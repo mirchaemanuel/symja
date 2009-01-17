@@ -29,18 +29,13 @@ import javax.swing.event.*;
 
 import java.util.Hashtable;
 
-/*import com.hartmath.expression.*;
-import com.hartmath.initial.*;
-import com.hartmath.lib.*;*/
-
 import org.matheclipse.parser.client.eval.*;
 
 /*import org.javadev.AnimatingCardLayout;
-import org.javadev.effects.*;
+import org.javadev.effects.*;*/
 
 import net.java.swingfx.waitwithstyle.InfiniteProgressPanel;
 
-import net.java.dev.cas.plot.*;*/
 
 /** This is currently the primary class to launch CAS.
   * Extends JApplet so that it can functions as an applet; if main()
@@ -118,8 +113,6 @@ public class Cas extends JApplet {
 
         setupContent(primaryView);
         populateContent(primaryView);
-
-		initializeHM();
 	}
 
     /** Cached plots tend to choke when applet is reloaded, so we
@@ -248,29 +241,6 @@ public class Cas extends JApplet {
 	}
 
 	
-    /** This is a piece of code that I didn't write. It's ugly, I
-      * don't understand it, and it frightens small children. It's
-      * legacy HartMath code that forms a classic example of the
-      * "Lava Flow" antipattern.
-      */
-	protected void initializeHM() {
-        /*if (C.initialized.equals(Boolean.FALSE)) {
-            C.init();
-
-            // I have absolutely no idea what these three lines do.
-            new M().evaluate(null);
-            new L().evaluate(null);
-            new Programming().evaluate(null);
-
-            try {
-                C.EV(InitRules.init(InitRules.larr, InitRules.barr));
-            } catch(Throwable t) {
-                t.printStackTrace();
-            }
-            HSymbol.sortFunctions();
-            C.initialized = Boolean.TRUE;
-        }*/
-	}
 
     public void start() {
         commandLine.selectAll();
@@ -296,6 +266,9 @@ class ExecuteListener implements ActionListener {
       */
     Scroller scroller;
 
+    /** Displays fun patterns while a command is executed.
+      */
+	InfiniteProgressPanel progress;
 
     /** Creates an ExecuteLister that takes commands from in, writes
       * them to out, scrolls to the bottom of scroll, and displays a
@@ -318,17 +291,19 @@ class ExecuteListener implements ActionListener {
 		sink = out;
 
         scroller = new Scroller(scroll);
+        progress = new InfiniteProgressPanel();
+        parent.setGlassPane(progress);
 	}
 
     /** Sets up the wait animation and starts execution of the
       * command.
       */
 	public void actionPerformed(ActionEvent ae) {
-        //progress.start();
+        progress.start();
         new CommandExecutor(sink,
                             source,
-                            scroller
-			    ).start();
+                            scroller,
+                            progress).start();
 	}
 }
 
@@ -352,6 +327,9 @@ class CommandExecutor extends Thread {
       */
     Scroller scroller;
 
+    /** Displays the wait animation.
+      */
+    InfiniteProgressPanel progress;
 
     /** Creates a CommandExecutor to execute the command in the text
       * field. When the thread is started, progress is displayed, the
@@ -362,43 +340,37 @@ class CommandExecutor extends Thread {
     public CommandExecutor(
                          DefaultListModel out,
                          JTextField source,
-                         Scroller scroller) {
+                         Scroller scroller,
+                         InfiniteProgressPanel progress) {
         in = source.getText();
         this.out = out;
         this.source = source;
         this.scroller = scroller;
+        this.progress = progress;
     }
 
     /** Executes the command.
       */
     public void run() {
-        /*HObject obj;
-        HObject res;*/
-
         try {
-            // I forget why I needed to prepend the newline
-            /*Scanner scan = new Scanner("\n" + in);
-            obj = scan.start();
-            res = C.EV(obj);*/
 	    ComplexEvaluator evaluator = new ComplexEvaluator();
 	    String result = ComplexEvaluator.toString(evaluator.evaluate(in));
 
-            EventQueue.invokeLater(new Displayer(/*obj.toString(),
-                                                 res.toString(),*/
-						 in, 
-						 result,
+
+            EventQueue.invokeLater(new Displayer(in,
+                                                 result,
                                                  out,
                                                  source,
-                                                 scroller
-                                                 ));
+                                                 scroller,
+                                                 progress));
         } catch (Throwable thrown) {
             thrown.printStackTrace();
             EventQueue.invokeLater(new Displayer(in,
                                                  thrown.toString(),
                                                  out,
                                                  source,
-                                                 scroller
-                                                 ));
+                                                 scroller,
+                                                 progress));
         }
     }
 }
@@ -429,6 +401,9 @@ class Displayer implements Runnable {
       */
     Scroller scroller;
 
+    /** Needs to be disabled now that the results have been computed.
+      */
+    InfiniteProgressPanel progress;
 
     /** Assembles a displayer that, when run, appends in and out to
       * sink. Scroller is scrolled to the bottom, progress is hidden,
@@ -438,18 +413,21 @@ class Displayer implements Runnable {
                      String out,
                      DefaultListModel sink,
                      JTextField source,
-                     Scroller scroller
-                     ) {
+                     Scroller scroller,
+                     InfiniteProgressPanel progress) {
         input = in;
         output = out;
         this.sink = sink;
         this.source = source;
         this.scroller = scroller;
+        this.progress = progress;
     }
 
     /** Does the work.
       */
     public void run() {
+        progress.stop();
+
         sink.addElement(input);
         sink.addElement(output);
 
