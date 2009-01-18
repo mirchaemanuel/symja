@@ -92,7 +92,7 @@ class PreferencesListener implements ActionListener {
         dialog = new JOptionPane(panel,
                                 JOptionPane.INFORMATION_MESSAGE,
                                 JOptionPane.DEFAULT_OPTION)
-                            .createDialog(parent, "CAS Preferences");
+                            .createDialog(parent, "Preferences");
 	}
 
     /** Sets up radio buttons to select color schemes and registers

@@ -41,19 +41,19 @@ import net.java.swingfx.waitwithstyle.InfiniteProgressPanel;
   * Extends JApplet so that it can functions as an applet; if main()
   * is called, the applet is wrapped in a window (JFrame).
   */
-public class Cas extends JApplet {
+public class Main extends JApplet {
     /** Launches CAS as an application.
       * Creates a window (JFrame) and displays the Cas panel inside
       * that window. Calls init() and start() on the Cas to mimic the
       * applet initialization behavior.
       */
 	public static void main(String args[]) {
-		JFrame frame = new JFrame("CAS");
-		Cas cas = new Cas();
+		JFrame frame = new JFrame("Symja");
+		Main panel = new Main();
 
-		frame.setContentPane(cas);
-		cas.init();
-		cas.start();
+		frame.setContentPane(panel);
+		panel.init();
+		panel.start();
 
         readyFrame(frame);
 	}
@@ -234,8 +234,8 @@ public class Cas extends JApplet {
         preferences.setToolTipText("Preferences");
         tools.add(preferences);
         about.addActionListener(new AboutListener(this));
-        about.setToolTipText("About CAS");
-        tools.add(about);
+        about.setToolTipText("About Symja");
+        //tools.add(about);
 
 		return tools;
 	}
@@ -515,7 +515,7 @@ class AboutListener implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         JOptionPane.showMessageDialog(parent,
             "CAS Computer Algebra System, Copyright (C) 2005 William Tracy (afishionado@dev.java.net)\nCAS comes with ABSOLUTELY NO WARRENTY. This is Free Software, and you are welcome to\nredistribute it under certain conditions.\n\nCAS is based on the work of the HartMath project (http://hartmath.dev.java.net)\n\nIt also contains code from the SwingFX (http://swingfx.dev.java.net) and\nAnimatingCardLayout (http://animatingcardlayout.dev.java.net) libraries.",
-            "About CAS",
+            "About Symja",
             JOptionPane.INFORMATION_MESSAGE, new ImageIcon(getClass()
                                        .getResource("About24.gif")));
     }
