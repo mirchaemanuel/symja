@@ -141,7 +141,8 @@ public class Main extends JApplet
   protected void populateContent (JComponent content)
   {
     content.add (createCenter (), BorderLayout.CENTER);
-    content.add (createToolbar (), BorderLayout.NORTH);
+    //content.add (createToolbar (), BorderLayout.NORTH);
+    setJMenuBar(createMenubar());
   }
 
     /** Sets up the center and bottom portions of the display.
@@ -196,7 +197,7 @@ public class Main extends JApplet
     commandLine =
       new
       JTextField
-      ("Plot3D({x * y, -y * x}, {x, -10.0, 10.0}, {y, -10.0, 10.0})");
+      ("2 + 2");
     exec = new JButton ("Execute");
 
     executeListener = new ExecuteListener (commandLine, model, scroll, this);
@@ -242,7 +243,26 @@ public class Main extends JApplet
     return tools;
   }
 
+  protected JMenuBar createMenubar() {
+	JMenuBar menuBar = new JMenuBar();
+	JMenu menu = new JMenu("Menu");
+	JMenuItem preferences = new JMenuItem("Preferences ...");
+    	preferences.addActionListener (new PreferencesListener (commands,
+							    redRenderer,
+							    blueRenderer,
+							    grayRenderer,
+							    this));
+	menu.add(preferences);
+	JMenuItem plot2D = new JMenuItem("New 2D Plot ...");
+	plot2D.setEnabled(false);
+	menu.add(plot2D);
+	JMenuItem plot3D = new JMenuItem("New 3D Plot ...");
+	plot3D.setEnabled(false);
+	menu.add(plot3D);
+	menuBar.add(menu);
 
+	return menuBar;
+  }
 
   public void start ()
   {
