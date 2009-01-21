@@ -30,9 +30,7 @@ import javax.swing.event.*;
 import java.util.Hashtable;
 
 import org.matheclipse.parser.client.eval.*;
-
-/*import org.javadev.AnimatingCardLayout;
-import org.javadev.effects.*;*/
+import org.matheclipse.symja.plot.*;
 
 import net.java.swingfx.waitwithstyle.InfiniteProgressPanel;
 
@@ -195,9 +193,7 @@ public class Main extends JApplet
     ActionListener executeListener;
 
     commandLine =
-      new
-      JTextField
-      ("2 + 2");
+      new JTextField ("Sin[0]");
     exec = new JButton ("Execute");
 
     executeListener = new ExecuteListener (commandLine, model, scroll, this);
@@ -254,7 +250,13 @@ public class Main extends JApplet
 							    this));
 	menu.add(preferences);
 	JMenuItem plot2D = new JMenuItem("New 2D Plot ...");
-	plot2D.setEnabled(false);
+	plot2D.addActionListener(new ActionListener() {
+		public void actionPerformed(ActionEvent e) {
+			JDialog window = new PlotWindow();
+			window.pack();
+			window.show();
+		}
+	});
 	menu.add(plot2D);
 	JMenuItem plot3D = new JMenuItem("New 3D Plot ...");
 	plot3D.setEnabled(false);
