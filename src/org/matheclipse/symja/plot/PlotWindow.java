@@ -4,6 +4,9 @@ import java.awt.*;
 import javax.swing.*;
 
 public class PlotWindow extends JDialog {
+	private SpinnerNumberModel xMin = new SpinnerNumberModel(-1.0, -999.0, 999.0, 1.0);
+	private SpinnerNumberModel xMax  = new SpinnerNumberModel(1.0, -999.0, 999.0, 1.0);
+
 	public PlotWindow() {
 		super();
 		Container c = getContentPane();
@@ -14,7 +17,6 @@ public class PlotWindow extends JDialog {
 	}
 
 	protected JComponent createFields() {
-		Insets i = new Insets(2, 2, 2, 2);
 		JComponent container = new JPanel();
 		container.setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
@@ -22,7 +24,7 @@ public class PlotWindow extends JDialog {
 		c.weightx = 1.0;
 		c.weighty = 0.0;
 		c.gridwidth = GridBagConstraints.REMAINDER;
-		c.insets = i;
+		c.insets = new Insets(2, 2, 2, 2);
 		container.add(new JTextField("Sin[x]"), c);
 		container.add(new JTextField("Cos[x]"), c);
 		c.fill = GridBagConstraints.NONE;
@@ -46,12 +48,12 @@ public class PlotWindow extends JDialog {
 		c.weightx = 0.0;
 		controls.add(new JLabel("X min: "), c);
 		c.weightx = 1.0;
-		controls.add(new JSpinner(), c);
+		controls.add(new JSpinner(xMin), c);
 		c.weightx = 0.0;
 		controls.add(new JLabel("X max: "), c);
 		c.gridwidth = GridBagConstraints.REMAINDER;
 		c.weightx = 1.0;
-		controls.add(new JSpinner(), c);
+		controls.add(new JSpinner(xMax), c);
 		c.weightx = 1.0;
 		c.weighty = 1.0;
 		controls.add(new JScrollPane(createFields()), c);
