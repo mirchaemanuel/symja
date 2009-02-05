@@ -41,6 +41,7 @@ import net.java.swingfx.waitwithstyle.InfiniteProgressPanel;
   */
 public class Main extends JApplet
 {
+  protected static JFrame frame = null;
     /** Launches CAS as an application.
       * Creates a window (JFrame) and displays the Cas panel inside
       * that window. Calls init() and start() on the Cas to mimic the
@@ -48,14 +49,14 @@ public class Main extends JApplet
       */
   public static void main (String args[])
   {
-    JFrame frame = new JFrame ("Symja");
+    frame = new JFrame ("Symja");
     Main panel = new Main ();
 
-      frame.setContentPane (panel);
-      panel.init ();
-      panel.start ();
+    frame.setContentPane (panel);
+    panel.init ();
+    panel.start ();
 
-      readyFrame (frame);
+    readyFrame (frame);
   }
 
     /** Sizes a frame, makes it quit the application when it closes,
@@ -252,7 +253,7 @@ public class Main extends JApplet
 	JMenuItem plot2D = new JMenuItem("New 2D Plot ...");
 	plot2D.addActionListener(new ActionListener() {
 		public void actionPerformed(ActionEvent e) {
-			JDialog window = new PlotWindow();
+			JDialog window = new PlotWindow(frame);
 			window.pack();
 			window.show();
 		}

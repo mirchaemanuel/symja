@@ -19,16 +19,15 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
 
 package org.matheclipse.symja.plot;
 
-/*import com.hartmath.expression.*;
-import com.hartmath.mapping.*;
-import com.hartmath.lib.*;*/
+import java.util.*;
 
 import java.awt.Graphics2D;
 import java.awt.EventQueue;
 import java.awt.Color;
 import javax.swing.*;
 
-import java.util.*;
+import org.matheclipse.parser.client.eval.*;
+
 
 /** Plots functions in 2D.
   */
@@ -59,64 +58,30 @@ public class Plotter extends AbstractPlotter2D {
       */
     protected static List cache = new ArrayList();
 
-    /** Readies a plot for display and displays it in a new window.
-      */
-    public void plot(/*HFunction args*/) {
-        /*HFunction funcs;
-        HObject xVar;
-        HFunction xArgs;
-
-        if (args.size() < 2)
-            throw new IllegalArgumentException(
-                                   "At least two arguments needed.");*/
-        thisResolution = newResolution;
-
-        /*if (args.get(0).isList()) {
-            funcs = (HFunction)args.get(0);
-            numFuncs = funcs.size();
-        } else {
-            funcs = args;
-            numFuncs = 1;
-        }
+   public void setFunctions(List functions) {
+	numFuncs = functions.size();
         point = new double[numFuncs][thisResolution + 1];
         paintPoint = new int[thisResolution + 1];
         xPoint = new int[thisResolution + 1];
         color = new Color[numFuncs];
+	DoubleEvaluator engine = new DoubleEvaluator();
 
-        xArgs = (HFunction)args.get(1);
-        xVar = C.EV(C.N.f(xArgs.get(0)));
-        xText = xVar.toString();
-        xMin = ((HDouble)C.EV(C.N.f(xArgs.get(1)))).doubleValue();
-        xMax = ((HDouble)C.EV(C.N.f(xArgs.get(2)))).doubleValue();
-        xRange = xMax - xMin;
+	ListIterator i = functions.listIterator();
+	while (i.hasNext()) {
+		String s = (String)i.next();
+		System.out.println(s);
+		populateFunction(s, i.previousIndex(), engine);
+	}
 
-        try {
-            yMax = yMin = new HUnaryNumerical(funcs.get(0),
-                                              xVar).map(xMin);
-        } catch (Exception e) {
-            yMax = yMin = 0;
-        }
-        for (int func = 0; func < numFuncs; ++func) {
-            populate(funcs, func, xVar);
-        }
+	updatePlot();
+   }
 
-        for (int counter = 2; counter < args.size(); ++counter) {
-            HFunction currentArgs = (HFunction)args.get(counter);
+    /** Readies a plot for display.
+      */
+    public void updatePlot() {
+        thisResolution = newResolution;
 
-            if (getColor(currentArgs.get(0)) != null) {
-                for (int i = 0; i < color.length; ++i)
-                    color[i] = getColor(currentArgs.get(i
-                                              % currentArgs.size()));
-            } else {
-                yText = currentArgs.get(0).toString();
-                yMin = ((HDouble)C.EV(C.N.f(currentArgs.get(1))))
-                                                      .doubleValue();
-                yMax = ((HDouble)C.EV(C.N.f(currentArgs.get(2))))
-                                                      .doubleValue();
-            }
-        }*/
-
-        if (yMax <= yMin) {
+        /*if (yMax <= yMin) {
             if (yMax < 0)
                 yMax = 0;
             if (yMin > 0)
@@ -128,7 +93,7 @@ public class Plotter extends AbstractPlotter2D {
             }
         }
 
-        yRange = yMax - yMin;
+        yRange = yMax - yMin;*/
 
         setupText();
 
@@ -137,34 +102,32 @@ public class Plotter extends AbstractPlotter2D {
 
     /** Populates the points array with function values.
       */
-    /*protected void populate(HFunction funcs,
+    protected void populateFunction(String expression,
                             int func,
-                            HObject xVar) {
-        HUnaryNumerical un = new HUnaryNumerical(funcs.get(func),
-                                                 xVar);
+			    DoubleEvaluator engine) {
+	//System.out.println("Initializing color #" + func + " of " + color.length);
         color[func] = COLOR[func % COLOR.length];
         for (int counter = 0; counter <= thisResolution; ++counter) {
+	    //System.out.println("Generating point #" + counter + " for function #" + func);
             try {
-                populatePoint(func, un, counter);
+                populatePoint(func, expression, counter, engine);
             } catch (Exception e) {
                 point[func][counter] = Double.POSITIVE_INFINITY;
             }
         }
-    }*/
+    }
 
     /** Inserts a function value into the appropriate point in the
       * array.
       */
-    /*protected void populatePoint(int func,
-                                 HUnaryNumerical un,
-                                 int x) {
-        point[func][x] = un.map(xMin
-            + xRange * (double)x / (double)(thisResolution));
-        if (point[func][x] < yMin)
-            yMin = point[func][x];
-        else if (point[func][x] > yMax)
-            yMax = point[func][x];
-    }*/
+    protected void populatePoint(int func,
+                                 String expression,
+                                 int x,
+				 DoubleEvaluator engine) {
+	double xVal = (double)xMin + (double)(xRange * x) / (double)thisResolution;
+	engine.defineVariable("x", new DoubleVariable(xVal));
+        point[func][x] = engine.evaluate(expression);
+    }
 
     /** Returns the color encoded in the HObject, or null if the
       * HObject doesn't encode a color.

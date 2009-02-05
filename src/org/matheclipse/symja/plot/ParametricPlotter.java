@@ -17,7 +17,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
 */
 
-package org.matheclipse.symja.plot;
+package net.java.dev.cas.plot;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -33,10 +33,10 @@ import javax.swing.*;
 
 import java.util.*;
 
-/*import com.hartmath.lib.*;
+import com.hartmath.lib.*;
 import com.hartmath.util.*;
 import com.hartmath.expression.*;
-import com.hartmath.mapping.*;*/
+import com.hartmath.mapping.*;
 
 /** Plots parametric shapes.
   */
@@ -55,15 +55,15 @@ public class ParametricPlotter extends AbstractPlotter2D {
 
     /** The independent variable.
       */
-    //protected HObject t;
+    protected HObject t;
 
     /** The first dependent variable.
       */
-    //protected HUnaryNumerical x;
+    protected HUnaryNumerical x;
 
     /** The second dependent variable.
       */
-    //protected HUnaryNumerical y;
+    protected HUnaryNumerical y;
 
     /** The x coordinates of the points plotted. They are indexed
       * first by plot number, then by the number of the point along
@@ -86,28 +86,28 @@ public class ParametricPlotter extends AbstractPlotter2D {
 
     /** Populates the point arrays and readies plot for display.
       */
-    public void plot(/*HFunction args*/) {
-        //HFunction funcs;
-        //HFunction tArgs;
+    public void plot(HFunction args) {
+        HFunction funcs;
+        HFunction tArgs;
 
-        /*if (args.size() != 2)
+        if (args.size() != 2)
             throw new IllegalArgumentException(
                                     "Incorrect number of arguments");
         if (!(args.get(0).isList() && args.get(1).isList()))
             throw new IllegalArgumentException(
-                                    "Both arguments must be lists");*/
+                                    "Both arguments must be lists");
 
         thisResolution = newResolution;
 
-        //funcs = (HFunction)args.get(0);
-        /*if (funcs.get(0).isList()) {
+        funcs = (HFunction)args.get(0);
+        if (funcs.get(0).isList()) {
             functions = funcs.size();
         } else {
             funcs = args;
             functions = 1;
-        }*/
+        }
 
-        /*tArgs = (HFunction)args.get(1);
+        tArgs = (HFunction)args.get(1);
         if (tArgs.size() != 3)
             throw new IllegalArgumentException(
                                "Variable name and bounds malformed");
@@ -127,7 +127,7 @@ public class ParametricPlotter extends AbstractPlotter2D {
 
         for (int f = 0; f < functions; ++f) {
             doPlot(funcs, f);
-        }*/
+        }
 
         if (xMax <= xMin) {
             if (xMax < 0) {
@@ -161,24 +161,24 @@ public class ParametricPlotter extends AbstractPlotter2D {
 
     /** Plots shape number f, and sets its color.
       */
-    protected void doPlot(/*HFunction funcs,*/ int f) {
-        /*if (((HFunction)funcs.get(f)).size() < 2)
+    protected void doPlot(HFunction funcs, int f) {
+        if (((HFunction)funcs.get(f)).size() < 2)
             throw new IllegalArgumentException(
                             "Two functions required for plot #" + f);
 
         x = new HUnaryNumerical(((HFunction)funcs.get(f)).get(0), t);
-        y = new HUnaryNumerical(((HFunction)funcs.get(f)).get(1), t);*/
+        y = new HUnaryNumerical(((HFunction)funcs.get(f)).get(1), t);
 
-        /*for(int counter = 0; counter <= thisResolution; ++counter) {
+        for(int counter = 0; counter <= thisResolution; ++counter) {
             plotPoint(f, counter);
-        }*/
-        //colorPlot(funcs, f);
+        }
+        colorPlot(funcs, f);
     }
 
     /** Chooses the color for a plot.
       */
-    protected void colorPlot(/*HFunction funcs,*/ int f) {
-        /*if (((HFunction)funcs.get(f)).size() > 2) {
+    protected void colorPlot(HFunction funcs, int f) {
+        if (((HFunction)funcs.get(f)).size() > 2) {
             String s = ((HFunction)funcs.get(f)).get(2).toString()
                                                       .toLowerCase();
             if (s.startsWith("b"))
@@ -199,12 +199,12 @@ public class ParametricPlotter extends AbstractPlotter2D {
                 color[f] = Color.YELLOW;
         } else {
             color[f] = COLOR[f % COLOR.length];
-        }*/
+        }
     }
 
     /** Plots point number n on shape f.
       */
-    /*protected void plotPoint(int f, int n) {
+    protected void plotPoint(int f, int n) {
         xPoints[f][n] = x.map(tMin
                     + tRange * (double)n / (double)(thisResolution));
         if (xPoints[f][n] < xMin)
@@ -218,7 +218,7 @@ public class ParametricPlotter extends AbstractPlotter2D {
             yMin = yPoints[f][n];
         else if (yPoints[f][n] > yMax)
             yMax = yPoints[f][n];
-    }*/
+    }
 
     /** Paints the plotted shapes on the display.
       */
@@ -310,10 +310,10 @@ public class ParametricPlotter extends AbstractPlotter2D {
     /** Caches the unused plot.
       */
     public void reclaim() {
-        /*xPoints = null;
+        xPoints = null;
         yPoints = null;
         x = null;
-        y = null;*/
+        y = null;
         cache.add(this);
     }
 
