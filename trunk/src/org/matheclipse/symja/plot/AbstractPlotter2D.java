@@ -19,6 +19,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
 
 package org.matheclipse.symja.plot;
 
+import java.util.List;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.font.*;
@@ -39,7 +41,7 @@ public abstract class AbstractPlotter2D extends JComponent
                                         implements Runnable {
     /** Contains the displayed plot.
       */
-    protected JFrame frame;
+    //protected JFrame frame;
 
     /** The ascent of the font used.
       */
@@ -164,11 +166,15 @@ public abstract class AbstractPlotter2D extends JComponent
       * with it.
       */
     protected AbstractPlotter2D() {
-        frame = new JFrame("Plot--CAS");
+	super();
+	setMinimumSize(new Dimension(0, 0));
+	setPreferredSize(new Dimension(400, 400));
+	setMaximumSize(new Dimension(Short.MAX_VALUE, Short.MAX_VALUE));
+        /*frame = new JFrame("Plot--CAS");
         frame.setContentPane(this);
         frame.setSize(400, 400);
         frame.setLocationRelativeTo(null);
-        frame.addWindowListener(new PlotWindowListener(this));
+        frame.addWindowListener(new PlotWindowListener(this));*/
     }
 
     /** All plots are opaque.
@@ -179,7 +185,8 @@ public abstract class AbstractPlotter2D extends JComponent
 
     /** Plots a new set of function(s) and readies them for display.
       */
-    public abstract void plot();
+    public abstract void updatePlot();
+    public abstract void setFunctions(List functions);
 
     /** Caches this object for future reuse, preventing memory leaks
       * if the garbage collector gets sloppy on us.
@@ -200,7 +207,7 @@ public abstract class AbstractPlotter2D extends JComponent
       * EventQueue.invokeLater(this)).
       */
     public void run() {
-        frame.show();
+	repaint();
     }
 
     /** Sets up the text labels for the plot.
@@ -248,6 +255,8 @@ public abstract class AbstractPlotter2D extends JComponent
 
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                              RenderingHints.VALUE_ANTIALIAS_ON);
+        g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+                             RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 
         fillBackground( g2d, xAxis, yAxis, top, bottom, left, right);
         paintPlots(g2d, top, height, bottom, left, width, right);
@@ -411,24 +420,28 @@ public abstract class AbstractPlotter2D extends JComponent
     protected int xAxis(int top, int height) {
         return top + height - (int)(-yMin * height / yRange);
     }
-}
 
-/** Reacts to closing of the window.
-  */
-class PlotWindowListener extends WindowAdapter {
-    /** The plot to reclaim.
-      */
-    protected AbstractPlotter2D plot;
-
-    /** Creates a listener for the frame associated with the plot.
-      */
-    public PlotWindowListener(AbstractPlotter2D ap) {
-        plot = ap;
+    public void setXMin(Double newMin) {
+	xMin = newMin;
+	xRange = xMax - xMin;
+	//updatePlot();
     }
 
-    /** Reclaims the plot associated with the closed window.
-      */
-    public void windowClosing(WindowEvent e) {
-        plot.reclaim();
+    public void setXMax(Double newMax) {
+	xMax = newMax;
+	xRange = xMax - xMin;
+	//updatePlot();
+    }
+
+    public void setYMin(Double newMin) {
+	yMin = newMin;
+	yRange = yMax - yMin;
+	updatePlot();
+    }
+
+    public void setYMax(Double newMax) {
+	yMax = newMax;
+	yRange = yMax - yMin;
+	updatePlot();
     }
 }
