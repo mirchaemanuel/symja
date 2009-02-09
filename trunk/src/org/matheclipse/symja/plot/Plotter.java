@@ -60,6 +60,7 @@ public class Plotter extends AbstractPlotter2D {
 
    public void setFunctions(List functions) {
 	numFuncs = functions.size();
+	//System.out.println("Plot has " + numFuncs + " functions!!!");
         point = new double[numFuncs][thisResolution + 1];
         paintPoint = new int[thisResolution + 1];
         xPoint = new int[thisResolution + 1];
@@ -69,12 +70,12 @@ public class Plotter extends AbstractPlotter2D {
 	ListIterator i = functions.listIterator();
 	while (i.hasNext()) {
 		String s = (String)i.next();
-		System.out.println(s);
+		//System.out.println(s);
 		populateFunction(s, i.previousIndex(), engine);
 	}
 
 	updatePlot();
-   }
+    }
 
     /** Readies a plot for display.
       */
@@ -225,6 +226,9 @@ public class Plotter extends AbstractPlotter2D {
     /** Enters this instance into the cache.
       */
     public void reclaim() {
+	point = null;
+	paintPoint = null;
+	xPoint = null;
         cache.add(this);
     }
 

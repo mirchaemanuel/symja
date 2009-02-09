@@ -125,7 +125,7 @@ public class Main extends JApplet
      Plotter.clearCache();
      ParametricPlotter.clearCache();
      Plotter3D.clearCache();
-     } */
+  } */
 
     /** Sets the border and layout of content.
       */
@@ -259,6 +259,15 @@ public class Main extends JApplet
 		}
 	});
 	menu.add(plot2D);
+	JMenuItem parametricPlot = new JMenuItem("New Parametric Plot ...");
+	parametricPlot.addActionListener(new ActionListener() {
+		public void actionPerformed(ActionEvent e) {
+			JDialog window = new ParametricPlotWindow(frame);
+			window.pack();
+			window.show();
+		}
+	});
+	menu.add(parametricPlot);
 	JMenuItem plot3D = new JMenuItem("New 3D Plot ...");
 	plot3D.setEnabled(false);
 	menu.add(plot3D);

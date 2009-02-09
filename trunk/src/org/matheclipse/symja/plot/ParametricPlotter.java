@@ -17,7 +17,9 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
 */
 
-package net.java.dev.cas.plot;
+package org.matheclipse.symja.plot;
+
+import java.util.*;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -31,16 +33,19 @@ import java.awt.Font;
 import java.awt.event.*;
 import javax.swing.*;
 
-import java.util.*;
-
-import com.hartmath.lib.*;
-import com.hartmath.util.*;
-import com.hartmath.expression.*;
-import com.hartmath.mapping.*;
+import org.matheclipse.parser.client.eval.*;
 
 /** Plots parametric shapes.
   */
 public class ParametricPlotter extends AbstractPlotter2D {
+    /** The number of points to plot on each line on this plot.
+      */
+    protected int thisResolution;
+
+    /** The number of lines to plot.
+      */
+    protected int numFuncs;
+
     /** The minimum bound on the independent variable.
       */
     protected double tMin;
@@ -55,15 +60,7 @@ public class ParametricPlotter extends AbstractPlotter2D {
 
     /** The independent variable.
       */
-    protected HObject t;
-
-    /** The first dependent variable.
-      */
-    protected HUnaryNumerical x;
-
-    /** The second dependent variable.
-      */
-    protected HUnaryNumerical y;
+    //protected HObject t;
 
     /** The x coordinates of the points plotted. They are indexed
       * first by plot number, then by the number of the point along
@@ -79,14 +76,34 @@ public class ParametricPlotter extends AbstractPlotter2D {
       */
     protected static List cache = new LinkedList();
 
-    /** The number of shapes plotted. Poorly chosen variable name.
-      * :-P
-      */
-    protected int functions;
+    public void updatePlot() {
+	thisResolution = newResolution;
+	setupText();
+	EventQueue.invokeLater(this);
+    }
+
+    public void setFunctions(java.util.List functions) {
+	numFuncs = functions.size() / 2;
+	
+        xPoints = new double[numFuncs][thisResolution + 1];
+        yPoints = new double[numFuncs][thisResolution + 1];
+        color = new Color[numFuncs];
+	DoubleEvaluator engine = new DoubleEvaluator();
+
+	ListIterator i = functions.listIterator();
+	while (i.hasNext()) {
+		String sx = (String)i.next();
+		String sy = (String)i.next();
+		populateFunction(sx, sy, (i.previousIndex() - 1) / 2, engine);
+	}
+
+	updatePlot();
+    }
+
 
     /** Populates the point arrays and readies plot for display.
       */
-    public void plot(HFunction args) {
+    /*public void plot(HFunction args) {
         HFunction funcs;
         HFunction tArgs;
 
@@ -157,11 +174,27 @@ public class ParametricPlotter extends AbstractPlotter2D {
         setupText();
 
         EventQueue.invokeLater(this);
-    }
+    }*/
 
+    protected void populateFunction(
+		String xExpression, 
+		String yExpression, 
+		int func, 
+		DoubleEvaluator engine) {
+	for (int counter = 0; counter <= thisResolution; ++counter) {
+		try {
+			plotPoint(func, xExpression, yExpression, counter, engine);
+		} catch (Exception e) {
+			xPoints[func][counter] = Double.POSITIVE_INFINITY;
+			yPoints[func][counter] = Double.POSITIVE_INFINITY;
+		}
+	}
+	colorPlot(func);
+    }
+	
     /** Plots shape number f, and sets its color.
       */
-    protected void doPlot(HFunction funcs, int f) {
+    /*protected void doPlot(HFunction funcs, int f) {
         if (((HFunction)funcs.get(f)).size() < 2)
             throw new IllegalArgumentException(
                             "Two functions required for plot #" + f);
@@ -173,11 +206,15 @@ public class ParametricPlotter extends AbstractPlotter2D {
             plotPoint(f, counter);
         }
         colorPlot(funcs, f);
+    }*/
+
+    protected void colorPlot(int index) {
+	color[index] = COLOR[index % COLOR.length];
     }
 
     /** Chooses the color for a plot.
       */
-    protected void colorPlot(HFunction funcs, int f) {
+    /*protected void colorPlot(HFunction funcs, int f) {
         if (((HFunction)funcs.get(f)).size() > 2) {
             String s = ((HFunction)funcs.get(f)).get(2).toString()
                                                       .toLowerCase();
@@ -200,11 +237,24 @@ public class ParametricPlotter extends AbstractPlotter2D {
         } else {
             color[f] = COLOR[f % COLOR.length];
         }
+    }*/
+
+    protected void plotPoint(
+		int func, 
+		String xExpression, 
+		String yExpression, 
+		int t, 
+		DoubleEvaluator engine) {
+	//System.out.println("Plotting point #" + t + " of function #" + func);
+	double tVal = (double)tMin + (double)(tRange * t) / (double)thisResolution;
+	engine.defineVariable("t", new DoubleVariable(tVal));
+        xPoints[func][t] = engine.evaluate(xExpression);
+        yPoints[func][t] = engine.evaluate(yExpression);
     }
 
     /** Plots point number n on shape f.
       */
-    protected void plotPoint(int f, int n) {
+    /*protected void plotPoint(int f, int n) {
         xPoints[f][n] = x.map(tMin
                     + tRange * (double)n / (double)(thisResolution));
         if (xPoints[f][n] < xMin)
@@ -218,7 +268,7 @@ public class ParametricPlotter extends AbstractPlotter2D {
             yMin = yPoints[f][n];
         else if (yPoints[f][n] > yMax)
             yMax = yPoints[f][n];
-    }
+    }*/
 
     /** Paints the plotted shapes on the display.
       */
@@ -232,7 +282,7 @@ public class ParametricPlotter extends AbstractPlotter2D {
         int x[] = new int[thisResolution + 1];
         int y[] = new int[thisResolution + 1];
 
-        for (int f = 0; f < functions; ++f) {
+        for (int f = 0; f < numFuncs; ++f) {
             paintPlot(g2d,
                       top,
                       height,
@@ -295,6 +345,16 @@ public class ParametricPlotter extends AbstractPlotter2D {
                                      * height / yRange);
     }
 
+    public void setTMax(double in) {
+	tMax = in;
+	tRange = tMax - tMin;
+    }
+
+    public void setTMin(double in) {
+	tMin = in;
+	tRange = tMax - tMin;
+    }
+
     /** Returns either a new plot or a plot from a cache.
       */
     public static ParametricPlotter getParametricPlotter() {
@@ -312,8 +372,8 @@ public class ParametricPlotter extends AbstractPlotter2D {
     public void reclaim() {
         xPoints = null;
         yPoints = null;
-        x = null;
-        y = null;
+        //x = null;
+        //y = null;
         cache.add(this);
     }
 
