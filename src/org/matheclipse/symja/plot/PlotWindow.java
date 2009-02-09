@@ -1,18 +1,13 @@
 package org.matheclipse.symja.plot;
 
-import java.util.ArrayList;
-
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
-import javax.swing.event.*;
+import java.awt.Frame;
 
 public class PlotWindow extends AbstractPlotWindow {
 	public PlotWindow(Frame parent) {
 		super(parent);
 	}
 
-	protected Plotter createPlot() {
+	public Plotter createPlot() {
 		return Plotter.getPlotter();
 	}
 

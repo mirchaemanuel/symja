@@ -170,11 +170,7 @@ public abstract class AbstractPlotter2D extends JComponent
 	setMinimumSize(new Dimension(0, 0));
 	setPreferredSize(new Dimension(400, 400));
 	setMaximumSize(new Dimension(Short.MAX_VALUE, Short.MAX_VALUE));
-        /*frame = new JFrame("Plot--CAS");
-        frame.setContentPane(this);
-        frame.setSize(400, 400);
-        frame.setLocationRelativeTo(null);
-        frame.addWindowListener(new PlotWindowListener(this));*/
+	updatePlot();
     }
 
     /** All plots are opaque.
@@ -436,12 +432,12 @@ public abstract class AbstractPlotter2D extends JComponent
     public void setYMin(Double newMin) {
 	yMin = newMin;
 	yRange = yMax - yMin;
-	updatePlot();
+	//updatePlot();
     }
 
     public void setYMax(Double newMax) {
 	yMax = newMax;
 	yRange = yMax - yMin;
-	updatePlot();
+	//updatePlot();
     }
 }

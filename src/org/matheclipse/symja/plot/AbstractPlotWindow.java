@@ -36,6 +36,7 @@ public abstract class AbstractPlotWindow extends JDialog {
 		split.setResizeWeight(1);
 
 		getContentPane().add(split);
+		doGraph();
 	}
 
 	protected abstract AbstractPlotter2D createPlot();
@@ -95,7 +96,7 @@ public abstract class AbstractPlotWindow extends JDialog {
 		field.addActionListener(new GraphListener());
 	}
 
-	protected JPanel createControls() {
+	protected JPanel createMinMaxControls() {
 		JPanel controls = new JPanel();
 		controls.setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
@@ -123,24 +124,13 @@ public abstract class AbstractPlotWindow extends JDialog {
 
 		c.weightx = 1.0;
 		controls.add(new JSpinner(yMin), c);
+
 		c.weightx = 0.0;
 		controls.add(new JLabel("Y max: "), c);
 
 		c.gridwidth = GridBagConstraints.REMAINDER;
 		c.weightx = 1.0;
 		controls.add(new JSpinner(yMax), c);
-
-		c.weightx = 1.0;
-		c.weighty = 1.0;
-		fieldScroller = new JScrollPane(createFields());
-
-		controls.add(fieldScroller, c);
-		c.weightx = 0.0;
-		c.weighty = 0.0;
-		c.fill = GridBagConstraints.NONE;
-		JButton update = new JButton("Update");
-		update.setEnabled(true);
-		controls.add(update, c);
 
 		xMin.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
@@ -174,6 +164,35 @@ public abstract class AbstractPlotWindow extends JDialog {
 				plot.setYMax(value);
 			}
 		});
+
+		return controls;
+	}
+
+	protected JPanel createControls() {
+		JPanel controls = new JPanel();
+		controls.setLayout(new GridBagLayout());
+		GridBagConstraints c = new GridBagConstraints();
+
+		c.fill = GridBagConstraints.BOTH;
+		c.insets = new Insets(2, 2, 2, 2);
+
+		c.gridwidth = GridBagConstraints.REMAINDER;
+		c.weightx = 0.0;
+		c.weighty = 0.0;
+		controls.add(createMinMaxControls(), c);
+
+		c.weightx = 1.0;
+		c.weighty = 1.0;
+		fieldScroller = new JScrollPane(createFields());
+		controls.add(fieldScroller, c);
+
+		c.weightx = 0.0;
+		c.weighty = 0.0;
+		c.fill = GridBagConstraints.NONE;
+		JButton update = new JButton("Update");
+		update.setEnabled(true);
+		controls.add(update, c);
+
 		update.addActionListener(new GraphListener());
 		
 		return controls;
