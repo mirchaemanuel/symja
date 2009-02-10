@@ -10,7 +10,6 @@
 	<classpathentry kind="lib" path="lib/mecore.jar"/>
 	<classpathentry kind="lib" path="lib/megeneric.jar"/>
 	<classpathentry kind="lib" path="lib/commons-math-2.0.jar"/>
-	<classpathentry kind="lib" path="lib/log4j-1.2.11.jar"/>
 	<classpathentry kind="var" path="JAVA3D_HOME/lib/ext/vecmath.jar"/>
 	<classpathentry kind="var" path="JAVA3D_HOME/lib/ext/j3dutils.jar"/>
 	<classpathentry kind="output" path="bin"/>
