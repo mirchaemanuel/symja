@@ -1,5 +1,5 @@
 <project name="Symja" basedir="." default="main">
-
+	<property name="java3d.dir"  value="C:/Programme/Java/Java3D/1.5.2/lib/ext"/>
     <property name="src.dir"     value="src"/>
 
     <property name="build.dir"   value="build"/>
@@ -12,6 +12,7 @@
 
     <path id="classpath">
         <fileset dir="${lib.dir}" includes="**/*.jar"/>
+    	<fileset dir="${java3d.dir}" includes="**/*.jar"/>
     </path>
 
 
@@ -24,14 +25,22 @@
         <javac srcdir="${src.dir}" destdir="${classes.dir}" classpathref="classpath" debug="true" />
     </target>
 
-    <target name="jar" depends="compile">
-        <mkdir dir="${jar.dir}"/>
-        <jar destfile="${jar.dir}/${ant.project.name}.jar" basedir="${classes.dir}">
-            <manifest>
-                <attribute name="Main-Class" value="${main-class}"/>
-            </manifest>
-        </jar>
-    </target>
+	<target name="jar" depends="compile">
+		<mkdir dir="${jar.dir}"/>
+		<unjar src="lib/commons-logging.jar" dest="${classes.dir}" />
+		<unjar src="lib/commons-discovery.jar" dest="${classes.dir}" />
+		<unjar src="lib/commons-math-2.0.jar" dest="${classes.dir}" />
+		<unjar src="lib/meparser-0.0.7.jar" dest="${classes.dir}" />
+		<unjar src="lib/mebasic.jar" dest="${classes.dir}" />
+		<unjar src="lib/megeneric.jar" dest="${classes.dir}" />
+		<unjar src="lib/mecore.jar" dest="${classes.dir}" />
+		
+		<jar destfile="${jar.dir}/${ant.project.name}.jar" basedir="${classes.dir}">
+		    <manifest>
+		        <attribute name="Main-Class" value="${main-class}"/>
+		    </manifest>
+		</jar>
+	</target>
 
     <target name="run" depends="jar">
         <java fork="true" classname="${main-class}">
@@ -46,5 +55,46 @@
 
     <target name="main" depends="clean,run"/>
 
+	<target name="obfuscate" depends="jar">
+	         <taskdef resource="proguard/ant/task.properties"
+	                  classpath="toolslib/proguard.jar" />
+
+	         <proguard printmapping="proguard.map"
+	                   overloadaggressively="on"
+	                   defaultpackage=""
+	                   allowaccessmodification="on">
+	               -dontskipnonpubliclibraryclasses
+	         	-dontskipnonpubliclibraryclassmembers
+
+	           <!-- Specify the input jars, output jars, and library jars. -->
+
+	           <injar  file="${jar.dir}/${ant.project.name}.jar" />
+	           <outjar file="${jar.dir}/${ant.project.name}_all001.jar" />
+
+	           <libraryjar file="${java.home}/lib/rt.jar" />
+	           
+	         	
+	               <keep access="public" extends="javax.swing.JApplet" />
+	         	   <keep access="public" extends="org.apache.commons.logging.LogFactory" />
+	               <keep access="public"
+	extends="org.matheclipse.core.interfaces.IEvaluator" />
+	               <keep access="public"
+	extends="org.matheclipse.core.eval.interfaces.ISymbolEvaluator" />
+	               <keep access="public"
+	extends="org.matheclipse.core.eval.interfaces.IFunctionEvaluator" />
+	               <keep access="public"
+	extends="org.matheclipse.core.form.mathml.IConverter" />
+	               <keep access="public" extends="org.matheclipse.core.form.tex.IConverter" />
+
+	 <!--              <keep access="public" name="org.matheclipse.symja.Main">
+	                     <method access    ="public static"
+	                             type      ="void"
+	                             name      ="main"
+	                             parameters="java.lang.String[]" />
+	               </keep>
+       -->
+	         	
+	         </proguard>
+	       </target>
 </project>
 

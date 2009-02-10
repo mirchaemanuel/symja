@@ -3,8 +3,15 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="var" path="JAVA3D_HOME/lib/ext/j3dcore.jar"/>
-	<classpathentry kind="var" path="JAVA3D_HOME/lib/ext/j3dutils.jar"/>
-	<classpathentry kind="var" path="JAVA3D_HOME/lib/ext/vecmath.jar"/>
 	<classpathentry kind="lib" path="lib/meparser-0.0.7.jar"/>
+	<classpathentry kind="lib" path="lib/commons-discovery.jar"/>
+	<classpathentry kind="lib" path="lib/commons-logging.jar"/>
+	<classpathentry kind="lib" path="lib/mebasic.jar"/>
+	<classpathentry kind="lib" path="lib/mecore.jar"/>
+	<classpathentry kind="lib" path="lib/megeneric.jar"/>
+	<classpathentry kind="lib" path="lib/commons-math-2.0.jar"/>
+	<classpathentry kind="lib" path="lib/log4j-1.2.11.jar"/>
+	<classpathentry kind="var" path="JAVA3D_HOME/lib/ext/vecmath.jar"/>
+	<classpathentry kind="var" path="JAVA3D_HOME/lib/ext/j3dutils.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
