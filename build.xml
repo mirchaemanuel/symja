@@ -1,6 +1,7 @@
 <project name="Symja" basedir="." default="main">
 	<property name="java3d.dir"  value="C:/Programme/Java/Java3D/1.5.2/lib/ext"/>
-    <property name="src.dir"     value="src"/>
+   
+	<property name="src.dir"     value="src"/>
 
     <property name="build.dir"   value="build"/>
     <property name="classes.dir" value="${build.dir}/classes"/>
@@ -12,7 +13,7 @@
 
     <path id="classpath">
         <fileset dir="${lib.dir}" includes="**/*.jar"/>
-    	<fileset dir="${java3d.dir}" includes="**/*.jar"/>
+     	<fileset dir="${java3d.dir}" includes="**/*.jar"/>  
     </path>
 
 
@@ -27,8 +28,6 @@
 
 	<target name="jar" depends="compile">
 		<mkdir dir="${jar.dir}"/>
-		<unjar src="lib/commons-logging.jar" dest="${classes.dir}" />
-		<unjar src="lib/commons-discovery.jar" dest="${classes.dir}" />
 		<unjar src="lib/commons-math-2.0.jar" dest="${classes.dir}" />
 		<unjar src="lib/meparser-0.0.7.jar" dest="${classes.dir}" />
 		<unjar src="lib/mebasic.jar" dest="${classes.dir}" />
@@ -54,7 +53,7 @@
     <target name="clean-build" depends="clean,jar"/>
 
     <target name="main" depends="clean,run"/>
-
+ 
 	<target name="obfuscate" depends="jar">
 	         <taskdef resource="proguard/ant/task.properties"
 	                  classpath="toolslib/proguard.jar" />
@@ -70,12 +69,13 @@
 
 	           <injar  file="${jar.dir}/${ant.project.name}.jar" />
 	           <outjar file="${jar.dir}/${ant.project.name}_all001.jar" />
-
+	         	
 	           <libraryjar file="${java.home}/lib/rt.jar" />
-	           
+	           <libraryjar file="${java3d.dir}/j3dcore.jar" />
+	           <libraryjar file="${java3d.dir}/j3dutils.jar" />
+	           <libraryjar file="${java3d.dir}/vecmath.jar" />
 	         	
 	               <keep access="public" extends="javax.swing.JApplet" />
-	         	   <keep access="public" extends="org.apache.commons.logging.LogFactory" />
 	               <keep access="public"
 	extends="org.matheclipse.core.interfaces.IEvaluator" />
 	               <keep access="public"
@@ -86,13 +86,19 @@
 	extends="org.matheclipse.core.form.mathml.IConverter" />
 	               <keep access="public" extends="org.matheclipse.core.form.tex.IConverter" />
 
-	 <!--              <keep access="public" name="org.matheclipse.symja.Main">
+	                <keep access="public" name="${main-class}">
 	                     <method access    ="public static"
 	                             type      ="void"
 	                             name      ="main"
 	                             parameters="java.lang.String[]" />
-	               </keep>
-       -->
+	                </keep>
+    	         	<keep access="public" name="org.matheclipse.symja.MathApplet">
+	         		                     <method access    ="public static"
+	         		                             type      ="void"
+	         		                             name      ="main"
+	         		                             parameters="java.lang.String[]" />
+	        		</keep>
+       
 	         	
 	         </proguard>
 	       </target>

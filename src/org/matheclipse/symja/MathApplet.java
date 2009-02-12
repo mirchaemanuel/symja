@@ -22,9 +22,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.io.UnsupportedEncodingException;
-import java.net.URL;
-import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -34,14 +31,13 @@ import javax.swing.ActionMap;
 import javax.swing.InputMap;
 import javax.swing.JApplet;
 import javax.swing.JButton;
-import javax.swing.JOptionPane;
+import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextPane;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
@@ -85,55 +81,13 @@ public class MathApplet extends JApplet implements DocumentListener {
 
 	private JTextPane jOutputPane = null;
 
-	// private JMenuBar jJMenuBar = null;
-	//
-	// private JMenu jMenuFile = null;
-	//
-	// private JMenuItem jMenuItemExit = null;
-	//
-	// private JMenu jMenuOptions = null;
-	//
-	// private JMenuItem jMenuItemColors = null;
-	//
-	// private JMenu jMenuView = null;
-	//
-	// private JMenuItem jMenuItemClear = null;
-	//
-	// private JMenuItem jMenuItemScale = null;
-	//
-	// // private JMenuItem jMenuItemSkriptPath = null;
-	//
-	// private JMenuItem jMenuItemBreak = null;
-	//
-	// private JMenu jMenuHelp = null;
-	//
-	// private JMenuItem jMenuItemHelp = null;
-
-	// private JPopupMenu jPopupMenu = null;
-
-	// private JMenuItem jPopupMenuItemCopy = null;
-	//
-	// private JMenuItem jPopupMenuItemPaste = null;
-	//
-	// private JMenuItem jPopupMenuItemBreak = null;
-
 	/* custom created attributes */
 	final static long serialVersionUID = 0x000000001;
 
 	private final static String versionStr = "Keyboard shortcuts\n" + "- Ctrl+ENTER - for symbolic evaluation\n"
 			+ "- Cursor up - previoues input\n" + "- Cursor down - next input\n";
 
-	private final static String iniStr = "me.ini";
-
-	private static String jreStr;
-
-	private static String iniFileStr; // including path
-
-	// private String scriptPath;
-
 	private DefaultStyledDocument jOutputDoc;
-
-	// private Props props;
 
 	private SimpleAttributeSet outputAtr, errorAtr, outputOpAtr, outputStringAtr;
 
@@ -141,36 +95,23 @@ public class MathApplet extends JApplet implements DocumentListener {
 
 	private int fontSize;
 
-	private final int maxDocSize = 1000000; // to work around bad TextPane
-	// performance
-
-	// private MathApplet jCalc;
-
 	private final String commandHistory[] = new String[20];
 
 	private int commandHistoryStoreIndex = 0;
 
 	private int commandHistoryReadIndex = 0;
 
-	// private boolean addLinefeed = false;
-
 	private Component popupSource;
-
-	private int internalScale = 64;
 
 	public static EvalEngine EVAL_ENGINE;
 
 	public static TimeConstrainedEvaluator EVAL;
-
-	// public Boolean IS_INITIALIZED = Boolean.FALSE;
 
 	final static String bracketChars = "[](){}";
 
 	final static String operatorChars = "~+*;,.#'-:<>|&/=!^@";
 
 	final static String numericBreakCharacters = operatorChars + bracketChars;
-
-	private final String cName[] = { "Output", "Num1", "Num2", "Comment", "Operator", "Bracket", "String", "Error" };
 
 	private Color cColor[]; /* selected color */
 
@@ -179,8 +120,10 @@ public class MathApplet extends JApplet implements DocumentListener {
 
 	private Thread fInitThread = null;
 
-	// If a string is on the system clipboard, this method returns it;
-	// otherwise it returns null.
+	/**
+	 * If a string is on the system clipboard, this method returns it; otherwise
+	 * it returns null.
+	 */
 	private static String getClipboard() {
 		final Transferable t = Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
 
@@ -230,15 +173,6 @@ public class MathApplet extends JApplet implements DocumentListener {
 				final StringBufferWriter printBuffer = new StringBufferWriter();
 				final PrintStream pout = new PrintStream(new WriterOutputStream(printBuffer));
 
-				// if (!IS_INITIALIZED) {
-				// // wait until eval engine is initialized
-				// for (int i = 0; i < 30; i++) {
-				// yield();
-				// if (IS_INITIALIZED) {
-				// break;
-				// }
-				// }
-				// }
 				EVAL_ENGINE.setOutPrintStream(pout);
 
 				final StringBufferWriter buf = new StringBufferWriter();
@@ -250,11 +184,6 @@ public class MathApplet extends JApplet implements DocumentListener {
 				if (buf.getBuffer().length() > 0) {
 					printOutColored("Out[" + commandHistoryStoreIndex + "]=" + buf.toString() + "\n");
 				}
-				// Value result = jParse.eval(command);
-				// if (addLinefeed) {
-				// printOut("\n");
-				// addLinefeed = false;
-				// }
 			} catch (final Throwable ex) {
 				// ex.printStackTrace();
 				String mess = ex.getMessage();
@@ -266,35 +195,6 @@ public class MathApplet extends JApplet implements DocumentListener {
 			} finally {
 				setBusy(false);
 			}
-			// catch (ParseException ex) {
-			// if (addLinefeed) {
-			// printOut("\n");
-			// addLinefeed = false;
-			// }
-			// ErrorPos epos = jParse.getErrorPos();
-			// if (epos.line > 1) {
-			// String file = epos.file.substring(5);
-			// printErr("\n");
-			// if (epos.file.length()>0)
-			// printErr("File: "+file+", ");
-			// printErr("Line: "+epos.line+", Pos: "+epos.pos+"\n");
-			// }
-			// try {
-			// command = jParse.getErrorString();
-			// } catch (ParseException e) {
-			// command = e.getMessage();
-			// };
-			// printErr("\n"+command+"\n");
-			// StringBuffer sb = new StringBuffer();
-			// for (int i=0; i<epos.getPos();i++)
-			// sb.append('-');
-			// sb.append("^\n");
-			// printErr(sb.toString());
-			//
-			// printErr(ex.getMessage()+"\n\n");
-			// setBusy(false);
-			//
-			// }
 		}
 
 		protected double[][] eval(final StringBufferWriter buf, final String evalStr) throws Exception {
@@ -471,17 +371,7 @@ public class MathApplet extends JApplet implements DocumentListener {
 						}
 					}
 				}
-				// special case: search for 'e' and 'p'
-				// if (dec) {
-				// for (int pos = startIdx; pos < startIdx + len; pos++) {
-				// c = s.charAt(pos);
-				// if (c == 'e' || c == 'E') {
-				// idx = pos;
-				// len = idx - startIdx;
-				// break;
-				// }
-				// }
-				// }
+	 
 				if (point != -1) {
 					int step2 = step;
 					// special case: decimal point
@@ -517,11 +407,6 @@ public class MathApplet extends JApplet implements DocumentListener {
 	 */
 	public void printOutColored(final String s) {
 		try {
-			// int length = jOutputDoc.getLength();
-			// if (length > maxDocSize) {
-			// jOutputDoc.remove(0, length - maxDocSize);
-			// length = jOutputDoc.getLength();
-			// }
 			jOutputDoc.insertString(0, s, outputAtr);
 			// now start the coloring
 			colorOutput(s, 0);
@@ -539,11 +424,6 @@ public class MathApplet extends JApplet implements DocumentListener {
 	 */
 	public void printOut(final String s) {
 		try {
-			// int length = jOutputDoc.getLength();
-			// if (length > maxDocSize) {
-			// jOutputDoc.remove(0, length - maxDocSize);
-			// length = jOutputDoc.getLength();
-			// }
 			jOutputDoc.insertString(0, s, outputAtr);
 			jOutputPane.setCaretPosition(0);// jOutputDoc.getLength());
 		} catch (final BadLocationException ble) {
@@ -562,11 +442,6 @@ public class MathApplet extends JApplet implements DocumentListener {
 			return;
 		}
 		try {
-			// int length = jOutputDoc.getLength();
-			// if (length > maxDocSize) {
-			// jOutputDoc.remove(0, length - maxDocSize);
-			// length = jOutputDoc.getLength();
-			// }
 			jOutputDoc.insertString(0, s + "\n", errorAtr);
 			jOutputPane.setCaretPosition(0);// jOutputDoc.getLength());
 		} catch (final BadLocationException ble) {
@@ -574,37 +449,13 @@ public class MathApplet extends JApplet implements DocumentListener {
 		}
 	}
 
-	/**
-	 * Common exit method to use in exit events
-	 */
-	// private void exit() {
-	// // store width and height
-	// try {
-	// final Dimension d = this.getSize();
-	// props.set("frameWidth", d.width);
-	// props.set("frameHeight", d.height);
-	// // store frame pos
-	// final Point p = this.getLocation();
-	// props.set("framePosX", p.x);
-	// props.set("framePosY", p.y);
-	// //
-	//
-	// props.save(iniFileStr);
-	// } catch (final Exception e) {
-	// e.printStackTrace();
-	// }
-	// System.exit(0);
-	// }
 	public class InitThread extends Thread {
 		@Override
 		public void run() {
-			// synchronized (IS_INITIALIZED) {
 			F.initSymbols();
 			EVAL_ENGINE = new EvalEngine();
 			EVAL = new TimeConstrainedEvaluator(EVAL_ENGINE, false, 360000);
-			// IS_INITIALIZED = Boolean.TRUE;
 			new CompletionLists(fWords, fReplaceWords);
-			// }
 		}
 	}
 
@@ -612,77 +463,49 @@ public class MathApplet extends JApplet implements DocumentListener {
 	 * Initialize instance, load properties etc.
 	 */
 	public void init() {
-		setContentPane(getJContentPane());
 		fInitThread = new InitThread();
 		fInitThread.start();
-		// get ini path
-		String s = this.getClass().getName().replace('.', '/') + ".class";
-		final URL url = this.getClass().getClassLoader().getResource(s);
-		int pos;
-		try {
-			iniFileStr = URLDecoder.decode(url.getPath(), "UTF-8");
-		} catch (final UnsupportedEncodingException ex) {
-		}
-		;
-		// special handling for JAR
-		if (((pos = iniFileStr.toLowerCase().indexOf("file:")) != -1)) {
-			iniFileStr = iniFileStr.substring(pos + 5);
-		}
-		if ((pos = iniFileStr.toLowerCase().indexOf(s.toLowerCase())) != -1) {
-			iniFileStr = iniFileStr.substring(0, pos);
-		}
-		s = (this.getClass().getName().replace('.', '/') + ".jar").toLowerCase();
-		if ((pos = iniFileStr.toLowerCase().indexOf(s)) != -1) {
-			iniFileStr = iniFileStr.substring(0, pos);
-		}
-		//
-		iniFileStr += iniStr;
-		// load properties
-		// props = new Props();
-		// props.setHeader(versionStr);
-		if (iniFileStr != null) {
-			// props.load(iniFileStr);
-		}
-		// read props
-		internalScale = 64;// props.get("internalScale", 64);
-		// scriptPath = props.get("scriptPath", ".");
-		fontSize = 12; // props.get("fontSize", 12);
+
+		fontSize = 12;
 		cColor = new Color[8];
-		cColor[Colors.OUTPUT] = new Color(cColorDefault[Colors.OUTPUT].getRGB());//props.get("outputColor", cColorDefault[Colors.OUTPUT].getRGB()));
-		cColor[Colors.ERROR] = new Color(cColorDefault[Colors.ERROR].getRGB());//props.get("errorColor", cColorDefault[Colors.ERROR].getRGB()));
-		cColor[Colors.OPERATOR] = new Color(cColorDefault[Colors.OPERATOR].getRGB());//props.get("outputOperatorColor", cColorDefault[Colors.OPERATOR].getRGB()));
-		cColor[Colors.STRING] = new Color(cColorDefault[Colors.STRING].getRGB());//props.get("outputStringColor", cColorDefault[Colors.STRING].getRGB()));
-		cColor[Colors.NUM1] = new Color(cColorDefault[Colors.NUM1].getRGB());//props.get("outputNumberColor1", cColorDefault[Colors.NUM1].getRGB()));
-		cColor[Colors.NUM2] = new Color(cColorDefault[Colors.NUM2].getRGB());//props.get("outputNumberColor2", cColorDefault[Colors.NUM2].getRGB()));
-		cColor[Colors.BRACKET] = new Color(cColorDefault[Colors.BRACKET].getRGB());//props.get("outputBracketColor", cColorDefault[Colors.BRACKET].getRGB()));
-		cColor[Colors.COMMENT] = new Color(cColorDefault[Colors.COMMENT].getRGB());//props.get("outputCommentColor", cColorDefault[Colors.COMMENT].getRGB()));
-		// read frame props
+		cColor[Colors.OUTPUT] = new Color(cColorDefault[Colors.OUTPUT].getRGB());
+		cColor[Colors.ERROR] = new Color(cColorDefault[Colors.ERROR].getRGB()); 
+		cColor[Colors.OPERATOR] = new Color(cColorDefault[Colors.OPERATOR].getRGB()); 
+		cColor[Colors.STRING] = new Color(cColorDefault[Colors.STRING].getRGB()); 
+		cColor[Colors.NUM1] = new Color(cColorDefault[Colors.NUM1].getRGB()); 
+		cColor[Colors.NUM2] = new Color(cColorDefault[Colors.NUM2].getRGB()); 
+		cColor[Colors.BRACKET] = new Color(cColorDefault[Colors.BRACKET].getRGB()); 
+		cColor[Colors.COMMENT] = new Color(cColorDefault[Colors.COMMENT].getRGB()); 
+	}
+
+	/**
+	 * Initialize instance, load properties etc.
+	 */
+	public void start() {
+		setContentPane(getJContentPane());
+	 
 		int width, height, posX, posY;
-		width = 300;// props.get("frameWidth", 300);
-		height = 200;// props.get("frameHeight", 200);
+		width = 300; 
+		height = 200; 
 		this.setSize(width, height);
 		final Point p = GraphicsEnvironment.getLocalGraphicsEnvironment().getCenterPoint();
 		p.x -= 300 / 2;
 		p.y -= 200 / 2;
-		posX = p.x > 0 ? p.x : 0;// props.get("framePosX", p.x > 0 ? p.x : 0);
-		posY = p.y > 0 ? p.y : 0; // props.get("framePosY", p.y > 0 ? p.y : 0);
+		posX = p.x > 0 ? p.x : 0; 
+		posY = p.y > 0 ? p.y : 0;  
 		this.setLocation(posX, posY);
 		validate(); // force redraw
 		setVisible(true);
 
-		// jCalc = this;
-		// jOutputDoc = jOutputPane.getStyledDocument();
 		jOutputDoc = new DefaultStyledDocument();
 		jOutputPane.setDocument(jOutputDoc);
 		final Font f = new Font("Monospaced", Font.PLAIN, fontSize);
 		jOutputPane.setFont(f);
 		jInputArea.setFont(f);
-		height = jInputArea.getGraphics().getFontMetrics().getHeight();
+		// height = jInputArea.getGraphics().getFontMetrics().getHeight();
 		jInputArea.setBounds(jInputArea.getBounds().x, jContentPane.getHeight() - height, jInputArea.getWidth(), height);
 		jContentPane.doLayout();
 
-		// popupmenu
-		// getJPopupMenu();
 		final MouseListener popupListener = new PopupListener();
 		jOutputPane.addMouseListener(popupListener);
 		jInputArea.addMouseListener(popupListener);
@@ -712,46 +535,11 @@ public class MathApplet extends JApplet implements DocumentListener {
 		outputCommentAtr = new SimpleAttributeSet();
 		StyleConstants.setForeground(outputCommentAtr, cColor[Colors.STRING]);
 
-		// create Parser
-		// try {
-		// jParse = new JParse();
-		// jParse.addDefaultOperators();
-		// jParse.addDefaultFunctions();
-		// jParse.addDefaultConstants();
-		// } catch (ParseException ex) {
-		// printErr("Init failed: "+ex.getMessage()+"\n");
-		// }
-		//
-		// jParse.setScale(internalScale);
-		// jParse.setScriptPath(scriptPath);
-
-		// print status info
 		printOut(versionStr + "\n");
-		// printOut("Running in JRE "+jreStr+"\n");
-		// printOut("Loading settings from "+iniFileStr+"\n\n");
 
-		// add parse listener
-		// jParse.addParseListener(new JParseListener() {
-		// public void parseEvent(JParseEvent ev) {
-		// printOut(ev.getMessage());
-		// addLinefeed = true;
-		// // synchronize with AWT thread
-		// try {
-		// SwingUtilities.invokeAndWait(new Runnable() { public void run() {} });
-		// } catch (Exception e) {
-		// e.printStackTrace();
-		// }
-		// }
-		//
-		// });
 		// request Focus
 		jInputArea.requestFocus();
 
-		// F.initSymbols();
-		// EVAL_ENGINE = new EvalEngine();
-		// EVAL = new TimeConstrainedEvaluator(EVAL_ENGINE, false, 360000);
-		// IS_INITIALIZED = true;
-		// new CompletionLists(fWords, fReplaceWords);
 		jInputArea.setText("");
 		jInputArea.setEditable(true);
 	}
@@ -806,32 +594,6 @@ public class MathApplet extends JApplet implements DocumentListener {
 				}
 			});
 
-			// jInputField.addActionListener(new java.awt.event.ActionListener() {
-			// public void actionPerformed(java.awt.event.ActionEvent e) {
-			// String cmd = e.getActionCommand();
-			// if (cmd.length() > 0) {
-			// commandHistory[commandHistoryStoreIndex++] = cmd;
-			// if (commandHistoryStoreIndex >= commandHistory.length)
-			// commandHistoryStoreIndex = 0;
-			// commandHistoryReadIndex = commandHistoryStoreIndex;
-			// jInputField.setText("");
-			// printOutColored(cmd + "\n");
-			// setBusy(true);
-			// calcThread = new CalcThread();
-			// calcThread.setCommand(cmd);
-			// calcThread.start();
-			//			
-			// /*
-			// * try { result = jParse.parse(cmd); printOut(" out =
-			// * "+result.toString()+"\n\n"); } catch (ParseException ex) {
-			// * StringBuffer sb = new StringBuffer(); for (int i=0;
-			// i<jParse.getErrorPos();i++)
-			// * sb.append('-'); sb.append("^\n"); printErr(sb.toString());
-			// * printErr(ex.getMessage()+"\n\n"); }
-			// */
-			// }
-			// }
-			// });
 		}
 		return jInputArea;
 	}
@@ -862,206 +624,6 @@ public class MathApplet extends JApplet implements DocumentListener {
 		return jOutputPane;
 	}
 
-	/**
-	 * This method initializes jJMenuBar
-	 * 
-	 * @return javax.swing.JMenuBar
-	 */
-	// private JMenuBar getJJMenuBar() {
-	// if (jJMenuBar == null) {
-	// jJMenuBar = new JMenuBar();
-	// jJMenuBar.add(getJMenuFile());
-	// jJMenuBar.add(getJMenuOptions()); // Generated
-	// jJMenuBar.add(getJMenuView()); // Generated
-	// jJMenuBar.add(getJMenuHelp()); // Generated
-	// }
-	// return jJMenuBar;
-	// }
-	/**
-	 * This method initializes jMenu
-	 * 
-	 * @return javax.swing.JMenu
-	 */
-	// private JMenu getJMenuFile() {
-	// if (jMenuFile == null) {
-	// jMenuFile = new JMenu();
-	// jMenuFile.setText("File");
-	// // jMenuFile.add(getJMenuItemSkriptPath()); // Generated
-	// jMenuFile.add(getJMenuItemBreak()); // Generated
-	// jMenuFile.add(getJMenuItemExit());
-	// }
-	// return jMenuFile;
-	// }
-	/**
-	 * This method initializes jMenuItemExit
-	 * 
-	 * @return javax.swing.JMenuItem
-	 */
-	// private JMenuItem getJMenuItemExit() {
-	// if (jMenuItemExit == null) {
-	// jMenuItemExit = new JMenuItem();
-	// jMenuItemExit.setText("Exit");
-	// jMenuItemExit.addActionListener(new java.awt.event.ActionListener() {
-	// public void actionPerformed(final java.awt.event.ActionEvent e) {
-	// exit();
-	// }
-	// });
-	// }
-	// return jMenuItemExit;
-	// }
-	/**
-	 * This method initializes jMenu
-	 * 
-	 * @return javax.swing.JMenu
-	 */
-	// private JMenu getJMenuOptions() {
-	// if (jMenuOptions == null) {
-	// jMenuOptions = new JMenu();
-	// jMenuOptions.setText("Options"); // Generated
-	// jMenuOptions.add(getJMenuItemColors()); // Generated
-	// jMenuOptions.add(getJMenuItemScale()); // Generated
-	// }
-	// return jMenuOptions;
-	// }
-	/**
-	 * This method initializes jMenuItem
-	 * 
-	 * @return javax.swing.JMenuItem
-	 */
-	// private JMenuItem getJMenuItemColors() {
-	// if (jMenuItemColors == null) {
-	// jMenuItemColors = new JMenuItem();
-	// jMenuItemColors.setText("Set Font & Colors"); // Generated
-	// jMenuItemColors.addActionListener(new java.awt.event.ActionListener() {
-	// public void actionPerformed(final java.awt.event.ActionEvent e) {
-	// final ColorDialog cDiag = new ColorDialog(jCalc, true);
-	// cDiag.setParameters(cName, cColor, cColorDefault, fontSize);
-	// cDiag.setVisible(true);
-	// fontSize = cDiag.getFontSize();
-	// cColor = cDiag.getColors();
-	// // set new setting
-	// final Font f = new Font("Monospaced", Font.PLAIN, fontSize);
-	// jOutputPane.setFont(f);
-	// jInputField.setFont(f);
-	// final int height = jInputField.getGraphics().getFontMetrics().getHeight();
-	// jInputField.setBounds(jInputField.getBounds().x, jContentPane.getHeight() -
-	// height, jInputField.getWidth(), height);
-	// jContentPane.doLayout();
-	// StyleConstants.setForeground(errorAtr, cColor[Colors.ERROR]);
-	// StyleConstants.setForeground(outputAtr, cColor[Colors.OUTPUT]);
-	// StyleConstants.setForeground(outputOpAtr, cColor[Colors.OPERATOR]);
-	// StyleConstants.setForeground(outputStringAtr, cColor[Colors.STRING]);
-	// StyleConstants.setForeground(outputNum1Atr, cColor[Colors.NUM1]);
-	// StyleConstants.setForeground(outputNum2Atr, cColor[Colors.NUM2]);
-	// StyleConstants.setForeground(outputBracketAtr, cColor[Colors.BRACKET]);
-	// StyleConstants.setForeground(outputCommentAtr, cColor[Colors.STRING]);
-	// // store new settings
-	// props.set("fontSize", fontSize);
-	// props.set("outputColor", cColor[Colors.OUTPUT].getRGB());
-	// props.set("errorColor", cColor[Colors.ERROR].getRGB());
-	// props.set("outputOperatorColor", cColor[Colors.OPERATOR].getRGB());
-	// props.set("outputStringColor", cColor[Colors.STRING].getRGB());
-	// props.set("outputNumberColor1", cColor[Colors.NUM1].getRGB());
-	// props.set("outputNumberColor2", cColor[Colors.NUM2].getRGB());
-	// props.set("outputBracketColor", cColor[Colors.BRACKET].getRGB());
-	// props.set("outputCommentColor", cColor[Colors.COMMENT].getRGB());
-	//
-	// }
-	// });
-	// }
-	// return jMenuItemColors;
-	// }
-	/**
-	 * This method initializes jMenu
-	 * 
-	 * @return javax.swing.JMenu
-	 */
-	// private JMenu getJMenuView() {
-	// if (jMenuView == null) {
-	// jMenuView = new JMenu();
-	// jMenuView.setText("View"); // Generated
-	// jMenuView.add(getJMenuItemClear()); // Generated
-	// }
-	// return jMenuView;
-	// }
-	/**
-	 * This method initializes jMenuItem
-	 * 
-	 * @return javax.swing.JMenuItem
-	 */
-	// private JMenuItem getJMenuItemClear() {
-	// if (jMenuItemClear == null) {
-	// jMenuItemClear = new JMenuItem();
-	// jMenuItemClear.setText("Clear View"); // Generated
-	// jMenuItemClear.addActionListener(new java.awt.event.ActionListener() {
-	// public void actionPerformed(final java.awt.event.ActionEvent e) {
-	// jOutputPane.setText("");
-	// }
-	// });
-	// }
-	// return jMenuItemClear;
-	// }
-	/**
-	 * This method initializes jMenuItem
-	 * 
-	 * @return javax.swing.JMenuItem
-	 */
-	// private JMenuItem getJMenuItemScale() {
-	// if (jMenuItemScale == null) {
-	// jMenuItemScale = new JMenuItem();
-	// jMenuItemScale.setText("Set Scale"); // Generated
-	// jMenuItemScale.addActionListener(new java.awt.event.ActionListener() {
-	// public void actionPerformed(final java.awt.event.ActionEvent e) {
-	// final ScaleDialog sDiag = new ScaleDialog(jCalc, true);
-	// sDiag.setScale(internalScale);
-	// sDiag.setVisible(true);
-	// internalScale = sDiag.getScale();
-	// props.set("internalScale", internalScale);
-	// // jParse.setScale(internalScale);
-	// }
-	// });
-	// }
-	// return jMenuItemScale;
-	// }
-	/**
-	 * This method initializes jMenuItem
-	 * 
-	 * @return javax.swing.JMenuItem
-	 */
-	// private JMenuItem getJMenuItemSkriptPath() {
-	// if (jMenuItemSkriptPath == null) {
-	// jMenuItemSkriptPath = new JMenuItem();
-	// jMenuItemSkriptPath.setText("Evaluate"); // Generated
-	// jMenuItemSkriptPath.addActionListener(new java.awt.event.ActionListener() {
-	// public void actionPerformed(java.awt.event.ActionEvent e) {
-	// String cmd = jInputField.getText();
-	// jInputField.setText("");
-	// if (cmd.length() > 0) {
-	// evalSymbolic(cmd);
-	//
-	// /*
-	// * try { result = jParse.parse(cmd); printOut(" out =
-	// * "+result.toString()+"\n\n"); } catch (ParseException ex) {
-	// * StringBuffer sb = new StringBuffer(); for (int i=0;
-	// i<jParse.getErrorPos();i++)
-	// * sb.append('-'); sb.append("^\n"); printErr(sb.toString());
-	// * printErr(ex.getMessage()+"\n\n"); }
-	// */
-	// }
-	// // JFileChooser jf = new JFileChooser(scriptPath);
-	// // jf.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-	// // int returnVal = jf.showOpenDialog(jCalc);
-	// // if (returnVal == JFileChooser.APPROVE_OPTION) {
-	// // scriptPath = jf.getSelectedFile().getAbsolutePath();
-	// // }
-	// // jParse.setScriptPath(scriptPath);
-	// // props.set("scriptPath", scriptPath);
-	// }
-	//
-	// });
-	// }
-	// return jMenuItemSkriptPath;
-	// }
 	private void evalSymbolicInputField() {
 		final String cmd = jInputArea.getText();
 		jInputArea.setText("");
@@ -1139,195 +701,6 @@ public class MathApplet extends JApplet implements DocumentListener {
 		}
 	}
 
-	/**
-	 * This method initializes jMenuItem
-	 * 
-	 * @return javax.swing.JMenuItem
-	 */
-	// private JMenuItem getJMenuItemBreak() {
-	// if (jMenuItemBreak == null) {
-	// jMenuItemBreak = new JMenuItem();
-	// jMenuItemBreak.setText("Break Calculation"); // Generated
-	// jMenuItemBreak.setEnabled(false);
-	// jMenuItemBreak.addActionListener(new java.awt.event.ActionListener() {
-	// public void actionPerformed(final java.awt.event.ActionEvent e) {
-	// EVAL.stopRequest();
-	// // jParse.breakExec();
-	// }
-	// });
-	// }
-	// return jMenuItemBreak;
-	// }
-	/**
-	 * This method initializes jMenu
-	 * 
-	 * @return javax.swing.JMenu
-	 */
-	// private JMenu getJMenuHelp() {
-	// if (jMenuHelp == null) {
-	// jMenuHelp = new JMenu();
-	// jMenuHelp.setText("Help"); // Generated
-	// jMenuHelp.add(getJMenuItemHelp()); // Generated
-	// }
-	// return jMenuHelp;
-	// }
-	/**
-	 * This method initializes jMenuItem
-	 * 
-	 * @return javax.swing.JMenuItem
-	 */
-	// private JMenuItem getJMenuItemHelp() {
-	// if (jMenuItemHelp == null) {
-	// jMenuItemHelp = new JMenuItem();
-	// jMenuItemHelp.setText("Help"); // Generated
-	// jMenuItemHelp.addActionListener(new java.awt.event.ActionListener() {
-	// public void actionPerformed(final java.awt.event.ActionEvent e) {
-	// final Help help = new Help();
-	// help.setLocation(getX() + 30, getY() + 30);
-	// help.setSize(800, 600);
-	// help.setVisible(true);
-	// }
-	// });
-	// }
-	// return jMenuItemHelp;
-	// }
-	/**
-	 * This method initializes jPopupMenu
-	 * 
-	 * @return javax.swing.JPopupMenu
-	 */
-	// private JPopupMenu getJPopupMenu() {
-	// if (jPopupMenu == null) {
-	// jPopupMenu = new JPopupMenu();
-	// jPopupMenu.add(getJPopupMenuItemBreak()); // Generated
-	// jPopupMenu.add(getJPopupMenuItemCopy()); // Generated
-	// jPopupMenu.add(getJPopupMenuItemPaste()); // Generated
-	// // jPopupMenu.setVisible(false); // Generated
-	// }
-	// return jPopupMenu;
-	// }
-	/**
-	 * This method initializes jMenuItem
-	 * 
-	 * @return javax.swing.JMenuItem
-	 */
-	// private JMenuItem getJPopupMenuItemCopy() {
-	// if (jPopupMenuItemCopy == null) {
-	// jPopupMenuItemCopy = new JMenuItem();
-	// jPopupMenuItemCopy.setText("Copy"); // Generated
-	// jPopupMenuItemCopy.addActionListener(new java.awt.event.ActionListener() {
-	// public void actionPerformed(final java.awt.event.ActionEvent e) {
-	// final String s = ((JTextComponent) popupSource).getSelectedText();
-	// if (s != null) {
-	// setClipboard(s);
-	// }
-	// }
-	// });
-	// }
-	// return jPopupMenuItemCopy;
-	// }
-	/**
-	 * This method initializes jMenuItem1
-	 * 
-	 * @return javax.swing.JMenuItem
-	 */
-	// private JMenuItem getJPopupMenuItemPaste() {
-	// if (jPopupMenuItemPaste == null) {
-	// jPopupMenuItemPaste = new JMenuItem();
-	// jPopupMenuItemPaste.setText("Paste"); // Generated
-	// jPopupMenuItemPaste.addActionListener(new java.awt.event.ActionListener() {
-	// public void actionPerformed(final java.awt.event.ActionEvent e) {
-	// final String s = getClipboard();
-	// if (s != null) {
-	// ((JTextComponent) popupSource).paste();
-	// }
-	// }
-	// });
-	//
-	// }
-	// return jPopupMenuItemPaste;
-	// }
-	/**
-	 * This method initializes jMenuItem2
-	 * 
-	 * @return javax.swing.JMenuItem
-	 */
-	// private JMenuItem getJPopupMenuItemBreak() {
-	// if (jPopupMenuItemBreak == null) {
-	// jPopupMenuItemBreak = new JMenuItem();
-	// jPopupMenuItemBreak.setText("Break"); // Generated
-	// jPopupMenuItemBreak.setEnabled(false); // Generated
-	// jPopupMenuItemBreak.addActionListener(new java.awt.event.ActionListener() {
-	// public void actionPerformed(final java.awt.event.ActionEvent e) {
-	// EVAL.stopRequest();
-	// // jParse.breakExec();
-	// }
-	// });
-	// }
-	// return jPopupMenuItemBreak;
-	// }
-	/**
-	 * Main function, check JVM version, set Look and Feel
-	 * 
-	 * @param args
-	 */
-	public static void main(final String[] args) {
-		/*
-		 * Set "Look and Feel" to system default
-		 */
-		try {
-			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		} catch (final Exception e) { /* don't care */
-		}
-		/*
-		 * Check JVM version
-		 */
-		jreStr = System.getProperty("java.version");
-		final String vs[] = jreStr.split("[._]");
-		double vnum;
-		if (vs.length >= 3) {
-			vnum = (Integer.parseInt(vs[0])) + (Integer.parseInt(vs[1])) * 0.1;
-			if (vnum < 1.5) {
-				JOptionPane.showMessageDialog(null, "Run HartMath with JVM >= 5.0", "Error", JOptionPane.ERROR_MESSAGE);
-				System.exit(1);
-			}
-		}
-
-		Toolkit.getDefaultToolkit().setDynamicLayout(true);
-
-		// create Instance of this static class and call init function
-		new MathApplet().init();
-	}
-
-	/**
-	 * This is the default constructor
-	 */
-	// public MathEclipse() {
-	// super();
-	// initialize();
-	// }
-	/**
-	 * This method initializes this
-	 */
-	// private void initialize() {
-	// setJMenuBar(getJJMenuBar());
-	// setResizable(true);
-	// this.setSize(300, 200);
-	// setContentPane(getJContentPane());
-	// setTitle("HartMath");
-	// setVisible(false);
-	// addWindowListener(new java.awt.event.WindowAdapter() {
-	// @Override
-	// public void windowClosing(final java.awt.event.WindowEvent e) {
-	// exit();
-	// }
-	//
-	// @Override
-	// public void windowClosed(final java.awt.event.WindowEvent e) {
-	// exit();
-	// }
-	// });
-	// }
 	/**
 	 * This method initializes jContentPane
 	 * 
@@ -1514,6 +887,35 @@ public class MathApplet extends JApplet implements DocumentListener {
 				jInputArea.replaceSelection("\n");
 			}
 		}
+	}
+
+	protected static JFrame frame = null;
+
+	/**
+	 * Launches CAS as an application. Creates a window (JFrame) and displays the
+	 * Cas panel inside that window. Calls init() and start() on the Cas to mimic
+	 * the applet initialization behavior.
+	 */
+	public static void main(String args[]) {
+		frame = new JFrame("Symja");
+		MathApplet panel = new MathApplet();
+
+		frame.setContentPane(panel);
+		panel.init();
+		panel.start();
+
+		readyFrame(frame);
+	}
+
+	/**
+	 * Sizes a frame, makes it quit the application when it closes, and displays
+	 * it.
+	 */
+	protected static void readyFrame(JFrame frame) {
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.pack();
+		frame.setLocationRelativeTo(null);
+		frame.show();
 	}
 
 }
