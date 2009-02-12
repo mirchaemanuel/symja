@@ -1,6 +1,7 @@
 <project name="Symja" basedir="." default="main">
-	<property name="java3d.dir"  value="C:/Programme/Java/Java3D/1.5.2/lib/ext"/>
-   
+	
+	<property file="build.properties"/>
+	
 	<property name="src.dir"     value="src"/>
 
     <property name="build.dir"   value="build"/>
