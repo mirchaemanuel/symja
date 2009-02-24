@@ -26,22 +26,17 @@ import com.sun.j3d.utils.geometry.*;
 import com.sun.j3d.utils.behaviors.mouse.MouseRotate;
 
 import javax.swing.*;
-import java.awt.GraphicsConfiguration;
-import java.awt.GraphicsEnvironment;
-import java.awt.EventQueue;
-import java.awt.AWTEvent;
-import java.awt.Font;
+import java.awt.*;
 import java.awt.geom.Line2D;
 import java.awt.event.*;
 
 import java.util.List;
+import java.util.ListIterator;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Arrays;
 
-/*import com.hartmath.expression.*;
-import com.hartmath.mapping.*;
-import com.hartmath.lib.*;*/
+import org.matheclipse.parser.client.eval.*;
 
 /** Responsible for plotting graphs in 3D. Called by
   * com.hartmath.loadable.EPlot3D.
@@ -351,7 +346,7 @@ public class Plotter3D extends Behavior implements Runnable {
       * content pane and repopulate it every time a graph is
       * displayed.
       */
-    JFrame frame;
+    //JFrame frame;
 
     /** The label on the X axis.
       */
@@ -364,6 +359,36 @@ public class Plotter3D extends Behavior implements Runnable {
     /** The label on the Z axis.
       */
     String z = "z";
+
+    public Plotter3D() {
+	super();
+	EventQueue.invokeLater(this);
+    }
+
+    public void setFunctions(java.util.List functions) {
+        int resolution = Plotter3DFactory.getResolution();
+	values = new double[resolution + 1]
+                           [resolution + 1]
+                           [functions.size()];
+	color = new int[functions.size()];
+	DoubleEvaluator engine = new DoubleEvaluator();
+
+	for(int counter = 0; counter < color.length; ++counter) {
+		if (counter % 2 == 0)
+			color[counter] = Plotter3DFactory.BLUE_GREEN;
+		else
+			color[counter] = Plotter3DFactory.RED_YELLOW;
+	}
+
+	ListIterator i = functions.listIterator();
+	while (i.hasNext()) {
+		String equation = (String)i.next();
+		populateFunction(equation, i.previousIndex(), engine);
+	}
+
+	updatePlot();
+    }
+
 
     /** Evaluates the the function's values over a range, then
       * launches the plotting code. Evaluation takes place on the
@@ -526,6 +551,10 @@ public class Plotter3D extends Behavior implements Runnable {
         EventQueue.invokeLater(this);
     }
 
+    public void updatePlot() {
+        EventQueue.invokeLater(this);
+    }
+
     /** Checks whether max and min values are provided for the
       * independent variables. If they are not found, throws an
       * IllegalArgumentException.
@@ -612,6 +641,24 @@ public class Plotter3D extends Behavior implements Runnable {
             || s.endsWith("pink");
     }
 
+    protected void populateFunction(String expression, int func, DoubleEvaluator engine) {
+	int resolution = Plotter3DFactory.getResolution();
+
+        for (int x = 0; x <= resolution; ++x) {
+            for (int y = 0; y <= resolution; ++y) {
+                try {
+			double xVal = (double)xMin + (double)(xRange * x) / (double)resolution;
+			double yVal = (double)yMin + (double)(yRange * y) / (double)resolution;
+			engine.defineVariable("x", new DoubleVariable(xVal));
+			engine.defineVariable("z", new DoubleVariable(yVal));
+			values[x][y][func] = engine.evaluate(expression);
+                } catch (Exception e) {
+                    values[x][y][func] = Double.POSITIVE_INFINITY;
+                }
+            }
+        }
+    }
+
     /** Evaluates points on the function. Populates the values array
       * with function outputs.
       */
@@ -644,7 +691,7 @@ public class Plotter3D extends Behavior implements Runnable {
 
         setupUniverse();
 
-        frame = createWindow();
+        //frame = createWindow();
     }
 
     /** Sets up the virtual universe, and creates the associated
@@ -670,7 +717,7 @@ public class Plotter3D extends Behavior implements Runnable {
 
     /** Creates a window to display plots in.
       */
-    protected JFrame createWindow() {
+    /*protected JFrame createWindow() {
         JFrame window;
 
         window = new JFrame("3D Plot--Cas");
@@ -680,7 +727,7 @@ public class Plotter3D extends Behavior implements Runnable {
         window.addWindowListener(new Plot3DWindowListener(this));
 
         return window;
-    }
+    }*/
 
     /** Builds the contents of the virtual universe, and returns the
       * root of the new graph.
@@ -1237,15 +1284,17 @@ public class Plotter3D extends Behavior implements Runnable {
       */
     public void run() {
         try {
-            locale = new Locale(vu);
-            locale.addBranchGraph(root);
+	    if (root.getParent() == null) {
+		    locale = new Locale(vu);
+		    locale.addBranchGraph(root);
+	    }
 
-            frame.getContentPane().removeAll();
-            frame.getContentPane().add(canvas);
+            //frame.getContentPane().removeAll();
+            //frame.getContentPane().add(canvas);
 
             postId(ID);
 
-            frame.show();
+            //frame.show();
             view.startView();
 
             canvas.requestFocus();
@@ -1593,6 +1642,38 @@ public class Plotter3D extends Behavior implements Runnable {
     public static void clearCache() {
         opaque.clear();
         transparent.clear();
+    }
+
+    public Component getComponent() {
+	return canvas;
+    }
+
+    public void setXMin(double min) {
+	xMin = min;
+	xRange = xMax - xMin;
+    }
+
+    public void setXMax(double max) {
+	xMax = max;
+	xRange = xMax - xMin;
+    }
+
+    public void setYMin(double min) {
+	yMin = min;
+	yRange = yMax - yMin;
+    }
+
+    public void setYMax(double max) {
+	yMax = max;
+	yRange = yMax - yMin;
+    }
+
+    public void setZMin(double min) {
+	this.min = min;
+    }
+
+    public void setZMax(double max) {
+	this.max = max;
     }
 }
 

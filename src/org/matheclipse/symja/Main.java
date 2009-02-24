@@ -269,7 +269,13 @@ public class Main extends JApplet
 	});
 	menu.add(parametricPlot);
 	JMenuItem plot3D = new JMenuItem("New 3D Plot ...");
-	plot3D.setEnabled(false);
+	plot3D.addActionListener(new ActionListener() {
+		public void actionPerformed(ActionEvent e) {
+			JDialog window = new Plot3DWindow(frame);
+			window.pack();
+			window.show();
+		}
+	});
 	menu.add(plot3D);
 	menuBar.add(menu);
 
