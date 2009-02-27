@@ -257,22 +257,36 @@ public class Main extends JApplet
 	JMenuItem print = new JMenuItem("Print...");
 	print.addActionListener(new ActionListener() {
 		public void actionPerformed(ActionEvent e) {
+			Printable p = new Printable() {
+				public int print(Graphics g, PageFormat pageFormat, int page) {
+					if (page > 0) return NO_SUCH_PAGE;
+					Graphics2D g2d = (Graphics2D)g;
+					g2d.translate(pageFormat.getImageableX(), pageFormat.getImageableY());
+					commands.print(g2d);
+					return PAGE_EXISTS;
+				}
+			};
 			try {
-			// load the service
-			PrintService ps = (PrintService)ServiceManager
-    	             		.lookup("javax.jnlp.PrintService");
+				// load the service
+				PrintService ps = (PrintService)ServiceManager
+    	             			.lookup("javax.jnlp.PrintService");
 
-                     	// select a page format
-                        PageFormat pf = ps.showPageFormatDialog(ps.getDefaultPage());
+                     		// select a page format
+                        	PageFormat pf = ps.showPageFormatDialog(ps.getDefaultPage());
 
-			// create a populate a book
-			/*Book book = new Book();
-			book.append(page, pf);*/
     
-			// send the page to the printer
-			//ps.print(book);
-			} catch (Exception ex) {
-				JOptionPane.showMessageDialog(frame, ex.toString());
+				// send the page to the printer
+				ps.print(p);
+			} catch (UnavailableServiceException ex) {
+				PrinterJob job = PrinterJob.getPrinterJob();
+				job.setPrintable(p);
+				if (job.printDialog()) {
+					try {
+						job.print();
+					} catch (Exception exc) {
+						JOptionPane.showMessageDialog(frame, exc.toString());
+					}
+				}
 			}
 		}
 	});
