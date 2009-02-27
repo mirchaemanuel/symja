@@ -23,9 +23,12 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.dnd.*;
 import java.awt.datatransfer.*;
+import java.awt.print.*;
 
 import javax.swing.*;
 import javax.swing.event.*;
+
+import javax.jnlp.*;
 
 import java.util.Hashtable;
 
@@ -243,6 +246,7 @@ public class Main extends JApplet
   protected JMenuBar createMenubar() {
 	JMenuBar menuBar = new JMenuBar();
 	JMenu menu = new JMenu("Menu");
+	JMenu plot = new JMenu("Plot");
 	JMenuItem preferences = new JMenuItem("Preferences ...");
     	preferences.addActionListener (new PreferencesListener (commands,
 							    redRenderer,
@@ -250,6 +254,29 @@ public class Main extends JApplet
 							    grayRenderer,
 							    this));
 	menu.add(preferences);
+	JMenuItem print = new JMenuItem("Print...");
+	print.addActionListener(new ActionListener() {
+		public void actionPerformed(ActionEvent e) {
+			try {
+			// load the service
+			PrintService ps = (PrintService)ServiceManager
+    	             		.lookup("javax.jnlp.PrintService");
+
+                     	// select a page format
+                        PageFormat pf = ps.showPageFormatDialog(ps.getDefaultPage());
+
+			// create a populate a book
+			/*Book book = new Book();
+			book.append(page, pf);*/
+    
+			// send the page to the printer
+			//ps.print(book);
+			} catch (Exception ex) {
+				JOptionPane.showMessageDialog(frame, ex.toString());
+			}
+		}
+	});
+	menu.add(print);
 	JMenuItem plot2D = new JMenuItem("New 2D Plot ...");
 	plot2D.addActionListener(new ActionListener() {
 		public void actionPerformed(ActionEvent e) {
@@ -258,7 +285,7 @@ public class Main extends JApplet
 			window.show();
 		}
 	});
-	menu.add(plot2D);
+	plot.add(plot2D);
 	JMenuItem parametricPlot = new JMenuItem("New Parametric Plot ...");
 	parametricPlot.addActionListener(new ActionListener() {
 		public void actionPerformed(ActionEvent e) {
@@ -267,17 +294,20 @@ public class Main extends JApplet
 			window.show();
 		}
 	});
-	menu.add(parametricPlot);
+	plot.add(parametricPlot);
 	JMenuItem plot3D = new JMenuItem("New 3D Plot ...");
 	plot3D.addActionListener(new ActionListener() {
 		public void actionPerformed(ActionEvent e) {
-			JDialog window = new Plot3DWindow(frame);
+			/*JDialog window = new Plot3DWindow(frame);
 			window.pack();
-			window.show();
+			window.show();*/
+			Plotter3D plot = Plotter3D.getPlotter(false);
+			plot.plot(JOptionPane.showInputDialog("y(x, z) = ", "Sin[x] + Sin[z]"));
 		}
 	});
-	menu.add(plot3D);
+	plot.add(plot3D);
 	menuBar.add(menu);
+	menuBar.add(plot);
 
 	return menuBar;
   }
