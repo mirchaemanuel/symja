@@ -26,17 +26,24 @@ import com.sun.j3d.utils.geometry.*;
 import com.sun.j3d.utils.behaviors.mouse.MouseRotate;
 
 import javax.swing.*;
-import java.awt.*;
+import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsEnvironment;
+import java.awt.EventQueue;
+import java.awt.AWTEvent;
+import java.awt.Font;
+import java.awt.Color;
 import java.awt.geom.Line2D;
 import java.awt.event.*;
 
 import java.util.List;
-import java.util.ListIterator;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Arrays;
 
 import org.matheclipse.parser.client.eval.*;
+/*import com.hartmath.expression.*;
+import com.hartmath.mapping.*;
+import com.hartmath.lib.*;*/
 
 /** Responsible for plotting graphs in 3D. Called by
   * com.hartmath.loadable.EPlot3D.
@@ -346,7 +353,7 @@ public class Plotter3D extends Behavior implements Runnable {
       * content pane and repopulate it every time a graph is
       * displayed.
       */
-    //JFrame frame;
+    JFrame frame;
 
     /** The label on the X axis.
       */
@@ -360,36 +367,6 @@ public class Plotter3D extends Behavior implements Runnable {
       */
     String z = "z";
 
-    public Plotter3D() {
-	super();
-	EventQueue.invokeLater(this);
-    }
-
-    public void setFunctions(java.util.List functions) {
-        int resolution = Plotter3DFactory.getResolution();
-	values = new double[resolution + 1]
-                           [resolution + 1]
-                           [functions.size()];
-	color = new int[functions.size()];
-	DoubleEvaluator engine = new DoubleEvaluator();
-
-	for(int counter = 0; counter < color.length; ++counter) {
-		if (counter % 2 == 0)
-			color[counter] = Plotter3DFactory.BLUE_GREEN;
-		else
-			color[counter] = Plotter3DFactory.RED_YELLOW;
-	}
-
-	ListIterator i = functions.listIterator();
-	while (i.hasNext()) {
-		String equation = (String)i.next();
-		populateFunction(equation, i.previousIndex(), engine);
-	}
-
-	updatePlot();
-    }
-
-
     /** Evaluates the the function's values over a range, then
       * launches the plotting code. Evaluation takes place on the
       * Harmath thread; graphing takes place on the Java3D thread,
@@ -402,137 +379,23 @@ public class Plotter3D extends Behavior implements Runnable {
       *
       * Throws an IllegalArgumentException if the input is malformed.
       */
-    public void plot(/*HFunction args*/) {
-        /*if (args.size() < 3)
-            throw new IllegalArgumentException(
-                          "Too few arguments; "
-                          + "supply at least one or more functions, "
-                          + "and two independent variables.");
-
-        HFunction xArgs;
-        HFunction yArgs;
-
-        HFunction colors = getColors(args);
-        HFunction zBounds = getOutputBounds(args);*/
+    public void plot(String arg) {
         int resolution = Plotter3DFactory.getResolution();
 
-        /*try {
-            // Switched to compensate for weird Java3D coordinate
-            // system
-            xArgs = (HFunction)args.get(2);
-            yArgs = (HFunction)args.get(1);
-        } catch (ClassCastException e) {
-            throw new IllegalArgumentException(
-                            "Bounds not wrapped in curly braces {}");
-        }*/
-
-        /*checkIndependentMaxMinsExist(xArgs, yArgs);
-
-        x = xArgs.get(0).toString();
-        try {
-            xMin = ((HDouble)C.EV(C.N.f(xArgs.get(1)))).doubleValue();
-            //xMin = ((HDouble)xArgs.get(1)).doubleValue();
-            xMax = ((HDouble)C.EV(C.N.f(xArgs.get(2)))).doubleValue();
-            //xMax = ((HDouble)xArgs.get(2)).doubleValue();
-        } catch (Exception e) {
-            throw new IllegalArgumentException(
-               x +
-               "\'s bounds cannot be evaluated as decimal numbers.");
-        }
-        if (xArgs.size() > 3) {
-            xIncrement = (float)((HDouble)xArgs.get(3))
-                                                      .doubleValue();
-        } else {
-            xIncrement = 1f;
-        }
-        if (xIncrement <= 0)
-            throw new IllegalArgumentException(
-                                             "Illegal increment for "
-                                                     + xArgs.get(0));
-
-
-        y = yArgs.get(0).toString();
-        try {
-            yMin = ((HDouble)C.EV(C.N.f(yArgs.get(1)))).doubleValue();
-            //yMin = ((HDouble)yArgs.get(1)).doubleValue();
-            yMax = ((HDouble)C.EV(C.N.f(yArgs.get(2)))).doubleValue();
-            //yMax = ((HDouble)yArgs.get(2)).doubleValue();
-        } catch (Exception e) {
-            throw new IllegalArgumentException(
-               y +
-               "\'s bounds cannot be evaluated as decimal numbers.");
-        }
-        if (yArgs.size() > 3) {
-            yIncrement = (float)((HDouble)yArgs.get(3))
-                                                      .doubleValue();
-        } else {
-            yIncrement = 1f;
-        }
-        if (yIncrement <= 0)
-            throw new IllegalArgumentException(
-                                             "Illegal increment for "
-                                             + yArgs.get(0));*/
+	xMin = -1;
+	xMax = 1;
+	yMin = -1;
+	yMax = 1;
         setupDependentRanges();
 
-        /*if (args.get(0).isList()) {
-            HFunction funcs = (HFunction)args.get(0);
-            values = new double[resolution + 1]
-                               [resolution + 1]
-                               [funcs.size()];
-            color = new int[funcs.size()];
-            HBinaryNumerical f = new HBinaryNumerical(funcs.get(0),
-                                                      xArgs.get(0),
-                                                      yArgs.get(0));
-            populateFirst(f);
-            for (int counter = 1; counter < funcs.size();
-                                  ++counter) {
-                f = new HBinaryNumerical(funcs.get(counter),
-                                         xArgs.get(0),
-                                         yArgs.get(0));
-                populate(f, counter);
-            }
-        } else {
-            values = new double[resolution + 1]
-                               [resolution + 1]
-                               [1];
-            color = new int[1];
-            HBinaryNumerical f = new HBinaryNumerical(args.get(0),
-                                                      xArgs.get(0),
-                                                      yArgs.get(0));
-            populateFirst(f);
-        }*/
+	values = new double[resolution + 1]
+		[resolution + 1]
+		[1];
+	color = new int[1];
+	DoubleEvaluator engine = new DoubleEvaluator();
+	populateFirst(arg, engine);
 
-        /*if (colors != null) {
-            String s;
-
-            for     (int counter = 0;
-                     counter < color.length;
-                     ++counter) {
-                s = colors.get(counter % colors.size()).toString()
-                                                      .toLowerCase();
-
-                if (s.startsWith("blue") || s.endsWith("green"))
-                    color[counter] = Plotter3DFactory.BLUE_GREEN;
-                else if (s.startsWith("red") || s.endsWith("yellow"))
-                    color[counter] = Plotter3DFactory.RED_YELLOW;
-                else if (s.startsWith("purple")
-                         || s.endsWith("pink"))
-                    color[counter] = Plotter3DFactory.PURPLE_PINK;
-            }
-        } else {
-            for(int counter = 0; counter < color.length; ++counter) {
-                if (counter % 2 == 0)
-                    color[counter] = Plotter3DFactory.BLUE_GREEN;
-                else
-                    color[counter] = Plotter3DFactory.RED_YELLOW;
-            }
-        }
-
-        if (zBounds != null) {
-            z = zBounds.get(0).toString();
-            min = ((HDouble)C.EV(C.N.f(zBounds.get(1)))).doubleValue();
-            max = ((HDouble)C.EV(C.N.f(zBounds.get(2)))).doubleValue();
-        }*/
+	color[0] = Plotter3DFactory.RED_YELLOW;
 
         if (max <= min) {
             if (max < 0) {
@@ -550,24 +413,6 @@ public class Plotter3D extends Behavior implements Runnable {
 
         EventQueue.invokeLater(this);
     }
-
-    public void updatePlot() {
-        EventQueue.invokeLater(this);
-    }
-
-    /** Checks whether max and min values are provided for the
-      * independent variables. If they are not found, throws an
-      * IllegalArgumentException.
-      */
-    /*protected void checkIndependentMaxMinsExist(HFunction xArgs,
-                                           HFunction yArgs) {
-        if (xArgs.size() < 3)
-            throw new IllegalArgumentException(
-                         "Max and min required for " + xArgs.get(0));
-        if (yArgs.size() < 3)
-            throw new IllegalArgumentException(
-                         "Max and min required for " + yArgs.get(0));
-    }*/
 
     /** Sets up the ranges of the dependent variables.
       */
@@ -588,46 +433,17 @@ public class Plotter3D extends Behavior implements Runnable {
       * sets bounds, then those values will override the automatic
       * values). Populates the graph of the very first function.
       */
-    /*protected void populateFirst(HBinaryNumerical f) {
+    protected void populateFirst(String expression, DoubleEvaluator engine) {
         try {
-            max = min = f.map(xMin, yMin);
+	    engine.defineVariable("x", new DoubleVariable(xMin));
+	    engine.defineVariable("z", new DoubleVariable(yMin));
+            max = min = engine.evaluate(expression);
         } catch (Exception e) {
             max = min = 0;
         }
-        populate(f, 0);
-    }*/
+        populate(expression, engine, 0);
+    }
 
-    /** Attempts to locates the list that contains the colors for the
-      * graph. Returns it if found, null otherwise.
-      */
-    /*protected HFunction getColors(HFunction args) {
-        HFunction colors;
-
-        for (int counter = 3; counter < args.size(); ++counter) {
-            if (args.get(counter) instanceof HFunction) {
-                colors = (HFunction)args.get(counter);
-                if (isColor(colors.get(0).toString().toLowerCase()))
-                    return colors;
-            }
-        }
-        return null;
-    }*/
-
-    /** Attempts to locate the list that contains the bounds for the
-      * independent variable. Returns it if found, null otherwise.
-      */
-    /*protected HFunction getOutputBounds(HFunction args) {
-        HFunction bounds;
-
-        for (int counter = 3; counter < args.size(); ++counter) {
-            if (args.get(counter) instanceof HFunction) {
-                bounds = (HFunction)args.get(counter);
-                if (!isColor(bounds.get(0).toString().toLowerCase()))
-                    return bounds;
-            }
-        }
-        return null;
-    }*/
 
     /** Returns true if the value appears to be the name of a color,
       * false otherwise.
@@ -641,37 +457,18 @@ public class Plotter3D extends Behavior implements Runnable {
             || s.endsWith("pink");
     }
 
-    protected void populateFunction(String expression, int func, DoubleEvaluator engine) {
-	int resolution = Plotter3DFactory.getResolution();
-
-        for (int x = 0; x <= resolution; ++x) {
-            for (int y = 0; y <= resolution; ++y) {
-                try {
-			double xVal = (double)xMin + (double)(xRange * x) / (double)resolution;
-			double yVal = (double)yMin + (double)(yRange * y) / (double)resolution;
-			engine.defineVariable("x", new DoubleVariable(xVal));
-			engine.defineVariable("z", new DoubleVariable(yVal));
-			values[x][y][func] = engine.evaluate(expression);
-                } catch (Exception e) {
-                    values[x][y][func] = Double.POSITIVE_INFINITY;
-                }
-            }
-        }
-    }
-
     /** Evaluates points on the function. Populates the values array
       * with function outputs.
       */
-    /*protected void populate(HBinaryNumerical f, int z) {
+    protected void populate(String expression, DoubleEvaluator engine, int z) {
         int resolution = Plotter3DFactory.getResolution();
 
         for (int x = 0; x <= resolution; ++x) {
             for (int y = 0; y <= resolution; ++y) {
                 try {
-                    values[x][y][z] = f.map(xMin + (x * xRange)
-                                                / resolution,
-                                         yMin + (y * yRange)
-                                                / resolution);
+		    engine.defineVariable("x", new DoubleVariable(xMin + (x * xRange) / resolution));
+		    engine.defineVariable("z", new DoubleVariable(yMin + (y * yRange) / resolution));
+                    values[x][y][z] = engine.evaluate(expression);
                     if (values[x][y][z] > max)
                         max = values[x][y][z];
                     if (values[x][y][z] < min)
@@ -681,7 +478,7 @@ public class Plotter3D extends Behavior implements Runnable {
                 }
             }
         }
-    }*/
+    }
 
     /** Creates a new Plotter3D. Application uses getPlotter() to get
       * instances, instead of calling the constructor directly.
@@ -691,7 +488,7 @@ public class Plotter3D extends Behavior implements Runnable {
 
         setupUniverse();
 
-        //frame = createWindow();
+        frame = createWindow();
     }
 
     /** Sets up the virtual universe, and creates the associated
@@ -717,7 +514,7 @@ public class Plotter3D extends Behavior implements Runnable {
 
     /** Creates a window to display plots in.
       */
-    /*protected JFrame createWindow() {
+    protected JFrame createWindow() {
         JFrame window;
 
         window = new JFrame("3D Plot--Cas");
@@ -727,7 +524,7 @@ public class Plotter3D extends Behavior implements Runnable {
         window.addWindowListener(new Plot3DWindowListener(this));
 
         return window;
-    }*/
+    }
 
     /** Builds the contents of the virtual universe, and returns the
       * root of the new graph.
@@ -1165,7 +962,10 @@ public class Plotter3D extends Behavior implements Runnable {
         graph.removeAllGeometries();
         for (int counter = 0; counter < values[0][0].length;
                               ++counter) {
-            graph.addGeometry(createGeometry(counter));
+	    System.out.println("Building geometry for function #" + counter);
+	    GeometryArray geom = createGeometry(counter);
+	    System.out.println(geom);
+            graph.addGeometry(geom);
         }
         values = null;
 
@@ -1284,17 +1084,15 @@ public class Plotter3D extends Behavior implements Runnable {
       */
     public void run() {
         try {
-	    if (root.getParent() == null) {
-		    locale = new Locale(vu);
-		    locale.addBranchGraph(root);
-	    }
+            locale = new Locale(vu);
+            locale.addBranchGraph(root);
 
-            //frame.getContentPane().removeAll();
-            //frame.getContentPane().add(canvas);
+            frame.getContentPane().removeAll();
+            frame.getContentPane().add(canvas);
 
             postId(ID);
 
-            //frame.show();
+            frame.show();
             view.startView();
 
             canvas.requestFocus();
@@ -1429,6 +1227,7 @@ public class Plotter3D extends Behavior implements Runnable {
                     arr.setTextureCoordinate(0, triangle, t1);
                     arr.setCoordinate(triangle + 1, p2);
                     arr.setColor(triangle + 1, c2);
+                    arr.setTextureCoordinate(0, triangle, t1);
                     arr.setTextureCoordinate(0, triangle + 1, t2);
                     arr.setCoordinate(triangle + 2, p3);
                     arr.setColor(triangle + 2, c3);
@@ -1547,12 +1346,14 @@ public class Plotter3D extends Behavior implements Runnable {
             c.set(0f,
                   (float)((position - min) / (max - min)),
                   (float)(1d - (position - min) / (max - min)));
-        } else if (color[index] == Plotter3DFactory.PURPLE_PINK) {
+        } else if(color[index] == Plotter3DFactory.PURPLE_PINK) {
             c.set(1f,
                   0.5f * (float)((position - min) / (max - min)),
                   1f - 0.5f
                           * (float)((position - min) / (max - min)));
-        }
+        } else {
+		c.set(1f, 1f, 1f);
+	}
         return c;
     }
 
@@ -1642,38 +1443,6 @@ public class Plotter3D extends Behavior implements Runnable {
     public static void clearCache() {
         opaque.clear();
         transparent.clear();
-    }
-
-    public Component getComponent() {
-	return canvas;
-    }
-
-    public void setXMin(double min) {
-	xMin = min;
-	xRange = xMax - xMin;
-    }
-
-    public void setXMax(double max) {
-	xMax = max;
-	xRange = xMax - xMin;
-    }
-
-    public void setYMin(double min) {
-	yMin = min;
-	yRange = yMax - yMin;
-    }
-
-    public void setYMax(double max) {
-	yMax = max;
-	yRange = yMax - yMin;
-    }
-
-    public void setZMin(double min) {
-	this.min = min;
-    }
-
-    public void setZMax(double max) {
-	this.max = max;
     }
 }
 
