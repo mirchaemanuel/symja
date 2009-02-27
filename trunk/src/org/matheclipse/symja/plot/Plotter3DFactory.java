@@ -87,7 +87,7 @@ public class Plotter3DFactory {
                                             new Color3f(.6f, .6f ,.6f),
                                             new Color3f(1f, 1f, 1f), 64f));
 
-        opaqueAppearance.setTexture(createTexture());
+        //opaqueAppearance.setTexture(createTexture());
 
         opaqueAppearance.setTextureAttributes(new TextureAttributes(
                                           TextureAttributes.DECAL,
