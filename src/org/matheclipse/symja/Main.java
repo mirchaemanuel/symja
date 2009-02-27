@@ -271,9 +271,9 @@ public class Main extends JApplet
     
 			// send the page to the printer
 			//ps.print(book);
-			} /*catch (Exception ex) {
+			} catch (Exception ex) {
 				JOptionPane.showMessageDialog(frame, ex.toString());
-			}*/
+			}
 		}
 	});
 	menu.add(print);
