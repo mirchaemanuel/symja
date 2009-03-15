@@ -171,7 +171,8 @@ public class Main extends JApplet
 					  new ListDragListener ());
     commands.addMouseListener (new InsertSelectedListener (commandLine));
 
-    return center;
+//    return center;
+    return new EvalPanel();
   }
 
     /** Initializes the different colored renderers for the commands
