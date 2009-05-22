@@ -49,18 +49,18 @@ class PreferencesListener implements ActionListener {
       * adjust the width of its parent's borders.
       */
     public PreferencesListener(JList list,
-                               ListCellRenderer redRenderer,
-                               ListCellRenderer blueRenderer,
-                               ListCellRenderer
-                               grayRenderer,
+//                               ListCellRenderer redRenderer,
+//                               ListCellRenderer blueRenderer,
+//                               ListCellRenderer
+//                               grayRenderer,
                                JApplet parent) {
 		JPanel panel = new JPanel();
         GridBagLayout layout = new GridBagLayout();
         GridBagConstraints constraints = new GridBagConstraints();
-        Component colors = createColorPanel(list,
-                                            redRenderer,
-                                            blueRenderer,
-                                            grayRenderer);
+//        Component colors = createColorPanel(list,
+//                                            redRenderer,
+//                                            blueRenderer,
+//                                            grayRenderer);
         Component panel2D = create2DPanel();
         Component panel3D;
 
@@ -70,8 +70,8 @@ class PreferencesListener implements ActionListener {
         constraints.fill = GridBagConstraints.BOTH;
         constraints.gridwidth = GridBagConstraints.RELATIVE;
         constraints.weightx = 1.0;
-        layout.setConstraints(colors, constraints);
-        panel.add(colors);
+//        layout.setConstraints(colors, constraints);
+//        panel.add(colors);
 
         constraints.gridwidth = GridBagConstraints.REMAINDER;
         layout.setConstraints(panel2D, constraints);
@@ -99,35 +99,36 @@ class PreferencesListener implements ActionListener {
       * listeners with them. Wraps them in a JComponent with a
       * labeled border and returns the JComponent.
       */
-    protected static JComponent createColorPanel(JList list,
-                                     ListCellRenderer redRenderer,
-                                     ListCellRenderer blueRenderer,
-                                     ListCellRenderer grayRenderer) {
-        Box buttonPanel = new Box(BoxLayout.X_AXIS);
-        JRadioButton   redButton = new JRadioButton("Warm");
-        JRadioButton  blueButton = new JRadioButton("Cool");
-        JRadioButton  grayButton = new JRadioButton("Silver");
-        ButtonGroup radioButtons = new ButtonGroup();
-
-		redButton.setSelected(true);
-		radioButtons.add(redButton);
-		radioButtons.add(blueButton);
-		radioButtons.add(grayButton);
-		buttonPanel.add(redButton);
-		buttonPanel.add(blueButton);
-		buttonPanel.add(grayButton);
-        redButton.addChangeListener(new ColorChangeListener(list,
-                                                       redRenderer));
-        blueButton.addChangeListener(new ColorChangeListener(list,
-                                                      blueRenderer));
-        grayButton.addChangeListener(new ColorChangeListener(list,
-                                                      grayRenderer));
-        buttonPanel.setBorder(BorderFactory.createTitledBorder(
-                                  BorderFactory.createEtchedBorder(),
-                                  "Colors"));
-
-		return buttonPanel;
-	}
+//    protected static JComponent createColorPanel(JList list,
+//                                     ListCellRenderer redRenderer,
+//                                     ListCellRenderer blueRenderer,
+//                                     ListCellRenderer grayRenderer
+//                                     ) {
+//        Box buttonPanel = new Box(BoxLayout.X_AXIS);
+//        JRadioButton   redButton = new JRadioButton("Warm");
+//        JRadioButton  blueButton = new JRadioButton("Cool");
+//        JRadioButton  grayButton = new JRadioButton("Silver");
+//        ButtonGroup radioButtons = new ButtonGroup();
+//
+//		redButton.setSelected(true);
+//		radioButtons.add(redButton);
+//		radioButtons.add(blueButton);
+//		radioButtons.add(grayButton);
+//		buttonPanel.add(redButton);
+//		buttonPanel.add(blueButton);
+//		buttonPanel.add(grayButton);
+//        redButton.addChangeListener(new ColorChangeListener(list,
+//                                                       redRenderer));
+//        blueButton.addChangeListener(new ColorChangeListener(list,
+//                                                      blueRenderer));
+//        grayButton.addChangeListener(new ColorChangeListener(list,
+//                                                      grayRenderer));
+//        buttonPanel.setBorder(BorderFactory.createTitledBorder(
+//                                  BorderFactory.createEtchedBorder(),
+//                                  "Colors"));
+//
+//		return buttonPanel;
+//	}
 
     /** Sets up the panel with parametric plotting controls.
       */
