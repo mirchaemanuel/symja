@@ -522,7 +522,6 @@ public class EvalPanel extends JPanel implements DocumentListener {
 		});
 		buttonsPanel.add(b1);
 
-		buttonsPanel.add(fPrettyPrintStyle);
 		final JButton b2 = new JButton("Numeric");
 		b2.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(final java.awt.event.ActionEvent e) {
@@ -534,6 +533,9 @@ public class EvalPanel extends JPanel implements DocumentListener {
 			}
 		});
 		buttonsPanel.add(b2);
+		
+		buttonsPanel.add(fPrettyPrintStyle);
+		
 		final JButton b3 = new JButton("MathML");
 		b3.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(final java.awt.event.ActionEvent e) {
