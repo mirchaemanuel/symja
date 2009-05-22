@@ -1,6 +1,5 @@
 package org.matheclipse.symja;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.EventQueue;
@@ -31,6 +30,7 @@ import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
 import javax.swing.InputMap;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -40,10 +40,9 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
-import javax.swing.text.DefaultStyledDocument;
 import javax.swing.text.JTextComponent;
-import javax.swing.text.SimpleAttributeSet;
-import javax.swing.text.StyleConstants;
+
+import net.sourceforge.jeuclid.swing.JMathComponent;
 
 import org.matheclipse.core.eval.CompletionLists;
 import org.matheclipse.core.eval.EvalEngine;
@@ -58,6 +57,8 @@ import org.matheclipse.core.util.WriterOutputStream;
 
 public class EvalPanel extends JPanel implements DocumentListener {
 	private static final String COMMIT_ACTION = "commit";
+	private static final int FONT_SIZE_TEXT = 12;
+	private static final int FONT_SIZE_MATHML = 24;
 
 	private static enum Mode {
 		INSERT, COMPLETION
@@ -76,21 +77,13 @@ public class EvalPanel extends JPanel implements DocumentListener {
 
 	private JScrollPane jScrollOutputPane = null;
 
-	private JTextPane jOutputPane = null;
+	private OutputTextPane jOutputPane = null;
 
 	/* custom created attributes */
 	final static long serialVersionUID = 0x000000001;
 
 	private final static String versionStr = "Keyboard shortcuts\n" + "- Ctrl+ENTER - for symbolic evaluation\n"
 			+ "- Cursor up - previoues input\n" + "- Cursor down - next input\n";
-
-	private DefaultStyledDocument jOutputDoc;
-
-	private SimpleAttributeSet outputAtr, errorAtr, outputOpAtr, outputStringAtr;
-
-	private SimpleAttributeSet outputNum1Atr, outputNum2Atr, outputBracketAtr, outputCommentAtr;
-
-	private int fontSize;
 
 	private final String commandHistory[] = new String[20];
 
@@ -102,18 +95,9 @@ public class EvalPanel extends JPanel implements DocumentListener {
 
 	public static EvalEngine EVAL_ENGINE;
 
+	final JCheckBox fPrettyPrintStyle = new JCheckBox("Pretty Print Output?");
+
 	public static TimeConstrainedEvaluator EVAL;
-
-	final static String bracketChars = "[](){}";
-
-	final static String operatorChars = "~+*;,.#'-:<>|&/=!^@";
-
-	final static String numericBreakCharacters = operatorChars + bracketChars;
-
-	private Color cColor[]; /* selected color */
-
-	private final Color cColorDefault[] /* default colors */= { Color.BLUE, Color.BLACK, new Color(100, 100, 255), Color.GRAY,
-			new Color(255, 100, 0), new Color(100, 0, 50), new Color(50, 150, 0), Color.RED };
 
 	private Thread fInitThread = null;
 
@@ -172,22 +156,47 @@ public class EvalPanel extends JPanel implements DocumentListener {
 
 				EVAL_ENGINE.setOutPrintStream(pout);
 
-				final StringBufferWriter buf = new StringBufferWriter();
+				final StringBufferWriter buf0 = new StringBufferWriter();
 
-				eval(buf, command);
+				eval(buf0, command);
+
 				if (printBuffer.getBuffer().length() > 0) {
-					printOut(printBuffer.toString() + "\n\n");
+					// print error messages ...
+					jOutputPane.printOut(printBuffer.toString() + "\n\n");
 				}
-				if (buf.getBuffer().length() > 0) {
-					printOutColored("Out[" + commandHistoryStoreIndex + "]=" + buf.toString() + "\n");
+
+				if (buf0.getBuffer().length() > 0 && fPrettyPrintStyle.isSelected()) {
+					String result = buf0.toString();
+					// jOutputPane.printOutColored("Out[" + commandHistoryStoreIndex
+					// +"]=");
+
+					final StringBufferWriter buf1 = new StringBufferWriter();
+					final MathMLUtilities mathUtil = new MathMLUtilities(EVAL_ENGINE, false);
+					try {
+						mathUtil.toMathML(result, buf1);
+
+						try {
+							JMathComponent component = new JMathComponent();
+							component.setFontSize(FONT_SIZE_MATHML);
+							component.setContent(buf1.toString());
+							jOutputPane.addComponent(component, 0, true);
+						} catch (final Exception e) {
+							e.printStackTrace();
+						}
+					} catch (final Exception e) {
+						e.printStackTrace();
+					}
+				} else {
+					String result = buf0.toString();
+					jOutputPane.printOutColored("Out[" + commandHistoryStoreIndex + "]=" + result + "\n");
 				}
 			} catch (final Throwable ex) {
-				// ex.printStackTrace();
+				ex.printStackTrace();
 				String mess = ex.getMessage();
 				if (mess == null) {
-					printErr(ex.getClass().getName());
+					jOutputPane.printErr(ex.getClass().getName());
 				} else {
-					printErr(mess);
+					jOutputPane.printErr(mess);
 				}
 			} finally {
 				setBusy(false);
@@ -269,180 +278,6 @@ public class EvalPanel extends JPanel implements DocumentListener {
 				// jPopupMenuItemCopy.setEnabled(canCopy);
 				// jPopupMenu.show(popupSource, e.getX(), e.getY());
 			}
-		}
-	}
-
-	/**
-	 * Checks is a character is a valid (starting) character for a number
-	 * 
-	 * @param c
-	 *          the char to be checked
-	 * @return true (is numeric) or false (is not numeric)
-	 */
-	private boolean isNumeric(final char c) {
-		return ("0123456789.".indexOf(c) != -1);
-	}
-
-	/**
-	 * Color text in output pane depending on the contents of the inserted string
-	 * 
-	 * @param s
-	 *          String that was inserted into the output pane
-	 * @param offset
-	 *          Start offset where string was inserted
-	 */
-	private void colorOutput(final String s, final int offset) {
-		int startIdx = 0;
-		char c;
-		for (int idx = 0; idx < s.length(); idx++) {
-			c = s.charAt(idx);
-			startIdx = idx;
-			// check for line comments
-			if ((c == '/') && (idx < s.length() - 1) && (s.charAt(idx + 1) == '/')) {
-				startIdx = idx;
-				idx++;
-				while ((++idx < s.length()) && ((c = s.charAt(idx)) != '\n')) {
-					;
-				}
-				jOutputDoc.setCharacterAttributes(offset + startIdx, idx - startIdx, outputCommentAtr, true);
-			}
-			// check for operators
-			startIdx = idx;
-			while ((operatorChars.indexOf(c) != -1) && (idx < s.length())) {
-				c = s.charAt(++idx);
-			}
-			if (idx != startIdx) {
-				jOutputDoc.setCharacterAttributes(offset + startIdx, idx - startIdx, outputOpAtr, true);
-			}
-			// check for brackets (no own state, since there's usually only one
-			// bracket in a row)
-			if (bracketChars.indexOf(c) != -1) {
-				jOutputDoc.setCharacterAttributes(offset + idx, 1, outputBracketAtr, true);
-				continue;
-			}
-			// check for strings
-			if (c == '"') {
-				startIdx = idx;
-				while ((++idx < s.length()) && ((c = s.charAt(idx)) != '"')) {
-					;
-				}
-				jOutputDoc.setCharacterAttributes(offset + startIdx, idx - startIdx + 1, outputStringAtr, true);
-			}
-			// check for numbers
-			if (isNumeric(c)) {
-				int len, step, point = -1;
-				boolean color1 = true;
-				startIdx = idx;
-				// search for break character
-				while ((++idx < s.length()) && (numericBreakCharacters.indexOf(c = s.charAt(idx)) == -1)) {
-					if (c == '.') {
-						point = idx - startIdx; // position of point inside number
-					}
-				}
-				if (idx != s.length()) {
-					idx--; // idx on last numeric character
-				}
-				len = idx - startIdx + 1;
-				step = 3;
-				// check kind of number
-				if (len > 1) {
-					if (s.charAt(startIdx) == '0') {
-						// special cases: octal, binary, hexadecimal
-						switch (s.charAt(startIdx + 1)) {
-						case 'x':
-							step = 2;
-							startIdx += 2;
-							len -= 2;
-							break; // octal
-						case 'b':
-							step = 4;
-							startIdx += 2;
-							len -= 2;
-							break; // octal
-						case '.':
-							step = 3;
-							break; // decimal
-						default:
-							step = 2;
-							break; // octal
-						}
-					}
-				}
-
-				if (point != -1) {
-					int step2 = step;
-					// special case: decimal point
-					// first color characters after the point from left to right
-					for (int pos = point + 1; pos < len; pos += step2) {
-						if (pos + step2 >= len) {
-							step2 = len - pos; // don't color outside number
-						}
-						jOutputDoc.setCharacterAttributes(offset + startIdx + pos, step2, color1 ? outputNum1Atr : outputNum2Atr, true);
-						color1 = !color1; // toggle
-					}
-					// then color characters before the point from right to left
-					len = point;
-					color1 = true;
-				}
-				for (int pos = len; pos > 0; pos -= step) {
-					if (pos - step < 0) {
-						step = pos;
-					}
-					jOutputDoc.setCharacterAttributes(offset + startIdx + pos - step, step, color1 ? outputNum1Atr : outputNum2Atr, true);
-					color1 = !color1; // toggle
-				}
-
-			}
-		}
-	}
-
-	/**
-	 * Print text to output pane with syntax coloring
-	 * 
-	 * @param s
-	 *          text to print
-	 */
-	public void printOutColored(final String s) {
-		try {
-			jOutputDoc.insertString(0, s, outputAtr);
-			// now start the coloring
-			colorOutput(s, 0);
-			jOutputPane.setCaretPosition(0);// jOutputDoc.getLength());
-		} catch (final BadLocationException ble) {
-			System.out.println("Couldn't write to Output Pane");
-		}
-	}
-
-	/**
-	 * Print text to output pane
-	 * 
-	 * @param s
-	 *          text to print
-	 */
-	public void printOut(final String s) {
-		try {
-			jOutputDoc.insertString(0, s, outputAtr);
-			jOutputPane.setCaretPosition(0);// jOutputDoc.getLength());
-		} catch (final BadLocationException ble) {
-			System.out.println("Couldn't write to Output Pane");
-		}
-	}
-
-	/**
-	 * Print text to error pane
-	 * 
-	 * @param s
-	 *          text to print
-	 */
-	public void printErr(final String s) {
-		if (s == null) {
-			return;
-		}
-		try {
-			jOutputDoc.insertString(0, s + "\n", errorAtr);
-			jOutputPane.setCaretPosition(0);// jOutputDoc.getLength());
-		} catch (final BadLocationException ble) {
-			System.out.println("Couldn't write to Output Pane");
 		}
 	}
 
@@ -530,7 +365,7 @@ public class EvalPanel extends JPanel implements DocumentListener {
 	 */
 	private JTextPane getJOutputPane() {
 		if (jOutputPane == null) {
-			jOutputPane = new JTextPane();
+			jOutputPane = new OutputTextPane();
 			jOutputPane.setEditable(false);
 		}
 		return jOutputPane;
@@ -557,7 +392,7 @@ public class EvalPanel extends JPanel implements DocumentListener {
 		}
 		commandHistoryReadIndex = commandHistoryStoreIndex;
 		jInputArea.setText("");
-		printOutColored("In[" + commandHistoryStoreIndex + "]=" + cmd + "\n\n");
+		jOutputPane.printOutColored("In[" + commandHistoryStoreIndex + "]=" + cmd + "\n\n");
 		setBusy(true);
 		CalcThread calcThread = new CalcThread();
 		calcThread.setCommand(cmd);
@@ -578,7 +413,7 @@ public class EvalPanel extends JPanel implements DocumentListener {
 		}
 		commandHistoryReadIndex = commandHistoryStoreIndex;
 		jInputArea.setText("");
-		printOutColored("In[" + commandHistoryStoreIndex + "]=" + cmd + "\n\n");
+		jOutputPane.printOutColored("In[" + commandHistoryStoreIndex + "]=" + cmd + "\n\n");
 		setBusy(true);
 		CalcThread calcThread = new CalcThread();
 		calcThread.setCommand(cmd);
@@ -601,14 +436,47 @@ public class EvalPanel extends JPanel implements DocumentListener {
 		final StringBufferWriter buf = new StringBufferWriter();
 		try {
 			mathUtil.toMathML(cmd, buf);
-			printOutColored("MathML:\n" + buf.toString() + "\n\n");
+			jOutputPane.printOutColored("MathML:\n" + buf.toString() + "\n\n");
 		} catch (final Exception e) {
 			e.printStackTrace();
 			String mess = e.getMessage();
 			if (mess == null) {
-				printOutColored(e.getClass().getName());
+				jOutputPane.printOutColored(e.getClass().getName());
 			} else {
-				printOutColored(e.getMessage());
+				jOutputPane.printOutColored(e.getMessage());
+			}
+		}
+	}
+
+	protected void createMathMLComponent(final String cmd) {
+		if (fInitThread != null) {
+			try {
+				fInitThread.join();
+			} catch (InterruptedException e) {
+			}
+		}
+
+		final MathMLUtilities mathUtil = new MathMLUtilities(EVAL_ENGINE, false);
+		final StringBufferWriter buf = new StringBufferWriter();
+		try {
+			mathUtil.toMathML(cmd, buf);
+
+			try {
+				JMathComponent component = new JMathComponent();
+				component.setFontSize(FONT_SIZE_MATHML);
+				component.setContent(buf.toString());
+				jOutputPane.addComponent(component, 0, true);
+			} catch (final Exception e) {
+				e.printStackTrace();
+				jOutputPane.printOut("MathML:\n" + buf.toString() + "\n\n");
+			}
+		} catch (final Exception e) {
+			e.printStackTrace();
+			String mess = e.getMessage();
+			if (mess == null) {
+				jOutputPane.printErr(e.getClass().getName());
+			} else {
+				jOutputPane.printErr(e.getMessage());
 			}
 		}
 	}
@@ -653,6 +521,8 @@ public class EvalPanel extends JPanel implements DocumentListener {
 			}
 		});
 		buttonsPanel.add(b1);
+
+		buttonsPanel.add(fPrettyPrintStyle);
 		final JButton b2 = new JButton("Numeric");
 		b2.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(final java.awt.event.ActionEvent e) {
@@ -675,27 +545,27 @@ public class EvalPanel extends JPanel implements DocumentListener {
 			}
 		});
 		buttonsPanel.add(b3);
+		final JButton b4 = new JButton("Show MathML");
+		b4.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(final java.awt.event.ActionEvent e) {
+				final String cmd = jInputArea.getText();
+				jInputArea.setText("");
+				if (cmd.length() > 0) {
+					createMathMLComponent(cmd);
+				}
+			}
+		});
+		buttonsPanel.add(b4);
+
 		bPanel.add(buttonsPanel);
 
 		add(getJScrollInputPane(), gridBagConstraints1);
 		add(bPanel, gridBagConstraints2);
 		add(getJScrollOutputPane(), gridBagConstraints3);
-		
+
 		fInitThread = new InitThread();
 		fInitThread.start();
-		
-		fontSize = 12;
-		cColor = new Color[8];
-		cColor[Colors.OUTPUT] = new Color(cColorDefault[Colors.OUTPUT].getRGB());
-		cColor[Colors.ERROR] = new Color(cColorDefault[Colors.ERROR].getRGB());
-		cColor[Colors.OPERATOR] = new Color(cColorDefault[Colors.OPERATOR].getRGB());
-		cColor[Colors.STRING] = new Color(cColorDefault[Colors.STRING].getRGB());
-		cColor[Colors.NUM1] = new Color(cColorDefault[Colors.NUM1].getRGB());
-		cColor[Colors.NUM2] = new Color(cColorDefault[Colors.NUM2].getRGB());
-		cColor[Colors.BRACKET] = new Color(cColorDefault[Colors.BRACKET].getRGB());
-		cColor[Colors.COMMENT] = new Color(cColorDefault[Colors.COMMENT].getRGB());
-		
-		
+
 		int width, height, posX, posY;
 		width = 300;
 		height = 200;
@@ -709,9 +579,7 @@ public class EvalPanel extends JPanel implements DocumentListener {
 		validate(); // force redraw
 		setVisible(true);
 
-		jOutputDoc = new DefaultStyledDocument();
-		jOutputPane.setDocument(jOutputDoc);
-		final Font f = new Font("Monospaced", Font.PLAIN, fontSize);
+		final Font f = new Font("Monospaced", Font.PLAIN, FONT_SIZE_TEXT);
 		jOutputPane.setFont(f);
 		jInputArea.setFont(f);
 		// height = jInputArea.getGraphics().getFontMetrics().getHeight();
@@ -722,56 +590,13 @@ public class EvalPanel extends JPanel implements DocumentListener {
 		jOutputPane.addMouseListener(popupListener);
 		jInputArea.addMouseListener(popupListener);
 
-		// error
-		errorAtr = new SimpleAttributeSet();
-		StyleConstants.setForeground(errorAtr, cColor[Colors.ERROR]);
-		// normal output
-		outputAtr = new SimpleAttributeSet();
-		StyleConstants.setForeground(outputAtr, cColor[Colors.OUTPUT]);
-		// operator output
-		outputOpAtr = new SimpleAttributeSet();
-		StyleConstants.setForeground(outputOpAtr, cColor[Colors.OPERATOR]);
-		// string output
-		outputStringAtr = new SimpleAttributeSet();
-		StyleConstants.setForeground(outputStringAtr, cColor[Colors.STRING]);
-		// number 1 output
-		outputNum1Atr = new SimpleAttributeSet();
-		StyleConstants.setForeground(outputNum1Atr, cColor[Colors.NUM1]);
-		// number 2 output
-		outputNum2Atr = new SimpleAttributeSet();
-		StyleConstants.setForeground(outputNum2Atr, cColor[Colors.NUM2]);
-		// bracket output
-		outputBracketAtr = new SimpleAttributeSet();
-		StyleConstants.setForeground(outputBracketAtr, cColor[Colors.BRACKET]);
-		// comment output
-		outputCommentAtr = new SimpleAttributeSet();
-		StyleConstants.setForeground(outputCommentAtr, cColor[Colors.STRING]);
-
-		printOut(versionStr + "\n");
+		jOutputPane.printOut(versionStr + "\n");
 
 		// request Focus
 		jInputArea.requestFocus();
 
 		jInputArea.setText("");
 		jInputArea.setEditable(true);
-	}
-
-	private class Colors {
-		final static int OUTPUT = 0;
-
-		final static int NUM1 = 1;
-
-		final static int NUM2 = 2;
-
-		final static int COMMENT = 3;
-
-		final static int OPERATOR = 4;
-
-		final static int BRACKET = 5;
-
-		final static int STRING = 6;
-
-		final static int ERROR = 7;
 	}
 
 	// Listener methods
@@ -868,6 +693,15 @@ public class EvalPanel extends JPanel implements DocumentListener {
 				jInputArea.replaceSelection("\n");
 			}
 		}
+	}
+
+	/**
+	 * Set a new text in the input textarea
+	 * 
+	 * @param text
+	 */
+	public void setInputText(String text) {
+		jInputArea.setText(text);
 	}
 
 }
