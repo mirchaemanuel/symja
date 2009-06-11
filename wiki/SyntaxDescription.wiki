@@ -14,8 +14,8 @@
 ||Matrices	||a matrix contains the rows as sublists 	||{{{ {{1, 2}, {3, 4}} }}}||
 ||Predefined Functions	||predefined function names start with an upper case character 	||{{{ Sin[0], PrimeQ[13] }}}||
 ||Predefined Constants	||predefined constant names start with an upper case character 	||{{{Degree, E, Pi, False, True, ...}}}||
-||Userdefined variables	||identifiers which you would like to assign a value start with a '$' character	||{{{ $a=42 }}}||
-||Userdefined rules	||identifiers which you would like to assign a rule start with a '$' character ||{{{ $f{x_,y_]:={x,y} }}}||
+||Userdefined variables	||identifiers which you would like to assign a value start with a '{{{$}}}' character	||{{{ $a=42 }}}||
+||Userdefined rules	||identifiers which you would like to assign a rule start with a '{{{$}}}' character ||{{{ $f{x_,y_]:={x,y} }}}||
 ||Pattern Symbols	||patterns end with a preceding '{{{_}}}' and could have a constraint 	||{{{ $f[x_IntegerQ]:={x} }}}||
 ||Strings	||character strings are enclosed by double quote characters 	||{{{"Hello World"}}}||
 ||Slots	||a '#' character followed by an optional number 	||{{{#}}} or {{{#2}}}||
