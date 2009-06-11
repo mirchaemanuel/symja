@@ -18,6 +18,6 @@
 ||Userdefined rules	||identifiers which you would like to assign a rule start with a '{{{$}}}' character ||{{{ $f{x_,y_]:={x,y} }}}||
 ||Pattern Symbols	||patterns end with a preceding '{{{_}}}' and could have a constraint 	||{{{ $f[x_IntegerQ]:={x} }}}||
 ||Strings	||character strings are enclosed by double quote characters 	||{{{"Hello World"}}}||
-||Slots	||a '#' character followed by an optional number 	||{{{#}}} or {{{#2}}}||
+||Slots	||a '{{{#}}}' character followed by an optional number 	||{{{#}}} or {{{#2}}}||
 ||Pure Functions	||pure functions can be expressed with the & operator 	||{{{(#^3)&[x]}}} gives {{{x^3}}}||
 ||Parts of an expression	||{{{ expression[[index]] }}}||{{{a, b, c, d}[[2]]}}} gives {{{b}}}||
