@@ -12,7 +12,7 @@
 ||Lists	||comma separated list of elements which are sourrounded by {{{ { ... } }}}||{{{ {a, b, c, d} }}}||
 ||Vectors	||vectors are like list, but cannot contain sublists {{{ { ... } }}}||{{{ {1, 2, 3, 4} }}}||
 ||Matrices	||a matrix contains the rows as sublists 	||{{{ {{1, 2}, {3, 4}} }}}||
-||Predefined Functions	||predefined function names start with an upper case character 	||{{{ Sin[0], PrimeQ[13] }}}||
+||Predefined Functions	||predefined function names start with an upper case character and the arguments are sourrounded by {{{ [ ... ] }}}||{{{ Sin[0], PrimeQ[13] }}}||
 ||Predefined Constants	||predefined constant names start with an upper case character 	||{{{Degree, E, Pi, False, True, ...}}}||
 ||Userdefined variables	||identifiers which you would like to assign a value start with a '{{{$}}}' character	||{{{ $a=42 }}}||
 ||Userdefined rules	||identifiers which you would like to assign a rule start with a '{{{$}}}' character ||{{{ $f{x_,y_]:={x,y} }}}||
