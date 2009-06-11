@@ -16,7 +16,7 @@
 ||Predefined Constants	||predefined constant names start with an upper case character 	||{{{Degree, E, Pi, False, True, ...}}}||
 ||Userdefined variables	||identifiers which you would like to assign a value start with a '$' character	||{{{ $a=42 }}}||
 ||Userdefined rules	||identifiers which you would like to assign a rule start with a '$' character ||{{{ $f{x_,y_]:={x,y} }}}||
-||Pattern Symbols	||patterns end with a preceding '_' and could have a constraint 	||{{{ $f[x_IntegerQ]:={x} }}}||
+||Pattern Symbols	||patterns end with a preceding '{{{_}}}' and could have a constraint 	||{{{ $f[x_IntegerQ]:={x} }}}||
 ||Strings	||character strings are enclosed by double quote characters 	||{{{"Hello World"}}}||
 ||Slots	||a '#' character followed by an optional number 	||{{{#}}} or {{{#2}}}||
 ||Pure Functions	||pure functions can be expressed with the & operator 	||{{{(#^3)&[x]}}} gives {{{x^3}}}||
