@@ -10,7 +10,7 @@
 	<groupId>org.matheclipse</groupId>
 	<packaging>jar</packaging>
 	<name>MathEclipse (Parser)</name>
-	<version>0.0.7-SNAPSHOT</version>
+	<version>0.0.7</version>
 	<description> This is the parser project of the MathEclipse system.</description>
 	<dependencies>
 		<dependency>
