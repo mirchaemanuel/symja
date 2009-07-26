@@ -33,7 +33,7 @@ import org.matheclipse.parser.client.ast.SymbolNode;
 public class DoubleEvaluator {
 	private static final boolean DEBUG = false;
 
-	private static double EPSILON = 1.0e-15;
+	public static double EPSILON = 1.0e-15;
 
 	private static Map<String, Double> SYMBOL_DOUBLE_MAP;
 
