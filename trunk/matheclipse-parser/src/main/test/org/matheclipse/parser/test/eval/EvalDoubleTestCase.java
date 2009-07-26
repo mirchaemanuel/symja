@@ -126,10 +126,10 @@ public class EvalDoubleTestCase extends TestCase {
 			BooleanVariable vb2 = new BooleanVariable(true);
 			engine.defineVariable("$2", vb2);
 			double d = engine.evaluate("If[$1 && $2, 1, 0]");
-			Assert.assertEquals(d, 1d);
+			Assert.assertEquals(d, 1d, DoubleEvaluator.EPSILON);
 			vb.setValue(false);
 			d = engine.evaluate();
-			Assert.assertEquals(d, 0d);
+			Assert.assertEquals(d, 0d, DoubleEvaluator.EPSILON);
 		} catch (Exception e) {
 			e.printStackTrace();
 			Assert.assertEquals("", e.getMessage());
@@ -146,10 +146,10 @@ public class EvalDoubleTestCase extends TestCase {
 			IDoubleValue vd2 = new DoubleVariable(-4.0);
 			engine.defineVariable("$2", vd2);
 			double d = engine.evaluate("$i = $1+$2; If[$i>0, 1, -1]");
-			Assert.assertEquals(d, -1d);
+			Assert.assertEquals(d, -1d,DoubleEvaluator.EPSILON);
 			vd2.setValue(4.0);
 			d = engine.evaluate();
-			Assert.assertEquals(d, 1d);
+			Assert.assertEquals(d, 1d, DoubleEvaluator.EPSILON);
 		} catch (Exception e) {
 			e.printStackTrace();
 			Assert.assertEquals("", e.getMessage());
