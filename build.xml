@@ -2,7 +2,7 @@
 	
 	<property file="build.properties"/>
 	
-	<property name="src.dir"     value="src"/>
+	<property name="src.dir"     value="symja-gui\src\main\java"/>
 
     <property name="build.dir"   value="build"/>
     <property name="classes.dir" value="${build.dir}/classes"/>

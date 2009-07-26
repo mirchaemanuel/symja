@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry exported="true" kind="var" path="JAVA3D_HOME/lib/ext/j3dcore.jar"/>
-	<classpathentry exported="true" kind="var" path="JAVA3D_HOME/lib/ext/vecmath.jar"/>
-	<classpathentry exported="true" kind="var" path="JAVA3D_HOME/lib/ext/j3dutils.jar"/>
-	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" output="symja-gui/target/classes" path="symja-gui/src/main/resources"/>
+	<classpathentry kind="src" output="symja-gui/target/classes" path="symja-gui/src/main/java"/>
 	<classpathentry kind="lib" path="lib/jnlp.jar"/>
 	<classpathentry kind="lib" path="lib/meparser-0.0.7.jar"/>
 	<classpathentry kind="lib" path="lib/mebasic.jar"/>
@@ -19,5 +17,8 @@
 	<classpathentry kind="lib" path="lib/batik-xml-1.7.jar"/>
 	<classpathentry kind="lib" path="lib/commons-io-1.3.1.jar"/>
 	<classpathentry kind="lib" path="lib/jeuclid-core-3.1.5.jar"/>
+	<classpathentry kind="var" path="JAVA3D_HOME/lib/ext/j3dcore.jar"/>
+	<classpathentry kind="var" path="JAVA3D_HOME/lib/ext/j3dutils.jar"/>
+	<classpathentry kind="var" path="JAVA3D_HOME/lib/ext/vecmath.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
