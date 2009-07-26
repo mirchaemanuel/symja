@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" output="matheclipse-parser/target/classes" path="matheclipse-parser/src/main/java"/>
-	<classpathentry kind="src" output="matheclipse-parser/target/classes" path="matheclipse-parser/src/test/java"/>
-	<classpathentry kind="src" output="matheclipse-parser/target/classes" path="matheclipse-parser/src/main/resources"/>
-	<classpathentry kind="src" output="matheclipse-parser/target/classes" path="symja-gui/src/main/java"/>
-	<classpathentry kind="src" output="matheclipse-parser/target/classes" path="symja-gui/src/main/resources"/>
+	<classpathentry kind="src" path="matheclipse-parser/src/main/java"/>
+	<classpathentry kind="src" path="matheclipse-parser/src/test/java"/>
+	<classpathentry kind="src" path="matheclipse-parser/src/main/resources"/>
+	<classpathentry kind="src" path="symja-gui/src/main/java"/>
+	<classpathentry kind="src" path="symja-gui/src/main/resources"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/J2SE-1.5"/>
 	<classpathentry kind="lib" path="lib/jnlp.jar"/>
 	<classpathentry kind="lib" path="lib/mebasic.jar"/>
@@ -23,5 +23,5 @@
 	<classpathentry kind="var" path="JAVA3D_HOME/lib/ext/j3dutils.jar"/>
 	<classpathentry kind="var" path="JAVA3D_HOME/lib/ext/vecmath.jar"/>
 	<classpathentry kind="con" path="org.maven.ide.eclipse.MAVEN2_CLASSPATH_CONTAINER"/>
-	<classpathentry kind="output" path="target/classes"/>
+	<classpathentry kind="output" path="bin"/>
 </classpath>
