@@ -96,8 +96,8 @@ In your GWT project module you have to insert the line:
     <inherits name="org.matheclipse.parser.Parser"/>
 }}}
  
-in your appropriate *.gwt.xml file.
-The meparser-x.x.x.jar has to be available on the classpath.
+in your appropriate {{{*.gwt.xml}}} file.
+The {{{matheclipse-parser-x.x.x.jar}}} has to be available on the classpath.
 
 Example:
 {{{
