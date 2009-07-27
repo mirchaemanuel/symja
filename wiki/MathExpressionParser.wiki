@@ -1,4 +1,5 @@
 #summary The Math Expression Parser.
+#labels Featured
 
 = About =
                 
@@ -9,6 +10,9 @@ The latest API is available as a binary download:
 
 Javadoc:
  * [http://symja.googlecode.com/svn/trunk/matheclipse-parser/doc/index.html]
+
+SVN Sourcecode tree:
+ * {http://code.google.com/p/symja/source/browse/#svn/trunk/matheclipse-parser]
 
 == Examples ==
  
