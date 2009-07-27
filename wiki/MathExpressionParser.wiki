@@ -5,15 +5,11 @@
 The Math Parser API is used in the [Math Eclipse Plugin] for parsing math expressions.
 The expression parser is driven by an operator table as described in the [Wikipedia entry for Operator-precedence parsers]. The parser also contains numeric solvers for double and complex valued expressions. The parser is usable as a [Google Web Toolkit (GWT)] module.
 
-=== Download ===
 The latest API is available as binary download:
-
-* [http://code.google.com/p/symja/downloads/list]
-
+ * [http://code.google.com/p/symja/downloads/list]
 
 Javadoc:
-
-* [http://symja.googlecode.com/svn/trunk/matheclipse-parser/doc/index.html]
+ * [http://symja.googlecode.com/svn/trunk/matheclipse-parser/doc/index.html]
 
 == Examples ==
  
@@ -112,7 +108,7 @@ Example:
 </module>
 }}}
  
-* See [http://code.google.com/webtoolkit/documentation/com.google.gwt.doc.DeveloperGuide.Fundamentals.html#Modules]
+ * See [http://code.google.com/webtoolkit/documentation/com.google.gwt.doc.DeveloperGuide.Fundamentals.html#Modules]
  
 === The Console application ===
  
@@ -216,13 +212,10 @@ The example is copied from the MathEclipse plugin. See CVS:
  
 The parsers operator table is driven by three arrays in the {{{org.matheclipse.parser.client.operator.ASTNodeFactory}}} class:
 
-* [http://code.google.com/p/symja/source/browse/trunk/matheclipse-parser/src/main/java/org/matheclipse/parser/client/operator/ASTNodeFactory.java]
-
-* {{{ASTNodeFactory#HEADER_STRINGS}}} - contains all internal names for the operators
-
-* {{{ASTNodeFactory#OPERATOR_STRINGS}}} - contains all operators used by the parser
-
-* {{{ASTNodeFactory#OPERATORS}}} - contains all PrefixOperator, InfixOperator and PostfixOperator definitions
+ * [http://code.google.com/p/symja/source/browse/trunk/matheclipse-parser/src/main/java/org/matheclipse/parser/client/operator/ASTNodeFactory.java]
+ * {{{ASTNodeFactory#HEADER_STRINGS}}} - contains all internal names for the operators
+ * {{{ASTNodeFactory#OPERATOR_STRINGS}}} - contains all operators used by the parser
+ * {{{ASTNodeFactory#OPERATORS}}} - contains all PrefixOperator, InfixOperator and PostfixOperator definitions
  
 There is a simplified way to create the Java sources for a given operator table.
 Simply define an operator table in a text file similar to the 
