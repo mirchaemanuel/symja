@@ -2,8 +2,7 @@
 
 = About =
                 
-The Math Parser API is used in the [Math Eclipse Plugin] for parsing math expressions.
-The expression parser is driven by an operator table as described in the [Wikipedia entry for Operator-precedence parsers]. The parser also contains numeric solvers for double and complex valued expressions. The parser is usable as a [Google Web Toolkit (GWT)] module.
+The expression parser is driven by an operator table as described in the [http://en.wikipedia.org/wiki/Operator-precedence_parser#Example_algorithm_to_parse_infix_notation Wikipedia entry for Operator-precedence parsers]. The parser also contains numeric solvers for double and complex valued expressions. The parser is usable as a [Google Web Toolkit (GWT)] module.
 
 The latest API is available as binary download:
  * [http://code.google.com/p/symja/downloads/list]
