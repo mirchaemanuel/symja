@@ -1,5 +1,5 @@
 #summary The Math Expression Parser.
-#labels Featured
+#labels Featured,Phase-Implementation
 
 = About =
                 
@@ -120,7 +120,7 @@ You can test the evaluation engine in the the *org.matheclipse.parser.server.uti
 The initial console looks like the following test output:
  
 {{{
-org.matheclipse.parser.util.Console [options]
+org.matheclipse.parser.server.util.Console [options]
 
 Options: 
   -d or -double                use Double evaluation mode
