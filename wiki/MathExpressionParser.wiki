@@ -7,9 +7,11 @@ The expression parser is driven by an operator table as described in the [Wikipe
 
 === Download ===
 The latest API is available as binary download:
+
 * [http://code.google.com/p/symja/downloads/list]
  
 Javadoc:
+
 * [http://symja.googlecode.com/svn/trunk/matheclipse-parser/doc/index.html]
 
 == Examples ==
