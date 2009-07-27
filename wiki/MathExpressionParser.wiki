@@ -1,0 +1,229 @@
+#summary The Math Expression Parser.
+
+= About =
+                
+The Math Parser API is used in the [Math Eclipse Plugin] for parsing math expressions.
+The expression parser is driven by an operator table as described in the [Wikipedia entry for Operator-precedence parsers]. The parser also contains numeric solvers for double and complex valued expressions. The parser is usable as a [Google Web Toolkit (GWT)] module.
+
+=== Download ===
+The latest API is available as binary download:
+* [http://code.google.com/p/symja/downloads/list]
+ 
+Javadoc:
+* [http://symja.googlecode.com/svn/trunk/matheclipse-parser/doc/index.html]
+
+== Examples ==
+ 
+=== Evaluate an expression in double mode ===
+ 
+This is a JUnit example for evaluating a math string expression into a *double* number value:
+
+{{{
+	public void testEval001() {
+		try {
+			DoubleEvaluator engine = new DoubleEvaluator();
+			double d = engine.evaluate("Sin[Pi/2*Cos[Pi]]");
+			assertEquals(Double.toString(d), "-1.0");
+		} catch (Exception e) {
+			e.printStackTrace();
+			assertEquals("", e.getMessage());
+		}
+	}
+
+	public void testEval002() {
+		try {
+			String in = "x^2*x^2-1";
+			IDoubleValue vd = new DoubleVariable(3.0);
+			DoubleEvaluator engine = new DoubleEvaluator();
+			engine.defineVariable("x", vd);
+			double d = engine.evaluate(in);
+			assertEquals(Double.valueOf(d).toString(), "80.0");
+			vd.setValue(4);
+			d = engine.evaluate();
+			assertEquals(Double.valueOf(d).toString(), "255.0");
+		} catch (Exception e) {
+			e.printStackTrace();
+			assertEquals("", e.getMessage());
+		}
+	}
+}}}
+ 
+=== Evaluate an expression in complex mode ===
+ 
+This is a JUnit example for evaluating a math string expression into a *Complex* number value:
+
+{{{
+	public void testEval001() {
+		try {
+			ComplexEvaluator engine = new ComplexEvaluator();
+			Complex c = engine.evaluate("Sin[Pi/2*Cos[Pi]]");
+			assertEquals(ComplexEvaluator.toString(c), "-1.0");
+		} catch (Exception e) {
+			e.printStackTrace();
+			assertEquals("", e.getMessage());
+		}
+	}
+	
+	public void testEval002() {
+		try {
+			Parser p = new Parser();
+			ASTNode obj = p.parse("x^2+3*x*I");
+			ComplexVariable vc = new ComplexVariable(3.0);
+			ComplexEvaluator engine = new ComplexEvaluator();
+			engine.defineVariable("x", vc);
+			Complex c = engine.evaluateNode(obj);
+			String result = ComplexEvaluator.toString(c);
+			assertEquals(result, "9.000000000000002+I*9.0");
+			vc.setValue(4);
+			c = engine.evaluateNode(obj);
+			result = ComplexEvaluator.toString(c);
+			assertEquals(result, "15.999999999999998+I*12.0");
+		} catch (Exception e) {
+			e.printStackTrace();
+			assertEquals("", e.getMessage());
+		}
+	}
+}}}
+ 
+=== Using the parser as a GWT module ===
+ 
+In your GWT project module you have to insert the line:
+
+
+{{{
+    <inherits name="org.matheclipse.parser.Parser"/>
+}}}
+ 
+in your appropriate *.gwt.xml file.
+The meparser-x.x.x.jar has to be available on the classpath.
+
+Example:
+{{{
+<module>
+        <!-- Inherit the core Web Toolkit stuff. -->
+        <inherits name="com.google.gwt.core.Core"/>
+...
+        <!-- Inherit the MathEclipse parser. -->
+        <inherits name="org.matheclipse.parser.Parser"/>
+...
+</module>
+}}}
+ 
+* See [http://code.google.com/webtoolkit/documentation/com.google.gwt.doc.DeveloperGuide.Fundamentals.html#Modules]
+ 
+=== The Console application ===
+ 
+You can test the evaluation engine in the the *org.matheclipse.parser.server.util.Console* application. Switch between the *double* and *complex* evaluation modes by typing the keywords *double* or *complex*.
+ 
+The initial console looks like the following test output:
+ 
+{{{
+org.matheclipse.parser.util.Console [options]
+
+Options: 
+  -d or -double                use Double evaluation mode
+  -c or -complex               use Complex evaluation mode
+  -h or -help                  print this message
+  -f or -file <filename>       use given file as input
+To stop the program type: 
+exit<RETURN-KEY>
+To switch between the evaluation modes type: 
+complex<RETURN-KEY> or
+double<RETURN-KEY>
+To continue an input line type '\' at the end of the line.
+****+****+****+****+****+****+****+****+****+****+****+****+
+>>> Sin[Pi/2*Cos[Pi]]
+-1.0
+>>> 
+}}}
+ 
+==== Parsing an abstract syntax tree (AST) ====
+ 
+This is a JUnit example for parsing a math string expression into an abstract syntax tree node (ASTNode):
+
+{{{
+	public void testParser1() {
+		try {
+			Parser p = new Parser();
+			ASTNode obj = p.parse("Integrate[Sin[x]^2+3*x^4, x]");
+			assertEquals(obj.toString(), "Integrate[Plus[Power[Sin[x], 2], Times[3, Power[x, 4]]], x]");
+		} catch (Exception e) {
+			e.printStackTrace();
+			assertEquals("", e.getMessage());
+		}
+	}
+}}}
+ 
+After the parsing step the obtained ASTNode can be converted into internal math objects.
+The next example traverses/converts the ASTNode and creates math objects from the text representation inside the ASTNode objects.
+
+ 
+The example is copied from the MathEclipse plugin. See CVS:
+* [http://matheclipse.cvs.sourceforge.net/matheclipse/org.matheclipse.core/src/org/matheclipse/core/convert/AST2Expr.java?view=markup]
+ 
+{{{
+	public IExpr convert(ASTNode node) throws ConversionException {
+		if (node == null) {
+			return null;
+		}
+		final EvalEngine evalEngine = EvalEngine.get();
+		final AbstractExpressionFactory f = evalEngine.getExpressionFactory();
+		if (node instanceof FunctionNode) {
+			final FunctionNode functionNode = (FunctionNode) node;
+			final IAST ast = f
+					.createAST(convert((ASTNode) functionNode.get(0)));
+			for (int i = 1; i < functionNode.size(); i++) {
+				ast.add(convert((ASTNode) functionNode.get(i)));
+			}
+			return ast;
+		}
+		if (node instanceof SymbolNode) {
+			return f.createSymbol(node.getString());
+		}
+		if (node instanceof PatternNode) {
+			final PatternNode pn = (PatternNode) node;
+			return f.createPattern(convert(pn.getSymbol()), convert(pn
+					.getConstraint()));
+		}
+		if (node instanceof IntegerNode) {
+			final IntegerNode integerNode = (IntegerNode) node;
+			final String iStr = integerNode.getString();
+			if (iStr != null) {
+				return f.createInteger(iStr, integerNode.getNumberFormat());
+			}
+			return f.createInteger(integerNode.getIntValue());
+		}
+		if (node instanceof FractionNode) {
+			return f.createFraction((IInteger) convert(((FractionNode) node)
+					.getNumerator()), (IInteger) convert(((FractionNode) node)
+					.getDenominator()));
+		}
+		if (node instanceof StringNode) {
+			return f.createString(node.getString());
+		}
+		if (node instanceof FloatNode) {
+			return f.createDouble(node.getString());
+		}
+
+		return f.createSymbol(node.toString());
+	}
+}}}
+ 
+=== Operator Table ===
+ 
+The parsers operator table is driven by three arrays in the {{{org.matheclipse.parser.client.operator.ASTNodeFactory}}} class:
+
+* []
+* {{{ASTNodeFactory#HEADER_STRINGS}}} - contains all internal names for the operators
+* {{{ASTNodeFactory#OPERATOR_STRINGS}}} - contains all operators used by the parser
+* {{{ASTNodeFactory#OPERATORS}}} - contains all PrefixOperator, InfixOperator and PostfixOperator definitions
+ 
+There is a simplified way to create the Java sources for a given operator table.
+Simply define an operator table in a text file similar to the 
+{{{
+  /org.matheclipse.parser/src/operators.txt
+}}} 
+file given in the source code distribution.
+ 
+After that run the {{{org.matheclipse.parser.server.util.GenerateOperatorArrays#main()}}} method.
+It creates the source code for the three arrays in the Eclipse console. Copy these arrays back to the ASTNodeFactory and recompile the parser package.
