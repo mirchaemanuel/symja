@@ -161,7 +161,7 @@ The next example traverses/converts the ASTNode and creates math objects from th
 
  
 The example is copied from the MathEclipse plugin. See CVS:
-* [http://matheclipse.cvs.sourceforge.net/matheclipse/org.matheclipse.core/src/org/matheclipse/core/convert/AST2Expr.java?view=markup]
+ * [http://matheclipse.cvs.sourceforge.net/matheclipse/org.matheclipse.core/src/org/matheclipse/core/convert/AST2Expr.java?view=markup]
  
 {{{
 	public IExpr convert(ASTNode node) throws ConversionException {
