@@ -9,7 +9,8 @@ The expression parser is driven by an operator table as described in the [Wikipe
 The latest API is available as binary download:
 
 * [http://code.google.com/p/symja/downloads/list]
- 
+
+
 Javadoc:
 
 * [http://symja.googlecode.com/svn/trunk/matheclipse-parser/doc/index.html]
@@ -215,9 +216,12 @@ The example is copied from the MathEclipse plugin. See CVS:
  
 The parsers operator table is driven by three arrays in the {{{org.matheclipse.parser.client.operator.ASTNodeFactory}}} class:
 
-* []
+* [http://code.google.com/p/symja/source/browse/trunk/matheclipse-parser/src/main/java/org/matheclipse/parser/client/operator/ASTNodeFactory.java]
+
 * {{{ASTNodeFactory#HEADER_STRINGS}}} - contains all internal names for the operators
+
 * {{{ASTNodeFactory#OPERATOR_STRINGS}}} - contains all operators used by the parser
+
 * {{{ASTNodeFactory#OPERATORS}}} - contains all PrefixOperator, InfixOperator and PostfixOperator definitions
  
 There is a simplified way to create the Java sources for a given operator table.
