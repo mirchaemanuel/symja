@@ -179,5 +179,16 @@ public class ParserTestCase extends TestCase {
 			assertEquals("", e.getMessage());
 		}
 	}
-	
+	 
+	public void testParser14() {
+		try { 
+			Parser p = new Parser();
+			ASTNode obj = p.parse("-a-b*c!!+d");
+			assertEquals(obj.dependsOn("d"),true);
+			assertEquals(obj.dependsOn("x"),false);
+		} catch (Exception e) {
+			e.printStackTrace();
+			assertEquals("", e.getMessage());
+		}
+	}
 }
