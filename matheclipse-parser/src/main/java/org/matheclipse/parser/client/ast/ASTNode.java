@@ -45,9 +45,9 @@ public abstract class ASTNode {
 		return false;
 	}
 
-	public ASTNode derivative(String variableName) {
-		return new IntegerNode("0");
-	}
+//	public ASTNode derivative(String variableName) {
+//		return new IntegerNode("0");
+//	}
 
 	public boolean equals(Object obj) {
 		if (obj instanceof ASTNode) {
