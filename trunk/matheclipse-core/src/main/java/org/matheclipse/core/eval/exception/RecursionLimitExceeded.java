@@ -1,0 +1,41 @@
+package org.matheclipse.core.eval.exception;
+
+import org.matheclipse.core.interfaces.IExpr;
+import org.matheclipse.core.reflection.system.ToString;
+
+/**
+ * 
+ */
+public class RecursionLimitExceeded extends RuntimeException {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 9179261773009842147L;
+
+	int fLimit;
+
+	IExpr fExpr;
+
+	public RecursionLimitExceeded(final int limit, final IExpr expr) {
+		fLimit = limit;
+		fExpr = expr;
+	}
+
+	@Override
+	public String getMessage() {
+		if (fExpr == null) {
+			return "Recursion limit " + fLimit + " exceeded at: null";
+		}
+		return "Recursion limit " + fLimit + " exceeded at: " + ToString.outputForm(fExpr);
+	}
+
+	public static void throwIt(final int limit, final IExpr expr) {
+//		HeapContext.enter();
+//		try {
+			throw new RecursionLimitExceeded(limit, expr);//.copy());
+//		} finally {
+//			HeapContext.exit();
+//		}
+	}
+
+}
