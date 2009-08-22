@@ -161,7 +161,7 @@ public class TeXFormFactory extends AbstractTeXFormFactory implements IConstantH
 	public void convert(final StringBuffer buf, final Object o, final int precedence) {
 		if (o instanceof IAST) {
 			final IAST f = ((IAST) o);
-			final IConverter converter = reflection(f.getHeader().toString());
+			final IConverter converter = reflection(f.head().toString());
 			if ((converter == null) || (converter.convert(buf, f, precedence) == false)) {
 				convertAST(buf, f);
 			}
@@ -195,7 +195,7 @@ public class TeXFormFactory extends AbstractTeXFormFactory implements IConstantH
 	}
 
 	private void convertAST(final StringBuffer buf, final IAST f) {
-		convertHead(buf, f.getHeader());
+		convertHead(buf, f.head());
 		buf.append("(");
 		for (int i = 1; i < f.size(); i++) {
 			checkCanceled();

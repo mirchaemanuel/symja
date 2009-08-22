@@ -48,7 +48,7 @@ public class Convert {
 		if (listMatrix == null) {
 			return null;
 		}
-		final Object header = listMatrix.getHeader();
+		final Object header = listMatrix.head();
 		if (header != F.List) {
 			return null;
 		}
@@ -65,7 +65,7 @@ public class Convert {
 		final IExpr[][] elements = new IExpr[rowSize][colSize];
 		for (int i = 1; i < rowSize + 1; i++) {
 			currInRow = (IAST) listMatrix.get(i);
-			if (currInRow.getHeader() != F.List) {
+			if (currInRow.head() != F.List) {
 				return null;
 			}
 			for (int j = 1; j < colSize + 1; j++) {
@@ -112,7 +112,7 @@ public class Convert {
 		if (listVector == null) {
 			return null;
 		}
-		final Object header = listVector.getHeader();
+		final Object header = listVector.head();
 		if (header != F.List) {
 			return null;
 		}

@@ -28,9 +28,9 @@ public class EvaluationSupport {
 	 * @return returns the flattened list
 	 */
 	public static IAST flatten(final IAST list) {
-		final IAST res = F.ast(list.getHeader());
+		final IAST res = F.ast(list.head());
 
-		if (AST.COPY.flatten(list.getHeader(), list, res, 1)) {
+		if (AST.COPY.flatten(list.head(), list, res, 1)) {
 			return res;
 		}
 		return null;
@@ -83,11 +83,11 @@ public class EvaluationSupport {
 
 		for (int j = headOffset; j < listLength + headOffset; j++) {
 			checkCanceled();
-			final IAST res1 = F.ast(list.getHeader(), list.size() - headOffset, true);
+			final IAST res1 = F.ast(list.head(), list.size() - headOffset, true);
 
 			for (int i = headOffset; i < list.size(); i++) {
 				checkCanceled();
-				if ((list.get(i) instanceof IAST) && (((IAST) list.get(i)).getHeader() == F.List)) {
+				if ((list.get(i) instanceof IAST) && (((IAST) list.get(i)).head() == F.List)) {
 					final IAST arg = (IAST) list.get(i);
 					res1.set(i, arg.get(j));
 				} else {

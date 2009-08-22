@@ -62,7 +62,7 @@ public class Times extends AbstractOperator {
 				flag = true;
 				continue;
 			}
-			if ((f.get(i) instanceof IAST) && ((IAST) f.get(i)).getHeader().toString().equals(IConstantHeaders.Power)) {
+			if ((f.get(i) instanceof IAST) && ((IAST) f.get(i)).head().toString().equals(IConstantHeaders.Power)) {
 				// filter negative Powers:
 				final IAST p = (IAST) f.get(i);
 				if ((p.size() == 3) && (p.get(2) instanceof ISignedNumber) && ((ISignedNumber) p.get(2)).isNegative()) {

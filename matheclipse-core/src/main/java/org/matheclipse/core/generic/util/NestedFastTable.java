@@ -128,7 +128,7 @@ public class NestedFastTable<E extends IRealtimeElement> extends ArrayList<E> im
 			return false;
 		}
 		final NestedFastTable list = ((NestedFastTable) o);
-		if (!getHeader().equals(list.getHeader())) {
+		if (!head().equals(list.head())) {
 			return false;
 		}
 		for (int i = 1; i < size(); i++) {
@@ -230,7 +230,7 @@ public class NestedFastTable<E extends IRealtimeElement> extends ArrayList<E> im
 //		return list;
 //	}
 
-	public final E getHeader() {
+	public final E head() {
 		return get(0);
 	}
 
@@ -289,7 +289,7 @@ public class NestedFastTable<E extends IRealtimeElement> extends ArrayList<E> im
 	@Override
 	public String toString() {
 		final String sep = ", ";
-		final E temp = getHeader();
+		final E temp = head();
 		StringBuffer text;
 		if (temp == null) {
 			text = new StringBuffer("<null-tag>");

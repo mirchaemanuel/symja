@@ -507,7 +507,7 @@ public class ComplexNum extends ExprImpl implements IComplexNum {
 		return (hierarchy() - (obj).hierarchy());
 	}
 
-	public ISymbol getHeader() {
+	public ISymbol head() {
 		return F.ComplexHead;
 	}
 

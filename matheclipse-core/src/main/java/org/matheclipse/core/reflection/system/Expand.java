@@ -41,12 +41,12 @@ public class Expand extends AbstractFunctionEvaluator implements
 	}
 
 	public IExpr expand(final IAST ast) {
-		IExpr header = ast.getHeader();
+		IExpr header = ast.head();
 		if ((header == F.Power) && (ast.size() == 3)) {
 			// (a+b)^exp
 			if ((ast.get(1) instanceof IAST)
 					&& (ast.get(2) instanceof IntegerSym)) {
-				header = ((IAST) ast.get(1)).getHeader();
+				header = ((IAST) ast.get(1)).head();
 				if (header == F.Plus) {
 					final IntegerSym exponent = (IntegerSym) ast.get(2);
 					if (!exponent.isPositive()) {
@@ -96,7 +96,7 @@ public class Expand extends AbstractFunctionEvaluator implements
 		IAST astPlus = null;
 		if (expr instanceof IAST) {
 			final IAST ast = (IAST) expr;
-			final IExpr header = ast.getHeader();
+			final IExpr header = ast.head();
 			if (header == F.Plus) {
 				astPlus = ast;
 				return astPlus;

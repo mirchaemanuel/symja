@@ -32,7 +32,7 @@ public class Plus extends AbstractOperator {
 			checkCanceled();
 			expr = f.get(i);
 
-			if ((i > 1) && (expr instanceof IAST) && ((IAST) expr).getHeader().toString().equals("Times")) {
+			if ((i > 1) && (expr instanceof IAST) && ((IAST) expr).head().toString().equals("Times")) {
 				timesConverter.convert(buf, (IAST) expr, fPrecedence, Times.PLUS_CALL);
 			} else {
 				if (i > 1) {

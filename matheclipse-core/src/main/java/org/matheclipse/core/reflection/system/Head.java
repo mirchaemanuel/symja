@@ -15,7 +15,7 @@ public class Head extends AbstractFunctionEvaluator {
 		if (functionList.size() != 2) {
 			return null;
 		}
-		return functionList.get(1).getHeader();
+		return functionList.get(1).head();
 	}
 
 	@Override

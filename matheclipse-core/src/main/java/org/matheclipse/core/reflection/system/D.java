@@ -54,13 +54,13 @@ public class D extends AbstractFunctionEvaluator {
 			// D[x_,x_] -> 1
 			return F.C1;
 		}
-		if (!(dList.getHeader() instanceof ISymbol)) {
+		if (!(dList.head() instanceof ISymbol)) {
 			return null;
 		}
 		final ISymbol symbolD = dList.topHead();
 		if (dList.get(1) instanceof IAST) {
 			final IAST listArg1 = (IAST) dList.get(1);
-			final IExpr header = listArg1.getHeader();
+			final IExpr header = listArg1.head();
 			if (header == F.Plus) {
 				// D[a_+b_+c_,x_] -> D[a,x]+D[b,x]+D[c,x]
 				return listArg1.args().map(F.Plus(), new BinaryMap(F.D()).bind2(dList.get(2)));

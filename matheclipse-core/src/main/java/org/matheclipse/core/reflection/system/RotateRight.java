@@ -20,7 +20,7 @@ public class RotateRight extends AbstractFunctionEvaluator {
 		}
 		try {
 			if (!functionList.get(1).isAtom()) {
-				final IAST result = F.ast(functionList.get(1).getHeader());
+				final IAST result = F.ast(functionList.get(1).head());
 				if (functionList.size() == 2) {
 					ASTRange range = ((IAST) functionList.get(1)).args();
 					range.rotateRight(result, 1);

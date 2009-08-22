@@ -24,7 +24,7 @@ public class Permutations extends AbstractFunctionEvaluator {
 	public IExpr evaluate(final IAST functionList) {
 		if ((functionList.size() >= 2) && (functionList.size() <= 3) && (functionList.get(1) instanceof IAST)) {
 			final IAST f = (IAST) functionList.get(1);
-			final IAST result = F.ast(f.getHeader());
+			final IAST result = F.ast(f.head());
 			if (f.size() <= 2) {
 				if (f.size() == 2) {
 					result.add(f);
@@ -41,7 +41,7 @@ public class Permutations extends AbstractFunctionEvaluator {
 					return null;
 				}
 			}
-			final KPermutationsList<IExpr, IAST> perm = new KPermutationsList<IExpr, IAST>(f, k, F.ast(f.getHeader()), AST.COPY, 1);
+			final KPermutationsList<IExpr, IAST> perm = new KPermutationsList<IExpr, IAST>(f, k, F.ast(f.head()), AST.COPY, 1);
 			// int j[];
 			IAST temp;
 			while ((temp = perm.next()) != null) {

@@ -3,9 +3,6 @@ package org.matheclipse.core.expression;
 import java.io.UnsupportedEncodingException;
 import java.util.Locale;
 
-import org.matheclipse.basic.Config;
-import org.matheclipse.basic.ObjectMemoryExceededException;
-import org.matheclipse.core.eval.exception.PoolMemoryExceededException;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.IStringX;
 import org.matheclipse.core.interfaces.ISymbol;
@@ -531,7 +528,7 @@ public class StringX extends ExprImpl implements IStringX {
 	// tb.append(fString);
 	// return tb.toText();
 	// }
-	public ISymbol getHeader() {
+	public ISymbol head() {
 		return F.StringHead;
 	}
 

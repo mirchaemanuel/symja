@@ -443,7 +443,7 @@ public class PatternMatcher extends IPatternMatcher<IExpr> implements Serializab
 			if (l1.size() != l2.size()) {
 				return false;
 			}
-			if (!equivalent(l1.getHeader(), l2.getHeader())) {
+			if (!equivalent(l1.head(), l2.head())) {
 				return false;
 			}
 			for (int i = 1; i < l1.size(); i++) {
@@ -484,7 +484,7 @@ public class PatternMatcher extends IPatternMatcher<IExpr> implements Serializab
 		if (lhsPatternExpression instanceof IAST) {
 			final IAST list = (IAST) lhsPatternExpression;
 			int listEvalFlags = IAST.NO_FLAG;
-			listEvalFlags |= determinePatterns(list.getHeader(), patternMap);
+			listEvalFlags |= determinePatterns(list.head(), patternMap);
 			for (int i = 1; i < list.size(); i++) {
 				checkCanceled();
 				listEvalFlags |= determinePatterns(list.get(i), patternMap);
@@ -527,7 +527,7 @@ public class PatternMatcher extends IPatternMatcher<IExpr> implements Serializab
 	public void getPatterns(final List<IExpr> resultList, final IExpr pExpr) {
 		if (pExpr instanceof IAST) {
 			final IAST list = (IAST) pExpr;
-			getPatterns(resultList, list.getHeader());
+			getPatterns(resultList, list.head());
 			for (int i = 0; i < list.size(); i++) {
 				checkCanceled();
 				getPatterns(resultList, list.get(i));
@@ -549,7 +549,7 @@ public class PatternMatcher extends IPatternMatcher<IExpr> implements Serializab
 	public void setPatternValue2Local(final IExpr pExpr) {
 		if (pExpr instanceof IAST) {
 			final IAST list = (IAST) pExpr;
-			setPatternValue2Local(list.getHeader());
+			setPatternValue2Local(list.head());
 			for (int i = 0; i < list.size(); i++) {
 				checkCanceled();
 				setPatternValue2Local(list.get(i));
@@ -627,8 +627,8 @@ public class PatternMatcher extends IPatternMatcher<IExpr> implements Serializab
 			final ISymbol sym = lhsPatternExpression.topHead();
 			if (lhsEvalList.size() > lhsPatternExpression.size()) {
 				if (((sym.getAttributes() & ISymbol.FLAT) == ISymbol.FLAT)
-						&& lhsPatternExpression.getHeader().equals(lhsEvalList.getHeader())) {
-					if (!matchExpr(lhsPatternExpression.getHeader(), lhsEvalList.getHeader())) {
+						&& lhsPatternExpression.head().equals(lhsEvalList.head())) {
+					if (!matchExpr(lhsPatternExpression.head(), lhsEvalList.head())) {
 						return false;
 					}
 					return matchFlatList(sym, lhsPatternExpression, lhsEvalList);
@@ -640,7 +640,7 @@ public class PatternMatcher extends IPatternMatcher<IExpr> implements Serializab
 				return false;
 			}
 
-			if (!matchExpr(lhsPatternExpression.getHeader(), lhsEvalList.getHeader())) {
+			if (!matchExpr(lhsPatternExpression.head(), lhsEvalList.head())) {
 				return false;
 			}
 

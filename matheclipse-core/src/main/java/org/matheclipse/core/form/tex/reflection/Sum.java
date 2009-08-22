@@ -21,7 +21,7 @@ public class Sum extends AbstractConverter {
   	if (f.size() >= 3) {
       for (int i = 2; i < f.size(); i++) {
         checkCanceled();
-				if ((f.get(i) instanceof IAST) && ((IAST) f.get(i)).getHeader().toString().equals(IConstantHeaders.List)) {
+				if ((f.get(i) instanceof IAST) && ((IAST) f.get(i)).head().toString().equals(IConstantHeaders.List)) {
         	final IAST list = (IAST) f.get(i);
         	buf.append("\\sum_{");
 

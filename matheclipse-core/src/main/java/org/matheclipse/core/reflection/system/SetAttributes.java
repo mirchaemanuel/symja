@@ -97,7 +97,7 @@ public IExpr evaluate(final IAST functionList) {
         }
 
       } else {
-        if ((functionList.get(2) instanceof IAST) && (((IAST) functionList.get(2)).getHeader() == F.List)) {
+        if ((functionList.get(2) instanceof IAST) && (((IAST) functionList.get(2)).head() == F.List)) {
           final IAST lst = (IAST) functionList.get(2);
           int symbolAttributes = ISymbol.NOATTRIBUTE;
           for (int i = 1; i < lst.size(); i++) {

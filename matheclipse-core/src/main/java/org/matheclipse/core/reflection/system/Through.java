@@ -18,15 +18,15 @@ public class Through extends AbstractFunctionEvaluator {
 		}
 		if ((functionList.get(1) instanceof IAST)) {
 			IAST l1 = (IAST) functionList.get(1);
-			IExpr h = l1.getHeader();
+			IExpr h = l1.head();
 			if (h instanceof IAST) {
 
 				IAST clonedList;
 				IAST l2 = (IAST) h;
-				if (functionList.size() == 3 && !l2.getHeader().equals(functionList.get(2))) {
+				if (functionList.size() == 3 && !l2.head().equals(functionList.get(2))) {
 					return l1;
 				}
-				IAST result = F.ast(l2.getHeader());
+				IAST result = F.ast(l2.head());
 				for (int i = 1; i < l2.size(); i++) {
 					if (l1.get(i) instanceof ISymbol || l2.get(i) instanceof IAST) {
 						clonedList = (IAST) l1.clone();

@@ -23,7 +23,7 @@ public class Limit extends AbstractConverter {
 			if (obj instanceof IAST) {
 				rule = (IAST) obj;
 			}
-			if ((rule != null) && (rule.size() == 3) && rule.getHeader().toString().equals("Rule")) {
+			if ((rule != null) && (rule.size() == 3) && rule.head().toString().equals("Rule")) {
 				buf.append("\\lim_{");
 				fFactory.convert(buf, rule.get(1), 0);
 				buf.append("\\rightarrow ");

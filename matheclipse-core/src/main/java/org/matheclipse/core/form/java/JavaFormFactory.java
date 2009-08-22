@@ -46,12 +46,12 @@ public class JavaFormFactory {
 
 	public void convertAST(final StringBuffer buf, final IAST f) {
 		if (f.size() == 1) {
-			convertHead(buf, f.getHeader());
+			convertHead(buf, f.head());
 			buf.append("()");
 		} else if (f.size() == 2) {
 			convert(buf, f.get(1));
 			buf.append(".");
-			convertHead(buf, f.getHeader());
+			convertHead(buf, f.head());
 			buf.append("()");
 		} else {
 			for (int i = 2; i < f.size(); i++) {

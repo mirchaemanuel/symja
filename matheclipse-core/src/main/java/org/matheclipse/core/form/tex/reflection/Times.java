@@ -50,7 +50,7 @@ public class Times extends AbstractOperator {
 		for (int i = 1; i < f.size(); i++) {
 			checkCanceled();
 			if ((f.get(i) instanceof IAST)
-					&& ((IAST) f.get(i)).getHeader().toString().equals(
+					&& ((IAST) f.get(i)).head().toString().equals(
 							IConstantHeaders.Power)) {
 				// filter negative Powers:
 				final IAST p = (IAST) f.get(i);
