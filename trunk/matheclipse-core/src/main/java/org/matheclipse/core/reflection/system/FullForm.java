@@ -15,7 +15,7 @@ public class FullForm implements IFunctionEvaluator {
 		if (ast.size() != 2) {
 			return null;
 		}
-		return F.stringx(new StringBuffer(ast.get(1).toFullForm()));
+		return F.stringx(new StringBuffer(ast.get(1).fullFormString()));
 	}
 
 	public IExpr numericEval(final IAST functionList) {

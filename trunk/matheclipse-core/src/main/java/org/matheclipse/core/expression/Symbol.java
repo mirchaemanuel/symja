@@ -422,23 +422,6 @@ public class Symbol extends ExprImpl implements ISymbol {
 	// public boolean move(final ObjectSpace os) {
 	// return super.move(os);
 	// }
-	public Symbol copy() {
-		return this;
-	}
-
-	public Symbol copyNew() {
-		return this;
-	}
-
-	@Override
-	public void recycle() {
-	}
-
-//	public Text toText() {
-//		final TextBuilder tb = TextBuilder.newInstance();
-//		tb.append(fSymbolName);
-//		return tb.toText();
-//	}
 
 	/**
 	 * Compares this expression with the specified expression for order. Returns a
@@ -451,7 +434,7 @@ public class Symbol extends ExprImpl implements ISymbol {
 		}
 		if (obj instanceof AST) {
 			final AST ast = (AST) obj;
-			final IExpr header = ast.getHeader();
+			final IExpr header = ast.head();
 			if (ast.size() > 1) {
 				if (header == F.Power && ast.size() == 3) {
 					if (ast.get(1) instanceof ISymbol) {
@@ -465,7 +448,7 @@ public class Symbol extends ExprImpl implements ISymbol {
 					// compare with the last ast element:
 					final IExpr lastTimes = ast.get(ast.size() - 1);
 					if (lastTimes instanceof AST) {
-						final IExpr lastTimesHeader = ((IAST) lastTimes).getHeader();
+						final IExpr lastTimesHeader = ((IAST) lastTimes).head();
 						if ((lastTimesHeader == F.Power) && (((IAST) lastTimes).size() == 3)) {
 							final int cp = compareTo(((IAST) lastTimes).get(1));
 							if (cp != 0) {
@@ -500,7 +483,7 @@ public class Symbol extends ExprImpl implements ISymbol {
 		return fSymbolName.equals("False");
 	}
 
-	public ISymbol getHeader() {
+	public ISymbol head() {
 		return F.SymbolHead;
 	}
 
@@ -712,8 +695,8 @@ public class Symbol extends ExprImpl implements ISymbol {
 				key = iter.next();
 				pair = fEqualRules.get(key);
 				stream.writeUTF(pair.getFirst().toString());
-				stream.writeUTF(key.toFullForm());
-				stream.writeUTF(pair.getSecond().toFullForm());
+				stream.writeUTF(key.fullFormString());
+				stream.writeUTF(pair.getSecond().fullFormString());
 			}
 		}
 		if (fSimplePatternRules == null || fSimplePatternRules.size() == 0) {
@@ -729,14 +712,14 @@ public class Symbol extends ExprImpl implements ISymbol {
 					pmEvaluator = (PatternMatcherAndEvaluator) list.get(i);
 					setSymbol = pmEvaluator.getSetSymbol();
 					stream.writeUTF(setSymbol.toString());
-					stream.writeUTF(pmEvaluator.getLHS().toFullForm());
-					stream.writeUTF(pmEvaluator.getRHS().toFullForm());
+					stream.writeUTF(pmEvaluator.getLHS().fullFormString());
+					stream.writeUTF(pmEvaluator.getRHS().fullFormString());
 					condition = pmEvaluator.getCondition();
 					if (condition == null) {
 						stream.write(0);
 					} else {
 						stream.write(1);
-						stream.writeUTF(condition.toFullForm());
+						stream.writeUTF(condition.fullFormString());
 					}
 
 				}
@@ -751,14 +734,14 @@ public class Symbol extends ExprImpl implements ISymbol {
 				pmEvaluator = (PatternMatcherAndEvaluator) fPatternRules.get(i);
 				setSymbol = pmEvaluator.getSetSymbol();
 				stream.writeUTF(setSymbol.toString());
-				stream.writeUTF(pmEvaluator.getLHS().toFullForm());
-				stream.writeUTF(pmEvaluator.getRHS().toFullForm());
+				stream.writeUTF(pmEvaluator.getLHS().fullFormString());
+				stream.writeUTF(pmEvaluator.getRHS().fullFormString());
 				condition = pmEvaluator.getCondition();
 				if (condition == null) {
 					stream.write(0);
 				} else {
 					stream.write(1);
-					stream.writeUTF(condition.toFullForm());
+					stream.writeUTF(condition.fullFormString());
 				}
 			}
 

@@ -22,7 +22,7 @@ public class Sum extends AbstractConverter {
       for (int i = 2; i < f.size(); i++) {
         checkCanceled();
 				fFactory.tagStart(buf, "mrow");
-        if ((f.get(i) instanceof IAST) && ((IAST) f.get(i)).getHeader().toString().equals(IConstantHeaders.List)) {
+        if ((f.get(i) instanceof IAST) && ((IAST) f.get(i)).head().toString().equals(IConstantHeaders.List)) {
           final IAST list = (IAST) f.get(i);
           fFactory.tagStart(buf, "munderover");
           // &sum; &#x2211

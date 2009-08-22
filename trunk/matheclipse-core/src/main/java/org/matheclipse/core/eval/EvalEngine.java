@@ -316,7 +316,7 @@ public class EvalEngine implements IEvaluationEngine {
 	public IExpr evalAST(final IAST ast) {
 		IExpr result;
 
-		if ((result = evalLoop(ast.getHeader())) != null) {
+		if ((result = evalLoop(ast.head())) != null) {
 			// first evaluate the header !
 			IAST resultList = (IAST) ast.clone();
 			resultList.setHeader(result);
@@ -350,7 +350,7 @@ public class EvalEngine implements IEvaluationEngine {
 
 				for (int i = 0; i < ast.size(); i++) {
 					Util.checkCanceled();
-					if ((ast.get(i) instanceof IAST) && (((IAST) ast.get(i)).getHeader() == F.List)) {
+					if ((ast.get(i) instanceof IAST) && (((IAST) ast.get(i)).head() == F.List)) {
 						if (listLength == 0) {
 							listLength = ((IAST) ast.get(i)).size() - 1;
 						} else {

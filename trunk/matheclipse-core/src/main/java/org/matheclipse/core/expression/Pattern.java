@@ -3,9 +3,7 @@ package org.matheclipse.core.expression;
 import java.util.List;
 import java.util.Map;
 
-import org.matheclipse.basic.Config;
 import org.matheclipse.core.eval.EvalEngine;
-import org.matheclipse.core.eval.exception.PoolMemoryExceededException;
 import org.matheclipse.core.generic.IsUnaryTrue;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.IPattern;
@@ -252,12 +250,12 @@ public class Pattern extends ExprImpl implements IPattern {
 		return buffer.toString();
 	}
 
-	public String toFullForm() {
+	public String fullFormString() {
 		StringBuffer buf = new StringBuffer();
 		if (fSymbol == null) {
 			buf.append("Blank[");
 			if (fCondition != null) {
-				buf.append(fCondition.toFullForm());
+				buf.append(fCondition.fullFormString());
 			}
 			buf.append("]");
 		} else {
@@ -266,7 +264,7 @@ public class Pattern extends ExprImpl implements IPattern {
 			buf.append(", ");
 			buf.append("Blank[");
 			if (fCondition != null) {
-				buf.append(fCondition.toFullForm());
+				buf.append(fCondition.fullFormString());
 			}
 			buf.append("]]");
 		}
@@ -312,7 +310,7 @@ public class Pattern extends ExprImpl implements IPattern {
 		return (hierarchy() - (obj).hierarchy());
 	}
 
-	public ISymbol getHeader() {
+	public ISymbol head() {
 		return F.PatternHead;
 	}
 
@@ -324,7 +322,7 @@ public class Pattern extends ExprImpl implements IPattern {
 		if (fCondition == null) {
 			return true;
 		}
-		if (expr.getHeader().equals(fCondition)) {
+		if (expr.head().equals(fCondition)) {
 			return true;
 		}
 		EvalEngine engine = EvalEngine.get();

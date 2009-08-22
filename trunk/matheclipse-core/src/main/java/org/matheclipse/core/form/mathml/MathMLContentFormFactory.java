@@ -215,7 +215,7 @@ public class MathMLContentFormFactory extends AbstractMathMLFormFactory implemen
 			// convertHeadList(buf, f);
 			// }
 			// }
-			final IConverter converter = reflection(f.getHeader().toString());
+			final IConverter converter = reflection(f.head().toString());
 			if ((converter == null) || (converter.convert(buf, f, precedence) == false)) {
 				convertHeadList(buf, f);
 			}
@@ -250,7 +250,7 @@ public class MathMLContentFormFactory extends AbstractMathMLFormFactory implemen
 
 	private void convertHeadList(final StringBuffer buf, final IAST f) {
 		tagStart(buf, "mrow");
-		convertHead(buf, f.getHeader());
+		convertHead(buf, f.head());
 		tag(buf, "mo", "&af;");
 		tagStart(buf, "mrow");
 		tag(buf, "mo", "(");

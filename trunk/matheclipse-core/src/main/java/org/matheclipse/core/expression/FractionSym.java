@@ -467,7 +467,7 @@ public class FractionSym extends ExprImpl implements IFraction {
 	}
 
 	@Override
-	public String toFullForm() {
+	public String fullFormString() {
 		StringBuffer buf = new StringBuffer("Rational[");
 		buf.append(fRational.getDividend().toString().toString());
 		buf.append(",");
@@ -563,7 +563,7 @@ public class FractionSym extends ExprImpl implements IFraction {
 		return fRational.doubleValue() < obj.doubleValue();
 	}
 
-	public ISymbol getHeader() {
+	public ISymbol head() {
 		return F.RationalHead;
 	}
 

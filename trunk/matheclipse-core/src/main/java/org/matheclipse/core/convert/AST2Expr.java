@@ -62,7 +62,7 @@ public class AST2Expr extends Converter<ASTNode, IExpr> {
 				checkCanceled();
 				ast.add(convert((ASTNode) functionNode.get(i)));
 			}
-			IExpr head = ast.getHeader();
+			IExpr head = ast.head();
 			if (head.equals(F.PatternHead)) {
 				final IExpr expr = Pattern.CONST.evaluate(ast);
 				if (expr != null) {

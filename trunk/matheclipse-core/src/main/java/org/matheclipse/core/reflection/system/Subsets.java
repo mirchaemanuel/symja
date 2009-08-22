@@ -38,7 +38,7 @@ public class Subsets extends AbstractFunctionEvaluator {
 			// return null;
 			// }
 			int k;
-			final IAST result = F.ast(f.getHeader());
+			final IAST result = F.ast(f.head());
 			level.setFromLevelAsCurrent();
 			while (level.isInRange()) {
 				k = level.getCurrentLevel();

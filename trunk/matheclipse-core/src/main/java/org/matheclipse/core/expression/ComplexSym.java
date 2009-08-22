@@ -307,7 +307,7 @@ public class ComplexSym extends ExprImpl implements IComplex {
 		// return toText().toString();
 	}
 
-	public String toFullForm() {
+	public String fullFormString() {
 		StringBuffer buf = new StringBuffer("Complex[");
 		if (_real.getDivisor().equals(BigInteger.ONE)) {
 			buf.append(_real.getDividend().toString());
@@ -375,7 +375,7 @@ public class ComplexSym extends ExprImpl implements IComplex {
 		return (hierarchy() - (obj).hierarchy());
 	}
 
-	public ISymbol getHeader() {
+	public ISymbol head() {
 		return F.ComplexHead;
 	}
 

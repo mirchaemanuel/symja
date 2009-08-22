@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.apache.commons.math.Field;
 import org.matheclipse.basic.Config;
+import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.IInteger;
 import org.matheclipse.core.interfaces.INumber;
@@ -15,7 +16,7 @@ import apache.harmony.math.BigInteger;
 
 public abstract class ExprImpl implements IExpr {
 	// protected int hash;
-  
+
 	@Override
 	public Field<IExpr> getField() {
 		return ExprField.CONST;
@@ -47,7 +48,7 @@ public abstract class ExprImpl implements IExpr {
 		return F.function(F.Power, this, F.CN1);
 	}
 
-	public IExpr times (final IExpr that) {
+	public IExpr times(final IExpr that) {
 		return F.function(F.Times, this, that);
 	}
 
@@ -71,7 +72,8 @@ public abstract class ExprImpl implements IExpr {
 	}
 
 	public IExpr div(final IExpr that) {
-		return F.eval(F.function(F.Times, this, F.function(F.Power, that, F.CN1)));
+		return F.eval(F.function(F.Times, this, F
+				.function(F.Power, that, F.CN1)));
 	}
 
 	public IExpr mod(final IExpr that) {
@@ -109,15 +111,16 @@ public abstract class ExprImpl implements IExpr {
 		} else if (clazz.equals(String.class)) {
 			return toString();
 		}
-		throw new UnsupportedOperationException("ExprImpl.asType() - cast not supported.");
+		throw new UnsupportedOperationException(
+				"ExprImpl.asType() - cast not supported.");
 	}
 
-	public abstract ISymbol getHeader();
-	
+	public abstract ISymbol head();
+
 	public ISymbol topHead() {
-		return getHeader();
+		return head();
 	}
-	
+
 	public boolean isList() {
 		return false;
 	}
@@ -201,7 +204,8 @@ public abstract class ExprImpl implements IExpr {
 	// return null;
 	// }
 
-	public IExpr variables2Slots(final Map<IExpr, IExpr> map, final List<IExpr> variableList) {
+	public IExpr variables2Slots(final Map<IExpr, IExpr> map,
+			final List<IExpr> variableList) {
 		return this;
 	}
 
@@ -213,10 +217,27 @@ public abstract class ExprImpl implements IExpr {
 	// return (IExpr) super.moveHeap();
 	// }
 
-	public String toFullForm() {
+	public String fullFormString() {
 		return toString();
 	}
 
-	public void recycle() {
+	public List<IExpr> leaves() {
+		return null;
+	}
+	
+	public IExpr apply(List<? extends IExpr> leaves) {
+		final IAST ast = F.ast(head());
+		for (int i = 0; i < leaves.size(); i++) {
+			ast.add(leaves.get(i));
+		}
+		return ast;
+	}
+
+	public IExpr apply(IExpr... leaves) {
+		final IAST ast = F.ast(head());
+		for (int i = 0; i < leaves.length; i++) {
+			ast.add(leaves[i]);
+		}
+		return ast;
 	}
 }

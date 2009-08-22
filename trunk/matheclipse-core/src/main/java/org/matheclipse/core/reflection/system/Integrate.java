@@ -76,10 +76,10 @@ public class Integrate extends AbstractFunctionEvaluator implements IConstantHea
 			// Integrate[x_,x_] -> x^2 / 2
 			return Times(F.C1D2, Power(lst.get(1), F.C2));
 		}
-		final ISymbol symbolIntegrate = (ISymbol) lst.getHeader();
+		final ISymbol symbolIntegrate = (ISymbol) lst.head();
 		if (lst.get(1) instanceof IAST) {
 			final IAST list = (IAST) lst.get(1);
-			final IExpr header = list.getHeader();
+			final IExpr header = list.head();
 			if (header == F.Plus) {
 				// Integrate[a_+b_+c_,x_] ->
 				// Integrate[a,x]+Integrate[b,x]+Integrate[c,x]

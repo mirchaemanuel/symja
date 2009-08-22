@@ -16,9 +16,9 @@ public class Function implements IFunctionEvaluator {
 	}
 
 	public IExpr evaluate(final IAST functionList) {
-		if (functionList.getHeader() instanceof IAST) {
+		if (functionList.head() instanceof IAST) {
 			try {
-				final IAST function = (IAST) functionList.getHeader();
+				final IAST function = (IAST) functionList.head();
 				if (function.size() == 2) {
 					return replaceSlots(function.get(1), functionList);
 				} else if (function.size() == 3) {

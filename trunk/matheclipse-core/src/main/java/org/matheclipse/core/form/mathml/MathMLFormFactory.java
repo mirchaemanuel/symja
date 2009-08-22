@@ -227,7 +227,7 @@ public class MathMLFormFactory extends AbstractMathMLFormFactory implements
 					ast = temp;
 				}
 			}
-			final IConverter converter = reflection(ast.getHeader().toString());
+			final IConverter converter = reflection(ast.head().toString());
 			if ((converter == null)
 					|| (converter.convert(buf, ast, precedence) == false)) {
 				convertAST(buf, ast);
@@ -263,7 +263,7 @@ public class MathMLFormFactory extends AbstractMathMLFormFactory implements
 
 	private void convertAST(final StringBuffer buf, final IAST ast) {
 		tagStart(buf, "mrow");
-		convertHead(buf, ast.getHeader());
+		convertHead(buf, ast.head());
 		// &af; &#x2061;
 		tag(buf, "mo", "&#x2061;");
 		tagStart(buf, "mrow");

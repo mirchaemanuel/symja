@@ -30,7 +30,7 @@ public boolean convert(final StringBuffer buf, final IAST f, final int precedenc
       checkCanceled();
 			expr = f.get(i);
 
-      if ((i>1) && (expr instanceof IAST) && ((IAST) expr).getHeader().toString().equals("Times")) {
+      if ((i>1) && (expr instanceof IAST) && ((IAST) expr).head().toString().equals("Times")) {
         timesConverter.convert(buf, (IAST) expr, fPrecedence, Times.PLUS_CALL);
       } else {
         if (i > 1) {

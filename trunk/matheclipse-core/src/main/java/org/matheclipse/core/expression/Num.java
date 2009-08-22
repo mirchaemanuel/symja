@@ -413,7 +413,7 @@ public class Num extends ExprImpl implements INum {
 		return fDouble > that.doubleValue();
 	}
 
-	public ISymbol getHeader() {
+	public ISymbol head() {
 		return F.RealHead;
 	}
 

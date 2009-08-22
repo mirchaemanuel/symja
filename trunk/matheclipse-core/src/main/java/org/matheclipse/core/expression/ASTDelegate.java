@@ -57,7 +57,7 @@ public class ASTDelegate {
 	}
 
 	public String toFullForm() {
-		return fAst.toFullForm();
+		return fAst.fullFormString();
 	}
 
 	public String toString() {

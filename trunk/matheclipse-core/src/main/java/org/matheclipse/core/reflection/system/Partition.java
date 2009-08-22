@@ -24,7 +24,7 @@ public class Partition extends AbstractFunctionEvaluator {
 			if (functionList.get(2) instanceof IInteger) {
 				final IAST f = (IAST) functionList.get(1);
 				final int n = ((IInteger) functionList.get(2)).getBigNumerator().intValue();
-				final IAST result = F.ast(f.getHeader());
+				final IAST result = F.ast(f.head());
 				IAST temp;
 				int i = n;
 				int v = n;
@@ -33,7 +33,7 @@ public class Partition extends AbstractFunctionEvaluator {
 				}
 				while (i <= f.size()-1) {
 					checkCanceled();
-					temp = F.ast(f.getHeader());
+					temp = F.ast(f.head());
 					for (int j = i - n; j < i; j++) {
 						checkCanceled();
 						temp.add(f.get(j+1));

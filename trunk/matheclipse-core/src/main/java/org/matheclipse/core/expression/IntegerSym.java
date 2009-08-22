@@ -867,7 +867,7 @@ public class IntegerSym extends ExprImpl implements IInteger {
 		return fInteger.doubleValue() < obj.doubleValue();
 	}
 
-	public ISymbol getHeader() {
+	public ISymbol head() {
 		return F.IntegerHead;
 	}
 

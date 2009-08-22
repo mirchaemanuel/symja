@@ -86,12 +86,12 @@ public abstract class AbstractTrigArg1 extends AbstractFunctionEvaluator {
 			return (((INumber) expr).complexSign() == (-1));
 		} else if (expr instanceof AST) {
 			final AST exprAST = (AST) expr;
-			if ((exprAST.getHeader() == F.Times)
+			if ((exprAST.head() == F.Times)
 					&& (exprAST.size() > 1)) {
 				if (exprAST.get(1) instanceof INumber) {
 					return (((INumber) exprAST.get(1)).complexSign() == (-1));
 				}
-			} else if ((exprAST.getHeader() == F.Plus)
+			} else if ((exprAST.head() == F.Plus)
 					&& (exprAST.size() > 2)) {
 				if (exprAST.get(1) instanceof INumber) {
 					return (((INumber) exprAST.get(1)).complexSign() == (-1));

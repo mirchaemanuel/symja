@@ -1,7 +1,6 @@
 package org.matheclipse.core.expression;
 
-import static org.matheclipse.basic.Util.checkCanceled;
-
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
@@ -49,7 +48,8 @@ import apache.harmony.math.BigInteger;
 public class AST extends NestedFastTable<IExpr> implements IAST {
 	private final static IAST AST_DUMMY_INSTANCE = new AST();
 
-	public final static ASTCopy COPY = new ASTCopy((Class<IAST>) AST_DUMMY_INSTANCE.getClass());
+	public final static ASTCopy COPY = new ASTCopy(
+			(Class<IAST>) AST_DUMMY_INSTANCE.getClass());
 
 	/**
 	 * 
@@ -103,21 +103,23 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 	/**
 	 * Holds the factory for this AST.
 	 */
-//	private static final ObjectFactory<AST> FACTORY = new ObjectFactory<AST>() {
-//		@Override
-//		public AST create() {
-//			if (Config.SERVER_MODE && currentQueue().getSize() >= Config.AST_MAX_POOL_SIZE) {
-//				throw new PoolMemoryExceededException("AST", currentQueue().getSize());
-//			}
-//			return new AST(5, false);
-//		}
-//
-//		@Override
-//		public void cleanup(AST obj) {
-//			obj.reset();
-//		}
-//
-//	};
+	// private static final ObjectFactory<AST> FACTORY = new
+	// ObjectFactory<AST>() {
+	// @Override
+	// public AST create() {
+	// if (Config.SERVER_MODE && currentQueue().getSize() >=
+	// Config.AST_MAX_POOL_SIZE) {
+	// throw new PoolMemoryExceededException("AST", currentQueue().getSize());
+	// }
+	// return new AST(5, false);
+	// }
+	//
+	// @Override
+	// public void cleanup(AST obj) {
+	// obj.reset();
+	// }
+	//
+	// };
 
 	/**
 	 * simple parser to simplify unit tests. The parser assumes that the String
@@ -126,7 +128,8 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 	 * Example &quot;List[x,List[y]]&quot;
 	 */
 	public static AST parse(final String inputString) {
-		final StringTokenizer tokenizer = new StringTokenizer(inputString, "[],", true);
+		final StringTokenizer tokenizer = new StringTokenizer(inputString,
+				"[],", true);
 		final AST list = newInstance(null);
 		String token = tokenizer.nextToken();
 		list.setHeader(StringX.valueOf(token));
@@ -140,12 +143,12 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 
 	}
 
-	private static void parseList(final StringTokenizer tokenizer, final AST list) {
+	private static void parseList(final StringTokenizer tokenizer,
+			final AST list) {
 		String token = tokenizer.nextToken();
 		String arg;
 		AST argList;
 		do {
-			checkCanceled();
 			if (token.equals("]")) {
 				return;
 			} else if (token.equals(",")) {
@@ -193,14 +196,14 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 	// }
 	/**
 	 * Constructs a list containing the elements of the specified collection, in
-	 * the order they are returned by the collection's iterator. The <tt>AST</tt>
-	 * instance has an initial capacity of 110% the size of the specified
-	 * collection.
+	 * the order they are returned by the collection's iterator. The
+	 * <tt>AST</tt> instance has an initial capacity of 110% the size of the
+	 * specified collection.
 	 * 
 	 * @param c
-	 *          the collection whose elements are to be placed into this list.
+	 *            the collection whose elements are to be placed into this list.
 	 * @throws NullPointerException
-	 *           if the specified collection is null.
+	 *             if the specified collection is null.
 	 */
 	// private AST(final Collection<IExpr> c, final IExpr head) {
 	// super(c, head);
@@ -213,11 +216,10 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 	// }
 	// }
 	/*
-	 * Creates a new list form the given list and symbol. if incl is set to <code>
-	 * true </code> all arguments from index first to last-1 are copied in the new
-	 * list if incl is set to <code> false </code> all arguments excluded from
-	 * index first to last-1 are copied in the new list
-	 * 
+	 * Creates a new list form the given list and symbol. if incl is set to
+	 * <code> true </code> all arguments from index first to last-1 are copied
+	 * in the new list if incl is set to <code> false </code> all arguments
+	 * excluded from index first to last-1 are copied in the new list
 	 */
 	// private AST(final IAST f, final IExpr sym, final boolean incl,
 	// final int first, final int last) {
@@ -241,9 +243,9 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 	 * Constructs an empty list with the specified initial capacity.
 	 * 
 	 * @param initialCapacity
-	 *          the initial capacity of the list.
+	 *            the initial capacity of the list.
 	 * @exception IllegalArgumentException
-	 *              if the specified initial capacity is negative
+	 *                if the specified initial capacity is negative
 	 */
 	// private AST(final int initialCapacity, final IExpr head) {
 	// super(initialCapacity + 1);
@@ -253,10 +255,11 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 	 * Constructs an empty list with the specified initial capacity.
 	 * 
 	 * @param initialCapacity
-	 *          the initial capacity (i.e. number of arguments without the heade
-	 *          element) of the list.
+	 *            the initial capacity (i.e. number of arguments without the
+	 *            heade element) of the list.
 	 * @param setLength
-	 *          if <code>true</code>, sets the array's size to initialCapacity.
+	 *            if <code>true</code>, sets the array's size to
+	 *            initialCapacity.
 	 */
 	private AST(final int initialCapacity, final boolean setLength) {
 		super(initialCapacity + 1, setLength ? initialCapacity + 1 : 0);
@@ -340,18 +343,19 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 	 */
 	@Override
 	public Object clone() {
-//		AST ast;
-//		if (Config.SERVER_MODE) {
-//			ast = FACTORY.object();
-//		} else {
-//			ast = new AST(5, false);
-//		}
+		// AST ast;
+		// if (Config.SERVER_MODE) {
+		// ast = FACTORY.object();
+		// } else {
+		// ast = new AST(5, false);
+		// }
 		AST ast = new AST(5, false);
 		ast.addAll(this);
 		return ast;
 	}
 
-	public boolean equalsFromPosition(final int from0, final AST f1, final int from1) {
+	public boolean equalsFromPosition(final int from0, final AST f1,
+			final int from1) {
 		if ((size() - from0) != (f1.size() - from1)) {
 			return false;
 		}
@@ -359,7 +363,6 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 		int j = from1;
 
 		for (int i = from0; i < size() - 1; i++) {
-			checkCanceled();
 			if (!get(i + 1).equals(f1.get(1 + j++))) {
 				return false;
 			}
@@ -373,38 +376,38 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 	 * recursively call headSymbol().
 	 */
 	public ISymbol topHead() {
-		if (getHeader() instanceof ISymbol) {
+		if (head() instanceof ISymbol) {
 			// this should be the "normal" case:
-			return (ISymbol) getHeader(); // .toString();
+			return (ISymbol) head(); // .toString();
 		}
-		if (getHeader() instanceof IAST) {
+		if (head() instanceof IAST) {
 			// look recursivly for the head
-			return ((IAST) getHeader()).topHead();
+			return ((IAST) head()).topHead();
 		}
 		// * Numbers return the header strings
 		// * "DoubleComplex", "Double", "Integer", "Fraction", "Complex"
 		// * all other objects return <code>null</code>
-		if (getHeader() instanceof ISignedNumber) {
-			if (getHeader() instanceof INum) {
+		if (head() instanceof ISignedNumber) {
+			if (head() instanceof INum) {
 				return F.RealHead;
 			}
-			if (getHeader() instanceof IInteger) {
+			if (head() instanceof IInteger) {
 				return F.IntegerHead;
 			}
-			if (getHeader() instanceof IFraction) {
+			if (head() instanceof IFraction) {
 				return F.RationalHead;
 			}
 		}
-		if (getHeader() instanceof IComplex) {
+		if (head() instanceof IComplex) {
 			return F.ComplexHead;
 		}
-		if (getHeader() instanceof IComplexNum) {
+		if (head() instanceof IComplexNum) {
 			return F.ComplexHead;
 		}
-		if (getHeader() instanceof IPattern) {
+		if (head() instanceof IPattern) {
 			return F.PatternHead;
 		}
-		if (getHeader() instanceof IStringX) {
+		if (head() instanceof IStringX) {
 			return F.StringHead;
 		}
 		return null;
@@ -493,7 +496,7 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 	}
 
 	public boolean isList() {
-		return getHeader().equals(F.List);
+		return head().equals(F.List);
 	}
 
 	public boolean isTrue() {
@@ -519,7 +522,7 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 			dim[1] = ((IAST) get(1)).size() - 1;
 			return dim;
 		}
-		if (getHeader().equals(F.List)) {
+		if (head().equals(F.List)) {
 			final int[] dim = new int[2];
 			dim[0] = size() - 1;
 			dim[1] = 0;
@@ -528,7 +531,6 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 					dim[1] = ((IAST) get(1)).size() - 1;
 
 					for (int i = 2; i < size(); i++) {
-						checkCanceled();
 						if (!get(i).isList()) {
 							// row is no list
 							return null;
@@ -552,14 +554,13 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 		if (isEvalFlagOn(IAST.IS_VECTOR)) {
 			return size() - 1;
 		}
-		if (getHeader().equals(F.List)) {
+		if (head().equals(F.List)) {
 			final int dim = size() - 1;
 			if (dim > 0) {
 				if (get(1).isList()) {
 					return -1;
 				}
 				for (int i = 2; i < size(); i++) {
-					checkCanceled();
 					if (get(i).isList()) {
 						// row is a list
 						return -1;
@@ -589,8 +590,23 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 	public IAST apply(final IExpr head, final int start, final int end) {
 		final IAST ast = F.ast(head);
 		for (int i = start; i < end; i++) {
-			checkCanceled();
 			ast.add(get(i));
+		}
+		return ast;
+	}
+
+	public IExpr apply(List<? extends IExpr> leaves) {
+		final IAST ast = F.ast(head());
+		for (int i = 0; i < leaves.size(); i++) {
+			ast.add(leaves.get(i));
+		}
+		return ast;
+	}
+
+	public IExpr apply(IExpr... leaves) {
+		final IAST ast = F.ast(head());
+		for (int i = 0; i < leaves.length; i++) {
+			ast.add(leaves[i]);
 		}
 		return ast;
 	}
@@ -607,7 +623,8 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 		return f;
 	}
 
-	public IAST map(IAST resultAST, IAST secondAST, BiFunction<IExpr, IExpr, IExpr> function) {
+	public IAST map(IAST resultAST, IAST secondAST,
+			BiFunction<IExpr, IExpr, IExpr> function) {
 		for (int i = 1; i < size(); i++) {
 			resultAST.add(function.apply(get(i), secondAST.get(i)));
 		}
@@ -645,7 +662,7 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 	 * canonical less than, equal to, or greater than the specified AST.
 	 */
 	private int compareToTimes(final AST ast) {
-		final IExpr astHeader = ast.getHeader();
+		final IExpr astHeader = ast.head();
 		int cp;
 
 		if (astHeader == F.Power) {
@@ -659,8 +676,9 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 				}
 				return F.C1.compareTo(ast.get(2));
 			} else {
-				final IExpr lastTimesHeader = ((IAST) lastTimes).getHeader();
-				if ((lastTimesHeader == F.Power) && (((IAST) lastTimes).size() == 3)) {
+				final IExpr lastTimesHeader = ((IAST) lastTimes).head();
+				if ((lastTimesHeader == F.Power)
+						&& (((IAST) lastTimes).size() == 3)) {
 					// compare 2 Power ast's
 					cp = ((IAST) lastTimes).get(1).compareTo(ast.get(1));
 					if (cp != 0) {
@@ -685,7 +703,6 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 			int i1 = ast.size();
 			int commonArgCounter = (i0 > i1) ? i1 : i0;
 			while (--commonArgCounter > 0) {
-				checkCanceled();
 				cp = get(--i0).compareTo(ast.get(--i1));
 				if (cp != 0) {
 					return cp;
@@ -698,9 +715,10 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 	}
 
 	/**
-	 * Compares this expression with the specified expression for canonical order.
-	 * Returns a negative integer, zero, or a positive integer as this expression
-	 * is canonical less than, equal to, or greater than the specified expression.
+	 * Compares this expression with the specified expression for canonical
+	 * order. Returns a negative integer, zero, or a positive integer as this
+	 * expression is canonical less than, equal to, or greater than the
+	 * specified expression.
 	 */
 	public int compareTo(final IExpr expr) {
 		if (expr instanceof AST) {
@@ -708,10 +726,10 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 
 			if ((size() > 2) && (ast.size() > 2)) {
 				// special comparison for Times?
-				if (getHeader() == F.Times) {
+				if (head() == F.Times) {
 					return compareToTimes((AST) expr);
 				} else {
-					if (ast.getHeader() == F.Times) {
+					if (ast.head() == F.Times) {
 						return -1 * ast.compareToTimes(this);
 					}
 				}
@@ -729,14 +747,13 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 
 	private int compareToAST(final AST ast) {
 		// compare the headers of the 2 expressions:
-		int cp = getHeader().compareTo(ast.getHeader());
+		int cp = head().compareTo(ast.head());
 		if (cp != 0) {
 			return cp;
 		}
 
 		final int commonArgSize = (size() > ast.size()) ? ast.size() : size();
 		for (int i = 1; i < commonArgSize; i++) {
-			checkCanceled();
 			cp = get(i).compareTo(ast.get(i));
 			if (cp != 0) {
 				return cp;
@@ -789,24 +806,29 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 	final public int patternHashCode() {
 		if (fHashValue == 0) {
 			if (size() > 1) {
-				final int attr = topHead().getAttributes() & ISymbol.FLATORDERLESS;
+				final int attr = topHead().getAttributes()
+						& ISymbol.FLATORDERLESS;
 				if (attr != ISymbol.NOATTRIBUTE) {
 					if (attr == ISymbol.FLATORDERLESS) {
 						fHashValue = (17 * get(0).hashCode());
 					} else if (attr == ISymbol.FLAT) {
 						if (get(1) instanceof IAST) {
-							fHashValue = (31 * get(0).hashCode() + ((IAST) get(1)).get(0).hashCode());
+							fHashValue = (31 * get(0).hashCode() + ((IAST) get(1))
+									.get(0).hashCode());
 						} else {
-							fHashValue = (37 * get(0).hashCode() + get(1).hashCode());
+							fHashValue = (37 * get(0).hashCode() + get(1)
+									.hashCode());
 						}
 					} else { // attr == ISymbol.ORDERLESS
 						fHashValue = (17 * get(0).hashCode() + size());
 					}
 				} else {
 					if (get(1) instanceof IAST) {
-						fHashValue = (31 * get(0).hashCode() + ((IAST) get(1)).get(0).hashCode() + size());
+						fHashValue = (31 * get(0).hashCode()
+								+ ((IAST) get(1)).get(0).hashCode() + size());
 					} else {
-						fHashValue = (37 * get(0).hashCode() + get(1).hashCode() + size());
+						fHashValue = (37 * get(0).hashCode()
+								+ get(1).hashCode() + size());
 					}
 				}
 			} else {
@@ -843,8 +865,10 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 		// return ast;
 	}
 
-	public IExpr variables2Slots(final Map<IExpr, IExpr> map, final List<IExpr> variableList) {
-		return AST.COPY.replaceAll(this, new IsUnaryVariableOrPattern<IExpr>(), new UnaryVariable2Slot(map, variableList));
+	public IExpr variables2Slots(final Map<IExpr, IExpr> map,
+			final List<IExpr> variableList) {
+		return AST.COPY.replaceAll(this, new IsUnaryVariableOrPattern<IExpr>(),
+				new UnaryVariable2Slot(map, variableList));
 	}
 
 	// @Override
@@ -882,52 +906,51 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 	// return super.toString();
 	// }
 	// }
- 
-//	@Override
-//	public Text toText() {
-//		final TextBuilder buf = TextBuilder.newInstance();
-//		if (isAST(F.List)) {
-//			buf.append("{");
-//			for (int i = 1; i < size(); i++) {
-//				checkCanceled();
-//				final IExpr o = get(i);
-//				buf.append(o == this ? "(this AST)" : String.valueOf(o));
-//				if (i < size() - 1) {
-//					buf.append(", ");
-//				}
-//			}
-//			buf.append("}");
-//			return buf.toText();
-//
-//		} else if (isAST(F.Slot, 2) && (get(1) instanceof IInteger)) {
-//			try {
-//				final int slot = ((IInteger) get(1)).toInt();
-//				if (slot <= 0) {
-//					return super.toText();
-//				}
-//				if (slot == 1) {
-//					return Text.valueOf('#');
-//				}
-//				return Text.valueOf("#" + slot);
-//			} catch (final ArithmeticException e) {
-//				// fall through
-//			}
-//			return super.toText();
-//
-//		} else {
-//			return super.toText();
-//		}
-//	}
 
-	public String toFullForm() {
+	// @Override
+	// public Text toText() {
+	// final TextBuilder buf = TextBuilder.newInstance();
+	// if (isAST(F.List)) {
+	// buf.append("{");
+	// for (int i = 1; i < size(); i++) {
+	// checkCanceled();
+	// final IExpr o = get(i);
+	// buf.append(o == this ? "(this AST)" : String.valueOf(o));
+	// if (i < size() - 1) {
+	// buf.append(", ");
+	// }
+	// }
+	// buf.append("}");
+	// return buf.toText();
+	//
+	// } else if (isAST(F.Slot, 2) && (get(1) instanceof IInteger)) {
+	// try {
+	// final int slot = ((IInteger) get(1)).toInt();
+	// if (slot <= 0) {
+	// return super.toText();
+	// }
+	// if (slot == 1) {
+	// return Text.valueOf('#');
+	// }
+	// return Text.valueOf("#" + slot);
+	// } catch (final ArithmeticException e) {
+	// // fall through
+	// }
+	// return super.toText();
+	//
+	// } else {
+	// return super.toText();
+	// }
+	// }
+
+	public String fullFormString() {
 		final String sep = ", ";
-		final IExpr temp = getHeader();
+		final IExpr temp = head();
 		StringBuffer text = new StringBuffer();
-		text.append(temp.toFullForm());
+		text.append(temp.fullFormString());
 		text.append('[');
 		for (int i = 1; i < size(); i++) {
-			checkCanceled();
-			text.append(get(i).toFullForm());
+			text.append(get(i).fullFormString());
 			if (i < size() - 1) {
 				text.append(sep);
 			}
@@ -942,8 +965,8 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 		if (size() > 0 && isAST(F.List)) {
 			buf.append("{");
 			for (int i = 1; i < size(); i++) {
-				checkCanceled();
-				buf.append(get(i) == this ? "(this AST)" : String.valueOf(get(i)));
+				buf.append(get(i) == this ? "(this AST)" : String
+						.valueOf(get(i)));
 				if (i < size() - 1) {
 					buf.append(", ");
 				}
@@ -1017,24 +1040,24 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 	// }
 
 	public static AST newInstance(final IExpr head) {
-//		AST ast;
-//		if (Config.SERVER_MODE) {
-//			ast = FACTORY.object();
-//		} else {
-//			ast = new AST(5, false);
-//		}
+		// AST ast;
+		// if (Config.SERVER_MODE) {
+		// ast = FACTORY.object();
+		// } else {
+		// ast = new AST(5, false);
+		// }
 		AST ast = new AST(5, false);
 		ast.add(head);
 		return ast;
 	}
 
 	public static AST newInstance(final ISymbol symbol, final int[] arr) {
-//		AST ast;
-//		if (Config.SERVER_MODE) {
-//			ast = FACTORY.object();
-//		} else {
-//			ast = new AST(5, false);
-//		}
+		// AST ast;
+		// if (Config.SERVER_MODE) {
+		// ast = FACTORY.object();
+		// } else {
+		// ast = new AST(5, false);
+		// }
 		AST ast = new AST(5, false);
 		ast.add(symbol);
 		for (int i = 1; i <= arr.length; i++) {
@@ -1050,12 +1073,12 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 	 * @see Num
 	 */
 	public static AST newInstance(final ISymbol symbol, final double[] arr) {
-//		AST ast;
-//		if (Config.SERVER_MODE) {
-//			ast = FACTORY.object();
-//		} else {
-//			ast = new AST(5, false);
-//		}
+		// AST ast;
+		// if (Config.SERVER_MODE) {
+		// ast = FACTORY.object();
+		// } else {
+		// ast = new AST(5, false);
+		// }
 		AST ast = new AST(5, false);
 		ast.add(symbol);
 		for (int i = 1; i <= arr.length; i++) {
@@ -1071,12 +1094,12 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 	 * @see Num
 	 */
 	public static AST newInstance(final ISymbol symbol, final double[][] matrix) {
-//		AST ast;
-//		if (Config.SERVER_MODE) {
-//			ast = FACTORY.object();
-//		} else {
-//			ast = new AST(5, false);
-//		}
+		// AST ast;
+		// if (Config.SERVER_MODE) {
+		// ast = FACTORY.object();
+		// } else {
+		// ast = new AST(5, false);
+		// }
 		AST ast = new AST(5, false);
 		ast.add(symbol);
 		AST row;
@@ -1087,12 +1110,12 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 		return ast;
 	}
 
-//	@Override
-//	public void reset() {
-//		super.reset();
-//		fEvalFlags = 0;
-//		fHashValue = 0;
-//	}
+	// @Override
+	// public void reset() {
+	// super.reset();
+	// fEvalFlags = 0;
+	// fHashValue = 0;
+	// }
 
 	// public void readExternal(ObjectInput in) throws IOException,
 	// ClassNotFoundException {
@@ -1111,42 +1134,42 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 	// out.writeUTF(toFullForm());
 	// }
 
-//	public IExpr copy() {
-////		AST ast;
-////		if (Config.SERVER_MODE) {
-////			ast = FACTORY.object();
-////		} else {
-////			ast = new AST(5, false);
-////		}
-//		AST ast = new AST(5, false);
-//		ast.fEvalFlags = 0;
-//		ast.fHash = 0;
-//		ast.fHashValue = 0;
-//		for (int i = 0; i < size(); i++) {
-//			ast.add(get(i).copy());
-//		}
-//		return ast;
-//	}
-//
-//	public IExpr copyNew() {
-//		AST ast = new AST(5, false);
-//		ast.fEvalFlags = 0;
-//		ast.fHash = 0;
-//		ast.fHashValue = 0;
-//		for (int i = 0; i < size(); i++) {
-//			ast.add(get(i).copyNew());
-//		}
-//		return ast;
-//	}
+	// public IExpr copy() {
+	// // AST ast;
+	// // if (Config.SERVER_MODE) {
+	// // ast = FACTORY.object();
+	// // } else {
+	// // ast = new AST(5, false);
+	// // }
+	// AST ast = new AST(5, false);
+	// ast.fEvalFlags = 0;
+	// ast.fHash = 0;
+	// ast.fHashValue = 0;
+	// for (int i = 0; i < size(); i++) {
+	// ast.add(get(i).copy());
+	// }
+	// return ast;
+	// }
+	//
+	// public IExpr copyNew() {
+	// AST ast = new AST(5, false);
+	// ast.fEvalFlags = 0;
+	// ast.fHash = 0;
+	// ast.fHashValue = 0;
+	// for (int i = 0; i < size(); i++) {
+	// ast.add(get(i).copyNew());
+	// }
+	// return ast;
+	// }
 
-//	public void recycle() {
-//		for (int i = 0; i < size(); i++) {
-//			if (get(i) != null) {
-//				get(i).recycle();
-//			}
-//		}
-//		FACTORY.recycle(this);
-//	}
+	// public void recycle() {
+	// for (int i = 0; i < size(); i++) {
+	// if (get(i) != null) {
+	// get(i).recycle();
+	// }
+	// }
+	// FACTORY.recycle(this);
+	// }
 
 	public <T> T accept(IVisitor<T> visitor) {
 		return visitor.visit(this);
@@ -1196,7 +1219,7 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 	public Field<IExpr> getField() {
 		return ExprField.CONST;
 	}
-	
+
 	public final IExpr power(final Integer n) {
 		return F.function(F.Power, this, F.integer(n));
 	}
@@ -1206,7 +1229,8 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 	}
 
 	public IExpr div(final IExpr that) {
-		return F.eval(F.function(F.Times, this, F.function(F.Power, that, F.CN1)));
+		return F.eval(F.function(F.Times, this, F
+				.function(F.Power, that, F.CN1)));
 	}
 
 	public IExpr mod(final IExpr that) {
@@ -1247,7 +1271,8 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 		} else if (clazz.equals(String.class)) {
 			return toString();
 		}
-		throw new UnsupportedOperationException("AST.asType() - cast not supported.");
+		throw new UnsupportedOperationException(
+				"AST.asType() - cast not supported.");
 	}
 
 	/**
@@ -1257,7 +1282,7 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 	 * @param index
 	 * @return
 	 * @throws WrongArgumentType
-	 *           if the cast is not possible
+	 *             if the cast is not possible
 	 */
 	public IInteger getInt(int index) {
 		if (get(index) instanceof IInteger) {
@@ -1273,7 +1298,7 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 	 * @param index
 	 * @return
 	 * @throws WrongArgumentType
-	 *           if the cast is not possible
+	 *             if the cast is not possible
 	 */
 	public INumber getNumber(int index) {
 		if (get(index) instanceof INumber) {
@@ -1289,7 +1314,7 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 	 * @param index
 	 * @return
 	 * @throws WrongArgumentType
-	 *           if the cast is not possible
+	 *             if the cast is not possible
 	 */
 	public IAST getAST(int index) {
 		if (get(index) instanceof IAST) {
@@ -1311,5 +1336,13 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 			return (IAST) get(index);
 		}
 		throw new WrongArgumentType(this, get(index), index);
+	}
+
+	public List<IExpr> leaves() {
+		int sz = size();
+		if (sz < 2) {
+			return java.util.Collections.EMPTY_LIST;
+		}
+		return subList(1, sz);
 	}
 }

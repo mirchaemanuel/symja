@@ -523,7 +523,7 @@ public class OutputFormFactory implements IConstantHeaders {
 	 * @throws IOException
 	 */
 	public void convertAST(final Writer buf, final IAST function) throws IOException {
-		convert(buf, function.getHeader());
+		convert(buf, function.head());
 		if (fRelaxedSyntax) {
 			buf.write("(");
 		} else {
