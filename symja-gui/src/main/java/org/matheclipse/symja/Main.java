@@ -50,7 +50,6 @@ import javax.swing.JToolBar;
 
 import org.matheclipse.symja.plot.ParametricPlotWindow;
 import org.matheclipse.symja.plot.PlotWindow;
-import org.matheclipse.symja.plot.Plotter3D;
 
 /**
  * This is currently the primary class to launch CAS. Extends JApplet so that it
@@ -270,8 +269,8 @@ public class Main extends JApplet {
 				 * JDialog window = new Plot3DWindow(frame); window.pack();
 				 * window.show();
 				 */
-				Plotter3D plot = Plotter3D.getPlotter(false);
-				plot.plot(JOptionPane.showInputDialog("y(x, z) = ", "Sin[x] + Sin[z]"));
+//				Plotter3D plot = Plotter3D.getPlotter(false);
+//				plot.plot(JOptionPane.showInputDialog("y(x, z) = ", "Sin[x] + Sin[z]"));
 			}
 		});
 		plot.add(plot3D);

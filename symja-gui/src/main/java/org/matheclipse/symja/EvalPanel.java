@@ -52,7 +52,7 @@ import org.matheclipse.core.expression.F;
 import org.matheclipse.core.form.output.StringBufferWriter;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
-import org.matheclipse.core.interfaces.INum;
+import org.matheclipse.core.interfaces.INum; 
 import org.matheclipse.core.util.WriterOutputStream;
 
 public class EvalPanel extends JPanel implements DocumentListener {
