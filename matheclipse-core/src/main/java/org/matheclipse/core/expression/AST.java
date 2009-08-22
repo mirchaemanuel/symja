@@ -1,0 +1,1315 @@
+package org.matheclipse.core.expression;
+
+import static org.matheclipse.basic.Util.checkCanceled;
+
+import java.util.List;
+import java.util.Map;
+import java.util.StringTokenizer;
+
+import org.apache.commons.math.Field;
+import org.matheclipse.core.eval.exception.WrongArgumentType;
+import org.matheclipse.core.generic.IsUnaryVariableOrPattern;
+import org.matheclipse.core.generic.UnaryVariable2Slot;
+import org.matheclipse.core.generic.util.NestedFastTable;
+import org.matheclipse.core.interfaces.IAST;
+import org.matheclipse.core.interfaces.IComplex;
+import org.matheclipse.core.interfaces.IComplexNum;
+import org.matheclipse.core.interfaces.IExpr;
+import org.matheclipse.core.interfaces.IFraction;
+import org.matheclipse.core.interfaces.IInteger;
+import org.matheclipse.core.interfaces.INum;
+import org.matheclipse.core.interfaces.INumber;
+import org.matheclipse.core.interfaces.IPattern;
+import org.matheclipse.core.interfaces.ISignedNumber;
+import org.matheclipse.core.interfaces.IStringX;
+import org.matheclipse.core.interfaces.ISymbol;
+import org.matheclipse.core.patternmatching.PatternMatcher;
+import org.matheclipse.core.visit.IVisitor;
+import org.matheclipse.core.visit.IVisitorBoolean;
+import org.matheclipse.core.visit.IVisitorInt;
+import org.matheclipse.generic.interfaces.BiFunction;
+
+import apache.harmony.math.BigInteger;
+
+/**
+ * 
+ * (A)bstract (S)yntax (T)ree implementation of a given function
+ * 
+ * The AST represents a function in a tree expression (implemented as
+ * nested-lists) and contains
+ * <ul>
+ * <li>the operator of the tree (i.e. the "header"-symbol: Sin, Cos, Inverse,
+ * Times, Plus ...) in the 0-th element of the list</li>
+ * <li>the arguments of the function in the i-th element of the list. The
+ * argument numbering starts with index 1. An argument in the IAST is either -
+ * an IAST instance or - an atomic IExpr instance.</li>
+ * </ul>
+ * 
+ */
+public class AST extends NestedFastTable<IExpr> implements IAST {
+	private final static IAST AST_DUMMY_INSTANCE = new AST();
+
+	public final static ASTCopy COPY = new ASTCopy((Class<IAST>) AST_DUMMY_INSTANCE.getClass());
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 4295200630292148027L;
+
+	//
+	// protected static final XmlFormat<AST> LIST_XML = new XmlFormat<AST>(
+	// AST.class) {
+	// @Override
+	// public void format(AST c, XmlElement xml) {
+	// FastList<IExpr> list = xml.getContent();
+	// if (c.getHeader() instanceof ISymbol) {
+	// xml.setAttribute("head", c.getHeader().toString());
+	// } else {
+	// list.add(c.getHeader());
+	// }
+	// for (int i = 1; i < c.size(); i++) {
+	// list.add(c.get(i));
+	// }
+	//
+	// }
+	//
+	// @Override
+	// public AST parse(XmlElement xml) {
+	// AST c = (AST) xml.object();
+	// String headName = xml.getAttribute("head", "");
+	// FastList<IExpr> list = xml.getContent();
+	// int start = 0;
+	// if (headName == null) {
+	// c.setHeader(list.get(start++));
+	// } else {
+	// c.setHeader(ExprFactory.get().createSymbol(headName));
+	// }
+	// for (int i = start; i < list.size(); i++) {
+	// c.add(list.get(i));
+	// }
+	// return c;
+	// }
+	// };
+
+	/**
+	 * Flags for controlling evaluation and left-hand-side pattern-matching
+	 * expressions
+	 * 
+	 */
+	transient private int fEvalFlags = 0;
+
+	transient protected int fHashValue = 0;
+
+	/**
+	 * Holds the factory for this AST.
+	 */
+//	private static final ObjectFactory<AST> FACTORY = new ObjectFactory<AST>() {
+//		@Override
+//		public AST create() {
+//			if (Config.SERVER_MODE && currentQueue().getSize() >= Config.AST_MAX_POOL_SIZE) {
+//				throw new PoolMemoryExceededException("AST", currentQueue().getSize());
+//			}
+//			return new AST(5, false);
+//		}
+//
+//		@Override
+//		public void cleanup(AST obj) {
+//			obj.reset();
+//		}
+//
+//	};
+
+	/**
+	 * simple parser to simplify unit tests. The parser assumes that the String
+	 * contains no syntax errors.
+	 * 
+	 * Example &quot;List[x,List[y]]&quot;
+	 */
+	public static AST parse(final String inputString) {
+		final StringTokenizer tokenizer = new StringTokenizer(inputString, "[],", true);
+		final AST list = newInstance(null);
+		String token = tokenizer.nextToken();
+		list.setHeader(StringX.valueOf(token));
+		token = tokenizer.nextToken();
+		if (token.equals("[")) {
+			parseList(tokenizer, list);
+			return list;
+		}
+		// syntax fError occured
+		return null;
+
+	}
+
+	private static void parseList(final StringTokenizer tokenizer, final AST list) {
+		String token = tokenizer.nextToken();
+		String arg;
+		AST argList;
+		do {
+			checkCanceled();
+			if (token.equals("]")) {
+				return;
+			} else if (token.equals(",")) {
+				arg = tokenizer.nextToken();
+				token = tokenizer.nextToken();
+				if (token.equals("[")) {
+					argList = newInstance(null);
+					argList.setHeader(StringX.valueOf(arg));
+					parseList(tokenizer, argList);
+					list.add(argList);
+				} else {
+					list.add(StringX.valueOf(arg));
+					continue;
+				}
+			} else if (token.equals(" ")) {
+				// ignore spaces
+			} else {
+				arg = token;
+				token = tokenizer.nextToken();
+				if (token.equals("[")) {
+					argList = newInstance(null);
+					argList.setHeader(StringX.valueOf(arg));
+					parseList(tokenizer, argList);
+					list.add(argList);
+				} else {
+					list.add(StringX.valueOf(arg));
+					continue;
+				}
+			}
+			token = tokenizer.nextToken();
+		} while (tokenizer.hasMoreTokens());
+	}
+
+	/**
+	 * Constructs an empty list with an initial capacity of five.
+	 */
+	// private AST() {
+	// super(5);
+	// }
+	/**
+	 * Constructs an empty list with an initial capacity of ten.
+	 */
+	// private AST(final Collection<IExpr> c) {
+	// super(c);
+	// }
+	/**
+	 * Constructs a list containing the elements of the specified collection, in
+	 * the order they are returned by the collection's iterator. The <tt>AST</tt>
+	 * instance has an initial capacity of 110% the size of the specified
+	 * collection.
+	 * 
+	 * @param c
+	 *          the collection whose elements are to be placed into this list.
+	 * @throws NullPointerException
+	 *           if the specified collection is null.
+	 */
+	// private AST(final Collection<IExpr> c, final IExpr head) {
+	// super(c, head);
+	// }
+	//
+	// private AST(final IExpr[] arr, final IExpr head) {
+	// super(head);
+	// for (final IExpr expr : arr) {
+	// add(expr);
+	// }
+	// }
+	/*
+	 * Creates a new list form the given list and symbol. if incl is set to <code>
+	 * true </code> all arguments from index first to last-1 are copied in the new
+	 * list if incl is set to <code> false </code> all arguments excluded from
+	 * index first to last-1 are copied in the new list
+	 * 
+	 */
+	// private AST(final IAST f, final IExpr sym, final boolean incl,
+	// final int first, final int last) {
+	// super(sym);
+	// if (incl == true) {
+	// // range include
+	// for (int i = first; i < last; i++) {
+	// add(f.get(i));
+	// }
+	// } else {
+	// // range exclude
+	// for (int i = 0; i < first; i++) {
+	// add(f.get(i));
+	// }
+	// for (int j = last; j < f.size(); j++) {
+	// add(f.get(j));
+	// }
+	// }
+	// }
+	/**
+	 * Constructs an empty list with the specified initial capacity.
+	 * 
+	 * @param initialCapacity
+	 *          the initial capacity of the list.
+	 * @exception IllegalArgumentException
+	 *              if the specified initial capacity is negative
+	 */
+	// private AST(final int initialCapacity, final IExpr head) {
+	// super(initialCapacity + 1);
+	// setHeader(head);
+	// }
+	/**
+	 * Constructs an empty list with the specified initial capacity.
+	 * 
+	 * @param initialCapacity
+	 *          the initial capacity (i.e. number of arguments without the heade
+	 *          element) of the list.
+	 * @param setLength
+	 *          if <code>true</code>, sets the array's size to initialCapacity.
+	 */
+	private AST(final int initialCapacity, final boolean setLength) {
+		super(initialCapacity + 1, setLength ? initialCapacity + 1 : 0);
+		// if (setLength) {
+		// for (int i = 0; i < initialCapacity; i++) {
+		// add(null);
+		// }
+		// }
+	}
+
+	/**
+	 * Public no-arg constructor only needed for serialization
+	 * 
+	 */
+	public AST() {
+		super(0);
+	}
+
+	/**
+	 * Constructs a list with header <i>symbol</i> and the arguments containing
+	 * the given DoubleImpl values.
+	 * 
+	 * @see DoubleImpl
+	 */
+	// public AST(final ISymbol symbol, final double[] arr) {
+	// this(arr.length, true);
+	// for (int i = 1; i <= arr.length; i++) {
+	// set(i, new DoubleImpl(arr[i - 1]));
+	// }
+	// setHeader(symbol);
+	// }
+	/**
+	 * Constructs a list with header <i>symbol</i> and the arguments containing
+	 * the given DoubleImpl matrix values as <i>List</i> rows
+	 * 
+	 * @see DoubleImpl
+	 */
+	// private AST(final ISymbol symbol, final double[][] matrix) {
+	// this(matrix.length, true);
+	// AST row;
+	// final AbstractExpressionFactory f = EvalEngine.get()
+	// .getExpressionFactory();
+	// for (int i = 1; i <= matrix.length; i++) {
+	// row = new AST(AbstractExpressionFactory.List, matrix[i - 1]);
+	// set(i, row);
+	// }
+	// setHeader(symbol);
+	// }
+	/**
+	 * Constructs an AST with header <i>symbol</i> and the arguments containing
+	 * the given IntegerImpl values.
+	 * 
+	 * @see IntegerImpl
+	 */
+	// private AST(final ISymbol symbol, final int[] arr) {
+	// this(arr.length, true);
+	//
+	// for (int i = 1; i <= arr.length; i++) {
+	// set(i, IntegerImpl.valueOf(arr[i - 1]));
+	// }
+	// setHeader(symbol);
+	// }
+	/**
+	 * Constructs an AST with header <i>symbol</i> and the arguments containing
+	 * the given DoubleComplexImpl values.
+	 * 
+	 * @see DoubleComplexImpl
+	 */
+	// private AST(final ISymbol symbol, final DoubleComplexImpl[] arr) {
+	// this(arr.length, true);
+	// for (int i = 1; i <= arr.length; i++) {
+	// set(i, arr[i - 1]);
+	// }
+	// setHeader(symbol);
+	// }
+	/**
+	 * Returns a shallow copy of this <tt>AST</tt> instance. (The elements
+	 * themselves are not copied.)
+	 * 
+	 * @return a clone of this <tt>AST</tt> instance.
+	 */
+	@Override
+	public Object clone() {
+//		AST ast;
+//		if (Config.SERVER_MODE) {
+//			ast = FACTORY.object();
+//		} else {
+//			ast = new AST(5, false);
+//		}
+		AST ast = new AST(5, false);
+		ast.addAll(this);
+		return ast;
+	}
+
+	public boolean equalsFromPosition(final int from0, final AST f1, final int from1) {
+		if ((size() - from0) != (f1.size() - from1)) {
+			return false;
+		}
+
+		int j = from1;
+
+		for (int i = from0; i < size() - 1; i++) {
+			checkCanceled();
+			if (!get(i + 1).equals(f1.get(1 + j++))) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	/**
+	 * Returns the ISymbol of the IAST. If the head itself is a IAST it will
+	 * recursively call headSymbol().
+	 */
+	public ISymbol topHead() {
+		if (getHeader() instanceof ISymbol) {
+			// this should be the "normal" case:
+			return (ISymbol) getHeader(); // .toString();
+		}
+		if (getHeader() instanceof IAST) {
+			// look recursivly for the head
+			return ((IAST) getHeader()).topHead();
+		}
+		// * Numbers return the header strings
+		// * "DoubleComplex", "Double", "Integer", "Fraction", "Complex"
+		// * all other objects return <code>null</code>
+		if (getHeader() instanceof ISignedNumber) {
+			if (getHeader() instanceof INum) {
+				return F.RealHead;
+			}
+			if (getHeader() instanceof IInteger) {
+				return F.IntegerHead;
+			}
+			if (getHeader() instanceof IFraction) {
+				return F.RationalHead;
+			}
+		}
+		if (getHeader() instanceof IComplex) {
+			return F.ComplexHead;
+		}
+		if (getHeader() instanceof IComplexNum) {
+			return F.ComplexHead;
+		}
+		if (getHeader() instanceof IPattern) {
+			return F.PatternHead;
+		}
+		if (getHeader() instanceof IStringX) {
+			return F.StringHead;
+		}
+		return null;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.matheclipse.parser.interfaces.IExpr#hierarchy()
+	 */
+	public int hierarchy() {
+		return ASTID;
+	}
+
+	public boolean isLTOrdered(final IExpr obj) {
+		return compareTo(obj) < 0;
+	}
+
+	public boolean isLEOrdered(final IExpr obj) {
+		return compareTo(obj) <= 0;
+	}
+
+	public boolean isGTOrdered(final IExpr obj) {
+		return compareTo(obj) > 0;
+	}
+
+	public boolean isGEOrdered(final IExpr obj) {
+		return compareTo(obj) >= 0;
+	}
+
+	/**
+	 * @param properties
+	 */
+	// public void setProperties(ListProperties properties) {
+	// fProperties = properties;
+	// }
+	/**
+	 * @return
+	 */
+	public int getEvalFlags() {
+		return fEvalFlags;
+	}
+
+	/**
+	 * Set the flags to this value
+	 */
+	public void setEvalFlags(final int i) {
+		fEvalFlags = i;
+	}
+
+	/**
+	 * Add a new flag to th existing flags
+	 */
+	public void addEvalFlags(final int i) {
+		fEvalFlags |= i;
+	}
+
+	/**
+	 * @return
+	 */
+	public boolean isEvalFlagOn(final int i) {
+		return (fEvalFlags & i) == i;
+	}
+
+	/**
+	 * @return
+	 */
+	public boolean isEvalFlagOff(final int i) {
+		return (fEvalFlags & i) == 0;
+	}
+
+	public IExpr opposite() {
+		return F.function(F.Times, F.CN1, this);
+	}
+
+	public IExpr plus(final IExpr that) {
+		return F.function(F.Plus, this, that);
+	}
+
+	public IExpr inverse() {
+		return F.function(F.Power, this, F.CN1);
+	}
+
+	public IExpr times(final IExpr that) {
+		return F.function(F.Times, this, that);
+	}
+
+	public boolean isList() {
+		return getHeader().equals(F.List);
+	}
+
+	public boolean isTrue() {
+		return false;
+	}
+
+	public boolean isFalse() {
+		return false;
+	}
+
+	public boolean isSame(IExpr expression) {
+		return equals(expression);
+	}
+
+	public boolean isSame(IExpr expression, double epsilon) {
+		return equals(expression);
+	}
+
+	public int[] isMatrix() {
+		if (isEvalFlagOn(IAST.IS_MATRIX)) {
+			final int[] dim = new int[2];
+			dim[0] = size() - 1;
+			dim[1] = ((IAST) get(1)).size() - 1;
+			return dim;
+		}
+		if (getHeader().equals(F.List)) {
+			final int[] dim = new int[2];
+			dim[0] = size() - 1;
+			dim[1] = 0;
+			if (dim[0] > 0) {
+				if (get(1).isList()) {
+					dim[1] = ((IAST) get(1)).size() - 1;
+
+					for (int i = 2; i < size(); i++) {
+						checkCanceled();
+						if (!get(i).isList()) {
+							// row is no list
+							return null;
+						}
+						if (dim[1] != ((IAST) get(i)).size() - 1) {
+							// not the same length
+							return null;
+						}
+					}
+				} else {
+					return null;
+				}
+			}
+			addEvalFlags(IAST.IS_MATRIX);
+			return dim;
+		}
+		return null;
+	}
+
+	public int isVector() {
+		if (isEvalFlagOn(IAST.IS_VECTOR)) {
+			return size() - 1;
+		}
+		if (getHeader().equals(F.List)) {
+			final int dim = size() - 1;
+			if (dim > 0) {
+				if (get(1).isList()) {
+					return -1;
+				}
+				for (int i = 2; i < size(); i++) {
+					checkCanceled();
+					if (get(i).isList()) {
+						// row is a list
+						return -1;
+					}
+				}
+			}
+			addEvalFlags(IAST.IS_VECTOR);
+			return dim;
+		}
+		return -1;
+	}
+
+	public boolean isNumber() {
+		return false;
+	}
+
+	public IAST apply(final IExpr head) {
+		final AST ast = (AST) clone();
+		ast.setHeader(head);
+		return ast;
+	}
+
+	public IAST apply(final IExpr head, final int start) {
+		return apply(head, start, size());
+	}
+
+	public IAST apply(final IExpr head, final int start, final int end) {
+		final IAST ast = F.ast(head);
+		for (int i = start; i < end; i++) {
+			checkCanceled();
+			ast.add(get(i));
+		}
+		return ast;
+	}
+
+	public IAST map(final IExpr head) {
+		final AST f = (AST) clone();
+		final AST lst = newInstance(null);
+		lst.setHeader(head);
+		lst.add(null);
+		for (int i = 1; i < size(); i++) {
+			lst.set(1, get(i));
+			f.set(i, (IExpr) lst.clone());
+		}
+		return f;
+	}
+
+	public IAST map(IAST resultAST, IAST secondAST, BiFunction<IExpr, IExpr, IExpr> function) {
+		for (int i = 1; i < size(); i++) {
+			resultAST.add(function.apply(get(i), secondAST.get(i)));
+		}
+		return resultAST;
+	}
+
+	public boolean isAST(final IExpr header) {
+		return get(0).equals(header);
+	}
+
+	public boolean isAST(final IExpr header, final int size) {
+		return (size() == size) && get(0).equals(header);
+	}
+
+	public boolean isASTSizeGE(final IExpr header, final int size) {
+		return (size() >= size) && get(0).equals(header);
+	}
+
+	public boolean isAST(final String symbol) {
+		return get(0).toString().equals(symbol);
+	}
+
+	public boolean isAST(final String symbol, final int size) {
+		return (size() == size) && get(0).toString().equals(symbol);
+	}
+
+	public boolean isFree(final IExpr pattern) {
+		final PatternMatcher matcher = new PatternMatcher(pattern);
+		return !AST.COPY.some((IExpr) this, matcher, 1);
+	}
+
+	/**
+	 * Compares this (Times) AST with the specified AST for order. Returns a
+	 * negative integer, zero, or a positive integer as this (Times) AST is
+	 * canonical less than, equal to, or greater than the specified AST.
+	 */
+	private int compareToTimes(final AST ast) {
+		final IExpr astHeader = ast.getHeader();
+		int cp;
+
+		if (astHeader == F.Power) {
+			// compare from the last this (Times) element:
+			final IExpr lastTimes = get(size() - 1);
+
+			if (!(lastTimes instanceof IAST)) {
+				cp = lastTimes.compareTo(ast.get(1));
+				if (cp != 0) {
+					return cp;
+				}
+				return F.C1.compareTo(ast.get(2));
+			} else {
+				final IExpr lastTimesHeader = ((IAST) lastTimes).getHeader();
+				if ((lastTimesHeader == F.Power) && (((IAST) lastTimes).size() == 3)) {
+					// compare 2 Power ast's
+					cp = ((IAST) lastTimes).get(1).compareTo(ast.get(1));
+					if (cp != 0) {
+						return cp;
+					}
+					cp = ((IAST) lastTimes).get(2).compareTo(ast.get(2));
+					if (cp != 0) {
+						return cp;
+					}
+					return 1;
+				} else {
+					cp = lastTimes.compareTo(ast.get(1));
+					if (cp != 0) {
+						return cp;
+					}
+					return F.C1.compareTo(ast.get(2));
+				}
+			}
+		} else if (astHeader == F.Times) {
+			// compare from the last element:
+			int i0 = size();
+			int i1 = ast.size();
+			int commonArgCounter = (i0 > i1) ? i1 : i0;
+			while (--commonArgCounter > 0) {
+				checkCanceled();
+				cp = get(--i0).compareTo(ast.get(--i1));
+				if (cp != 0) {
+					return cp;
+				}
+			}
+			return size() - ast.size();
+		}
+
+		return compareToAST(ast);
+	}
+
+	/**
+	 * Compares this expression with the specified expression for canonical order.
+	 * Returns a negative integer, zero, or a positive integer as this expression
+	 * is canonical less than, equal to, or greater than the specified expression.
+	 */
+	public int compareTo(final IExpr expr) {
+		if (expr instanceof AST) {
+			final AST ast = (AST) expr;
+
+			if ((size() > 2) && (ast.size() > 2)) {
+				// special comparison for Times?
+				if (getHeader() == F.Times) {
+					return compareToTimes((AST) expr);
+				} else {
+					if (ast.getHeader() == F.Times) {
+						return -1 * ast.compareToTimes(this);
+					}
+				}
+			}
+
+			return compareToAST(ast);
+		}
+
+		if (expr instanceof Symbol) {
+			return -1 * ((Symbol) expr).compareTo(this);
+		}
+
+		return (hierarchy() - (expr).hierarchy());
+	}
+
+	private int compareToAST(final AST ast) {
+		// compare the headers of the 2 expressions:
+		int cp = getHeader().compareTo(ast.getHeader());
+		if (cp != 0) {
+			return cp;
+		}
+
+		final int commonArgSize = (size() > ast.size()) ? ast.size() : size();
+		for (int i = 1; i < commonArgSize; i++) {
+			checkCanceled();
+			cp = get(i).compareTo(ast.get(i));
+			if (cp != 0) {
+				return cp;
+			}
+		}
+
+		return size() - ast.size();
+	}
+
+	@Override
+	public int hashCode() {
+		if (fHash == 0) {
+			if (size() > 1) {
+				fHash = (31 * get(0).hashCode() + get(1).hashCode() + size());
+			} else {
+				if (size() == 1) {
+					fHash = (17 * get(0).hashCode());
+				} else {
+					// this case shouldn't happen
+					fHash = 41;
+				}
+			}
+		}
+		// } else if (DEBUG_HASH) {
+		// int dHash = 0;
+		// if (size() >= 1) {
+		// if (size() == 1) {
+		// dHash = 17 * get(0).hashCode();
+		// } else {
+		// if (get(1) instanceof NestedList) {
+		// dHash = 31 * get(0).hashCode() + ((NestedList)
+		// get(1)).get(0).hashCode()
+		// + size();
+		// } else {
+		// dHash = 37 * get(0).hashCode() + get(1).hashCode() + size();
+		// }
+		// }
+		// }
+		// if (dHash != fHash) {
+		// throw new RuntimeException("Different hash values in AST class");
+		// }
+		// }
+		return fHash;
+	}
+
+	/**
+	 * Calculate a special hash value to find a matching rule in a hash table
+	 * 
+	 */
+	final public int patternHashCode() {
+		if (fHashValue == 0) {
+			if (size() > 1) {
+				final int attr = topHead().getAttributes() & ISymbol.FLATORDERLESS;
+				if (attr != ISymbol.NOATTRIBUTE) {
+					if (attr == ISymbol.FLATORDERLESS) {
+						fHashValue = (17 * get(0).hashCode());
+					} else if (attr == ISymbol.FLAT) {
+						if (get(1) instanceof IAST) {
+							fHashValue = (31 * get(0).hashCode() + ((IAST) get(1)).get(0).hashCode());
+						} else {
+							fHashValue = (37 * get(0).hashCode() + get(1).hashCode());
+						}
+					} else { // attr == ISymbol.ORDERLESS
+						fHashValue = (17 * get(0).hashCode() + size());
+					}
+				} else {
+					if (get(1) instanceof IAST) {
+						fHashValue = (31 * get(0).hashCode() + ((IAST) get(1)).get(0).hashCode() + size());
+					} else {
+						fHashValue = (37 * get(0).hashCode() + get(1).hashCode() + size());
+					}
+				}
+			} else {
+				if (size() == 1) {
+					fHashValue = (17 * get(0).hashCode());
+				} else {
+					// this case shouldn't happen
+					fHashValue = 41;
+				}
+			}
+		}
+		return fHashValue;
+	}
+
+	public boolean isAtom() {
+		return false;
+	}
+
+	/**
+	 * 
+	 * @deprecated
+	 * 
+	 */
+	// @Deprecated
+	// final public int argsSize() {
+	// return size() - 1;
+	// }
+	@Deprecated
+	public IAST copyHead() {
+		// copy the head
+		return newInstance(get(0));
+		// final AST ast = new AST(size() - 1, false);
+		// ast.add(get(0));
+		// return ast;
+	}
+
+	public IExpr variables2Slots(final Map<IExpr, IExpr> map, final List<IExpr> variableList) {
+		return AST.COPY.replaceAll(this, new IsUnaryVariableOrPattern<IExpr>(), new UnaryVariable2Slot(map, variableList));
+	}
+
+	// @Override
+	// public String toString() {
+	// if (isAST(AbstractExpressionFactory.List)) {
+	// final StringBuffer buf = new StringBuffer();
+	// buf.append("{");
+	// for (int i = 1; i < size(); i++) {
+	// final IExpr o = get(i);
+	// buf.append(o == this ? "(this AST)" : String.valueOf(o));
+	// if (i < size() - 1) {
+	// buf.append(", ");
+	// }
+	// }
+	// buf.append("}");
+	// return buf.toString();
+	//
+	// } else if (isAST(AbstractExpressionFactory.Slot, 2)
+	// && (get(1) instanceof IInteger)) {
+	// try {
+	// final int slot = ((IInteger) get(1)).toInt();
+	// if (slot <= 0) {
+	// return super.toString();
+	// }
+	// if (slot == 1) {
+	// return "#";
+	// }
+	// return "#" + slot;
+	// } catch (final ArithmeticException e) {
+	// // fall through
+	// }
+	// return super.toString();
+	//
+	// } else {
+	// return super.toString();
+	// }
+	// }
+ 
+//	@Override
+//	public Text toText() {
+//		final TextBuilder buf = TextBuilder.newInstance();
+//		if (isAST(F.List)) {
+//			buf.append("{");
+//			for (int i = 1; i < size(); i++) {
+//				checkCanceled();
+//				final IExpr o = get(i);
+//				buf.append(o == this ? "(this AST)" : String.valueOf(o));
+//				if (i < size() - 1) {
+//					buf.append(", ");
+//				}
+//			}
+//			buf.append("}");
+//			return buf.toText();
+//
+//		} else if (isAST(F.Slot, 2) && (get(1) instanceof IInteger)) {
+//			try {
+//				final int slot = ((IInteger) get(1)).toInt();
+//				if (slot <= 0) {
+//					return super.toText();
+//				}
+//				if (slot == 1) {
+//					return Text.valueOf('#');
+//				}
+//				return Text.valueOf("#" + slot);
+//			} catch (final ArithmeticException e) {
+//				// fall through
+//			}
+//			return super.toText();
+//
+//		} else {
+//			return super.toText();
+//		}
+//	}
+
+	public String toFullForm() {
+		final String sep = ", ";
+		final IExpr temp = getHeader();
+		StringBuffer text = new StringBuffer();
+		text.append(temp.toFullForm());
+		text.append('[');
+		for (int i = 1; i < size(); i++) {
+			checkCanceled();
+			text.append(get(i).toFullForm());
+			if (i < size() - 1) {
+				text.append(sep);
+			}
+		}
+		text.append(']');
+		return text.toString();
+	}
+
+	@Override
+	public String toString() {
+		final StringBuffer buf = new StringBuffer();
+		if (size() > 0 && isAST(F.List)) {
+			buf.append("{");
+			for (int i = 1; i < size(); i++) {
+				checkCanceled();
+				buf.append(get(i) == this ? "(this AST)" : String.valueOf(get(i)));
+				if (i < size() - 1) {
+					buf.append(", ");
+				}
+			}
+			buf.append("}");
+			return buf.toString();
+
+		} else if (isAST(F.Slot, 2) && (get(1) instanceof IInteger)) {
+			try {
+				final int slot = ((IInteger) get(1)).toInt();
+				if (slot <= 0) {
+					return super.toString();
+				}
+				if (slot == 1) {
+					return "#";
+				}
+				return "#" + slot;
+			} catch (final ArithmeticException e) {
+				// fall through
+			}
+			return super.toString();
+
+		} else {
+			return super.toString();
+		}
+	}
+
+	/**
+	 * Get the range of elements [1..sizeOfAST[ which are the arguments of a
+	 * function
+	 * 
+	 * @return
+	 */
+	public ASTRange args() {
+		return new ASTRange(this, 1);
+	}
+
+	/**
+	 * Get the range of elements [0..sizeOfAST[ of the AST
+	 * 
+	 * @return
+	 */
+	public ASTRange range() {
+		return new ASTRange(this, 0, size());
+	}
+
+	/**
+	 * Get the range of elements [start..sizeOfAST[ of the AST
+	 * 
+	 * @return
+	 */
+	public ASTRange range(final int start) {
+		return new ASTRange(this, start, size());
+	}
+
+	/**
+	 * Get the range of elements [start..end[ of the AST
+	 * 
+	 * @return
+	 */
+	public ASTRange range(final int start, final int end) {
+		return new ASTRange(this, start, end);
+	}
+
+	// public IExpr save() {
+	// return (IExpr) super.export();
+	// }
+	//
+	// public IExpr saveHeap() {
+	// return (IExpr) super.moveHeap();
+	// }
+
+	public static AST newInstance(final IExpr head) {
+//		AST ast;
+//		if (Config.SERVER_MODE) {
+//			ast = FACTORY.object();
+//		} else {
+//			ast = new AST(5, false);
+//		}
+		AST ast = new AST(5, false);
+		ast.add(head);
+		return ast;
+	}
+
+	public static AST newInstance(final ISymbol symbol, final int[] arr) {
+//		AST ast;
+//		if (Config.SERVER_MODE) {
+//			ast = FACTORY.object();
+//		} else {
+//			ast = new AST(5, false);
+//		}
+		AST ast = new AST(5, false);
+		ast.add(symbol);
+		for (int i = 1; i <= arr.length; i++) {
+			ast.add(i, IntegerSym.valueOf(arr[i - 1]));
+		}
+		return ast;
+	}
+
+	/**
+	 * Constructs a list with header <i>symbol</i> and the arguments containing
+	 * the given DoubleImpl values.
+	 * 
+	 * @see Num
+	 */
+	public static AST newInstance(final ISymbol symbol, final double[] arr) {
+//		AST ast;
+//		if (Config.SERVER_MODE) {
+//			ast = FACTORY.object();
+//		} else {
+//			ast = new AST(5, false);
+//		}
+		AST ast = new AST(5, false);
+		ast.add(symbol);
+		for (int i = 1; i <= arr.length; i++) {
+			ast.add(i, Num.valueOf(arr[i - 1]));
+		}
+		return ast;
+	}
+
+	/**
+	 * Constructs a list with header <i>symbol</i> and the arguments containing
+	 * the given DoubleImpl matrix values as <i>List</i> rows
+	 * 
+	 * @see Num
+	 */
+	public static AST newInstance(final ISymbol symbol, final double[][] matrix) {
+//		AST ast;
+//		if (Config.SERVER_MODE) {
+//			ast = FACTORY.object();
+//		} else {
+//			ast = new AST(5, false);
+//		}
+		AST ast = new AST(5, false);
+		ast.add(symbol);
+		AST row;
+		for (int i = 1; i <= matrix.length; i++) {
+			row = newInstance(F.List, matrix[i - 1]);
+			ast.add(i, row);
+		}
+		return ast;
+	}
+
+//	@Override
+//	public void reset() {
+//		super.reset();
+//		fEvalFlags = 0;
+//		fHashValue = 0;
+//	}
+
+	// public void readExternal(ObjectInput in) throws IOException,
+	// ClassNotFoundException {
+	// Parser parser = new Parser();
+	// String astString = in.readUTF();
+	// ASTNode node = parser.parseExpression(astString);
+	// IExpr inExpr = AST2Expr.CONST.convert(this, (FunctionNode) node);
+	// if (Config.DEBUG) {
+	// if (!(inExpr instanceof IAST)) {
+	// throw new IllegalStateException("AST#readExternal()");
+	// }
+	// }
+	// }
+	//
+	// public void writeExternal(ObjectOutput out) throws IOException {
+	// out.writeUTF(toFullForm());
+	// }
+
+//	public IExpr copy() {
+////		AST ast;
+////		if (Config.SERVER_MODE) {
+////			ast = FACTORY.object();
+////		} else {
+////			ast = new AST(5, false);
+////		}
+//		AST ast = new AST(5, false);
+//		ast.fEvalFlags = 0;
+//		ast.fHash = 0;
+//		ast.fHashValue = 0;
+//		for (int i = 0; i < size(); i++) {
+//			ast.add(get(i).copy());
+//		}
+//		return ast;
+//	}
+//
+//	public IExpr copyNew() {
+//		AST ast = new AST(5, false);
+//		ast.fEvalFlags = 0;
+//		ast.fHash = 0;
+//		ast.fHashValue = 0;
+//		for (int i = 0; i < size(); i++) {
+//			ast.add(get(i).copyNew());
+//		}
+//		return ast;
+//	}
+
+//	public void recycle() {
+//		for (int i = 0; i < size(); i++) {
+//			if (get(i) != null) {
+//				get(i).recycle();
+//			}
+//		}
+//		FACTORY.recycle(this);
+//	}
+
+	public <T> T accept(IVisitor<T> visitor) {
+		return visitor.visit(this);
+	}
+
+	public boolean accept(IVisitorBoolean visitor) {
+		return visitor.visit(this);
+	}
+
+	public int accept(IVisitorInt visitor) {
+		return visitor.visit(this);
+	}
+
+	// private void readObject(java.io.ObjectInputStream stream)
+	// throws IOException, ClassNotFoundException {
+	// stream.defaultReadObject();
+	// fEvalFlags = 0;
+	// fHashValue = 0;
+	// }
+
+	/**
+	 * Additional negative method, which works like opposite to fulfill groovy's
+	 * method signature
+	 * 
+	 * @return
+	 */
+	public final IExpr negative() {
+		return opposite();
+	}
+
+	public IExpr minus(final IExpr that) {
+		return F.function(F.Plus, this, F.function(F.Times, F.CN1, that));
+	}
+
+	/**
+	 * Additional multiply method, which works like times to fulfill groovy's
+	 * method signature
+	 * 
+	 * @param that
+	 * @return
+	 */
+	public final IExpr multiply(final IExpr that) {
+		return times(that);
+	}
+
+	@Override
+	public Field<IExpr> getField() {
+		return ExprField.CONST;
+	}
+	
+	public final IExpr power(final Integer n) {
+		return F.function(F.Power, this, F.integer(n));
+	}
+
+	public final IExpr power(final IExpr that) {
+		return F.function(F.Power, this, that);
+	}
+
+	public IExpr div(final IExpr that) {
+		return F.eval(F.function(F.Times, this, F.function(F.Power, that, F.CN1)));
+	}
+
+	public IExpr mod(final IExpr that) {
+		return F.function(F.Mod, this, that);
+	}
+
+	public IExpr and(final IExpr that) {
+		return F.function(F.And, this, that);
+	}
+
+	public IExpr or(final IExpr that) {
+		return F.function(F.Or, this, that);
+	}
+
+	public IExpr getAt(final int index) {
+		return get(index);
+	}
+
+	public Object asType(Class clazz) {
+		if (clazz.equals(Boolean.class)) {
+			IExpr temp = F.eval(this);
+			if (temp.equals(F.True)) {
+				return Boolean.TRUE;
+			}
+			if (temp.equals(F.False)) {
+				return Boolean.FALSE;
+			}
+		} else if (clazz.equals(Integer.class)) {
+			IExpr temp = F.eval(this);
+			if (temp instanceof IntegerSym) {
+				return Integer.valueOf(((IInteger) this).toInt());
+			}
+		} else if (clazz.equals(java.math.BigInteger.class)) {
+			IExpr temp = F.eval(this);
+			if (temp instanceof IntegerSym) {
+				return new BigInteger(((IntegerSym) temp).toByteArray());
+			}
+		} else if (clazz.equals(String.class)) {
+			return toString();
+		}
+		throw new UnsupportedOperationException("AST.asType() - cast not supported.");
+	}
+
+	/**
+	 * Casts an <code>IExpr</code> at position <code>index</code> to an
+	 * <code>IInteger</code>.
+	 * 
+	 * @param index
+	 * @return
+	 * @throws WrongArgumentType
+	 *           if the cast is not possible
+	 */
+	public IInteger getInt(int index) {
+		if (get(index) instanceof IInteger) {
+			return (IInteger) get(index);
+		}
+		throw new WrongArgumentType(this, get(index), index);
+	}
+
+	/**
+	 * Casts an <code>IExpr</code> at position <code>index</code> to an
+	 * <code>INumber</code>.
+	 * 
+	 * @param index
+	 * @return
+	 * @throws WrongArgumentType
+	 *           if the cast is not possible
+	 */
+	public INumber getNumber(int index) {
+		if (get(index) instanceof INumber) {
+			return (INumber) get(index);
+		}
+		throw new WrongArgumentType(this, get(index), index);
+	}
+
+	/**
+	 * Casts an <code>IExpr</code> at position <code>index</code> to an
+	 * <code>IAST</code>.
+	 * 
+	 * @param index
+	 * @return
+	 * @throws WrongArgumentType
+	 *           if the cast is not possible
+	 */
+	public IAST getAST(int index) {
+		if (get(index) instanceof IAST) {
+			return (IAST) get(index);
+		}
+		throw new WrongArgumentType(this, get(index), index);
+	}
+
+	/**
+	 * Casts an <code>IExpr</code> which is a list at position
+	 * <code>index</code> to an <code>IAST</code>.
+	 * 
+	 * @param index
+	 * @return
+	 * @throws WrongArgumentType
+	 */
+	public IAST getList(int index) {
+		if (get(index).isList()) {
+			return (IAST) get(index);
+		}
+		throw new WrongArgumentType(this, get(index), index);
+	}
+}
