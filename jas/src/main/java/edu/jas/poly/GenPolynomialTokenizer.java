@@ -399,7 +399,7 @@ public class GenPolynomialTokenizer  {
                 if (debug) logger.debug("factor " + c);
                 ie = nextExponent();
                 if (debug) logger.debug("ie " + ie);
-                c = Power.positivePower(c,ie);
+                c = (GenPolynomial)Power.positivePower(c,ie); 
                 if (debug) logger.debug("factor^ie " + c);
                 b = b.multiply(c); 
                 tt = tok.nextToken();
