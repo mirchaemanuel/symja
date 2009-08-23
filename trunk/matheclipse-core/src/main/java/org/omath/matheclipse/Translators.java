@@ -119,7 +119,7 @@ public class Translators {
 	}
 
 	/**
-	 * Convert a matheclipse expression into an omath IExpr
+	 * Convert a matheclipse IExpr into an omath expression
 	 * 
 	 * @param expression
 	 * @return <code>null</code> if no conversion is possible
