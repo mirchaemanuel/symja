@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="matheclipse-parser/src/main/java"/>
+	<classpathentry kind="src" path="surface-plotter/src/main/java"/>
 	<classpathentry kind="src" path="jas/src/main/java"/>
 	<classpathentry kind="src" path="commons-math/src/main/java"/>
 	<classpathentry kind="src" path="matheclipse-core/src/main/java"/>
@@ -23,5 +24,7 @@
 	<classpathentry kind="con" path="org.maven.ide.eclipse.MAVEN2_CLASSPATH_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/log4j-1.2.11.jar"/>
 	<classpathentry kind="lib" path="C:/galileo/eclipse/plugins/org.junit4_4.5.0.v20090423/junit.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/iterables"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/org.omath.api"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
