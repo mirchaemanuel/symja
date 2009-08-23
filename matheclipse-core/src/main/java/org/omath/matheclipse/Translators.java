@@ -40,7 +40,8 @@ public class Translators {
 						Parser parser = new Parser();
 						ASTNode node = parser
 								.parse(expression.fullFormString());
-						// if the node is definitely a function it could be
+						// if the input is definitely a
+						// AbstractFullFormExpression it could be
 						// safely cast to an IAST in the next step
 						IExpr inExpr = AST2Expr.CONST.convert(node);
 						IExpr result = util.evaluate(inExpr);
