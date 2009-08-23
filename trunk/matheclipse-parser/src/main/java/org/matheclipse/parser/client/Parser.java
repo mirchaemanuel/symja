@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 package org.matheclipse.parser.client;
- 
+
 import org.matheclipse.parser.client.ast.ASTNode;
 import org.matheclipse.parser.client.ast.FunctionNode;
 import org.matheclipse.parser.client.ast.IConstantOperators;
@@ -27,14 +27,14 @@ import org.matheclipse.parser.client.operator.Operator;
 import org.matheclipse.parser.client.operator.PostfixOperator;
 import org.matheclipse.parser.client.operator.PrefixOperator;
 
-/** 
- * Create an expression of the <code>ASTNode</code> class-hierarchy from a
- * math formulas string representation
+/**
+ * Create an expression of the <code>ASTNode</code> class-hierarchy from a math
+ * formulas string representation
  * 
  * See <a
- * href="http://en.wikipedia.org/wiki/Operator-precedence_parser">Operator-precedence
- * parser</a> for the idea, how to parse the operators depending on their
- * precedence.
+ * href="http://en.wikipedia.org/wiki/Operator-precedence_parser">Operator
+ * -precedence parser</a> for the idea, how to parse the operators depending on
+ * their precedence.
  */
 public class Parser extends Scanner {
 	/**
@@ -46,11 +46,25 @@ public class Parser extends Scanner {
 		this(ASTNodeFactory.MMA_STYLE_FACTORY, false);
 	}
 
+	/**
+	 * 
+	 * @param relaxedSyntax
+	 *            if <code>true</code>, use '('...')' as brackets for arguments
+	 * @throws SyntaxError
+	 */
 	public Parser(final boolean relaxedSyntax) throws SyntaxError {
 		this(ASTNodeFactory.MMA_STYLE_FACTORY, relaxedSyntax);
 	}
 
-	public Parser(IParserFactory factory, final boolean relaxedSyntax) throws SyntaxError {
+	/**
+	 * 
+	 * @param factory
+	 * @param relaxedSyntax
+	 *            if <code>true</code>, use '('...')' as brackets for arguments
+	 * @throws SyntaxError
+	 */
+	public Parser(IParserFactory factory, final boolean relaxedSyntax)
+			throws SyntaxError {
 		super();
 		this.fRelaxedSyntax = relaxedSyntax;
 		this.fFactory = factory;
@@ -146,7 +160,8 @@ public class Parser extends Scanner {
 			final PrefixOperator prefixOperator = determinePrefixOperator();
 			if (prefixOperator != null) {
 				getNextToken();
-				final ASTNode temp = parseLookaheadOperator(prefixOperator.getPrecedence());
+				final ASTNode temp = parseLookaheadOperator(prefixOperator
+						.getPrecedence());
 				if (prefixOperator.getFunctionName().equals("PreMinus")) {
 					// special cases for negative numbers
 					if (temp instanceof NumberNode) {
@@ -156,7 +171,8 @@ public class Parser extends Scanner {
 				}
 				return prefixOperator.createFunction(fFactory, temp);
 			}
-			throwSyntaxError("Operator: " + fOperatorString + " is no prefix operator.");
+			throwSyntaxError("Operator: " + fOperatorString
+					+ " is no prefix operator.");
 
 		}
 		return getPart();
@@ -166,10 +182,12 @@ public class Parser extends Scanner {
 		ASTNode rhs = parsePrimary();
 		while (true) {
 			final int lookahead = fToken;
-			if ((fToken == TT_LIST_OPEN) || (fToken == TT_PRECEDENCE_OPEN) || (fToken == TT_IDENTIFIER) || (fToken == TT_STRING)
+			if ((fToken == TT_LIST_OPEN) || (fToken == TT_PRECEDENCE_OPEN)
+					|| (fToken == TT_IDENTIFIER) || (fToken == TT_STRING)
 					|| (fToken == TT_DIGIT)) {
 				// lazy evaluation of multiplication
-				InfixOperator timesOperator = (InfixOperator) fFactory.get("Times");
+				InfixOperator timesOperator = (InfixOperator) fFactory
+						.get("Times");
 				if (timesOperator.getPrecedence() > min_precedence) {
 					rhs = parseOperators(rhs, timesOperator.getPrecedence());
 					continue;
@@ -210,12 +228,12 @@ public class Parser extends Scanner {
 
 	/**
 	 * See <a
-	 * href="http://en.wikipedia.org/wiki/Operator-precedence_parser">Operator-precedence
-	 * parser</a> for the idea, how to parse the operators depending on their
-	 * precedence.
+	 * href="http://en.wikipedia.org/wiki/Operator-precedence_parser">Operator
+	 * -precedence parser</a> for the idea, how to parse the operators depending
+	 * on their precedence.
 	 * 
 	 * @param lhs
-	 *          the already parsed left-hand-side of the operator
+	 *            the already parsed left-hand-side of the operator
 	 * @param min_precedence
 	 * @return
 	 */
@@ -225,13 +243,15 @@ public class Parser extends Scanner {
 		InfixOperator infixOperator;
 		PostfixOperator postfixOperator;
 		while (true) {
-			if ((fToken == TT_LIST_OPEN) || (fToken == TT_PRECEDENCE_OPEN) || (fToken == TT_IDENTIFIER) || (fToken == TT_STRING)
+			if ((fToken == TT_LIST_OPEN) || (fToken == TT_PRECEDENCE_OPEN)
+					|| (fToken == TT_IDENTIFIER) || (fToken == TT_STRING)
 					|| (fToken == TT_DIGIT)) {
 				// lazy evaluation of multiplication
 				oper = fFactory.get("Times");
 				if (oper.getPrecedence() >= min_precedence) {
 					rhs = parseLookaheadOperator(oper.getPrecedence());
-					lhs = fFactory.createFunction(fFactory.createSymbol(oper.getFunctionName()), lhs, rhs);
+					lhs = fFactory.createFunction(fFactory.createSymbol(oper
+							.getFunctionName()), lhs, rhs);
 					lhs = parseArguments(lhs);
 					continue;
 				}
@@ -244,7 +264,8 @@ public class Parser extends Scanner {
 				if (infixOperator != null) {
 					if (infixOperator.getPrecedence() >= min_precedence) {
 						getNextToken();
-						rhs = parseLookaheadOperator(infixOperator.getPrecedence());
+						rhs = parseLookaheadOperator(infixOperator
+								.getPrecedence());
 						lhs = infixOperator.createFunction(fFactory, lhs, rhs);
 						lhs = parseArguments(lhs);
 						continue;
@@ -258,7 +279,8 @@ public class Parser extends Scanner {
 						lhs = parseArguments(lhs);
 						continue;
 					}
-					throwSyntaxError("Operator: " + fOperatorString + " is no infix or postfix operator.");
+					throwSyntaxError("Operator: " + fOperatorString
+							+ " is no infix or postfix operator.");
 				}
 			}
 			break;
@@ -270,7 +292,7 @@ public class Parser extends Scanner {
 	 * Parse the given <code>expression</code> String into an ASTNode.
 	 * 
 	 * @param expression
-	 *          a formula string which should be parsed.
+	 *            a formula string which should be parsed.
 	 * @return the parsed ASTNode representation of the given formula string
 	 * @throws SyntaxError
 	 */
@@ -329,7 +351,9 @@ public class Parser extends Scanner {
 		try {
 			intValue = Integer.parseInt(number, numFormat);
 		} catch (final NumberFormatException e) {
-			throwSyntaxError("Number format error (not an int type): " + number, number.length());
+			throwSyntaxError(
+					"Number format error (not an int type): " + number, number
+							.length());
 		}
 		getNextToken();
 		return intValue;
@@ -365,7 +389,8 @@ public class Parser extends Scanner {
 	 * 
 	 */
 	private ASTNode getList() throws SyntaxError {
-		final FunctionNode function = fFactory.createFunction(fFactory.createSymbol(IConstantOperators.List));
+		final FunctionNode function = fFactory.createFunction(fFactory
+				.createSymbol(IConstantOperators.List));
 
 		getNextToken();
 
@@ -488,7 +513,8 @@ public class Parser extends Scanner {
 		}
 		if (fToken == TT_PERCENT) {
 
-			final FunctionNode out = fFactory.createFunction(fFactory.createSymbol(IConstantOperators.Out));
+			final FunctionNode out = fFactory.createFunction(fFactory
+					.createSymbol(IConstantOperators.Out));
 
 			int countPercent = 1;
 			getNextToken();
@@ -509,7 +535,8 @@ public class Parser extends Scanner {
 		if (fToken == TT_SLOT) {
 
 			getNextToken();
-			final FunctionNode slot = fFactory.createFunction(fFactory.createSymbol(IConstantOperators.Slot));
+			final FunctionNode slot = fFactory.createFunction(fFactory
+					.createSymbol(IConstantOperators.Slot));
 			if (fToken == TT_DIGIT) {
 				slot.add(getNumber(false));
 			} else {
@@ -521,7 +548,8 @@ public class Parser extends Scanner {
 		if (fToken == TT_SLOTSEQUENCE) {
 
 			getNextToken();
-			final FunctionNode slotSequencce = fFactory.createFunction(fFactory.createSymbol(IConstantOperators.SlotSequence));
+			final FunctionNode slotSequencce = fFactory.createFunction(fFactory
+					.createSymbol(IConstantOperators.SlotSequence));
 			if (fToken == TT_DIGIT) {
 				slotSequencce.add(getNumber(false));
 			} else {
@@ -545,7 +573,8 @@ public class Parser extends Scanner {
 		// throwSyntaxError("too much open ] in factor.");
 		}
 
-		throwSyntaxError("Error in factor at character: '" + fCurrentChar + "' (" + fToken + ")");
+		throwSyntaxError("Error in factor at character: '" + fCurrentChar
+				+ "' (" + fToken + ")");
 		return null;
 	}
 
@@ -572,10 +601,12 @@ public class Parser extends Scanner {
 
 		do {
 			if (function == null) {
-				function = fFactory.createFunction(fFactory.createSymbol(IConstantOperators.Part));
+				function = fFactory.createFunction(fFactory
+						.createSymbol(IConstantOperators.Part));
 				function.add(temp);
 			} else {
-				function = fFactory.createFunction(fFactory.createSymbol(IConstantOperators.Part), function);
+				function = fFactory.createFunction(fFactory
+						.createSymbol(IConstantOperators.Part), function);
 			}
 
 			getNextToken();
