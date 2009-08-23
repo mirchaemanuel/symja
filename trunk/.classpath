@@ -26,5 +26,6 @@
 	<classpathentry kind="lib" path="C:/galileo/eclipse/plugins/org.junit4_4.5.0.v20090423/junit.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/iterables"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/org.omath.api"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/org.omath.kernel"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

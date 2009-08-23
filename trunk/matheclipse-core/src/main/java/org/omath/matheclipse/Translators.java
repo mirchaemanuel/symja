@@ -1,17 +1,31 @@
 package org.omath.matheclipse;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import net.tqft.iterables.interfaces.Transformer;
 
 import org.matheclipse.core.convert.AST2Expr;
 import org.matheclipse.core.eval.EvalEngine;
 import org.matheclipse.core.eval.EvalUtilities;
 import org.matheclipse.core.expression.F;
+import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
+import org.matheclipse.core.interfaces.IInteger;
+import org.matheclipse.core.interfaces.IStringX;
+import org.matheclipse.core.interfaces.ISymbol;
 import org.matheclipse.parser.client.Parser;
 import org.matheclipse.parser.client.ast.ASTNode;
 import org.omath.interfaces.SyntaxException;
 import org.omath.interfaces.expression.Expression;
 import org.omath.interfaces.expression.ExpressionFactory;
+import org.omath.interfaces.expression.IntegerExpression;
+import org.omath.interfaces.expression.RawExpression;
+import org.omath.interfaces.expression.RealExpression;
+import org.omath.interfaces.expression.StringExpression;
+import org.omath.interfaces.expression.SymbolExpression;
+import org.omath.tungsten.expressions.AbstractFullFormExpression;
+import org.omath.util.immutables.ImmutableList;
 
 public class Translators {
 	private static org.apache.commons.logging.Log log = org.apache.commons.logging.LogFactory
@@ -68,4 +82,69 @@ public class Translators {
 				});
 	}
 
+	/**
+	 * Convert an omath expression into a matheclipse IExpr
+	 * 
+	 * @param expression
+	 * @return <code>null</code> if no conversion is possible
+	 */
+	public static IExpr expression2IExpr(final Expression expression) {
+		if (expression instanceof AbstractFullFormExpression) {
+			AbstractFullFormExpression affe = (AbstractFullFormExpression) expression;
+			ImmutableList<Expression> leaves = affe.leaves();
+			IAST ast = F.ast(expression2IExpr(affe.head()));
+			for (int i = 0; i < leaves.size(); i++) {
+				ast.add(expression2IExpr(leaves.get(i)));
+			}
+			return ast;
+		}
+		if (expression instanceof RawExpression) {
+			if (expression instanceof SymbolExpression) {
+				return F.symbol(((SymbolExpression) expression).getName());
+			}
+			if (expression instanceof IntegerExpression) {
+				return F.integer(((IntegerExpression) expression)
+						.bigIntegerValue());
+			}
+			if (expression instanceof RealExpression) {
+				// TODO Is this correct?
+				return F.num(((RealExpression) expression).valueAsBigDecimal()
+						.doubleValue());
+			}
+			if (expression instanceof StringExpression) {
+				return F.stringx(expression.toString());
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Convert a matheclipse expression into an omath IExpr
+	 * 
+	 * @param expression
+	 * @return <code>null</code> if no conversion is possible
+	 */
+	public static Expression iexpr2Expression(final ExpressionFactory factory,
+			final IExpr expr) {
+		if (expr instanceof IAST) {
+			IAST ast = (IAST) expr;
+			Expression head = iexpr2Expression(factory, expr.head());
+			List<Expression> leaves = new ArrayList<Expression>(ast.size() - 1);
+			for (int i = 1; i < ast.size(); i++) {
+				leaves.add(iexpr2Expression(factory, ast.get(i)));
+			}
+			return factory.getExpressionInstance(head, leaves);
+		}
+		if (expr instanceof ISymbol) {
+			return factory.getSymbolExpressionInstance(expr.toString());
+		}
+		if (expr instanceof IStringX) {
+			return factory.getStringExpressionInstance(expr.toString());
+		}
+		if (expr instanceof IInteger) {
+			return factory.getIntegerExpressionInstance(((IInteger) expr)
+					.getBigNumerator().toJavaBigInteger());
+		}
+		return null;
+	}
 }
