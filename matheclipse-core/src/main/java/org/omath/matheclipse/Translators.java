@@ -83,10 +83,12 @@ public class Translators {
 	}
 
 	/**
-	 * Convert an omath expression into a matheclipse IExpr
+	 * Convert an OMath Expression into a Matheclipse IExpr
 	 * 
 	 * @param expression
-	 * @return <code>null</code> if no conversion is possible
+	 *            the OMath expression
+	 * @return the Matheclipse IExpr or <code>null</code> if no conversion is
+	 *         possible
 	 */
 	public static IExpr expression2IExpr(final Expression expression) {
 		if (expression instanceof AbstractFullFormExpression) {
@@ -119,10 +121,12 @@ public class Translators {
 	}
 
 	/**
-	 * Convert a matheclipse IExpr into an omath expression
+	 * Convert a Matheclipse IExpr into an OMath Expression
 	 * 
-	 * @param expression
-	 * @return <code>null</code> if no conversion is possible
+	 * @param expr
+	 *            the MathEclipse expression
+	 * @return the OMath Expression or <code>null</code> if no conversion is
+	 *         possible
 	 */
 	public static Expression iexpr2Expression(final ExpressionFactory factory,
 			final IExpr expr) {
