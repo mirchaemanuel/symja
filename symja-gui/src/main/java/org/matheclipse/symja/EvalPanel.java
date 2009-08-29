@@ -83,7 +83,7 @@ public class EvalPanel extends JPanel implements DocumentListener {
 	final static long serialVersionUID = 0x000000001;
 
 	private final static String versionStr = "Keyboard shortcuts\n" + "- Ctrl+ENTER - for symbolic evaluation\n"
-			+ "- Cursor up - previoues input\n" + "- Cursor down - next input\n";
+			+ "- Cursor up - previous input\n" + "- Cursor down - next input\n";
 
 	private final String commandHistory[] = new String[20];
 

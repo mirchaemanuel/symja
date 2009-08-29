@@ -262,24 +262,32 @@ public class Main extends JApplet {
 			}
 		});
 		plot.add(parametricPlot);
-		JMenuItem plot3D = new JMenuItem("New 3D Plot ...");
-		plot3D.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				/*
-				 * JDialog window = new Plot3DWindow(frame); window.pack();
-				 * window.show();
-				 */
-//				Plotter3D plot = Plotter3D.getPlotter(false);
-//				plot.plot(JOptionPane.showInputDialog("y(x, z) = ", "Sin[x] + Sin[z]"));
-			}
-		});
-		plot.add(plot3D);
+//		JMenuItem plot3D = new JMenuItem("New 3D Plot ...");
+//		plot3D.addActionListener(new ActionListener() {
+//			public void actionPerformed(ActionEvent e) {
+//				/*
+//				 * JDialog window = new Plot3DWindow(frame); window.pack();
+//				 * window.show();
+//				 */
+////				Plotter3D plot = Plotter3D.getPlotter(false);
+////				plot.plot(JOptionPane.showInputDialog("y(x, z) = ", "Sin[x] + Sin[z]"));
+//			}
+//		});
+//		plot.add(plot3D);
 
 		examplesMenu.setMnemonic('e');
 		examplesMenu.add(new EvalExampleMenuItem("Simplify an expression", evalPanel, "a+a+4*b^2+3*b^2"));
 		examplesMenu.add(new EvalExampleMenuItem("Factor an integer number", evalPanel, "FactorInteger[2^15-5]"));
 		examplesMenu.add(new EvalExampleMenuItem("Derivative of a function", evalPanel, "D[Sin[x^3],x]"));
-
+		examplesMenu.add(new EvalExampleMenuItem("Factor a polynomial", evalPanel, "Factor[-1+x^16]"));
+		examplesMenu.add(new EvalExampleMenuItem("Factor a polynomial modulo an integer", evalPanel, "Factor[5+x^12,Modulus->7]"));
+		examplesMenu.add(new EvalExampleMenuItem("Expand a polynomial", evalPanel, "Expand[(-1+x)*(1+x)*(1+x^2)*(1+x^4)*(1+x^8)]"));
+		examplesMenu.add(new EvalExampleMenuItem("Inverse of a matrix", evalPanel, "Inverse[{{1,2},{3,4}}]"));
+		examplesMenu.add(new EvalExampleMenuItem("Determinant of a matrix of a matrix", evalPanel, "Det[{{1,2},{3,4}}]"));
+//		examplesMenu.add(new EvalExampleMenuItem("", evalPanel, ""));
+//		examplesMenu.add(new EvalExampleMenuItem("", evalPanel, ""));
+//		examplesMenu.add(new EvalExampleMenuItem("", evalPanel, ""));
+//		examplesMenu.add(new EvalExampleMenuItem("", evalPanel, ""));
 		menuBar.add(menu);
 		menuBar.add(plot);
 		menuBar.add(examplesMenu);
