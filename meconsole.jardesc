@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<jardesc>
+    <jar path="C:/galileo/testme/meconsole001.jar"/>
+    <options buildIfNeeded="true" compress="true" descriptionLocation="/symja/meconsole.jardesc" exportErrors="true" exportWarnings="true" includeDirectoryEntries="false" overwrite="false" saveDescription="true" storeRefactorings="false" useSourceFolders="false"/>
+    <storedRefactorings deprecationInfo="true" structuralOnly="false"/>
+    <selectedProjects/>
+    <manifest generateManifest="true" manifestLocation="" manifestVersion="1.0" reuseManifest="false" saveManifest="false" usesManifest="true">
+        <sealing sealJar="false">
+            <packagesToSeal/>
+            <packagesToUnSeal/>
+        </sealing>
+    </manifest>
+    <selectedElements exportClassFiles="true" exportJavaFiles="false" exportOutputFolder="false">
+        <javaElement handleIdentifier="=symja/matheclipse-generic\/src\/main\/java"/>
+        <javaElement handleIdentifier="=symja/jas\/src\/main\/java"/>
+        <javaElement handleIdentifier="=symja/commons-math\/src\/main\/java"/>
+        <javaElement handleIdentifier="=symja/matheclipse-parser\/src\/main\/resources"/>
+        <javaElement handleIdentifier="=symja/matheclipse-parser\/src\/main\/java"/>
+        <javaElement handleIdentifier="=symja/matheclipse-core\/src\/main\/java"/>
+    </selectedElements>
+</jardesc>
