@@ -7,12 +7,13 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
+import org.matheclipse.basic.Config;
 import org.matheclipse.core.eval.EvalEngine;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.expression.Symbol;
 import org.matheclipse.core.interfaces.ISymbol;
 
-public class SerializableTest extends AbstractTestCase {
+public class SerializableTest extends SpecialTestCase {
 	public SerializableTest(String name) {
 		super(name);
 	}
@@ -33,6 +34,7 @@ public class SerializableTest extends AbstractTestCase {
 		check(engine, false, "Sin[Pi/2]", "1");
 
 		// deserialize
+		Config.SERVER_MODE=false;
 		InputStream in = new FileInputStream("c:\\temp\\testsym.ser");
 		ObjectInputStream ois = new ObjectInputStream(in);
 		sym.clearAll();

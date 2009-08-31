@@ -12,7 +12,6 @@ import java.util.Iterator;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
-
 /**
  * Power set with iterator.
  * @author Heinz Kredel

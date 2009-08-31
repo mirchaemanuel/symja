@@ -19,19 +19,15 @@ public class CompleteTestSuite extends TestCase {
 	 *@return The test suite
 	 */
 	public static Test suite() {
-		TestSuite suite = new TestSuite("Test Suite (without MathML tests");
-		suite.addTest(new TestSuite(org.matheclipse.core.system.SystemTestCase.class));
-		suite.addTest(new TestSuite(org.matheclipse.core.system.PatternMatchingTestCase.class));
-		suite.addTest(new TestSuite(org.matheclipse.core.system.CombinatoricTestCase.class));
-		// suite.addTest(new
-		// TestSuite(org.matheclipse.core.system.PolynomialTestCase.class));
-		// suite.addTest(new
-		// TestSuite(org.matheclipse.core.form.mathml.MathMLPresentationTestCase
-		// .class));
-		// suite.addTest(new
-		// TestSuite(org.matheclipse.core.form.mathml.MathMLPrefixPresentationTestCase
-		// .class));
-
+		TestSuite suite = new TestSuite();
+		suite.addTestSuite(SystemTestCase.class);
+		suite.addTestSuite(PatternMatchingTestCase.class);
+		suite.addTestSuite(CombinatoricTestCase.class);
+		suite.addTestSuite(HeadlistTestCase.class);
+		suite.addTestSuite(FindRootScriptTestCase.class);
+		suite.addTestSuite(SerializableTest.class);
+		suite.addTestSuite(SpecialTestCase.class);
+		suite.addTestSuite(ScriptEngineTestCase.class);
 		return suite;
 
 	}
