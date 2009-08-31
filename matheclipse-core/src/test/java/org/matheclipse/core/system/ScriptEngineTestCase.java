@@ -17,7 +17,7 @@ import org.matheclipse.script.engine.MathScriptEngine;
 
 public class ScriptEngineTestCase extends TestCase {
 	public ScriptEngineTestCase() {
-		super("ScriptTest");
+		super("ScriptEngineTestCase");
 	}
 
 	public void testScriptEngine() {
@@ -28,19 +28,19 @@ public class ScriptEngineTestCase extends TestCase {
 		ScriptEngineManager scriptManager = new ScriptEngineManager();
 
 		String stringResult = null;
-		ScriptEngine meEngine1 = scriptManager.getEngineByExtension("m");
-		ScriptEngine meEngine2 = scriptManager.getEngineByExtension("m");
+		ScriptEngine engine_1 = scriptManager.getEngineByExtension("m");
+		ScriptEngine engine_2 = scriptManager.getEngineByExtension("m");
 		try {
-			stringResult = (String) meEngine1.eval("D[Sin[x]*Cos[x],x]");
+			stringResult = (String) engine_1.eval("D[Sin[x]*Cos[x],x]");
 			assertEquals("Cos[x]^2-Sin[x]^2", stringResult);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
 
 		try {
-			stringResult = (String) meEngine1.eval("Expand[(x+5)^3]");
+			stringResult = (String) engine_1.eval("Expand[(x+5)^3]");
 			assertEquals("125+75*x+15*x^2+x^3", stringResult);
-			stringResult = (String) meEngine1.eval("Factor[" + stringResult
+			stringResult = (String) engine_1.eval("Factor[" + stringResult
 					+ "]");
 			assertEquals("(5+x)^3", stringResult);
 		} catch (Exception ex) {
@@ -48,19 +48,19 @@ public class ScriptEngineTestCase extends TestCase {
 		}
 
 		try {
-			meEngine1.put("$x", new Boolean(true));
-			meEngine1.put("$y", new Boolean(true));
-			stringResult = (String) meEngine1.eval("$x && $y");
+			engine_1.put("$x", new Boolean(true));
+			engine_1.put("$y", new Boolean(true));
+			stringResult = (String) engine_1.eval("$x && $y");
 			assertEquals("True", stringResult);
 
-			stringResult = (String) meEngine2.eval("$x && $y");
+			stringResult = (String) engine_2.eval("$x && $y");
 			assertEquals("$x&&$y", stringResult);
 
-			stringResult = (String) meEngine1.eval("$x && $y");
+			stringResult = (String) engine_1.eval("$x && $y");
 			assertEquals("True", stringResult);
 
-			meEngine2.put("$x", new Boolean(false));
-			stringResult = (String) meEngine2.eval("$x && $y");
+			engine_2.put("$x", new Boolean(false));
+			stringResult = (String) engine_2.eval("$x && $y");
 			assertEquals("False", stringResult);
 
 		} catch (Exception ex) {
@@ -68,7 +68,7 @@ public class ScriptEngineTestCase extends TestCase {
 		}
 
 		try {
-			stringResult = (String) meEngine1.eval("MyDepth[Sin[x]*Cos[x]]");
+			stringResult = (String) engine_1.eval("MyDepth[Sin[x]*Cos[x]]");
 			assertEquals("3", stringResult);
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -83,17 +83,17 @@ public class ScriptEngineTestCase extends TestCase {
 
 			int[] intArr = { 3, 4, 11 };
 
-			meEngine1.put("$x", row);
-			meEngine1.put("$y", intArr);
+			engine_1.put("$x", row);
+			engine_1.put("$y", intArr);
 			// the test.m file contains this script for matrix multiplication:
 			// $m={$x, $y, {13, 7, 8}};
 			// $m.$m
 
-			ScriptContext context = meEngine1.getContext();
+			ScriptContext context = engine_1.getContext();
 			context.setAttribute(MathScriptEngine.RETURN_OBJECT, Boolean.TRUE,
 					ScriptContext.ENGINE_SCOPE);
-			Object objectResult = meEngine1.eval(new FileReader(
-					"C:\\IDE\\workspace\\org.matheclipse.script.test\\test.m"));
+			Object objectResult = engine_1.eval(new FileReader(
+					"C:\\galileo\\workspace\\symja\\matheclipse-core\\src\\test\\java\\test.m"));
 			// print result for matrix multiplication: {{1,2,3}, {3, 4, 11},
 			// {13, 7,
 			// 8}}.{{1,2,3}, {3, 4, 11}, {13, 7, 8}}
