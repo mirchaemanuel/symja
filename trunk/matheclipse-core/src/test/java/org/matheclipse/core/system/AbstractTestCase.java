@@ -2,6 +2,9 @@ package org.matheclipse.core.system;
 
 import java.util.ArrayList;
 
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+
 import junit.framework.TestCase;
 
 import org.matheclipse.basic.Config;
@@ -22,64 +25,39 @@ import org.matheclipse.parser.client.ast.ASTNode;
  * Tests system.reflection classes
  */
 public abstract class AbstractTestCase extends TestCase {
-	private Parser fParser;
-
-	protected EvalUtilities util;
-
-	protected static boolean DEBUG = true;
+	private ScriptEngine fScriptEngine;
+	protected static ScriptEngineManager fScriptManager = new ScriptEngineManager();
 
 	public AbstractTestCase(String name) {
 		super(name);
 		F.initSymbols();
 	}
 
-	public void check(String strEval, String strResult) {
-		check(EvalEngine.get(), true, strEval, strResult, false);
+	// public void check(String evalString, String expectedResult) {
+	// check(true, evalString, expectedResult);
+	// }
+	public void check(String evalString, String expectedResult) {
+		check(fScriptEngine, evalString, expectedResult);
 	}
 
-	public void check(String strEval, String strResult, boolean relaxedOutput) {
-		check(EvalEngine.get(), true, strEval, strResult, relaxedOutput);
-	}
-
-	public void check(IAST ast, String strResult) {
-		check(EvalEngine.get(), true, ast, strResult);
-	}
-
-	public void check(EvalEngine engine, boolean configMode, String strEval, String strResult) {
-		check(engine, configMode, strEval, strResult, false);
-	}
-
-	public void check(EvalEngine engine, boolean configMode, String strEval, String strResult, boolean relaxedSyntax) {
+	public void check(ScriptEngine scriptEngine, String evalString,
+			String expectedResult) {
 		try {
-			if (strEval.length() == 0 && strResult.length() == 0) {
+			if (evalString.length() == 0 && expectedResult.length() == 0) {
 				return;
 			}
-			IExpr result;
-			StringBufferWriter buf = new StringBufferWriter();
-			buf.setIgnoreNewLine(true);
-			// F.initSymbols();
-			Config.SERVER_MODE = true;//configMode;
-			if (Config.SERVER_MODE) {
-				Parser parser = new Parser(relaxedSyntax);
-				ASTNode node = parser.parse(strEval);
-				IExpr inExpr = AST2Expr.CONST.convert(node);
-				TimeConstrainedEvaluator utility = new TimeConstrainedEvaluator(engine, false, Config.FOREVER, relaxedSyntax);
-				result = utility.constrainedEval(buf, inExpr);
-			} else {
-				Parser parser = new Parser(relaxedSyntax);
-				ASTNode node = parser.parse(strEval);
-				IExpr inExpr = AST2Expr.CONST.convert(node);
-				result = util.evaluate(inExpr);
-				if ((result != null) && !result.equals(F.Null)) {
-					OutputFormFactory.get(relaxedSyntax).convert(buf, result);
-				}
-			}
 
-			assertEquals(buf.toString(), strResult);
+			String evaledResult = (String) scriptEngine.eval(evalString);
+
+			assertEquals(evaledResult, expectedResult);
 		} catch (Exception e) {
 			e.printStackTrace();
 			assertEquals(e, "");
 		}
+	}
+
+	public void check(IAST ast, String strResult) {
+		check(EvalEngine.get(), true, ast, strResult);
 	}
 
 	public void check(EvalEngine engine, boolean configMode, IAST ast, String strResult) {
@@ -110,53 +88,16 @@ public abstract class AbstractTestCase extends TestCase {
 		}
 	}
 
-	public void checkPattern(String patternString, String evalString, String resultString) {
-		checkPattern(patternString, evalString, null, resultString);
-	}
-
-	public void checkPattern(String patternString, String evalString, String conditionString, String resultString) {
-		try {
-			ASTNode node = fParser.parse(patternString);
-			IExpr pat = AST2Expr.CONST.convert(node);
-
-			node = fParser.parse(evalString);
-			IExpr eval = AST2Expr.CONST.convert(node);
-			IExpr condition;
-			if (conditionString == null) {
-				condition = null;
-			} else {
-				node = fParser.parse(conditionString);
-				condition = AST2Expr.CONST.convert(node);
-			}
-			PatternMatcher matcher = new PatternMatcher(pat);
-			matcher.setCondition(condition);
-			if (matcher.apply(eval)) {
-				ArrayList<IExpr> resultList = new ArrayList<IExpr>();
-				matcher.getPatterns(resultList, pat);
-				assertEquals(resultList.toString(), resultString);
-				return;
-			}
-			assertEquals("", resultString);
-		} catch (Exception e) {
-			assertEquals("", resultString);
-		}
-	}
 
 	/**
 	 * The JUnit setup method
 	 */
 	protected void setUp() {
 		try {
-			// setup the evaluation engine (and bind to current thread)
-			EvalEngine engine = new EvalEngine(); // EvalEngine.get();
-			EvalEngine.set(engine);
-			engine.setSessionID("AbstractTestCase");
-			engine.setRecursionLimit(256);
-			engine.setIterationLimit(1024 * 1024);
-			util = new EvalUtilities(engine, false);
-			// setup a parser for the math expressions
-
-			fParser = new Parser();
+			synchronized (fScriptManager) {
+				fScriptEngine = fScriptManager.getEngineByExtension("m");
+			}
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 			// assertEquals("", "ParserError");
@@ -166,28 +107,4 @@ public abstract class AbstractTestCase extends TestCase {
 
 	}
 
-	public static void main(String[] args) {
-		try {
-			// setup the evaluation engine (and bind to current thread)
-			EvalEngine engine = new EvalEngine(); // EvalEngine.get();
-			EvalEngine.set(engine);
-			engine.setSessionID("AbstractTestCase");
-			engine.setRecursionLimit(256);
-			EvalUtilities util = new EvalUtilities(engine, false);
-			// setup a parser for the math expressions
-
-			IExpr result = util.evaluate("a===a===a");
-			StringBufferWriter buf = new StringBufferWriter();
-			buf.setIgnoreNewLine(true);
-			OutputFormFactory.get().convert(buf, result);
-			if (DEBUG) {
-				System.out.println(result);
-				System.out.println(buf.toString());
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			assertEquals(e, "");
-		}
-	}
 }

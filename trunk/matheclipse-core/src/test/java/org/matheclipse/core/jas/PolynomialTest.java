@@ -13,7 +13,6 @@ import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.ISymbol;
 import org.matheclipse.core.system.AbstractTestCase;
 
-import edu.jas.arith.BigComplex;
 import edu.jas.arith.BigRational;
 import edu.jas.arith.ModInteger;
 import edu.jas.arith.ModIntegerRing;

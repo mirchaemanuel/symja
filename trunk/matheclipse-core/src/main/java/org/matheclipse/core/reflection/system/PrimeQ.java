@@ -22,7 +22,7 @@ public class PrimeQ extends AbstractFunctionEvaluator implements Predicate<IExpr
 	public PrimeQ() {
 	}
 
-	@Override
+	@Override 
 	public IExpr evaluate(final IAST functionList) {
 		if ((functionList.size() != 2) || !(functionList.get(1) instanceof IInteger)) {
 			return null;

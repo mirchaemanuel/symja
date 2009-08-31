@@ -1,9 +1,10 @@
 package org.matheclipse.core.system;
 
+
 /**
  *  Tests pattern matcher
  */
-public class PatternMatchingTestCase extends AbstractTestCase {
+public class PatternMatchingTestCase extends SpecialTestCase {
 
   public PatternMatchingTestCase(String name) {
     super(name);
