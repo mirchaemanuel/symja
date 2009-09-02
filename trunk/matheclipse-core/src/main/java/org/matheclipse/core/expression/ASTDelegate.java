@@ -1,17 +1,18 @@
 package org.matheclipse.core.expression;
 
+import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
 
 public class ASTDelegate {
 
-	protected AST fAst;
+	protected IAST fAst;
 
 
 	protected ASTDelegate() {
 		this(null);
 	}
 
-	public ASTDelegate(AST ast) {
+	public ASTDelegate(IAST ast) {
 		super();
 		fAst=ast;
 	}
@@ -68,7 +69,7 @@ public class ASTDelegate {
 //		return fAst.toText();
 //	}
 
-	public AST getAST() {
+	public IAST getAST() {
 		return fAst;
 	}
 }

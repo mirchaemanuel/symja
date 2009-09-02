@@ -1,6 +1,5 @@
 package org.matheclipse.core.expression;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
@@ -29,6 +28,8 @@ import org.matheclipse.core.visit.IVisitorInt;
 import org.matheclipse.generic.interfaces.BiFunction;
 
 import apache.harmony.math.BigInteger;
+
+import com.google.common.base.Predicate;
 
 /**
  * 
@@ -847,22 +848,8 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 		return false;
 	}
 
-	/**
-	 * 
-	 * @deprecated
-	 * 
-	 */
-	// @Deprecated
-	// final public int argsSize() {
-	// return size() - 1;
-	// }
-	@Deprecated
 	public IAST copyHead() {
-		// copy the head
 		return newInstance(get(0));
-		// final AST ast = new AST(size() - 1, false);
-		// ast.add(get(0));
-		// return ast;
 	}
 
 	public IExpr variables2Slots(final Map<IExpr, IExpr> map,
