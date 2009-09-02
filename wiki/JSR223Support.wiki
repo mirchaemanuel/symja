@@ -59,3 +59,16 @@ or {{{Expand[(x+5)^3]}}}:
 			ex.printStackTrace();
 		}
 }}}
+
+Define variables {{{$x}}} and {{{$y}}}:
+{{{
+		try {
+			engine_1.put("$x", new Boolean(true));
+			engine_1.put("$y", new Boolean(true));
+			stringResult = (String) engine_1.eval("$x && $y");
+			assertEquals("True", stringResult);
+
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+}}}
