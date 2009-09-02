@@ -37,7 +37,7 @@ Initialize the scripting engine:
 
 }}}
 
-Evaluate a given expression "D[Sin[x]*Cos[x],x]":
+Evaluate a given expression {{{D[Sin[x]*Cos[x],x]}}}:
 {{{
 		try {
 			stringResult = (String) engine_1.eval("D[Sin[x]*Cos[x],x]");
@@ -47,7 +47,7 @@ Evaluate a given expression "D[Sin[x]*Cos[x],x]":
 		}
 }}}
 
-or "Expand[(x+5)^3]":
+or {{{Expand[(x+5)^3]}}}:
 {{{
 		try {
 			stringResult = (String) engine_1.eval("Expand[(x+5)^3]");
