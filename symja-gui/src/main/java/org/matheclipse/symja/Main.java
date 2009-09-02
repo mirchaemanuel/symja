@@ -283,7 +283,7 @@ public class Main extends JApplet {
 		examplesMenu.add(new EvalExampleMenuItem("Factor a polynomial modulo an integer", evalPanel, "Factor[5+x^12,Modulus->7]"));
 		examplesMenu.add(new EvalExampleMenuItem("Expand a polynomial", evalPanel, "Expand[(-1+x)*(1+x)*(1+x^2)*(1+x^4)*(1+x^8)]"));
 		examplesMenu.add(new EvalExampleMenuItem("Inverse of a matrix", evalPanel, "Inverse[{{1,2},{3,4}}]"));
-		examplesMenu.add(new EvalExampleMenuItem("Determinant of a matrix of a matrix", evalPanel, "Det[{{1,2},{3,4}}]"));
+		examplesMenu.add(new EvalExampleMenuItem("Determinant of a matrix", evalPanel, "Det[{{1,2},{3,4}}]"));
 //		examplesMenu.add(new EvalExampleMenuItem("", evalPanel, ""));
 //		examplesMenu.add(new EvalExampleMenuItem("", evalPanel, ""));
 //		examplesMenu.add(new EvalExampleMenuItem("", evalPanel, ""));
