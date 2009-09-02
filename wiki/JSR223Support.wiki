@@ -1,5 +1,7 @@
 #summary Use MathEclipse as a scripting engine (JSR 223).
 
+*Note:* this feature is currently only available through the SVN version.
+
 MathEclipse is usable as a [http://en.wikipedia.org/wiki/JSR_223 JSR 223] scripting engine.
 
 
