@@ -34,9 +34,27 @@ Initialize the scripting engine:
 		String stringResult = null;
 		ScriptEngineManager scriptManager = new ScriptEngineManager();
 		ScriptEngine engine_1 = scriptManager.getEngineByExtension("m");
+
+}}}
+
+Evaluate a given expression "D[Sin[x]*Cos[x],x]":
+{{{
 		try {
 			stringResult = (String) engine_1.eval("D[Sin[x]*Cos[x],x]");
 			assertEquals("Cos[x]^2-Sin[x]^2", stringResult);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+}}}
+
+or "Expand[(x+5)^3]":
+{{{
+		try {
+			stringResult = (String) engine_1.eval("Expand[(x+5)^3]");
+			assertEquals("125+75*x+15*x^2+x^3", stringResult);
+			stringResult = (String) engine_1.eval("Factor[" + stringResult
+					+ "]");
+			assertEquals("(5+x)^3", stringResult);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
