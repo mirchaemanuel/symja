@@ -1,7 +1,5 @@
 package org.matheclipse.core.reflection.system;
 
-import static org.matheclipse.basic.Util.checkCanceled;
-
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
 import org.matheclipse.core.expression.AST;
 import org.matheclipse.core.expression.F;
@@ -27,7 +25,6 @@ public class Max extends AbstractFunctionEvaluator {
 			IAST f = list.copyHead();
 			int comp;
 			for (int i = 2; i < list.size(); i++) {
-				checkCanceled();
 				max2 = list.get(i);
 				comp = Less.CONST.compare(max1, max2);
 

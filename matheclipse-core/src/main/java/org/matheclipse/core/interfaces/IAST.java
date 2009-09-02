@@ -13,15 +13,15 @@ import org.matheclipse.generic.interfaces.BiFunction;
  * 
  * The IAST represents one node of the tree and contains
  * <ul>
- * <li> the operator of the tree (i.e. the "header"-symbol: Sin, Cos,
+ * <li>the operator of the tree (i.e. the "header"-symbol: Sin, Cos,
  * Inverse,...)</li>
- * <li> the arguments of the function</li>
+ * <li>the arguments of the function</li>
  * </ul>
  * the arguments of the function are represented as a list (the i-th argument is
  * the i-th element in the list) an argument in the IAST is either
  * <ul>
- * <li> an IAST or </li>
- * <li> an atomic IExpr </li>
+ * <li>an IAST or</li>
+ * <li>an atomic IExpr</li>
  * </ul>
  */
 public interface IAST extends IExpr, INestedRealtimeList<IExpr> {
@@ -56,8 +56,8 @@ public interface IAST extends IExpr, INestedRealtimeList<IExpr> {
 	 * Returns the header. If the header itself is an ISymbol it will return the
 	 * symbol object. If the header itself is an IAST it will recursively call
 	 * headSymbol(). If the head is of type INumbers The head will return one of
-	 * these headers: "DoubleComplex", "Double", "Integer", "Fraction", "Complex"
-	 * All other objects return <code>null</code>
+	 * these headers: "DoubleComplex", "Double", "Integer", "Fraction",
+	 * "Complex" All other objects return <code>null</code>
 	 */
 	public ISymbol topHead();
 
@@ -137,9 +137,10 @@ public interface IAST extends IExpr, INestedRealtimeList<IExpr> {
 	 * 
 	 * @return the given resultAST.
 	 * @throws IndexOutOfBoundsException
-	 *           if the secondAST size is lesser than this AST size
+	 *             if the secondAST size is lesser than this AST size
 	 */
-	public IAST map(IAST resultAST, IAST secondAST, BiFunction<IExpr, IExpr, IExpr> function);
+	public IAST map(IAST resultAST, IAST secondAST,
+			BiFunction<IExpr, IExpr, IExpr> function);
 
 	/**
 	 * Set the head element of this list
@@ -160,8 +161,8 @@ public interface IAST extends IExpr, INestedRealtimeList<IExpr> {
 	public Object clone();
 
 	/**
-	 * Create a a shallow copy of this <code>IAST</code>, which only contains
-	 * some head elements of the list (i.e. the element with index 0).
+	 * Create a copy of this <code>IAST</code>, which only contains the head
+	 * element of the list (i.e. the element with index 0).
 	 */
 	public IAST copyHead();
 
@@ -173,15 +174,16 @@ public interface IAST extends IExpr, INestedRealtimeList<IExpr> {
 	public int patternHashCode();
 
 	/**
-	 * Get the range of elements [1..sizeOfAST[ which are the arguments of a
-	 * function
+	 * Get the range of elements [1..ast.size()[. This range elements are the arguments
+	 * of a function.
 	 * 
 	 * @return
 	 */
 	public ASTRange args();
 
 	/**
-	 * Get the range of elements [0..sizeOfAST[ of the AST
+	 * Get the range of elements [0..ast.size()[ of the AST. This range elements
+	 * are the head of the function prepended  by the arguments of a function.
 	 * 
 	 * @return
 	 */
@@ -208,7 +210,7 @@ public interface IAST extends IExpr, INestedRealtimeList<IExpr> {
 	 * @param index
 	 * @return
 	 * @throws WrongArgumentType
-	 *           if the cast is not possible
+	 *             if the cast is not possible
 	 */
 	public IInteger getInt(int index);
 
@@ -219,9 +221,10 @@ public interface IAST extends IExpr, INestedRealtimeList<IExpr> {
 	 * @param index
 	 * @return
 	 * @throws WrongArgumentType
-	 *           if the cast is not possible
+	 *             if the cast is not possible
 	 */
 	public INumber getNumber(int index);
+
 	/**
 	 * Casts an <code>IExpr</code> at position <code>index</code> to an
 	 * <code>IAST</code>.
@@ -229,13 +232,13 @@ public interface IAST extends IExpr, INestedRealtimeList<IExpr> {
 	 * @param index
 	 * @return
 	 * @throws WrongArgumentType
-	 *           if the cast is not possible
+	 *             if the cast is not possible
 	 */
 	public IAST getAST(int index);
 
 	/**
-	 * Casts an <code>IExpr</code> which is a list at position <code>index</code> to an
-	 * <code>IAST</code>.
+	 * Casts an <code>IExpr</code> which is a list at position
+	 * <code>index</code> to an <code>IAST</code>.
 	 * 
 	 * @param index
 	 * @return

@@ -52,7 +52,7 @@ import org.matheclipse.core.expression.F;
 import org.matheclipse.core.form.output.StringBufferWriter;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
-import org.matheclipse.core.interfaces.INum; 
+import org.matheclipse.core.interfaces.INum;
 import org.matheclipse.core.util.WriterOutputStream;
 
 public class EvalPanel extends JPanel implements DocumentListener {
@@ -82,7 +82,8 @@ public class EvalPanel extends JPanel implements DocumentListener {
 	/* custom created attributes */
 	final static long serialVersionUID = 0x000000001;
 
-	private final static String versionStr = "Keyboard shortcuts\n" + "- Ctrl+ENTER - for symbolic evaluation\n"
+	private final static String versionStr = "Keyboard shortcuts\n"
+			+ "- Ctrl+ENTER - for symbolic evaluation\n"
 			+ "- Cursor up - previous input\n" + "- Cursor down - next input\n";
 
 	private final String commandHistory[] = new String[20];
@@ -106,11 +107,13 @@ public class EvalPanel extends JPanel implements DocumentListener {
 	 * it returns null.
 	 */
 	private static String getClipboard() {
-		final Transferable t = Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
+		final Transferable t = Toolkit.getDefaultToolkit().getSystemClipboard()
+				.getContents(null);
 
 		try {
 			if ((t != null) && t.isDataFlavorSupported(DataFlavor.stringFlavor)) {
-				final String text = (String) t.getTransferData(DataFlavor.stringFlavor);
+				final String text = (String) t
+						.getTransferData(DataFlavor.stringFlavor);
 				return text;
 			}
 		} catch (final UnsupportedFlavorException e) {
@@ -133,11 +136,11 @@ public class EvalPanel extends JPanel implements DocumentListener {
 		String command;
 
 		/**
-		 * Pass command string to calculation thread. Must be called before starting
-		 * the thread
+		 * Pass command string to calculation thread. Must be called before
+		 * starting the thread
 		 * 
 		 * @param cmd
-		 *          Command string to parse
+		 *            Command string to parse
 		 */
 		public void setCommand(final String cmd) {
 			command = cmd;
@@ -152,7 +155,8 @@ public class EvalPanel extends JPanel implements DocumentListener {
 		public void run() {
 			try {
 				final StringBufferWriter printBuffer = new StringBufferWriter();
-				final PrintStream pout = new PrintStream(new WriterOutputStream(printBuffer));
+				final PrintStream pout = new PrintStream(
+						new WriterOutputStream(printBuffer));
 
 				EVAL_ENGINE.setOutPrintStream(pout);
 
@@ -165,13 +169,16 @@ public class EvalPanel extends JPanel implements DocumentListener {
 					jOutputPane.printOut(printBuffer.toString() + "\n\n");
 				}
 
-				if (buf0.getBuffer().length() > 0 && fPrettyPrintStyle.isSelected()) {
+				if (buf0.getBuffer().length() > 0
+						&& fPrettyPrintStyle.isSelected()) {
 					String result = buf0.toString();
-					// jOutputPane.printOutColored("Out[" + commandHistoryStoreIndex
+					// jOutputPane.printOutColored("Out[" +
+					// commandHistoryStoreIndex
 					// +"]=");
 
 					final StringBufferWriter buf1 = new StringBufferWriter();
-					final MathMLUtilities mathUtil = new MathMLUtilities(EVAL_ENGINE, false);
+					final MathMLUtilities mathUtil = new MathMLUtilities(
+							EVAL_ENGINE, false);
 					try {
 						mathUtil.toMathML(result, buf1);
 
@@ -188,7 +195,8 @@ public class EvalPanel extends JPanel implements DocumentListener {
 					}
 				} else {
 					String result = buf0.toString();
-					jOutputPane.printOutColored("Out[" + commandHistoryStoreIndex + "]=" + result + "\n");
+					jOutputPane.printOutColored("Out["
+							+ commandHistoryStoreIndex + "]=" + result + "\n");
 				}
 			} catch (final Throwable ex) {
 				ex.printStackTrace();
@@ -203,7 +211,8 @@ public class EvalPanel extends JPanel implements DocumentListener {
 			}
 		}
 
-		protected double[][] eval(final StringBufferWriter buf, final String evalStr) throws Exception {
+		protected double[][] eval(final StringBufferWriter buf,
+				final String evalStr) throws Exception {
 			final IExpr expr = EVAL.constrainedEval(buf, evalStr);
 			if (expr instanceof IAST) {
 				final IAST show = (IAST) expr;
@@ -215,12 +224,16 @@ public class EvalPanel extends JPanel implements DocumentListener {
 						if (data.isAST("Line") && data.get(1).isList()) {
 							final IAST lineData = (IAST) data.get(1);
 							IAST pair;
-							final double[][] plotPoints = new double[lineData.size() - 1][2];
+							final double[][] plotPoints = new double[lineData
+									.size() - 1][2];
 							for (int i = 1; i < lineData.size(); i++) {
 								pair = (IAST) lineData.get(i);
-								plotPoints[i - 1][0] = ((INum) pair.get(1)).getRealPart();
-								plotPoints[i - 1][1] = ((INum) pair.get(2)).getRealPart();
-								// plotPoints[1][i-1] = ((IDouble)pair.get(2)).getRealPart();
+								plotPoints[i - 1][0] = ((INum) pair.get(1))
+										.getRealPart();
+								plotPoints[i - 1][1] = ((INum) pair.get(2))
+										.getRealPart();
+								// plotPoints[1][i-1] =
+								// ((IDouble)pair.get(2)).getRealPart();
 							}
 							return plotPoints;
 
@@ -238,15 +251,17 @@ public class EvalPanel extends JPanel implements DocumentListener {
 	 * Enable/disable busy cursor and command input
 	 * 
 	 * @param busy
-	 *          true: enter busy state, false: leave busy state
+	 *            true: enter busy state, false: leave busy state
 	 */
 	private void setBusy(final boolean busy) {
 		if (busy) {
 			jInputArea.setEditable(false);
 			// jMenuItemBreak.setEnabled(true);
 			// jPopupMenuItemBreak.setEnabled(true);
-			jOutputPane.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-			jInputArea.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+			jOutputPane.setCursor(Cursor
+					.getPredefinedCursor(Cursor.WAIT_CURSOR));
+			jInputArea
+					.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
 		} else {
 			jInputArea.setEditable(true);
@@ -272,8 +287,11 @@ public class EvalPanel extends JPanel implements DocumentListener {
 		private void maybeShowPopup(final MouseEvent e) {
 			if (e.isPopupTrigger()) {
 				popupSource = e.getComponent();
-				final boolean canPaste = ((JTextComponent) popupSource).isEditable() && (getClipboard() != null);
-				final boolean canCopy = ((JTextComponent) popupSource).getSelectedText() != null;
+				final boolean canPaste = ((JTextComponent) popupSource)
+						.isEditable()
+						&& (getClipboard() != null);
+				final boolean canCopy = ((JTextComponent) popupSource)
+						.getSelectedText() != null;
 				// jPopupMenuItemPaste.setEnabled(canPaste);
 				// jPopupMenuItemCopy.setEnabled(canCopy);
 				// jPopupMenu.show(popupSource, e.getX(), e.getY());
@@ -288,6 +306,9 @@ public class EvalPanel extends JPanel implements DocumentListener {
 			EVAL_ENGINE = new EvalEngine();
 			EVAL = new TimeConstrainedEvaluator(EVAL_ENGINE, false, 360000);
 			new CompletionLists(fWords, fReplaceWords);
+			// JMathComponent component = new JMathComponent();
+			// component.setFontSize(FONT_SIZE_MATHML);
+			// component.setContent("<math><mn>1</mn></math>");
 		}
 	}
 
@@ -318,7 +339,8 @@ public class EvalPanel extends JPanel implements DocumentListener {
 			jInputArea.addKeyListener(new java.awt.event.KeyAdapter() {
 				@Override
 				public void keyPressed(final java.awt.event.KeyEvent e) {
-					if (e.getKeyCode() == KeyEvent.VK_ENTER && e.getModifiersEx() == KeyEvent.CTRL_DOWN_MASK) {
+					if (e.getKeyCode() == KeyEvent.VK_ENTER
+							&& e.getModifiersEx() == KeyEvent.CTRL_DOWN_MASK) {
 						evalSymbolicInputField();
 						return;
 					}
@@ -328,14 +350,16 @@ public class EvalPanel extends JPanel implements DocumentListener {
 						if (commandHistoryReadIndex < 0) {
 							commandHistoryReadIndex = commandHistory.length - 1;
 						}
-						jInputArea.setText(commandHistory[commandHistoryReadIndex]);
+						jInputArea
+								.setText(commandHistory[commandHistoryReadIndex]);
 						break;
 					case KeyEvent.VK_DOWN:
 						commandHistoryReadIndex++;
 						if (commandHistoryReadIndex >= commandHistory.length) {
 							commandHistoryReadIndex = 0;
 						}
-						jInputArea.setText(commandHistory[commandHistoryReadIndex]);
+						jInputArea
+								.setText(commandHistory[commandHistoryReadIndex]);
 						break;
 					}
 				}
@@ -392,7 +416,8 @@ public class EvalPanel extends JPanel implements DocumentListener {
 		}
 		commandHistoryReadIndex = commandHistoryStoreIndex;
 		jInputArea.setText("");
-		jOutputPane.printOutColored("In[" + commandHistoryStoreIndex + "]=" + cmd + "\n\n");
+		jOutputPane.printOutColored("In[" + commandHistoryStoreIndex + "]="
+				+ cmd + "\n\n");
 		setBusy(true);
 		CalcThread calcThread = new CalcThread();
 		calcThread.setCommand(cmd);
@@ -413,7 +438,8 @@ public class EvalPanel extends JPanel implements DocumentListener {
 		}
 		commandHistoryReadIndex = commandHistoryStoreIndex;
 		jInputArea.setText("");
-		jOutputPane.printOutColored("In[" + commandHistoryStoreIndex + "]=" + cmd + "\n\n");
+		jOutputPane.printOutColored("In[" + commandHistoryStoreIndex + "]="
+				+ cmd + "\n\n");
 		setBusy(true);
 		CalcThread calcThread = new CalcThread();
 		calcThread.setCommand(cmd);
@@ -533,9 +559,9 @@ public class EvalPanel extends JPanel implements DocumentListener {
 			}
 		});
 		buttonsPanel.add(b2);
-		
+
 		buttonsPanel.add(fPrettyPrintStyle);
-		
+
 		final JButton b3 = new JButton("MathML");
 		b3.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(final java.awt.event.ActionEvent e) {
@@ -572,7 +598,8 @@ public class EvalPanel extends JPanel implements DocumentListener {
 		width = 300;
 		height = 200;
 		this.setSize(width, height);
-		final Point p = GraphicsEnvironment.getLocalGraphicsEnvironment().getCenterPoint();
+		final Point p = GraphicsEnvironment.getLocalGraphicsEnvironment()
+				.getCenterPoint();
 		p.x -= 300 / 2;
 		p.y -= 200 / 2;
 		posX = p.x > 0 ? p.x : 0;
@@ -585,7 +612,8 @@ public class EvalPanel extends JPanel implements DocumentListener {
 		jOutputPane.setFont(f);
 		jInputArea.setFont(f);
 		// height = jInputArea.getGraphics().getFontMetrics().getHeight();
-		jInputArea.setBounds(jInputArea.getBounds().x, getHeight() - height, jInputArea.getWidth(), height);
+		jInputArea.setBounds(jInputArea.getBounds().x, getHeight() - height,
+				jInputArea.getWidth(), height);
 		doLayout();
 
 		final MouseListener popupListener = new PopupListener();
@@ -643,7 +671,8 @@ public class EvalPanel extends JPanel implements DocumentListener {
 				String completion = match.substring(pos - w);
 				// We cannot modify Document from within notification,
 				// so we submit a task that does the change later
-				SwingUtilities.invokeLater(new CompletionTask(completion, pos + 1, w + 1, fReplaceWords.get(-n - 1)));
+				SwingUtilities.invokeLater(new CompletionTask(completion,
+						pos + 1, w + 1, fReplaceWords.get(-n - 1)));
 			}
 		} else {
 			// Nothing found
@@ -657,7 +686,8 @@ public class EvalPanel extends JPanel implements DocumentListener {
 		int w;
 		String replacement;
 
-		CompletionTask(String completion, int position, int w, String replacement) {
+		CompletionTask(String completion, int position, int w,
+				String replacement) {
 			this.completion = completion;
 			this.position = position;
 			this.w = w;
@@ -678,7 +708,8 @@ public class EvalPanel extends JPanel implements DocumentListener {
 		public void actionPerformed(ActionEvent ev) {
 			if (mode == Mode.COMPLETION) {
 				int pos = jInputArea.getSelectionEnd();
-				jInputArea.replaceRange(fReplacement, fW, fW + fReplacement.length());
+				jInputArea.replaceRange(fReplacement, fW, fW
+						+ fReplacement.length());
 				// jInputField.insert(" ", pos);
 				try {
 					String endChar = jInputArea.getText(pos - 1, 1);

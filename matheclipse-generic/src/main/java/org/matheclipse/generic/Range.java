@@ -1,6 +1,5 @@
 package org.matheclipse.generic;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
@@ -10,6 +9,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.matheclipse.core.generic.UnaryFunctorImpl;
+import org.matheclipse.generic.interfaces.Aggregator;
 import org.matheclipse.generic.interfaces.BiFunction;
 import org.matheclipse.generic.interfaces.BiPredicate;
 import org.matheclipse.generic.util.MutuableInteger;
@@ -67,14 +68,31 @@ public class Range<E, L extends List<E>> implements Iterable<E> {
 		fStart = start;
 		fEnd = end;
 		if (fStart < 0 || fStart > fList.size()) {
-			throw new IndexOutOfBoundsException("Start index not allowed for the given list");
+			throw new IndexOutOfBoundsException(
+					"Start index not allowed for the given list");
 		}
 		if (fEnd < 0 || fEnd > fList.size()) {
-			throw new IndexOutOfBoundsException("End index not allowed for the given list");
+			throw new IndexOutOfBoundsException(
+					"End index not allowed for the given list");
 		}
 		if (fStart > fEnd) {
-			throw new IndexOutOfBoundsException("Start index greater than end index");
+			throw new IndexOutOfBoundsException(
+					"Start index greater than end index");
 		}
+	}
+
+	/**
+	 * Aggregates the items in the given iterable using the given
+	 * {@link Aggregator}.
+	 * 
+	 * @param aggregator
+	 *            The function that defines how the objects in this iterable
+	 *            have to be aggregated
+	 * @return The result of the aggregation of all the items in the given
+	 *         iterable
+	 */
+	public E aggregate(Aggregator<E> aggregator) {
+		return aggregator.aggregate(this);
 	}
 
 	/**
@@ -112,11 +130,11 @@ public class Range<E, L extends List<E>> implements Iterable<E> {
 	}
 
 	/**
-	 * Returns true if the predicate returns true for at least one element in the
-	 * range.
+	 * Returns true if the predicate returns true for at least one element in
+	 * the range.
 	 * 
-	 * @return true if the predicate returns true for at least one element, false
-	 *         otherwise
+	 * @return true if the predicate returns true for at least one element,
+	 *         false otherwise
 	 */
 	public boolean any(Predicate<E> predicate) {
 		for (int i = fStart; i < fEnd; i++) {
@@ -129,10 +147,11 @@ public class Range<E, L extends List<E>> implements Iterable<E> {
 	}
 
 	/**
-	 * Returns true if at least one branch predicate returns true for all elements
-	 * in the range.
+	 * Returns true if at least one branch predicate returns true for all
+	 * elements in the range.
 	 * 
-	 * @return true if at least one branch predicate returns true, false otherwise
+	 * @return true if at least one branch predicate returns true, false
+	 *         otherwise
 	 */
 	public boolean any(Predicate<E>[] predicates) {
 		for (int i = fStart; i < fEnd; i++) {
@@ -148,9 +167,9 @@ public class Range<E, L extends List<E>> implements Iterable<E> {
 	}
 
 	/**
-	 * Compare all adjacent elemants from lowest to highest index and return true,
-	 * if the binary predicate gives true in each step. If start &gt;= (end-1) the
-	 * method return false;
+	 * Compare all adjacent elemants from lowest to highest index and return
+	 * true, if the binary predicate gives true in each step. If start &gt;=
+	 * (end-1) the method return false;
 	 * 
 	 */
 	public boolean compareAdjacent(BiPredicate<E> predicate) {
@@ -227,7 +246,8 @@ public class Range<E, L extends List<E>> implements Iterable<E> {
 	}
 
 	/**
-	 * Returns the number of elements in the range that match the given predicate.
+	 * Returns the number of elements in the range that match the given
+	 * predicate.
 	 */
 	public int countIf(Predicate<E> predicate) {
 		int counter = 0;
@@ -241,8 +261,8 @@ public class Range<E, L extends List<E>> implements Iterable<E> {
 	}
 
 	/**
-	 * Locates the first pair of adjacent elements in a range that match the given
-	 * predicate
+	 * Locates the first pair of adjacent elements in a range that match the
+	 * given predicate
 	 * 
 	 * @return the index of the first element
 	 */
@@ -251,8 +271,8 @@ public class Range<E, L extends List<E>> implements Iterable<E> {
 	}
 
 	/**
-	 * Locates the first pair of adjacent elements in a range that match the given
-	 * predicate starting at index
+	 * Locates the first pair of adjacent elements in a range that match the
+	 * given predicate starting at index
 	 * <code>start</start> and ending at the ranges upper limit.
 	 * 
 	 * @return the index of the first element
@@ -260,7 +280,8 @@ public class Range<E, L extends List<E>> implements Iterable<E> {
 	public int findAdjacent(Predicate<E> predicate, int start) {
 		for (int i = start; i < fEnd - 1; i++) {
 
-			if (predicate.apply(fList.get(i)) && predicate.apply(fList.get(i + 1))) {
+			if (predicate.apply(fList.get(i))
+					&& predicate.apply(fList.get(i + 1))) {
 				return i;
 			}
 		}
@@ -306,8 +327,8 @@ public class Range<E, L extends List<E>> implements Iterable<E> {
 	/**
 	 * Apply the functor to pairwise elements of the range and return the final
 	 * result. Results do accumulate from one invocation to the next: each time
-	 * this method is called, the accumulation starts over with the value from the
-	 * previous function call.
+	 * this method is called, the accumulation starts over with the value from
+	 * the previous function call.
 	 * 
 	 * @return If the range contains only one element, the method will return
 	 *         <code>function.call(element, null)</code>
@@ -328,10 +349,10 @@ public class Range<E, L extends List<E>> implements Iterable<E> {
 	}
 
 	/**
-	 * Apply the functor to the elements of the range and return the final result.
-	 * Results do accumulate from one invocation to the next: each time this
-	 * method is called, the accumulation starts over with value from the previous
-	 * function call.
+	 * Apply the functor to the elements of the range and return the final
+	 * result. Results do accumulate from one invocation to the next: each time
+	 * this method is called, the accumulation starts over with value from the
+	 * previous function call.
 	 * 
 	 */
 	public E fold(final BiFunction<E, E, ? extends E> function, E givenValue) {
@@ -344,7 +365,8 @@ public class Range<E, L extends List<E>> implements Iterable<E> {
 	}
 
 	/**
-	 * Apply the functor to each element in the range and return the final result.
+	 * Apply the functor to each element in the range and return the final
+	 * result.
 	 * 
 	 * @return the result of the last execution of the functor, or null if the
 	 *         functor is not executed.
@@ -516,9 +538,9 @@ public class Range<E, L extends List<E>> implements Iterable<E> {
 
 	/**
 	 * Append the result of the pairwise mapped elements to the given
-	 * <code>list</code>. If the function evaluates to <code>null</code>
-	 * append the current range element directly otherwise evaluate the next pair
-	 * of elements
+	 * <code>list</code>. If the function evaluates to <code>null</code> append
+	 * the current range element directly otherwise evaluate the next pair of
+	 * elements
 	 * 
 	 * @param list
 	 * @param fromIndex
@@ -592,8 +614,8 @@ public class Range<E, L extends List<E>> implements Iterable<E> {
 	}
 
 	/**
-	 * Apply the predicate to each element in the range and append the elements to
-	 * the list, which don't match the predicate.
+	 * Apply the predicate to each element in the range and append the elements
+	 * to the list, which don't match the predicate.
 	 * 
 	 * @see Range#select(List, Predicate)
 	 * @see Range#replaceAll(List, UnaryFunctorImpl)
@@ -624,7 +646,8 @@ public class Range<E, L extends List<E>> implements Iterable<E> {
 	}
 
 	/**
-	 * Append the ranges elements in reversed order to the given <code>list</code>
+	 * Append the ranges elements in reversed order to the given
+	 * <code>list</code>
 	 * 
 	 * @param list
 	 * @param fromIndex
@@ -639,8 +662,8 @@ public class Range<E, L extends List<E>> implements Iterable<E> {
 	}
 
 	/**
-	 * Rotate the ranges elements to the left by n places and append the resulting
-	 * elements to the <code>list</code>
+	 * Rotate the ranges elements to the left by n places and append the
+	 * resulting elements to the <code>list</code>
 	 * 
 	 * @param list
 	 * @param n
@@ -681,8 +704,8 @@ public class Range<E, L extends List<E>> implements Iterable<E> {
 	}
 
 	/**
-	 * Apply the predicate to each element in the range and append the elements to
-	 * the list, which match the predicate.
+	 * Apply the predicate to each element in the range and append the elements
+	 * to the list, which match the predicate.
 	 * 
 	 * @see Range#removeAll(List, Predicate)
 	 * @see Range#replaceAll(List, UnaryFunctorImpl)
@@ -698,8 +721,8 @@ public class Range<E, L extends List<E>> implements Iterable<E> {
 	}
 
 	/**
-	 * Apply the predicate to each element in the range and append the elements to
-	 * the list, which match the predicate.
+	 * Apply the predicate to each element in the range and append the elements
+	 * to the list, which match the predicate.
 	 * 
 	 * @see Range#removeAll(List, Predicate)
 	 * @see Range#replaceAll(List, UnaryFunctorImpl)
@@ -734,8 +757,8 @@ public class Range<E, L extends List<E>> implements Iterable<E> {
 
 	/**
 	 * Sorts the elements of the specified range "in place" (i.e. modify the
-	 * internal referenced list) ,according to the order induced by the specified
-	 * comparator.
+	 * internal referenced list) ,according to the order induced by the
+	 * specified comparator.
 	 */
 	public L sort(Comparator<E> comparator) {
 		final E[] a = (E[]) fList.toArray();
@@ -760,8 +783,8 @@ public class Range<E, L extends List<E>> implements Iterable<E> {
 	}
 
 	/**
-	 * Create the (unordered) union set from both ranges. Multiple equal values in
-	 * the given ranges are reduced to one value in the result.
+	 * Create the (unordered) union set from both ranges. Multiple equal values
+	 * in the given ranges are reduced to one value in the result.
 	 * 
 	 * @param result
 	 * @param secondRange
