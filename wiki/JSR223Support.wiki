@@ -2,3 +2,42 @@
 
 MathEclipse is usable as a [http://en.wikipedia.org/wiki/JSR_223 JSR 223] scripting engine.
 
+
+Example:
+{{{
+...
+import java.io.FileReader;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.script.ScriptContext;
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+
+import junit.framework.TestCase;
+
+import org.matheclipse.core.eval.SystemNamespace;
+import org.matheclipse.core.interfaces.IAST;
+import org.matheclipse.core.interfaces.IExpr;
+import org.matheclipse.script.engine.MathScriptEngine;
+public class ScriptEngineTestCase extends TestCase {
+	public ScriptEngineTestCase() {
+		super("ScriptEngineTestCase");
+	}
+
+}}}
+
+Initialize the scripting engine:
+{{{
+
+	public void testScriptEngine() {
+		String stringResult = null;
+		ScriptEngineManager scriptManager = new ScriptEngineManager();
+		ScriptEngine engine_1 = scriptManager.getEngineByExtension("m");
+		try {
+			stringResult = (String) engine_1.eval("D[Sin[x]*Cos[x],x]");
+			assertEquals("Cos[x]^2-Sin[x]^2", stringResult);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+}}}
