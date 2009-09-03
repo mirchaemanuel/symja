@@ -18,7 +18,6 @@ public class Util {
 	/**
 	 * Check if the current calculation thread was stopped.<br/> This is mainly
 	 * caused by exceeding calculation time limits.
-	 * @deprecated
 	 */
 	public static final void checkCanceled() {
 		if (TIME_CONSTRAINED_EVALUATION) { // compiler switch
