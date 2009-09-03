@@ -366,7 +366,7 @@ public class MathMLFormFactory extends AbstractMathMLFormFactory implements
 		CONSTANT_SYMBOLS.put("HEllipsis", new Operator("&hellip;"));
 		// greek Symbols:
 		CONSTANT_SYMBOLS.put("Pi", "\u03A0");
-
+		CONSTANT_SYMBOLS.put("pi", "\u03C0");
 		CONSTANT_SYMBOLS.put("Alpha", "\u0391");
 		CONSTANT_SYMBOLS.put("Beta", "\u0392");
 		CONSTANT_SYMBOLS.put("Gamma", "\u0393");
