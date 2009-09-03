@@ -391,7 +391,7 @@ public class MathMLFormFactory extends AbstractMathMLFormFactory implements
 		CONSTANT_SYMBOLS.put("Psi", "\u03A8");
 		CONSTANT_SYMBOLS.put("Omega", "\u03A9");
 
-		CONSTANT_SYMBOLS.put("varTheta", True);
+		CONSTANT_SYMBOLS.put("varTheta", "\u03D1");
 
 		CONSTANT_SYMBOLS.put("alpha", "\u03B1");
 		CONSTANT_SYMBOLS.put("beta", "\u03B2");
@@ -402,20 +402,18 @@ public class MathMLFormFactory extends AbstractMathMLFormFactory implements
 		CONSTANT_SYMBOLS.put("gamma", "\u03B3");
 		CONSTANT_SYMBOLS.put("eta", "\u03B7");
 		CONSTANT_SYMBOLS.put("iota", "\u03B9");
-		// CONSTANT_SYMBOLS.put("varphi", "\u0300");
+		CONSTANT_SYMBOLS.put("varphi", "\u03C6");
 		CONSTANT_SYMBOLS.put("kappa", "\u03BA");
 		CONSTANT_SYMBOLS.put("lambda", "\u03BB");
 		CONSTANT_SYMBOLS.put("mu", "\u03BC");
 		CONSTANT_SYMBOLS.put("nu", "\u03BD");
 		CONSTANT_SYMBOLS.put("omicron", "\u03BF");
-		// see "Pi"
-		// CONSTANT_SYMBOLS.put("pi", True);
 		CONSTANT_SYMBOLS.put("theta", "\u03B8");
 		CONSTANT_SYMBOLS.put("rho", "\u03C1");
 		CONSTANT_SYMBOLS.put("sigma", "\u03C3");
 		CONSTANT_SYMBOLS.put("tau", "\u03C4");
 		CONSTANT_SYMBOLS.put("upsilon", "\u03C5");
-		// CONSTANT_SYMBOLS.put("varomega", "\u0300");
+		CONSTANT_SYMBOLS.put("varsigma", "\u03C2");
 		CONSTANT_SYMBOLS.put("omega", "\u03C9");
 		CONSTANT_SYMBOLS.put("xi", "\u03BE");
 		CONSTANT_SYMBOLS.put("psi", "\u03C8");
