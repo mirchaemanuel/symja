@@ -1,25 +1,22 @@
 package org.matheclipse.core.form.mathml;
 
-import static org.matheclipse.basic.Util.checkCanceled;
-
 import java.util.Hashtable;
 
 import org.matheclipse.basic.Config;
-import org.matheclipse.core.eval.EvalEngine;
 import org.matheclipse.core.expression.IConstantHeaders;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IComplex;
-import org.matheclipse.core.interfaces.INum;
 import org.matheclipse.core.interfaces.IComplexNum;
 import org.matheclipse.core.interfaces.IFraction;
 import org.matheclipse.core.interfaces.IInteger;
+import org.matheclipse.core.interfaces.INum;
 import org.matheclipse.core.interfaces.ISymbol;
 import org.matheclipse.core.list.algorithms.EvaluationSupport;
 import org.matheclipse.parser.client.operator.ASTNodeFactory;
 
 /**
  * PresentationGenerator generates MathML presentation output
- *
+ * 
  */
 public class MathMLFormFactory extends AbstractMathMLFormFactory implements
 		IConstantHeaders {
@@ -56,6 +53,7 @@ public class MathMLFormFactory extends AbstractMathMLFormFactory implements
 			199);
 
 	private int plusPrec;
+
 	/**
 	 * Constructor
 	 */
@@ -68,9 +66,9 @@ public class MathMLFormFactory extends AbstractMathMLFormFactory implements
 		init();
 	}
 
-	public void convertDouble(final StringBuffer buf, final INum d, final int precedence) {
-		if (d.isNegative()
-				&& (precedence > plusPrec)) {
+	public void convertDouble(final StringBuffer buf, final INum d,
+			final int precedence) {
+		if (d.isNegative() && (precedence > plusPrec)) {
 			tag(buf, "mo", "(");
 		}
 		tagStart(buf, "mn");
@@ -81,8 +79,8 @@ public class MathMLFormFactory extends AbstractMathMLFormFactory implements
 		}
 	}
 
-	public void convertDoubleComplex(final StringBuffer buf, final IComplexNum dc,
-			final int precedence) {
+	public void convertDoubleComplex(final StringBuffer buf,
+			final IComplexNum dc, final int precedence) {
 		tagStart(buf, "mrow");
 		buf.append(String.valueOf(dc.getRealPart()));
 		tag(buf, "mo", "+");
@@ -97,7 +95,8 @@ public class MathMLFormFactory extends AbstractMathMLFormFactory implements
 		tagEnd(buf, "mrow");
 	}
 
-	public void convertInteger(final StringBuffer buf, final IInteger i, final int precedence) {
+	public void convertInteger(final StringBuffer buf, final IInteger i,
+			final int precedence) {
 		if (i.isNegative() && (precedence > plusPrec)) {
 			tag(buf, "mo", "(");
 		}
@@ -109,7 +108,8 @@ public class MathMLFormFactory extends AbstractMathMLFormFactory implements
 		}
 	}
 
-	public void convertFraction(final StringBuffer buf, final IFraction f, final int precedence) {
+	public void convertFraction(final StringBuffer buf, final IFraction f,
+			final int precedence) {
 		if (f.isNegative() && (precedence > plusPrec)) {
 			tag(buf, "mo", "(");
 		}
@@ -126,7 +126,8 @@ public class MathMLFormFactory extends AbstractMathMLFormFactory implements
 		}
 	}
 
-	public void convertComplex(final StringBuffer buf, final IComplex c, final int precedence) {
+	public void convertComplex(final StringBuffer buf, final IComplex c,
+			final int precedence) {
 		tagStart(buf, "mrow");
 		convert(buf, c.getRealPart(), 0);
 		tag(buf, "mo", "+");
@@ -173,7 +174,7 @@ public class MathMLFormFactory extends AbstractMathMLFormFactory implements
 
 	/**
 	 * Description of the Method
-	 *
+	 * 
 	 * @param buf
 	 *            Description of Parameter
 	 * @param p
@@ -200,7 +201,8 @@ public class MathMLFormFactory extends AbstractMathMLFormFactory implements
 		convert(buf, obj, 0);
 	}
 
-	public void convert(final StringBuffer buf, final Object o, final int precedence) {
+	public void convert(final StringBuffer buf, final Object o,
+			final int precedence) {
 		if (o instanceof IAST) {
 			final IAST f = ((IAST) o);
 			// System.out.println(f.getHeader().toString());
@@ -270,7 +272,6 @@ public class MathMLFormFactory extends AbstractMathMLFormFactory implements
 		tag(buf, "mo", "(");
 		tagStart(buf, "mrow");
 		for (int i = 1; i < ast.size(); i++) {
-			checkCanceled();
 			convert(buf, ast.get(i), 0);
 			if (i < ast.size() - 1) {
 				tag(buf, "mo", ",");
@@ -307,7 +308,7 @@ public class MathMLFormFactory extends AbstractMathMLFormFactory implements
 		try {
 			module = (AbstractConverter) clazz.newInstance();
 			module.setFactory(this);
-//			module.setExpressionFactory(fExprFactory);
+			// module.setExpressionFactory(fExprFactory);
 			operTab.put(headString, module);
 			return module;
 		} catch (final Throwable se) {
@@ -360,74 +361,73 @@ public class MathMLFormFactory extends AbstractMathMLFormFactory implements
 		// operTab.put(Factorial, new MMLFactorial(this));
 		// operTab.put("Binomial", new MMLBinomial(this));
 
-		CONSTANT_SYMBOLS.put("E", "&#02147;");
-		CONSTANT_SYMBOLS.put("I", "&#x02148;"); // IMaginaryI
+		CONSTANT_SYMBOLS.put("E", "\u2147");
+		CONSTANT_SYMBOLS.put("I", "\u2148"); // IMaginaryI
 		CONSTANT_SYMBOLS.put("HEllipsis", new Operator("&hellip;"));
 		// greek Symbols:
-		CONSTANT_SYMBOLS.put("Pi", "&pi;");
+		CONSTANT_SYMBOLS.put("Pi", "\u03A0");
 
-		CONSTANT_SYMBOLS.put("Alpha", True);
-		CONSTANT_SYMBOLS.put("Beta", True);
-		CONSTANT_SYMBOLS.put("Chi", True);
-		CONSTANT_SYMBOLS.put("Delta", True);
-		CONSTANT_SYMBOLS.put("Epsilon", True);
-		CONSTANT_SYMBOLS.put("Phi", True);
-		CONSTANT_SYMBOLS.put("Gamma", True);
-		CONSTANT_SYMBOLS.put("Eta", True);
-		CONSTANT_SYMBOLS.put("Iota", True);
+		CONSTANT_SYMBOLS.put("Alpha", "\u0391");
+		CONSTANT_SYMBOLS.put("Beta", "\u0392");
+		CONSTANT_SYMBOLS.put("Gamma", "\u0393");
+		CONSTANT_SYMBOLS.put("Delta", "\u0394");
+		CONSTANT_SYMBOLS.put("Epsilon", "\u0395");
+		CONSTANT_SYMBOLS.put("Zeta", "\u0396");
+		CONSTANT_SYMBOLS.put("Eta", "\u0397");
+		CONSTANT_SYMBOLS.put("Theta", "\u0398");
+		CONSTANT_SYMBOLS.put("Iota", "\u0399");
+		CONSTANT_SYMBOLS.put("Kappa", "\u039A");
+		CONSTANT_SYMBOLS.put("Lambda", "\u039B");
+		CONSTANT_SYMBOLS.put("Mu", "\u039C");
+		CONSTANT_SYMBOLS.put("Nu", "\u039D");
+		CONSTANT_SYMBOLS.put("Xi", "\u039E");
+		CONSTANT_SYMBOLS.put("Omicron", "\u039F");
+		CONSTANT_SYMBOLS.put("Rho", "\u03A1");
+		CONSTANT_SYMBOLS.put("Sigma", "\u03A3");
+		CONSTANT_SYMBOLS.put("Tau", "\u03A4");
+		CONSTANT_SYMBOLS.put("Upsilon", "\u03A5");
+		CONSTANT_SYMBOLS.put("Phi", "\u03A6");
+		CONSTANT_SYMBOLS.put("Chi", "\u03A7");
+		CONSTANT_SYMBOLS.put("Psi", "\u03A8");
+		CONSTANT_SYMBOLS.put("Omega", "\u03A9");
+
 		CONSTANT_SYMBOLS.put("varTheta", True);
-		CONSTANT_SYMBOLS.put("Kappa", True);
-		CONSTANT_SYMBOLS.put("Lambda", True);
-		CONSTANT_SYMBOLS.put("Mu", True);
-		CONSTANT_SYMBOLS.put("Nu", True);
-		CONSTANT_SYMBOLS.put("Omicron", True);
 
-		CONSTANT_SYMBOLS.put("Theta", True);
-		CONSTANT_SYMBOLS.put("Rho", True);
-		CONSTANT_SYMBOLS.put("Sigma", True);
-		CONSTANT_SYMBOLS.put("Tau", True);
-		CONSTANT_SYMBOLS.put("Upsilon", True);
-		CONSTANT_SYMBOLS.put("Omega", True);
-		CONSTANT_SYMBOLS.put("Xi", True);
-		CONSTANT_SYMBOLS.put("Psi", True);
-		CONSTANT_SYMBOLS.put("Zeta", True);
-
-		CONSTANT_SYMBOLS.put("alpha", True);
-		CONSTANT_SYMBOLS.put("beta", True);
-		CONSTANT_SYMBOLS.put("chi", True);
-		CONSTANT_SYMBOLS.put("selta", True);
-		CONSTANT_SYMBOLS.put("epsilon", True);
-		CONSTANT_SYMBOLS.put("phi", True);
-		CONSTANT_SYMBOLS.put("gamma", True);
-		CONSTANT_SYMBOLS.put("eta", True);
-		CONSTANT_SYMBOLS.put("iota", True);
-		CONSTANT_SYMBOLS.put("varphi", True);
-		CONSTANT_SYMBOLS.put("kappa", True);
-		CONSTANT_SYMBOLS.put("lambda", True);
-		CONSTANT_SYMBOLS.put("mu", True);
-		CONSTANT_SYMBOLS.put("nu", True);
-		CONSTANT_SYMBOLS.put("omicron", True);
+		CONSTANT_SYMBOLS.put("alpha", "\u03B1");
+		CONSTANT_SYMBOLS.put("beta", "\u03B2");
+		CONSTANT_SYMBOLS.put("chi", "\u03C7");
+		CONSTANT_SYMBOLS.put("selta", "\u03B4");
+		CONSTANT_SYMBOLS.put("epsilon", "\u03B5");
+		CONSTANT_SYMBOLS.put("phi", "\u03C7");
+		CONSTANT_SYMBOLS.put("gamma", "\u03B3");
+		CONSTANT_SYMBOLS.put("eta", "\u03B7");
+		CONSTANT_SYMBOLS.put("iota", "\u03B9");
+		// CONSTANT_SYMBOLS.put("varphi", "\u0300");
+		CONSTANT_SYMBOLS.put("kappa", "\u03BA");
+		CONSTANT_SYMBOLS.put("lambda", "\u03BB");
+		CONSTANT_SYMBOLS.put("mu", "\u03BC");
+		CONSTANT_SYMBOLS.put("nu", "\u03BD");
+		CONSTANT_SYMBOLS.put("omicron", "\u03BF");
 		// see "Pi"
 		// CONSTANT_SYMBOLS.put("pi", True);
-		CONSTANT_SYMBOLS.put("theta", True);
-		CONSTANT_SYMBOLS.put("rho", True);
-		CONSTANT_SYMBOLS.put("sigma", True);
-		CONSTANT_SYMBOLS.put("tau", True);
-		CONSTANT_SYMBOLS.put("upsilon", True);
-		CONSTANT_SYMBOLS.put("varomega", True);
-		CONSTANT_SYMBOLS.put("omega", True);
-		CONSTANT_SYMBOLS.put("xi", True);
-		CONSTANT_SYMBOLS.put("psi", True);
-		CONSTANT_SYMBOLS.put("zeta", True);
+		CONSTANT_SYMBOLS.put("theta", "\u03B8");
+		CONSTANT_SYMBOLS.put("rho", "\u03C1");
+		CONSTANT_SYMBOLS.put("sigma", "\u03C3");
+		CONSTANT_SYMBOLS.put("tau", "\u03C4");
+		CONSTANT_SYMBOLS.put("upsilon", "\u03C5");
+		// CONSTANT_SYMBOLS.put("varomega", "\u0300");
+		CONSTANT_SYMBOLS.put("omega", "\u03C9");
+		CONSTANT_SYMBOLS.put("xi", "\u03BE");
+		CONSTANT_SYMBOLS.put("psi", "\u03C8");
+		CONSTANT_SYMBOLS.put("zeta", "\u03B6");
 
-		ENTITY_TABLE.put("&af;", "&#xE8A0;");
-		ENTITY_TABLE.put("&dd;", "&#xF74C;");
-		ENTITY_TABLE.put("&InvisibleTimes;", "&#xE89E;");
+		ENTITY_TABLE.put("&af;", "\uE8A0");
+		ENTITY_TABLE.put("&dd;", "\uF74C");
+		ENTITY_TABLE.put("&InvisibleTimes;", "\uE89E");
 
-		ENTITY_TABLE.put("&Integral;", "&#x222B;");
-		ENTITY_TABLE.put("&PartialD;", "&#x2202;");
-		ENTITY_TABLE.put("&Product;", "&#x220F;");
+		ENTITY_TABLE.put("&Integral;", "\u222B");
+		ENTITY_TABLE.put("&PartialD;", "\u2202");
+		ENTITY_TABLE.put("&Product;", "\u220F");
 
 	}
-
 }
