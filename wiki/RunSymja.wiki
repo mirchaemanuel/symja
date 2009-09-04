@@ -26,4 +26,7 @@ To continue an input line type '\' at the end of the line.
 In [1]: 1+1
 Out[1]: 2
 >>> D[Sin[x],x]
+In [2]: D[Sin[x],x]
+Out[2]: Cos[x]
+>>> 
 }}}
