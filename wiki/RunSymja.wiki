@@ -1,6 +1,10 @@
 #summary How to run the console and Symja Swing application
 
 == The Symja Swing GUI application ==
+In the folder where you installed the symja JARR, run a command similar to this:
+{{{
+C:\Java\jdk1.6.0\jre\bin\java -classpath symja-0.0.7a.jar org.matheclipse.symja.Main
+}}}
 
 == The console application ==
 In the folder where you've unzipped the console application, run a command similar to this:
