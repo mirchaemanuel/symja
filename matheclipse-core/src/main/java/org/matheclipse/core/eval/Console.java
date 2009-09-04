@@ -1,7 +1,5 @@
 package org.matheclipse.core.eval;
 
-import static org.matheclipse.basic.Util.checkCanceled;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -22,13 +20,14 @@ public class Console {
 
 	private File fFile;
 
+	private String fDefaultSystemRulesFilename;
+
 	// private Parser fParser;
 
 	private static int COUNTER = 1;
-	
+
 	public static void main(final String args[]) {
 		printUsage();
-		F.initSymbols();
 		Console console;
 		try {
 			console = new Console();
@@ -40,42 +39,48 @@ public class Console {
 		String inputExpression = null;
 		String outputExpression = null;
 		console.setArgs(args);
+		F.initSymbols(console.getDefaultSystemRulesFilename());
 		final File file = console.getFile();
 		if (file != null) {
 			try {
-				final BufferedReader f = new BufferedReader(new FileReader(file));
+				final BufferedReader f = new BufferedReader(
+						new FileReader(file));
 				final StringBuffer buff = new StringBuffer(1024);
 				String line;
 				while ((line = f.readLine()) != null) {
-					checkCanceled();
 					buff.append(line);
 					buff.append("\n");
 				}
 				f.close();
 				inputExpression = buff.toString();
 				outputExpression = console.interpreter(inputExpression);
-				System.out.println("In ["+COUNTER+"]: "+inputExpression);
-				System.out.println("Out["+COUNTER+"]: "+outputExpression);
+				System.out.println("In [" + COUNTER + "]: " + inputExpression);
+				System.out.println("Out[" + COUNTER + "]: " + outputExpression);
 				COUNTER++;
 			} catch (final IOException ioe) {
-				final String msg = "Cannot read from the specified file. " + "Make sure the path exists and you have read permission.";
+				final String msg = "Cannot read from the specified file. "
+						+ "Make sure the path exists and you have read permission.";
 				System.out.println(msg);
 				return;
 			}
 		}
 
 		while (true) {
-			checkCanceled();
 			try {
 				inputExpression = console.readString(System.out, ">>> ");
 				if (inputExpression != null) {
-					if ((inputExpression.length() >= 4) && inputExpression.toLowerCase().substring(0, 4).equals("exit")) {
-						System.out.println("Closing MathEclipse console... bye.");
+					if ((inputExpression.length() >= 4)
+							&& inputExpression.toLowerCase().substring(0, 4)
+									.equals("exit")) {
+						System.out
+								.println("Closing MathEclipse console... bye.");
 						System.exit(0);
 					}
 					outputExpression = console.interpreter(inputExpression);
-					System.out.println("In ["+COUNTER+"]: "+inputExpression);
-					System.out.println("Out["+COUNTER+"]: "+outputExpression);
+					System.out.println("In [" + COUNTER + "]: "
+							+ inputExpression);
+					System.out.println("Out[" + COUNTER + "]: "
+							+ outputExpression);
 					COUNTER++;
 				}
 			} catch (final Exception e) {
@@ -90,16 +95,24 @@ public class Console {
 	private static void printUsage() {
 		final String lineSeparator = System.getProperty("line.separator");
 		final StringBuffer msg = new StringBuffer();
-		msg.append("org.matheclipse.core.eval.Console [options]" + lineSeparator);
+		msg.append("org.matheclipse.core.eval.Console [options]"
+				+ lineSeparator);
 		msg.append(lineSeparator);
-		msg.append("Options: " + lineSeparator);
-		msg.append("  -h or -help                  print this message" + lineSeparator);
+		msg.append("Program arguments: " + lineSeparator);
+		msg.append("  -h or -help                  print this message"
+				+ lineSeparator);
 		// msg.append(" -debug print debugging information" + lSep);
-		msg.append("  -f or -file <filename>       use given file as input" + lineSeparator);
+		msg.append("  -f or -file <filename>       use given file as input script"
+				+ lineSeparator);
+		msg.append("  -d or -default <filename>    use given textfile for system rules"
+				+ lineSeparator);
 		msg.append("To stop the program type: " + lineSeparator);
 		msg.append("exit<RETURN>" + lineSeparator);
-		msg.append("To continue an input line type '\\' at the end of the line." + lineSeparator);
-		msg.append("****+****+****+****+****+****+****+****+****+****+****+****+");
+		msg
+				.append("To continue an input line type '\\' at the end of the line."
+						+ lineSeparator);
+		msg
+				.append("****+****+****+****+****+****+****+****+****+****+****+****+");
 
 		System.out.println(msg.toString());
 	}
@@ -122,11 +135,10 @@ public class Console {
 	 * Sets the arguments for the <code>main</code> method
 	 * 
 	 * @param args
-	 *          the aruments of the program
+	 *            the aruments of the program
 	 */
 	private void setArgs(final String args[]) {
 		for (int i = 0; i < args.length; i++) {
-			checkCanceled();
 			final String arg = args[i];
 
 			if (arg.equals("-help") || arg.equals("-h")) {
@@ -139,7 +151,18 @@ public class Console {
 					fFile = new File(args[i + 1]);
 					i++;
 				} catch (final ArrayIndexOutOfBoundsException aioobe) {
-					final String msg = "You must specify a file when " + "using the -file argument";
+					final String msg = "You must specify a file when "
+							+ "using the -file argument";
+					System.out.println(msg);
+					return;
+				}
+			} else if (arg.equals("-default") || arg.equals("-d")) {
+				try {
+					fDefaultSystemRulesFilename = args[i + 1];
+					i++;
+				} catch (final ArrayIndexOutOfBoundsException aioobe) {
+					final String msg = "You must specify a file when "
+							+ "using the -file argument";
 					System.out.println(msg);
 					return;
 				}
@@ -181,7 +204,7 @@ public class Console {
 	 * 
 	 * @param out
 	 * @param prompt
-	 *          the prompt string to display
+	 *            the prompt string to display
 	 * 
 	 */
 
@@ -194,18 +217,18 @@ public class Console {
 	 * read a string from the console. The string is terminated by a newline
 	 * 
 	 * @param out
-	 *          Description of Parameter
+	 *            Description of Parameter
 	 * @return the input string (without the newline)
 	 */
 
 	public String readString(final PrintStream out) {
 		final StringBuffer input = new StringBuffer();
-		final BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+		final BufferedReader in = new BufferedReader(new InputStreamReader(
+				System.in));
 		boolean done = false;
 
 		try {
 			while (!done) {
-				checkCanceled();
 				final String s = in.readLine();
 				if (s != null) {
 					if ((s.length() > 0) && (s.charAt(s.length() - 1) != '\\')) {
@@ -246,9 +269,9 @@ public class Console {
 	 * read a string from the console. The string is terminated by a newline
 	 * 
 	 * @param prompt
-	 *          the prompt string to display
+	 *            the prompt string to display
 	 * @param out
-	 *          Description of Parameter
+	 *            Description of Parameter
 	 * @return the input string (without the newline)
 	 */
 
@@ -271,4 +294,13 @@ public class Console {
 		return fFile;
 	}
 
+	/**
+	 * Get the default rules textfile name, which should be loaded at startup.
+	 * This file replaces the default built-in System.mep resource stream.
+	 * 
+	 * @return default rules textfile name
+	 */
+	public String getDefaultSystemRulesFilename() {
+		return fDefaultSystemRulesFilename;
+	}
 }

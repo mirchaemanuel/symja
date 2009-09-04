@@ -25,12 +25,6 @@ import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.event.*;
 
-import java.util.Map;
-
-/*import net.java.dev.cas.plot.*;
-
-import javax.media.j3d.VirtualUniverse;*/
-
 /** Responsible for displaying the preferences dialog and handling
   * preference changes.
   */

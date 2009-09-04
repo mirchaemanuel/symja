@@ -20,7 +20,7 @@ public class PlotExample {
 	public static void main(String[] args) {
 		try {
 			// initialize the engine:
-			F.initSymbols();
+			F.initSymbols(null);
 			Config.SWING_PLOT_FRAME = false;
 			Config.SERVER_MODE = true;
 
