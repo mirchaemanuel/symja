@@ -35,7 +35,7 @@ With the {{{-f}}} or {{{-file}}} program argument, you can run a default script 
  -f C:\temp\mymath.script
 }}}
 
-With the {{{-d}}} or {{{-default}}} program argument, the default pattern-matching math rules which are implemented in the System.mep file are replaced by your own rules:
+With the {{{-d}}} or {{{-default}}} program argument, the default pattern-matching math rules which are implemented in the [http://code.google.com/p/symja/source/browse/trunk/matheclipse-core/src/main/java/System.mep System.mep] file are replaced by your own rules:
 {{{
  -default C:\temp\mysystem.mep
 }}}
