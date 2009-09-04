@@ -1,9 +1,13 @@
 package org.matheclipse.core.expression;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.HashMap;
 
 import org.matheclipse.basic.Config;
@@ -507,7 +511,7 @@ public class F {
 	}
 
 	public static IAST Dot(final IExpr... a) {// 0, final IExpr a1, final IExpr
-																						// a2) {
+		// a2) {
 		return ast(a, Dot);
 		// return ternary(Dot, a0, a1, a2);
 	}
@@ -518,7 +522,7 @@ public class F {
 	}
 
 	public static IAST Equal(final IExpr... a) {// , final IExpr a1, final IExpr
-																							// a2) {
+		// a2) {
 		return ast(a, Equal);
 		// return ternary(Equal, a0, a1, a2);
 	}
@@ -557,7 +561,7 @@ public class F {
 
 		return binary(GCD, a0, a1);
 	}
-	
+
 	public static IAST Graphics() {
 
 		return function(Graphics);
@@ -570,13 +574,21 @@ public class F {
 
 	private static boolean isSystemInitialized = false;
 
-	public synchronized static void initSymbols() {
+	/**
+	 * Initialize the complete System
+	 * 
+	 * @param fileName
+	 *            <code>null</code> or optional text filename, which includes
+	 *            the preloaded system rules
+	 */
+	public synchronized static void initSymbols(String fileName) {
 
 		if (!isSystemInitialized) {
 			isSystemInitialized = true;
 			// try {
 			// JSCL_LEXICOGRAPHIC = Variable.valueOf("lex").expressionValue();
-			// JSCL_DEGREE_LEXICOGRAPHIC = Variable.valueOf("tdl").expressionValue();
+			// JSCL_DEGREE_LEXICOGRAPHIC =
+			// Variable.valueOf("tdl").expressionValue();
 			// JSCL_DEGREE_REVERSE_LEXICOGRAPHIC =
 			// Variable.valueOf("drl").expressionValue();
 			// } catch (NotVariableException e) {
@@ -599,8 +611,8 @@ public class F {
 			CD1 = Num.valueOf(1.0);
 
 			/**
-			 * Define the &quot;set symbols&quot; first, because of dependencies in
-			 * the predefined rules
+			 * Define the &quot;set symbols&quot; first, because of dependencies
+			 * in the predefined rules
 			 */
 			Set = predefinedSymbol("Set");
 			SetDelayed = predefinedSymbol("SetDelayed");
@@ -764,17 +776,32 @@ public class F {
 			Unequal = predefinedSymbol("Unequal");
 			While = predefinedSymbol("While");
 
-			InputStream systemPackage = F.class.getResourceAsStream("/System.mep");
-			if (systemPackage != null) {
-				loadPackage(systemPackage);
+			Reader reader = null;
+			if (fileName != null) {
+				try {
+					reader = new FileReader(fileName);
+				} catch (FileNotFoundException e) {
+					e.printStackTrace();
+				}
+			}
+			if (reader == null) {
+				InputStream systemPackage = F.class
+						.getResourceAsStream("/System.mep");
+				if (systemPackage != null) {
+					reader = new InputStreamReader(systemPackage);
+				}
+			}
+			if (reader != null) {
+				loadPackage(reader);
 			}
 		}
 	}
 
-	public static void loadPackage(final InputStream is) {
+	public static void loadPackage(final Reader is) {
 		String record = null;
 		final StringBufferWriter buf = new StringBufferWriter();
-		final BufferedReader r = new BufferedReader(new InputStreamReader(is));
+		final BufferedReader r = new BufferedReader(is);// new
+		// InputStreamReader(is));
 		try {
 			StringBuilder builder = new StringBuilder(2048);
 			while ((record = r.readLine()) != null) {
@@ -857,7 +884,7 @@ public class F {
 	}
 
 	public static IAST List(final IExpr... a) {// 0, final IExpr a1, final IExpr
-																							// a2) {
+		// a2) {
 		return ast(a, List);
 		// return ternary(List, a0, a1, a2);
 	}
@@ -953,7 +980,7 @@ public class F {
 	}
 
 	public static IAST Plus(final IExpr... a) {// 0, final IExpr a1, final IExpr
-																							// a2) {
+		// a2) {
 		return ast(a, Plus);
 		// return ternary(Plus, a0, a1, a2);
 	}
@@ -1087,11 +1114,12 @@ public class F {
 	 * Creates a new list from the given ast and symbol. if <code>include</code>
 	 * is set to <code>true </code> all arguments from index first to last-1 are
 	 * copied in the new list if <code>include</code> is set to
-	 * <code> false </code> all arguments excluded from index first to last-1 are
-	 * copied in the new list
+	 * <code> false </code> all arguments excluded from index first to last-1
+	 * are copied in the new list
 	 * 
 	 */
-	public static IAST ast(final IAST f, final IExpr sym, final boolean include, final int first, final int last) {
+	public static IAST ast(final IAST f, final IExpr sym,
+			final boolean include, final int first, final int last) {
 		// return new AST(f, sym, incl, first, last);
 		final AST ast = AST.newInstance(sym);
 		if (include == true) {
@@ -1126,7 +1154,8 @@ public class F {
 		return ast(a, head);
 	}
 
-	public static IAST ast(final IExpr head, final int initialCapacity, final boolean setLength) {
+	public static IAST ast(final IExpr head, final int initialCapacity,
+			final boolean setLength) {
 		final AST ast = AST.newInstance(head);
 		if (setLength) {
 			for (int i = 0; i < initialCapacity; i++) {
@@ -1208,7 +1237,7 @@ public class F {
 	 * Create a complex numeric number with imaginary part = 0.0
 	 * 
 	 * @param r
-	 *          the real part of the number
+	 *            the real part of the number
 	 * @return
 	 */
 	public static IComplexNum complexNum(final double r) {
@@ -1219,9 +1248,9 @@ public class F {
 	 * Create a complex numeric value
 	 * 
 	 * @param r
-	 *          real part
+	 *            real part
 	 * @param i
-	 *          imaginary part
+	 *            imaginary part
 	 * @return
 	 */
 	public static ComplexNum complexNum(final double r, final double i) {
@@ -1267,7 +1296,8 @@ public class F {
 	 * @param a2
 	 * @return
 	 */
-	public static IExpr eval(final ISymbol head, final IExpr a0, final IExpr a1, final IExpr a2) {
+	public static IExpr eval(final ISymbol head, final IExpr a0,
+			final IExpr a1, final IExpr a2) {
 		final IAST ast = ast(head);
 		ast.add(a0);
 		ast.add(a1);
@@ -1290,12 +1320,13 @@ public class F {
 	 * Create a "fractional" number
 	 * 
 	 * @param numerator
-	 *          numerator of the fractional number
+	 *            numerator of the fractional number
 	 * @param denominator
-	 *          denumerator of the fractional number
+	 *            denumerator of the fractional number
 	 * @return IFraction
 	 */
-	public static IFraction fraction(final IInteger numerator, final IInteger denominator) {
+	public static IFraction fraction(final IInteger numerator,
+			final IInteger denominator) {
 		return FractionSym.valueOf(numerator, denominator);
 	}
 
@@ -1303,12 +1334,13 @@ public class F {
 	 * Create a "fractional" number
 	 * 
 	 * @param numerator
-	 *          numerator of the fractional number
+	 *            numerator of the fractional number
 	 * @param denominator
-	 *          denumerator of the fractional number
+	 *            denumerator of the fractional number
 	 * @return IFraction
 	 */
-	public static IFraction fraction(final BigInteger numerator, final BigInteger denominator) {
+	public static IFraction fraction(final BigInteger numerator,
+			final BigInteger denominator) {
 		return FractionSym.valueOf(numerator, denominator);
 	}
 
@@ -1316,25 +1348,29 @@ public class F {
 	 * Create a "fractional" number
 	 * 
 	 * @param numerator
-	 *          numerator of the fractional number
+	 *            numerator of the fractional number
 	 * @param denominator
-	 *          denumerator of the fractional number
+	 *            denumerator of the fractional number
 	 * @return IFraction
 	 */
-	public static IFraction fraction(java.math.BigInteger jmNumeratorBig, java.math.BigInteger jmDenominatorBig) {
-		return FractionSym.valueOf(new BigInteger(jmNumeratorBig.toByteArray()), new BigInteger(jmDenominatorBig.toByteArray()));
+	public static IFraction fraction(java.math.BigInteger jmNumeratorBig,
+			java.math.BigInteger jmDenominatorBig) {
+		return FractionSym.valueOf(
+				new BigInteger(jmNumeratorBig.toByteArray()), new BigInteger(
+						jmDenominatorBig.toByteArray()));
 	}
 
 	/**
 	 * Create a "fractional" number
 	 * 
 	 * @param numerator
-	 *          numerator of the fractional number
+	 *            numerator of the fractional number
 	 * @param denominator
-	 *          denumerator of the fractional number
+	 *            denumerator of the fractional number
 	 * @return IFraction
 	 */
-	public static IFraction fraction(final long numerator, final long denominator) {
+	public static IFraction fraction(final long numerator,
+			final long denominator) {
 		return FractionSym.valueOf(numerator, denominator);
 	}
 
@@ -1342,8 +1378,8 @@ public class F {
 	 * Create a "fractional" number
 	 * 
 	 * @param value
-	 *          the rational value which should be converted to a fractional
-	 *          number
+	 *            the rational value which should be converted to a fractional
+	 *            number
 	 * @return IFraction
 	 */
 	public static IFraction fraction(final Rational value) {
@@ -1354,7 +1390,8 @@ public class F {
 	 * Create a "fractional" number
 	 * 
 	 * @param value
-	 *          the double value which should be converted to a fractional number
+	 *            the double value which should be converted to a fractional
+	 *            number
 	 * @return IFraction
 	 */
 	public static IFraction fraction(final double value) {
@@ -1390,12 +1427,13 @@ public class F {
 	 * 
 	 * @param head
 	 * @param arg0
-	 *          first argument of the function
+	 *            first argument of the function
 	 * @param arg1
-	 *          second argument of the function
+	 *            second argument of the function
 	 * @return
 	 */
-	public static IAST function(final IAST head, final IExpr arg0, final IExpr arg1) {
+	public static IAST function(final IAST head, final IExpr arg0,
+			final IExpr arg1) {
 		final IAST list = ast(head);
 		list.add(arg0);
 		list.add(arg1);
@@ -1434,7 +1472,8 @@ public class F {
 	 * @param arg1
 	 * @return
 	 */
-	public static IAST function(final ISymbol head, final IExpr arg0, final IExpr arg1) {
+	public static IAST function(final ISymbol head, final IExpr arg0,
+			final IExpr arg1) {
 		final IAST list = ast(head);
 		list.add(arg0);
 		list.add(arg1);
@@ -1445,7 +1484,7 @@ public class F {
 	 * Create a function
 	 * 
 	 * @param head
-	 *          usually a String which tags the function
+	 *            usually a String which tags the function
 	 * @return IAST
 	 * @see org.matheclipse.parser.client.IConstantHeaders
 	 */
@@ -1458,9 +1497,9 @@ public class F {
 	 * Create a unary function with 1 argument
 	 * 
 	 * @param head
-	 *          usually a String which tags the function
+	 *            usually a String which tags the function
 	 * @param arg0
-	 *          the argument of this function
+	 *            the argument of this function
 	 * @return IAST
 	 */
 	public static IAST function(final String head, final IExpr arg0) {
@@ -1473,14 +1512,15 @@ public class F {
 	 * Create a binary function with 2 arguments
 	 * 
 	 * @param head
-	 *          usually a String which tags the function
+	 *            usually a String which tags the function
 	 * @param arg0
-	 *          the first argument of this function
+	 *            the first argument of this function
 	 * @param arg1
-	 *          the second argument of this function
+	 *            the second argument of this function
 	 * @return IAST
 	 */
-	public static IAST function(final String head, final IExpr arg0, final IExpr arg1) {
+	public static IAST function(final String head, final IExpr arg0,
+			final IExpr arg1) {
 		final IAST list = ast(symbol(head));
 		list.add(arg0);
 		list.add(arg1);
@@ -1538,12 +1578,13 @@ public class F {
 	 * Create a large integer number.
 	 * 
 	 * @param integerString
-	 *          the integer number represented as a String
+	 *            the integer number represented as a String
 	 * @param numberFormat
-	 *          the format of the number (usually 10)
+	 *            the format of the number (usually 10)
 	 * @return Object
 	 */
-	public static IInteger integer(final String integerString, final int numberFormat) {
+	public static IInteger integer(final String integerString,
+			final int numberFormat) {
 		return IntegerSym.valueOf(integerString, numberFormat);
 	}
 
@@ -1585,7 +1626,8 @@ public class F {
 	 * 
 	 * @param symbol
 	 * @param check
-	 *          additional condition which should be checked in pattern-matching
+	 *            additional condition which should be checked in
+	 *            pattern-matching
 	 * @return IPattern
 	 */
 	public static IPattern pattern(final ISymbol symbol, final IExpr check) {
@@ -1613,7 +1655,8 @@ public class F {
 	 * 
 	 * @param symbolName
 	 * @param check
-	 *          additional condition which should be checked in pattern-matching
+	 *            additional condition which should be checked in
+	 *            pattern-matching
 	 * @return IPattern
 	 */
 	public static IPattern pattern(final String symbolName, final IExpr check) {
@@ -1637,7 +1680,8 @@ public class F {
 		temp = new Symbol(symbolName);
 		fSymbolMap.put(symbolName, temp);
 		if (Character.isUpperCase(symbolName.charAt(0))) {
-			// probably a predefined function use reflection to setUp this symbol
+			// probably a predefined function use reflection to setUp this
+			// symbol
 			SystemNamespace.DEFAULT.setEvaluator(temp);
 		}
 
@@ -1711,7 +1755,7 @@ public class F {
 	 * thread local variables map and push a value on the local stack;
 	 * 
 	 * @param symbolName
-	 *          the name of the symbol
+	 *            the name of the symbol
 	 * @return
 	 */
 	public static ISymbol local(final String symbolName, IExpr value) {
@@ -1733,7 +1777,7 @@ public class F {
 	 * local stack;
 	 * 
 	 * @param symbolName
-	 *          the name of the symbol
+	 *            the name of the symbol
 	 * @return
 	 */
 	public static ISymbol local(final String symbolName) {
@@ -1875,7 +1919,7 @@ public class F {
 	 * given argument.
 	 * 
 	 * @param a
-	 *          the expression which should be evaluated
+	 *            the expression which should be evaluated
 	 * @return the evaluated expression
 	 * @see EvalEngine#evaluate(IExpr)
 	 */
@@ -1935,7 +1979,8 @@ public class F {
 		return tempA.equals(tempB);
 	}
 
-	public static int compareTo(IExpr a, IExpr b) throws UnsupportedOperationException {
+	public static int compareTo(IExpr a, IExpr b)
+			throws UnsupportedOperationException {
 		if (a instanceof ISignedNumber && b instanceof ISignedNumber) {
 			return a.compareTo(b);
 		}
@@ -1944,10 +1989,12 @@ public class F {
 		if (tempA instanceof ISignedNumber && tempB instanceof ISignedNumber) {
 			return tempA.compareTo(tempB);
 		}
-		throw new UnsupportedOperationException("compareTo() - first or second argument could not be converted into a signed number.");
+		throw new UnsupportedOperationException(
+				"compareTo() - first or second argument could not be converted into a signed number.");
 	}
 
-	public static int compareTo(IExpr a, Integer i) throws UnsupportedOperationException {
+	public static int compareTo(IExpr a, Integer i)
+			throws UnsupportedOperationException {
 		if (a instanceof ISignedNumber) {
 			return a.compareTo(integer(i.longValue()));
 		}
@@ -1955,10 +2002,12 @@ public class F {
 		if (temp instanceof ISignedNumber) {
 			return temp.compareTo(integer(i.longValue()));
 		}
-		throw new UnsupportedOperationException("compareTo() - first argument could not be converted into a signed number.");
+		throw new UnsupportedOperationException(
+				"compareTo() - first argument could not be converted into a signed number.");
 	}
 
-	public static int compareTo(Integer i, IExpr b) throws UnsupportedOperationException {
+	public static int compareTo(Integer i, IExpr b)
+			throws UnsupportedOperationException {
 		if (b instanceof ISignedNumber) {
 			return integer(i.longValue()).compareTo(b);
 		}
@@ -1966,10 +2015,12 @@ public class F {
 		if (temp instanceof ISignedNumber) {
 			return integer(i.longValue()).compareTo(temp);
 		}
-		throw new UnsupportedOperationException("compareTo() - second argument could not be converted into a signed number.");
+		throw new UnsupportedOperationException(
+				"compareTo() - second argument could not be converted into a signed number.");
 	}
 
-	public static int compareTo(IExpr a, java.math.BigInteger i) throws UnsupportedOperationException {
+	public static int compareTo(IExpr a, java.math.BigInteger i)
+			throws UnsupportedOperationException {
 		if (a instanceof ISignedNumber) {
 			return a.compareTo(integer(i));
 		}
@@ -1977,10 +2028,12 @@ public class F {
 		if (temp instanceof ISignedNumber) {
 			return temp.compareTo(integer(i));
 		}
-		throw new UnsupportedOperationException("compareTo() - first argument could not be converted into a signed number.");
+		throw new UnsupportedOperationException(
+				"compareTo() - first argument could not be converted into a signed number.");
 	}
 
-	public static int compareTo(java.math.BigInteger i, IExpr b) throws UnsupportedOperationException {
+	public static int compareTo(java.math.BigInteger i, IExpr b)
+			throws UnsupportedOperationException {
 		if (b instanceof ISignedNumber) {
 			return integer(i).compareTo(b);
 		}
@@ -1988,7 +2041,8 @@ public class F {
 		if (temp instanceof ISignedNumber) {
 			return integer(i).compareTo(temp);
 		}
-		throw new UnsupportedOperationException("compareTo() - second argument could not be converted into a signed number.");
+		throw new UnsupportedOperationException(
+				"compareTo() - second argument could not be converted into a signed number.");
 	}
 
 	public static IExpr plus(java.math.BigInteger i, IExpr b) {

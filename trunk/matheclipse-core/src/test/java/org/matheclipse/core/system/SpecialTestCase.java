@@ -29,7 +29,7 @@ public class SpecialTestCase extends TestCase {
 
 	public SpecialTestCase(String name) {
 		super(name);
-		F.initSymbols();
+		F.initSymbols(null);
 	}
 
 	// public void check(String evalString, String expectedResult) {

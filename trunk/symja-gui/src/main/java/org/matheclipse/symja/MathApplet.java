@@ -32,7 +32,7 @@ public class MathApplet extends JApplet {
 	 */
 	private JPanel getJContentPane() {
 		if (jContentPane == null) {
-			jContentPane = new EvalPanel();
+			jContentPane = new EvalPanel(null, null);
 		}
 		return jContentPane;
 	}
