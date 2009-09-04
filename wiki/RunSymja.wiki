@@ -1,4 +1,4 @@
-#summary How to run the console and Symja Swing application
+#summary How to run the Symja Swing and console application
 
 == The Symja Swing GUI application ==
 In the folder where you installed the symja JAR, run a command similar to this:
