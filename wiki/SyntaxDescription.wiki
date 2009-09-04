@@ -23,4 +23,46 @@
 ||Pure Functions	||pure functions can be expressed with the & operator 	||{{{(#^3)&[x]}}} gives {{{x^3}}}||
 ||Parts of an expression	||{{{ expression[[index]] }}}||{{{a, b, c, d}[[2]]}}} gives {{{b}}}||
 
+= Examples =
+
+Simplyfy an expression:
+{{{ 
+a+a+4*b^2+3*b^2
+}}}
+
+Factor an integer number:
+{{{ 
+FactorInteger[2^15-5]
+}}}
+
+Derivative of a function:
+{{{ 
+D[Sin[x^3],x]
+}}}
+
+Factor a polynomial:
+{{{ 
+Factor[-1+x^16]
+}}}
+
+Factor a polynomial modulo an integer
+{{{ 
+Factor[5+x^12,Modulus->7]
+}}}
+
+Expand a polynomial
+{{{ 
+Expand[(-1+x)*(1+x)*(1+x^2)*(1+x^4)*(1+x^8)]
+}}}
+
+Inverse of a matrix:
+{{{ 
+Inverse[{{1,2},{3,4}}]
+}}}
+
+Determinant of a matrix:
+{{{ 
+Det[{{1,2},{3,4}}]
+}}}
+
 See the [http://code.google.com/p/symja/source/browse/trunk/matheclipse-core/src/test/java/org/matheclipse/core/system/SystemTestCase.java JUnit test cases] for more syntax examples.
