@@ -15,7 +15,8 @@ SVN Sourcecode tree:
  * [http://code.google.com/p/symja/source/browse/#svn/trunk/matheclipse-parser]
 
 == Examples ==
- 
+The following examples show the numeric evaluation engines shipped with the parser package. For using the symboli engine see the JSR223Support and RunSymja documents.
+
 === Evaluate an expression in double mode ===
  
 This is a JUnit example for evaluating a math string expression into a *double* number value:
