@@ -2,7 +2,7 @@
 
 = Syntax Description =
 
-||Type 	 ||Description 	 ||Input Example||
+||*Type*	||*Description*	 ||*Input Example*||
 ||Integer	||integer numbers 	||{{{ 42 }}}||
 ||Rational	||rational numbers 	||{{{ 13/17 }}}||
 ||Complex	||complex numbers 	||{{{ 2+I*(1/3) }}}||
