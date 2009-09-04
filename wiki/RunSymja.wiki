@@ -1,6 +1,4 @@
-#summary Ho to run the console and Symja Swing application
-
-
+#summary How to run the console and Symja Swing application
 
 == The Symja Swing GUI application ==
 
@@ -29,4 +27,15 @@ Out[1]: 2
 In [2]: D[Sin[x],x]
 Out[2]: Cos[x]
 >>> 
+}}}
+
+==Features available in the latest SVN version==
+With the {{{-f}}} or {{{-file}}} program argument, you can run a default script on startup of the console or Symja application:
+{{{
+ -f C:\temp\mymath.script
+}}}
+
+With the {{{-d}}} or {{{-default}}} program argument, the default pattern-matching math rules which are implemented in the System.mep file are replaced by your own rules:
+{{{
+ -default C:\temp\mysystem.mep
 }}}
