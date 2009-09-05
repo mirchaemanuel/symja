@@ -77,7 +77,7 @@ Define variables {{{$x}}} and {{{$y}}}:
 
 Assuming that the {{{c:\temp\test.m}}} script file contains this code:
 {{{
-  $m={$x, $y, {13, 7, 8}}; $m.$
+  $m={$x, $y, {13, 7, 8}}; $m.$m
 }}}
 
 we can now define values for the variables $x and $y (which contain the first and second row of the matrix $m) and multiply the matrix $m by itself: 
