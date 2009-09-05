@@ -74,3 +74,78 @@ Define variables {{{$x}}} and {{{$y}}}:
 			ex.printStackTrace();
 		}
 }}}
+
+Assuming that the {{{c:\temp\test.m}}} script file contains this code:
+{{{
+  $m={$x, $y, {13, 7, 8}}; $m.$
+}}}
+
+we can now define values for the variables $x and $y (which contain the first and second row of the matrix $m) and multiply the matrix $m by itself: 
+{{{
+    try {// a script file test
+      ArrayList<Object> row = new ArrayList<Object>();
+      row.add("List"); // head of the expression
+      row.add(Integer.valueOf(1));
+      row.add(Integer.valueOf(2));
+      row.add(Integer.valueOf(3));
+
+      int[] intArr = { 3, 4, 11 };
+
+      engine_1.put("$x", row);
+      engine_1.put("$y", intArr);
+// the test.m file contains this script for matrix multiplication:
+// $m={$x, $y, {13, 7, 8}};
+// $m.$m
+
+      ScriptContext context = engine_1.getContext();
+      context.setAttribute(MathScriptEngine.RETURN_OBJECT, Boolean.TRUE,
+          ScriptContext.ENGINE_SCOPE);
+      Object objectResult = engine_1
+          .eval(new FileReader(
+              "C:\\temp\\test.m"));
+// print result for matrix multiplication: {{1,2,3}, {3, 4, 11},
+// {13, 7, 8}}.{{1,2,3}, {3, 4, 11}, {13, 7, 8}}
+      assertEquals("{{46, 31, 49}, {158, 99, 141}, {138, 110, 180}}",
+          objectResult.toString());
+      if (objectResult instanceof IExpr) {
+        // decompose the matrix into rows
+        IExpr expr = (IExpr) objectResult;
+        // gives the head "List", because matrices are list of row-lists
+        assertEquals("List", expr.head().toString());
+
+        if (expr instanceof List) {
+          // use java.util.List to print the rows
+          List<IExpr> list = (List<IExpr>) expr;
+          for (IExpr subExpr : list) {
+            System.out.println(subExpr);
+          }
+          IExpr subExpr;
+          // there's a difference between foreach and for loop
+          // because the head is stored at index 0:
+          for (int i = 0; i < list.size(); i++) {
+            subExpr = list.get(i);
+            System.out.println(subExpr);
+          }
+        }
+
+        if (expr instanceof IAST) {
+          // use org.matheclipse.core.interfaces.IAST to print the
+          // rows
+          IAST list = (IAST) expr;
+          for (IExpr subExpr : list) {
+            System.out.println(subExpr);
+          }
+          IExpr subExpr;
+          // there's a difference between foreach and for loop
+          // because the head is stored at index 0:
+          for (int i = 0; i < list.size(); i++) {
+            subExpr = list.get(i);
+            System.out.println(subExpr);
+          }
+        }
+
+      }
+    } catch (Exception ex) {
+      ex.printStackTrace();
+    }
+}}}
