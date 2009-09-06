@@ -1,4 +1,4 @@
-#summary How to add new Java function packages
+#summary How to add new Java function packages to MathEclipse
 
 = Function Interfaces =
 For your own Java math functions you have to add the Java package name to the system namespace:
@@ -8,7 +8,22 @@ SystemNamespace.DEFAULT.add("<your.own.package.name>");
 
 In this package you have to define a class which is derived from the [http://code.google.com/p/symja/source/browse/trunk/matheclipse-core/src/main/java/org/matheclipse/core/eval/interfaces/IFunctionEvaluator.java org.matheclipse.core.eval.interfaces.IFunctionEvaluator] or [http://code.google.com/p/symja/source/browse/trunk/matheclipse-core/src/main/java/org/matheclipse/core/eval/interfaces/AbstractFunctionEvaluator.java org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator] interfaces.
 
+If you would like to implement a new {{{MyFunction[<argument>]}}} function, you can for example derive a class with the same name ({{{MyFunction}}}) from {{{AbstractFunctionEvaluator}}}. In this class you have to define a public default constructor and an {{{evaluate()}}} method. The {{{evaluate()}}} method can return {{{null}}}} if no new result could be evaluated.
 
+{{{
+public class MyFunction extends AbstractFunctionEvaluator {
+
+  public MyFunction() {
+  }
+
+  @Override
+  public IExpr evaluate(final IAST functionList) {
+...
+
+...
+  }
+}
+}}}
 = Example =
 
 You can find a lot of examples in the [http://code.google.com/p/symja/source/browse/#svn/trunk/matheclipse-core/src/main/java/org/matheclipse/core/reflection/system org.matheclipse.core.reflection.system package].
