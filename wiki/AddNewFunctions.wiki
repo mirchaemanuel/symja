@@ -1,5 +1,11 @@
 #summary How to add new function packages
 
+= Function Interfaces =
+For your own function you have to add the Java package name to the SystemNamespace:
+{{{
+SystemNamespace.DEFAULT.add("<your.own.package.name>");
+}}}
+
 = Example =
 
 You can find a lot of examples in the [http://code.google.com/p/symja/source/browse/#svn/trunk/matheclipse-core/src/main/java/org/matheclipse/core/reflection/system org.matheclipse.core.reflection.system package].
