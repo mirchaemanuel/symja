@@ -7,7 +7,7 @@ All atomic math objects like integer numbers ({{{IntegerSym}}}), fractional numb
 
 The math functions are represented as AST (abstract syntax tree) objects (derived from {{{IAST}}}, {{{IExpr}}} and {{{java.util.List}}} interfaces). The *head* (i.e. Sin, Cos, PrimeQ,...) of the function is stored at index {{{0}}} in the list. The {{{n}}} arguments of the function are stored in the indexes {{{1..n}}}. For example the function {{{f[x,y,z]}}} is internally represented by the {{{java.util.ArrayList}}}: {{{[ f, x, y, z ]}}}. Of course these lists can be nested and form a tree of {{{java.util.List}}} and other atomic math objects (i.e. {{{f[x,y,g[u,v,h[w,3]]]}}} is represented by the nested {{{java.util.ArrayList}}} structure: {{{[ f, x, y, [ g, u, v [ h, w, 3 ] ] ]}}}).
 
-Here is an hierarchy overview of the classes, which implement the internal math expression representation:
+Here is a hierarchy overview of the classes, which implement the internal math expression representation:
  
 http://symja.googlecode.com/svn/wiki/MathEclipseObjectHierarchy.png
 
