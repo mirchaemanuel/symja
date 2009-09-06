@@ -1,5 +1,5 @@
 #summary How to use the Maven repository
-#labels Featured
+#labels Featured,Phase-Implementation
 
 IN PROGRESS
 
