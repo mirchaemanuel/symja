@@ -1,7 +1,7 @@
-#summary How to add new function packages
+#summary How to add new Java function packages
 
 = Function Interfaces =
-For your own function you have to add the Java package name to the system namespace:
+For your own Java math functions you have to add the Java package name to the system namespace:
 {{{
 SystemNamespace.DEFAULT.add("<your.own.package.name>");
 }}}
