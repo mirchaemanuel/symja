@@ -1,5 +1,5 @@
 #summary How to add new Java function packages to the MathEclipse core
-#labels Phase-Implementation
+#labels Featured
 
 = Object Hierarchy =
 
