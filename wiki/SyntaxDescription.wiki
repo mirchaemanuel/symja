@@ -1,4 +1,4 @@
-#summary syntax description.
+#summary A short syntax description.
 #labels Featured
 
 = Syntax Description =
