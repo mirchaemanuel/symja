@@ -3,7 +3,8 @@
 
 = Object Hierarchy =
 
-Because the 
+The math functions are represented as AST (abstract syntax tree) objects (derived from {{{IAST}}}, {{{IExpr}}} and {{{java.util.List}}} interfaces). The *head* (i.e. Sin, Cos, PrimeQ,...) of the function is stored at index {{{0}}} in the list. The {{{n}}} arguments of the function are stored in the indexes {{{1..n}}}. For example the function {{{f[x,y,z]}}} is internally represented by the {{{java.util.ArrayList}}}: {{{[ f, x, y, z ]}}}
+
 http://symja.googlecode.com/svn/wiki/MathEclipseObjectHierarchy.png
 
 = Function Interfaces =
