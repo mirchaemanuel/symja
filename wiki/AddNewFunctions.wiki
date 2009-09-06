@@ -4,10 +4,12 @@
 
 You can find a lot of examples in the [http://code.google.com/p/symja/source/browse/#svn/trunk/matheclipse-core/src/main/java/org/matheclipse/core/reflection/system org.matheclipse.core.reflection.system package].
 
+Add your own package to the system namespace:
 {{{
 SystemNamespace.DEFAULT.add("org.matheclipse.test.function");
 }}}
 
+After defining a new MyFuntion[] function in the package you can evaluate an expression like {{{MyFunction[Sin[x]*Cos[x]]}}}
 {{{
 package org.matheclipse.test.function;
 
