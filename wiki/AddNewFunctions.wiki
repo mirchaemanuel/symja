@@ -1,4 +1,4 @@
-#summary How to add new Java function packages to MathEclipse
+#summary How to add new Java function packages to the MathEclipse core
 #labels Phase-Implementation
 
 = Function Interfaces =
