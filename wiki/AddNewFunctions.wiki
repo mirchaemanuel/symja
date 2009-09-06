@@ -9,7 +9,7 @@ Add your own package to the system namespace:
 SystemNamespace.DEFAULT.add("org.matheclipse.test.function");
 }}}
 
-After defining a new MyFuntion[] function in the package you can evaluate an expression like {{{MyFunction[Sin[x]*Cos[x]]}}}
+After defining a new {{{MyFuntion[]}}} function in the package you can evaluate an expression like {{{MyFunction[Sin[x]*Cos[x]]}}}
 {{{
 package org.matheclipse.test.function;
 
