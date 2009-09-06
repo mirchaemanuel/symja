@@ -1,0 +1,41 @@
+#summary How to add new function packages
+
+= Example =
+
+{{{
+SystemNamespace.DEFAULT.add("org.matheclipse.test.function");
+}}}
+
+{{{
+package org.matheclipse.test.function;
+
+import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
+import org.matheclipse.core.expression.AST;
+import org.matheclipse.core.expression.F;
+import org.matheclipse.core.interfaces.IAST;
+import org.matheclipse.core.interfaces.IExpr;
+
+/**
+ * Calculate the <b>depth</b> of an expression 
+ */
+public class MyFunction extends AbstractFunctionEvaluator {
+
+  public MyFunction() {
+  }
+
+  @Override
+  public IExpr evaluate(final IAST functionList) {
+    if (functionList.size() != 2) {
+      // The size has to be 2 because the head is stored at index 0 and 
+      // the argument is stored at index 1
+      return null;
+    }
+    if (!(functionList.get(1) instanceof IAST)) {
+      //constant integer 1:
+      return F.C1;
+    }
+    return F.integer(AST.COPY.depth((IAST) functionList.get(1), 1));
+  }
+
+}
+}}}
