@@ -1,10 +1,13 @@
 #summary How to add new function packages
 
 = Function Interfaces =
-For your own function you have to add the Java package name to the SystemNamespace:
+For your own function you have to add the Java package name to the system namespace:
 {{{
 SystemNamespace.DEFAULT.add("<your.own.package.name>");
 }}}
+
+In this package you have to define a class which is derived from the [http://code.google.com/p/symja/source/browse/trunk/matheclipse-core/src/main/java/org/matheclipse/core/eval/interfaces/IFunctionEvaluator.java org.matheclipse.core.eval.interfaces.IFunctionEvaluator] or [http://code.google.com/p/symja/source/browse/trunk/matheclipse-core/src/main/java/org/matheclipse/core/eval/interfaces/AbstractFunctionEvaluator.java org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator] interfaces.
+
 
 = Example =
 
