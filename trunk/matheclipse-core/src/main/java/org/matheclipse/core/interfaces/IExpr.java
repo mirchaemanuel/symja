@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.math.FieldElement;
-import org.matheclipse.core.expression.F;
 import org.matheclipse.core.generic.util.IRealtimeElement;
 import org.matheclipse.core.visit.IVisitor;
 import org.matheclipse.core.visit.IVisitorBoolean;

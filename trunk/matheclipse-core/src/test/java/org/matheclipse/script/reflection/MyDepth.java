@@ -7,22 +7,22 @@ import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
 
 /**
- * Calculates the depth of an expression (i.e. <code>{x,{y}} --> 3</code>
+ * Calculate the depth of an expression (i.e. <code>{x,{y}} --> 3</code>
  */
 public class MyDepth extends AbstractFunctionEvaluator {
 
-	public MyDepth() {
-	}
+  public MyDepth() {
+  }
 
-	@Override
-	public IExpr evaluate(final IAST functionList) {
-		if (functionList.size() != 2) {
-			return null;
-		}
-		if (!(functionList.get(1) instanceof IAST)) {
-			return F.C1;
-		}
-		return F.integer(AST.COPY.depth((IAST) functionList.get(1), 1));
-	}
+  @Override
+  public IExpr evaluate(final IAST functionList) {
+    if (functionList.size() != 2) {
+      return null;
+    }
+    if (!(functionList.get(1) instanceof IAST)) {
+      return F.C1;
+    }
+    return F.integer(AST.COPY.depth((IAST) functionList.get(1), 1));
+  }
 
 }

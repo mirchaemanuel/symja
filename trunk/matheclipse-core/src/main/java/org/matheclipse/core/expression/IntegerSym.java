@@ -568,8 +568,8 @@ public class IntegerSym extends ExprImpl implements IInteger {
 	 * 
 	 * @return
 	 */
-	public List<IntegerSym> factorize() {
-		final ArrayList<IntegerSym> result = new ArrayList<IntegerSym>();
+	public List<IInteger> factorize() {
+		final ArrayList<IInteger> result = new ArrayList<IInteger>();
 		IntegerSym b = this;
 		if (sign() < 0) {
 			b = b.multiply(IntegerSym.valueOf(-1));
@@ -594,10 +594,10 @@ public class IntegerSym extends ExprImpl implements IInteger {
 	}
 
 	public IAST factorInteger() {
-		IntegerSym factor;
-		IntegerSym last = IntegerSym.valueOf(-2);
+	  IInteger factor;
+	  IInteger last = IntegerSym.valueOf(-2);
 		int count = 0;
-		final List<IntegerSym> iFactors = factorize();
+		final List<IInteger> iFactors = factorize();
 		final IAST list = List();
 		IAST subList = null;
 		for (int i = 0; i < iFactors.size(); i++) {
