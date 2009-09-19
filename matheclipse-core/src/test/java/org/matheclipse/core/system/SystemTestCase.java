@@ -507,10 +507,13 @@ public class SystemTestCase extends AbstractTestCase {
 	public void testSystem081() {
 		check("Inverse[{{1,2},{3,4}}]", "{{-2,1},\n" + 
 				" {3/2,-1/2}}");
+		check("Inverse[{{1,2.0},{3,4}}]", "{{-1.9999999999999998,1.0},\n" + 
+				" {1.4999999999999998,-0.49999999999999994}}");
 	}
 
 	public void testSystem082() {
 		check("Det[{{1,2},{3,4}}]", "-2");
+		check("Det[{{1,2.0},{3,4}}]", "-2.0");
 	}
 
 	public void testSystem083() {

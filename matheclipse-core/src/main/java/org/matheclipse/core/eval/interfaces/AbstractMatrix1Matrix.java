@@ -1,6 +1,7 @@
 package org.matheclipse.core.eval.interfaces;
 
 import org.apache.commons.math.linear.FieldMatrix;
+import org.apache.commons.math.linear.RealMatrix;
 import org.matheclipse.basic.Config;
 import org.matheclipse.core.convert.Convert;
 import org.matheclipse.core.interfaces.IAST;
@@ -36,9 +37,29 @@ public abstract class AbstractMatrix1Matrix extends AbstractFunctionEvaluator {
 	}
 
 	@Override
-	public IExpr numericEval(final IAST functionList) {
-		return evaluate(functionList);
+	public IExpr numericEval(final IAST function) {
+	  RealMatrix matrix;
+    try {
+      if (function.size() == 2) {
+        final IAST list = (IAST) function.get(1);
+        matrix = Convert.list2RealMatrix(list);
+        matrix = realMatrixEval(matrix);
+
+        return Convert.realMatrix2List(matrix);
+      }
+    } catch (final ClassCastException e) {
+      if (Config.SHOW_STACKTRACE) {
+        e.printStackTrace();
+      }
+    } catch (final IndexOutOfBoundsException e) {
+      if (Config.SHOW_STACKTRACE) {
+        e.printStackTrace();
+      }
+    }
+		return evaluate(function);
 	}
 
 	public abstract FieldMatrix<IExpr> matrixEval(FieldMatrix<IExpr> matrix);
+	
+	public abstract RealMatrix realMatrixEval(RealMatrix matrix);
 }
