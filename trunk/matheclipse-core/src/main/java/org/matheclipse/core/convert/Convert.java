@@ -4,10 +4,12 @@ import static org.matheclipse.core.expression.F.List;
 
 import org.apache.commons.math.linear.Array2DRowRealMatrix;
 import org.apache.commons.math.linear.ArrayFieldVector;
+import org.apache.commons.math.linear.ArrayRealVector;
 import org.apache.commons.math.linear.BlockFieldMatrix;
 import org.apache.commons.math.linear.FieldMatrix;
 import org.apache.commons.math.linear.FieldVector;
 import org.apache.commons.math.linear.RealMatrix;
+import org.apache.commons.math.linear.RealVector;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
@@ -198,6 +200,31 @@ public class Convert {
     return new ArrayFieldVector<IExpr>(elements);
   }
 
+  public static RealVector list2RealVector(final IAST listVector)
+      throws ClassCastException, IndexOutOfBoundsException {
+    if (listVector == null) {
+      return null;
+    }
+    final Object header = listVector.head();
+    if (header != F.List) {
+      return null;
+    }
+
+    final int rowSize = listVector.size() - 1;
+
+    final double[] elements = new double[rowSize];
+    for (int i = 0; i < rowSize; i++) {
+      elements[i] = ((ISignedNumber) listVector.get(i + 1)).doubleValue();
+    }
+    return new ArrayRealVector(elements);
+  }
+
+  /**
+   * Convert a FieldVector to a IAST list.
+   * 
+   * @param vector
+   * @return
+   */
   public static IAST vector2List(final FieldVector<IExpr> vector) {
     if (vector == null) {
       return null;
@@ -207,6 +234,26 @@ public class Convert {
     final IAST out = F.function(F.List);
     for (int i = 0; i < rowSize; i++) {
       out.add(vector.getEntry(i));
+    }
+    out.addEvalFlags(IAST.IS_VECTOR);
+    return out;
+  }
+
+  /**
+   * Convert a RealVector to a IAST list.
+   * 
+   * @param vector
+   * @return
+   */
+  public static IAST realVector2List(final RealVector vector) {
+    if (vector == null) {
+      return null;
+    }
+    final int rowSize = vector.getDimension();
+
+    final IAST out = F.function(F.List);
+    for (int i = 0; i < rowSize; i++) {
+      out.add(F.num(vector.getEntry(i)));
     }
     out.addEvalFlags(IAST.IS_VECTOR);
     return out;
