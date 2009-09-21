@@ -14,6 +14,9 @@ Javadoc:
 SVN Sourcecode tree:
  * [http://code.google.com/p/symja/source/browse/#svn/trunk/matheclipse-parser]
 
+== License ==
+The parser is published under Apache License.
+
 == Examples ==
 The following examples show the numeric evaluation engines shipped with the parser package. For using the symboli engine see the JSR223Support and RunSymja documents.
 
