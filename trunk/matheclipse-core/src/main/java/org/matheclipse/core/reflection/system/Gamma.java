@@ -15,15 +15,14 @@ import apache.harmony.math.BigInteger;
  * See <a href="http://en.wikipedia.org/wiki/Factorial">Factorial</a>
  * 
  */
-public class Factorial extends AbstractTrigArg1 {
+public class Gamma extends AbstractTrigArg1 {
 
-  public Factorial() {
+  public Gamma() {
   }
 
   @Override
   public IExpr numericEvalD1(final Num arg1) {
-    double d = org.apache.commons.math.special.Gamma.logGamma(arg1
-        .doubleValue() + 1);
+    double d = org.apache.commons.math.special.Gamma.logGamma(arg1.doubleValue());
     return F.num(Math.exp(d));
   }
 
@@ -32,28 +31,14 @@ public class Factorial extends AbstractTrigArg1 {
     return null;
   }
 
-  public static BigInteger factorial(final BigInteger biggi) {
-    BigInteger result = BigInteger.ONE;
-    if (biggi.compareTo(BigInteger.ZERO) == -1) {
-      result = BigInteger.valueOf(-1);
-
-      for (BigInteger i = BigInteger.valueOf(-2); i.compareTo(biggi) >= 0; i = i
-          .plus(BigInteger.valueOf(-1))) {
-        result = result.times(i);
-      }
-    } else {
-      for (BigInteger i = BigInteger.valueOf(2); i.compareTo(biggi) <= 0; i = i
-          .plus(BigInteger.ONE)) {
-        result = result.times(i);
-      }
-    }
-    return result;
+  public static BigInteger gamma(final BigInteger biggi) {
+    return Factorial.factorial(biggi.minus(BigInteger.ONE));
   }
 
   @Override
   public IExpr evaluateArg1(final IExpr arg1) {
     if (arg1 instanceof IInteger) {
-      BigInteger fac = factorial(((IInteger) arg1).getBigNumerator());
+      BigInteger fac = gamma(((IInteger) arg1).getBigNumerator());
       return F.integer(fac);
     }
     return null;
