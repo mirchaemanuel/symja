@@ -10,9 +10,9 @@ import org.matheclipse.core.interfaces.IInteger;
 import apache.harmony.math.BigInteger;
 
 /**
- * Returns the factorial of an integer n
+ * Returns the Gamma function value.
  * 
- * See <a href="http://en.wikipedia.org/wiki/Factorial">Factorial</a>
+ * See <a href="http://en.wikipedia.org/wiki/Gamma_function">Gamma functio</a>
  * 
  */
 public class Gamma extends AbstractTrigArg1 {
