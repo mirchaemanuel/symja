@@ -5,7 +5,6 @@ package org.matheclipse.core.interfaces;
  * 
  */
 public interface ISignedNumber extends INumber {
-	public boolean equalsInt(int i);
 
 	public boolean isNegative();
 
