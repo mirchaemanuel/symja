@@ -391,4 +391,8 @@ public class ComplexSym extends ExprImpl implements IComplex {
 		return visitor.visit(this);
 	}
 
+  @Override
+  public boolean equalsInt(int i) {
+    return false;
+  }
 }
