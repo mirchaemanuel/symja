@@ -72,7 +72,7 @@ public class EvaluationSupport {
 	 * 
 	 * @param list
 	 * @param listLength
-	 *          he length of the list
+	 *          the length of the list
 	 * 
 	 * 
 	 * @return Description of the Returned Value
@@ -87,7 +87,7 @@ public class EvaluationSupport {
 
 			for (int i = headOffset; i < list.size(); i++) {
 				checkCanceled();
-				if ((list.get(i) instanceof IAST) && (((IAST) list.get(i)).head() == F.List)) {
+				if ((list.get(i) instanceof IAST) && (((IAST) list.get(i)).head().equals(F.List))) {
 					final IAST arg = (IAST) list.get(i);
 					res1.set(i, arg.get(j));
 				} else {

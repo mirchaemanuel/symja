@@ -1,7 +1,7 @@
 Package[ 
   "System", 
   (* define the public available symbols *)
-  {Abs, ArcCos, ArcSin, ArcTan, Cos, D, Log, Sin, Tan, LegendreP}, 
+  {Abs, ArcCos, ArcSin, ArcTan, Cos, D,  Log, Power, Sin, Tan, LegendreP}, 
 { 
   Abs[Pi]=Pi, 
   Abs[E]=E, 
@@ -101,6 +101,9 @@ Package[
   D[Cosh[x_],y_]:=(-1)*Sinh[x]*D[x,y],
   
   Log[E]=1,
+  
+  (* rules for Power[] *)
+  E^(I*Pi)=(-1),
   
   Sin[Pi]=0,
   Sin[1/12*Pi]=1/4*(1-1/3*3^(1/2))*6^(1/2),
