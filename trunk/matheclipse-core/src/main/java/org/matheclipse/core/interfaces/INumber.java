@@ -30,4 +30,11 @@ public interface INumber extends IExpr {
 	 * @return
 	 */
 	public IExpr absNumber();
+	
+	/**
+	 * Is this number equal an integer number?
+	 * @param i
+	 * @return
+	 */
+	public boolean equalsInt(int i);
 }
