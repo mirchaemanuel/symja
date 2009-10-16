@@ -6,6 +6,7 @@ import org.matheclipse.core.eval.interfaces.AbstractArg1;
 import org.matheclipse.core.eval.interfaces.INumeric;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IExpr;
+
 public class Exp extends AbstractArg1 implements INumeric {
 	public Exp() {
 	}

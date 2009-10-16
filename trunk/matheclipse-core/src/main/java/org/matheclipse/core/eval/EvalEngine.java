@@ -349,8 +349,7 @@ public class EvalEngine implements IEvaluationEngine {
 				int listLength = 0;
 
 				for (int i = 0; i < ast.size(); i++) {
-					Util.checkCanceled();
-					if ((ast.get(i) instanceof IAST) && (((IAST) ast.get(i)).head() == F.List)) {
+					if ((ast.get(i) instanceof IAST) && (((IAST) ast.get(i)).head().equals(F.List))) {
 						if (listLength == 0) {
 							listLength = ((IAST) ast.get(i)).size() - 1;
 						} else {
