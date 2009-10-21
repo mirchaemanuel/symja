@@ -282,8 +282,8 @@ public class F {
   public static IInteger C2;
 
   /**
-   * Complex imaginary unit. The parsed symbol &quot;I&quot; is converted on input to this
-   * constant.
+   * Complex imaginary unit. The parsed symbol &quot;I&quot; is converted on
+   * input to this constant.
    */
   public static IComplex CI;
 
@@ -576,6 +576,14 @@ public class F {
   }
 
   private static boolean isSystemInitialized = false;
+
+  /**
+   * Initialize the complete System. Calls {@link #initSymbols(String)} with
+   * parameter <code>null</code>.
+   */
+  public synchronized static void initSymbols() {
+    initSymbols(null);
+  }
 
   /**
    * Initialize the complete System
