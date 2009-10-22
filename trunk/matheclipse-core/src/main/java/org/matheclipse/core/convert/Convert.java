@@ -2,6 +2,7 @@ package org.matheclipse.core.convert;
 
 import static org.matheclipse.core.expression.F.List;
 
+import org.apache.commons.math.analysis.polynomials.PolynomialFunction;
 import org.apache.commons.math.linear.Array2DRowRealMatrix;
 import org.apache.commons.math.linear.ArrayFieldVector;
 import org.apache.commons.math.linear.ArrayRealVector;
@@ -15,6 +16,7 @@ import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.INumber;
 import org.matheclipse.core.interfaces.ISignedNumber;
+import org.matheclipse.core.interfaces.ISymbol;
 
 /**
  * Conversions between an IExpr object and misc other object class types
@@ -259,6 +261,34 @@ public class Convert {
     return out;
   }
 
+  /**
+   * Converts a PolynomialFunction to the (polynomial) expression
+   * representation.
+   * 
+   * @param pf
+   *          the polynomial function
+   * @param sym
+   *          the name of the polynomial functions variable
+   * @return
+   */
+  public static IExpr polynomialFunction2Expr(final PolynomialFunction pf,
+      ISymbol sym) {
+    double[] coefficients = pf.getCoefficients();
+    IAST sum = F.Plus();
+    if (coefficients[0] == 0.0) {
+      if (coefficients.length == 1) {
+        return F.C0;
+      }
+    }
+    sum.add(F.num(coefficients[0]));
+    for (int i = 1; i < coefficients.length; ++i) {
+      if (coefficients[i] != 0) {
+        sum.add(F.Times(F.num(coefficients[i]), F.Power(sym, F.integer(i))));
+      }
+    }
+
+    return sum;
+  }
   /**
    * Convert an expression into a JScience polynomial. Throws different
    * exceptions if the conversion is not possible:<br>

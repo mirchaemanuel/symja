@@ -38,7 +38,7 @@ public interface IInteger extends IRational {
 
 	/**
      * Converts this large integer to <code>int</code>; unlike
-     * {@link #fIntValue} this method raises {@link ArithmeticException} if this
+     * {@link #intValue} this method raises {@link ArithmeticException} if this
      * integer cannot be represented by an <code>int</code> type.
      *
      * @return the numeric value represented by this integer after conversion
