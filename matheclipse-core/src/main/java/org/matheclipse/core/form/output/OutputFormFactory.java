@@ -71,6 +71,7 @@ public class OutputFormFactory implements IConstantHeaders {
   public void convertDouble(final Writer buf, final INum d, final int precedence)
       throws IOException {
     final boolean isNegative = d.isNegative();
+    
     convertDoubleValue(buf, d.toString(), precedence, isNegative);
   }
 
