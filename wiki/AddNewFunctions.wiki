@@ -3,7 +3,7 @@
 
 = Object Hierarchy =
 
-All atomic math objects like integer numbers ({{{IntegerSym}}}), fractional numbers ({{{FractionSym}}}), complex numbers ({{{ComplexSym}}}), numerical numbers ({{{Num, ComplexNum}}}), patterns ({{{Pattern}}}), strings ({{{StringX}}}) or symbols ({{{Symol}}}) are derived from {{{org.matheclipse.core.expression.ExprImpl}}}
+All atomic math objects like integer numbers ({{{IntegerSym}}}), fractional numbers ({{{FractionSym}}}), complex numbers ({{{ComplexSym}}}), numerical numbers ({{{Num, ComplexNum}}}), patterns ({{{Pattern}}}), strings ({{{StringX}}}) or symbols ({{{Symbol}}}) are derived from {{{org.matheclipse.core.expression.ExprImpl}}}
 
 The math functions are represented as AST (abstract syntax tree) objects (derived from {{{IAST}}}, {{{IExpr}}} and {{{java.util.List}}} interfaces). The *head* (i.e. Sin, Cos, PrimeQ,...) of the function is stored at index {{{0}}} in the list. The {{{n}}} arguments of the function are stored in the indexes {{{1..n}}}. For example the function {{{f[x,y,z]}}} is internally represented by the {{{java.util.ArrayList}}}: {{{[ f, x, y, z ]}}}. Of course these lists can be nested and form a tree of {{{java.util.List}}} and other atomic math objects (i.e. {{{f[x,y,g[u,v,h[w,3]]]}}} is represented by the nested {{{java.util.ArrayList}}} structure: {{{[ f, x, y, [ g, u, v [ h, w, 3 ] ] ]}}}).
 
