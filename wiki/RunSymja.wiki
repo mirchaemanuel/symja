@@ -2,13 +2,13 @@
 #labels Featured
 
 == The Symja Swing GUI application ==
-In the folder where you installed the symja JAR, run a command similar to this:
+In the folder where you installed the *symja* JAR, run a command similar to this:
 {{{
 C:\Java\jdk1.6.0\jre\bin\java -classpath symja-0.0.7a.jar org.matheclipse.symja.Main
 }}}
 
 == The console application ==
-In the folder where you've unzipped the console application, run a command similar to this:
+In the folder where you've unzipped the *console* application, run a command similar to this:
 {{{
 C:\Java\jdk1.6.0\jre\bin\java -classpath meconsole001.jar;commons-logging-1.1.1.jar;log4j-1.2.11.jar org.matheclipse.core.eval.Console
 }}}
