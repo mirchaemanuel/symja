@@ -236,7 +236,7 @@ public class Complex implements FieldElement<Complex>, Serializable  {
                 (imaginary * q - real) / denominator);
         } else {
             if (c == 0.0) {
-                return createComplex(imaginary/d, -real/c);
+                return createComplex(imaginary/d, -real/d);
             }
             double q = d / c;
             double denominator = d * q + c;
