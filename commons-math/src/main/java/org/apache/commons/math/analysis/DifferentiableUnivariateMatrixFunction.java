@@ -19,17 +19,17 @@ package org.apache.commons.math.analysis;
 /**
  * Extension of {@link UnivariateMatrixFunction} representing a differentiable univariate matrix function.
  *
- * @version $Revision: 758046 $ $Date: 2009-03-24 18:05:13 -0400 (Tue, 24 Mar 2009) $
+ * @version $Revision: 811786 $ $Date: 2009-09-06 11:36:08 +0200 (So, 06 Sep 2009) $
  * @since 2.0
  */
 public interface DifferentiableUnivariateMatrixFunction
     extends UnivariateMatrixFunction {
- 
+
     /**
      * Returns the derivative of the function
-     * 
+     *
      * @return  the derivative function
      */
-    public UnivariateMatrixFunction derivative();
+    UnivariateMatrixFunction derivative();
 
 }

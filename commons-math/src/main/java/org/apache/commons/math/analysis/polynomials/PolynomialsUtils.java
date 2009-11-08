@@ -22,8 +22,8 @@ import org.apache.commons.math.fraction.BigFraction;
 
 /**
  * A collection of static methods that operate on or return polynomials.
- * 
- * @version $Revision: 760901 $ $Date: 2009-04-01 10:29:18 -0400 (Wed, 01 Apr 2009) $
+ *
+ * @version $Revision: 811685 $ $Date: 2009-09-05 19:36:48 +0200 (Sa, 05 Sep 2009) $
  * @since 2.0
  */
 public class PolynomialsUtils {
@@ -219,7 +219,7 @@ public class PolynomialsUtils {
         return new PolynomialFunction(a);
 
     }
-    
+
     /** Compute polynomial coefficients up to a given degree.
      * @param degree maximal degree
      * @param maxDegree current maximal degree
@@ -244,23 +244,23 @@ public class PolynomialsUtils {
             BigFraction ckm1   = coefficients.get(startKm1);
 
             // degree 0 coefficient
-            coefficients.add(ck.times(ai[0]).minus(ckm1.times(ai[2])));
+            coefficients.add(ck.multiply(ai[0]).subtract(ckm1.multiply(ai[2])));
 
             // degree 1 to degree k-1 coefficients
             for (int i = 1; i < k; ++i) {
                 final BigFraction ckPrev = ck;
                 ck     = coefficients.get(startK + i);
                 ckm1   = coefficients.get(startKm1 + i);
-                coefficients.add(ck.times(ai[0]).plus(ckPrev.times(ai[1])).minus(ckm1.times(ai[2])));
+                coefficients.add(ck.multiply(ai[0]).add(ckPrev.multiply(ai[1])).subtract(ckm1.multiply(ai[2])));
             }
 
             // degree k coefficient
             final BigFraction ckPrev = ck;
             ck = coefficients.get(startK + k);
-            coefficients.add(ck.times(ai[0]).plus(ckPrev.times(ai[1])));
+            coefficients.add(ck.multiply(ai[0]).add(ckPrev.multiply(ai[1])));
 
             // degree k+1 coefficient
-            coefficients.add(ck.times(ai[1]));
+            coefficients.add(ck.multiply(ai[1]));
 
         }
 

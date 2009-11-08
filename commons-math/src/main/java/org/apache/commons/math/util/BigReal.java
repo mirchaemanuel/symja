@@ -32,18 +32,18 @@ import org.apache.commons.math.FieldElement;
  * in order to implement the {@link FieldElement} interface.
  * </p>
  * @since 2.0
- * @version $Revision: 795963 $ $Date: 2009-07-20 15:23:43 -0400 (Mon, 20 Jul 2009) $
+ * @version $Revision: 811827 $ $Date: 2009-09-06 17:32:50 +0200 (So, 06 Sep 2009) $
  */
 public class BigReal implements FieldElement<BigReal>, Comparable<BigReal>, Serializable {
-
-    /** Serializable version identifier. */
-    private static final long serialVersionUID = 7887631840434052850L;
 
     /** A big real representing 0. */
     public static final BigReal ZERO = new BigReal(BigDecimal.ZERO);
 
     /** A big real representing 1. */
     public static final BigReal ONE = new BigReal(BigDecimal.ONE);
+
+    /** Serializable version identifier. */
+    private static final long serialVersionUID = 7887631840434052850L;
 
     /** Underlying BigDecimal. */
     private final BigDecimal d;
@@ -182,22 +182,22 @@ public class BigReal implements FieldElement<BigReal>, Comparable<BigReal>, Seri
     }
 
     /** {@inheritDoc} */
-    public BigReal plus(BigReal a) {
+    public BigReal add(BigReal a) {
         return new BigReal(d.add(a.d));
     }
 
     /** {@inheritDoc} */
-    public BigReal minus(BigReal a) {
+    public BigReal subtract(BigReal a) {
         return new BigReal(d.subtract(a.d));
     }
 
     /** {@inheritDoc} */
-    public BigReal div(BigReal a) throws ArithmeticException {
+    public BigReal divide(BigReal a) throws ArithmeticException {
         return new BigReal(d.divide(a.d));
     }
 
     /** {@inheritDoc} */
-    public BigReal times(BigReal a) {
+    public BigReal multiply(BigReal a) {
         return new BigReal(d.multiply(a.d));
     }
 

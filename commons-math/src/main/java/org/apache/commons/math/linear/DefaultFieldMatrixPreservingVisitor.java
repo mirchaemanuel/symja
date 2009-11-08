@@ -25,9 +25,9 @@ import org.apache.commons.math.FieldElement;
  * This class is a convenience to create custom visitors without defining all
  * methods. This class provides default implementations that do nothing.
  * </p>
- * 
+ *
  * @param <T> the type of the field elements
- * @version $Revision: 778191 $ $Date: 2009-05-24 12:44:52 -0400 (Sun, 24 May 2009) $
+ * @version $Revision: 811685 $ $Date: 2009-09-05 19:36:48 +0200 (Sa, 05 Sep 2009) $
  * @since 2.0
  */
 public class DefaultFieldMatrixPreservingVisitor<T extends FieldElement<T>>

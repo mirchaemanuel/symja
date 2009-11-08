@@ -19,10 +19,10 @@ package org.apache.commons.math.optimization;
 
 import org.apache.commons.math.ConvergenceException;
 
-/** 
+/**
  * This class represents exceptions thrown by optimizers.
  *
- * @version $Revision: 799857 $ $Date: 2009-08-01 09:07:12 -0400 (Sat, 01 Aug 2009) $
+ * @version $Revision: 811685 $ $Date: 2009-09-05 19:36:48 +0200 (Sa, 05 Sep 2009) $
  * @since 1.2
  *
  */
@@ -32,7 +32,7 @@ public class OptimizationException extends ConvergenceException {
     /** Serializable version identifier. */
     private static final long serialVersionUID = -357696069587075016L;
 
-    /** 
+    /**
      * Simple constructor.
      * Build an exception by translating and formating a message
      * @param specifier format specifier (to be translated)

@@ -38,26 +38,26 @@ package org.apache.commons.math.ode.nonstiff;
  * @see ClassicalRungeKuttaIntegrator
  * @see GillIntegrator
  * @see MidpointIntegrator
- * @version $Revision: 786881 $ $Date: 2009-06-20 14:53:08 -0400 (Sat, 20 Jun 2009) $
+ * @version $Revision: 810196 $ $Date: 2009-09-01 21:47:46 +0200 (Di, 01 Sep 2009) $
  * @since 1.2
  */
 
 public class ThreeEighthesIntegrator extends RungeKuttaIntegrator {
 
   /** Time steps Butcher array. */
-  private static final double[] c = {
+  private static final double[] STATIC_C = {
     1.0 / 3.0, 2.0 / 3.0, 1.0
   };
 
   /** Internal weights Butcher array. */
-  private static final double[][] a = {
+  private static final double[][] STATIC_A = {
     {  1.0 / 3.0 },
     { -1.0 / 3.0, 1.0 },
     {  1.0, -1.0, 1.0 }
   };
 
   /** Propagation weights Butcher array. */
-  private static final double[] b = {
+  private static final double[] STATIC_B = {
     1.0 / 8.0, 3.0 / 8.0, 3.0 / 8.0, 1.0 / 8.0
   };
 
@@ -66,7 +66,7 @@ public class ThreeEighthesIntegrator extends RungeKuttaIntegrator {
    * @param step integration step
    */
   public ThreeEighthesIntegrator(final double step) {
-    super("3/8", c, a, b, new ThreeEighthesStepInterpolator(), step);
+    super("3/8", STATIC_C, STATIC_A, STATIC_B, new ThreeEighthesStepInterpolator(), step);
   }
 
 }

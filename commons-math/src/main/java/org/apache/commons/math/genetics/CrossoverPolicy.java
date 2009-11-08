@@ -19,14 +19,14 @@ package org.apache.commons.math.genetics;
 /**
  * Policy used to create a pair of new chromosomes by performing a crossover
  * operation on a source pair of chromosomes.
- * 
+ *
  * @since 2.0
- * @version $Revision: 799857 $ $Date: 2009-08-01 09:07:12 -0400 (Sat, 01 Aug 2009) $
+ * @version $Revision: 811685 $ $Date: 2009-09-05 19:36:48 +0200 (Sa, 05 Sep 2009) $
  */
 public interface CrossoverPolicy {
     /**
      * Perform a crossover operation on the given chromosomes.
-     * 
+     *
      * @param first the first chromosome.
      * @param second the second chromosome.
      * @return the pair of new chromosomes that resulted from the crossover.

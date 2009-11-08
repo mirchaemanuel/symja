@@ -28,10 +28,13 @@ import org.apache.commons.math.MathRuntimeException;
  * <p>As shown by the presence of the P matrix, this decomposition is
  * implemented using partial pivoting.</p>
  *
- * @version $Revision: 799857 $ $Date: 2009-08-01 09:07:12 -0400 (Sat, 01 Aug 2009) $
+ * @version $Revision: 811827 $ $Date: 2009-09-06 17:32:50 +0200 (So, 06 Sep 2009) $
  * @since 2.0
  */
 public class LUDecompositionImpl implements LUDecomposition {
+
+    /** Default bound to determine effective singularity in LU decomposition */
+    private static final double DEFAULT_TOO_SMALL = 10E-12;
 
     /** Entries of LU decomposition. */
     private double lu[][];
@@ -54,11 +57,8 @@ public class LUDecompositionImpl implements LUDecomposition {
     /** Cached value of P. */
     private RealMatrix cachedP;
 
-    /** Default bound to determine effective singularity in LU decomposition */
-    private static final double DEFAULT_TOO_SMALL = 10E-12;
-
     /**
-     * Calculates the LU-decomposition of the given matrix. 
+     * Calculates the LU-decomposition of the given matrix.
      * @param matrix The matrix to decompose.
      * @exception InvalidMatrixException if matrix is not square
      */
@@ -68,7 +68,7 @@ public class LUDecompositionImpl implements LUDecomposition {
     }
 
     /**
-     * Calculates the LU-decomposition of the given matrix. 
+     * Calculates the LU-decomposition of the given matrix.
      * @param matrix The matrix to decompose.
      * @param singularityThreshold threshold (based on partial row norm)
      * under which a matrix is considered singular
@@ -228,7 +228,7 @@ public class LUDecompositionImpl implements LUDecomposition {
 
     /** Specialized solver. */
     private static class Solver implements DecompositionSolver {
-    
+
         /** Entries of LU decomposition. */
         private final double lu[][];
 

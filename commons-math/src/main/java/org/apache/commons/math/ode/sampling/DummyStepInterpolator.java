@@ -22,7 +22,6 @@ import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
 import org.apache.commons.math.ode.DerivativeException;
-import org.apache.commons.math.ode.nonstiff.EmbeddedRungeKuttaIntegrator;
 
 /** This class is a step interpolator that does nothing.
  *
@@ -34,12 +33,15 @@ import org.apache.commons.math.ode.nonstiff.EmbeddedRungeKuttaIntegrator;
  *
  * @see StepHandler
  *
- * @version $Revision: 782431 $ $Date: 2009-06-07 15:04:37 -0400 (Sun, 07 Jun 2009) $
+ * @version $Revision: 811827 $ $Date: 2009-09-06 17:32:50 +0200 (So, 06 Sep 2009) $
  * @since 1.2
  */
 
 public class DummyStepInterpolator
   extends AbstractStepInterpolator {
+
+    /** Serializable version identifier */
+    private static final long serialVersionUID = 1708010296707839488L;
 
   /** Simple constructor.
    * This constructor builds an instance that is not usable yet, the
@@ -47,9 +49,9 @@ public class DummyStepInterpolator
    * should be called before using the instance in order to initialize
    * the internal arrays. This constructor is used only in order to delay
    * the initialization in some cases. As an example, the {@link
-   * EmbeddedRungeKuttaIntegrator} uses the prototyping design pattern
-   * to create the step interpolators by cloning an uninitialized
-   * model and latter initializing the copy.
+   * org.apache.commons.math.ode.nonstiff.EmbeddedRungeKuttaIntegrator} uses
+   * the prototyping design pattern to create the step interpolators by
+   * cloning an uninitialized model and latter initializing the copy.
    */
   public DummyStepInterpolator() {
     super();
@@ -96,7 +98,7 @@ public class DummyStepInterpolator
     throws DerivativeException {
       System.arraycopy(currentState, 0, interpolatedState, 0, currentState.length);
   }
-    
+
   /** Write the instance to an output channel.
    * @param out output channel
    * @exception IOException if the instance cannot be written
@@ -116,15 +118,12 @@ public class DummyStepInterpolator
   public void readExternal(final ObjectInput in)
     throws IOException {
 
-    // read the base class 
+    // read the base class
     final double t = readBaseExternal(in);
 
     // we can now set the interpolated time and state
     setInterpolatedTime(t);
 
   }
-
-  /** Serializable version identifier */
-  private static final long serialVersionUID = 1708010296707839488L;
 
 }

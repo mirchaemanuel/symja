@@ -19,31 +19,16 @@ package org.apache.commons.math;
 
 import java.util.ListResourceBundle;
 
-/** 
+/**
  * French localization message resources for the commons-math library.
- * @version $Revision: 796546 $ $Date: 2009-07-21 17:38:55 -0400 (Tue, 21 Jul 2009) $
+ * @version $Revision: 825925 $ $Date: 2009-10-16 17:11:47 +0200 (Fr, 16 Okt 2009) $
  * @since 1.2
  */
 public class MessagesResources_fr
   extends ListResourceBundle {
 
-  /** 
-   * Simple constructor.
-   */
-  public MessagesResources_fr() {
-  }
-
-  /** 
-   * Get the non-translated/translated messages arrays from this resource bundle.
-   * @return non-translated/translated messages arrays
-   */
-  @Override
-  public Object[][] getContents() {
-    return contents.clone();
-  }
-
   /** Non-translated/translated messages arrays. */
-  private static final Object[][] contents = {
+  private static final Object[][] CONTENTS = {
 
     // org.apache.commons.math.util.MathUtils
     { "must have n >= k for binomial coefficient (n,k), got n = {0}, k = {1}",
@@ -62,6 +47,12 @@ public class MessagesResources_fr
        " {5} ({6}), {7} ({8}), {9} ({10}), {11} ({12}), {13} ({14}), {15} ({16})",
       "m\u00e9thode d''arondi {0} invalide, m\u00e9thodes valides : {1} ({2}), {3} ({4})," +
        " {5} ({6}), {7} ({8}), {9} ({10}), {11} ({12}), {13} ({14}), {15} ({16})" },
+    { "Cannot normalize to an infinite value",
+      "impossible de normaliser vers une valeur infinie" },
+    { "Cannot normalize to NaN",
+      "impossible de normaliser vers NaN" },
+    { "Array contains an infinite element, {0} at index {1}",
+      "le tableau contient l''\u00e9l\u00e9ment infini {0} \u00e0 l''index {1}" },
 
     // org.apache.commons.math.FunctionEvaluationException
     { "evaluation failed for argument = {0}",
@@ -97,10 +88,21 @@ public class MessagesResources_fr
     // org.apache.commons.math.random.UncorrelatedRandomVectorGenerator
     // org.apache.commons.math.stat.regression.AbstractMultipleLinearRegression
     // org.apache.commons.math.stat.inference.ChiSquareTestImpl
+    // org.apache.commons.math.analysis.interpolation.MicrosphereInterpolatingFunction
     { "dimension mismatch {0} != {1}",
       "dimensions incompatibles {0} != {1}" },
 
-    // org.apache.commons.math.linear.decomposition.NotPositiveDefiniteMatrixException
+    // org.apache.commons.math.analysis.interpolation.MicrosphereInterpolatingFunction
+    { "no data",
+      "aucune donn\u00e9e" },
+
+    // org.apache.commons.math.analysis.interpolation.MicrosphereInterpolator
+    { "brightness exponent should be positive or null, but got {0}",
+      "l''exposant de brillance devrait \u00eatre positif ou null, or e = {0}" },
+    { "number of microsphere elements must be positive, but got {0}",
+      "le nombre d''\u00e9l\u00e9ments de la microsph\u00e8re devrait \u00eatre positif, or n = {0}" },
+
+   // org.apache.commons.math.linear.decomposition.NotPositiveDefiniteMatrixException
     { "not positive definite matrix",
       "matrice non d\u00e9finie positive" },
 
@@ -197,6 +199,8 @@ public class MessagesResources_fr
       "toutes les abscisses doivent \u00eatre des nombres r\u00e9els finis, mais l''abscisse {0} vaut {1}" },
     { "all ordinatae must be finite real numbers, but {0}-th is {1}",
       "toutes les ordonn\u00e9es doivent \u00eatre des nombres r\u00e9els finis, mais l''ordonn\u00e9e {0} vaut {1}" },
+    { "all weights must be finite real numbers, but {0}-th is {1}",
+      "tous les poids doivent \u00eatre des nombres r\u00e9els finis, mais le poids {0} vaut {1}" },
     { "the abscissae array must be sorted in a strictly increasing order, " +
       "but the {0}-th element is {1} whereas {2}-th is {3}",
       "les abscisses doivent \u00eatre en ordre strictement croissant, " +
@@ -283,8 +287,8 @@ public class MessagesResources_fr
       "impossible de rendre la matrice orthogonale en {0} it\u00e9rations" },
 
     // org.apache.commons.math.ode.nonstiff.AdaptiveStepsizeIntegrator
-    { "minimal step size ({0}) reached, integration needs {1}",
-      "pas minimal ({0}) atteint, l''int\u00e9gration n\u00e9cessite {1}" },
+    { "minimal step size ({0,number,0.00E00}) reached, integration needs {1,number,0.00E00}",
+      "pas minimal ({0,number,0.00E00}) atteint, l''int\u00e9gration n\u00e9cessite {1,number,0.00E00}" },
     { "dimensions mismatch: state vector has dimension {0}," +
       " absolute tolerance vector has dimension {1}",
       "incompatibilit\u00e9 de dimensions entre le vecteur d''\u00e9tat ({0})," +
@@ -399,7 +403,7 @@ public class MessagesResources_fr
     // org.apache.commons.math.linear.SparseRealVector
     { "vector length mismatch: got {0} but expected {1}",
       "dimension de vecteur erronn\u00e9e : {0} \u00e0 la place de {1}" },
-      
+
     // org.apache.commons.math.linear.ArrayRealVector
     // org.apache.commons.math.linear.ArrayFieldVector
     // org.apache.commons.math.linear.SparseRealVector
@@ -427,7 +431,7 @@ public class MessagesResources_fr
 
     // org.apache.commons.math.linear.AbstractRealMatrix
     // org.apache.commons.math.linear.AbstractFieldMatrix
-    // org.apache.commons.math.stat.inference.ChiSquareTestImpl      
+    // org.apache.commons.math.stat.inference.ChiSquareTestImpl
     { "some rows have length {0} while others have length {1}",
       "certaines lignes ont une longueur de {0} alors que d''autres ont une longueur de {1}" },
 
@@ -720,10 +724,6 @@ public class MessagesResources_fr
    { "out of bounds significance level {0}, must be between {1} and {2}",
      "niveau de signification {0} hors domaine, doit \u00eatre entre {1} et {2}" },
 
-   // org.apache.commons.math.stat.regression.OLSMultipleLinearRegression
-   { "matrix is not upper-triangular, entry ({0}, {1}) = {2} is too large",
-     "matrice non triangulaire sup\u00e9rieure, l''\u00e9l\u00e9ment ({0}, {1}) = {2} est trop grand" },
-
    // org.apache.commons.math.stat.regression.AbstractMultipleLinearRegression
    { "not enough data ({0} rows) for this many predictors ({1} predictors)",
      "pas assez de donn\u00e9es ({0} lignes) pour {1} pr\u00e9dicteurs" },
@@ -847,5 +847,20 @@ public class MessagesResources_fr
      "erreur interne, veuillez signaler l''erreur \u00e0 {0}" }
 
   };
+
+  /**
+   * Simple constructor.
+   */
+  public MessagesResources_fr() {
+  }
+
+  /**
+   * Get the non-translated/translated messages arrays from this resource bundle.
+   * @return non-translated/translated messages arrays
+   */
+  @Override
+  public Object[][] getContents() {
+    return CONTENTS.clone();
+  }
 
 }

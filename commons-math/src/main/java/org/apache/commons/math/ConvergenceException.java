@@ -20,10 +20,10 @@ package org.apache.commons.math;
  * Error thrown when a numerical computation can not be performed because the
  * numerical result failed to converge to a finite value.
  *
- * @version $Revision: 746578 $ $Date: 2009-02-21 15:01:14 -0500 (Sat, 21 Feb 2009) $
+ * @version $Revision: 811685 $ $Date: 2009-09-05 19:36:48 +0200 (Sa, 05 Sep 2009) $
  */
 public class ConvergenceException extends MathException {
-    
+
     /** Serializable version identifier */
     private static final long serialVersionUID = 4883703247677159141L;
 
@@ -33,7 +33,7 @@ public class ConvergenceException extends MathException {
     public ConvergenceException() {
         super("Convergence failed");
     }
-    
+
     /**
      * Constructs an exception with specified formatted detail message.
      * Message formatting is delegated to {@link java.text.MessageFormat}.

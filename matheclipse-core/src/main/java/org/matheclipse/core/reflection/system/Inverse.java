@@ -7,7 +7,7 @@ import org.apache.commons.math.linear.FieldMatrix;
 import org.apache.commons.math.linear.LUDecompositionImpl;
 import org.apache.commons.math.linear.RealMatrix;
 import org.matheclipse.core.eval.interfaces.AbstractMatrix1Matrix;
-import org.matheclipse.core.interfaces.IExpr;
+import org.matheclipse.core.expression.ExprFieldElement;
 
 /**
  * Invert a matrix
@@ -22,10 +22,10 @@ public class Inverse extends AbstractMatrix1Matrix {
   }
 
   @Override
-  public FieldMatrix<IExpr> matrixEval(FieldMatrix<IExpr> matrix) {
-    final FieldLUDecompositionImpl<IExpr> lu = new FieldLUDecompositionImpl<IExpr>(
+  public FieldMatrix<ExprFieldElement> matrixEval(FieldMatrix<ExprFieldElement> matrix) {
+    final FieldLUDecompositionImpl<ExprFieldElement> lu = new FieldLUDecompositionImpl<ExprFieldElement>(
         matrix);
-    FieldDecompositionSolver<IExpr> solver = lu.getSolver();
+    FieldDecompositionSolver<ExprFieldElement> solver = lu.getSolver();
     if (!solver.isNonSingular()) {
       return null;
     }

@@ -20,7 +20,7 @@ import java.io.Serializable;
 
 /**
  * Signals a configuration problem with any of the factory methods.
- * @version $Revision: 746578 $ $Date: 2009-02-21 15:01:14 -0500 (Sat, 21 Feb 2009) $
+ * @version $Revision: 811685 $ $Date: 2009-09-05 19:36:48 +0200 (Sa, 05 Sep 2009) $
  */
 public class MathConfigurationException extends MathException implements Serializable{
 
@@ -33,7 +33,7 @@ public class MathConfigurationException extends MathException implements Seriali
     public MathConfigurationException() {
         super();
     }
-    
+
     /**
      * Constructs an exception with specified formatted detail message.
      * Message formatting is delegated to {@link java.text.MessageFormat}.

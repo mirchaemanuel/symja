@@ -34,7 +34,7 @@ import org.apache.commons.math.MathRuntimeException;
  * a zero pivot element, no attempt is done to get the largest pivot element.</p>
  *
  * @param <T> the type of the field elements
- * @version $Revision: 783702 $ $Date: 2009-06-11 04:54:02 -0400 (Thu, 11 Jun 2009) $
+ * @version $Revision: 811685 $ $Date: 2009-09-05 19:36:48 +0200 (Sa, 05 Sep 2009) $
  * @since 2.0
  */
 public class FieldLUDecompositionImpl<T extends FieldElement<T>> implements FieldLUDecomposition<T> {
@@ -64,7 +64,7 @@ public class FieldLUDecompositionImpl<T extends FieldElement<T>> implements Fiel
     private FieldMatrix<T> cachedP;
 
     /**
-     * Calculates the LU-decomposition of the given matrix. 
+     * Calculates the LU-decomposition of the given matrix.
      * @param matrix The matrix to decompose.
      * @exception NonSquareMatrixException if matrix is not square
      */
@@ -100,7 +100,7 @@ public class FieldLUDecompositionImpl<T extends FieldElement<T>> implements Fiel
                 final T[] luRow = lu[row];
                 sum = luRow[col];
                 for (int i = 0; i < row; i++) {
-                    sum = sum.minus(luRow[i].times(lu[i][col]));
+                    sum = sum.subtract(luRow[i].multiply(lu[i][col]));
                 }
                 luRow[col] = sum;
             }
@@ -111,7 +111,7 @@ public class FieldLUDecompositionImpl<T extends FieldElement<T>> implements Fiel
                 final T[] luRow = lu[row];
                 sum = luRow[col];
                 for (int i = 0; i < col; i++) {
-                    sum = sum.minus(luRow[i].times(lu[i][col]));
+                    sum = sum.subtract(luRow[i].multiply(lu[i][col]));
                 }
                 luRow[col] = sum;
 
@@ -145,7 +145,7 @@ public class FieldLUDecompositionImpl<T extends FieldElement<T>> implements Fiel
             final T luDiag = lu[col][col];
             for (int row = col + 1; row < m; row++) {
                 final T[] luRow = lu[row];
-                luRow[col] = luRow[col].div(luDiag);
+                luRow[col] = luRow[col].divide(luDiag);
             }
         }
 
@@ -205,9 +205,9 @@ public class FieldLUDecompositionImpl<T extends FieldElement<T>> implements Fiel
             return field.getZero();
         } else {
             final int m = pivot.length;
-            T determinant = even ? field.getOne() : field.getZero().minus(field.getOne());
+            T determinant = even ? field.getOne() : field.getZero().subtract(field.getOne());
             for (int i = 0; i < m; i++) {
-                determinant = determinant.times(lu[i][i]);
+                determinant = determinant.multiply(lu[i][i]);
             }
             return determinant;
         }
@@ -271,7 +271,7 @@ public class FieldLUDecompositionImpl<T extends FieldElement<T>> implements Fiel
                 throw new SingularMatrixException();
             }
 
-            final T[] bp = (T[]) Array.newInstance(field.getRuntimeClass(), m);
+            final T[] bp = (T[]) Array.newInstance(field.getZero().getClass(), m);
 
             // Apply permutations to b
             for (int row = 0; row < m; row++) {
@@ -282,16 +282,16 @@ public class FieldLUDecompositionImpl<T extends FieldElement<T>> implements Fiel
             for (int col = 0; col < m; col++) {
                 final T bpCol = bp[col];
                 for (int i = col + 1; i < m; i++) {
-                    bp[i] = bp[i].minus(bpCol.times(lu[i][col]));
+                    bp[i] = bp[i].subtract(bpCol.multiply(lu[i][col]));
                 }
             }
 
             // Solve UX = Y
             for (int col = m - 1; col >= 0; col--) {
-                bp[col] = bp[col].div(lu[col][col]);
+                bp[col] = bp[col].divide(lu[col][col]);
                 final T bpCol = bp[col];
                 for (int i = 0; i < col; i++) {
-                    bp[i] = bp[i].minus(bpCol.times(lu[i][col]));
+                    bp[i] = bp[i].subtract(bpCol.multiply(lu[i][col]));
                 }
             }
 
@@ -317,7 +317,7 @@ public class FieldLUDecompositionImpl<T extends FieldElement<T>> implements Fiel
                     throw new SingularMatrixException();
                 }
 
-                final T[] bp = (T[]) Array.newInstance(field.getRuntimeClass(), m);
+                final T[] bp = (T[]) Array.newInstance(field.getZero().getClass(), m);
 
                 // Apply permutations to b
                 for (int row = 0; row < m; row++) {
@@ -328,16 +328,16 @@ public class FieldLUDecompositionImpl<T extends FieldElement<T>> implements Fiel
                 for (int col = 0; col < m; col++) {
                     final T bpCol = bp[col];
                     for (int i = col + 1; i < m; i++) {
-                        bp[i] = bp[i].minus(bpCol.times(lu[i][col]));
+                        bp[i] = bp[i].subtract(bpCol.multiply(lu[i][col]));
                     }
                 }
 
                 // Solve UX = Y
                 for (int col = m - 1; col >= 0; col--) {
-                    bp[col] = bp[col].div(lu[col][col]);
+                    bp[col] = bp[col].divide(lu[col][col]);
                     final T bpCol = bp[col];
                     for (int i = 0; i < col; i++) {
-                        bp[i] = bp[i].minus(bpCol.times(lu[i][col]));
+                        bp[i] = bp[i].subtract(bpCol.multiply(lu[i][col]));
                     }
                 }
 
@@ -376,7 +376,7 @@ public class FieldLUDecompositionImpl<T extends FieldElement<T>> implements Fiel
             final int nColB = b.getColumnDimension();
 
             // Apply permutations to b
-            final T[][] bp = (T[][]) Array.newInstance(field.getRuntimeClass(), new int[] { m, nColB });
+            final T[][] bp = (T[][]) Array.newInstance(field.getZero().getClass(), new int[] { m, nColB });
             for (int row = 0; row < m; row++) {
                 final T[] bpRow = bp[row];
                 final int pRow = pivot[row];
@@ -392,7 +392,7 @@ public class FieldLUDecompositionImpl<T extends FieldElement<T>> implements Fiel
                     final T[] bpI = bp[i];
                     final T luICol = lu[i][col];
                     for (int j = 0; j < nColB; j++) {
-                        bpI[j] = bpI[j].minus(bpCol[j].times(luICol));
+                        bpI[j] = bpI[j].subtract(bpCol[j].multiply(luICol));
                     }
                 }
             }
@@ -402,13 +402,13 @@ public class FieldLUDecompositionImpl<T extends FieldElement<T>> implements Fiel
                 final T[] bpCol = bp[col];
                 final T luDiag = lu[col][col];
                 for (int j = 0; j < nColB; j++) {
-                    bpCol[j] = bpCol[j].div(luDiag);
+                    bpCol[j] = bpCol[j].divide(luDiag);
                 }
                 for (int i = 0; i < col; i++) {
                     final T[] bpI = bp[i];
                     final T luICol = lu[i][col];
                     for (int j = 0; j < nColB; j++) {
-                        bpI[j] = bpI[j].minus(bpCol[j].times(luICol));
+                        bpI[j] = bpI[j].subtract(bpCol[j].multiply(luICol));
                     }
                 }
             }

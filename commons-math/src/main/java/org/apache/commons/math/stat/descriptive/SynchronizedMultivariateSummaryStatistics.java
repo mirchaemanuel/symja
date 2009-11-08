@@ -29,7 +29,7 @@ import org.apache.commons.math.linear.RealMatrix;
  * thread is computing a statistic from the instance, no other thread can modify
  * the instance nor compute another statistic.
  * @since 1.2
- * @version $Revision: 762087 $ $Date: 2009-04-05 10:20:18 -0400 (Sun, 05 Apr 2009) $
+ * @version $Revision: 811685 $ $Date: 2009-09-05 19:36:48 +0200 (Sa, 05 Sep 2009) $
  */
 public class SynchronizedMultivariateSummaryStatistics
   extends MultivariateSummaryStatistics {
@@ -144,7 +144,7 @@ public class SynchronizedMultivariateSummaryStatistics
     public synchronized double[] getGeometricMean() {
         return super.getGeometricMean();
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -160,7 +160,7 @@ public class SynchronizedMultivariateSummaryStatistics
     public synchronized void clear() {
         super.clear();
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -168,7 +168,7 @@ public class SynchronizedMultivariateSummaryStatistics
     public synchronized boolean equals(Object object) {
         return super.equals(object);
     }
-    
+
     /**
      * {@inheritDoc}
      */

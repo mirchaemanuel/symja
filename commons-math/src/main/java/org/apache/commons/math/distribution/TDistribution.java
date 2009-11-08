@@ -27,7 +27,7 @@ package org.apache.commons.math.distribution;
  * </ul>
  * </p>
  *
- * @version $Revision: 670469 $ $Date: 2008-06-23 04:01:38 -0400 (Mon, 23 Jun 2008) $
+ * @version $Revision: 811685 $ $Date: 2009-09-05 19:36:48 +0200 (Sa, 05 Sep 2009) $
  */
 public interface TDistribution extends ContinuousDistribution {
     /**
@@ -35,7 +35,7 @@ public interface TDistribution extends ContinuousDistribution {
      * @param degreesOfFreedom the new degrees of freedom.
      */
     void setDegreesOfFreedom(double degreesOfFreedom);
-    
+
     /**
      * Access the degrees of freedom.
      * @return the degrees of freedom.

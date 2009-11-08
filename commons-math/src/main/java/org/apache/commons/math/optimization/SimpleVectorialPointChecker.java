@@ -19,7 +19,7 @@ package org.apache.commons.math.optimization;
 
 import org.apache.commons.math.util.MathUtils;
 
-/** 
+/**
  * Simple implementation of the {@link VectorialConvergenceChecker} interface using
  * only point coordinates.
  * <p>
@@ -28,7 +28,7 @@ import org.apache.commons.math.util.MathUtils;
  * or if either the absolute difference between the point coordinates are
  * smaller than another threshold.
  * </p>
- * @version $Revision: 795972 $ $Date: 2009-07-20 15:34:06 -0400 (Mon, 20 Jul 2009) $
+ * @version $Revision: 811685 $ $Date: 2009-09-05 19:36:48 +0200 (Sa, 05 Sep 2009) $
  * @since 2.0
  */
 public class SimpleVectorialPointChecker implements VectorialConvergenceChecker {

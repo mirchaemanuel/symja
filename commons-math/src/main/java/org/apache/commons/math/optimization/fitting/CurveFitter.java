@@ -37,7 +37,7 @@ import org.apache.commons.math.optimization.VectorialPointValuePair;
  * is done by finding the parameters values that minimizes the objective
  * function &sum;(y<sub>i</sub>-f(x<sub>i</sub>))<sup>2</sup>. This is
  * really a least squares problem.</p>
- * @version $Revision: 790380 $ $Date: 2009-07-01 17:03:38 -0400 (Wed, 01 Jul 2009) $
+ * @version $Revision: 790380 $ $Date: 2009-07-01 23:03:38 +0200 (Mi, 01 Jul 2009) $
  * @since 2.0
  */
 public class CurveFitter {

@@ -22,7 +22,6 @@ import java.util.List;
 import java.io.Serializable;
 
 import org.apache.commons.math.MathRuntimeException;
-import org.apache.commons.math.ode.nonstiff.AdaptiveStepsizeIntegrator;
 import org.apache.commons.math.ode.sampling.StepHandler;
 import org.apache.commons.math.ode.sampling.StepInterpolator;
 
@@ -75,16 +74,35 @@ import org.apache.commons.math.ode.sampling.StepInterpolator;
  * ContinuousOutputModel instance can be important if the state vector
  * is large, if the integration interval is long or if the steps are
  * small (which can result from small tolerance settings in {@link
- * AdaptiveStepsizeIntegrator adaptive step size integrators}).</p>
+ * org.apache.commons.math.ode.nonstiff.AdaptiveStepsizeIntegrator adaptive
+ * step size integrators}).</p>
  *
  * @see StepHandler
  * @see StepInterpolator
- * @version $Revision: 782431 $ $Date: 2009-06-07 15:04:37 -0400 (Sun, 07 Jun 2009) $
+ * @version $Revision: 811827 $ $Date: 2009-09-06 17:32:50 +0200 (So, 06 Sep 2009) $
  * @since 1.2
  */
 
 public class ContinuousOutputModel
   implements StepHandler, Serializable {
+
+    /** Serializable version identifier */
+    private static final long serialVersionUID = -1417964919405031606L;
+
+    /** Initial integration time. */
+    private double initialTime;
+
+    /** Final integration time. */
+    private double finalTime;
+
+    /** Integration direction indicator. */
+    private boolean forward;
+
+    /** Current interpolator index. */
+    private int index;
+
+    /** Steps table. */
+    private List<StepInterpolator> steps;
 
   /** Simple constructor.
    * Build an empty continuous output model.
@@ -200,7 +218,7 @@ public class ContinuousOutputModel
   public double getInitialTime() {
     return initialTime;
   }
-    
+
   /**
    * Get the final integration time.
    * @return final integration time
@@ -218,7 +236,7 @@ public class ContinuousOutputModel
   public double getInterpolatedTime() {
     return steps.get(index).getInterpolatedTime();
   }
-    
+
   /** Set the time of the interpolated point.
    * <p>This method should <strong>not</strong> be called before the
    * integration is over because some internal variables are set only
@@ -329,7 +347,7 @@ public class ContinuousOutputModel
     return steps.get(index).getInterpolatedState();
   }
 
-  /** Compare a step interval and a double. 
+  /** Compare a step interval and a double.
    * @param time point to locate
    * @param interval step interval
    * @return -1 if the double is before the interval, 0 if it is in
@@ -354,23 +372,5 @@ public class ContinuousOutputModel
       return 0;
     }
   }
-
-  /** Initial integration time. */
-  private double initialTime;
-
-  /** Final integration time. */
-  private double finalTime;
-
-  /** Integration direction indicator. */
-  private boolean forward;
-
-  /** Current interpolator index. */
-  private int index;
-
-  /** Steps table. */
-  private List<StepInterpolator> steps;
-
-  /** Serializable version identifier */
-  private static final long serialVersionUID = -1417964919405031606L;
 
 }

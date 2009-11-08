@@ -24,16 +24,16 @@ import org.apache.commons.math.util.OpenIntToDoubleHashMap.Iterator;
 
 /**
  * This class implements the {@link RealVector} interface with a {@link OpenIntToDoubleHashMap} backing store.
- * @version $Revision: 800111 $ $Date: 2009-08-02 13:23:05 -0400 (Sun, 02 Aug 2009) $
+ * @version $Revision: 811827 $ $Date: 2009-09-06 17:32:50 +0200 (So, 06 Sep 2009) $
  * @since 2.0
 */
 public class OpenMapRealVector implements SparseRealVector, Serializable {
 
-    /** Serializable version identifier. */
-    private static final long serialVersionUID = 8772222695580707260L;
-
     /** Default Tolerance for having a value considered zero. */
     public static final double DEFAULT_ZERO_TOLERANCE = 1.0e-12;
+
+    /** Serializable version identifier. */
+    private static final long serialVersionUID = 8772222695580707260L;
 
     /** Entries of the vector. */
     private final OpenIntToDoubleHashMap entries;
@@ -1233,7 +1233,7 @@ public class OpenMapRealVector implements SparseRealVector, Serializable {
         return getData();
     }
 
-    /** {@inheritDoc} 
+    /** {@inheritDoc}
      * <p> Implementation Note: This works on exact values, and as a result
      * it is possible for {@code a.subtract(b)} to be the zero vector, while
      * {@code a.hashCode() != b.hashCode()}.</p>
@@ -1255,9 +1255,9 @@ public class OpenMapRealVector implements SparseRealVector, Serializable {
         return result;
     }
 
-    /**  
+    /**
      * <p> Implementation Note: This performs an exact comparison, and as a result
-     * it is possible for {@code a.subtract(b}} to be the zero vector, while 
+     * it is possible for {@code a.subtract(b}} to be the zero vector, while
      * {@code  a.equals(b) == false}.</p>
      * {@inheritDoc}
      */
@@ -1300,7 +1300,7 @@ public class OpenMapRealVector implements SparseRealVector, Serializable {
     }
 
     /**
-     * 
+     *
      * @return the percentage of none zero elements as a decimal percent.
      */
     public double getSparcity() {

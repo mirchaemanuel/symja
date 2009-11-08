@@ -19,17 +19,17 @@ package org.apache.commons.math.random;
 
 
 /** This interface represents a random generator for whole vectors.
- * 
+ *
  * @since 1.2
- * @version $Revision: 780975 $ $Date: 2009-06-02 05:05:37 -0400 (Tue, 02 Jun 2009) $
+ * @version $Revision: 811786 $ $Date: 2009-09-06 11:36:08 +0200 (So, 06 Sep 2009) $
  *
  */
 
 public interface RandomVectorGenerator {
 
-  /** Generate a random vector.
-   * @return a random vector as an array of double.
-   */
-  public double[] nextVector();
+    /** Generate a random vector.
+     * @return a random vector as an array of double.
+     */
+    double[] nextVector();
 
 }

@@ -19,7 +19,7 @@ package org.apache.commons.math.optimization.linear;
 
 /**
  * Types of relationships between two cells in a Solver {@link LinearConstraint}.
- * @version $Revision: 758920 $ $Date: 2009-03-26 19:25:30 -0400 (Thu, 26 Mar 2009) $
+ * @version $Revision: 758920 $ $Date: 2009-03-27 00:25:30 +0100 (Fr, 27 Mrz 2009) $
  * @since 2.0
  */
 public enum Relationship {

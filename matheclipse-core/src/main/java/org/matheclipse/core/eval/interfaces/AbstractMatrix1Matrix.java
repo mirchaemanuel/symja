@@ -4,6 +4,7 @@ import org.apache.commons.math.linear.FieldMatrix;
 import org.apache.commons.math.linear.RealMatrix;
 import org.matheclipse.basic.Config;
 import org.matheclipse.core.convert.Convert;
+import org.matheclipse.core.expression.ExprFieldElement;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
 
@@ -14,7 +15,7 @@ public abstract class AbstractMatrix1Matrix extends AbstractFunctionEvaluator {
 
 	@Override
 	public IExpr evaluate(final IAST function) {
-		FieldMatrix<IExpr> matrix;
+		FieldMatrix<ExprFieldElement> matrix;
 		try {
 			if (function.size() == 2) {
 				final IAST list = (IAST) function.get(1);
@@ -59,7 +60,7 @@ public abstract class AbstractMatrix1Matrix extends AbstractFunctionEvaluator {
 		return evaluate(function);
 	}
 
-	public abstract FieldMatrix<IExpr> matrixEval(FieldMatrix<IExpr> matrix);
+	public abstract FieldMatrix<ExprFieldElement> matrixEval(FieldMatrix<ExprFieldElement> matrix);
 	
 	public abstract RealMatrix realMatrixEval(RealMatrix matrix);
 }

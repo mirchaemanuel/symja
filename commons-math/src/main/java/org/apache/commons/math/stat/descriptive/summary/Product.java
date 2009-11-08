@@ -23,24 +23,24 @@ import org.apache.commons.math.stat.descriptive.AbstractStorelessUnivariateStati
 /**
  * Returns the product of the available values.
  * <p>
- * If there are no values in the dataset, or any of the values are 
+ * If there are no values in the dataset, or any of the values are
  * <code>NaN</code>, then <code>NaN</code> is returned.</p>
  * <p>
- * <strong>Note that this implementation is not synchronized.</strong> If 
+ * <strong>Note that this implementation is not synchronized.</strong> If
  * multiple threads access an instance of this class concurrently, and at least
- * one of the threads invokes the <code>increment()</code> or 
+ * one of the threads invokes the <code>increment()</code> or
  * <code>clear()</code> method, it must be synchronized externally.</p>
- * 
- * @version $Revision: 762087 $ $Date: 2009-04-05 10:20:18 -0400 (Sun, 05 Apr 2009) $
+ *
+ * @version $Revision: 811685 $ $Date: 2009-09-05 19:36:48 +0200 (Sa, 05 Sep 2009) $
  */
 public class Product extends AbstractStorelessUnivariateStatistic implements Serializable {
 
     /** Serializable version identifier */
-    private static final long serialVersionUID = 2824226005990582538L;   
-     
+    private static final long serialVersionUID = 2824226005990582538L;
+
     /**The number of values that have been added */
     private long n;
-    
+
     /**
      * The current Running Product.
      */
@@ -53,17 +53,17 @@ public class Product extends AbstractStorelessUnivariateStatistic implements Ser
         n = 0;
         value = Double.NaN;
     }
-    
+
     /**
      * Copy constructor, creates a new {@code Product} identical
      * to the {@code original}
-     * 
+     *
      * @param original the {@code Product} instance to copy
      */
     public Product(Product original) {
         copy(original, this);
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -91,7 +91,7 @@ public class Product extends AbstractStorelessUnivariateStatistic implements Ser
     public long getN() {
         return n;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -107,7 +107,7 @@ public class Product extends AbstractStorelessUnivariateStatistic implements Ser
      * is empty.
      * <p>
      * Throws <code>IllegalArgumentException</code> if the array is null.</p>
-     * 
+     *
      * @param values the input array
      * @param begin index of the first array element to include
      * @param length the number of elements to include
@@ -126,7 +126,46 @@ public class Product extends AbstractStorelessUnivariateStatistic implements Ser
         }
         return product;
     }
-    
+
+    /**
+     * <p>Returns the weighted product of the entries in the specified portion of
+     * the input array, or <code>Double.NaN</code> if the designated subarray
+     * is empty.</p>
+     *
+     * <p>Throws <code>IllegalArgumentException</code> if any of the following are true:
+     * <ul><li>the values array is null</li>
+     *     <li>the weights array is null</li>
+     *     <li>the weights array does not have the same length as the values array</li>
+     *     <li>the weights array contains one or more infinite values</li>
+     *     <li>the weights array contains one or more NaN values</li>
+     *     <li>the weights array contains negative values</li>
+     *     <li>the start and length arguments do not determine a valid array</li>
+     * </ul></p>
+     *
+     * <p>Uses the formula, <pre>
+     *    weighted product = &prod;values[i]<sup>weights[i]</sup>
+     * </pre>
+     * that is, the weights are applied as exponents when computing the weighted product.</p>
+     *
+     * @param values the input array
+     * @param weights the weights array
+     * @param begin index of the first array element to include
+     * @param length the number of elements to include
+     * @return the product of the values or Double.NaN if length = 0
+     * @throws IllegalArgumentException if the parameters are not valid
+     */
+    public double evaluate(final double[] values, final double[] weights,
+                           final int begin, final int length) {
+        double product = Double.NaN;
+        if (test(values, weights, begin, length)) {
+            product = 1.0;
+            for (int i = begin; i < begin + length; i++) {
+                product *= Math.pow(values[i], weights[i]);
+            }
+        }
+        return product;
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -136,11 +175,11 @@ public class Product extends AbstractStorelessUnivariateStatistic implements Ser
         copy(this, result);
         return result;
     }
-    
+
     /**
      * Copies source to dest.
      * <p>Neither source nor dest can be null.</p>
-     * 
+     *
      * @param source Product to copy
      * @param dest Product to copy to
      * @throws NullPointerException if either source or dest is null

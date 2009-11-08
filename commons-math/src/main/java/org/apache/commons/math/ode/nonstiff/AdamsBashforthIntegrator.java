@@ -105,7 +105,7 @@ import org.apache.commons.math.ode.sampling.StepHandler;
  *        [  -8  48 -256 1280  ... ]
  *        [          ...           ]
  * </pre></p>
- * 
+ *
  * <p>Using the Nordsieck vector has several advantages:
  * <ul>
  *   <li>it greatly simplifies step interpolation as the interpolator mainly applies
@@ -114,7 +114,7 @@ import org.apache.commons.math.ode.sampling.StepHandler;
  *   the step are triggered,</li>
  *   <li>it allows to extend the methods in order to support adaptive stepsize.</li>
  * </ul></p>
- * 
+ *
  * <p>The Nordsieck vector at step n+1 is computed from the Nordsieck vector at step n as follows:
  * <ul>
  *   <li>y<sub>n+1</sub> = y<sub>n</sub> + s<sub>1</sub>(n) + u<sup>T</sup> r<sub>n</sub></li>
@@ -135,7 +135,7 @@ import org.apache.commons.math.ode.sampling.StepHandler;
  * <p>The P<sup>-1</sup>u vector and the P<sup>-1</sup> A P matrix do not depend on the state,
  * they only depend on k and therefore are precomputed once for all.</p>
  *
- * @version $Revision: 789159 $ $Date: 2009-06-28 17:56:20 -0400 (Sun, 28 Jun 2009) $
+ * @version $Revision: 811833 $ $Date: 2009-09-06 18:27:50 +0200 (So, 06 Sep 2009) $
  * @since 2.0
  */
 public class AdamsBashforthIntegrator extends AdamsIntegrator {
@@ -191,7 +191,7 @@ public class AdamsBashforthIntegrator extends AdamsIntegrator {
         sanityChecks(equations, t0, y0, t, y);
         setEquations(equations);
         resetEvaluations();
-        final boolean forward = (t > t0);
+        final boolean forward = t > t0;
 
         // initialize working arrays
         if (y != y0) {
@@ -221,7 +221,7 @@ public class AdamsBashforthIntegrator extends AdamsIntegrator {
         // reuse the step that was chosen by the starter integrator
         double hNew = stepSize;
         interpolator.rescale(hNew);
-        
+
         boolean lastStep = false;
         while (!lastStep) {
 

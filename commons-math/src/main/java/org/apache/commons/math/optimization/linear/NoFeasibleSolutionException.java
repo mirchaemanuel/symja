@@ -22,7 +22,7 @@ import org.apache.commons.math.optimization.OptimizationException;
 /**
  * This class represents exceptions thrown by optimizers when no solution
  * fulfills the constraints.
- * @version $Revision: 758920 $ $Date: 2009-03-26 19:25:30 -0400 (Thu, 26 Mar 2009) $
+ * @version $Revision: 811685 $ $Date: 2009-09-05 19:36:48 +0200 (Sa, 05 Sep 2009) $
  * @since 2.0
  */
 public class NoFeasibleSolutionException extends OptimizationException {
@@ -30,7 +30,7 @@ public class NoFeasibleSolutionException extends OptimizationException {
     /** Serializable version identifier. */
     private static final long serialVersionUID = -3044253632189082760L;
 
-    /** 
+    /**
      * Simple constructor using a default message.
      */
     public NoFeasibleSolutionException() {

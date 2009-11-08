@@ -33,10 +33,19 @@ import org.apache.commons.math.MathRuntimeException;
  * {@link #iterator()} are fail-fast: they throw a
  * <code>ConcurrentModificationException</code> when they detect the map has been
  * modified during iteration.</p>
- * @version $Revision: 746578 $ $Date: 2009-02-21 15:01:14 -0500 (Sat, 21 Feb 2009) $
+ * @version $Revision: 825919 $ $Date: 2009-10-16 16:51:55 +0200 (Fr, 16 Okt 2009) $
  * @since 2.0
  */
 public class OpenIntToDoubleHashMap implements Serializable {
+
+    /** Status indicator for free table entries. */
+    protected static final byte FREE    = 0;
+
+    /** Status indicator for full table entries. */
+    protected static final byte FULL    = 1;
+
+    /** Status indicator for removed table entries. */
+    protected static final byte REMOVED = 2;
 
     /** Serializable version identifier */
     private static final long serialVersionUID = -3646337053166149105L;
@@ -56,15 +65,6 @@ public class OpenIntToDoubleHashMap implements Serializable {
 
     /** Number of bits to perturb the index when probing for collision resolution. */
     private static final int PERTURB_SHIFT = 5;
-
-    /** Status indicator for free table entries. */
-    protected static final byte FREE    = 0;
-
-    /** Status indicator for full table entries. */
-    protected static final byte FULL    = 1;
-
-    /** Status indicator for removed table entries. */
-    protected static final byte REMOVED = 2;
 
     /** Keys table. */
     private int[] keys;
@@ -186,7 +186,8 @@ public class OpenIntToDoubleHashMap implements Serializable {
             return missingEntries;
         }
 
-        for (int perturb = perturb(hash), j = index; states[index] != FREE; perturb >>= PERTURB_SHIFT) {
+        int j = index;
+        for (int perturb = perturb(hash); states[index] != FREE; perturb >>= PERTURB_SHIFT) {
             j = probe(perturb, j);
             index = j & mask;
             if (containsKey(key, index)) {
@@ -215,7 +216,8 @@ public class OpenIntToDoubleHashMap implements Serializable {
             return false;
         }
 
-        for (int perturb = perturb(hash), j = index; states[index] != FREE; perturb >>= PERTURB_SHIFT) {
+        int j = index;
+        for (int perturb = perturb(hash); states[index] != FREE; perturb >>= PERTURB_SHIFT) {
             j = probe(perturb, j);
             index = j & mask;
             if (containsKey(key, index)) {
@@ -281,7 +283,7 @@ public class OpenIntToDoubleHashMap implements Serializable {
                 j = probe(perturb, j);
                 index = j & mask;
                 perturb >>= PERTURB_SHIFT;
-                
+
                 if (states[index] != FULL || keys[index] == key) {
                     break;
                 }
@@ -340,7 +342,7 @@ public class OpenIntToDoubleHashMap implements Serializable {
         return size;
     }
 
-    
+
     /**
      * Remove the value associated with a key.
      * @param key key to which the value is associated
@@ -358,7 +360,8 @@ public class OpenIntToDoubleHashMap implements Serializable {
             return missingEntries;
         }
 
-        for (int perturb = perturb(hash), j = index; states[index] != FREE; perturb >>= PERTURB_SHIFT) {
+        int j = index;
+        for (int perturb = perturb(hash); states[index] != FREE; perturb >>= PERTURB_SHIFT) {
             j = probe(perturb, j);
             index = j & mask;
             if (containsKey(key, index)) {
@@ -475,7 +478,7 @@ public class OpenIntToDoubleHashMap implements Serializable {
         return h ^ (h >>> 7) ^ (h >>> 4);
     }
 
-    
+
     /** Iterator class for the map. */
     public class Iterator {
 
@@ -592,5 +595,5 @@ public class OpenIntToDoubleHashMap implements Serializable {
         count = 0;
     }
 
-            
+
 }

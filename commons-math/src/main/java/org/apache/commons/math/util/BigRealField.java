@@ -20,8 +20,6 @@ package org.apache.commons.math.util;
 import java.io.Serializable;
 
 import org.apache.commons.math.Field;
-import org.apache.commons.math.FieldElement;
-import org.apache.commons.math.fraction.Fraction;
 
 /**
  * Representation of real numbers with arbitrary precision field.
@@ -29,7 +27,7 @@ import org.apache.commons.math.fraction.Fraction;
  * This class is a singleton.
  * </p>
  * @see BigReal
- * @version $Revision: 795912 $ $Date: 2009-07-20 12:51:09 -0400 (Mon, 20 Jul 2009) $
+ * @version $Revision: 811827 $ $Date: 2009-09-06 17:32:50 +0200 (So, 06 Sep 2009) $
  * @since 2.0
  */
 public class BigRealField implements Field<BigReal>, Serializable  {
@@ -59,6 +57,7 @@ public class BigRealField implements Field<BigReal>, Serializable  {
         return BigReal.ZERO;
     }
 
+    // CHECKSTYLE: stop HideUtilityClassConstructor
     /** Holder for the instance.
      * <p>We use here the Initialization On Demand Holder Idiom.</p>
      */
@@ -66,17 +65,14 @@ public class BigRealField implements Field<BigReal>, Serializable  {
         /** Cached field instance. */
         private static final BigRealField INSTANCE = new BigRealField();
     }
+    // CHECKSTYLE: resume HideUtilityClassConstructor
 
     /** Handle deserialization of the singleton.
      * @return the singleton instance
      */
     private Object readResolve() {
         // return the singleton instance
-        return LazyHolder.INSTANCE; 
+        return LazyHolder.INSTANCE;
     }
 
-    /** {@inheritDoc} */
-    public Class<? extends FieldElement<BigReal>> getRuntimeClass() {
-        return BigReal.class;
-    }
 }

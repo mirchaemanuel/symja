@@ -7,6 +7,8 @@ import org.apache.commons.math.linear.FieldVector;
 import org.matheclipse.basic.Config;
 import org.matheclipse.core.convert.Convert;
 import org.matheclipse.core.eval.interfaces.AbstractNonOrderlessArgMultiple;
+import org.matheclipse.core.expression.ExprField;
+import org.matheclipse.core.expression.ExprFieldElement;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.ISymbol;
@@ -18,10 +20,10 @@ public class Dot extends AbstractNonOrderlessArgMultiple {
 
 	@Override
 	public IExpr e2ObjArg(final IExpr o0, final IExpr o1) {
-		FieldMatrix<IExpr> matrix0;
-		FieldMatrix<IExpr> matrix1;
-		FieldVector<IExpr> vector0;
-		FieldVector<IExpr> vector1;
+		FieldMatrix<ExprFieldElement> matrix0;
+		FieldMatrix<ExprFieldElement> matrix1;
+		FieldVector<ExprFieldElement> vector0;
+		FieldVector<ExprFieldElement> vector1;
 		IAST res;
 		try {
 			IAST list;
@@ -45,15 +47,15 @@ public class Dot extends AbstractNonOrderlessArgMultiple {
 				if (o1.isMatrix() != null) {
 					list = (IAST) o1;
 					matrix1 = Convert.list2Matrix(list);
-					FieldElement<IExpr>[] av = vector0.getData();
-					BlockFieldMatrix<IExpr> m = new BlockFieldMatrix<IExpr>(o0.getField(),1,av.length);
+					FieldElement<ExprFieldElement>[] av = vector0.getData();
+					BlockFieldMatrix<ExprFieldElement> m = new BlockFieldMatrix<ExprFieldElement>(ExprField.CONST,1,av.length);
 					m.setRow(0, vector0.getData());
 					return Convert.matrix2List(m.multiply(
 							matrix1));
 				} else if (o1.isVector() != (-1)) {
 					list = (IAST) o1;
 					vector1 = Convert.list2Vector(list);
-					return vector0.dotProduct(vector1);
+					return vector0.dotProduct(vector1).getExpr();
 				}
 			}
 

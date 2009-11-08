@@ -111,15 +111,15 @@ public class ComplexNum extends ExprImpl implements IComplexNum {
 	}
 
 	public IComplexNum add(final IComplexNum val) {
-		return newInstance(fComplex.plus(((ComplexNum) val).fComplex));
+		return newInstance(fComplex.add(((ComplexNum) val).fComplex));
 	}
 
 	public ComplexNum add(final ComplexNum that) {
-		return newInstance(fComplex.plus(that.fComplex));
+		return newInstance(fComplex.add(that.fComplex));
 	}
 
 	public IComplexNum multiply(final IComplexNum val) {
-		return newInstance(fComplex.times(((ComplexNum) val).fComplex));
+		return newInstance(fComplex.multiply(((ComplexNum) val).fComplex));
 	}
 
 	/**
@@ -127,7 +127,7 @@ public class ComplexNum extends ExprImpl implements IComplexNum {
 	 * @return
 	 */
 	public Complex add(final Complex that) {
-		return fComplex.plus(that);
+		return fComplex.add(that);
 	}
 
 	/**
@@ -142,11 +142,11 @@ public class ComplexNum extends ExprImpl implements IComplexNum {
 	 * @return
 	 */
 	public Complex divide(final Complex that) {
-		return fComplex.div(that);
+		return fComplex.divide(that);
 	}
 
 	public ComplexNum divide(final ComplexNum that) throws ArithmeticException {
-		return newInstance(fComplex.div(that.fComplex));
+		return newInstance(fComplex.divide(that.fComplex));
 	}
 
 	/**
@@ -338,7 +338,7 @@ public class ComplexNum extends ExprImpl implements IComplexNum {
 	 * @return
 	 */
 	public ComplexNum multiply(final ComplexNum that) {
-		return newInstance(fComplex.times(that.fComplex));
+		return newInstance(fComplex.multiply(that.fComplex));
 	}
 
 	/**
@@ -363,7 +363,7 @@ public class ComplexNum extends ExprImpl implements IComplexNum {
 	@Override
 	public IExpr plus(final IExpr that) {
 		if (that instanceof ComplexNum) {
-			return newInstance(fComplex.plus(((ComplexNum) that).fComplex));
+			return newInstance(fComplex.add(((ComplexNum) that).fComplex));
 		}
 		return super.plus(that);
 	}
@@ -420,11 +420,11 @@ public class ComplexNum extends ExprImpl implements IComplexNum {
 	 * @return
 	 */
 	public Complex subtract(final Complex that) {
-		return fComplex.minus(that);
+		return fComplex.subtract(that);
 	}
 
 	public ComplexNum subtract(final ComplexNum that) {
-		return newInstance(fComplex.minus(that.fComplex));
+		return newInstance(fComplex.subtract(that.fComplex));
 	}
 
 	/**
@@ -434,7 +434,7 @@ public class ComplexNum extends ExprImpl implements IComplexNum {
 	@Override
 	public IExpr times(final IExpr that) {
 		if (that instanceof ComplexNum) {
-			return newInstance(fComplex.times(((ComplexNum) that).fComplex));
+			return newInstance(fComplex.multiply(((ComplexNum) that).fComplex));
 		}
 		return super.times(that);
 	}

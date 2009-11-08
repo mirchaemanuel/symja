@@ -17,7 +17,6 @@
 
 package org.apache.commons.math.linear;
 
-import org.apache.commons.math.ConvergenceException;
 import org.apache.commons.math.MathRuntimeException;
 import org.apache.commons.math.util.MathUtils;
 
@@ -29,7 +28,7 @@ import org.apache.commons.math.util.MathUtils;
  * &Sigma; is a m &times; n diagonal matrix with positive diagonal elements,
  * and V is an n &times; n orthogonal matrix.</p>
  *
- * @version $Revision: 799857 $ $Date: 2009-08-01 09:07:12 -0400 (Sat, 01 Aug 2009) $
+ * @version $Revision: 811685 $ $Date: 2009-09-05 19:36:48 +0200 (Sa, 05 Sep 2009) $
  * @since 2.0
  */
 public class SingularValueDecompositionImpl implements SingularValueDecomposition {
@@ -77,10 +76,10 @@ public class SingularValueDecompositionImpl implements SingularValueDecompositio
     private RealMatrix cachedVt;
 
     /**
-     * Calculates the Singular Value Decomposition of the given matrix. 
+     * Calculates the Singular Value Decomposition of the given matrix.
      * @param matrix The matrix to decompose.
-     * @exception InvalidMatrixException (wrapping a {@link ConvergenceException}
-     * if algorithm fails to converge
+     * @exception InvalidMatrixException (wrapping a {@link
+     * org.apache.commons.math.ConvergenceException} if algorithm fails to converge
      */
     public SingularValueDecompositionImpl(RealMatrix matrix)
         throws InvalidMatrixException {
@@ -135,7 +134,7 @@ public class SingularValueDecompositionImpl implements SingularValueDecompositio
                 iData[0] = ei1;
                 for (int i = 0; i < n - 1; ++i) {
                     // compute Bt.E.S^(-1) where E is the eigenvectors matrix
-                    // we reuse the array from matrix E to store the result 
+                    // we reuse the array from matrix E to store the result
                     final double[] ei0 = ei1;
                     ei1 = eData[i + 1];
                     iData[i + 1] = ei1;
@@ -215,7 +214,7 @@ public class SingularValueDecompositionImpl implements SingularValueDecompositio
                 iData[0] = ei1;
                 for (int i = 0; i < m - 1; ++i) {
                     // compute Bt.E.S^(-1) where E is the eigenvectors matrix
-                    // we reuse the array from matrix E to store the result 
+                    // we reuse the array from matrix E to store the result
                     final double[] ei0 = ei1;
                     ei1 = eData[i + 1];
                     iData[i + 1] = ei1;
@@ -320,7 +319,7 @@ public class SingularValueDecompositionImpl implements SingularValueDecompositio
 
     /** Specialized solver. */
     private static class Solver implements DecompositionSolver {
-        
+
         /** Singular values. */
         private final double[] singularValues;
 

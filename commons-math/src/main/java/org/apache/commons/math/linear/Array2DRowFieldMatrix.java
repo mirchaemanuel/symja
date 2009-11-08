@@ -32,10 +32,10 @@ import org.apache.commons.math.MathRuntimeException;
  * </p>
  *
  * @param <T> the type of the field elements
- * @version $Revision: 783702 $ $Date: 2009-06-11 04:54:02 -0400 (Thu, 11 Jun 2009) $
+ * @version $Revision: 811685 $ $Date: 2009-09-05 19:36:48 +0200 (Sa, 05 Sep 2009) $
  */
 public class Array2DRowFieldMatrix<T extends FieldElement<T>> extends AbstractFieldMatrix<T> implements Serializable {
-    
+
     /** Serializable version identifier */
     private static final long serialVersionUID = 7260756672015356458L;
 
@@ -108,14 +108,14 @@ public class Array2DRowFieldMatrix<T extends FieldElement<T>> extends AbstractFi
         } else {
             if (d == null) {
                 throw new NullPointerException();
-            }   
+            }
             final int nRows = d.length;
             if (nRows == 0) {
-                throw MathRuntimeException.createIllegalArgumentException("matrix must have at least one row"); 
+                throw MathRuntimeException.createIllegalArgumentException("matrix must have at least one row");
             }
             final int nCols = d[0].length;
             if (nCols == 0) {
-                throw MathRuntimeException.createIllegalArgumentException("matrix must have at least one column"); 
+                throw MathRuntimeException.createIllegalArgumentException("matrix must have at least one column");
             }
             for (int r = 1; r < nRows; r++) {
                 if (d[r].length != nCols) {
@@ -123,7 +123,7 @@ public class Array2DRowFieldMatrix<T extends FieldElement<T>> extends AbstractFi
                             "some rows have length {0} while others have length {1}",
                             nCols, d[r].length);
                 }
-            }       
+            }
             data = d;
         }
     }
@@ -190,7 +190,7 @@ public class Array2DRowFieldMatrix<T extends FieldElement<T>> extends AbstractFi
             final T[] mRow       = m.data[row];
             final T[] outDataRow = outData[row];
             for (int col = 0; col < columnCount; col++) {
-                outDataRow[col] = dataRow[col].plus(mRow[col]);
+                outDataRow[col] = dataRow[col].add(mRow[col]);
             }
         }
 
@@ -230,7 +230,7 @@ public class Array2DRowFieldMatrix<T extends FieldElement<T>> extends AbstractFi
             final T[] mRow       = m.data[row];
             final T[] outDataRow = outData[row];
             for (int col = 0; col < columnCount; col++) {
-                outDataRow[col] = dataRow[col].minus(mRow[col]);
+                outDataRow[col] = dataRow[col].subtract(mRow[col]);
             }
         }
 
@@ -272,7 +272,7 @@ public class Array2DRowFieldMatrix<T extends FieldElement<T>> extends AbstractFi
             for (int col = 0; col < nCols; col++) {
                 T sum = getField().getZero();
                 for (int i = 0; i < nSum; i++) {
-                    sum = sum.plus(dataRow[i].times(m.data[i][col]));
+                    sum = sum.add(dataRow[i].multiply(m.data[i][col]));
                 }
                 outDataRow[col] = sum;
             }
@@ -301,7 +301,7 @@ public class Array2DRowFieldMatrix<T extends FieldElement<T>> extends AbstractFi
 
     /** {@inheritDoc} */
     @Override
-    public void setSubMatrix(final T[][] subMatrix, final int row, final int column) 
+    public void setSubMatrix(final T[][] subMatrix, final int row, final int column)
     throws MatrixIndexException {
         if (data == null) {
             if (row > 0) {
@@ -316,19 +316,19 @@ public class Array2DRowFieldMatrix<T extends FieldElement<T>> extends AbstractFi
             }
             final int nRows = subMatrix.length;
             if (nRows == 0) {
-                throw MathRuntimeException.createIllegalArgumentException("matrix must have at least one row"); 
+                throw MathRuntimeException.createIllegalArgumentException("matrix must have at least one row");
             }
 
             final int nCols = subMatrix[0].length;
             if (nCols == 0) {
-                throw MathRuntimeException.createIllegalArgumentException("matrix must have at least one column"); 
+                throw MathRuntimeException.createIllegalArgumentException("matrix must have at least one column");
             }
             data = buildArray(getField(), subMatrix.length, nCols);
             for (int i = 0; i < data.length; ++i) {
                 if (subMatrix[i].length != nCols) {
                     throw MathRuntimeException.createIllegalArgumentException(
                             "some rows have length {0} while others have length {1}",
-                            nCols, subMatrix[i].length); 
+                            nCols, subMatrix[i].length);
                 }
                 System.arraycopy(subMatrix[i], 0, data[i + row], column, nCols);
             }
@@ -369,12 +369,12 @@ public class Array2DRowFieldMatrix<T extends FieldElement<T>> extends AbstractFi
     public void addToEntry(final int row, final int column, final T increment)
         throws MatrixIndexException {
         try {
-            data[row][column] = data[row][column].plus(increment);
+            data[row][column] = data[row][column].add(increment);
         } catch (ArrayIndexOutOfBoundsException e) {
             throw new MatrixIndexException(
                     "no entry at indices ({0}, {1}) in a {2}x{3} matrix",
                     row, column, getRowDimension(), getColumnDimension());
-        }      
+        }
     }
 
     /** {@inheritDoc} */
@@ -382,12 +382,12 @@ public class Array2DRowFieldMatrix<T extends FieldElement<T>> extends AbstractFi
     public void multiplyEntry(final int row, final int column, final T factor)
         throws MatrixIndexException {
         try {
-            data[row][column] = data[row][column].times(factor);
+            data[row][column] = data[row][column].multiply(factor);
         } catch (ArrayIndexOutOfBoundsException e) {
             throw new MatrixIndexException(
                     "no entry at indices ({0}, {1}) in a {2}x{3} matrix",
                     row, column, getRowDimension(), getColumnDimension());
-        }      
+        }
     }
 
     /** {@inheritDoc} */
@@ -418,7 +418,7 @@ public class Array2DRowFieldMatrix<T extends FieldElement<T>> extends AbstractFi
             final T[] dataRow = data[row];
             T sum = getField().getZero();
             for (int i = 0; i < nCols; i++) {
-                sum = sum.plus(dataRow[i].times(v[i]));
+                sum = sum.add(dataRow[i].multiply(v[i]));
             }
             out[row] = sum;
         }
@@ -442,7 +442,7 @@ public class Array2DRowFieldMatrix<T extends FieldElement<T>> extends AbstractFi
         for (int col = 0; col < nCols; ++col) {
             T sum = getField().getZero();
             for (int i = 0; i < nRows; ++i) {
-                sum = sum.plus(data[i][col].times(v[i]));
+                sum = sum.add(data[i][col].multiply(v[i]));
             }
             out[col] = sum;
         }

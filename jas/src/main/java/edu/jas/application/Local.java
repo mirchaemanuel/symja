@@ -1,5 +1,5 @@
 /*
- * $Id: Local.java 2598 2009-04-25 21:31:56Z kredel $
+ * $Id: Local.java 2748 2009-07-15 19:47:15Z kredel $
  */
 
 package edu.jas.application;
@@ -275,9 +275,9 @@ public class Local<C extends GcdRingElem<C> >
     public String toScript() {
         // Python case
         if ( den.isONE() ) {
-            return "( " + num.toScript() + " )";
+            return num.toScript();
         } else {
-            return "( " + num.toScript() + " ) / ( " + den.toScript() + " )";
+            return num.toScript() + " / " + den.toScript();
         }
     }
 

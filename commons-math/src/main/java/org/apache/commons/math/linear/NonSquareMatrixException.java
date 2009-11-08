@@ -20,7 +20,7 @@ package org.apache.commons.math.linear;
 
 /**
  * Thrown when an operation defined only for square matrices is applied to non-square ones.
- * @version $Revision: 799857 $ $Date: 2009-08-01 09:07:12 -0400 (Sat, 01 Aug 2009) $
+ * @version $Revision: 799857 $ $Date: 2009-08-01 15:07:12 +0200 (Sa, 01 Aug 2009) $
  * @since 2.0
  */
 public class NonSquareMatrixException extends InvalidMatrixException {

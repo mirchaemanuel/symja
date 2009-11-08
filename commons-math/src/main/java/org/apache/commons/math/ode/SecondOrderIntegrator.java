@@ -27,7 +27,7 @@ package org.apache.commons.math.ode;
  * SecondOrderDifferentialEquations} interface.</p>
  *
  * @see SecondOrderDifferentialEquations
- * @version $Revision: 674820 $ $Date: 2008-07-08 09:37:09 -0400 (Tue, 08 Jul 2008) $
+ * @version $Revision: 811786 $ $Date: 2009-09-06 11:36:08 +0200 (So, 06 Sep 2009) $
  * @since 1.2
  */
 
@@ -50,9 +50,9 @@ public interface SecondOrderIntegrator extends ODEIntegrator {
    * @throws DerivativeException this exception is propagated to the caller if the
    * underlying user function triggers one
    */
-  public void integrate(SecondOrderDifferentialEquations equations,
-                        double t0, double[] y0, double[] yDot0,
-                        double t, double[] y, double[] yDot)
-  throws DerivativeException, IntegratorException;
+  void integrate(SecondOrderDifferentialEquations equations,
+                 double t0, double[] y0, double[] yDot0,
+                 double t, double[] y, double[] yDot)
+      throws DerivativeException, IntegratorException;
 
 }

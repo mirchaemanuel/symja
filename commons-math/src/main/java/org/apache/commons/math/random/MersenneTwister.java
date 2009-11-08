@@ -53,8 +53,8 @@ import java.io.Serializable;
  *   <li>Redistributions in binary form must reproduce the above copyright
  *       notice, this list of conditions and the following disclaimer in the
  *       documentation and/or other materials provided with the distribution.</li>
- *   <li>The names of its contributors may not be used to endorse or promote 
- *       products derived from this software without specific prior written 
+ *   <li>The names of its contributors may not be used to endorse or promote
+ *       products derived from this software without specific prior written
  *       permission.</li>
  * </ol></td></tr>
 
@@ -73,7 +73,7 @@ import java.io.Serializable;
  * DAMAGE.</strong></td></tr>
  * </table>
 
- * @version $Revision: 797246 $ $Date: 2009-07-23 18:21:46 -0400 (Thu, 23 Jul 2009) $
+ * @version $Revision: 811833 $ $Date: 2009-09-06 18:27:50 +0200 (So, 06 Sep 2009) $
  * @since 2.0
 
  */
@@ -143,7 +143,7 @@ public class MersenneTwister extends BitsStreamGenerator implements Serializable
         for (mti = 1; mti < N; ++mti) {
             // See Knuth TAOCP Vol2. 3rd Ed. P.106 for multiplier.
             // initializer from the 2002-01-09 C version by Makoto Matsumoto
-            longMT = (1812433253l * (longMT ^ (longMT >> 30)) + mti) & 0xffffffffL; 
+            longMT = (1812433253l * (longMT ^ (longMT >> 30)) + mti) & 0xffffffffL;
             mt[mti]= (int) longMT;
         }
     }
@@ -241,10 +241,10 @@ public class MersenneTwister extends BitsStreamGenerator implements Serializable
         y = mt[mti++];
 
         // tempering
-        y ^= (y >>> 11);
+        y ^=  y >>> 11;
         y ^= (y <<   7) & 0x9d2c5680;
         y ^= (y <<  15) & 0xefc60000;
-        y ^= (y >>> 18);
+        y ^=  y >>> 18;
 
         return y >>> (32 - bits);
 

@@ -35,8 +35,8 @@ package org.apache.commons.math.linear;
  * <pre>
  *   RealVector result = v.mapAddToSelf(3.0).mapTanToSelf().mapSquareToSelf();
  * </pre>
- * 
- * @version $Revision: 778058 $ $Date: 2009-05-23 18:57:26 -0400 (Sat, 23 May 2009) $
+ *
+ * @version $Revision: 811786 $ $Date: 2009-09-06 11:36:08 +0200 (So, 06 Sep 2009) $
  * @since 2.0
  */
 public interface RealVector {
@@ -463,8 +463,7 @@ public interface RealVector {
      * @return a vector containing this[i] * v[i] for all i
      * @throws IllegalArgumentException if v is not the same size as this
      */
-    public RealVector ebeMultiply(RealVector v)
-        throws IllegalArgumentException;
+    RealVector ebeMultiply(RealVector v) throws IllegalArgumentException;
 
     /**
      * Element-by-element multiplication.
@@ -472,8 +471,7 @@ public interface RealVector {
      * @return a vector containing this[i] * v[i] for all i
      * @throws IllegalArgumentException if v is not the same size as this
      */
-    public RealVector ebeMultiply(double[] v)
-        throws IllegalArgumentException;
+    RealVector ebeMultiply(double[] v) throws IllegalArgumentException;
 
     /**
      * Element-by-element division.
@@ -481,8 +479,7 @@ public interface RealVector {
      * @return a vector containing this[i] / v[i] for all i
      * @throws IllegalArgumentException if v is not the same size as this
      */
-    public RealVector ebeDivide(RealVector v)
-        throws IllegalArgumentException;
+    RealVector ebeDivide(RealVector v) throws IllegalArgumentException;
 
     /**
      * Element-by-element division.
@@ -490,8 +487,7 @@ public interface RealVector {
      * @return a vector containing this[i] / v[i] for all i
      * @throws IllegalArgumentException if v is not the same size as this
      */
-    public RealVector ebeDivide(double[] v)
-        throws IllegalArgumentException;
+    RealVector ebeDivide(double[] v) throws IllegalArgumentException;
 
     /**
      * Returns vector entries as a double array.
@@ -790,14 +786,14 @@ public interface RealVector {
      * Returns true if any coordinate of this vector is NaN; false otherwise
      * @return  true if any coordinate of this vector is NaN; false otherwise
      */
-    public boolean isNaN();
-    
+    boolean isNaN();
+
     /**
      * Returns true if any coordinate of this vector is infinite and none are NaN;
      * false otherwise
      * @return  true if any coordinate of this vector is infinite and none are NaN;
      * false otherwise
      */
-    public boolean isInfinite();
-    
+    boolean isInfinite();
+
 }

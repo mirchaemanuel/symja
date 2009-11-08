@@ -27,7 +27,7 @@ package org.apache.commons.math.distribution;
  * </ul>
  * </p>
  *
- * @version $Revision: 693598 $ $Date: 2008-09-09 16:37:08 -0400 (Tue, 09 Sep 2008) $
+ * @version $Revision: 811685 $ $Date: 2009-09-05 19:36:48 +0200 (Sa, 05 Sep 2009) $
  */
 public interface GammaDistribution extends ContinuousDistribution, HasDensity<Double> {
     /**
@@ -35,19 +35,19 @@ public interface GammaDistribution extends ContinuousDistribution, HasDensity<Do
      * @param alpha the new shape parameter.
      */
     void setAlpha(double alpha);
-    
+
     /**
      * Access the shape parameter, alpha
      * @return alpha.
      */
     double getAlpha();
-    
+
     /**
      * Modify the scale parameter, beta.
      * @param beta the new scale parameter.
      */
     void setBeta(double beta);
-    
+
     /**
      * Access the scale parameter, beta
      * @return beta.

@@ -26,20 +26,20 @@ import org.apache.commons.math.MathRuntimeException;
  * {@link org.apache.commons.math.distribution.WeibullDistribution}.
  *
  * @since 1.1
- * @version $Revision: 772119 $ $Date: 2009-05-06 05:43:28 -0400 (Wed, 06 May 2009) $
+ * @version $Revision: 811685 $ $Date: 2009-09-05 19:36:48 +0200 (Sa, 05 Sep 2009) $
  */
 public class WeibullDistributionImpl extends AbstractContinuousDistribution
         implements WeibullDistribution, Serializable {
-    
+
     /** Serializable version identifier */
     private static final long serialVersionUID = 8589540077390120676L;
-    
+
     /** The shape parameter. */
-    private double alpha;
-    
+    private double shape;
+
     /** The scale parameter. */
-    private double beta;
-    
+    private double scale;
+
     /**
      * Creates weibull distribution with the given shape and scale and a
      * location equal to zero.
@@ -55,7 +55,7 @@ public class WeibullDistributionImpl extends AbstractContinuousDistribution
     /**
      * For this distribution, X, this method returns P(X &lt; <code>x</code>).
      * @param x the value at which the CDF is evaluated.
-     * @return CDF evaluted at <code>x</code>. 
+     * @return CDF evaluted at <code>x</code>.
      */
     public double cumulativeProbability(double x) {
         double ret;
@@ -72,22 +72,22 @@ public class WeibullDistributionImpl extends AbstractContinuousDistribution
      * @return the shape parameter.
      */
     public double getShape() {
-        return alpha;
+        return shape;
     }
-    
+
     /**
      * Access the scale parameter.
      * @return the scale parameter.
      */
     public double getScale() {
-        return beta;
+        return scale;
     }
-    
+
     /**
      * For this distribution, X, this method returns the critical point x, such
      * that P(X &lt; x) = <code>p</code>.
      * <p>
-     * Returns <code>Double.NEGATIVE_INFINITY</code> for p=0 and 
+     * Returns <code>Double.NEGATIVE_INFINITY</code> for p=0 and
      * <code>Double.POSITIVE_INFINITY</code> for p=1.</p>
      *
      * @param p the desired probability
@@ -110,7 +110,7 @@ public class WeibullDistributionImpl extends AbstractContinuousDistribution
         }
         return ret;
     }
-    
+
     /**
      * Modify the shape parameter.
      * @param alpha the new shape parameter value.
@@ -120,10 +120,10 @@ public class WeibullDistributionImpl extends AbstractContinuousDistribution
             throw MathRuntimeException.createIllegalArgumentException(
                   "shape must be positive ({0})",
                   alpha);
-        }       
-        this.alpha = alpha;
+        }
+        this.shape = alpha;
     }
-    
+
     /**
      * Modify the scale parameter.
      * @param beta the new scale parameter value.
@@ -133,18 +133,18 @@ public class WeibullDistributionImpl extends AbstractContinuousDistribution
             throw MathRuntimeException.createIllegalArgumentException(
                   "scale must be positive ({0})",
                   beta);
-        }       
-        this.beta = beta;
+        }
+        this.scale = beta;
     }
 
     /**
      * Access the domain value lower bound, based on <code>p</code>, used to
      * bracket a CDF root.  This method is used by
      * {@link #inverseCumulativeProbability(double)} to find critical values.
-     * 
+     *
      * @param p the desired probability for the critical value
      * @return domain value lower bound, i.e.
-     *         P(X &lt; <i>lower bound</i>) &lt; <code>p</code> 
+     *         P(X &lt; <i>lower bound</i>) &lt; <code>p</code>
      */
     @Override
     protected double getDomainLowerBound(double p) {
@@ -155,10 +155,10 @@ public class WeibullDistributionImpl extends AbstractContinuousDistribution
      * Access the domain value upper bound, based on <code>p</code>, used to
      * bracket a CDF root.  This method is used by
      * {@link #inverseCumulativeProbability(double)} to find critical values.
-     * 
+     *
      * @param p the desired probability for the critical value
      * @return domain value upper bound, i.e.
-     *         P(X &lt; <i>upper bound</i>) &gt; <code>p</code> 
+     *         P(X &lt; <i>upper bound</i>) &gt; <code>p</code>
      */
     @Override
     protected double getDomainUpperBound(double p) {
@@ -169,7 +169,7 @@ public class WeibullDistributionImpl extends AbstractContinuousDistribution
      * Access the initial domain value, based on <code>p</code>, used to
      * bracket a CDF root.  This method is used by
      * {@link #inverseCumulativeProbability(double)} to find critical values.
-     * 
+     *
      * @param p the desired probability for the critical value
      * @return initial domain value
      */

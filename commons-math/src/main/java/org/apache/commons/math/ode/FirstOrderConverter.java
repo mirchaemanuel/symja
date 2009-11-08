@@ -49,11 +49,26 @@ package org.apache.commons.math.ode;
  * @see FirstOrderIntegrator
  * @see FirstOrderDifferentialEquations
  * @see SecondOrderDifferentialEquations
- * @version $Revision: 786881 $ $Date: 2009-06-20 14:53:08 -0400 (Sat, 20 Jun 2009) $
+ * @version $Revision: 811827 $ $Date: 2009-09-06 17:32:50 +0200 (So, 06 Sep 2009) $
  * @since 1.2
  */
 
 public class FirstOrderConverter implements FirstOrderDifferentialEquations {
+
+    /** Underlying second order equations set. */
+    private final SecondOrderDifferentialEquations equations;
+
+    /** second order problem dimension. */
+    private final int dimension;
+
+    /** state vector. */
+    private final double[] z;
+
+    /** first time derivative of the state vector. */
+    private final double[] zDot;
+
+    /** second time derivative of the state vector. */
+    private final double[] zDDot;
 
   /** Simple constructor.
    * Build a converter around a second order equations set.
@@ -96,22 +111,7 @@ public class FirstOrderConverter implements FirstOrderDifferentialEquations {
     // build the result state derivative
     System.arraycopy(zDot,  0, yDot, 0,         dimension);
     System.arraycopy(zDDot, 0, yDot, dimension, dimension);
-    
+
   }
-
-  /** Underlying second order equations set. */
-  private SecondOrderDifferentialEquations equations;
-
-  /** second order problem dimension. */
-  private int dimension;
-
-  /** state vector. */
-  private double[] z;
-
-  /** first time derivative of the state vector. */
-  private double[] zDot;
-
-  /** second time derivative of the state vector. */
-  private double[] zDDot;
 
 }

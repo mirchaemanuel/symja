@@ -18,8 +18,8 @@ package org.apache.commons.math.genetics;
 
 /**
  * Exception indicating that the representation of a chromosome is not valid.
- * 
- * @version $Revision: 799857 $ $Date: 2009-08-01 09:07:12 -0400 (Sat, 01 Aug 2009) $
+ *
+ * @version $Revision: 811685 $ $Date: 2009-09-05 19:36:48 +0200 (Sa, 05 Sep 2009) $
  * @since 2.0
  */
 public class InvalidRepresentationException extends Exception {
@@ -52,7 +52,7 @@ public class InvalidRepresentationException extends Exception {
 
     /**
      * Construct an InvalidRepresentationException
-     * 
+     *
      * @param arg0 exception message
      * @param arg1 cause
      */

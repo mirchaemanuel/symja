@@ -22,7 +22,7 @@ import org.apache.commons.math.MathRuntimeException;
 /**
  * Thrown when an operation addresses a matrix coordinate (row, col)
  * which is outside of the dimensions of a matrix.
- * @version $Revision: 746578 $ $Date: 2009-02-21 15:01:14 -0500 (Sat, 21 Feb 2009) $
+ * @version $Revision: 746578 $ $Date: 2009-02-21 21:01:14 +0100 (Sa, 21 Feb 2009) $
  */
 public class MatrixIndexException extends MathRuntimeException {
 

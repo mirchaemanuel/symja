@@ -1,5 +1,5 @@
 /*
- * $Id: BigComplex.java 2561 2009-04-18 12:10:18Z kredel $
+ * $Id: BigComplex.java 2747 2009-07-15 19:38:58Z kredel $
  */
 
 package edu.jas.arith;
@@ -283,16 +283,43 @@ public final class BigComplex implements StarRingElem<BigComplex>,
      */
     @Override
     public String toScript() {
-        // Python case
+        // Python case: re or re+im*i 
+        // was (re,im) or (re,) 
         StringBuffer s = new StringBuffer();
-        if ( im.isZERO() ) {
+        boolean iz = im.isZERO();
+        if ( iz ) {
             s.append(re.toScript());
-        } else {
-            s.append("(");
-            s.append(re.toScript());
-            s.append(",").append(im.toScript());
-            s.append(")");
+            return s.toString();
         }
+        boolean rz = re.isZERO();
+        if ( rz ) {
+            if ( !im.isONE() ) {
+                if ( im.signum() > 0 ) { 
+                    s.append(im.toScript()+"*");
+                } else {
+                    s.append("-");
+                    BigRational ii = im.negate();
+                    if ( !ii.isONE() ) {
+                        s.append(ii.toScript()+"*");
+                    }
+                }
+            }
+        } else {
+            s.append(re.toScript());
+            if ( im.signum() > 0 ) {
+                s.append("+");
+                if ( !im.isONE() ) {
+                   s.append(im.toScript()+"*");
+                }
+            } else {
+                s.append("-");
+                BigRational ii = im.negate();
+                if ( !ii.isONE() ) {
+                    s.append(ii.toScript()+"*");
+                }
+            }
+        }
+        s.append("I");
         return s.toString();
     }
 

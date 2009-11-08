@@ -28,7 +28,7 @@ package org.apache.commons.math.distribution;
  * </ul>
  * </p>
  *
- * @version $Revision: 693598 $ $Date: 2008-09-09 16:37:08 -0400 (Tue, 09 Sep 2008) $
+ * @version $Revision: 693598 $ $Date: 2008-09-09 22:37:08 +0200 (Di, 09 Sep 2008) $
  */
 public interface NormalDistribution extends ContinuousDistribution, HasDensity<Double> {
     /**

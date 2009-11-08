@@ -27,7 +27,7 @@ import org.apache.commons.math.MathRuntimeException;
 /**
  * This class implements the {@link FieldVector} interface with a {@link FieldElement} array.
  * @param <T> the type of the field elements
- * @version $Revision: 783702 $ $Date: 2009-06-11 04:54:02 -0400 (Thu, 11 Jun 2009) $
+ * @version $Revision: 811827 $ $Date: 2009-09-06 17:32:50 +0200 (So, 06 Sep 2009) $
  * @since 2.0
  */
 public class ArrayFieldVector<T extends FieldElement<T>> implements FieldVector<T>, Serializable {
@@ -35,20 +35,11 @@ public class ArrayFieldVector<T extends FieldElement<T>> implements FieldVector<
     /** Serializable version identifier. */
     private static final long serialVersionUID = 7648186910365927050L;
 
-    /** Field to which the elements belong. */
-    private final Field<T> field;
-
     /** Entries of the vector. */
     protected T[] data;
 
-    /** Build an array of elements.
-     * @param length size of the array to build
-     * @return a new array
-     */
-    @SuppressWarnings("unchecked")
-    private T[] buildArray(final int length) {
-        return (T[]) Array.newInstance(field.getRuntimeClass(), length);
-    }
+    /** Field to which the elements belong. */
+    private final Field<T> field;
 
     /**
      * Build a 0-length vector.
@@ -97,7 +88,7 @@ public class ArrayFieldVector<T extends FieldElement<T>> implements FieldVector<
             data = d.clone();
         } catch (ArrayIndexOutOfBoundsException e) {
             throw MathRuntimeException.createIllegalArgumentException(
-                      "vector must have at least one element"); 
+                      "vector must have at least one element");
         }
     }
 
@@ -228,6 +219,15 @@ public class ArrayFieldVector<T extends FieldElement<T>> implements FieldVector<
         }
     }
 
+    /** Build an array of elements.
+     * @param length size of the array to build
+     * @return a new array
+     */
+    @SuppressWarnings("unchecked")
+    private T[] buildArray(final int length) {
+        return (T[]) Array.newInstance(field.getZero().getClass(), length);
+    }
+
     /** {@inheritDoc} */
     public Field<T> getField() {
         return field;
@@ -246,7 +246,7 @@ public class ArrayFieldVector<T extends FieldElement<T>> implements FieldVector<
             checkVectorDimensions(v);
             T[] out = buildArray(data.length);
             for (int i = 0; i < data.length; i++) {
-                out[i] = data[i].plus(v.getEntry(i));
+                out[i] = data[i].add(v.getEntry(i));
             }
             return new ArrayFieldVector<T>(out);
         }
@@ -257,7 +257,7 @@ public class ArrayFieldVector<T extends FieldElement<T>> implements FieldVector<
         checkVectorDimensions(v.length);
         T[] out = buildArray(data.length);
         for (int i = 0; i < data.length; i++) {
-            out[i] = data[i].plus(v[i]);
+            out[i] = data[i].add(v[i]);
         }
         return new ArrayFieldVector<T>(out);
     }
@@ -281,7 +281,7 @@ public class ArrayFieldVector<T extends FieldElement<T>> implements FieldVector<
             checkVectorDimensions(v);
             T[] out = buildArray(data.length);
             for (int i = 0; i < data.length; i++) {
-                out[i] = data[i].minus(v.getEntry(i));
+                out[i] = data[i].subtract(v.getEntry(i));
             }
             return new ArrayFieldVector<T>(out);
         }
@@ -292,7 +292,7 @@ public class ArrayFieldVector<T extends FieldElement<T>> implements FieldVector<
         checkVectorDimensions(v.length);
         T[] out = buildArray(data.length);
         for (int i = 0; i < data.length; i++) {
-            out[i] = data[i].minus(v[i]);
+            out[i] = data[i].subtract(v[i]);
         }
         return new ArrayFieldVector<T>(out);
     }
@@ -312,7 +312,7 @@ public class ArrayFieldVector<T extends FieldElement<T>> implements FieldVector<
     public FieldVector<T> mapAdd(T d) {
         T[] out = buildArray(data.length);
         for (int i = 0; i < data.length; i++) {
-            out[i] = data[i].plus(d);
+            out[i] = data[i].add(d);
         }
         return new ArrayFieldVector<T>(out);
     }
@@ -320,7 +320,7 @@ public class ArrayFieldVector<T extends FieldElement<T>> implements FieldVector<
     /** {@inheritDoc} */
     public FieldVector<T> mapAddToSelf(T d) {
         for (int i = 0; i < data.length; i++) {
-            data[i] = data[i].plus(d);
+            data[i] = data[i].add(d);
         }
         return this;
     }
@@ -329,7 +329,7 @@ public class ArrayFieldVector<T extends FieldElement<T>> implements FieldVector<
     public FieldVector<T> mapSubtract(T d) {
         T[] out = buildArray(data.length);
         for (int i = 0; i < data.length; i++) {
-            out[i] = data[i].minus(d);
+            out[i] = data[i].subtract(d);
         }
         return new ArrayFieldVector<T>(out);
     }
@@ -337,7 +337,7 @@ public class ArrayFieldVector<T extends FieldElement<T>> implements FieldVector<
     /** {@inheritDoc} */
     public FieldVector<T> mapSubtractToSelf(T d) {
         for (int i = 0; i < data.length; i++) {
-            data[i] = data[i].minus(d);
+            data[i] = data[i].subtract(d);
         }
         return this;
     }
@@ -346,7 +346,7 @@ public class ArrayFieldVector<T extends FieldElement<T>> implements FieldVector<
     public FieldVector<T> mapMultiply(T d) {
         T[] out = buildArray(data.length);
         for (int i = 0; i < data.length; i++) {
-            out[i] = data[i].times(d);
+            out[i] = data[i].multiply(d);
         }
         return new ArrayFieldVector<T>(out);
     }
@@ -354,7 +354,7 @@ public class ArrayFieldVector<T extends FieldElement<T>> implements FieldVector<
     /** {@inheritDoc} */
     public FieldVector<T> mapMultiplyToSelf(T d) {
         for (int i = 0; i < data.length; i++) {
-            data[i] = data[i].times(d);
+            data[i] = data[i].multiply(d);
         }
         return this;
     }
@@ -363,7 +363,7 @@ public class ArrayFieldVector<T extends FieldElement<T>> implements FieldVector<
     public FieldVector<T> mapDivide(T d) {
         T[] out = buildArray(data.length);
         for (int i = 0; i < data.length; i++) {
-            out[i] = data[i].div(d);
+            out[i] = data[i].divide(d);
         }
         return new ArrayFieldVector<T>(out);
     }
@@ -371,7 +371,7 @@ public class ArrayFieldVector<T extends FieldElement<T>> implements FieldVector<
     /** {@inheritDoc} */
     public FieldVector<T> mapDivideToSelf(T d) {
         for (int i = 0; i < data.length; i++) {
-            data[i] = data[i].div(d);
+            data[i] = data[i].divide(d);
         }
         return this;
     }
@@ -381,7 +381,7 @@ public class ArrayFieldVector<T extends FieldElement<T>> implements FieldVector<
         T[] out = buildArray(data.length);
         final T one = field.getOne();
         for (int i = 0; i < data.length; i++) {
-            out[i] = one.div(data[i]);
+            out[i] = one.divide(data[i]);
         }
         return new ArrayFieldVector<T>(out);
     }
@@ -390,7 +390,7 @@ public class ArrayFieldVector<T extends FieldElement<T>> implements FieldVector<
     public FieldVector<T> mapInvToSelf() {
         final T one = field.getOne();
         for (int i = 0; i < data.length; i++) {
-            data[i] = one.div(data[i]);
+            data[i] = one.divide(data[i]);
         }
         return this;
     }
@@ -404,7 +404,7 @@ public class ArrayFieldVector<T extends FieldElement<T>> implements FieldVector<
             checkVectorDimensions(v);
             T[] out = buildArray(data.length);
             for (int i = 0; i < data.length; i++) {
-                out[i] = data[i].times(v.getEntry(i));
+                out[i] = data[i].multiply(v.getEntry(i));
             }
             return new ArrayFieldVector<T>(out);
         }
@@ -416,7 +416,7 @@ public class ArrayFieldVector<T extends FieldElement<T>> implements FieldVector<
         checkVectorDimensions(v.length);
         T[] out = buildArray(data.length);
         for (int i = 0; i < data.length; i++) {
-            out[i] = data[i].times(v[i]);
+            out[i] = data[i].multiply(v[i]);
         }
         return new ArrayFieldVector<T>(out);
     }
@@ -441,7 +441,7 @@ public class ArrayFieldVector<T extends FieldElement<T>> implements FieldVector<
             checkVectorDimensions(v);
             T[] out = buildArray(data.length);
             for (int i = 0; i < data.length; i++) {
-                out[i] = data[i].div(v.getEntry(i));
+                out[i] = data[i].divide(v.getEntry(i));
             }
             return new ArrayFieldVector<T>(out);
         }
@@ -453,7 +453,7 @@ public class ArrayFieldVector<T extends FieldElement<T>> implements FieldVector<
         checkVectorDimensions(v.length);
         T[] out = buildArray(data.length);
         for (int i = 0; i < data.length; i++) {
-                out[i] = data[i].div(v[i]);
+                out[i] = data[i].divide(v[i]);
         }
         return new ArrayFieldVector<T>(out);
     }
@@ -492,7 +492,7 @@ public class ArrayFieldVector<T extends FieldElement<T>> implements FieldVector<
             checkVectorDimensions(v);
             T dot = field.getZero();
             for (int i = 0; i < data.length; i++) {
-                dot = dot.plus(data[i].times(v.getEntry(i)));
+                dot = dot.add(data[i].multiply(v.getEntry(i)));
             }
             return dot;
         }
@@ -504,7 +504,7 @@ public class ArrayFieldVector<T extends FieldElement<T>> implements FieldVector<
         checkVectorDimensions(v.length);
         T dot = field.getZero();
         for (int i = 0; i < data.length; i++) {
-            dot = dot.plus(data[i].times(v[i]));
+            dot = dot.add(data[i].multiply(v[i]));
         }
         return dot;
     }
@@ -522,7 +522,7 @@ public class ArrayFieldVector<T extends FieldElement<T>> implements FieldVector<
 
     /** {@inheritDoc} */
     public FieldVector<T> projection(FieldVector<T> v) {
-        return v.mapMultiply(dotProduct(v).div(v.dotProduct(v)));
+        return v.mapMultiply(dotProduct(v).divide(v.dotProduct(v)));
     }
 
     /** {@inheritDoc} */
@@ -536,7 +536,7 @@ public class ArrayFieldVector<T extends FieldElement<T>> implements FieldVector<
      * @throws IllegalArgumentException if v is not the same size as this
      */
     public ArrayFieldVector<T> projection(ArrayFieldVector<T> v) {
-        return (ArrayFieldVector<T>) v.mapMultiply(dotProduct(v).div(v.dotProduct(v)));
+        return (ArrayFieldVector<T>) v.mapMultiply(dotProduct(v).divide(v.dotProduct(v)));
     }
 
     /** {@inheritDoc} */
@@ -550,7 +550,7 @@ public class ArrayFieldVector<T extends FieldElement<T>> implements FieldVector<
             final FieldMatrix<T> out = new Array2DRowFieldMatrix<T>(field, m, m);
             for (int i = 0; i < data.length; i++) {
                 for (int j = 0; j < data.length; j++) {
-                    out.setEntry(i, j, data[i].times(v.getEntry(j)));
+                    out.setEntry(i, j, data[i].multiply(v.getEntry(j)));
                 }
             }
             return out;
@@ -576,7 +576,7 @@ public class ArrayFieldVector<T extends FieldElement<T>> implements FieldVector<
         final FieldMatrix<T> out = new Array2DRowFieldMatrix<T>(field, m, m);
         for (int i = 0; i < data.length; i++) {
             for (int j = 0; j < data.length; j++) {
-                out.setEntry(i, j, data[i].times(v[j]));
+                out.setEntry(i, j, data[i].multiply(v[j]));
             }
         }
         return out;
@@ -672,7 +672,7 @@ public class ArrayFieldVector<T extends FieldElement<T>> implements FieldVector<
 
     /**
      * Set a set of consecutive elements.
-     * 
+     *
      * @param index index of first element to be set.
      * @param v vector containing the values to set.
      * @exception MatrixIndexException if the index is
@@ -706,7 +706,7 @@ public class ArrayFieldVector<T extends FieldElement<T>> implements FieldVector<
 
     /**
      * Check if instance dimension is equal to some expected value.
-     * 
+     *
      * @param n expected dimension.
      * @exception IllegalArgumentException if the dimension is
      * inconsistent with vector size
@@ -737,13 +737,13 @@ public class ArrayFieldVector<T extends FieldElement<T>> implements FieldVector<
      * @return true if two 3D vector objects are equal, false if
      *         object is null, not an instance of Vector3D, or
      *         not equal to this Vector3D instance
-     * 
+     *
      */
     @SuppressWarnings("unchecked")
     @Override
     public boolean equals(Object other) {
 
-      if (this == other) { 
+      if (this == other) {
         return true;
       }
 
@@ -771,7 +771,7 @@ public class ArrayFieldVector<T extends FieldElement<T>> implements FieldVector<
       }
 
     }
-    
+
     /**
      * Get a hashCode for the real vector.
      * <p>All NaN values have the same hash code.</p>

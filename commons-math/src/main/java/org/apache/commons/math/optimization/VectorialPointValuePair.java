@@ -19,14 +19,12 @@ package org.apache.commons.math.optimization;
 
 import java.io.Serializable;
 
-import org.apache.commons.math.analysis.MultivariateVectorialFunction;
-
-/** 
+/**
  * This class holds a point and the vectorial value of an objective function at this point.
  * <p>This is a simple immutable container.</p>
  * @see RealPointValuePair
- * @see MultivariateVectorialFunction
- * @version $Revision: 758049 $ $Date: 2009-03-24 18:09:34 -0400 (Tue, 24 Mar 2009) $
+ * @see org.apache.commons.math.analysis.MultivariateVectorialFunction
+ * @version $Revision: 811685 $ $Date: 2009-09-05 19:36:48 +0200 (Sa, 05 Sep 2009) $
  * @since 2.0
  */
 public class VectorialPointValuePair implements Serializable {

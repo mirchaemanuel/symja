@@ -19,9 +19,9 @@ package org.apache.commons.math.optimization;
 
 import java.io.Serializable;
 
-/** 
+/**
  * Goal type for an optimization problem.
- * @version $Revision: 748274 $ $Date: 2009-02-26 14:17:39 -0500 (Thu, 26 Feb 2009) $
+ * @version $Revision: 811685 $ $Date: 2009-09-05 19:36:48 +0200 (Sa, 05 Sep 2009) $
  * @since 2.0
  */
 public enum GoalType implements Serializable {

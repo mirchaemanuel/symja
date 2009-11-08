@@ -41,17 +41,17 @@ package org.apache.commons.math.ode;
  * @see FirstOrderConverter
  * @see SecondOrderDifferentialEquations
  *
- * @version $Revision: 786881 $ $Date: 2009-06-20 14:53:08 -0400 (Sat, 20 Jun 2009) $
+ * @version $Revision: 811786 $ $Date: 2009-09-06 11:36:08 +0200 (So, 06 Sep 2009) $
  * @since 1.2
  */
 
 public interface FirstOrderDifferentialEquations {
-    
+
     /** Get the dimension of the problem.
      * @return dimension of the problem
      */
-    public int getDimension();
-    
+    int getDimension();
+
     /** Get the current time derivative of the state vector.
      * @param t current value of the independent <I>time</I> variable
      * @param y array containing the current value of the state vector
@@ -59,7 +59,6 @@ public interface FirstOrderDifferentialEquations {
      * @throws DerivativeException this exception is propagated to the caller if the
      * underlying user function triggers one
      */
-    public void computeDerivatives(double t, double[] y, double[] yDot)
-    throws DerivativeException;
-    
+    void computeDerivatives(double t, double[] y, double[] yDot) throws DerivativeException;
+
 }

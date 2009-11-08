@@ -24,17 +24,17 @@ import org.apache.commons.math.MathRuntimeException;
 /**
  * The default implementation of {@link ExponentialDistribution}.
  *
- * @version $Revision: 772119 $ $Date: 2009-05-06 05:43:28 -0400 (Wed, 06 May 2009) $
+ * @version $Revision: 811685 $ $Date: 2009-09-05 19:36:48 +0200 (Sa, 05 Sep 2009) $
  */
 public class ExponentialDistributionImpl extends AbstractContinuousDistribution
     implements ExponentialDistribution, Serializable {
 
     /** Serializable version identifier */
     private static final long serialVersionUID = 2401296428283614780L;
-    
+
     /** The mean of this distribution. */
     private double mean;
-    
+
     /**
      * Create a exponential distribution with the given mean.
      * @param mean mean of this distribution.
@@ -80,14 +80,14 @@ public class ExponentialDistributionImpl extends AbstractContinuousDistribution
 
     /**
      * For this distribution, X, this method returns P(X &lt; x).
-     * 
+     *
      * The implementation of this method is based on:
      * <ul>
      * <li>
      * <a href="http://mathworld.wolfram.com/ExponentialDistribution.html">
      * Exponential Distribution</a>, equation (1).</li>
      * </ul>
-     * 
+     *
      * @param x the value at which the CDF is evaluated.
      * @return CDF for this distribution.
      * @throws MathException if the cumulative probability can not be
@@ -102,13 +102,13 @@ public class ExponentialDistributionImpl extends AbstractContinuousDistribution
         }
         return ret;
     }
-    
+
     /**
      * For this distribution, X, this method returns the critical point x, such
      * that P(X &lt; x) = <code>p</code>.
      * <p>
      * Returns 0 for p=0 and <code>Double.POSITIVE_INFINITY</code> for p=1.</p>
-     * 
+     *
      * @param p the desired probability
      * @return x, such that P(X &lt; x) = <code>p</code>
      * @throws MathException if the inverse cumulative probability can not be
@@ -118,7 +118,7 @@ public class ExponentialDistributionImpl extends AbstractContinuousDistribution
     @Override
     public double inverseCumulativeProbability(double p) throws MathException {
         double ret;
-        
+
         if (p < 0.0 || p > 1.0) {
             throw MathRuntimeException.createIllegalArgumentException(
                   "{0} out of [{1}, {2}] range", p, 0.0, 1.0);
@@ -127,14 +127,14 @@ public class ExponentialDistributionImpl extends AbstractContinuousDistribution
         } else {
             ret = -getMean() * Math.log(1.0 - p);
         }
-        
+
         return ret;
     }
-    
+
     /**
      * Access the domain value lower bound, based on <code>p</code>, used to
-     * bracket a CDF root.   
-     * 
+     * bracket a CDF root.
+     *
      * @param p the desired probability for the critical value
      * @return domain value lower bound, i.e.
      *         P(X &lt; <i>lower bound</i>) &lt; <code>p</code>
@@ -143,14 +143,14 @@ public class ExponentialDistributionImpl extends AbstractContinuousDistribution
     protected double getDomainLowerBound(double p) {
         return 0;
     }
-    
+
     /**
      * Access the domain value upper bound, based on <code>p</code>, used to
-     * bracket a CDF root.   
-     * 
+     * bracket a CDF root.
+     *
      * @param p the desired probability for the critical value
      * @return domain value upper bound, i.e.
-     *         P(X &lt; <i>upper bound</i>) &gt; <code>p</code> 
+     *         P(X &lt; <i>upper bound</i>) &gt; <code>p</code>
      */
     @Override
     protected double getDomainUpperBound(double p) {
@@ -165,11 +165,11 @@ public class ExponentialDistributionImpl extends AbstractContinuousDistribution
             return Double.MAX_VALUE;
         }
     }
-    
+
     /**
      * Access the initial domain value, based on <code>p</code>, used to
-     * bracket a CDF root.   
-     * 
+     * bracket a CDF root.
+     *
      * @param p the desired probability for the critical value
      * @return initial domain value
      */

@@ -21,14 +21,14 @@ import org.apache.commons.math.MathException;
 /**
  * Base interface for continuous distributions.
  *
- * @version $Revision: 670469 $ $Date: 2008-06-23 04:01:38 -0400 (Mon, 23 Jun 2008) $
+ * @version $Revision: 811685 $ $Date: 2009-09-05 19:36:48 +0200 (Sa, 05 Sep 2009) $
  */
 public interface ContinuousDistribution extends Distribution {
-    
+
     /**
      * For this distribution, X, this method returns x such that P(X &lt; x) = p.
      * @param p the cumulative probability.
-     * @return x. 
+     * @return x.
      * @throws MathException if the inverse cumulative probability can not be
      *            computed due to convergence or other numerical errors.
      */

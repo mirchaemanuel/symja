@@ -23,12 +23,12 @@ import org.apache.commons.math.MathException;
  * This exception is made available to users to report
  * the error conditions that are triggered while computing
  * the differential equations.
- * @version $Revision: 746578 $ $Date: 2009-02-21 15:01:14 -0500 (Sat, 21 Feb 2009) $
+ * @version $Revision: 811685 $ $Date: 2009-09-05 19:36:48 +0200 (Sa, 05 Sep 2009) $
  * @since 1.2
  */
 public class DerivativeException
   extends MathException {
-    
+
   /** Serializable version identifier */
   private static final long serialVersionUID = 5666710788967425123L;
 

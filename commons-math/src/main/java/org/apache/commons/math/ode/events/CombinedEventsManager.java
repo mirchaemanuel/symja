@@ -31,7 +31,7 @@ import org.apache.commons.math.ode.sampling.StepInterpolator;
  *
  * @see EventHandler
  * @see EventState
- * @version $Revision: 786881 $ $Date: 2009-06-20 14:53:08 -0400 (Sat, 20 Jun 2009) $
+ * @version $Revision: 786881 $ $Date: 2009-06-20 20:53:08 +0200 (Sa, 20 Jun 2009) $
  * @since 1.2
  */
 
