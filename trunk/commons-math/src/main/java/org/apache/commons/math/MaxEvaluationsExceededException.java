@@ -23,7 +23,7 @@ import org.apache.commons.math.ConvergenceException;
  * Error thrown when a numerical computation exceeds its allowed
  * number of functions evaluations.
  *
- * @version $Revision: 779273 $ $Date: 2009-05-27 14:54:48 -0400 (Wed, 27 May 2009) $
+ * @version $Revision: 779273 $ $Date: 2009-05-27 20:54:48 +0200 (Mi, 27 Mai 2009) $
  * @since 2.0
  */
 public class MaxEvaluationsExceededException extends ConvergenceException {

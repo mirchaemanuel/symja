@@ -1,5 +1,5 @@
 /*
- * $Id: ModIntegerRing.java 2561 2009-04-18 12:10:18Z kredel $
+ * $Id: ModIntegerRing.java 2840 2009-10-14 18:19:30Z kredel $
  */
 
 package edu.jas.arith;
@@ -112,6 +112,33 @@ public final class ModIntegerRing implements RingFactory<ModInteger> {
     }
 
 
+    /** Create ModInteger element c.
+     * @param c
+     * @return a ModInteger of c.
+     */
+    public ModInteger create(java.math.BigInteger c) {
+        return new ModInteger( this, c );
+    }
+
+
+    /** Create ModInteger element c.
+     * @param c
+     * @return a ModInteger of c.
+     */
+    public ModInteger create(long c) {
+        return new ModInteger( this, c );
+    }
+
+
+    /** Create ModInteger element c.
+     * @param c
+     * @return a ModInteger of c.
+     */
+    public ModInteger create(String c) {
+        return parse(c);
+    }
+
+
     /** Copy ModInteger element c.
      * @param c
      * @return a copy of c.
@@ -178,7 +205,9 @@ public final class ModIntegerRing implements RingFactory<ModInteger> {
         if ( isField == 0 ) { 
            return false;
         }
-        if ( modul.isProbablePrime(certainty) ) {
+        //System.out.println("isProbablePrime " + modul + " = " + modul.isProbablePrime(certainty));
+        // if ( modul.isProbablePrime(certainty) ) {
+        if ( modul.isProbablePrime(modul.bitLength()) ) {
            isField = 1;
            return true;
         }
@@ -242,7 +271,7 @@ public final class ModIntegerRing implements RingFactory<ModInteger> {
         if ( ! ( b instanceof ModIntegerRing ) ) {
             return false;
         }
-     ModIntegerRing m = (ModIntegerRing)b;
+        ModIntegerRing m = (ModIntegerRing)b;
         return ( 0 == modul.compareTo( m.modul ) );
     }
 

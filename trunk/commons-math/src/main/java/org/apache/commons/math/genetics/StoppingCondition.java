@@ -18,15 +18,15 @@ package org.apache.commons.math.genetics;
 
 /**
  * Algorithm used to determine when to stop evolution.
- * 
+ *
  * @since 2.0
- * @version $Revision: 800116 $ $Date: 2009-08-02 13:49:59 -0400 (Sun, 02 Aug 2009) $
+ * @version $Revision: 811685 $ $Date: 2009-09-05 19:36:48 +0200 (Sa, 05 Sep 2009) $
  */
 public interface StoppingCondition {
     /**
      * Determine whether or not the given population satisfies the stopping
      * condition.
-     * 
+     *
      * @param population the population to test.
      * @return <code>true</code> if this stopping condition is met by the
      *         given population. <code>false</code> otherwise.

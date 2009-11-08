@@ -118,7 +118,7 @@ import org.apache.commons.math.optimization.OptimizationException;
  * estimations, these operations run in O(n) time, where n is the
  * number of measurements.</p>
 
- * @version $Revision: 786479 $ $Date: 2009-06-19 08:36:16 -0400 (Fri, 19 Jun 2009) $
+ * @version $Revision: 786479 $ $Date: 2009-06-19 14:36:16 +0200 (Fr, 19 Jun 2009) $
  * @since 2.0
 
  */

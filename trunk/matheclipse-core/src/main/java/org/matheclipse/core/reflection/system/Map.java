@@ -30,7 +30,6 @@ public class Map extends AbstractFunctionEvaluator {
 		final IAST ast = F.ast(functionList.get(1));
 		final IExpr result = (IExpr) AST.COPY.map(functionList.get(2), new UnaryMap(ast), level, 1);
 		return result == null ? functionList.get(2) : result;
-
 	}
 
 }

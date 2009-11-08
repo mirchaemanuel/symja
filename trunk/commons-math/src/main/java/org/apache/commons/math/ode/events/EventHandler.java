@@ -17,9 +17,6 @@
 
 package org.apache.commons.math.ode.events;
 
-import org.apache.commons.math.ode.FirstOrderDifferentialEquations;
-import org.apache.commons.math.ode.sampling.StepHandler;
-
 /** This interface represents a handler for discrete events triggered
  * during ODE integration.
  *
@@ -30,7 +27,7 @@ import org.apache.commons.math.ode.sampling.StepHandler;
  * discontinuities, or simply when the user wants to monitor some
  * states boundaries crossings.
  * </p>
- * 
+ *
  * <p>These events are defined as occurring when a <code>g</code>
  * switching function sign changes.</p>
  *
@@ -46,7 +43,7 @@ import org.apache.commons.math.ode.sampling.StepHandler;
  * error (this event handling feature is available for all integrators,
  * including fixed step ones).</p>
  *
- * @version $Revision: 785473 $ $Date: 2009-06-17 00:02:35 -0400 (Wed, 17 Jun 2009) $
+ * @version $Revision: 811786 $ $Date: 2009-09-06 11:36:08 +0200 (So, 06 Sep 2009) $
  * @since 1.2
  */
 
@@ -57,7 +54,7 @@ public interface EventHandler  {
    * #eventOccurred eventOccurred} method when the integration should be
    * stopped after the event ending the current step.</p>
    */
-  public static final int STOP = 0;
+  int STOP = 0;
 
   /** Reset state indicator.
    * <p>This value should be used as the return value of the {@link
@@ -66,27 +63,28 @@ public interface EventHandler  {
    * vector (which will be retrieved thanks to the {@link #resetState
    * resetState} method).</p>
    */
-  public static final int RESET_STATE = 1;
+  int RESET_STATE = 1;
 
   /** Reset derivatives indicator.
    * <p>This value should be used as the return value of the {@link
    * #eventOccurred eventOccurred} method when the integration should
    * go on after the event ending the current step, with a new derivatives
    * vector (which will be retrieved thanks to the {@link
-   * FirstOrderDifferentialEquations#computeDerivatives} method).</p>
+   * org.apache.commons.math.ode.FirstOrderDifferentialEquations#computeDerivatives}
+   * method).</p>
    */
-  public static final int RESET_DERIVATIVES = 2;
+  int RESET_DERIVATIVES = 2;
 
   /** Continue indicator.
    * <p>This value should be used as the return value of the {@link
    * #eventOccurred eventOccurred} method when the integration should go
    * on after the event ending the current step.</p>
    */
-  public static final int CONTINUE = 3;
+  int CONTINUE = 3;
 
   /** Compute the value of the switching function.
 
-   * <p>The discrete events are generated when the sign of this 
+   * <p>The discrete events are generated when the sign of this
    * switching function changes. The integrator will take care to change
    * the stepsize in such a way these events occur exactly at step boundaries.
    * The switching function must be continuous in its roots neighborhood
@@ -98,7 +96,7 @@ public interface EventHandler  {
    * @return value of the g switching function
    * @exception EventException if the switching function cannot be evaluated
    */
-  public double g(double t, double[] y) throws EventException;
+  double g(double t, double[] y) throws EventException;
 
   /** Handle an event and choose what to do next.
 
@@ -107,16 +105,16 @@ public interface EventHandler  {
    * step handler itself is called. It allows the user to update his
    * internal data to acknowledge the fact the event has been handled
    * (for example setting a flag in the {@link
-   * FirstOrderDifferentialEquations differential equations} to switch
-   * the derivatives computation in case of discontinuity), or to
-   * direct the integrator to either stop or continue integration,
-   * possibly with a reset state or derivatives.</p>
+   * org.apache.commons.math.ode.FirstOrderDifferentialEquations
+   * differential equations} to switch the derivatives computation in
+   * case of discontinuity), or to direct the integrator to either stop
+   * or continue integration, possibly with a reset state or derivatives.</p>
 
    * <ul>
    *   <li>if {@link #STOP} is returned, the step handler will be called
    *   with the <code>isLast</code> flag of the {@link
-   *   StepHandler#handleStep handleStep} method set to true and the
-   *   integration will be stopped,</li>
+   *   org.apache.commons.math.ode.sampling.StepHandler#handleStep handleStep}
+   *   method set to true and the integration will be stopped,</li>
    *   <li>if {@link #RESET_STATE} is returned, the {@link #resetState
    *   resetState} method will be called once the step handler has
    *   finished its task, and the integrator will also recompute the
@@ -138,8 +136,8 @@ public interface EventHandler  {
    * {@link #RESET_DERIVATIVES} or {@link #CONTINUE}
    * @exception EventException if the event occurrence triggers an error
    */
-  public int eventOccurred(double t, double[] y, boolean increasing) throws EventException;
-  
+  int eventOccurred(double t, double[] y, boolean increasing) throws EventException;
+
   /** Reset the state prior to continue the integration.
 
    * <p>This method is called after the step handler has returned and
@@ -156,6 +154,6 @@ public interface EventHandler  {
    * the new state should be put in the same array
    * @exception EventException if the state cannot be reseted
    */
-  public void resetState(double t, double[] y) throws EventException;
+  void resetState(double t, double[] y) throws EventException;
 
 }

@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.commons.math.ConvergenceException;
 import org.apache.commons.math.MathRuntimeException;
 import org.apache.commons.math.MaxIterationsExceededException;
 import org.apache.commons.math.util.MathUtils;
@@ -47,12 +46,16 @@ import org.apache.commons.math.util.MathUtils;
  * href="http://www.netlib.org/lapack/lawnspdf/lawn155.pdf">An Implementation of the
  * dqds Algorithm (Positive Case)</a> and on the corresponding LAPACK routines (DLARRE,
  * DLASQ2, DLAZQ3, DLAZQ4, DLASQ5 and DLASQ6).</p>
- * @author Beresford Parlett, University of California, Berkeley, USA (fortran version)
- * @author Jim Demmel, University of California, Berkeley, USA (fortran version)
- * @author Inderjit Dhillon, University of Texas, Austin, USA(fortran version)
- * @author Osni Marques, LBNL/NERSC, USA (fortran version)
- * @author Christof Voemel, University of California, Berkeley, USA(fortran version)
- * @version $Revision: 799857 $ $Date: 2009-08-01 09:07:12 -0400 (Sat, 01 Aug 2009) $
+ * <p>The authors of the original fortran version are:
+ *   <ul>
+ *     <li>Beresford Parlett, University of California, Berkeley, USA</li>
+ *     <li>Jim Demmel, University of California, Berkeley, USA</li>
+ *     <li>Inderjit Dhillon, University of Texas, Austin, USA</li>
+ *     <li>Osni Marques, LBNL/NERSC, USA</li>
+ *     <li>Christof Voemel, University of California, Berkeley, USA</li>
+ *   </ul>
+ * </p>
+ * @version $Revision: 833740 $ $Date: 2009-11-07 20:57:02 +0100 (Sa, 07 Nov 2009) $
  * @since 2.0
  */
 public class EigenDecompositionImpl implements EigenDecomposition {
@@ -151,13 +154,13 @@ public class EigenDecompositionImpl implements EigenDecomposition {
     private RealMatrix cachedVt;
 
     /**
-     * Calculates the eigen decomposition of the given symmetric matrix. 
+     * Calculates the eigen decomposition of the given symmetric matrix.
      * @param matrix The <strong>symmetric</strong> matrix to decompose.
      * @param splitTolerance tolerance on the off-diagonal elements relative to the
      * geometric mean to split the tridiagonal matrix (a suggested value is
      * {@link MathUtils#SAFE_MIN})
-     * @exception InvalidMatrixException (wrapping a {@link ConvergenceException}
-     * if algorithm fails to converge
+     * @exception InvalidMatrixException (wrapping a {@link
+     * org.apache.commons.math.ConvergenceException} if algorithm fails to converge
      */
     public EigenDecompositionImpl(final RealMatrix matrix,
                                   final double splitTolerance)
@@ -174,14 +177,14 @@ public class EigenDecompositionImpl implements EigenDecomposition {
     }
 
     /**
-     * Calculates the eigen decomposition of the given tridiagonal symmetric matrix. 
+     * Calculates the eigen decomposition of the given tridiagonal symmetric matrix.
      * @param main the main diagonal of the matrix (will be copied)
      * @param secondary the secondary diagonal of the matrix (will be copied)
      * @param splitTolerance tolerance on the off-diagonal elements relative to the
      * geometric mean to split the tridiagonal matrix (a suggested value is
      * {@link MathUtils#SAFE_MIN})
-     * @exception InvalidMatrixException (wrapping a {@link ConvergenceException}
-     * if algorithm fails to converge
+     * @exception InvalidMatrixException (wrapping a {@link
+     * org.apache.commons.math.ConvergenceException} if algorithm fails to converge
      */
     public EigenDecompositionImpl(final double[] main, double[] secondary,
             final double splitTolerance)
@@ -225,9 +228,9 @@ public class EigenDecompositionImpl implements EigenDecomposition {
     }
 
     /**
-     * Decompose a tridiagonal symmetric matrix. 
-     * @exception InvalidMatrixException (wrapping a {@link ConvergenceException}
-     * if algorithm fails to converge
+     * Decompose a tridiagonal symmetric matrix.
+     * @exception InvalidMatrixException (wrapping a {@link
+     * org.apache.commons.math.ConvergenceException} if algorithm fails to converge
      */
     private void decompose() {
 
@@ -358,7 +361,7 @@ public class EigenDecompositionImpl implements EigenDecomposition {
 
     /** Specialized solver. */
     private static class Solver implements DecompositionSolver {
-    
+
         /** Real part of the realEigenvalues. */
         private double[] realEigenvalues;
 
@@ -378,7 +381,7 @@ public class EigenDecompositionImpl implements EigenDecomposition {
                        final ArrayRealVector[] eigenvectors) {
             this.realEigenvalues = realEigenvalues;
             this.imagEigenvalues = imagEigenvalues;
-            this.eigenvectors    = eigenvectors; 
+            this.eigenvectors    = eigenvectors;
         }
 
         /** Solve the linear equation A &times; X = B for symmetric matrices A.
@@ -588,12 +591,16 @@ public class EigenDecompositionImpl implements EigenDecomposition {
             final double upper = dCurrent + radius;
             work[upperStart + i] = upper;
             upperSpectra = Math.max(upperSpectra, upper);
-            
+
         }
 
         final double dCurrent = main[m - 1];
-        work[lowerStart + m - 1] = dCurrent - eCurrent;
-        work[upperStart + m - 1] = dCurrent + eCurrent;
+        final double lower = dCurrent - eCurrent;
+        work[lowerStart + m - 1] = lower;
+        lowerSpectra = Math.min(lowerSpectra, lower);
+        final double upper = dCurrent + eCurrent;
+        work[upperStart + m - 1] = upper;
+        upperSpectra = Math.max(upperSpectra, upper);
         minPivot = MathUtils.SAFE_MIN * Math.max(1.0, eMax * eMax);
 
     }
@@ -644,7 +651,7 @@ public class EigenDecompositionImpl implements EigenDecomposition {
 
                 tau = (range[1] - range[0]) * MathUtils.EPSILON * n + 2 * minPivot;
 
-                // decompose T&lambda;I as LDL<sup>T</sup>
+                // decompose T-&lambda;I as LDL<sup>T</sup>
                 ldlTDecomposition(lambda, begin, n);
 
                 // apply general dqd/dqds method
@@ -658,7 +665,7 @@ public class EigenDecompositionImpl implements EigenDecomposition {
                 } else {
                     for (int i = 0; i < n; ++i) {
                         realEigenvalues[begin + i] = lambda - work[4 * i];
-                    }                    
+                    }
                 }
 
             }
@@ -667,10 +674,12 @@ public class EigenDecompositionImpl implements EigenDecomposition {
 
         // sort the realEigenvalues in decreasing order
         Arrays.sort(realEigenvalues);
-        for (int i = 0, j = realEigenvalues.length - 1; i < j; ++i, --j) {
+        int j = realEigenvalues.length - 1;
+        for (int i = 0; i < j; ++i) {
             final double tmp = realEigenvalues[i];
             realEigenvalues[i] = realEigenvalues[j];
             realEigenvalues[j] = tmp;
+            --j;
         }
 
     }
@@ -769,7 +778,7 @@ public class EigenDecompositionImpl implements EigenDecomposition {
             // in fact, there are solutions to the equation, but in the context
             // of symmetric realEigenvalues problem, there should be three distinct
             // real roots, so we throw an error if this condition is not met
-            throw new InvalidMatrixException("cannot solve degree {0} equation", 3);           
+            throw new InvalidMatrixException("cannot solve degree {0} equation", 3);
         }
         final double sqrtMq = Math.sqrt(-q);
         final double theta  = Math.acos(r / (-q * sqrtMq));
@@ -828,7 +837,7 @@ public class EigenDecompositionImpl implements EigenDecomposition {
         }
 
         // initial checks for splits (see Parlett & Marques section 3.3)
-        flipIfWarranted(n, 2);
+        flipEveryOtherIfWarranted(n);
 
         // two iterations with Li's test for initial splits
         initialSplits(n);
@@ -852,27 +861,27 @@ public class EigenDecompositionImpl implements EigenDecomposition {
             sigmaLow = 0;
 
             // find start of a new split segment to process
-            double eMin = (i0 == n0) ? 0 : work[4 * n0 - 6];
-            double eMax = 0;
-            double qMax = work[4 * n0 - 4];
-            double qMin = qMax;
+            double offDiagMin = (i0 == n0) ? 0 : work[4 * n0 - 6];
+            double offDiagMax = 0;
+            double diagMax    = work[4 * n0 - 4];
+            double diagMin    = diagMax;
             i0 = 0;
             for (int i = 4 * (n0 - 2); i >= 0; i -= 4) {
                 if (work[i + 2] <= 0) {
                     i0 = 1 + i / 4;
                     break;
                 }
-                if (qMin >= 4 * eMax) {
-                    qMin = Math.min(qMin, work[i + 4]);
-                    eMax = Math.max(eMax, work[i + 2]);
+                if (diagMin >= 4 * offDiagMax) {
+                    diagMin    = Math.min(diagMin, work[i + 4]);
+                    offDiagMax = Math.max(offDiagMax, work[i + 2]);
                 }
-                qMax = Math.max(qMax, work[i] + work[i + 2]);
-                eMin = Math.min(eMin, work[i + 2]);
+                diagMax    = Math.max(diagMax, work[i] + work[i + 2]);
+                offDiagMin = Math.min(offDiagMin, work[i + 2]);
             }
-            work[4 * n0 - 2] = eMin;
+            work[4 * n0 - 2] = offDiagMin;
 
             // lower bound of Gershgorin disk
-            dMin = -Math.max(0, qMin - 2 * Math.sqrt(qMin * eMax));
+            dMin = -Math.max(0, diagMin - 2 * Math.sqrt(diagMin * offDiagMax));
 
             pingPong = 0;
             int maxIter = 30 * (n0 - i0);
@@ -888,28 +897,28 @@ public class EigenDecompositionImpl implements EigenDecomposition {
                 // check for new splits after "ping" steps
                 // when the last elements of qd array are very small
                 if ((pingPong == 0) && (n0 - i0 > 3) &&
-                    (work[4 * n0 - 1] <= TOLERANCE_2 * qMax) &&
+                    (work[4 * n0 - 1] <= TOLERANCE_2 * diagMax) &&
                     (work[4 * n0 - 2] <= TOLERANCE_2 * sigma)) {
-                    int split = i0 - 1;
-                    qMax = work[4 * i0];
-                    eMin = work[4 * i0 + 2];
+                    int split  = i0 - 1;
+                    diagMax    = work[4 * i0];
+                    offDiagMin = work[4 * i0 + 2];
                     double previousEMin = work[4 * i0 + 3];
-                    for (int i = 4 * i0; i < 4 * n0 - 11; i += 4) {
-                        if ((work[i + 3] <= TOLERANCE_2 * work[i]) &&
+                    for (int i = 4 * i0; i < 4 * n0 - 16; i += 4) {
+                        if ((work[i + 3] <= TOLERANCE_2 * work[i]) ||
                             (work[i + 2] <= TOLERANCE_2 * sigma)) {
                             // insert a split
                             work[i + 2]  = -sigma;
                             split        = i / 4;
-                            qMax         = 0;
-                            eMin         = work[i + 6];
+                            diagMax      = 0;
+                            offDiagMin   = work[i + 6];
                             previousEMin = work[i + 7];
                         } else {
-                            qMax         = Math.max(qMax, work[i + 4]);
-                            eMin         = Math.min(eMin, work[i + 2]);
+                            diagMax      = Math.max(diagMax, work[i + 4]);
+                            offDiagMin   = Math.min(offDiagMin, work[i + 2]);
                             previousEMin = Math.min(previousEMin, work[i + 3]);
                         }
                     }
-                    work[4 * n0 - 2] = eMin;
+                    work[4 * n0 - 2] = offDiagMin;
                     work[4 * n0 - 1] = previousEMin;
                     i0 = split + 1;
                 }
@@ -1020,7 +1029,7 @@ public class EigenDecompositionImpl implements EigenDecomposition {
                     if (s <= t) {
                         s = work[k - 3] * work[k - 5] / (t * (1 + Math.sqrt(1 + s / t)));
                     } else {
-                        s = work[k - 3] * work[k - 5] / (t + Math.sqrt(t * (t + s)));                      
+                        s = work[k - 3] * work[k - 5] / (t + Math.sqrt(t * (t + s)));
                     }
                     t = work[k - 7] + (s + work[k - 5]);
                     work[k - 3] *= work[k - 7] / t;
@@ -1042,7 +1051,7 @@ public class EigenDecompositionImpl implements EigenDecomposition {
 
         // step 2: flip array if needed
         if ((dMin <= 0) || (deflatedEnd < end)) {
-            if (flipIfWarranted(deflatedEnd, 1)) {
+            if (flipAllIfWarranted(deflatedEnd)) {
                 dMin2 = Math.min(dMin2, work[l - 1]);
                 work[l - 1] =
                     Math.min(work[l - 1],
@@ -1114,25 +1123,59 @@ public class EigenDecompositionImpl implements EigenDecomposition {
     }
 
     /**
-     * Flip qd array if warranted.
+     * Flip all elements of qd array if warranted.
      * @param n number of rows in the block
-     * @param step within the array (1 for flipping all elements, 2 for flipping
-     * only every other element)
      * @return true if qd array was flipped
      */
-    private boolean flipIfWarranted(final int n, final int step) {
-        if (1.5 * work[pingPong] < work[4 * (n - 1) + pingPong]) {
-            // flip array
-            for (int i = 0, j = 4 * n - 1; i < j; i += 4, j -= 4) {
-                for (int k = 0; k < 4; k += step) {
-                    final double tmp = work[i + k];
-                    work[i + k] = work[j - k];
-                    work[j - k] = tmp;
-                }
-            }
-            return true;
+    private boolean flipAllIfWarranted(final int n) {
+        if (1.5 * work[pingPong] >= work[4 * (n - 1) + pingPong]) {
+            return false;
         }
-        return false;
+
+        int j = 4 * (n - 1);
+        for (int i = 0; i < j; i += 4) {
+            final double tmp1 = work[i];
+            work[i] = work[j];
+            work[j] = tmp1;
+            final double tmp2 = work[i+1];
+            work[i+1] = work[j+1];
+            work[j+1] = tmp2;
+            final double tmp3 = work[i+2];
+            work[i+2] = work[j-2];
+            work[j-2] = tmp3;
+            final double tmp4 = work[i+3];
+            work[i+3] = work[j-1];
+            work[j-1] = tmp4;
+            j -= 4;
+        }
+
+        return true;
+
+    }
+
+    /**
+     * Flip every other elements of qd array if warranted.
+     * @param n number of rows in the block
+     * @return true if qd array was flipped
+     */
+    private boolean flipEveryOtherIfWarranted(final int n) {
+        if (1.5 * work[pingPong] >= work[4 * (n - 1) + pingPong]) {
+            return false;
+        }
+
+        // flip array
+        int j = 4 * (n - 1);
+        for (int i = 0; i < j; i += 4) {
+            for (int k = 0; k < 4; k += 2) {
+                final double tmp = work[i + k];
+                work[i + k] = work[j - k];
+                work[j - k] = tmp;
+            }
+            j -= 4;
+        }
+
+        return true;
+
     }
 
     /**
@@ -1434,7 +1477,7 @@ public class EigenDecompositionImpl implements EigenDecomposition {
         int nn = 4 * end + pingPong - 1;
         switch (deflated) {
 
-        case 0 : // no realEigenvalues deflated. 
+        case 0 : // no realEigenvalues deflated.
             if (dMin == dN || dMin == dN1) {
 
                 double b1 = Math.sqrt(work[nn - 3]) * Math.sqrt(work[nn - 5]);
@@ -1442,7 +1485,7 @@ public class EigenDecompositionImpl implements EigenDecomposition {
                 double a2 = work[nn - 7] + work[nn - 5];
 
                 if (dMin == dN && dMin1 == dN1) {
-                    // cases 2 and 3. 
+                    // cases 2 and 3.
                     final double gap2 = dMin2 - a2 - dMin2 * 0.25;
                     final double gap1 = a2 - dN - ((gap2 > 0.0 && gap2 > b2) ? (b2 / gap2) * b2 : (b1 + b2));
                     if (gap1 > 0.0 && gap1 > b1) {
@@ -1530,7 +1573,7 @@ public class EigenDecompositionImpl implements EigenDecomposition {
                 double a2 = (work[np - 8] / b2) * (1 + work[np - 4] / b1);
 
                 // approximate contribution to norm squared from i < nn-2.
-                if (end - start > 2) {
+                if (end - start > 3) {
                     b2 = work[nn - 13] / work[nn - 15];
                     a2 = a2 + b2;
                     for (int i4 = nn - 17; i4 >= 4 * start + 2 + pingPong; i4 -= 4) {
@@ -1573,7 +1616,7 @@ public class EigenDecompositionImpl implements EigenDecomposition {
             break;
 
         case 1 : // one eigenvalue just deflated. use dMin1, dN1 for dMin and dN.
-            if (dMin1 == dN1 && dMin2 == dN2) { 
+            if (dMin1 == dN1 && dMin2 == dN2) {
 
                 // cases 7 and 8.
                 tType = -7;
@@ -1619,7 +1662,7 @@ public class EigenDecompositionImpl implements EigenDecomposition {
         case 2 : // two realEigenvalues deflated. use dMin2, dN2 for dMin and dN.
 
             // cases 10 and 11.
-            if (dMin2 == dN2 && 2 * work[nn - 5] < work[nn - 7]) { 
+            if (dMin2 == dN2 && 2 * work[nn - 5] < work[nn - 7]) {
                 tType = -10;
                 final double s = 0.333 * dMin2;
                 if (work[nn - 5] > work[nn - 7]) {
@@ -1663,20 +1706,20 @@ public class EigenDecompositionImpl implements EigenDecomposition {
 
     /**
      * Update sigma.
-     * @param tau shift to apply to sigma
+     * @param shift shift to apply to sigma
      */
-    private void updateSigma(final double tau) {
+    private void updateSigma(final double shift) {
         // BEWARE: do NOT attempt to simplify the following statements
         // the expressions below take care to accumulate the part of sigma
         // that does not fit within a double variable into sigmaLow
-        if (tau < sigma) {
-            sigmaLow += tau;
+        if (shift < sigma) {
+            sigmaLow += shift;
             final double t = sigma + sigmaLow;
             sigmaLow -= t - sigma;
             sigma = t;
         } else {
-            final double t = sigma + tau;
-            sigmaLow += sigma - (t - tau);
+            final double t = sigma + shift;
+            sigmaLow += sigma - (t - shift);
             sigma = t;
         }
     }
@@ -1708,13 +1751,13 @@ public class EigenDecompositionImpl implements EigenDecomposition {
         for (int i = 0; i < m; ++i) {
             eigenvectors[i] = findEigenvector(realEigenvalues[i]+mu, d, l);
         }
- 
+
     }
 
     /**
      * Find an eigenvector corresponding to an eigenvalue, using bidiagonals.
      * <p>This method corresponds to algorithm X from Dhillon's thesis.</p>
-     * 
+     *
      * @param eigenvalue eigenvalue for which eigenvector is desired
      * @param d diagonal elements of the initial non-shifted D matrix
      * @param l off-diagonal elements of the initial non-shifted L matrix
@@ -1733,13 +1776,14 @@ public class EigenDecompositionImpl implements EigenDecomposition {
         // the least diagonal element in the twisted factorization
         int r = m - 1;
         double minG = Math.abs(work[6 * r] + work[6 * r + 3] + eigenvalue);
-        for (int i = 0, sixI = 0; i < m - 1; ++i, sixI += 6) {
-            final double g = work[sixI] + d[i] * work[sixI + 9] / work[sixI + 10];
-            final double absG = Math.abs(g);
+        int sixI = 0;
+        for (int i = 0; i < m - 1; ++i) {
+            final double absG = Math.abs(work[sixI] + d[i] * work[sixI + 9] / work[sixI + 10]);
             if (absG < minG) {
                 r = i;
                 minG = absG;
             }
+            sixI += 6;
         }
 
         // solve the singular system by ignoring the equation
@@ -1784,7 +1828,8 @@ public class EigenDecompositionImpl implements EigenDecomposition {
                                                        final double lambda) {
         final int nM1 = d.length - 1;
         double si = -lambda;
-        for (int i = 0, sixI = 0; i < nM1; ++i, sixI += 6) {
+        int sixI = 0;
+        for (int i = 0; i < nM1; ++i) {
             final double di   = d[i];
             final double li   = l[i];
             final double diP1 = di + si;
@@ -1793,6 +1838,7 @@ public class EigenDecompositionImpl implements EigenDecomposition {
             work[sixI + 1]    = diP1;
             work[sixI + 2]    = liP1;
             si = li * liP1 * si - lambda;
+            sixI += 6;
         }
         work[6 * nM1 + 1] = d[nM1] + si;
         work[6 * nM1]     = si;
@@ -1810,7 +1856,8 @@ public class EigenDecompositionImpl implements EigenDecomposition {
                                                         final double lambda) {
         final int nM1 = d.length - 1;
         double pi = d[nM1] - lambda;
-        for (int i = nM1 - 1, sixI = 6 * i; i >= 0; --i, sixI -= 6) {
+        int sixI = 6 * (nM1 - 1);
+        for (int i = nM1 - 1; i >= 0; --i) {
             final double di   = d[i];
             final double li   = l[i];
             final double diP1 = di * li * li + pi;
@@ -1819,6 +1866,7 @@ public class EigenDecompositionImpl implements EigenDecomposition {
             work[sixI + 10]   = diP1;
             work[sixI +  5]   = li * t;
             pi = pi * t - lambda;
+            sixI -= 6;
         }
         work[3] = pi;
         work[4] = pi;

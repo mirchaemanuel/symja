@@ -1,5 +1,5 @@
 /*
- * $Id: Quotient.java 2585 2009-04-20 20:37:52Z kredel $
+ * $Id: Quotient.java 2748 2009-07-15 19:47:15Z kredel $
  */
 
 package edu.jas.application;
@@ -14,6 +14,7 @@ import edu.jas.kern.PrettyPrint;
 import edu.jas.structure.RingElem;
 import edu.jas.structure.RingFactory;
 import edu.jas.structure.GcdRingElem;
+import edu.jas.structure.NotInvertibleException;
 
 
 /**
@@ -21,7 +22,7 @@ import edu.jas.structure.GcdRingElem;
  * interface. Objects of this class are immutable.
  * @author Heinz Kredel
  */
-public class Quotient<C extends GcdRingElem<C>> implements RingElem<Quotient<C>> {
+public class Quotient<C extends GcdRingElem<C>> implements GcdRingElem<Quotient<C>> {
 
 
     private static final Logger logger = Logger.getLogger(Quotient.class);
@@ -97,26 +98,27 @@ public class Quotient<C extends GcdRingElem<C>> implements RingElem<Quotient<C>>
             n = n.negate();
             d = d.negate();
         }
-        if (isred) {
-            num = n;
-            den = d;
-            return;
+        if (!isred) {
+            // must reduce to lowest terms
+            GenPolynomial<C> gcd = ring.gcd(n, d);
+            if (false || debug) {
+                logger.info("gcd = " + gcd);
+            }
+            //GenPolynomial<C> gcd = ring.ring.getONE();
+            if (!gcd.isONE()) {
+                //logger.info("gcd = " + gcd);
+                n = ring.divide(n, gcd);
+                d = ring.divide(d, gcd);
+            }
         }
-        // must reduce to lowest terms
-        GenPolynomial<C> gcd = ring.gcd(n, d);
-        if (false || debug) {
-            logger.info("gcd = " + gcd.isONE());
+        C lc = d.leadingBaseCoefficient();
+        if ( !lc.isONE() && lc.isUnit() ) {
+            lc = lc.inverse();
+            n  = n.multiply(lc);
+            d  = d.multiply(lc);
         }
-        //GenPolynomial<C> gcd = ring.ring.getONE();
-        if (gcd.isONE()) {
-            logger.info("gcd = 1");
-            num = n;
-            den = d;
-        } else {
-            logger.info("gcd = " + gcd);
-            num = ring.divide(n, gcd);
-            den = ring.divide(d, gcd);
-        }
+        num = n;
+        den = d;
     }
 
 
@@ -161,7 +163,7 @@ public class Quotient<C extends GcdRingElem<C>> implements RingElem<Quotient<C>>
 
 
     /**
-     * Is Quotient unit.
+     * Is Quotient a unit.
      * @return If this is a unit then true is returned, else false.
      * @see edu.jas.structure.RingElem#isUnit()
      */
@@ -171,6 +173,14 @@ public class Quotient<C extends GcdRingElem<C>> implements RingElem<Quotient<C>>
         } else {
             return true;
         }
+    }
+
+
+    /** Is Qoutient<C> a constant. 
+     * @return true, if this has constant numerator and denominator, else false.
+     */
+    public boolean isConstant() {
+        return num.isConstant() && den.isConstant();
     }
 
 
@@ -200,9 +210,9 @@ public class Quotient<C extends GcdRingElem<C>> implements RingElem<Quotient<C>>
     public String toScript() {
         // Python case
         if ( den.isONE() ) {
-            return "( " + num.toScript() + " )";
+            return num.toScript();
         } else {
-            return "( " + num.toScript() + " ) / ( " + den.toScript() + " )";
+            return num.toScript() + " / " + den.toScript();
         }
     }
 
@@ -517,8 +527,7 @@ public class Quotient<C extends GcdRingElem<C>> implements RingElem<Quotient<C>>
 
 
     /**
-     * Greatest common divisor. <b>Note: </b>Not implemented, throws
-     * RuntimeException.
+     * Greatest common divisor. 
      * @param b other element.
      * @return gcd(this,b).
      */
@@ -534,8 +543,7 @@ public class Quotient<C extends GcdRingElem<C>> implements RingElem<Quotient<C>>
 
 
     /**
-     * Extended greatest common divisor. <b>Note: </b>Not implemented, throws
-     * RuntimeException.
+     * Extended greatest common divisor. 
      * @param b other element.
      * @return [ gcd(this,b), c1, c2 ] with c1*this + c2*b = gcd(this,b).
      */

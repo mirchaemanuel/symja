@@ -33,7 +33,7 @@ import org.apache.commons.math.complex.Complex;
  * Laguerre's method is global in the sense that it can start with any initial
  * approximation and be able to solve all roots from that point.</p>
  *
- * @version $Revision: 799857 $ $Date: 2009-08-01 09:07:12 -0400 (Sat, 01 Aug 2009) $
+ * @version $Revision: 811833 $ $Date: 2009-09-06 18:27:50 +0200 (So, 06 Sep 2009) $
  * @since 1.2
  */
 public class LaguerreSolver extends UnivariateRealSolverImpl {
@@ -73,7 +73,7 @@ public class LaguerreSolver extends UnivariateRealSolverImpl {
 
     /**
      * Returns a copy of the polynomial function.
-     * 
+     *
      * @return a fresh copy of the polynomial function
      * @deprecated as of 2.0 the function is not stored anymore within the instance.
      */
@@ -100,7 +100,7 @@ public class LaguerreSolver extends UnivariateRealSolverImpl {
      * Find a real root in the given interval with initial value.
      * <p>
      * Requires bracketing condition.</p>
-     * 
+     *
      * @param f function to solve (must be polynomial)
      * @param min the lower bound for the interval
      * @param max the upper bound for the interval
@@ -117,9 +117,15 @@ public class LaguerreSolver extends UnivariateRealSolverImpl {
         throws ConvergenceException, FunctionEvaluationException {
 
         // check for zeros before verifying bracketing
-        if (f.value(min) == 0.0) { return min; }
-        if (f.value(max) == 0.0) { return max; }
-        if (f.value(initial) == 0.0) { return initial; }
+        if (f.value(min) == 0.0) {
+            return min;
+        }
+        if (f.value(max) == 0.0) {
+            return max;
+        }
+        if (f.value(initial) == 0.0) {
+            return initial;
+        }
 
         verifyBracketing(min, max, f);
         verifySequence(min, initial, max);
@@ -147,7 +153,7 @@ public class LaguerreSolver extends UnivariateRealSolverImpl {
      * @throws ConvergenceException if the maximum iteration count is exceeded
      * or the solver detects convergence problems otherwise
      * @throws FunctionEvaluationException if an error occurs evaluating the
-     * function 
+     * function
      * @throws IllegalArgumentException if any parameters are invalid
      */
     public double solve(final UnivariateRealFunction f,
@@ -192,7 +198,7 @@ public class LaguerreSolver extends UnivariateRealSolverImpl {
     /**
      * Returns true iff the given complex root is actually a real zero
      * in the given interval, within the solver tolerance level.
-     * 
+     *
      * @param min the lower bound for the interval
      * @param max the upper bound for the interval
      * @param z the complex root
@@ -208,14 +214,14 @@ public class LaguerreSolver extends UnivariateRealSolverImpl {
     /**
      * Find all complex roots for the polynomial with the given coefficients,
      * starting from the given initial value.
-     * 
+     *
      * @param coefficients the polynomial coefficients array
      * @param initial the start value to use
      * @return the point at which the function value is zero
      * @throws ConvergenceException if the maximum iteration count is exceeded
      * or the solver detects convergence problems otherwise
      * @throws FunctionEvaluationException if an error occurs evaluating the
-     * function 
+     * function
      * @throws IllegalArgumentException if any parameters are invalid
      */
     public Complex[] solveAll(double coefficients[], double initial) throws
@@ -232,14 +238,14 @@ public class LaguerreSolver extends UnivariateRealSolverImpl {
     /**
      * Find all complex roots for the polynomial with the given coefficients,
      * starting from the given initial value.
-     * 
+     *
      * @param coefficients the polynomial coefficients array
      * @param initial the start value to use
      * @return the point at which the function value is zero
      * @throws MaxIterationsExceededException if the maximum iteration count is exceeded
      * or the solver detects convergence problems otherwise
      * @throws FunctionEvaluationException if an error occurs evaluating the
-     * function 
+     * function
      * @throws IllegalArgumentException if any parameters are invalid
      */
     public Complex[] solveAll(Complex coefficients[], Complex initial) throws
@@ -268,7 +274,7 @@ public class LaguerreSolver extends UnivariateRealSolverImpl {
             for (int j = n-i-1; j >= 0; j--) {
                 oldc = c[j];
                 c[j] = newc;
-                newc = oldc.plus(newc.times(root[i]));
+                newc = oldc.add(newc.multiply(root[i]));
             }
             iterationCount += this.iterationCount;
         }
@@ -281,14 +287,14 @@ public class LaguerreSolver extends UnivariateRealSolverImpl {
     /**
      * Find a complex root for the polynomial with the given coefficients,
      * starting from the given initial value.
-     * 
+     *
      * @param coefficients the polynomial coefficients array
      * @param initial the start value to use
      * @return the point at which the function value is zero
      * @throws MaxIterationsExceededException if the maximum iteration count is exceeded
      * or the solver detects convergence problems otherwise
      * @throws FunctionEvaluationException if an error occurs evaluating the
-     * function 
+     * function
      * @throws IllegalArgumentException if any parameters are invalid
      */
     public Complex solve(Complex coefficients[], Complex initial) throws
@@ -299,8 +305,8 @@ public class LaguerreSolver extends UnivariateRealSolverImpl {
             throw MathRuntimeException.createIllegalArgumentException(
                   "polynomial degree must be positive: degree={0}", n);
         }
-        Complex N = new Complex(n, 0.0);
-        Complex N1 = new Complex((n-1), 0.0);
+        Complex N  = new Complex(n,     0.0);
+        Complex N1 = new Complex(n - 1, 0.0);
 
         int i = 1;
         Complex pv = null;
@@ -320,16 +326,16 @@ public class LaguerreSolver extends UnivariateRealSolverImpl {
             dv = Complex.ZERO;
             d2v = Complex.ZERO;
             for (int j = n-1; j >= 0; j--) {
-                d2v = dv.plus(z.times(d2v));
-                dv = pv.plus(z.times(dv));
-                pv = coefficients[j].plus(z.times(pv));
+                d2v = dv.add(z.multiply(d2v));
+                dv = pv.add(z.multiply(dv));
+                pv = coefficients[j].add(z.multiply(pv));
             }
-            d2v = d2v.times(new Complex(2.0, 0.0));
+            d2v = d2v.multiply(new Complex(2.0, 0.0));
 
             // check for convergence
             double tolerance = Math.max(relativeAccuracy * z.abs(),
                                         absoluteAccuracy);
-            if ((z.minus(oldz)).abs() <= tolerance) {
+            if ((z.subtract(oldz)).abs() <= tolerance) {
                 resultComputed = true;
                 iterationCount = i;
                 return z;
@@ -341,24 +347,24 @@ public class LaguerreSolver extends UnivariateRealSolverImpl {
             }
 
             // now pv != 0, calculate the new approximation
-            G = dv.div(pv);
-            G2 = G.times(G);
-            H = G2.minus(d2v.div(pv));
-            delta = N1.times((N.times(H)).minus(G2));
+            G = dv.divide(pv);
+            G2 = G.multiply(G);
+            H = G2.subtract(d2v.divide(pv));
+            delta = N1.multiply((N.multiply(H)).subtract(G2));
             // choose a denominator larger in magnitude
             Complex deltaSqrt = delta.sqrt();
-            Complex dplus = G.plus(deltaSqrt);
-            Complex dminus = G.minus(deltaSqrt);
+            Complex dplus = G.add(deltaSqrt);
+            Complex dminus = G.subtract(deltaSqrt);
             denominator = dplus.abs() > dminus.abs() ? dplus : dminus;
             // Perturb z if denominator is zero, for instance,
             // p(x) = x^3 + 1, z = 0.
             if (denominator.equals(new Complex(0.0, 0.0))) {
-                z = z.plus(new Complex(absoluteAccuracy, absoluteAccuracy));
+                z = z.add(new Complex(absoluteAccuracy, absoluteAccuracy));
                 oldz = new Complex(Double.POSITIVE_INFINITY,
                                    Double.POSITIVE_INFINITY);
             } else {
                 oldz = z;
-                z = z.minus(N.div(denominator));
+                z = z.subtract(N.divide(denominator));
             }
             i++;
         }

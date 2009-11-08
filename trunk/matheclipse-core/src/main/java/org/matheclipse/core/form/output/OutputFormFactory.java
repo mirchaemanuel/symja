@@ -137,8 +137,8 @@ public class OutputFormFactory implements IConstantHeaders {
 
   public void convertFraction(final Writer buf, final Rational f,
       final int precedence) throws IOException {
-    boolean isInteger = f.getDivisor().compareTo(BigInteger.ONE) == 0;
-    final boolean isNegative = f.getDividend().compareTo(BigInteger.ZERO) < 0;
+    boolean isInteger = f.getDenominator().compareTo(BigInteger.ONE) == 0;
+    final boolean isNegative = f.getNumerator().compareTo(BigInteger.ZERO) < 0;
     final int prec = isNegative ? ASTNodeFactory.PLUS_PRECEDENCE
         : ASTNodeFactory.TIMES_PRECEDENCE;
     if (prec < precedence) {
@@ -149,7 +149,7 @@ public class OutputFormFactory implements IConstantHeaders {
     if (buf instanceof StringBufferWriter) {
       sbw = (StringBufferWriter) buf;
     }
-    String str = f.getDividend().toString();
+    String str = f.getNumerator().toString();
     if (sbw != null && (str.length() + sbw.getColumnCounter() > 80)) {
       if (sbw.getColumnCounter() > 40) {
         sbw.newLine();
@@ -171,7 +171,7 @@ public class OutputFormFactory implements IConstantHeaders {
     if (!isInteger) {
       buf.write("/");
       // buf.write(f.getDenominator().toString());
-      str = f.getDivisor().toString();
+      str = f.getDenominator().toString();
       if (sbw != null && (str.length() + sbw.getColumnCounter() > 80)) {
         if (sbw.getColumnCounter() > 40) {
           sbw.newLine();

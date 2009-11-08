@@ -24,10 +24,10 @@ package org.apache.commons.math.stat.descriptive;
  * conditions.  In effect, this implementation makes modification and access
  * methods atomic operations for a single instance.  That is to say, as one
  * thread is computing a statistic from the instance, no other thread can modify
- * the instance nor compute another statistic. 
+ * the instance nor compute another statistic.
  *
  * @since 1.2
- * @version $Revision: 762087 $ $Date: 2009-04-05 10:20:18 -0400 (Sun, 05 Apr 2009) $
+ * @version $Revision: 811685 $ $Date: 2009-09-05 19:36:48 +0200 (Sa, 05 Sep 2009) $
  */
 public class SynchronizedDescriptiveStatistics extends DescriptiveStatistics {
 
@@ -48,10 +48,10 @@ public class SynchronizedDescriptiveStatistics extends DescriptiveStatistics {
     public SynchronizedDescriptiveStatistics(int window) {
         super(window);
     }
-    
+
     /**
      * A copy constructor. Creates a deep-copy of the {@code original}.
-     * 
+     *
      * @param original the {@code SynchronizedDescriptiveStatistics} instance to copy
      */
     public SynchronizedDescriptiveStatistics(SynchronizedDescriptiveStatistics original) {
@@ -98,7 +98,7 @@ public class SynchronizedDescriptiveStatistics extends DescriptiveStatistics {
         return super.getN();
     }
 
-    /** 
+    /**
      * {@inheritDoc}
      */
     @Override
@@ -137,26 +137,26 @@ public class SynchronizedDescriptiveStatistics extends DescriptiveStatistics {
     public synchronized String toString() {
         return super.toString();
     }
-    
+
     /**
      * Returns a copy of this SynchronizedDescriptiveStatistics instance with the
      * same internal state.
-     * 
+     *
      * @return a copy of this
      */
     @Override
     public synchronized SynchronizedDescriptiveStatistics copy() {
-        SynchronizedDescriptiveStatistics result = 
+        SynchronizedDescriptiveStatistics result =
             new SynchronizedDescriptiveStatistics();
         copy(this, result);
-        return result; 
+        return result;
     }
-     
+
     /**
      * Copies source to dest.
      * <p>Neither source nor dest can be null.</p>
      * <p>Acquires synchronization lock on source, then dest before copying.</p>
-     * 
+     *
      * @param source SynchronizedDescriptiveStatistics to copy
      * @param dest SynchronizedDescriptiveStatistics to copy to
      * @throws NullPointerException if either source or dest is null

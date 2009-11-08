@@ -1,5 +1,5 @@
 /*
- * $Id: ColoredSystem.java 2031 2008-08-10 11:36:38Z kredel $
+ * $Id: ColoredSystem.java 2828 2009-09-27 12:30:52Z kredel $
  */
 
 package edu.jas.application;
@@ -17,7 +17,7 @@ import edu.jas.structure.GcdRingElem;
 
 
 /**
- * Container for a condition, a corresponding colored polynomial system and a
+ * Container for a condition, a corresponding colored polynomial list and a
  * Groebner base pair list.
  * @param <C> coefficient type
  */
@@ -79,6 +79,33 @@ public class ColoredSystem<C extends GcdRingElem<C>> implements Cloneable {
     @Override
     public ColoredSystem<C> clone() {
         return new ColoredSystem<C>(condition, list, pairlist.clone());
+    }
+
+
+    /**
+     * Add to list of colored systems.
+     * This is added to the list of colored systems, 
+     * if a system with the same condition is not already contained.
+     * @param L a list of colored systems.
+     * @return L.add(this) if this not in L, else L.
+     */
+    public List<ColoredSystem<C>> addToList(List<ColoredSystem<C>> L) {
+        List<ColoredSystem<C>> S = new ArrayList<ColoredSystem<C>>(L.size()+1);
+        boolean contained = false;
+        for (ColoredSystem<C> x : L) {
+            if (condition.equals(x.condition) && list.equals(x.list)) {
+                logger.info("replaced system = " + x.condition);
+                S.add(this);
+                contained = true;
+            } else { // copy existing
+                // System.out.println("kept system = " + x);
+                S.add(x);
+            }
+        }
+        if (!contained) {
+            S.add(this);
+        }
+        return S;
     }
 
 
@@ -172,7 +199,7 @@ public class ColoredSystem<C extends GcdRingElem<C>> implements Cloneable {
      * @return condition.nonZero.
      */
     public List<GenPolynomial<C>> getConditionNonZero() {
-        return condition.nonZero;
+        return condition.nonZero.mset;
     }
 
 
@@ -239,6 +266,9 @@ public class ColoredSystem<C extends GcdRingElem<C>> implements Cloneable {
         if (!isDetermined()) {
             return false;
         }
+        if (!condition.isDetermined(list)) {
+            return false;
+        }
         // Condition<C> cond = condition;
         for (ColorPolynomial<C> s : list) {
             if (!s.checkInvariant()) {
@@ -286,8 +316,11 @@ public class ColoredSystem<C extends GcdRingElem<C>> implements Cloneable {
                 continue;
             }
             if (!s.isDetermined()) {
-                System.out.println("notDetermined " + s);
-                System.out.println("condition: " + condition);
+                System.out.println("not simple determined " + s);
+                System.out.println("condition:            " + condition);
+                return false;
+            }
+            if (!condition.isDetermined(s)) {
                 return false;
             }
         }
@@ -297,21 +330,20 @@ public class ColoredSystem<C extends GcdRingElem<C>> implements Cloneable {
 
     /**
      * Re determine colorings of polynomials.
-     * @param cond a condition.
-     * @return re determined colored polynomials wrt. condition.
+     * @return colored system with re determined colored polynomials.
      */
-    public ColoredSystem<C> reDetermine(Condition<C> cond) { // unused
-        if (cond == null || cond.zero.isONE()) {
+    public ColoredSystem<C> reDetermine() {
+        if (condition == null || condition.zero.isONE()) {
             return this;
         }
         List<ColorPolynomial<C>> Sn = new ArrayList<ColorPolynomial<C>>(list.size());
         for (ColorPolynomial<C> c : list) {
-            ColorPolynomial<C> a = cond.reDetermine(c);
+            ColorPolynomial<C> a = condition.reDetermine(c);
             // if ( !a.isZERO() ) {
             Sn.add(a); // must also add zeros
             // }
         }
-        return new ColoredSystem<C>(cond, Sn);
+        return new ColoredSystem<C>(condition, Sn, pairlist);
     }
 
 }

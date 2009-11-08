@@ -1,5 +1,5 @@
 /*
- * $Id: PolyUtilApp.java 2412 2009-02-07 12:17:54Z kredel $
+ * $Id: PolyUtilApp.java 2820 2009-09-21 13:20:01Z kredel $
  */
 
 package edu.jas.application;
@@ -593,11 +593,11 @@ public class PolyUtilApp<C extends RingElem<C> > {
         StringBuffer sb = new StringBuffer(); //"\nproductSlice ----------------- begin");
         for ( Ideal<C> id: L.keySet() ) {
             sb.append("\n\ncondition == 0:\n");
-            sb.append( id.list.toString() );
+            sb.append( id.list.toScript() );
             pl = L.get( id );
             sl.addAll( pl.list );
             sb.append("\ncorresponding ideal:\n");
-            sb.append( pl.toString() );
+            sb.append( pl.toScript() );
         }
         //List<GenPolynomial<GenPolynomial<C>>> sll 
         //   = new ArrayList<GenPolynomial<GenPolynomial<C>>>( sl );

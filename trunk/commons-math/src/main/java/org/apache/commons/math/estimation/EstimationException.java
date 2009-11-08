@@ -19,10 +19,10 @@ package org.apache.commons.math.estimation;
 
 import org.apache.commons.math.MathException;
 
-/** 
+/**
  * This class represents exceptions thrown by the estimation solvers.
  *
- * @version $Revision: 754732 $ $Date: 2009-03-15 15:30:44 -0400 (Sun, 15 Mar 2009) $
+ * @version $Revision: 811685 $ $Date: 2009-09-05 19:36:48 +0200 (Sa, 05 Sep 2009) $
  * @since 1.2
  * @deprecated as of 2.0, everything in package org.apache.commons.math.estimation has
  * been deprecated and replaced by package org.apache.commons.math.optimization.general
@@ -35,7 +35,7 @@ extends MathException {
     /** Serializable version identifier. */
     private static final long serialVersionUID = -573038581493881337L;
 
-    /** 
+    /**
      * Simple constructor.
      * Build an exception by translating and formating a message
      * @param specifier format specifier (to be translated)

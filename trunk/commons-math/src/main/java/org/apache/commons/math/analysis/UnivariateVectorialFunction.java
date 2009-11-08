@@ -20,17 +20,18 @@ import org.apache.commons.math.FunctionEvaluationException;
 
 /**
  * An interface representing a univariate vectorial function.
- *  
- * @version $Revision: 777894 $ $Date: 2009-05-23 07:44:01 -0400 (Sat, 23 May 2009) $
+ *
+ * @version $Revision: 811786 $ $Date: 2009-09-06 11:36:08 +0200 (So, 06 Sep 2009) $
  * @since 2.0
  */
 public interface UnivariateVectorialFunction {
+
     /**
      * Compute the value for the function.
      * @param x the point for which the function value should be computed
      * @return the value
      * @throws FunctionEvaluationException if the function evaluation fails
      */
-    public double[] value(double x) throws FunctionEvaluationException;
+    double[] value(double x) throws FunctionEvaluationException;
 
 }

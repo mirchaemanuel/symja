@@ -17,50 +17,35 @@
 package org.apache.commons.math;
 
 /**
- * Interface representing a <a
- * href="http://mathworld.wolfram.com/Field.html">field</a>.
+ * Interface representing a <a href="http://mathworld.wolfram.com/Field.html">field</a>.
  * <p>
  * Classes implementing this interface will often be singletons.
  * </p>
- * 
- * @param <T>
- *          the type of the field elements
+ * @param <T> the type of the field elements
  * @see FieldElement
- * @version $Revision: 777521 $ $Date: 2009-05-22 09:48:21 -0400 (Fri, 22 May
- *          2009) $
+ * @version $Revision: 811685 $ $Date: 2009-09-05 19:36:48 +0200 (Sa, 05 Sep 2009) $
  * @since 2.0
  */
 public interface Field<T> {
 
-	/**
-	 * Get the additive identity of the field.
-	 * <p>
-	 * The additive identity is the element e<sub>0</sub> of the field such that
-	 * for all elements a of the field, the equalities a + e<sub>0</sub> =
-	 * e<sub>0</sub> + a = a hold.
-	 * </p>
-	 * 
-	 * @return additive identity of the field
-	 */
-	T getZero();
+    /** Get the additive identity of the field.
+     * <p>
+     * The additive identity is the element e<sub>0</sub> of the field such that
+     * for all elements a of the field, the equalities a + e<sub>0</sub> =
+     * e<sub>0</sub> + a = a hold.
+     * </p>
+     * @return additive identity of the field
+     */
+    T getZero();
 
-	/**
-	 * Get the multiplicative identity of the field.
-	 * <p>
-	 * The multiplicative identity is the element e<sub>1</sub> of the field such
-	 * that for all elements a of the field, the equalities a &times;
-	 * e<sub>1</sub> = e<sub>1</sub> &times; a = a hold.
-	 * </p>
-	 * 
-	 * @return multiplicative identity of the field
-	 */
-	T getOne();
+    /** Get the multiplicative identity of the field.
+     * <p>
+     * The multiplicative identity is the element e<sub>1</sub> of the field such that
+     * for all elements a of the field, the equalities a &times; e<sub>1</sub> =
+     * e<sub>1</sub> &times; a = a hold.
+     * </p>
+     * @return multiplicative identity of the field
+     */
+    T getOne();
 
-	/**
-	 * Returns the runtime class of the FieldElement.
-	 * 
-	 * @return The {@code Class} object that represents the runtime class of this
-	 *         object.
-	 */
-	Class<? extends FieldElement<T>> getRuntimeClass();
 }

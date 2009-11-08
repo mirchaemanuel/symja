@@ -35,7 +35,7 @@ import org.apache.commons.math.ode.sampling.StepInterpolator;
  * proposed step (and hence the step should be reduced to ensure the
  * event occurs at a bound rather than inside the step).</p>
  *
- * @version $Revision: 786881 $ $Date: 2009-06-20 14:53:08 -0400 (Sat, 20 Jun 2009) $
+ * @version $Revision: 811833 $ $Date: 2009-09-06 18:27:50 +0200 (So, 06 Sep 2009) $
  * @since 1.2
  */
 public class EventState {
@@ -138,18 +138,18 @@ public class EventState {
     }
 
     /** Reinitialize the beginning of the step.
-     * @param t0 value of the independent <i>time</i> variable at the
+     * @param tStart value of the independent <i>time</i> variable at the
      * beginning of the step
-     * @param y0 array containing the current value of the state vector
+     * @param yStart array containing the current value of the state vector
      * at the beginning of the step
      * @exception EventException if the event handler
      * value cannot be evaluated at the beginning of the step
      */
-    public void reinitializeBegin(final double t0, final double[] y0)
+    public void reinitializeBegin(final double tStart, final double[] yStart)
         throws EventException {
-        this.t0 = t0;
-        g0 = handler.g(t0, y0);
-        g0Positive = (g0 >= 0);
+        t0 = tStart;
+        g0 = handler.g(tStart, yStart);
+        g0Positive = g0 >= 0;
     }
 
     /** Evaluate the impact of the proposed step on the event handler.
@@ -188,7 +188,7 @@ public class EventState {
                     // there is a sign change: an event is expected during this step
 
                     // variation direction, with respect to the integration direction
-                    increasing = (gb >= ga);
+                    increasing = gb >= ga;
 
                     final UnivariateRealFunction f = new UnivariateRealFunction() {
                         public double value(final double t) throws FunctionEvaluationException {
@@ -288,7 +288,7 @@ public class EventState {
             g0Positive        = increasing;
             nextAction        = handler.eventOccurred(t, y, !(increasing ^ forward));
         } else {
-            g0Positive = (g0 >= 0);
+            g0Positive = g0 >= 0;
             nextAction = EventHandler.CONTINUE;
         }
     }

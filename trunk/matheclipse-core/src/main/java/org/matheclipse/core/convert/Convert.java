@@ -11,6 +11,7 @@ import org.apache.commons.math.linear.FieldMatrix;
 import org.apache.commons.math.linear.FieldVector;
 import org.apache.commons.math.linear.RealMatrix;
 import org.apache.commons.math.linear.RealVector;
+import org.matheclipse.core.expression.ExprFieldElement;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
@@ -51,7 +52,7 @@ public class Convert {
    * @throws ClassCastException
    * @throws IndexOutOfBoundsException
    */
-  public static FieldMatrix<IExpr> list2Matrix(final IAST listMatrix)
+  public static FieldMatrix<ExprFieldElement> list2Matrix(final IAST listMatrix)
       throws ClassCastException, IndexOutOfBoundsException {
     if (listMatrix == null) {
       return null;
@@ -64,23 +65,23 @@ public class Convert {
     IAST currInRow = (IAST) listMatrix.get(1);
     if (currInRow.size() == 1) {
       // special case 0-Matrix
-      IExpr[][] array = new IExpr[0][0];
-      return new BlockFieldMatrix<IExpr>(array);
+      ExprFieldElement[][] array = new ExprFieldElement[0][0];
+      return new BlockFieldMatrix<ExprFieldElement>(array);
     }
     final int rowSize = listMatrix.size() - 1;
     final int colSize = currInRow.size() - 1;
 
-    final IExpr[][] elements = new IExpr[rowSize][colSize];
+    final ExprFieldElement[][] elements = new ExprFieldElement[rowSize][colSize];
     for (int i = 1; i < rowSize + 1; i++) {
       currInRow = (IAST) listMatrix.get(i);
       if (currInRow.head() != F.List) {
         return null;
       }
       for (int j = 1; j < colSize + 1; j++) {
-        elements[i - 1][j - 1] = currInRow.get(j);
+        elements[i - 1][j - 1] = new ExprFieldElement(currInRow.get(j));
       }
     }
-    return new BlockFieldMatrix<IExpr>(elements);
+    return new BlockFieldMatrix<ExprFieldElement>(elements);
   }
 
   /**
@@ -89,7 +90,7 @@ public class Convert {
    * @param matrix
    * @return
    */
-  public static IAST matrix2List(final FieldMatrix<IExpr> matrix) {
+  public static IAST matrix2List(final FieldMatrix<ExprFieldElement> matrix) {
     if (matrix == null) {
       return null;
     }
@@ -102,11 +103,11 @@ public class Convert {
       currOutRow = F.List();
       out.add(currOutRow);
       for (int j = 0; j < colSize; j++) {
-        IExpr expr = matrix.getEntry(i, j);
+        IExpr expr = matrix.getEntry(i, j).getExpr();
         if (expr instanceof INumber) {
-          currOutRow.add(matrix.getEntry(i, j));
+          currOutRow.add(expr);
         } else {
-          currOutRow.add(F.Expand(matrix.getEntry(i, j)));
+          currOutRow.add(F.Expand(expr));
         }
       }
     }
@@ -183,7 +184,7 @@ public class Convert {
     return out;
   }
 
-  public static FieldVector<IExpr> list2Vector(final IAST listVector)
+  public static FieldVector<ExprFieldElement> list2Vector(final IAST listVector)
       throws ClassCastException, IndexOutOfBoundsException {
     if (listVector == null) {
       return null;
@@ -195,11 +196,11 @@ public class Convert {
 
     final int rowSize = listVector.size() - 1;
 
-    final IExpr[] elements = new IExpr[rowSize];
+    final ExprFieldElement[] elements = new ExprFieldElement[rowSize];
     for (int i = 0; i < rowSize; i++) {
-      elements[i] = listVector.get(i + 1);
+      elements[i] = new ExprFieldElement(listVector.get(i + 1));
     }
-    return new ArrayFieldVector<IExpr>(elements);
+    return new ArrayFieldVector<ExprFieldElement>(elements);
   }
 
   public static RealVector list2RealVector(final IAST listVector)
@@ -227,15 +228,15 @@ public class Convert {
    * @param vector
    * @return
    */
-  public static IAST vector2List(final FieldVector<IExpr> vector) {
+  public static IAST vector2List(final FieldVector<ExprFieldElement> vector) {
     if (vector == null) {
       return null;
     }
     final int rowSize = vector.getDimension();
 
-    final IAST out = F.function(F.List);
+    final IAST out = F.List();
     for (int i = 0; i < rowSize; i++) {
-      out.add(vector.getEntry(i));
+      out.add(vector.getEntry(i).getExpr());
     }
     out.addEvalFlags(IAST.IS_VECTOR);
     return out;

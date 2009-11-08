@@ -24,7 +24,7 @@ import org.apache.commons.math.MathException;
  * for a particular point.
  * @param <P> the type of the point at which density is to be computed, this
  * may be for example <code>Double</code>
- * @version $Revision: 705239 $ $Date: 2008-10-16 09:32:32 -0400 (Thu, 16 Oct 2008) $
+ * @version $Revision: 705239 $ $Date: 2008-10-16 15:32:32 +0200 (Do, 16 Okt 2008) $
  */
 public interface HasDensity<P> {
 

@@ -20,7 +20,7 @@ import org.apache.commons.math.MathRuntimeException;
 
 /** Base class for random number generators that generates bits streams.
 
- * @version $Revision: 796552 $ $Date: 2009-07-21 17:51:30 -0400 (Tue, 21 Jul 2009) $
+ * @version $Revision: 811685 $ $Date: 2009-09-05 19:36:48 +0200 (Sa, 05 Sep 2009) $
  * @since 2.0
 
  */
@@ -74,7 +74,7 @@ public abstract class BitsStreamGenerator implements RandomGenerator {
         }
         int random = next(32);
         while (i < bytes.length) {
-            bytes[i++] = (byte) (random & 0xff); 
+            bytes[i++] = (byte) (random & 0xff);
             random     = random >> 8;
         }
     }

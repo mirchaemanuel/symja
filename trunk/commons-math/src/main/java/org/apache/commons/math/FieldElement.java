@@ -21,7 +21,7 @@ package org.apache.commons.math;
  * Interface representing <a href="http://mathworld.wolfram.com/Field.html">field</a> elements.
  * @param <T> the type of the field elements
  * @see Field
- * @version $Revision: 799857 $ $Date: 2009-08-01 09:07:12 -0400 (Sat, 01 Aug 2009) $
+ * @version $Revision: 811685 $ $Date: 2009-09-05 19:36:48 +0200 (Sa, 05 Sep 2009) $
  * @since 2.0
  */
 public interface FieldElement<T> {
@@ -30,19 +30,19 @@ public interface FieldElement<T> {
      * @param a element to add
      * @return a new element representing this + a
      */
-    T plus(T a);
+    T add(T a);
 
     /** Compute this - a.
      * @param a element to subtract
      * @return a new element representing this - a
      */
-    T minus(T a);
+    T subtract(T a);
 
     /** Compute this &times; a.
      * @param a element to multiply
      * @return a new element representing this &times; a
      */
-    T times(T a);
+    T multiply(T a);
 
     /** Compute this &divide; a.
      * @param a element to add
@@ -50,7 +50,7 @@ public interface FieldElement<T> {
      * @exception ArithmeticException if a is the zero of the
      * additive operation (i.e. additive identity)
      */
-    T div(T a) throws ArithmeticException;
+    T divide(T a) throws ArithmeticException;
 
     /** Get the {@link Field} to which the instance belongs.
      * @return {@link Field} to which the instance belongs

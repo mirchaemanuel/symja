@@ -1,5 +1,5 @@
 /*
- * $Id: Residue.java 2593 2009-04-25 10:07:29Z kredel $
+ * $Id: Residue.java 2748 2009-07-15 19:47:15Z kredel $
  */
 
 package edu.jas.application;
@@ -171,7 +171,7 @@ public class Residue<C extends GcdRingElem<C> >
     @Override
     public String toScript() {
         // Python case
-        return "( " + val.toScript() + " )"; 
+        return val.toScript(); 
 //         return "PolyResidue( " + val.toScript() 
 //                         + ", " + ring.toScript() + " )";
     }
@@ -284,9 +284,11 @@ public class Residue<C extends GcdRingElem<C> >
      * @return this/S.
      */
     public Residue<C> divide(Residue<C> S) {
-        return multiply( S.inverse() );
-        //GenPolynomial<C> x = PolyUtil.<C>basePseudoDivide( val, S.val );
-        //return new Residue<C>( ring, x );
+        if ( ring.isField() ) {
+            return multiply( S.inverse() );
+        }
+        GenPolynomial<C> x = PolyUtil.<C>basePseudoDivide( val, S.val );
+        return new Residue<C>( ring, x );
     }
 
 

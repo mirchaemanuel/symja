@@ -48,11 +48,26 @@ import org.apache.commons.math.ode.sampling.StepHandler;
  * @see ClassicalRungeKuttaIntegrator
  * @see GillIntegrator
  * @see MidpointIntegrator
- * @version $Revision: 785473 $ $Date: 2009-06-17 00:02:35 -0400 (Wed, 17 Jun 2009) $
+ * @version $Revision: 811833 $ $Date: 2009-09-06 18:27:50 +0200 (So, 06 Sep 2009) $
  * @since 1.2
  */
 
 public abstract class RungeKuttaIntegrator extends AbstractIntegrator {
+
+    /** Time steps from Butcher array (without the first zero). */
+    private final double[] c;
+
+    /** Internal weights from Butcher array (without the first empty row). */
+    private final double[][] a;
+
+    /** External weights for the high order method from Butcher array. */
+    private final double[] b;
+
+    /** Prototype of the step interpolator. */
+    private final RungeKuttaStepInterpolator prototype;
+
+    /** Integration step. */
+    private final double step;
 
   /** Simple constructor.
    * Build a Runge-Kutta integrator with the given
@@ -85,7 +100,7 @@ public abstract class RungeKuttaIntegrator extends AbstractIntegrator {
     sanityChecks(equations, t0, y0, t, y);
     setEquations(equations);
     resetEvaluations();
-    final boolean forward = (t > t0);
+    final boolean forward = t > t0;
 
     // create some internal working arrays
     final int stages = c.length + 1;
@@ -199,20 +214,5 @@ public abstract class RungeKuttaIntegrator extends AbstractIntegrator {
     return stopTime;
 
   }
-
-  /** Time steps from Butcher array (without the first zero). */
-  private double[] c;
-
-  /** Internal weights from Butcher array (without the first empty row). */
-  private double[][] a;
-
-  /** External weights for the high order method from Butcher array. */
-  private double[] b;
-
-  /** Prototype of the step interpolator. */
-  private RungeKuttaStepInterpolator prototype;
-                                         
-  /** Integration step. */
-  private double step;
 
 }

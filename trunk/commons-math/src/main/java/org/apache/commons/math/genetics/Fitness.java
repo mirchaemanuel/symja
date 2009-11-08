@@ -19,15 +19,17 @@ package org.apache.commons.math.genetics;
 /**
  * Fitness of a chromosome.
  *
- * @version $Revision: 800116 $ $Date: 2009-08-02 13:49:59 -0400 (Sun, 02 Aug 2009) $
+ * @version $Revision: 811786 $ $Date: 2009-09-06 11:36:08 +0200 (So, 06 Sep 2009) $
  * @since 2.0
  */
 public interface Fitness {
+
     /**
      * Compute the fitness. This is usually very time-consuming, so the value
      * should be cached.
-     * 
+     *
      * @return fitness
      */
-    public double fitness();
+    double fitness();
+
 }

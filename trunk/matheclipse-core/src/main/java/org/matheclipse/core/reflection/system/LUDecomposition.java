@@ -7,6 +7,7 @@ import org.apache.commons.math.linear.FieldMatrix;
 import org.matheclipse.basic.Config;
 import org.matheclipse.core.convert.Convert;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
+import org.matheclipse.core.expression.ExprFieldElement;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
@@ -19,14 +20,14 @@ public class LUDecomposition extends AbstractFunctionEvaluator {
 
 	@Override
 	public IExpr evaluate(final IAST function) {
-		FieldMatrix<IExpr> matrix;
+		FieldMatrix<ExprFieldElement> matrix;
 		try {
 			if (function.size() == 2) {
 				final IAST list = (IAST) function.get(1);
 				matrix = Convert.list2Matrix(list);
-				final FieldLUDecompositionImpl<IExpr> lu = new FieldLUDecompositionImpl<IExpr>(matrix);
-				final FieldMatrix<IExpr> lMatrix = lu.getL();
-				final FieldMatrix<IExpr> uMatrix = lu.getU();
+				final FieldLUDecompositionImpl<ExprFieldElement> lu = new FieldLUDecompositionImpl<ExprFieldElement>(matrix);
+				final FieldMatrix<ExprFieldElement> lMatrix = lu.getL();
+				final FieldMatrix<ExprFieldElement> uMatrix = lu.getU();
 				final int[] iArr = lu.getPivot();
 				// final int permutationCount = lu.getPermutationCount();
 				final IAST iList = List();

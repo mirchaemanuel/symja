@@ -20,7 +20,6 @@ package org.apache.commons.math.fraction;
 import java.io.Serializable;
 
 import org.apache.commons.math.Field;
-import org.apache.commons.math.FieldElement;
 
 /**
  * Representation of the fractional numbers  without any overflow field.
@@ -28,7 +27,7 @@ import org.apache.commons.math.FieldElement;
  * This class is a singleton.
  * </p>
  * @see Fraction
- * @version $Revision: 795908 $ $Date: 2009-07-20 12:42:55 -0400 (Mon, 20 Jul 2009) $
+ * @version $Revision: 811827 $ $Date: 2009-09-06 17:32:50 +0200 (So, 06 Sep 2009) $
  * @since 2.0
  */
 public class BigFractionField implements Field<BigFraction>, Serializable  {
@@ -58,6 +57,7 @@ public class BigFractionField implements Field<BigFraction>, Serializable  {
         return BigFraction.ZERO;
     }
 
+    // CHECKSTYLE: stop HideUtilityClassConstructor
     /** Holder for the instance.
      * <p>We use here the Initialization On Demand Holder Idiom.</p>
      */
@@ -65,17 +65,14 @@ public class BigFractionField implements Field<BigFraction>, Serializable  {
         /** Cached field instance. */
         private static final BigFractionField INSTANCE = new BigFractionField();
     }
+    // CHECKSTYLE: resume HideUtilityClassConstructor
 
     /** Handle deserialization of the singleton.
      * @return the singleton instance
      */
     private Object readResolve() {
         // return the singleton instance
-        return LazyHolder.INSTANCE; 
+        return LazyHolder.INSTANCE;
     }
 
-    /** {@inheritDoc} */
-    public Class<? extends FieldElement<BigFraction>> getRuntimeClass() {
-        return BigFraction.class;
-    }
 }

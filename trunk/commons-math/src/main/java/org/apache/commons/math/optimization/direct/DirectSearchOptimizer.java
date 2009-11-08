@@ -32,7 +32,7 @@ import org.apache.commons.math.optimization.RealConvergenceChecker;
 import org.apache.commons.math.optimization.RealPointValuePair;
 import org.apache.commons.math.optimization.SimpleScalarValueChecker;
 
-/** 
+/**
  * This class implements simplex-based direct search optimization
  * algorithms.
  *
@@ -78,11 +78,11 @@ import org.apache.commons.math.optimization.SimpleScalarValueChecker;
  * algorithms.</p>
  *
  * implements MultivariateRealOptimizer since 2.0
- * 
+ *
  * @see MultivariateRealFunction
  * @see NelderMead
  * @see MultiDirectional
- * @version $Revision: 799857 $ $Date: 2009-08-01 09:07:12 -0400 (Sat, 01 Aug 2009) $
+ * @version $Revision: 811685 $ $Date: 2009-09-05 19:36:48 +0200 (Sa, 05 Sep 2009) $
  * @since 1.2
  */
 public abstract class DirectSearchOptimizer implements MultivariateRealOptimizer {
@@ -246,8 +246,8 @@ public abstract class DirectSearchOptimizer implements MultivariateRealOptimizer
     }
 
     /** {@inheritDoc} */
-    public void setConvergenceChecker(RealConvergenceChecker checker) {
-        this.checker = checker;
+    public void setConvergenceChecker(RealConvergenceChecker convergenceChecker) {
+        this.checker = convergenceChecker;
     }
 
     /** {@inheritDoc} */
@@ -256,9 +256,9 @@ public abstract class DirectSearchOptimizer implements MultivariateRealOptimizer
     }
 
     /** {@inheritDoc} */
-    public RealPointValuePair optimize(final MultivariateRealFunction f,
-                                         final GoalType goalType,
-                                         final double[] startPoint)
+    public RealPointValuePair optimize(final MultivariateRealFunction function,
+                                       final GoalType goalType,
+                                       final double[] startPoint)
         throws FunctionEvaluationException, OptimizationException,
         IllegalArgumentException {
 
@@ -270,7 +270,7 @@ public abstract class DirectSearchOptimizer implements MultivariateRealOptimizer
             setStartConfiguration(unit);
         }
 
-        this.f = f;
+        this.f = function;
         final Comparator<RealPointValuePair> comparator =
             new Comparator<RealPointValuePair>() {
                 public int compare(final RealPointValuePair o1,

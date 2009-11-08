@@ -1,5 +1,5 @@
 /*
- * $Id: Ideal.java 2594 2009-04-25 10:08:00Z kredel $
+ * $Id: Ideal.java 2815 2009-09-19 09:51:47Z kredel $
  */
 
 package edu.jas.application;
@@ -36,8 +36,9 @@ import edu.jas.poly.OptimizedPolynomialList;
 import edu.jas.poly.TermOrder;
 import edu.jas.poly.TermOrderOptimization;
 
-import edu.jas.ufd.GreatestCommonDivisor;
-import edu.jas.ufd.GCDFactory;
+import edu.jas.ufd.Squarefree;
+import edu.jas.ufd.SquarefreeAbstract;
+import edu.jas.ufd.SquarefreeFactory;
 
 
 /**
@@ -92,9 +93,18 @@ public class Ideal<C extends GcdRingElem<C>>
 
 
     /**
-     * Greatest common divisor engine.
+     * Squarefree decomposition engine.
      */
-    protected final GreatestCommonDivisor<C> engine;
+    protected final SquarefreeAbstract<C> engine;
+
+
+    /**
+     * Constructor.
+     * @param ring polynomial ring
+     */
+    public Ideal( GenPolynomialRing<C> ring) {
+        this( ring, new ArrayList<GenPolynomial<C>>() );
+    }
 
 
     /**
@@ -206,7 +216,7 @@ public class Ideal<C extends GcdRingElem<C>>
         this.testGB = ( gb ? true : false ); // ??
         this.bb = bb;
         this.red = red;
-        this.engine = GCDFactory.<C>getProxy( list.ring.coFac );
+        this.engine = SquarefreeFactory.<C>getImplementation( list.ring.coFac );
     }
 
 
@@ -406,26 +416,7 @@ public class Ideal<C extends GcdRingElem<C>>
         if ( B == null || B.isZERO() ) {
             return true;
         }
-        if ( this.isONE() ) {
-            return true;
-        }
-        if ( !isGB ) {
-            doGB();
-        }
-        List< GenPolynomial<C> > z;
-        z = red.normalform( getList(), B.getList() );
-        if ( z == null ) {
-            return true;
-        }
-        for ( GenPolynomial<C> p : z ) {
-            if ( p == null ) {
-                continue;
-            }
-            if ( ! p.isZERO() ) {
-                return false;
-            }
-        }
-        return true;
+        return contains( B.getList() );
     }
 
 
@@ -454,6 +445,35 @@ public class Ideal<C extends GcdRingElem<C>>
             return true;
         }
         return false;
+    }
+
+
+    /**
+     * Ideal containment. Test if each b in B is contained in this ideal.
+     * Note: this is eventually modified to become a Groebner Base.
+     * @param B list of polynomials
+     * @return true, if each b in B is contained in this, else false
+     */
+    public boolean contains( List<GenPolynomial<C>> B ) {
+        if ( B == null || B.size() == 0 ) {
+            return true;
+        }
+        if ( this.isONE() ) {
+            return true;
+        }
+        if ( !isGB ) {
+            doGB();
+        }
+        for ( GenPolynomial<C> b : B ) {
+            if ( b == null ) {
+                continue;
+            }
+            GenPolynomial<C> z = red.normalform( getList(), b );
+            if ( !z.isZERO() ) {
+                return false;
+            }
+        }
+        return true;
     }
 
 
@@ -681,7 +701,7 @@ public class Ideal<C extends GcdRingElem<C>>
         logger.warn("elimnation computing GB");
         List< GenPolynomial<C> > G = bb.GB( ppolys );
         if ( debug ) {
-            logger.debug("intersect GB = " + G);
+            logger.debug("elimnation GB = " + G);
         }
         Ideal<C> I = new Ideal<C>( E, G, true );
         // System.out.println("I = " + I);
@@ -792,13 +812,13 @@ public class Ideal<C extends GcdRingElem<C>>
             c.add( p );
         }
         GenPolynomial<C> q  = h.extend( tfac, 0, 1L );
-        GenPolynomial<C> r  = h.extend( tfac, 0, 0L );
-        GenPolynomial<C> hs = r.subtract( q ); // (1-t)*h
+        GenPolynomial<C> r  = tfac.getONE();    // h.extend( tfac, 0, 0L );
+        GenPolynomial<C> hs = q.subtract( r );  // 1 - t*h // (1-t)*h
         c.add( hs );
-        logger.warn("intersect computing GB");
+        logger.warn("infiniteQuotientRab computing GB");
         List< GenPolynomial<C> > g = bb.GB( c );
         if ( debug ) {
-            logger.debug("intersect GB = " + g);
+            logger.debug("infiniteQuotientRab GB = " + g);
         }
         Ideal<C> E = new Ideal<C>( tfac, g, true );
         Ideal<C> Is = E.intersect( getRing() );
@@ -839,6 +859,29 @@ public class Ideal<C extends GcdRingElem<C>>
             }
         }
         return Is;
+    }
+
+
+    /**
+     * Radical membership test.
+     * @param h polynomial
+     * @return true if h is contained in the radical of ideal(this), else false.
+     */
+    public boolean isRadicalMember( GenPolynomial<C> h ) {
+        if ( h == null ) { // == (0)
+            return true;
+        }
+        if ( h.isZERO() ) { 
+            return true;
+        }
+        if ( this.isZERO() ) {
+            return true;
+        }
+        Ideal<C> x = infiniteQuotientRab( h );
+        if ( debug ) {
+            logger.debug("infiniteQuotientRab = " + x);
+        }
+        return x.isONE();
     }
 
 
@@ -1086,7 +1129,7 @@ public class Ideal<C extends GcdRingElem<C>>
         List<GenPolynomial<C>> li, ri;
         while ( true ) {
             li = R.getList();
-            ri = new ArrayList<GenPolynomial<C>>( li.size() );
+            ri = new ArrayList<GenPolynomial<C>>( li ); //.size() );
             for ( GenPolynomial<C> h : li ) {
                 GenPolynomial<C> r = engine.squarefreePart( h );
                 ri.add( r );

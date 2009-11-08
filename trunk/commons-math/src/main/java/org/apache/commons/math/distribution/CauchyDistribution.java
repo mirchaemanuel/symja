@@ -29,28 +29,28 @@ package org.apache.commons.math.distribution;
  * </p>
  *
  * @since 1.1
- * @version $Revision: 670469 $ $Date: 2008-06-23 04:01:38 -0400 (Mon, 23 Jun 2008) $
+ * @version $Revision: 811685 $ $Date: 2009-09-05 19:36:48 +0200 (Sa, 05 Sep 2009) $
  */
 public interface CauchyDistribution extends ContinuousDistribution {
-    
+
     /**
      * Access the median.
      * @return median for this distribution
      */
     double getMedian();
-    
+
     /**
      * Access the scale parameter.
      * @return scale parameter for this distribution
      */
     double getScale();
-    
+
     /**
      * Modify the median.
      * @param median for this distribution
      */
     void setMedian(double median);
-    
+
     /**
      * Modify the scale parameter.
      * @param s scale parameter for this distribution

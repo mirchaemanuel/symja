@@ -20,11 +20,11 @@ import java.util.List;
 
 /**
  * Interface indicating that the chromosome represents a permutation of objects.
- * 
+ *
  * @param <T>
  *            type of the permuted objects
  * @since 2.0
- * @version $Revision: 799857 $ $Date: 2009-08-01 09:07:12 -0400 (Sat, 01 Aug 2009) $
+ * @version $Revision: 811786 $ $Date: 2009-09-06 11:36:08 +0200 (So, 06 Sep 2009) $
  */
 public interface PermutationChromosome<T> {
 
@@ -33,12 +33,12 @@ public interface PermutationChromosome<T> {
      * permutation this chromosome represents. For example, if this chromosome
      * represents a permutation (3,0,1,2), and the unpermuted sequence is
      * (a,b,c,d), this yields (d,a,b,c).
-     * 
+     *
      * @param sequence
      *            the unpermuted (original) sequence of objects
      * @return permutation of <code>sequence</code> represented by this
      *         permutation
      */
-    public List<T> decode(List<T> sequence);
-    
+    List<T> decode(List<T> sequence);
+
 }

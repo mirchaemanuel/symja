@@ -60,12 +60,39 @@ import org.apache.commons.math.ode.sampling.StepHandler;
  * evaluation is saved. For an <i>fsal</i> method, we have cs = 1 and
  * asi = bi for all i.</p>
  *
- * @version $Revision: 786874 $ $Date: 2009-06-20 14:09:16 -0400 (Sat, 20 Jun 2009) $
+ * @version $Revision: 811833 $ $Date: 2009-09-06 18:27:50 +0200 (So, 06 Sep 2009) $
  * @since 1.2
  */
 
 public abstract class EmbeddedRungeKuttaIntegrator
   extends AdaptiveStepsizeIntegrator {
+
+    /** Indicator for <i>fsal</i> methods. */
+    private final boolean fsal;
+
+    /** Time steps from Butcher array (without the first zero). */
+    private final double[] c;
+
+    /** Internal weights from Butcher array (without the first empty row). */
+    private final double[][] a;
+
+    /** External weights for the high order method from Butcher array. */
+    private final double[] b;
+
+    /** Prototype of the step interpolator. */
+    private final RungeKuttaStepInterpolator prototype;
+
+    /** Stepsize control exponent. */
+    private final double exp;
+
+    /** Safety factor for stepsize control. */
+    private double safety;
+
+    /** Minimal reduction factor for stepsize control. */
+    private double minReduction;
+
+    /** Maximal growth factor for stepsize control. */
+    private double maxGrowth;
 
   /** Build a Runge-Kutta integrator with the given Butcher array.
    * @param name name of the method
@@ -172,7 +199,7 @@ public abstract class EmbeddedRungeKuttaIntegrator
     sanityChecks(equations, t0, y0, t, y);
     setEquations(equations);
     resetEvaluations();
-    final boolean forward = (t > t0);
+    final boolean forward = t > t0;
 
     // create some internal working arrays
     final int stages = c.length + 1;
@@ -371,32 +398,5 @@ public abstract class EmbeddedRungeKuttaIntegrator
   protected abstract double estimateError(double[][] yDotK,
                                           double[] y0, double[] y1,
                                           double h);
-
-  /** Indicator for <i>fsal</i> methods. */
-  private boolean fsal;
-
-  /** Time steps from Butcher array (without the first zero). */
-  private double[] c;
-
-  /** Internal weights from Butcher array (without the first empty row). */
-  private double[][] a;
-
-  /** External weights for the high order method from Butcher array. */
-  private double[] b;
-
-  /** Prototype of the step interpolator. */
-  private RungeKuttaStepInterpolator prototype;
-                                         
-  /** Stepsize control exponent. */
-  private double exp;
-
-  /** Safety factor for stepsize control. */
-  private double safety;
-
-  /** Minimal reduction factor for stepsize control. */
-  private double minReduction;
-
-  /** Maximal growth factor for stepsize control. */
-  private double maxGrowth;
 
 }

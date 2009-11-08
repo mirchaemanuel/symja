@@ -309,24 +309,24 @@ public class ComplexSym extends ExprImpl implements IComplex {
 
 	public String fullFormString() {
 		StringBuffer buf = new StringBuffer("Complex[");
-		if (_real.getDivisor().equals(BigInteger.ONE)) {
-			buf.append(_real.getDividend().toString());
+		if (_real.getDenominator().equals(BigInteger.ONE)) {
+			buf.append(_real.getNumerator().toString());
 		} else {
 			buf.append("Rational[");
-			buf.append(_real.getDividend().toString().toString());
+			buf.append(_real.getNumerator().toString().toString());
 			buf.append(",");
-			buf.append(_real.getDivisor().toString().toString());
+			buf.append(_real.getDenominator().toString().toString());
 			buf.append("]");
 		}
 		buf.append(",");
 
-		if (_imaginary.getDivisor().equals(BigInteger.ONE)) {
-			buf.append(_imaginary.getDividend().toString());
+		if (_imaginary.getDenominator().equals(BigInteger.ONE)) {
+			buf.append(_imaginary.getNumerator().toString());
 		} else {
 			buf.append("Rational[");
-			buf.append(_imaginary.getDividend().toString().toString());
+			buf.append(_imaginary.getNumerator().toString().toString());
 			buf.append(",");
-			buf.append(_imaginary.getDivisor().toString().toString());
+			buf.append(_imaginary.getDenominator().toString().toString());
 			buf.append("]");
 		}
 		buf.append("]");
@@ -335,8 +335,8 @@ public class ComplexSym extends ExprImpl implements IComplex {
 
 	public INumber normalize() {
 		if (_imaginary.equals(Rational.ZERO)) {
-			if (_real.getDivisor().equals(BigInteger.ZERO)) {
-				return IntegerSym.valueOf(_real.getDividend());
+			if (_real.getDenominator().equals(BigInteger.ZERO)) {
+				return IntegerSym.valueOf(_real.getNumerator());
 			}
 			return FractionSym.newInstance(_real);
 		}
@@ -344,10 +344,10 @@ public class ComplexSym extends ExprImpl implements IComplex {
 	}
 
 	public int complexSign() {
-		final int i = _real.getDividend().signum();
+		final int i = _real.getNumerator().signum();
 
 		if (i == 0) {
-			return _imaginary.getDividend().signum();
+			return _imaginary.getNumerator().signum();
 		}
 
 		return i;

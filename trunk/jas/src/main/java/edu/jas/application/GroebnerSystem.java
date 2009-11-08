@@ -1,5 +1,5 @@
 /*
- * $Id: GroebnerSystem.java 2041 2008-08-10 13:07:40Z kredel $
+ * $Id: GroebnerSystem.java 2828 2009-09-27 12:30:52Z kredel $
  */
 
 package edu.jas.application;
@@ -13,6 +13,7 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 
 import edu.jas.poly.PolynomialList;
+import edu.jas.poly.OrderedPolynomialList;
 import edu.jas.poly.GenPolynomial;
 import edu.jas.poly.GenPolynomialRing;
 import edu.jas.structure.GcdRingElem;
@@ -20,7 +21,7 @@ import edu.jas.structure.GcdRingElem;
 
 /**
  * Container for a Groebner system. 
- * It contains a list of colored polynomial systems and a
+ * It contains a list of colored systems and a
  * list of parametric polynomials representing the 
  * corresponding comprehensive Groebner base.
  * @param <C> coefficient type
@@ -91,7 +92,7 @@ public class GroebnerSystem<C extends GcdRingElem<C>> {
         }
         sb.append("\n");
         if ( cgb == null ) {
-           sb.append("Comprehensive Groebner Base not jet determined\n");
+           sb.append("Comprehensive Groebner Base not jet computed\n");
         } else {
            sb.append("Comprehensive Groebner Base:\n");
            first = true;
@@ -222,7 +223,7 @@ public class GroebnerSystem<C extends GcdRingElem<C>> {
         if ( G.size() > 0 ) {
            ring = G.get(0).ring;
         }
-        cgb = new PolynomialList<GenPolynomial<C>>(ring,G);
+        cgb = new OrderedPolynomialList<GenPolynomial<C>>(ring,G);
         return G;
     }
 

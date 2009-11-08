@@ -6,6 +6,8 @@ import org.matheclipse.basic.Config;
 import org.matheclipse.core.convert.Convert;
 import org.matheclipse.core.eval.exception.NonNegativeIntegerExpected;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
+import org.matheclipse.core.expression.ExprField;
+import org.matheclipse.core.expression.ExprFieldElement;
 import org.matheclipse.core.expression.IntegerSym;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
@@ -21,8 +23,8 @@ public class MatrixPower extends AbstractFunctionEvaluator {
 		if (lst.size() != 3) {
 			return null;
 		}
-		FieldMatrix<IExpr> matrix;
-		FieldMatrix<IExpr> resultMatrix;
+		FieldMatrix<ExprFieldElement> matrix;
+		FieldMatrix<ExprFieldElement> resultMatrix;
 		try {
 			matrix = Convert.list2Matrix((IAST) lst.get(1));
 			final int p = ((IntegerSym) lst.get(2)).toInt();
@@ -34,13 +36,13 @@ public class MatrixPower extends AbstractFunctionEvaluator {
 				return lst.get(1);
 			}
 			if (p == 0) {
-				resultMatrix = new BlockFieldMatrix<IExpr>(lst.getField(), matrix.getRowDimension(), matrix.getColumnDimension());
+				resultMatrix = new BlockFieldMatrix<ExprFieldElement>(ExprField.CONST, matrix.getRowDimension(), matrix.getColumnDimension());
 				int min = matrix.getRowDimension();
 				if (min > matrix.getColumnDimension()) {
 					min = matrix.getColumnDimension();
 				}
 				for (int i = 0; i < min; i++) {
-					resultMatrix.setEntry(i, i, lst.getField().getOne());
+					resultMatrix.setEntry(i, i, ExprField.CONST.getOne());
 				}
 
 				return Convert.matrix2List(resultMatrix);

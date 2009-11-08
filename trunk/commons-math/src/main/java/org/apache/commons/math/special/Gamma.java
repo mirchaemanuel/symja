@@ -24,11 +24,11 @@ import org.apache.commons.math.util.ContinuedFraction;
  * This is a utility class that provides computation methods related to the
  * Gamma family of functions.
  *
- * @version $Revision: 780975 $ $Date: 2009-06-02 05:05:37 -0400 (Tue, 02 Jun 2009) $
+ * @version $Revision: 811827 $ $Date: 2009-09-06 17:32:50 +0200 (So, 06 Sep 2009) $
  */
 public class Gamma {
-    
-    /** 
+
+    /**
      * <a href="http://en.wikipedia.org/wiki/Euler-Mascheroni_constant">Euler-Mascheroni constant</a>
      * @since 2.0
      */
@@ -38,7 +38,7 @@ public class Gamma {
     private static final double DEFAULT_EPSILON = 10e-15;
 
     /** Lanczos coefficients */
-    private static final double[] lanczos =
+    private static final double[] LANCZOS =
     {
         0.99999999999999709182,
         57.156235665862923517,
@@ -60,6 +60,12 @@ public class Gamma {
     /** Avoid repeated computation of log of 2 PI in logGamma */
     private static final double HALF_LOG_2_PI = 0.5 * Math.log(2.0 * Math.PI);
 
+    // limits for switching algorithm in digamma
+    /** C limit. */
+    private static final double C_LIMIT = 49;
+
+    /** S limit. */
+    private static final double S_LIMIT = 1e-5;
 
     /**
      * Default constructor.  Prohibit instantiation.
@@ -81,7 +87,7 @@ public class Gamma {
      * the computation of the convergent Lanczos complex Gamma approximation
      * </a></li>
      * </ul>
-     * 
+     *
      * @param x the value.
      * @return log(&#915;(x))
      */
@@ -92,12 +98,12 @@ public class Gamma {
             ret = Double.NaN;
         } else {
             double g = 607.0 / 128.0;
-            
+
             double sum = 0.0;
-            for (int i = lanczos.length - 1; i > 0; --i) {
-                sum = sum + (lanczos[i] / (x + i));
+            for (int i = LANCZOS.length - 1; i > 0; --i) {
+                sum = sum + (LANCZOS[i] / (x + i));
             }
-            sum = sum + lanczos[0];
+            sum = sum + LANCZOS[0];
 
             double tmp = x + g + .5;
             ret = ((x + .5) * Math.log(tmp)) - tmp +
@@ -109,7 +115,7 @@ public class Gamma {
 
     /**
      * Returns the regularized gamma function P(a, x).
-     * 
+     *
      * @param a the a parameter.
      * @param x the value.
      * @return the regularized gamma function P(a, x)
@@ -120,11 +126,11 @@ public class Gamma {
     {
         return regularizedGammaP(a, x, DEFAULT_EPSILON, Integer.MAX_VALUE);
     }
-        
-        
+
+
     /**
      * Returns the regularized gamma function P(a, x).
-     * 
+     *
      * The implementation of this method is based on:
      * <ul>
      * <li>
@@ -138,20 +144,20 @@ public class Gamma {
      * Confluent Hypergeometric Function of the First Kind</a>, equation (1).
      * </li>
      * </ul>
-     * 
+     *
      * @param a the a parameter.
      * @param x the value.
      * @param epsilon When the absolute value of the nth item in the
      *                series is less than epsilon the approximation ceases
      *                to calculate further elements in the series.
-     * @param maxIterations Maximum number of "iterations" to complete. 
+     * @param maxIterations Maximum number of "iterations" to complete.
      * @return the regularized gamma function P(a, x)
      * @throws MathException if the algorithm fails to converge.
      */
-    public static double regularizedGammaP(double a, 
-                                           double x, 
-                                           double epsilon, 
-                                           int maxIterations) 
+    public static double regularizedGammaP(double a,
+                                           double x,
+                                           double epsilon,
+                                           int maxIterations)
         throws MathException
     {
         double ret;
@@ -186,10 +192,10 @@ public class Gamma {
 
         return ret;
     }
-    
+
     /**
      * Returns the regularized gamma function Q(a, x) = 1 - P(a, x).
-     * 
+     *
      * @param a the a parameter.
      * @param x the value.
      * @return the regularized gamma function Q(a, x)
@@ -200,10 +206,10 @@ public class Gamma {
     {
         return regularizedGammaQ(a, x, DEFAULT_EPSILON, Integer.MAX_VALUE);
     }
-    
+
     /**
      * Returns the regularized gamma function Q(a, x) = 1 - P(a, x).
-     * 
+     *
      * The implementation of this method is based on:
      * <ul>
      * <li>
@@ -213,20 +219,20 @@ public class Gamma {
      * <a href="    http://functions.wolfram.com/GammaBetaErf/GammaRegularized/10/0003/">
      * Regularized incomplete gamma function: Continued fraction representations  (formula 06.08.10.0003)</a></li>
      * </ul>
-     * 
+     *
      * @param a the a parameter.
      * @param x the value.
      * @param epsilon When the absolute value of the nth item in the
      *                series is less than epsilon the approximation ceases
      *                to calculate further elements in the series.
-     * @param maxIterations Maximum number of "iterations" to complete. 
+     * @param maxIterations Maximum number of "iterations" to complete.
      * @return the regularized gamma function P(a, x)
      * @throws MathException if the algorithm fails to converge.
      */
-    public static double regularizedGammaQ(final double a, 
-                                           double x, 
-                                           double epsilon, 
-                                           int maxIterations) 
+    public static double regularizedGammaQ(final double a,
+                                           double x,
+                                           double epsilon,
+                                           int maxIterations)
         throws MathException
     {
         double ret;
@@ -253,7 +259,7 @@ public class Gamma {
                     return n * (a - n);
                 }
             };
-            
+
             ret = 1.0 / cf.evaluate(x, epsilon, maxIterations);
             ret = Math.exp(-x + (a * Math.log(x)) - logGamma(a)) * ret;
         }
@@ -262,26 +268,20 @@ public class Gamma {
     }
 
 
-    // limits for switching algorithm in digamma
-    /** C limit */
-     private static final double C_LIMIT = 49;
-     /** S limit */
-     private static final double S_LIMIT = 1e-5;
-
     /**
      * <p>Computes the digamma function of x.</p>
-     * 
+     *
      * <p>This is an independently written implementation of the algorithm described in
      * Jose Bernardo, Algorithm AS 103: Psi (Digamma) Function, Applied Statistics, 1976.</p>
-     * 
+     *
      * <p>Some of the constants have been changed to increase accuracy at the moderate expense
      * of run-time.  The result should be accurate to within 10^-8 absolute tolerance for
      * x >= 10^-5 and within 10^-8 relative tolerance for x > 0.</p>
-     * 
+     *
      * <p>Performance for large negative values of x will be quite expensive (proportional to
      * |x|).  Accuracy for negative values of x should be about 10^-8 absolute for results
      * less than 10^5 and 10^-8 relative for results larger than that.</p>
-     * 
+     *
      * @param x  the argument
      * @return   digamma(x) to within 10-8 relative or absolute error whichever is smaller
      * @see <a href="http://en.wikipedia.org/wiki/Digamma_function"> Digamma at wikipedia </a>
@@ -310,7 +310,7 @@ public class Gamma {
     /**
      * <p>Computes the trigamma function of x.  This function is derived by taking the derivative of
      * the implementation of digamma.</p>
-     * 
+     *
      * @param x  the argument
      * @return   trigamma(x) to within 10-8 relative or absolute error whichever is smaller
      * @see <a href="http://en.wikipedia.org/wiki/Trigamma_function"> Trigamma at wikipedia </a>

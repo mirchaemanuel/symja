@@ -24,7 +24,7 @@ import org.apache.commons.math.util.MathUtils;
 
 /**
  * A simple implementation of {@link Clusterable} for points with integer coordinates.
- * @version $Revision: 795984 $ $Date: 2009-07-20 16:13:24 -0400 (Mon, 20 Jul 2009) $
+ * @version $Revision: 795984 $ $Date: 2009-07-20 22:13:24 +0200 (Mo, 20 Jul 2009) $
  * @since 2.0
  */
 public class EuclideanIntegerPoint implements Clusterable<EuclideanIntegerPoint>, Serializable {

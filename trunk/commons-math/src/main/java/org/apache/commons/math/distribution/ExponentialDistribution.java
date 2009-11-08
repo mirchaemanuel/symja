@@ -27,7 +27,7 @@ package org.apache.commons.math.distribution;
  * </ul>
  * </p>
  *
- * @version $Revision: 693598 $ $Date: 2008-09-09 16:37:08 -0400 (Tue, 09 Sep 2008) $
+ * @version $Revision: 811685 $ $Date: 2009-09-05 19:36:48 +0200 (Sa, 05 Sep 2009) $
  */
 public interface ExponentialDistribution extends ContinuousDistribution, HasDensity<Double> {
     /**
@@ -35,7 +35,7 @@ public interface ExponentialDistribution extends ContinuousDistribution, HasDens
      * @param mean the new mean.
      */
     void setMean(double mean);
-    
+
     /**
      * Access the mean.
      * @return the mean.

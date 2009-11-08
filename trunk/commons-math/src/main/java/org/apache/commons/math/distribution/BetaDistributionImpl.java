@@ -29,7 +29,7 @@ import org.apache.commons.math.special.Beta;
  * Beta distribution</a></li>
  * </ul>
  * </p>
- * @version $Revision: 762087 $ $Date: 2009-04-05 10:20:18 -0400 (Sun, 05 Apr 2009) $
+ * @version $Revision: 762087 $ $Date: 2009-04-05 16:20:18 +0200 (So, 05 Apr 2009) $
  * @since 2.0
  */
 public class BetaDistributionImpl

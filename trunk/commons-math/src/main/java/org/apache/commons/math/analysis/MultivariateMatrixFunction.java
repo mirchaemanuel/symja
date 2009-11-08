@@ -20,14 +20,14 @@ package org.apache.commons.math.analysis;
 
 import org.apache.commons.math.FunctionEvaluationException;
 
-/** 
+/**
  * An interface representing a multivariate matrix function.
- * @version $Revision: 777516 $ $Date: 2009-05-22 09:36:14 -0400 (Fri, 22 May 2009) $
+ * @version $Revision: 811685 $ $Date: 2009-09-05 19:36:48 +0200 (Sa, 05 Sep 2009) $
  * @since 2.0
  */
 public interface MultivariateMatrixFunction {
 
-    /** 
+    /**
      * Compute the value for the function at the given point.
      * @param point point at which the function must be evaluated
      * @return function value for the given point

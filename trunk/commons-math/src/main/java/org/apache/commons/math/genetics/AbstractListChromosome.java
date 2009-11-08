@@ -23,16 +23,16 @@ import java.util.List;
 
 /**
  * Chromosome represented by an immutable list of a fixed length.
- * 
+ *
  * @param <T> type of the representation list
- * @version $Revision: 799857 $ $Date: 2009-08-01 09:07:12 -0400 (Sat, 01 Aug 2009) $
+ * @version $Revision: 811685 $ $Date: 2009-09-05 19:36:48 +0200 (Sa, 05 Sep 2009) $
  * @since 2.0
  */
 public abstract class AbstractListChromosome<T> extends Chromosome {
-    
+
     /** List representing the chromosome */
     private final List<T> representation;
-    
+
     /**
      * Constructor.
      * @param representation inner representation of the chromosome
@@ -45,7 +45,7 @@ public abstract class AbstractListChromosome<T> extends Chromosome {
         }
         this.representation = Collections.unmodifiableList(new ArrayList<T> (representation));
     }
-    
+
     /**
      * Constructor.
      * @param representation inner representation of the chromosome
@@ -55,13 +55,13 @@ public abstract class AbstractListChromosome<T> extends Chromosome {
     }
 
     /**
-     * 
+     *
      * Asserts that <code>representation</code> can represent a valid chromosome.
-     * @param representation representation of the chromosome
+     * @param chromosomeRepresentation representation of the chromosome
      * @throws InvalidRepresentationException iff the <code>representation</code> can not represent
      *         a valid chromosome
      */
-    protected abstract void checkValidity(List<T> representation) throws InvalidRepresentationException;
+    protected abstract void checkValidity(List<T> chromosomeRepresentation) throws InvalidRepresentationException;
 
     /**
      * Returns the (immutable) inner representation of the chromosome.
@@ -84,16 +84,16 @@ public abstract class AbstractListChromosome<T> extends Chromosome {
      * given <code>arrayRepresentation</code>. This is needed in crossover and
      * mutation operators, where we need a new instance of the same class, but
      * with different array representation.
-     * 
+     *
      * Usually, this method just calls a constructor of the class.
-     * 
-     * @param representation
+     *
+     * @param chromosomeRepresentation
      *            the inner array representation of the new chromosome.
      * @return new instance extended from FixedLengthChromosome with the given
      *         arrayRepresentation
      */
-    public abstract AbstractListChromosome<T> newFixedLengthChromosome(final List<T> representation);
-    
+    public abstract AbstractListChromosome<T> newFixedLengthChromosome(final List<T> chromosomeRepresentation);
+
     /**
      * {@inheritDoc}
      */

@@ -46,30 +46,11 @@ public class Permutations extends AbstractFunctionEvaluator {
 			IAST temp;
 			while ((temp = perm.next()) != null) {
 				checkCanceled();
-				// temp = F.ast(f.getHeader());
-				// for (int i = 0; i < k; i++) {
-				// checkCanceled();
-				// temp.add(f.get(j[i]+1));
-				// }
+
 				result.add(temp);
 			}
 			return result;
-			// final KPermutationsIterator perm = new KPermutationsIterator(f, k, 1);
-			// // while (perm.hasNext()) {
-			// int j[];
-			// IAST temp;
-			// while ((j = perm.nextElement()) != null) {
-			// checkCanceled();
-			// temp = F.ast(f.getHeader());
-			// for (int i = 0; i < k; i++) {
-			// checkCanceled();
-			// temp.add(f.get(j[i]+1));
-			// }
-			// result.add(temp);
-			//
-			// Util.checkCanceled();
-			// }
-			// return result;
+
 		}
 		return null;
 	}

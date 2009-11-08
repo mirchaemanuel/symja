@@ -27,11 +27,11 @@ import org.apache.commons.math.util.OpenIntToFieldHashMap;
 /**
  * This class implements the {@link FieldVector} interface with a {@link OpenIntToFieldHashMap} backing store.
  * @param <T> the type of the field elements
- * @version $Revision: 799857 $ $Date: 2009-08-01 09:07:12 -0400 (Sat, 01 Aug 2009) $
+ * @version $Revision: 811685 $ $Date: 2009-09-05 19:36:48 +0200 (Sa, 05 Sep 2009) $
  * @since 2.0
  */
 public class SparseFieldVector<T extends FieldElement<T>> implements FieldVector<T>, Serializable {
-    
+
     /**
      *  Serial version id
      */
@@ -57,7 +57,7 @@ public class SparseFieldVector<T extends FieldElement<T>> implements FieldVector
         this(field, 0);
     }
 
-    
+
     /**
      * Construct a (dimension)-length vector of zeros.
      * @param field field to which the elements belong
@@ -80,7 +80,7 @@ public class SparseFieldVector<T extends FieldElement<T>> implements FieldVector
         entries = new OpenIntToFieldHashMap<T>(v.entries);
     }
 
-    
+
     /**
      * Build a vector with known the sparseness (for advanced use only).
      * @param field field to which the elements belong
@@ -109,7 +109,7 @@ public class SparseFieldVector<T extends FieldElement<T>> implements FieldVector
         }
     }
 
-     
+
 
     /**
      * Copy constructor.
@@ -128,7 +128,7 @@ public class SparseFieldVector<T extends FieldElement<T>> implements FieldVector
     private OpenIntToFieldHashMap<T> getEntries() {
         return entries;
     }
-    
+
     /**
      * Optimized method to add sparse vectors.
      * @param v vector to add
@@ -144,7 +144,7 @@ public class SparseFieldVector<T extends FieldElement<T>> implements FieldVector
             int key = iter.key();
             T value = iter.value();
             if (entries.containsKey(key)) {
-                res.setEntry(key, entries.get(key).plus(value));
+                res.setEntry(key, entries.get(key).add(value));
             } else {
                 res.setEntry(key, value);
             }
@@ -153,13 +153,13 @@ public class SparseFieldVector<T extends FieldElement<T>> implements FieldVector
 
     }
 
-    
+
     /** {@inheritDoc} */
     public FieldVector<T> add(T[] v) throws IllegalArgumentException {
         checkVectorDimensions(v.length);
         SparseFieldVector<T> res = new SparseFieldVector<T>(field,getDimension());
         for (int i = 0; i < v.length; i++) {
-            res.setEntry(i, v[i].plus(getEntry(i)));
+            res.setEntry(i, v[i].add(getEntry(i)));
         }
         return res;
     }
@@ -185,7 +185,7 @@ public class SparseFieldVector<T extends FieldElement<T>> implements FieldVector
             return append((SparseFieldVector<T>) v);
         } else {
             return append(v.toArray());
-        }   
+        }
     }
 
     /** {@inheritDoc} */
@@ -216,7 +216,7 @@ public class SparseFieldVector<T extends FieldElement<T>> implements FieldVector
         OpenIntToFieldHashMap<T>.Iterator iter = entries.iterator();
         while (iter.hasNext()) {
             iter.advance();
-            res = res.plus(v.getEntry(iter.key()).times(iter.value()));
+            res = res.add(v.getEntry(iter.key()).multiply(iter.value()));
         }
         return res;
     }
@@ -232,7 +232,7 @@ public class SparseFieldVector<T extends FieldElement<T>> implements FieldVector
             if (idx < v.length) {
                 value = v[idx];
             }
-            res = res.plus(value.times(iter.value()));
+            res = res.add(value.multiply(iter.value()));
         }
         return res;
      }
@@ -245,7 +245,7 @@ public class SparseFieldVector<T extends FieldElement<T>> implements FieldVector
         OpenIntToFieldHashMap<T>.Iterator iter = res.entries.iterator();
         while (iter.hasNext()) {
             iter.advance();
-            res.setEntry(iter.key(), iter.value().div(v.getEntry(iter.key())));
+            res.setEntry(iter.key(), iter.value().divide(v.getEntry(iter.key())));
         }
         return res;
     }
@@ -257,7 +257,7 @@ public class SparseFieldVector<T extends FieldElement<T>> implements FieldVector
         OpenIntToFieldHashMap<T>.Iterator iter = res.entries.iterator();
         while (iter.hasNext()) {
             iter.advance();
-            res.setEntry(iter.key(), iter.value().div(v[iter.key()]));
+            res.setEntry(iter.key(), iter.value().divide(v[iter.key()]));
         }
         return res;
     }
@@ -269,7 +269,7 @@ public class SparseFieldVector<T extends FieldElement<T>> implements FieldVector
         OpenIntToFieldHashMap<T>.Iterator iter = res.entries.iterator();
         while (iter.hasNext()) {
             iter.advance();
-            res.setEntry(iter.key(), iter.value().times(v.getEntry(iter.key())));
+            res.setEntry(iter.key(), iter.value().multiply(v.getEntry(iter.key())));
         }
         return res;
     }
@@ -281,7 +281,7 @@ public class SparseFieldVector<T extends FieldElement<T>> implements FieldVector
         OpenIntToFieldHashMap<T>.Iterator iter = res.entries.iterator();
         while (iter.hasNext()) {
             iter.advance();
-            res.setEntry(iter.key(), iter.value().times(v[iter.key()]));
+            res.setEntry(iter.key(), iter.value().multiply(v[iter.key()]));
         }
         return res;
     }
@@ -339,7 +339,7 @@ public class SparseFieldVector<T extends FieldElement<T>> implements FieldVector
      /** {@inheritDoc} */
      public FieldVector<T> mapAddToSelf(T d) {
         for (int i = 0; i < virtualSize; i++) {
-            setEntry(i, getEntry(i).plus(d));
+            setEntry(i, getEntry(i).add(d));
         }
         return this;
     }
@@ -354,7 +354,7 @@ public class SparseFieldVector<T extends FieldElement<T>> implements FieldVector
         OpenIntToFieldHashMap<T>.Iterator iter = entries.iterator();
         while (iter.hasNext()) {
             iter.advance();
-            entries.put(iter.key(), iter.value().div(d));
+            entries.put(iter.key(), iter.value().divide(d));
         }
         return this;
    }
@@ -367,7 +367,7 @@ public class SparseFieldVector<T extends FieldElement<T>> implements FieldVector
      /** {@inheritDoc} */
      public FieldVector<T> mapInvToSelf() {
         for (int i = 0; i < virtualSize; i++) {
-            setEntry(i, field.getOne().div(getEntry(i)));
+            setEntry(i, field.getOne().divide(getEntry(i)));
         }
         return this;
    }
@@ -382,7 +382,7 @@ public class SparseFieldVector<T extends FieldElement<T>> implements FieldVector
         OpenIntToFieldHashMap<T>.Iterator iter = entries.iterator();
         while (iter.hasNext()) {
             iter.advance();
-            entries.put(iter.key(), iter.value().times(d));
+            entries.put(iter.key(), iter.value().multiply(d));
         }
         return this;
    }
@@ -390,11 +390,11 @@ public class SparseFieldVector<T extends FieldElement<T>> implements FieldVector
      /** {@inheritDoc} */
      public FieldVector<T> mapSubtract(T d) {
         return copy().mapSubtractToSelf(d);
-    }    
+    }
 
      /** {@inheritDoc} */
      public FieldVector<T> mapSubtractToSelf(T d) {
-        return mapAddToSelf(field.getZero().minus(d));
+        return mapAddToSelf(field.getZero().subtract(d));
     }
 
      /**
@@ -413,7 +413,7 @@ public class SparseFieldVector<T extends FieldElement<T>> implements FieldVector
             OpenIntToFieldHashMap<T>.Iterator iter2 = v.entries.iterator();
             while (iter2.hasNext()) {
                 iter2.advance();
-                res.setEntry(iter.key(), iter2.key(), iter.value().times(iter2.value()));
+                res.setEntry(iter.key(), iter2.key(), iter.value().multiply(iter2.value()));
             }
         }
         return res;
@@ -429,7 +429,7 @@ public class SparseFieldVector<T extends FieldElement<T>> implements FieldVector
             int row = iter.key();
             FieldElement<T>value = iter.value();
             for (int col = 0; col < virtualSize; col++) {
-                res.setEntry(row, col, value.times(v[col]));
+                res.setEntry(row, col, value.multiply(v[col]));
             }
         }
         return res;
@@ -448,7 +448,7 @@ public class SparseFieldVector<T extends FieldElement<T>> implements FieldVector
     public FieldVector<T> projection(FieldVector<T> v)
     throws IllegalArgumentException {
         checkVectorDimensions(v.getDimension());
-        return v.mapMultiply(dotProduct(v).div(v.dotProduct(v)));
+        return v.mapMultiply(dotProduct(v).divide(v.dotProduct(v)));
     }
 
     /** {@inheritDoc} */
@@ -485,7 +485,7 @@ public class SparseFieldVector<T extends FieldElement<T>> implements FieldVector
         for (int i = 0; i < v.length; i++) {
             setEntry(i + index, v[i]);
         }
-        
+
     }
 
     /**
@@ -502,9 +502,9 @@ public class SparseFieldVector<T extends FieldElement<T>> implements FieldVector
             iter.advance();
             int key = iter.key();
             if (entries.containsKey(key)) {
-                res.setEntry(key, entries.get(key).minus(iter.value()));
+                res.setEntry(key, entries.get(key).subtract(iter.value()));
             } else {
-                res.setEntry(key, field.getZero().minus(iter.value()));
+                res.setEntry(key, field.getZero().subtract(iter.value()));
             }
         }
         return res;
@@ -525,9 +525,9 @@ public class SparseFieldVector<T extends FieldElement<T>> implements FieldVector
         SparseFieldVector<T> res = new SparseFieldVector<T>(this);
         for (int i = 0; i < v.length; i++) {
             if (entries.containsKey(i)) {
-                res.setEntry(i, entries.get(i).minus(v[i]));
+                res.setEntry(i, entries.get(i).subtract(v[i]));
             } else {
-                res.setEntry(i, field.getZero().minus(v[i]));
+                res.setEntry(i, field.getZero().subtract(v[i]));
             }
         }
         return res;
@@ -537,7 +537,7 @@ public class SparseFieldVector<T extends FieldElement<T>> implements FieldVector
     public T[] toArray() {
         return getData();
     }
-    
+
     /**
      * Check if an index is valid.
      *
@@ -586,7 +586,7 @@ public class SparseFieldVector<T extends FieldElement<T>> implements FieldVector
      */
     @SuppressWarnings("unchecked")
     private T[] buildArray(final int length) {
-        return (T[]) Array.newInstance(field.getRuntimeClass(), length);
+        return (T[]) Array.newInstance(field.getZero().getClass(), length);
     }
 
 
@@ -656,5 +656,5 @@ public class SparseFieldVector<T extends FieldElement<T>> implements FieldVector
     }
 
 
-    
+
 }

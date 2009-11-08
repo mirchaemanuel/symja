@@ -26,14 +26,14 @@ import org.apache.commons.math.linear.RealMatrix;
 import org.apache.commons.math.linear.RealVector;
 import org.apache.commons.math.linear.ArrayRealVector;
 
-/** 
+/**
  * This class implements a solver for estimation problems.
  *
  * <p>This class solves estimation problems using a weighted least
  * squares criterion on the measurement residuals. It uses a
  * Gauss-Newton algorithm.</p>
  *
- * @version $Revision: 783702 $ $Date: 2009-06-11 04:54:02 -0400 (Thu, 11 Jun 2009) $
+ * @version $Revision: 811685 $ $Date: 2009-09-05 19:36:48 +0200 (Sa, 05 Sep 2009) $
  * @since 1.2
  * @deprecated as of 2.0, everything in package org.apache.commons.math.estimation has
  * been deprecated and replaced by package org.apache.commons.math.optimization.general
@@ -67,10 +67,10 @@ public class GaussNewtonEstimator extends AbstractEstimator implements Serializa
      */
     public GaussNewtonEstimator() {
         this.steadyStateThreshold = DEFAULT_STEADY_STATE_THRESHOLD;
-        this.convergence          = DEFAULT_CONVERGENCE;        
+        this.convergence          = DEFAULT_CONVERGENCE;
     }
 
-    /** 
+    /**
      * Simple constructor.
      *
      * <p>This constructor builds an estimator and stores its convergence
@@ -132,7 +132,7 @@ public class GaussNewtonEstimator extends AbstractEstimator implements Serializa
         this.steadyStateThreshold = steadyStateThreshold;
     }
 
-    /** 
+    /**
      * Solve an estimation problem using a least squares criterion.
      *
      * <p>This method set the unbound parameters of the given problem

@@ -127,13 +127,13 @@ import org.apache.commons.math.linear.MatrixUtils;
  * vector and a P<sup>-1</sup> A P matrix are used that do not depend on the state,
  * they only depend on k. This class handles these transformations.</p>
  *
- * @version $Revision: 790374 $ $Date: 2009-07-01 16:57:20 -0400 (Wed, 01 Jul 2009) $
+ * @version $Revision: 810196 $ $Date: 2009-09-01 21:47:46 +0200 (Di, 01 Sep 2009) $
  * @since 2.0
  */
 public class AdamsNordsieckTransformer {
 
     /** Cache for already computed coefficients. */
-    private static final Map<Integer, AdamsNordsieckTransformer> cache =
+    private static final Map<Integer, AdamsNordsieckTransformer> CACHE =
         new HashMap<Integer, AdamsNordsieckTransformer>();
 
     /** Initialization matrix for the higher order derivatives wrt y'', y''' ... */
@@ -200,11 +200,11 @@ public class AdamsNordsieckTransformer {
      * @return Nordsieck transformer for the specified number of steps
      */
     public static AdamsNordsieckTransformer getInstance(final int nSteps) {
-        synchronized(cache) {
-            AdamsNordsieckTransformer t = cache.get(nSteps);
+        synchronized(CACHE) {
+            AdamsNordsieckTransformer t = CACHE.get(nSteps);
             if (t == null) {
                 t = new AdamsNordsieckTransformer(nSteps);
-                cache.put(nSteps, t);
+                CACHE.put(nSteps, t);
             }
             return t;
         }

@@ -36,11 +36,20 @@ import org.apache.commons.math.MathRuntimeException;
  * <code>ConcurrentModificationException</code> when they detect the map has been
  * modified during iteration.</p>
  * @param <T> the type of the field elements
- * @version $Revision: 799857 $ $Date: 2009-08-01 09:07:12 -0400 (Sat, 01 Aug 2009) $
+ * @version $Revision: 825919 $ $Date: 2009-10-16 16:51:55 +0200 (Fr, 16 Okt 2009) $
  * @since 2.0
  */
 public class OpenIntToFieldHashMap<T extends FieldElement<T>> implements Serializable {
-    
+
+    /** Status indicator for free table entries. */
+    protected static final byte FREE    = 0;
+
+    /** Status indicator for full table entries. */
+    protected static final byte FULL    = 1;
+
+    /** Status indicator for removed table entries. */
+    protected static final byte REMOVED = 2;
+
     /** Serializable version identifier. */
     private static final long serialVersionUID = -9179080286849120720L;
 
@@ -60,18 +69,9 @@ public class OpenIntToFieldHashMap<T extends FieldElement<T>> implements Seriali
     /** Number of bits to perturb the index when probing for collision resolution. */
     private static final int PERTURB_SHIFT = 5;
 
-    /** Status indicator for free table entries. */
-    protected static final byte FREE    = 0;
-
-    /** Status indicator for full table entries. */
-    protected static final byte FULL    = 1;
-
-    /** Status indicator for removed table entries. */
-    protected static final byte REMOVED = 2;
-
     /** Field to which the elements belong. */
     private final Field<T> field;
-    
+
     /** Keys table. */
     private int[] keys;
 
@@ -198,7 +198,8 @@ public class OpenIntToFieldHashMap<T extends FieldElement<T>> implements Seriali
             return missingEntries;
         }
 
-        for (int perturb = perturb(hash), j = index; states[index] != FREE; perturb >>= PERTURB_SHIFT) {
+        int j = index;
+        for (int perturb = perturb(hash); states[index] != FREE; perturb >>= PERTURB_SHIFT) {
             j = probe(perturb, j);
             index = j & mask;
             if (containsKey(key, index)) {
@@ -227,7 +228,8 @@ public class OpenIntToFieldHashMap<T extends FieldElement<T>> implements Seriali
             return false;
         }
 
-        for (int perturb = perturb(hash), j = index; states[index] != FREE; perturb >>= PERTURB_SHIFT) {
+        int j = index;
+        for (int perturb = perturb(hash); states[index] != FREE; perturb >>= PERTURB_SHIFT) {
             j = probe(perturb, j);
             index = j & mask;
             if (containsKey(key, index)) {
@@ -293,7 +295,7 @@ public class OpenIntToFieldHashMap<T extends FieldElement<T>> implements Seriali
                 j = probe(perturb, j);
                 index = j & mask;
                 perturb >>= PERTURB_SHIFT;
-                
+
                 if (states[index] != FULL || keys[index] == key) {
                     break;
                 }
@@ -352,7 +354,7 @@ public class OpenIntToFieldHashMap<T extends FieldElement<T>> implements Seriali
         return size;
     }
 
-    
+
     /**
      * Remove the value associated with a key.
      * @param key key to which the value is associated
@@ -370,7 +372,8 @@ public class OpenIntToFieldHashMap<T extends FieldElement<T>> implements Seriali
             return missingEntries;
         }
 
-        for (int perturb = perturb(hash), j = index; states[index] != FREE; perturb >>= PERTURB_SHIFT) {
+        int j = index;
+        for (int perturb = perturb(hash); states[index] != FREE; perturb >>= PERTURB_SHIFT) {
             j = probe(perturb, j);
             index = j & mask;
             if (containsKey(key, index)) {
@@ -487,7 +490,7 @@ public class OpenIntToFieldHashMap<T extends FieldElement<T>> implements Seriali
         return h ^ (h >>> 7) ^ (h >>> 4);
     }
 
-    
+
     /** Iterator class for the map. */
     public class Iterator {
 
@@ -610,7 +613,7 @@ public class OpenIntToFieldHashMap<T extends FieldElement<T>> implements Seriali
      */
     @SuppressWarnings("unchecked")
     private T[] buildArray(final int length) {
-        return (T[]) Array.newInstance(field.getRuntimeClass(), length);
+        return (T[]) Array.newInstance(field.getZero().getClass(), length);
     }
 
 }

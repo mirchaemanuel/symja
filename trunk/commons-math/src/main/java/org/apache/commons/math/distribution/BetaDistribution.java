@@ -22,7 +22,7 @@ import org.apache.commons.math.MathException;
  * Computes the cumulative, inverse cumulative and density functions for the beta distribuiton.
  *
  * @see <a href="http://en.wikipedia.org/wiki/Beta_distribution">Beta_distribution</a>
- * @version $Revision: 705239 $ $Date: 2008-10-16 09:32:32 -0400 (Thu, 16 Oct 2008) $
+ * @version $Revision: 705239 $ $Date: 2008-10-16 15:32:32 +0200 (Do, 16 Okt 2008) $
  * @since 2.0
  */
 public interface BetaDistribution extends ContinuousDistribution, HasDensity<Double> {

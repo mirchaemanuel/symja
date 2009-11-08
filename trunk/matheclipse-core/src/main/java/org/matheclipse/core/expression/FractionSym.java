@@ -140,11 +140,11 @@ public class FractionSym extends ExprImpl implements IFraction {
 	 * @see org.matheclipse.parser.interfaces.INumber#isZero()
 	 */
 	public boolean isZero() {
-		return fRational.getDividend().equals(BigInteger.ZERO);
+		return fRational.getNumerator().equals(BigInteger.ZERO);
 	}
 
 	public boolean equalsInt(final int i) {
-		return fRational.getDividend().equals(BigInteger.valueOf(i)) && fRational.getDivisor().equals(BigInteger.ONE);
+		return fRational.getNumerator().equals(BigInteger.valueOf(i)) && fRational.getDenominator().equals(BigInteger.ONE);
 	}
 
 	/**
@@ -153,7 +153,7 @@ public class FractionSym extends ExprImpl implements IFraction {
 	 * @return denominator
 	 */
 	public BigInteger getBigDenominator() {
-		return fRational.getDivisor();
+		return fRational.getDenominator();
 	}
 
 	/**
@@ -162,7 +162,7 @@ public class FractionSym extends ExprImpl implements IFraction {
 	 * @return numerator
 	 */
 	public BigInteger getBigNumerator() {
-		return fRational.getDividend();
+		return fRational.getNumerator();
 	}
 
 	/**
@@ -171,7 +171,7 @@ public class FractionSym extends ExprImpl implements IFraction {
 	 * @return denominator
 	 */
 	public IInteger getDenominator() {
-		return IntegerSym.valueOf(fRational.getDivisor());
+		return IntegerSym.valueOf(fRational.getDenominator());
 	}
 
 	/**
@@ -180,7 +180,7 @@ public class FractionSym extends ExprImpl implements IFraction {
 	 * @return numerator
 	 */
 	public IInteger getNumerator() {
-		return IntegerSym.valueOf(fRational.getDividend());
+		return IntegerSym.valueOf(fRational.getNumerator());
 	}
 
 	public int hierarchy() {
@@ -196,11 +196,11 @@ public class FractionSym extends ExprImpl implements IFraction {
 	}
 
 	public boolean isNegative() {
-		return (fRational.getDividend().compareTo(BigInteger.ZERO) == -1);
+		return (fRational.getNumerator().compareTo(BigInteger.ZERO) == -1);
 	}
 
 	public boolean isPositive() {
-		return (fRational.getDividend().compareTo(BigInteger.ZERO) == 1);
+		return (fRational.getNumerator().compareTo(BigInteger.ZERO) == 1);
 	}
 
 	/**
@@ -259,14 +259,14 @@ public class FractionSym extends ExprImpl implements IFraction {
 	 * @return
 	 */
 	public BigInteger getDividend() {
-		return fRational.getDividend();
+		return fRational.getNumerator();
 	}
 
 	/**
 	 * @return
 	 */
 	public BigInteger getDivisor() {
-		return fRational.getDivisor();
+		return fRational.getDenominator();
 	}
 
 	@Override
@@ -462,16 +462,16 @@ public class FractionSym extends ExprImpl implements IFraction {
 	// }
 	@Override
 	public String toString() {
-		return fRational.getDividend().toString() + "/" + fRational.getDivisor().toString();
+		return fRational.getNumerator().toString() + "/" + fRational.getDenominator().toString();
 		// return toText().toString();
 	}
 
 	@Override
 	public String fullFormString() {
 		StringBuffer buf = new StringBuffer("Rational[");
-		buf.append(fRational.getDividend().toString().toString());
+		buf.append(fRational.getNumerator().toString().toString());
 		buf.append(",");
-		buf.append(fRational.getDivisor().toString().toString());
+		buf.append(fRational.getDenominator().toString().toString());
 		buf.append("]");
 		return buf.toString();
 	}
@@ -493,7 +493,7 @@ public class FractionSym extends ExprImpl implements IFraction {
 	}
 
 	public int sign() {
-		return fRational.getDividend().signum();
+		return fRational.getNumerator().signum();
 	}
 
 	public int complexSign() {
@@ -502,7 +502,7 @@ public class FractionSym extends ExprImpl implements IFraction {
 
 	public ISignedNumber ceil() {
 
-		BigInteger[] result = fRational.getDividend().divideAndRemainder(fRational.getDivisor());
+		BigInteger[] result = fRational.getNumerator().divideAndRemainder(fRational.getDenominator());
 		// final BigInteger[] result = new BigInteger[2];
 		// result[0] = fRational.getDividend().divide(fRational.getDivisor());
 		// result[1] = result[0].getRemainder();
@@ -515,7 +515,7 @@ public class FractionSym extends ExprImpl implements IFraction {
 	}
 
 	public ISignedNumber floor() {
-		BigInteger[] result = fRational.getDividend().divideAndRemainder(fRational.getDivisor());
+		BigInteger[] result = fRational.getNumerator().divideAndRemainder(fRational.getDenominator());
 		// final BigInteger[] result = new BigInteger[2];
 		// result[0] = fRational.getDividend().divide(fRational.getDivisor());
 		// result[1] = result[0].getRemainder();

@@ -20,7 +20,6 @@ package org.apache.commons.math.complex;
 import java.io.Serializable;
 
 import org.apache.commons.math.Field;
-import org.apache.commons.math.FieldElement;
 
 /**
  * Representation of the complex numbers field.
@@ -28,7 +27,7 @@ import org.apache.commons.math.FieldElement;
  * This class is a singleton.
  * </p>
  * @see Complex
- * @version $Revision: 795911 $ $Date: 2009-07-20 12:48:30 -0400 (Mon, 20 Jul 2009) $
+ * @version $Revision: 811827 $ $Date: 2009-09-06 17:32:50 +0200 (So, 06 Sep 2009) $
  * @since 2.0
  */
 public class ComplexField implements Field<Complex>, Serializable  {
@@ -58,6 +57,7 @@ public class ComplexField implements Field<Complex>, Serializable  {
         return Complex.ZERO;
     }
 
+    // CHECKSTYLE: stop HideUtilityClassConstructor
     /** Holder for the instance.
      * <p>We use here the Initialization On Demand Holder Idiom.</p>
      */
@@ -65,17 +65,14 @@ public class ComplexField implements Field<Complex>, Serializable  {
         /** Cached field instance. */
         private static final ComplexField INSTANCE = new ComplexField();
     }
+    // CHECKSTYLE: resume HideUtilityClassConstructor
 
     /** Handle deserialization of the singleton.
      * @return the singleton instance
      */
     private Object readResolve() {
         // return the singleton instance
-        return LazyHolder.INSTANCE; 
+        return LazyHolder.INSTANCE;
     }
 
-    /** {@inheritDoc} */
-    public Class<? extends FieldElement<Complex>> getRuntimeClass() {
-        return Complex.class;
-    }
 }

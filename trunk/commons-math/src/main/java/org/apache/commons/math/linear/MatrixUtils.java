@@ -32,18 +32,18 @@ import org.apache.commons.math.fraction.Fraction;
 
 /**
  * A collection of static methods that operate on or return matrices.
- * 
- * @version $Revision: 789156 $ $Date: 2009-06-28 17:48:15 -0400 (Sun, 28 Jun 2009) $
+ *
+ * @version $Revision: 811685 $ $Date: 2009-09-05 19:36:48 +0200 (Sa, 05 Sep 2009) $
  */
 public class MatrixUtils {
 
     /**
-     * Default constructor.
+     * Private constructor.
      */
-    public MatrixUtils() {
+    private MatrixUtils() {
         super();
     }
-    
+
     /**
      * Returns a {@link RealMatrix} with specified dimensions.
      * <p>The type of matrix returned depends on the dimension. Below
@@ -93,7 +93,7 @@ public class MatrixUtils {
      * Array2DRowRealMatrix} instance is built. Above this threshold a {@link
      * BlockRealMatrix} instance is built.</p>
      * <p>The input array is copied, not referenced.</p>
-     * 
+     *
      * @param data input array
      * @return  RealMatrix containing the values of the array
      * @throws IllegalArgumentException if <code>data</code> is not rectangular
@@ -161,7 +161,7 @@ public class MatrixUtils {
         createFieldIdentityMatrix(final Field<T> field, final int dimension) {
         final T zero = field.getZero();
         final T one  = field.getOne();
-        final T[][] d = (T[][]) Array.newInstance(field.getRuntimeClass(), new int[] { dimension, dimension });
+        final T[][] d = (T[][]) Array.newInstance(zero.getClass(), new int[] { dimension, dimension });
         for (int row = 0; row < dimension; row++) {
             final T[] dRow = d[row];
             Arrays.fill(dRow, zero);
@@ -189,7 +189,7 @@ public class MatrixUtils {
         }
         return new BigMatrixImpl(d, false);
     }
-    
+
     /**
      * Returns a diagonal matrix with specified elements.
      *
@@ -205,7 +205,7 @@ public class MatrixUtils {
         }
         return m;
     }
-    
+
     /**
      * Returns a diagonal matrix with specified elements.
      *
@@ -224,11 +224,11 @@ public class MatrixUtils {
         }
         return m;
     }
-    
+
     /**
      * Returns a {@link BigMatrix} whose entries are the the values in the
      * the input array.  The input array is copied, not referenced.
-     * 
+     *
      * @param data input array
      * @return  RealMatrix containing the values of the array
      * @throws IllegalArgumentException if <code>data</code> is not rectangular
@@ -240,11 +240,11 @@ public class MatrixUtils {
     public static BigMatrix createBigMatrix(double[][] data) {
         return new BigMatrixImpl(data);
     }
-    
+
     /**
      * Returns a {@link BigMatrix} whose entries are the the values in the
      * the input array.  The input array is copied, not referenced.
-     * 
+     *
      * @param data input array
      * @return  RealMatrix containing the values of the array
      * @throws IllegalArgumentException if <code>data</code> is not rectangular
@@ -282,7 +282,7 @@ public class MatrixUtils {
     /**
      * Returns a {@link BigMatrix} whose entries are the the values in the
      * the input array.  The input array is copied, not referenced.
-     * 
+     *
      * @param data input array
      * @return  RealMatrix containing the values of the array
      * @throws IllegalArgumentException if <code>data</code> is not rectangular
@@ -294,10 +294,10 @@ public class MatrixUtils {
     public static BigMatrix createBigMatrix(String[][] data) {
         return new BigMatrixImpl(data);
     }
-    
+
     /**
-     * Creates a {@link RealVector} using the data from the input array. 
-     * 
+     * Creates a {@link RealVector} using the data from the input array.
+     *
      * @param data the input data
      * @return a data.length RealVector
      * @throws IllegalArgumentException if <code>data</code> is empty
@@ -306,10 +306,10 @@ public class MatrixUtils {
     public static RealVector createRealVector(double[] data) {
         return new ArrayRealVector(data, true);
     }
-    
+
     /**
-     * Creates a {@link FieldVector} using the data from the input array. 
-     * 
+     * Creates a {@link FieldVector} using the data from the input array.
+     *
      * @param <T> the type of the field elements
      * @param data the input data
      * @return a data.length FieldVector
@@ -319,11 +319,11 @@ public class MatrixUtils {
     public static <T extends FieldElement<T>> FieldVector<T> createFieldVector(final T[] data) {
         return new ArrayFieldVector<T>(data, true);
     }
-    
+
     /**
      * Creates a row {@link RealMatrix} using the data from the input
-     * array. 
-     * 
+     * array.
+     *
      * @param rowData the input row data
      * @return a 1 x rowData.length RealMatrix
      * @throws IllegalArgumentException if <code>rowData</code> is empty
@@ -337,11 +337,11 @@ public class MatrixUtils {
         }
         return m;
     }
-    
+
     /**
      * Creates a row {@link FieldMatrix} using the data from the input
-     * array. 
-     * 
+     * array.
+     *
      * @param <T> the type of the field elements
      * @param rowData the input row data
      * @return a 1 x rowData.length FieldMatrix
@@ -352,7 +352,7 @@ public class MatrixUtils {
         createRowFieldMatrix(final T[] rowData) {
         final int nCols = rowData.length;
         if (nCols == 0) {
-            throw MathRuntimeException.createIllegalArgumentException("matrix must have at least one column"); 
+            throw MathRuntimeException.createIllegalArgumentException("matrix must have at least one column");
         }
         final FieldMatrix<T> m = createFieldMatrix(rowData[0].getField(), 1, nCols);
         for (int i = 0; i < nCols; ++i) {
@@ -360,11 +360,11 @@ public class MatrixUtils {
         }
         return m;
     }
-    
+
     /**
      * Creates a row {@link BigMatrix} using the data from the input
-     * array. 
-     * 
+     * array.
+     *
      * @param rowData the input row data
      * @return a 1 x rowData.length BigMatrix
      * @throws IllegalArgumentException if <code>rowData</code> is empty
@@ -380,11 +380,11 @@ public class MatrixUtils {
         }
         return new BigMatrixImpl(data, false);
     }
-    
+
     /**
      * Creates a row {@link BigMatrix} using the data from the input
-     * array. 
-     * 
+     * array.
+     *
      * @param rowData the input row data
      * @return a 1 x rowData.length BigMatrix
      * @throws IllegalArgumentException if <code>rowData</code> is empty
@@ -398,11 +398,11 @@ public class MatrixUtils {
         System.arraycopy(rowData, 0, data[0], 0, nCols);
         return new BigMatrixImpl(data, false);
     }
-    
+
     /**
      * Creates a row {@link BigMatrix} using the data from the input
-     * array. 
-     * 
+     * array.
+     *
      * @param rowData the input row data
      * @return a 1 x rowData.length BigMatrix
      * @throws IllegalArgumentException if <code>rowData</code> is empty
@@ -418,11 +418,11 @@ public class MatrixUtils {
         }
         return new BigMatrixImpl(data, false);
     }
-    
+
     /**
      * Creates a column {@link RealMatrix} using the data from the input
      * array.
-     * 
+     *
      * @param columnData  the input column data
      * @return a columnData x 1 RealMatrix
      * @throws IllegalArgumentException if <code>columnData</code> is empty
@@ -436,11 +436,11 @@ public class MatrixUtils {
         }
         return m;
     }
-    
+
     /**
      * Creates a column {@link FieldMatrix} using the data from the input
      * array.
-     * 
+     *
      * @param <T> the type of the field elements
      * @param columnData  the input column data
      * @return a columnData x 1 FieldMatrix
@@ -451,7 +451,7 @@ public class MatrixUtils {
         createColumnFieldMatrix(final T[] columnData) {
         final int nRows = columnData.length;
         if (nRows == 0) {
-            throw MathRuntimeException.createIllegalArgumentException("matrix must have at least one row"); 
+            throw MathRuntimeException.createIllegalArgumentException("matrix must have at least one row");
         }
         final FieldMatrix<T> m = createFieldMatrix(columnData[0].getField(), nRows, 1);
         for (int i = 0; i < nRows; ++i) {
@@ -459,11 +459,11 @@ public class MatrixUtils {
         }
         return m;
     }
-    
+
     /**
      * Creates a column {@link BigMatrix} using the data from the input
      * array.
-     * 
+     *
      * @param columnData  the input column data
      * @return a columnData x 1 BigMatrix
      * @throws IllegalArgumentException if <code>columnData</code> is empty
@@ -479,11 +479,11 @@ public class MatrixUtils {
         }
         return new BigMatrixImpl(data, false);
     }
-    
+
     /**
      * Creates a column {@link BigMatrix} using the data from the input
      * array.
-     * 
+     *
      * @param columnData  the input column data
      * @return a columnData x 1 BigMatrix
      * @throws IllegalArgumentException if <code>columnData</code> is empty
@@ -499,11 +499,11 @@ public class MatrixUtils {
         }
         return new BigMatrixImpl(data, false);
     }
-    
+
     /**
      * Creates a column {@link BigMatrix} using the data from the input
      * array.
-     * 
+     *
      * @param columnData  the input column data
      * @return a columnData x 1 BigMatrix
      * @throws IllegalArgumentException if <code>columnData</code> is empty
@@ -575,7 +575,7 @@ public class MatrixUtils {
                                            startColumn, endColumn);
         }
 
-    
+
     }
 
     /**
@@ -777,7 +777,7 @@ public class MatrixUtils {
      * }
      * </code></pre>
      * </p>
-     * 
+     *
      * @param vector real vector to serialize
      * @param oos stream where the real vector should be written
      * @exception IOException if object cannot be written to stream
@@ -878,7 +878,7 @@ public class MatrixUtils {
      * }
      * </code></pre>
      * </p>
-     * 
+     *
      * @param matrix real matrix to serialize
      * @param oos stream where the real matrix should be written
      * @exception IOException if object cannot be written to stream

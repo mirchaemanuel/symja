@@ -15,10 +15,8 @@ import org.matheclipse.core.visit.IVisitorInt;
  * (I)nterface for a mathematical (Expr)ession
  * 
  */
-public interface IExpr extends FieldElement<IExpr>, Comparable<IExpr>,
+public interface IExpr extends Comparable<IExpr>, //FieldElement<IExpr>, 
 		IRealtimeElement, Serializable {
-	// public interface IExpr extends Field<IExpr>, Comparable<IExpr>,
-	// IRealtimeElement, Serializable {
 
 	public final static int DOUBLEID = 2;
 

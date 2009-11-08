@@ -253,15 +253,15 @@ public class EvalEngine implements IEvaluationEngine {
 			double ni = 0.0;
 			double di = 1.0;
 			// if (r instanceof IFraction) {
-			nr = r.getDividend().doubleValue();
-			dr = r.getDivisor().doubleValue();
+			nr = r.getNumerator().doubleValue();
+			dr = r.getDenominator().doubleValue();
 			// }
 			// if (r instanceof IInteger) {
 			// nr = ((IInteger) r).getNumerator().doubleValue();
 			// }
 			// if (i instanceof IFraction) {
-			ni = i.getDividend().doubleValue();
-			di = i.getDivisor().doubleValue();
+			ni = i.getNumerator().doubleValue();
+			di = i.getDenominator().doubleValue();
 			// }
 			// if (i instanceof IInteger) {
 			// ni = ((IInteger) i).getNumerator().doubleValue();

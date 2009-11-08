@@ -27,7 +27,7 @@ package org.apache.commons.math.distribution;
  * </ul>
  * </p>
  *
- * @version $Revision: 670469 $ $Date: 2008-06-23 04:01:38 -0400 (Mon, 23 Jun 2008) $
+ * @version $Revision: 811685 $ $Date: 2009-09-05 19:36:48 +0200 (Sa, 05 Sep 2009) $
  */
 public interface FDistribution extends ContinuousDistribution {
     /**
@@ -35,19 +35,19 @@ public interface FDistribution extends ContinuousDistribution {
      * @param degreesOfFreedom the new numerator degrees of freedom.
      */
     void setNumeratorDegreesOfFreedom(double degreesOfFreedom);
-    
+
     /**
      * Access the numerator degrees of freedom.
      * @return the numerator degrees of freedom.
      */
     double getNumeratorDegreesOfFreedom();
-    
+
     /**
      * Modify the denominator degrees of freedom.
      * @param degreesOfFreedom the new denominator degrees of freedom.
      */
     void setDenominatorDegreesOfFreedom(double degreesOfFreedom);
-    
+
     /**
      * Access the denominator degrees of freedom.
      * @return the denominator degrees of freedom.

@@ -1,5 +1,5 @@
 /*
- * $Id: BigRational.java 2574 2009-04-19 11:33:17Z kredel $
+ * $Id: BigRational.java 2807 2009-09-11 19:40:46Z kredel $
  */
 
 package edu.jas.arith;
@@ -26,7 +26,7 @@ import edu.jas.util.StringUtil;
  */
 
 public final class BigRational implements GcdRingElem<BigRational>, 
-                                          RingFactory<BigRational> {
+                                          RingFactory<BigRational>, ToRational {
 
     /**
      * Numerator part of the data structure.
@@ -58,11 +58,6 @@ public final class BigRational implements GcdRingElem<BigRational>,
         = new BigRational(BigInteger.ONE);
 
 
-    /* from history: 
-       private final static BigRational RNZERO = ZERO;
-       private final static BigRational RNONE = ONE;
-    */
-
     private final static Random random = new Random();
 
 
@@ -71,7 +66,7 @@ public final class BigRational implements GcdRingElem<BigRational>,
      * @param d math.BigInteger.
      */
     protected BigRational(BigInteger n, BigInteger d) {
-        // assume gcd(n,d) == 1
+        // assert gcd(n,d) == 1
         num = n; 
         den = d;
     } 
@@ -195,6 +190,16 @@ public final class BigRational implements GcdRingElem<BigRational>,
     }
 
 
+    /**
+     * Return a BigRational approximation of this Element.
+     * @return a BigRational approximation of this.
+     * @see edu.jas.arith.ToRational#toRational()
+     */
+    public BigRational toRational() {
+        return this;
+    }
+
+
     /** Get the numerator.
      * @return num.
      */
@@ -225,23 +230,35 @@ public final class BigRational implements GcdRingElem<BigRational>,
     } 
 
 
+    /** Get the decimal string representation with given precision.
+     * @param n precission.
+     * @return decimal approximation.
+     */
+    public String toString(int n) {             
+        java.math.MathContext mc = new java.math.MathContext(n);
+        BigDecimal d = new BigDecimal(this,mc);
+        return d.toString();
+    }
+
+
     /** Get a scripting compatible string representation.
      * @return script compatible representation for this Element.
      * @see edu.jas.structure.Element#toScript()
      */
     @Override
     public String toScript() {
-        // Python case
+        // Python case: (num,den) or num 
+        // was (num,) 
         StringBuffer s = new StringBuffer();
         if ( den.equals(BigInteger.ONE) ) {
-            //s.append("("+num+",)");
-            s.append(num);
-        } else {
-            s.append("(");
-            s.append(num);
-            s.append(",").append(den);
-            s.append(")");
+            s.append(num.toString());
+            return s.toString();
         }
+        s.append("(");
+        s.append(num.toString());
+        s.append(",");
+        s.append(den.toString());
+        s.append(")");
         return s.toString();
     }
 
@@ -422,10 +439,10 @@ public final class BigRational implements GcdRingElem<BigRational>,
      * @see edu.jas.structure.RingElem#abs()
      */
     public BigRational abs() {
-        if ( RNSIGN( this ) >= 0 ) {
+        if ( this.signum() >= 0 ) {
             return this;
         } else {
-            return RNNEG(this);
+            return this.negate();
         }
     }
 
@@ -456,10 +473,10 @@ public final class BigRational implements GcdRingElem<BigRational>,
         int TL;
         int RL;
         if ( this.equals( ZERO ) ) {
-            return - RNSIGN( S );
+            return - S.signum();
         }
         if ( S.equals( ZERO ) ) {
-            return RNSIGN( this );
+            return this.signum();
         }
         R1 = num; //this.numerator(); 
         R2 = den; //this.denominator();
@@ -505,11 +522,7 @@ public final class BigRational implements GcdRingElem<BigRational>,
      * @return this-S.
      */
     public BigRational subtract(BigRational S) {
-        BigRational J1Y;
-        BigRational T;
-        J1Y = RNNEG( S );
-        T = RNSUM( this, J1Y );
-        return T;
+        return this.sum( S.negate() );
     }
 
 
@@ -524,26 +537,24 @@ public final class BigRational implements GcdRingElem<BigRational>,
     }
 
 
-    /** Rational number decimal write.  R is a rational number.  n is a
-        non-negative integer.  R is approximated by a decimal fraction D with
-        n decimal digits following the decimal point and D is written in the
-        output stream.  The inaccuracy of the approximation is at most
-        (1/2)*10**-n.  If ABS(D) is greater than ABS(R) then the last digit is
-        followed by a minus sign, if ABS(D) is less than ABS(R) then by a
-        plus sign. 
-        * @param R
-        * @param NL
-        */
+    /** 
+     * Rational number decimal write.  R is a rational number.  n is a
+     * non-negative integer.  R is approximated by a decimal fraction D with
+     * n decimal digits following the decimal point and D is written in the
+     * output stream.  The inaccuracy of the approximation is at most
+     * (1/2)*10**-n.  
+     * @param R
+     * @param NL
+     */
+    // If ABS(D) is greater than ABS(R) then the last digit is
+    // followed by a minus sign, if ABS(D) is less than ABS(R) then by a
+    // plus sign. 
     public static void RNDWR(BigRational R, int NL) {             
         BigInteger num = R.num;
         BigInteger den = R.den;
-        /* BigInteger p = new BigInteger("10");
-           p = p.pow(NL);
-        */
-        double n = num.doubleValue();
-        double d = den.doubleValue();
-        double r = n/d;
-        System.out.print( String.valueOf( r ) );
+        java.math.MathContext mc = new java.math.MathContext(NL);
+        BigDecimal d = new BigDecimal(R,mc);
+        System.out.print( d.toString() );
         return;
     }
 
@@ -562,8 +573,8 @@ public final class BigRational implements GcdRingElem<BigRational>,
      * @see edu.jas.structure.RingElem#inverse()
      */
     public BigRational inverse() {
-        BigInteger R1 = num; //R.nominator();
-        BigInteger R2 = den; //R.denominator();
+        BigInteger R1 = num; 
+        BigInteger R2 = den; 
         BigInteger S1;
         BigInteger S2;
         if ( R1.signum() >= 0 ) {
@@ -683,7 +694,9 @@ public final class BigRational implements GcdRingElem<BigRational>,
      * @return R*S.
      */
     public static BigRational RNPROD(BigRational R, BigRational S) {
-        if ( R == null ) return S;
+        if ( R == null ) {
+            return R;
+        }
         return R.multiply(S);
     }
 
@@ -703,7 +716,9 @@ public final class BigRational implements GcdRingElem<BigRational>,
      * @return R/S.
      */
     public static BigRational RNQ(BigRational R, BigRational S) {
-        if ( R == null ) return S.inverse();
+        if ( R == null ) {
+            return R;
+        }
         return R.divide( S );
     }
 
@@ -778,7 +793,9 @@ public final class BigRational implements GcdRingElem<BigRational>,
      * @return R.signum().
      */
     public static int RNSIGN(BigRational R) {
-        if ( R == null ) return Integer.MAX_VALUE;
+        if ( R == null ) {
+            return 0;
+        }
         return R.signum();
     }
 
@@ -859,7 +876,9 @@ public final class BigRational implements GcdRingElem<BigRational>,
      * @return R+S.
      */
     public static BigRational RNSUM(BigRational R, BigRational S) {
-        if ( R == null ) return S;
+        if ( R == null ) {
+            return S;
+        }
         return R.sum( S );
     }
 
