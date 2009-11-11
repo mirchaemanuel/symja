@@ -199,7 +199,7 @@ public abstract class AbstractPlotWindow extends JDialog {
 	}
 
 	protected void doGraph() {
-		java.util.List l = new ArrayList();
+		java.util.List<String> l = new ArrayList<String>();
 		Component c[] = equations.getComponents();
 
 		for (int i = 0; i < c.length; ++i) {

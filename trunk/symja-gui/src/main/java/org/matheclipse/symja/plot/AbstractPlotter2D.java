@@ -182,7 +182,7 @@ public abstract class AbstractPlotter2D extends JComponent
     /** Plots a new set of function(s) and readies them for display.
       */
     public abstract void updatePlot();
-    public abstract void setFunctions(List functions);
+    public abstract void setFunctions(List<String> functions);
 
     /** Caches this object for future reuse, preventing memory leaks
       * if the garbage collector gets sloppy on us.
