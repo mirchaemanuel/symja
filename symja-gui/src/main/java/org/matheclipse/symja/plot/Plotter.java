@@ -34,6 +34,12 @@ import org.matheclipse.symja.CoreCallbackFunction;
  * Plots functions in 2D.
  */
 public class Plotter extends AbstractPlotter2D {
+
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 5687700167663608759L;
+
   /**
    * The number of points to plot on each line on this plot.
    */
@@ -64,9 +70,9 @@ public class Plotter extends AbstractPlotter2D {
   /**
    * The cached plotters.
    */
-  protected static List cache = new ArrayList();
+  protected static List<Plotter> cache = new ArrayList<Plotter>();
 
-  public void setFunctions(List functions) {
+  public void setFunctions(List<String> functions) {
     numFuncs = functions.size();
     // System.out.println("Plot has " + numFuncs + " functions!!!");
     point = new double[numFuncs][thisResolution + 1];
@@ -75,7 +81,7 @@ public class Plotter extends AbstractPlotter2D {
     color = new Color[numFuncs];
     DoubleEvaluator engine = new DoubleEvaluator();
     engine.setCallbackFunction(CoreCallbackFunction.CONST);
-    ListIterator i = functions.listIterator();
+    ListIterator<String> i = functions.listIterator();
     while (i.hasNext()) {
       String s = (String) i.next();
       // System.out.println(s);
@@ -164,8 +170,8 @@ public class Plotter extends AbstractPlotter2D {
    */
   protected void paintPlot(Graphics2D g2d, int top, int height, int bottom,
       int left, int width, int right, int func) {
-    int x[] = new int[thisResolution + 1];
-    int y[] = new int[thisResolution + 1];
+    // int x[] = new int[thisResolution + 1];
+    // int y[] = new int[thisResolution + 1];
     int index = 0;
 
     g2d.setColor(color[func]);

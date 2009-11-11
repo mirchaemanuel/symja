@@ -22,8 +22,14 @@ public class Gamma extends AbstractTrigArg1 {
 
   @Override
   public IExpr numericEvalD1(final Num arg1) {
-    double d = org.apache.commons.math.special.Gamma.logGamma(arg1.doubleValue());
-    return F.num(Math.exp(d));
+    double x = arg1.doubleValue();
+    if (x > 0.0) {
+      double gamma;
+      gamma = org.apache.commons.math.special.Gamma.logGamma(x);
+      gamma = Math.exp(gamma);
+      return F.num(gamma);
+    }
+    return null;
   }
 
   @Override

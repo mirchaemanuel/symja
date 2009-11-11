@@ -942,6 +942,12 @@ public class F {
     return binary(Min, a0, a1);
   }
 
+  /**
+   * Evaluate the given expression in numeric mode
+   * 
+   * @param a0
+   * @return
+   */
   public static IAST N(final IExpr a0) {
 
     return unary(N, a0);
