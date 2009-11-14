@@ -1,5 +1,5 @@
 /*
- * $Id: PolyUtil.java 2833 2009-10-03 10:09:51Z kredel $
+ * $Id: PolyUtil.java 2859 2009-11-11 22:01:32Z kredel $
  */
 
 package edu.jas.poly;
@@ -1031,6 +1031,43 @@ public class PolyUtil {
                   ExpVector e = ExpVector.create( 1, 0, fl-1L );  
                   dm.put(e,x);
                }
+            }
+        }
+        return d; 
+    }
+
+
+    /**
+     * GenPolynomial polynomial integral main variable.
+     * @param <C> coefficient type.
+     * @param P GenPolynomial.
+     * @return integral(P).
+     */
+    public static <C extends RingElem<C>>
+           GenPolynomial<C> 
+           baseIntegral( GenPolynomial<C> P ) {
+        if ( P == null || P.isZERO() ) {
+            return P;
+        }
+        GenPolynomialRing<C> pfac = P.ring;
+        if ( pfac.nvar > 1 ) { 
+           // baseContent not possible by return type
+           throw new RuntimeException(P.getClass().getName()
+                     + " only for univariate polynomials");
+        }
+        RingFactory<C> rf = pfac.coFac;
+        GenPolynomial<C> d = pfac.getZERO().clone();
+        Map<ExpVector,C> dm = d.val; //getMap();
+        for ( Map.Entry<ExpVector,C> m : P.getMap().entrySet() ) {
+            ExpVector f = m.getKey();  
+            long fl = f.getVal(0);
+            fl++;
+            C cf = rf.fromInteger( fl );
+            C a = m.getValue(); 
+            C x = a.divide(cf);
+            if ( x != null && !x.isZERO() ) {
+                ExpVector e = ExpVector.create( 1, 0, fl );  
+                dm.put(e,x);
             }
         }
         return d; 

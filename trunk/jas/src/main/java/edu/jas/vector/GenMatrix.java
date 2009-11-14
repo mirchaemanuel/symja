@@ -1,5 +1,5 @@
 /*
- * $Id: GenMatrix.java 2608 2009-05-01 10:41:03Z kredel $
+ * $Id: GenMatrix.java 2849 2009-11-05 21:28:37Z kredel $
  */
 
 package edu.jas.vector;
@@ -60,6 +60,9 @@ public class GenMatrix<C extends RingElem<C> >
      * Constructor for GenMatrix.
      */
     public GenMatrix(GenMatrixRing< C > r, ArrayList<ArrayList<C>> m) {
+        if ( r == null || m == null ) {
+            throw new RuntimeException("Empty r or m not allowed, r = " + r + ", m = " +m);
+        }
         ring = r;
         matrix = m;
     }
