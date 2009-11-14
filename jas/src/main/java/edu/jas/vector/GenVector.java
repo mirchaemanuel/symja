@@ -1,5 +1,5 @@
 /*
- * $Id: GenVector.java 2566 2009-04-18 18:52:44Z kredel $
+ * $Id: GenVector.java 2849 2009-11-05 21:28:37Z kredel $
  */
 
 package edu.jas.vector;
@@ -44,6 +44,9 @@ public class GenVector<C extends RingElem<C> >
      * Constructor for GenVector.
      */
     public GenVector(GenVectorModul< C > m, List<C> v) {
+        if ( m == null || v == null ) {
+            throw new RuntimeException("Empty m or v not allowed, m = " + m + ", v = " +v);
+        }
         modul = m;
         val = v;
     }

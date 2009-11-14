@@ -1328,7 +1328,7 @@ public class GenPolynomialTokenizer  {
 
     // must also allow +/- // does not work with tokenizer
     @SuppressWarnings("unused")
-  private boolean number(char x) {
+	private boolean number(char x) {
         return digit(x) || x == '-' || x == '+';
     }
 

@@ -1,5 +1,5 @@
 /*
- * $Id: FactorTest.java 2843 2009-10-18 21:44:14Z kredel $
+ * $Id: FactorTest.java 2850 2009-11-05 21:36:29Z kredel $
  */
 
 package edu.jas.ufd;
@@ -597,9 +597,8 @@ public class FactorTest extends TestCase {
 
         FactorRational engine = new FactorRational();
 
-        List<FactorsList<BigRational>> F = engine.baseAlgebraicPartialFraction(N,agen);
-        System.out.println("agen     = " + agen);
-        System.out.println("F        = " + F);
+        PartialFraction<BigRational> F = engine.baseAlgebraicPartialFraction(N,agen);
+        System.out.println("\npartial fraction = " + F);
 
         //boolean t = engine.isAbsoluteFactorization(F);
         //System.out.println("t        = " + t);
