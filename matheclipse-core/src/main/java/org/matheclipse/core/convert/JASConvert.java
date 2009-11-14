@@ -12,6 +12,8 @@ import org.matheclipse.core.interfaces.ISymbol;
 
 import edu.jas.arith.BigRational;
 import edu.jas.arith.ModInteger;
+import edu.jas.integrate.Integral;
+import edu.jas.integrate.LogIntegral;
 import edu.jas.poly.ExpVector;
 import edu.jas.poly.GenPolynomial;
 import edu.jas.poly.GenPolynomialRing;
@@ -26,7 +28,7 @@ public class JASConvert<C extends RingElem<C>> {
   private final TermOrder fTermOrder;
   private final GenPolynomialRing<C> fPolyFactory;
   GenPolynomialRing<edu.jas.arith.BigInteger> fBigIntegerPolyFactory;
-  private final List<? extends IExpr> fVariables;
+  private final List<? extends IExpr> fVariables;;
 
   public JASConvert(final List<? extends IExpr> variablesList) {
     this(variablesList, new BigRational(0));
@@ -211,5 +213,31 @@ public class JASConvert<C extends RingElem<C>> {
   public Object[] factorTerms(GenPolynomial<BigRational> A) {
     return PolyUtil.integerFromRationalCoefficientsFactor(
         fBigIntegerPolyFactory, A);
+  }
+
+  /**
+   * Convert a jas <code>Integral</code> into a matheclipse expression
+   * 
+   * @param integral
+   *          the JAS Integral
+   * @return
+   */
+  public IAST integral2Expr(Integral<BigRational> integral) {
+    IAST sum = F.Plus();
+    // TODO implement this conversion
+    return null;
+  }
+
+  /**
+   * Convert a jas <code>LogIntegral</code> into a matheclipse expression
+   * 
+   * @param logIntegral
+   *          the JAS LogIntegral
+   * @return
+   */
+  public IAST logIntegral2Expr(LogIntegral<BigRational> logIntegral) {
+    IAST sum = F.Plus();
+    // TODO implement this conversion
+    return null;
   }
 }
