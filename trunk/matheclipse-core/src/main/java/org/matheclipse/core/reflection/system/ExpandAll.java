@@ -24,7 +24,7 @@ public class ExpandAll extends AbstractFunctionEvaluator implements IConstantHea
 		return ast.get(1);
 	}
 
-	private IExpr expandAll(final IExpr expr) {
+	public static IExpr expandAll(final IExpr expr) {
 		if (!(expr instanceof IAST)) {
 			return null;
 		}
@@ -43,11 +43,7 @@ public class ExpandAll extends AbstractFunctionEvaluator implements IConstantHea
 		if (j>=ast.size()){
 			return null;
 		}
-		// if (temp==null){
-		// return null;
-		// }
 		IAST result = (IAST) ast.clone();
-		// result.set(j, temp);
 		for (int i = j; i < ast.size(); i++) {
 			temp = expandAll(ast.get(i));
 			if (temp != null) {
@@ -56,7 +52,7 @@ public class ExpandAll extends AbstractFunctionEvaluator implements IConstantHea
 				result.set(i, ast.get(i));
 			}
 		}
-		temp = Expand.CONST.expand(result);
+		temp = Expand.expand(result);
 		if (temp != null) {
 			return temp;
 		}
