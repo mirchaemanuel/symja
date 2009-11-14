@@ -539,26 +539,27 @@ public class SystemTestCase extends AbstractTestCase {
     check("Fit[{{1,1},{2,4},{3,9},{4,16}},2,x]", "x^2.0");
     check("Fit[{1,4,9,16},2,x]", "x^2.0");
 
-//    double[][] m = { { 0.0, 1.0, -1.0 }, { 1.0, 1.0, 0.0 }, { -1.0, 0.0, 1.0 } };
-//    RealMatrix rm = new Array2DRowRealMatrix(m);
-//    assertEquals(rm.toString(),
-//        "Array2DRowRealMatrix{{0.0,1.0,-1.0},{1.0,1.0,0.0},{-1.0,0.0,1.0}}");
-//    EigenDecompositionImpl ed = new EigenDecompositionImpl(rm,
-//        MathUtils.SAFE_MIN);
-//    RealVector rv0 = ed.getEigenvector(0);
-//    RealVector rv1 = ed.getEigenvector(1);
-//    RealVector rv2 = ed.getEigenvector(2);
-//    assertEquals(rv0.toString(), "{0,58; 0,58; -0,58}");
-//    assertEquals(rv1.toString(), "{-0; -0,71; -0,71}");
-//    assertEquals(rv2.toString(), "{0,82; -0,41; 0,41}");
-//    check(
-//        "Eigenvectors[{{0.0,1.0,-1.0},{1.0,1.0,0.0},{-1.0,0.0,1.0}}]",
-//        "{{0.577350269189626,0.5773502691896254,-0.5773502691896257},"
-//            + "{-1.73268085632541E-16,-0.7071067811865476,-0.7071067811865474},"
-//            + "{0.8164965809277261,-0.40824829046386296,0.40824829046386296}}");
-//    check(
-//        "{{0.0,1.0,-1.0},{1.0,1.0,0.0},{-1.0,0.0,1.0}}.{-1.73268085632541E-16,-0.7071067811865476,-0.7071067811865474}",
-//        "{-2.220446049250313E-16,-0.7071067811865478,-0.7071067811865471}");
+    // double[][] m = { { 0.0, 1.0, -1.0 }, { 1.0, 1.0, 0.0 }, { -1.0, 0.0, 1.0
+    // } };
+    // RealMatrix rm = new Array2DRowRealMatrix(m);
+    // assertEquals(rm.toString(),
+    // "Array2DRowRealMatrix{{0.0,1.0,-1.0},{1.0,1.0,0.0},{-1.0,0.0,1.0}}");
+    // EigenDecompositionImpl ed = new EigenDecompositionImpl(rm,
+    // MathUtils.SAFE_MIN);
+    // RealVector rv0 = ed.getEigenvector(0);
+    // RealVector rv1 = ed.getEigenvector(1);
+    // RealVector rv2 = ed.getEigenvector(2);
+    // assertEquals(rv0.toString(), "{0,58; 0,58; -0,58}");
+    // assertEquals(rv1.toString(), "{-0; -0,71; -0,71}");
+    // assertEquals(rv2.toString(), "{0,82; -0,41; 0,41}");
+    // check(
+    // "Eigenvectors[{{0.0,1.0,-1.0},{1.0,1.0,0.0},{-1.0,0.0,1.0}}]",
+    // "{{0.577350269189626,0.5773502691896254,-0.5773502691896257},"
+    // + "{-1.73268085632541E-16,-0.7071067811865476,-0.7071067811865474},"
+    // + "{0.8164965809277261,-0.40824829046386296,0.40824829046386296}}");
+    // check(
+    // "{{0.0,1.0,-1.0},{1.0,1.0,0.0},{-1.0,0.0,1.0}}.{-1.73268085632541E-16,-0.7071067811865476,-0.7071067811865474}",
+    // "{-2.220446049250313E-16,-0.7071067811865478,-0.7071067811865471}");
   }
 
   public void testSystem084() {
@@ -945,6 +946,7 @@ public class SystemTestCase extends AbstractTestCase {
 
   public void testSystem165() {
     check("Expand[(a+b)*(c+d)]", "a*c+b*c+a*d+b*d");
+    check("Expand[(x+3)/((x+4)*(x+2))]", "(3+x)*(8+6*x+x^2)^(-1)");
   }
 
   public void testSystem166() {
@@ -968,11 +970,21 @@ public class SystemTestCase extends AbstractTestCase {
   }
 
   public void testSystem171() {
+    check("Integrate[(10 x^2 - 63 x + 29)/(x^3 - 11 x^2 + 40 x -48),x]",
+        "80*Log[-4+x]-70*Log[-3+x]+63*(-4+x)^(-1)");
+    // TODO conversion not implemented:
+    // check(
+    // "Integrate[1/(x^5+x-7),x]",
+    // "");
     check("Integrate[x,x]", "1/2*x^2");
+    check("Integrate[Sin[x],x]", "(-1)*Cos[x]");
+
   }
 
   public void testSystem172() {
-    check("Integrate[Sin[x],x]", "(-1)*Cos[x]");
+    check(
+        "Integrate[(x^7 - 24*x^4 - 4*x^2 + 8*x - 8)/(x^8 + 6*x^6 + 12*x^4 + 8*x^2),x]",
+        "Log[x]+x^(-1)+(3-x)*(2+x^2)^(-1)+6*x*(4+4*x^2+x^4)^(-1)");
   }
 
   public void testSystem173() {
