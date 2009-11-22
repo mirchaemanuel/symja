@@ -1,5 +1,5 @@
 /*
- * $Id: Integral.java 2863 2009-11-13 20:28:48Z kredel $
+ * $Id: Integral.java 2876 2009-11-15 17:15:57Z kredel $
  */
 
 package edu.jas.integrate;
@@ -19,8 +19,8 @@ import edu.jas.ufd.PartialFraction;
 
 
 /**
- * Container for an rational function integral.
- * integral(num/den) = ...
+ * Container for a rational function integral, polynomial version.
+ * integral(num/den) = pol + sum_rat( rat_i/rat_{i+1} ) + sum_log( a_i log ( d_i ) )
  * @author Heinz Kredel
  * @param <C> coefficient type
  */
@@ -29,13 +29,13 @@ public class Integral<C extends GcdRingElem<C>> implements Serializable {
 
 
     /**
-     * Original numerator polynomial coefficients from C.
+     * Original numerator polynomial with coefficients from C.
      */
     public final GenPolynomial<C> num;
 
 
     /**
-     * Original denominator polynomial coefficients from C.
+     * Original denominator polynomial with coefficients from C.
      */
     public final GenPolynomial<C> den;
 

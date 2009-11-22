@@ -1,5 +1,5 @@
 /*
- * $Id: FactorAbsolute.java 2848 2009-11-01 17:50:43Z kredel $
+ * $Id: FactorAbsolute.java 2873 2009-11-15 16:44:07Z kredel $
  */
 
 package edu.jas.ufd;
@@ -304,7 +304,7 @@ public abstract class FactorAbsolute<C extends GcdRingElem<C>> extends FactorAbs
 
     /**
      * Univariate GenPolynomial algebraic partial fraction decomposition, 
-     * Rothstein-Trager algorithm.
+     * Absolute factorization or Rothstein-Trager algorithm.
      * @param A univariate GenPolynomial, deg(A) < deg(P).
      * @param P univariate squarefree GenPolynomial, gcd(A,P) == 1.
      * @return partial fraction container.
@@ -339,7 +339,7 @@ public abstract class FactorAbsolute<C extends GcdRingElem<C>> extends FactorAbs
             return new PartialFraction<C>(A,P,cfactors,cdenom,afactors,adenom);
         }
         List<GenPolynomial<C>> Pfac = baseFactorsSquarefree(P);
-        System.out.println("\nPfac = " + Pfac);
+        //System.out.println("\nPfac = " + Pfac);
 
         List<GenPolynomial<C>> Afac = engine.basePartialFraction(A,Pfac);
 
@@ -357,7 +357,8 @@ public abstract class FactorAbsolute<C extends GcdRingElem<C>> extends FactorAbs
                 cdenom.add(pi); 
                 continue;
             }
-            PartialFraction<C> pf = baseAlgebraicPartialFractionIrreducible(ai,pi);
+            PartialFraction<C> pf = baseAlgebraicPartialFractionIrreducibleAbsolute(ai,pi);
+            //PartialFraction<C> pf = baseAlgebraicPartialFractionIrreducible(ai,pi);
             cfactors.addAll( pf.cfactors ); 
             cdenom.addAll( pf.cdenom ); 
             afactors.addAll( pf.afactors ); 
@@ -374,6 +375,7 @@ public abstract class FactorAbsolute<C extends GcdRingElem<C>> extends FactorAbs
      * @param P univariate squarefree GenPolynomial, gcd(A,P) == 1.
      * @return partial fraction container.
      */
+    @Deprecated
     public PartialFraction<C> baseAlgebraicPartialFractionIrreducible(GenPolynomial<C> A, GenPolynomial<C> P) {
         if (P == null || P.isZERO() ) {
             throw new RuntimeException(" P == null or P == 0");
@@ -403,36 +405,36 @@ public abstract class FactorAbsolute<C extends GcdRingElem<C>> extends FactorAbs
         // deriviative
         GenPolynomial<C> Pp = PolyUtil.<C> baseDeriviative(P);
         //no: Pp = Pp.monic();
-        System.out.println("\nP  = " + P);
-        System.out.println("Pp = " + Pp);
+        //System.out.println("\nP  = " + P);
+        //System.out.println("Pp = " + Pp);
 
         // Q[t]
         String[] vars = new String[] { "t" };
         GenPolynomialRing<C> cfac = new GenPolynomialRing<C>(pfac.coFac, 1, pfac.tord, vars);
         GenPolynomial<C> t = cfac.univariate(0);
-        System.out.println("t = " + t);
+        //System.out.println("t = " + t);
 
         // Q[x][t]
         GenPolynomialRing<GenPolynomial<C>> rfac = new GenPolynomialRing<GenPolynomial<C>>(pfac, cfac); // sic
-        System.out.println("rfac = " + rfac.toScript());
+        //System.out.println("rfac = " + rfac.toScript());
 
         // transform polynomials to bi-variate polynomial
         GenPolynomial<GenPolynomial<C>> Ac = PolyUfdUtil.<C> introduceLowerVariable(rfac, A);
-        System.out.println("Ac = " + Ac);
+        //System.out.println("Ac = " + Ac);
         GenPolynomial<GenPolynomial<C>> Pc = PolyUfdUtil.<C> introduceLowerVariable(rfac, P);
-        System.out.println("Pc = " + Pc);
+        //System.out.println("Pc = " + Pc);
         GenPolynomial<GenPolynomial<C>> Pcp = PolyUfdUtil.<C> introduceLowerVariable(rfac, Pp);
-        System.out.println("Pcp = " + Pcp);
+        //System.out.println("Pcp = " + Pcp);
 
         // Q[t][x]
         GenPolynomialRing<GenPolynomial<C>> rfac1 = Pc.ring;
-        System.out.println("rfac1 = " + rfac1.toScript());
+        //System.out.println("rfac1 = " + rfac1.toScript());
 
         // A - t P'
         GenPolynomial<GenPolynomial<C>> tc = rfac1.getONE().multiply(t);
-        System.out.println("tc = " + tc);
+        //System.out.println("tc = " + tc);
         GenPolynomial<GenPolynomial<C>> At = Ac.subtract( tc.multiply(Pcp) ); 
-        System.out.println("At = " + At);
+        //System.out.println("At = " + At);
 
         GreatestCommonDivisorSubres<C> engine = new GreatestCommonDivisorSubres<C>();
         // = GCDFactory.<C>getImplementation( cfac.coFac );
@@ -442,13 +444,13 @@ public abstract class FactorAbsolute<C extends GcdRingElem<C>> extends FactorAbs
         //System.out.println("Rc = " + Rc);
         GenPolynomial<C> res = Rc.leadingBaseCoefficient();
         //no: res = res.monic();
-        System.out.println("\nres = " + res);
+        //System.out.println("\nres = " + res);
 
         SortedMap<GenPolynomial<C>,Long> resfac = baseFactors(res);
-        System.out.println("resfac = " + resfac + "\n");
+        //System.out.println("resfac = " + resfac + "\n");
 
         for ( GenPolynomial<C> r : resfac.keySet() ) {
-            System.out.println("\nr(t) = " + r);
+            //System.out.println("\nr(t) = " + r);
             if ( r.isConstant() ) {
                 continue;
             }
@@ -461,38 +463,38 @@ public abstract class FactorAbsolute<C extends GcdRingElem<C>> extends FactorAbs
             pfac = pfac.clone();
             vars = pfac.setVars(vars);
             r = pfac.copy(r); // hack to exchange the variables
-            System.out.println("r(z_) = " + r);
+            //System.out.println("r(z_) = " + r);
             AlgebraicNumberRing<C> afac = new AlgebraicNumberRing<C>(r, true); // since irreducible
-            System.out.println("afac = " + afac.toScript());
+            logger.debug("afac = " + afac.toScript());
             AlgebraicNumber<C> a = afac.getGenerator();
             //no: a = a.negate();
-            System.out.println("a = " + a);
+            //System.out.println("a = " + a);
 
             // K(alpha)[x]
             GenPolynomialRing<AlgebraicNumber<C>> pafac 
                 = new GenPolynomialRing<AlgebraicNumber<C>>(afac, Pc.ring);
-            System.out.println("pafac = " + pafac.toScript());
+            //System.out.println("pafac = " + pafac.toScript());
 
             // convert to K(alpha)[x]
             GenPolynomial<AlgebraicNumber<C>> Pa = PolyUtil.<C> convertToAlgebraicCoefficients(pafac, P);
-            System.out.println("Pa = " + Pa);
+            //System.out.println("Pa = " + Pa);
             GenPolynomial<AlgebraicNumber<C>> Pap = PolyUtil.<C> convertToAlgebraicCoefficients(pafac, Pp);
-            System.out.println("Pap = " + Pap);
+            //System.out.println("Pap = " + Pap);
             GenPolynomial<AlgebraicNumber<C>> Aa = PolyUtil.<C> convertToAlgebraicCoefficients(pafac, A);
-            System.out.println("Aa = " + Aa);
+            //System.out.println("Aa = " + Aa);
 
             // A - a P'
             GenPolynomial<AlgebraicNumber<C>> Ap = Aa.subtract( Pap.multiply(a) ); 
-            System.out.println("Ap = " + Ap);
+            //System.out.println("Ap = " + Ap);
 
             if ( aengine == null ) {
                 aengine = GCDFactory.<AlgebraicNumber<C>>getImplementation( afac );
                 //System.out.println("aengine = " + aengine);
             }
             GenPolynomial<AlgebraicNumber<C>> Ga = aengine.baseGcd(Pa,Ap);
-            System.out.println("Ga = " + Ga);
+            //System.out.println("Ga = " + Ga);
             if ( Ga.isConstant() ) {
-                System.out.println("warning constant gcd ignored");
+                //System.out.println("warning constant gcd ignored");
                 continue;
             }
             afactors.add( a );
@@ -504,11 +506,11 @@ public abstract class FactorAbsolute<C extends GcdRingElem<C>> extends FactorAbs
                 if ( !qra[1].isZERO() ) {
                     throw new RuntimeException("remainder not zero");
                 }
-                System.out.println("Qa = " + Qa);
+                //System.out.println("Qa = " + Qa);
                 afactors.add( a.negate() );
                 adenom.add( Qa );
             }
-            if ( P.degree(0) == 3 && Ga.degree(0) == 1 ) {
+            if ( false && P.degree(0) == 3 && Ga.degree(0) == 1 ) {
                 GenPolynomial<AlgebraicNumber<C>>[] qra = PolyUtil.<AlgebraicNumber<C>> basePseudoQuotientRemainder(Pa,Ga);
                 GenPolynomial<AlgebraicNumber<C>> Qa = qra[0];
                 if ( !qra[1].isZERO() ) {
@@ -560,26 +562,26 @@ public abstract class FactorAbsolute<C extends GcdRingElem<C>> extends FactorAbs
         Factors<C> afacs = factorsAbsoluteIrreducible(P);
         System.out.println("linear algebraic factors = " + afacs);
 
-        System.out.println("afactors      = " + afacs.afactors);
+        //System.out.println("afactors      = " + afacs.afactors);
         //System.out.println("arfactors     = " + afacs.arfactors);
-        System.out.println("arfactors pol = " + afacs.arfactors.get(0).poly);
-        System.out.println("arfactors2    = " + afacs.arfactors.get(0).afactors);
+        //System.out.println("arfactors pol = " + afacs.arfactors.get(0).poly);
+        //System.out.println("arfactors2    = " + afacs.arfactors.get(0).afactors);
 
         List<GenPolynomial<AlgebraicNumber<C>>> fact = afacs.getFactors();
-        System.out.println("factors       = " + fact);
+        //System.out.println("factors       = " + fact);
         GenPolynomial<AlgebraicNumber<C>> Pa = afacs.apoly;
 
         GenPolynomial<AlgebraicNumber<C>> Aa = PolyUtil
                 .<C> convertToRecAlgebraicCoefficients(1, Pa.ring, A);
 
 
-        GreatestCommonDivisorAbstract<AlgebraicNumber<C>> aengine = GCDFactory.getImplementation(afacs.afac);
+        GreatestCommonDivisorAbstract<AlgebraicNumber<C>> aengine = GCDFactory.getProxy(afacs.afac);
 
-        System.out.println("denom         = " + Pa);
-        System.out.println("numer         = " + Aa);
+        //System.out.println("denom         = " + Pa);
+        //System.out.println("numer         = " + Aa);
 
         List<GenPolynomial<AlgebraicNumber<C>>> numers = aengine.basePartialFraction(Aa,fact);
-        System.out.println("part frac     = " + numers);
+        //System.out.println("part frac     = " + numers);
         GenPolynomial<AlgebraicNumber<C>> A0 = numers.remove(0);
         if ( ! A0.isZERO() ) {
             throw new RuntimeException(" A0 != 0: deg(A)>= deg(P)");
