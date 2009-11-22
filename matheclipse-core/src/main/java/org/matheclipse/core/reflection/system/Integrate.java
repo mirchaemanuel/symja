@@ -16,9 +16,11 @@ import org.matheclipse.core.interfaces.INumber;
 import org.matheclipse.core.interfaces.ISignedNumber;
 import org.matheclipse.core.interfaces.ISymbol;
 
+import edu.jas.application.Quotient;
+import edu.jas.application.QuotientRing;
 import edu.jas.arith.BigRational;
 import edu.jas.integrate.ElementaryIntegration;
-import edu.jas.integrate.Integral;
+import edu.jas.integrate.QuotIntegral;
 import edu.jas.poly.GenPolynomial;
 
 /**
@@ -102,27 +104,8 @@ public class Integrate extends AbstractFunctionEvaluator implements
       }
       if (header == F.Times || header == F.Power) {
         IExpr arg = F.eval(F.ExpandAll, list);// ExpandAll.expandAll(list);
-        IExpr[] parts = null;
         if (lst.get(2) instanceof ISymbol) {
-          if (arg.isASTSizeGE(F.Times, 3)) {
-            parts = Expand.getFractionalParts((IAST) arg);
-          } else if (arg.isAST(F.Power, 3)) {
-            IAST temp = (IAST) arg;
-            if (temp.get(2) instanceof ISignedNumber) {
-              parts = new IExpr[2];
-              if (temp.get(2).equals(F.CN1)) {
-                parts[0] = F.C1;
-                parts[1] = temp.get(1);
-              } else if (((ISignedNumber) temp.get(2)).isNegative()) {
-                parts[0] = F.C1;
-                parts[1] = F.Power(temp.get(1), ((ISignedNumber) temp.get(2))
-                    .negate());
-              } else {
-                parts[0] = arg;
-                parts[1] = F.C1;
-              }
-            }
-          }
+          IExpr[] parts = getFractionalParts2(arg);
           if (parts != null) {
             try {
               ArrayList<IExpr> varList = new ArrayList<IExpr>();
@@ -132,14 +115,17 @@ public class Integrate extends AbstractFunctionEvaluator implements
               JASConvert<BigRational> jas = new JASConvert<BigRational>(varList);
               GenPolynomial<BigRational> numerator = jas.expr2Poly(parts[0]);
               GenPolynomial<BigRational> denominator = jas.expr2Poly(parts[1]);
+              QuotientRing<BigRational> qfac = new QuotientRing<BigRational>(
+                  jas.getPolynomialRingFactory());
+              Quotient<BigRational> q = new Quotient<BigRational>(qfac,
+                  numerator, denominator);
               ElementaryIntegration<BigRational> eIntegrator = new ElementaryIntegration<BigRational>(
                   BigRational.ZERO);
-              Integral<BigRational> integral = eIntegrator.integrate(numerator,
-                  denominator);
+              QuotIntegral<BigRational> integral = eIntegrator.integrate(q);
               if (Config.SHOW_STACKTRACE) {
                 System.out.println("Result: " + integral);
               }
-              return jas.integral2Expr(integral);
+              return jas.quotIntegral2Expr(integral);
             } catch (RuntimeException re) {
               // in case the epression couldn't be converted to JAS format
               if (Config.DEBUG) {
@@ -153,6 +139,36 @@ public class Integrate extends AbstractFunctionEvaluator implements
     }
 
     return null;
+  }
+
+  /**
+   * 
+   * @param arg
+   * @return <code>null</code> if the expression couldn't be split into
+   *         numerator and denominator polynomials
+   */
+  public static IExpr[] getFractionalParts2(IExpr arg) {
+    IExpr[] parts = null;
+    if (arg.isASTSizeGE(F.Times, 3)) {
+      parts = Expand.getFractionalParts((IAST) arg);
+    } else if (arg.isAST(F.Power, 3)) {
+      IAST temp = (IAST) arg;
+      if (temp.get(2) instanceof ISignedNumber) {
+        parts = new IExpr[2];
+        if (temp.get(2).equals(F.CN1)) {
+          parts[0] = F.C1;
+          parts[1] = temp.get(1);
+        } else if (((ISignedNumber) temp.get(2)).isNegative()) {
+          parts[0] = F.C1;
+          parts[1] = F.Power(temp.get(1), ((ISignedNumber) temp.get(2))
+              .negate());
+        } else {
+          parts[0] = arg;
+          parts[1] = F.C1;
+        }
+      }
+    }
+    return parts;
   }
 
   /*
