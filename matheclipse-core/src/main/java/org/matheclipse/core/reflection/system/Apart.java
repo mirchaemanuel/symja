@@ -1,9 +1,32 @@
 package org.matheclipse.core.reflection.system;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.SortedMap;
+
+import org.matheclipse.basic.Config;
+import org.matheclipse.core.convert.JASConvert;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
+import org.matheclipse.core.expression.ASTRange;
+import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
 
+import edu.jas.arith.BigRational;
+import edu.jas.poly.GenPolynomial;
+import edu.jas.structure.Power;
+import edu.jas.ufd.FactorAbstract;
+import edu.jas.ufd.FactorFactory;
+import edu.jas.ufd.GCDFactory;
+import edu.jas.ufd.GreatestCommonDivisorAbstract;
+
+/**
+ * Evaluate the partial fraction decomposition of a univariate polynomial
+ * fraction.
+ * 
+ * See <a href="http://en.wikipedia.org/wiki/Partial_fraction">Wikipedia -
+ * Partial fraction decomposition</a>
+ */
 public class Apart extends AbstractFunctionEvaluator {
 
   public Apart() {
@@ -11,143 +34,77 @@ public class Apart extends AbstractFunctionEvaluator {
 
   @Override
   public IExpr evaluate(final IAST lst) {
-    if (lst.size() != 3 && lst.size() != 4) {
+    if (lst.size() != 2) {
       return null;
     }
-//    IAST variableList = null;
-//
-//    variableList = Variables.call(lst.get(1));
-//    if (variableList.size() != 2) {
-//      // factorization only possible for univariate polynomials
-//      return null;
-//    }
-//    // IExpr variable = variableList.get(1);
-//    try {
-//      IExpr exprDenominator = F.eval(F.ExpandAll, lst.get(1));
-//      IExpr exprNumerator = F.eval(F.ExpandAll, lst.get(2));
-//      ASTRange r = new ASTRange(variableList, 1);
-//      List<IExpr> varList = r.toList();
-//
-//      // if (lst.size() == 3) {
-//      // final EvalEngine engine = EvalEngine.get();
-//      // final Options options = new Options(F.Factor, engine, lst, 2);
-//      //        
-//      // }
-//      JASConvert<Rational> jasNumerator = new JASConvert<Rational>(varList);
-//      GenPolynomial<Rational> pNumerator = jasNumerator.expr2Poly(exprNumerator);
-//      JASConvert<Rational> jasDenominator = new JASConvert<Rational>(varList);
-//      GenPolynomial<Rational> pDenominator = jasDenominator.expr2Poly(exprDenominator);      
-//      // calculate factors
-//      FactorAbstract<Rational> factorAbstract = FactorFactory
-//          .getImplementation(Rational.ONE);
-//      SortedMap<GenPolynomial<Rational>, Long> map = factorAbstract
-//          .baseFactors(pDenominator);
-//      
-//
-//      BlockFieldMatrix<Rational> matrix = new BlockFieldMatrix<Rational>(
-//          RationalField.CONST, 2, 2);
-//      matrix.setEntry(0, 0, Rational.ONE);
-//      matrix.setEntry(0, 1, Rational.ONE);
-//      matrix.setEntry(1, 0, Rational.valueOf(5, 1));
-//      matrix.setEntry(1, 1, Rational.valueOf(-8, 1));
-//
-//      final FieldLUDecompositionImpl<Rational> lu = new FieldLUDecompositionImpl<Rational>(
-//          matrix);
-//      FieldDecompositionSolver<Rational> fds = lu.getSolver();
-//      long degreeDenominator = pDenominator.degree();
-//      FieldVector<Rational> b = new ArrayFieldVector<Rational>(
-//          RationalField.CONST, (int)degreeDenominator-1);
-//      for (Monomial<Rational> monomial : pDenominator) {
-//        monomial.coefficient();
-//        b.setEntry(0, Rational.ONE);
-//      }
-//      
-//      b.setEntry(0, Rational.ONE);
-//      b.setEntry(1, Rational.valueOf(3, 1));
-//      FieldVector<Rational> lsResult = fds.solve(b);
-//      System.out.println("[" + lsResult.getEntry(0) + ","
-//          + lsResult.getEntry(1) + "]");
-//      
-//      
-//      
-//      int i = 0;
-//      for (SortedMap.Entry<GenPolynomial<Rational>, Long> entry : map
-//          .entrySet()) {
-//        GenPolynomial<Rational> key = entry.getKey();
-//        GenPolynomial<edu.jas.arith.BigInteger> iPoly = (GenPolynomial<edu.jas.arith.BigInteger>) jasDenominator
-//            .factorTerms(key)[2];
-//        long degree = iPoly.degree();
-//        Long val = entry.getValue();
-//        if (degree == 2) {
-//
-//        } else {
-//          iPoly.trailingBaseCoefficient();
-//        }
-//      }
-//      IAST result = F.Plus();
-//      i = 0;
-//      for (SortedMap.Entry<GenPolynomial<Rational>, Long> entry : map
-//          .entrySet()) {
-//        GenPolynomial<Rational> key = entry.getKey();
-//        GenPolynomial<BigInteger> iPoly = (GenPolynomial<BigInteger>) jasDenominator
-//            .factorTerms(key)[2];
-//        long degree = iPoly.degree();
-//        Long val = entry.getValue();
-//        if (degree == 2) {
-//
-//        } else {
-//          result.add(F.Times(F.fraction(lsResult.getEntry(i++)), F.Power(jasDenominator
-//              .integerPoly2Expr(iPoly), F.CN1)));
-//        }
-//        // result.add(F.Power(jas.integerPoly2Expr(iPoly), F.integer(val)));
-//      }
-//      return result;
-//      // BigInteger[] mExpr =
-//      // Poly2BigIntegerConverter.expr2Polynomial(lst.get(1), variable);
-//      // // for (int i = 0; i < mExpr.length; i++) {
-//      // // System.out.println(i+":"+mExpr[i].toString());
-//      // // }
-//      // List univariateFactorizationOverZresult =
-//      // UnivariateFactorizationOverZ.univariateFactorizationOverZ(mExpr,
-//      // mExpr.length - 1);
-//      // int runIndex;
-//      // int index;
-//      // IAST result = F.Times();
-//      // for (runIndex = 0; runIndex <=
-//      // (univariateFactorizationOverZresult.size() - 1); runIndex = runIndex +
-//      // 3) {
-//      // IAST factor = F.Plus();
-//      // for (index = (Integer)
-//      // univariateFactorizationOverZresult.get(runIndex); index >= 0; index--)
-//      // {
-//      // BigInteger temp = ((BigInteger[])
-//      // univariateFactorizationOverZresult.get(runIndex + 1))[index];
-//      // if (!temp.equals(BigInteger.ZERO)) {
-//      // if (!temp.equals(BigInteger.ONE) || index <= 0) {
-//      // factor.add(F.Times(F.integer(temp), F.Power(variable,
-//      // F.integer(index))));
-//      // } else {
-//      // factor.add(F.Power(variable, F.integer(index)));
-//      // }
-//      // }
-//      // }
-//      //
-//      // Integer itemp = (Integer)
-//      // univariateFactorizationOverZresult.get(runIndex + 2);
-//      // if (itemp != 1) {
-//      // result.add(F.Power(factor, F.integer((Integer)
-//      // univariateFactorizationOverZresult.get(runIndex + 2))));
-//      // } else {
-//      // result.add(factor);
-//      // }
-//      // }
-//      //
-//      // return result;
-//    } catch (Exception e) {
-//      if (Config.DEBUG) {
-//        e.printStackTrace();
-//      }
-//    }
+    IAST variableList = null;
+
+    variableList = Variables.call(lst.get(1));
+    if (variableList.size() != 2) {
+      // factorization only possible for univariate polynomials
+      return null;
+    }
+    try {
+      final IExpr header = lst.get(1).head();
+      if (header == F.Times || header == F.Power) {
+        IExpr[] parts = Integrate.getFractionalParts2(lst.get(1));
+        if (parts != null) {
+
+          IExpr exprNumerator = F.eval(F.ExpandAll, parts[0]);
+          IExpr exprDenominator = F.eval(F.ExpandAll, parts[1]);
+          ASTRange r = new ASTRange(variableList, 1);
+          List<IExpr> varList = r.toList();
+
+          String[] varListStr = new String[1];
+          varListStr[0] = variableList.get(1).toString();
+          JASConvert<BigRational> jas = new JASConvert<BigRational>(varList);
+          final GreatestCommonDivisorAbstract<BigRational> ufd = GCDFactory
+              .getProxy(BigRational.ZERO);
+          GenPolynomial<BigRational> numerator = jas.expr2Poly(exprNumerator);
+          GenPolynomial<BigRational> denominator = jas
+              .expr2Poly(exprDenominator);
+
+          // get factors
+          FactorAbstract<BigRational> factorAbstract = FactorFactory
+              .getImplementation(BigRational.ZERO);
+          SortedMap<GenPolynomial<BigRational>, Long> sfactors = factorAbstract
+              .baseFactors(denominator);
+
+          List<GenPolynomial<BigRational>> D = new ArrayList<GenPolynomial<BigRational>>(
+              sfactors.keySet());
+          List<GenPolynomial<BigRational>> DP = new ArrayList<GenPolynomial<BigRational>>();
+          for (GenPolynomial<BigRational> f : D) {
+            long e = sfactors.get(f);
+            for (long i = 0; i < e; i++) {
+              // GenPolynomial<BigRational> dp = Power
+              // .<GenPolynomial<BigRational>> positivePower(f, e);
+              DP.add(f);
+            }
+          }
+
+          // List<GenPolynomial<BigRational>> Di = ufd.coPrime(DP);
+          List<GenPolynomial<BigRational>> Ai = ufd.basePartialFraction(
+              numerator, DP);
+          // return [ A0, A1,..., An ] with
+          // A/prod(D) = A0 + sum( Ai/Di ) with deg(Ai) < deg(Di).
+          IAST result = F.Plus();
+          if (Ai.size() > 0) {
+            result.add(jas.poly2Expr(Ai.get(0), null));
+            for (int i = 1; i < Ai.size(); i++) {
+              result.add(F.Times(jas.poly2Expr(Ai.get(i), null), F.Power(jas
+                  .poly2Expr(DP.get(i - 1), null), F.CN1)));
+            }
+          }
+          return result;
+        }
+      } else {
+        return lst.get(1);
+      }
+    } catch (Exception e) {
+      if (Config.SHOW_STACKTRACE) {
+        e.printStackTrace();
+      }
+    }
     return null;
   }
 
