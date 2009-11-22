@@ -1,5 +1,5 @@
 /*
- * $Id: Quotient.java 2748 2009-07-15 19:47:15Z kredel $
+ * $Id: Quotient.java 2870 2009-11-15 12:03:03Z kredel $
  */
 
 package edu.jas.application;
@@ -503,6 +503,26 @@ public class Quotient<C extends GcdRingElem<C>> implements GcdRingElem<Quotient<
         }
         GenPolynomial<C> n = num.multiply(b);
         return new Quotient<C>(ring, n, d, true);
+    }
+
+
+    /**
+     * Quotient multiplication by coefficient.
+     * @param b coefficient.
+     * @return this*b.
+     */
+    public Quotient<C> multiply(C b) {
+        if (b == null || b.isZERO()) {
+            return ring.getZERO();
+        }
+        if (num.isZERO()) {
+            return this;
+        }
+        if (b.isONE()) {
+            return this;
+        }
+        GenPolynomial<C> n = num.multiply(b);
+        return new Quotient<C>(ring, n, den, true);
     }
 
 
