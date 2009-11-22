@@ -206,6 +206,8 @@ public class F {
   public static ISymbol Quotient;
 
   public static ISymbol Rational;
+  
+  public static ISymbol RootOf;
 
   public static ISymbol ReplaceAll;
 
@@ -767,6 +769,7 @@ public class F {
       Product = predefinedSymbol("Product");
       Quotient = predefinedSymbol("Quotient");
       Reverse = predefinedSymbol("Reverse");
+      RootOf = predefinedSymbol("RootOf");
       RotateLeft = predefinedSymbol("RotateLeft");
       RotateRight = predefinedSymbol("RotateRight");
       Rule = predefinedSymbol("Rule");

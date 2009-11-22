@@ -970,18 +970,15 @@ public class SystemTestCase extends AbstractTestCase {
   }
 
   public void testSystem171() {
-    check("Integrate[(10 x^2 - 63 x + 29)/(x^3 - 11 x^2 + 40 x -48),x]",
-        "80*Log[-4+x]-70*Log[-3+x]+63*(-4+x)^(-1)");
-    // TODO conversion not implemented:
-    // check(
-    // "Integrate[1/(x^5+x-7),x]",
-    // "");
     check("Integrate[x,x]", "1/2*x^2");
     check("Integrate[Sin[x],x]", "(-1)*Cos[x]");
 
+    // check("Integrate[1/(x^5+x-7),x]", "");
   }
 
   public void testSystem172() {
+    check("Integrate[(10 x^2 - 63 x + 29)/(x^3 - 11 x^2 + 40 x -48),x]",
+        "80*Log[-4+x]-70*Log[-3+x]+63*(-4+x)^(-1)");
     check(
         "Integrate[(x^7 - 24*x^4 - 4*x^2 + 8*x - 8)/(x^8 + 6*x^6 + 12*x^4 + 8*x^2),x]",
         "Log[x]+x^(-1)+(3-x)*(2+x^2)^(-1)+6*x*(4+4*x^2+x^4)^(-1)");
@@ -2234,9 +2231,14 @@ public class SystemTestCase extends AbstractTestCase {
         "7/2+7/4*x+2*x^2+x^3");
   }
 
-  // public void testSystem995() {
-  // check("Apart[x^2-3*x-40,x+3]", "");
-  // }
+  public void testSystem995() {
+    check("Apart[(x+3)/(x^2-3*x-40)]", "11/13*(-8+x)^(-1)+2/13*(5+x)^(-1)");
+    check("Apart[(10*x^2+12*x+20)/(x^3-8)]",
+        "7*(-2+x)^(-1)+(4+3*x)*(4+2*x+x^2)^(-1)");
+    check("Apart[(10*x^2-63*x+29)/(x^3-11*x^2+40*x-48)]",
+        "Apart[(29-63*x+10*x^2)*(-48+40*x-11*x^2+x^3)^(-1)]");
+
+  }
 
   public void testSystem996() {
     check("FactorTerms[3+3*x^3]", "3*(1+x^3)");
