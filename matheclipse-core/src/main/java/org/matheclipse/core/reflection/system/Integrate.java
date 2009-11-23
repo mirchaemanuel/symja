@@ -148,6 +148,7 @@ public class Integrate extends AbstractFunctionEvaluator implements
    *         numerator and denominator polynomials
    */
   public static IExpr[] getFractionalParts2(IExpr arg) {
+    // TODO extract this method in a Utility class
     IExpr[] parts = null;
     if (arg.isASTSizeGE(F.Times, 3)) {
       parts = Expand.getFractionalParts((IAST) arg);

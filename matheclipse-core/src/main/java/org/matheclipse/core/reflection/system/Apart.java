@@ -14,11 +14,10 @@ import org.matheclipse.core.interfaces.IExpr;
 
 import edu.jas.arith.BigRational;
 import edu.jas.poly.GenPolynomial;
-import edu.jas.structure.Power;
 import edu.jas.ufd.FactorAbstract;
 import edu.jas.ufd.FactorFactory;
-import edu.jas.ufd.GCDFactory;
-import edu.jas.ufd.GreatestCommonDivisorAbstract;
+import edu.jas.ufd.SquarefreeAbstract;
+import edu.jas.ufd.SquarefreeFactory;
 
 /**
  * Evaluate the partial fraction decomposition of a univariate polynomial
@@ -58,8 +57,6 @@ public class Apart extends AbstractFunctionEvaluator {
           String[] varListStr = new String[1];
           varListStr[0] = variableList.get(1).toString();
           JASConvert<BigRational> jas = new JASConvert<BigRational>(varList);
-          final GreatestCommonDivisorAbstract<BigRational> ufd = GCDFactory
-              .getProxy(BigRational.ZERO);
           GenPolynomial<BigRational> numerator = jas.expr2Poly(exprNumerator);
           GenPolynomial<BigRational> denominator = jas
               .expr2Poly(exprDenominator);
@@ -72,30 +69,32 @@ public class Apart extends AbstractFunctionEvaluator {
 
           List<GenPolynomial<BigRational>> D = new ArrayList<GenPolynomial<BigRational>>(
               sfactors.keySet());
-          List<GenPolynomial<BigRational>> DP = new ArrayList<GenPolynomial<BigRational>>();
-          for (GenPolynomial<BigRational> f : D) {
-            long e = sfactors.get(f);
-            for (long i = 0; i < e; i++) {
-              // GenPolynomial<BigRational> dp = Power
-              // .<GenPolynomial<BigRational>> positivePower(f, e);
-              DP.add(f);
-            }
-          }
 
-          // List<GenPolynomial<BigRational>> Di = ufd.coPrime(DP);
-          List<GenPolynomial<BigRational>> Ai = ufd.basePartialFraction(
-              numerator, DP);
-          // return [ A0, A1,..., An ] with
-          // A/prod(D) = A0 + sum( Ai/Di ) with deg(Ai) < deg(Di).
-          IAST result = F.Plus();
+          SquarefreeAbstract<BigRational> sqf = SquarefreeFactory
+              .getImplementation(BigRational.ZERO);
+          List<List<GenPolynomial<BigRational>>> Ai = sqf.basePartialFraction(
+              numerator, sfactors);
+          // returns [ [Ai0, Ai1,..., Aie_i], i=0,...,k ] with A/prod(D) =
+          // A0 + sum( sum ( Aij/di^j ) ) with deg(Aij) < deg(di).
+
           if (Ai.size() > 0) {
-            result.add(jas.poly2Expr(Ai.get(0), null));
+            IAST result = F.Plus();
+            result.add(jas.poly2Expr(Ai.get(0).get(0), null));
             for (int i = 1; i < Ai.size(); i++) {
-              result.add(F.Times(jas.poly2Expr(Ai.get(i), null), F.Power(jas
-                  .poly2Expr(DP.get(i - 1), null), F.CN1)));
+              List<GenPolynomial<BigRational>> list = Ai.get(i);
+              long j = 0L;
+              for (GenPolynomial<BigRational> genPolynomial : list) {
+                if (!genPolynomial.isZERO()) {
+                  result.add(F.Times(jas.poly2Expr(genPolynomial, null), F
+                      .Power(jas.poly2Expr(D.get(i - 1), null), F.integer(j
+                          * (-1L)))));
+                }
+                j++;
+              }
+
             }
+            return result;
           }
-          return result;
         }
       } else {
         return lst.get(1);
