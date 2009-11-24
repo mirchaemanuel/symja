@@ -119,7 +119,7 @@ Example:
  
 === The Console application ===
  
-You can test the evaluation engine in the the *org.matheclipse.parser.server.util.Console* application. Switch between the *double* and *complex* evaluation modes by typing the keywords *double* or *complex*.
+You can test the evaluation engine in the *org.matheclipse.parser.server.util.Console* application. Switch between the *double* and *complex* evaluation modes by typing the keywords *double* or *complex*.
  
 The initial console looks like the following test output:
  
