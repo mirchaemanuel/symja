@@ -18,7 +18,7 @@ SVN Sourcecode tree:
 The parser is published under the [http://www.apache.org/licenses/LICENSE-2.0 Apache License, Version 2.0].
 
 == Examples ==
-The following examples show the numeric evaluation engines shipped with the parser package. For using the symboli engine see the JSR223Support and RunSymja documents.
+The following examples show the numeric evaluation engines shipped with the parser package. For using the symbolic math engine see the [JSR223Support] and RunSymja documents.
 
 === Evaluate an expression in double mode ===
  
