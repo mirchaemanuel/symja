@@ -2034,6 +2034,13 @@ public class SystemTestCase extends AbstractTestCase {
     check("Denominator[3/4]", "4");
     check("Numerator[42]", "42");
     check("Denominator[42]", "1");
+    check("Numerator[3/4*x^(-3)]", "3");
+    check("Denominator[3/4*x^(-3)]", "4*x^3");
+    check("Numerator[x+3/4*x^(-3)]", "3/4*x^(-3)+x");
+    check("Denominator[x+3/4*x^(-3)]", "1");
+    check("Together[x+3/4*x^(-3)]", "1/4*(3+4*x^4)*x^(-3)");
+    check("Together[(x^2-2)^3/(x^2-2)+(x^2-2)^2/(x^2-2)]", "2-3*x^2+x^4");
+    check("Together[a/b+c/d]","(b*c+a*d)*b^(-1)*d^(-1)");
   }
 
   public void testSystem399() {
