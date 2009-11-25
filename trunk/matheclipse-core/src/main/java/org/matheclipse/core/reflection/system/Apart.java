@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.SortedMap;
 
 import org.matheclipse.basic.Config;
+import org.matheclipse.core.convert.ExprVariables;
 import org.matheclipse.core.convert.JASConvert;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
 import org.matheclipse.core.expression.ASTRange;
@@ -36,13 +37,12 @@ public class Apart extends AbstractFunctionEvaluator {
     if (lst.size() != 2) {
       return null;
     }
-    IAST variableList = null;
-
-    variableList = Variables.call(lst.get(1));
-    if (variableList.size() != 2) {
-      // factorization only possible for univariate polynomials
+    ExprVariables eVar = new ExprVariables(lst.get(1));
+    if (!eVar.isSize(1)) {
+      // partial fraction only possible for univariate polynomials
       return null;
     }
+    IAST variableList = eVar.getVarList();
     try {
       final IExpr header = lst.get(1).head();
       if (header == F.Times || header == F.Power) {

@@ -11,6 +11,7 @@ import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.IFraction;
 import org.matheclipse.core.interfaces.IInteger;
 import org.matheclipse.core.interfaces.ISymbol;
+import org.matheclipse.core.reflection.system.Variables;
 
 import edu.jas.application.Quotient;
 import edu.jas.arith.BigRational;
@@ -452,4 +453,5 @@ public class JASConvert<C extends RingElem<C>> {
     }
     return result;
   }
+
 }

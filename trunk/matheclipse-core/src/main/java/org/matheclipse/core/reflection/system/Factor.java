@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.SortedMap;
 
 import org.matheclipse.basic.Config;
+import org.matheclipse.core.convert.ExprVariables;
 import org.matheclipse.core.convert.JASConvert;
 import org.matheclipse.core.eval.EvalEngine;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
@@ -33,17 +34,15 @@ public class Factor extends AbstractFunctionEvaluator {
 		if (lst.size() != 2 && lst.size() != 3) {
 			return null;
 		}
-		IAST variableList = null;
 
-		variableList = Variables.call(lst.get(1));
-		if (variableList.size() != 2) {
-			// factorization only possible for univariate polynomials
-			return null;
-		}
-		IExpr variable = variableList.get(1);
+		ExprVariables eVar = new ExprVariables(lst.get(1));
+    if (!eVar.isSize(1)) {
+      // factor only possible for univariate polynomials
+      return null;
+    }
 		try {
 			IExpr expr = F.eval(F.ExpandAll, lst.get(1));
-			ASTRange r = new ASTRange(variableList, 1);
+			ASTRange r = new ASTRange(eVar.getVarList(), 1);
 			List<IExpr> varList = r.toList();
 			
 			if (lst.size() == 3) {
@@ -56,7 +55,7 @@ public class Factor extends AbstractFunctionEvaluator {
 						final BigInteger value = ((IInteger) option).getBigNumerator();
 						int intValue = ((IInteger) option).toInt();
 						ModIntegerRing modIntegerRing = new ModIntegerRing(intValue, value.isProbablePrime(32));
-						JASConvert<ModInteger> jas =  new JASConvert(varList, modIntegerRing);
+						JASConvert<ModInteger> jas =  new JASConvert<ModInteger>(varList, modIntegerRing);
 						GenPolynomial<ModInteger> poly = jas.expr2Poly(expr);
 
 						FactorAbstract<ModInteger> factorAbstract = FactorFactory.getImplementation(modIntegerRing);
@@ -90,47 +89,7 @@ public class Factor extends AbstractFunctionEvaluator {
 				result.add(F.Power(jas.integerPoly2Expr(iPoly), F.integer(val)));
 			}
 			return result;
-			// BigInteger[] mExpr =
-			// Poly2BigIntegerConverter.expr2Polynomial(lst.get(1), variable);
-			// // for (int i = 0; i < mExpr.length; i++) {
-			// // System.out.println(i+":"+mExpr[i].toString());
-			// // }
-			// List univariateFactorizationOverZresult =
-			// UnivariateFactorizationOverZ.univariateFactorizationOverZ(mExpr,
-			// mExpr.length - 1);
-			// int runIndex;
-			// int index;
-			// IAST result = F.Times();
-			// for (runIndex = 0; runIndex <=
-			// (univariateFactorizationOverZresult.size() - 1); runIndex = runIndex +
-			// 3) {
-			// IAST factor = F.Plus();
-			// for (index = (Integer)
-			// univariateFactorizationOverZresult.get(runIndex); index >= 0; index--)
-			// {
-			// BigInteger temp = ((BigInteger[])
-			// univariateFactorizationOverZresult.get(runIndex + 1))[index];
-			// if (!temp.equals(BigInteger.ZERO)) {
-			// if (!temp.equals(BigInteger.ONE) || index <= 0) {
-			// factor.add(F.Times(F.integer(temp), F.Power(variable,
-			// F.integer(index))));
-			// } else {
-			// factor.add(F.Power(variable, F.integer(index)));
-			// }
-			// }
-			// }
-			//
-			// Integer itemp = (Integer)
-			// univariateFactorizationOverZresult.get(runIndex + 2);
-			// if (itemp != 1) {
-			// result.add(F.Power(factor, F.integer((Integer)
-			// univariateFactorizationOverZresult.get(runIndex + 2))));
-			// } else {
-			// result.add(factor);
-			// }
-			// }
-			//
-			// return result;
+			
 		} catch (Exception e) {
 			if (Config.DEBUG) {
 				e.printStackTrace();

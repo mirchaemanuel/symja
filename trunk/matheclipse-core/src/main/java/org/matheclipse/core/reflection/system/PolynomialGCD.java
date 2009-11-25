@@ -1,6 +1,7 @@
 package org.matheclipse.core.reflection.system;
 
 import org.matheclipse.basic.Config;
+import org.matheclipse.core.convert.ExprVariables;
 import org.matheclipse.core.convert.JASConvert;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
 import org.matheclipse.core.expression.ASTRange;
@@ -26,28 +27,24 @@ public class PolynomialGCD extends AbstractFunctionEvaluator {
 		if (lst.size() < 3) {
 			return null;
 		}
-		IAST variableList = null;
-		variableList = Variables.call(lst.get(1));
-		if (variableList.size() != 2) {
-			// factorization only possible for univariate polynomials
-			return null;
-		}
-		// IExpr variable = variableList.get(1);
+		ExprVariables eVar = new ExprVariables(lst.get(1));
+		if (!eVar.isSize(1)) {
+      // gcd only possible for univariate polynomials
+      return null;
+    }
 		try {
 			IExpr expr = F.eval(F.ExpandAll, lst.get(1));
-			ASTRange r = new ASTRange(variableList, 1);
+			ASTRange r = new ASTRange(eVar.getVarList(), 1);
 			JASConvert<BigRational> jas = new JASConvert<BigRational>(r.toList());
 			GenPolynomial<BigRational> poly = jas.expr2Poly(expr);
 			GenPolynomial<BigRational> temp;
 			for (int i = 2; i < lst.size(); i++) {
-				variableList = Variables.call(lst.get(1));
-				if (variableList.size() != 2) {
-					// factorization only possible for univariate polynomials
-					return null;
-				}
+				eVar = new ExprVariables(lst.get(i));
+		    if (!eVar.isSize(1)) {
+		      // gcd only possible for univariate polynomials
+		      return null;
+		    }
 				expr = F.eval(F.ExpandAll, lst.get(i));
-				r = new ASTRange(variableList, 1);
-				jas = new JASConvert<BigRational>(r.toList());
 				temp = jas.expr2Poly(expr);
 				poly = poly.gcd(temp);
 			}

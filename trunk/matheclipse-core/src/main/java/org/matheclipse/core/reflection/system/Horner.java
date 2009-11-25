@@ -1,5 +1,6 @@
 package org.matheclipse.core.reflection.system;
 
+import org.matheclipse.core.convert.ExprVariables;
 import org.matheclipse.core.eval.EvalEngine;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
 import org.matheclipse.core.expression.F;
@@ -27,7 +28,8 @@ public class Horner extends AbstractFunctionEvaluator {
 			return expr;
 		}
 		IAST poly = (IAST) expr;
-		IAST variables = Variables.call(poly);
+		ExprVariables eVar = new ExprVariables(ast.get(1));
+		IAST variables = eVar.getVarList();
 		if (variables.size() >= 2) {
 			ISymbol sym = (ISymbol) variables.get(1);
 			if (poly.isASTSizeGE(F.Plus, 2)) {

@@ -77,6 +77,8 @@ public class F {
 
   public static ISymbol D;
 
+  public static ISymbol Denominator;
+  
   public static ISymbol Depth;
 
   public static ISymbol Det;
@@ -160,6 +162,8 @@ public class F {
   public static ISymbol Mod;
 
   public static ISymbol N;
+  
+  public static ISymbol Numerator;
 
   public static ISymbol Negative;
 
@@ -500,6 +504,11 @@ public class F {
     return binary(D, a0, a1);
   }
 
+  public static IAST Denominator(final IExpr a0) {
+
+    return unary(Denominator, a0);
+  }
+  
   public static IAST Depth(final IExpr a0) {
 
     return unary(Depth, a0);
@@ -573,10 +582,13 @@ public class F {
   }
 
   public static IAST Hold(final IExpr a0) {
-
     return unary(Hold, a0);
   }
 
+  public static IAST Numerator(final IExpr a0) {
+    return unary(Numerator, a0);
+  }
+  
   private static boolean isSystemInitialized = false;
 
   /**
@@ -706,6 +718,7 @@ public class F {
       Cosh = predefinedSymbol("Cosh");
       Cross = predefinedSymbol("Cross");
       D = predefinedSymbol("D");
+      Denominator = predefinedSymbol("Denominator");
       Det = predefinedSymbol("Det");
       Dot = predefinedSymbol("Dot");
       Equal = predefinedSymbol("Equal");
@@ -751,6 +764,7 @@ public class F {
       Not = predefinedSymbol("Not");
       NumberPartitions = predefinedSymbol("NumberPartitions");
       NumberQ = predefinedSymbol("NumberQ");
+      Numerator = predefinedSymbol("Numerator");
       OddQ = predefinedSymbol("OddQ");
       Or = predefinedSymbol("Or");
       Order = predefinedSymbol("Order");
