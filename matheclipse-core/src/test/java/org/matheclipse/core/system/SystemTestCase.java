@@ -974,6 +974,15 @@ public class SystemTestCase extends AbstractTestCase {
     check("Integrate[Sin[x],x]", "(-1)*Cos[x]");
 
     // check("Integrate[1/(x^5+x-7),x]", "");
+    check("(-1.0)/48", "-0.020833333333333332");
+    check("NIntegrate[(x-1)*(x-0.5)*x*(x+0.5)*(x+1),{x,0,1}]",
+        "-0.020833327124516472");
+    check("NIntegrate[(x-1)*(x-0.5)*x*(x+0.5)*(x+1),{x,0,1},Simpson]",
+        "-0.0208333320915699");
+    check("NIntegrate[(x-1)*(x-0.5)*x*(x+0.5)*(x+1),{x,0,1},Romberg]",
+        "-0.020833333333333332");
+    check("NIntegrate[(x-1)*(x-0.5)*x*(x+0.5)*(x+1),{x,0,1},LegendreGauss]",
+        "-0.020833333333333336");
   }
 
   public void testSystem172() {
@@ -1927,8 +1936,14 @@ public class SystemTestCase extends AbstractTestCase {
   }
 
   public void testSystem380() {
-    check("FindRoot[Exp[x]==Pi^3,{x,-1,10}, Bisection]",
-        "{x->3.434189647436142}");
+    check("Exp[3.4341896]","31.006274895944433");
+    check("Pi^3.0","31.006276680299816");
+    check("FindRoot[Exp[x]==Pi^3,{x,-1,10}, Bisection]", "{x->3.434189647436142}");
+    check("FindRoot[Exp[x]==Pi^3,{x,-1,10}, Brent]", "{x->3.434189604205737}");
+    check("FindRoot[Exp[x]==Pi^3,{x,-1,10}, Muller]", "{x->3.4341896575482025}");
+    check("FindRoot[Exp[x]==Pi^3,{x,-1,10}, Ridders]", "{x->3.4341896575482007}");
+    check("FindRoot[Exp[x]==Pi^3,{x,-1,10}, Secant]", "{x->3.4341896575482007}");
+    
   }
 
   public void testSystem381() {
@@ -2040,7 +2055,7 @@ public class SystemTestCase extends AbstractTestCase {
     check("Denominator[x+3/4*x^(-3)]", "1");
     check("Together[x+3/4*x^(-3)]", "1/4*(3+4*x^4)*x^(-3)");
     check("Together[(x^2-2)^3/(x^2-2)+(x^2-2)^2/(x^2-2)]", "2-3*x^2+x^4");
-    check("Together[a/b+c/d]","(b*c+a*d)*b^(-1)*d^(-1)");
+    check("Together[a/b+c/d]", "(b*c+a*d)*b^(-1)*d^(-1)");
   }
 
   public void testSystem399() {
