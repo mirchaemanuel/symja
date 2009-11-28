@@ -70,17 +70,17 @@ public class FindRoot extends AbstractFunctionEvaluator implements
 		function = F.eval(function);
 		DifferentiableUnivariateRealFunction f = new UnaryNumerical(function,
 				xVar, engine);
-		UnivariateRealSolver solver = new NewtonSolver(f);
+		UnivariateRealSolver solver = new NewtonSolver();
 		if (method.equals("Bisection")) {
-			solver = new BisectionSolver(f);
+			solver = new BisectionSolver();
 		} else if (method.equals("Brent")) {
-			solver = new BrentSolver(f);
+			solver = new BrentSolver();
 		} else if (method.equals("Secant")) {
-			solver = new SecantSolver(f);
+			solver = new SecantSolver();
 		} else {
 			// default: NewtonSolver
 		}
-		return solver.solve(min.doubleValue(), max.doubleValue());
+		return solver.solve(f, min.doubleValue(), max.doubleValue());
 
 	}
 
