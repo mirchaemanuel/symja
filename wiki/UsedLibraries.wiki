@@ -6,8 +6,7 @@
 
 === Commons-Math ===
 The following functions are based on commons-math implementations:
-* FindRoot - ([http://code.google.com/p/symja/source/browse/trunk/matheclipse-core/src/main/java/org/matheclipse/core/reflection/system/FindRoot.java SVN]) - [http://commons.apache.org/math/apidocs/org/apache/commons/math/analysis/solvers/UnivariateRealSolver.html BisectionSolver, BrentSolver, MullerSolver,
- * NewtonSolver, RiddersSolver, SecantSolver]
-* NIntegrate - ([http://code.google.com/p/symja/source/browse/trunk/matheclipse-core/src/main/java/org/matheclipse/core/reflection/system/NIntegrate.java SVN]) - 
+* {{{FindRoot}}} - ([http://code.google.com/p/symja/source/browse/trunk/matheclipse-core/src/main/java/org/matheclipse/core/reflection/system/FindRoot.java SVN]) - [http://commons.apache.org/math/apidocs/org/apache/commons/math/analysis/solvers/UnivariateRealSolver.html BisectionSolver, BrentSolver, MullerSolver, NewtonSolver, RiddersSolver, SecantSolver]
+* {{{NIntegrate}}} - ([http://code.google.com/p/symja/source/browse/trunk/matheclipse-core/src/main/java/org/matheclipse/core/reflection/system/NIntegrate.java SVN]) - 
 
 === Java Algebra System (JAS) ===
