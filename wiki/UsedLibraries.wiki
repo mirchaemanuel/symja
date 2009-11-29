@@ -1,0 +1,5 @@
+#summary main libraries used in the evaluation engine
+
+== Libraries ==
+  * [http://commons.apache.org/math/ Commons-Math: The Apache Commons Mathematics Library]
+  * [http://krum.rz.uni-mannheim.de/jas/ Java Algebra System (JAS)]
