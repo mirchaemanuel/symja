@@ -3,6 +3,7 @@
 == Libraries ==
   * [http://commons.apache.org/math/ Commons-Math: The Apache Commons Mathematics Library]
   * [http://krum.rz.uni-mannheim.de/jas/ Java Algebra System (JAS)]
+  * [http://jeuclid.sourceforge.net/ JEuclid - MathML renderer]
 
 === Commons-Math ===
 The following functions are based on commons-math implementations:
@@ -10,3 +11,12 @@ The following functions are based on commons-math implementations:
   * {{{NIntegrate}}} - ([http://code.google.com/p/symja/source/browse/trunk/matheclipse-core/src/main/java/org/matheclipse/core/reflection/system/NIntegrate.java SVN]) - [http://commons.apache.org/math/apidocs/org/apache/commons/math/analysis/integration/UnivariateRealIntegratorImpl.html LegendreGaussIntegrator, RombergIntegrator, SimpsonIntegrator, TrapezoidIntegrator] 
 
 === Java Algebra System (JAS) ===
+
+  * {{{Apart}}} - ([http://code.google.com/p/symja/source/browse/trunk/matheclipse-core/src/main/java/org/matheclipse/core/reflection/system/Apart.java SVN])
+  * {{{Factor}}} - ([http://code.google.com/p/symja/source/browse/trunk/matheclipse-core/src/main/java/org/matheclipse/core/reflection/system/Factor.java SVN])
+  * {{{FactorTerms}}} - ([http://code.google.com/p/symja/source/browse/trunk/matheclipse-core/src/main/java/org/matheclipse/core/reflection/system/FactorTerms.java SVN])
+  * {{{Integrate}}} - ([http://code.google.com/p/symja/source/browse/trunk/matheclipse-core/src/main/java/org/matheclipse/core/reflection/system/Integrate.java SVN])
+  * {{{PolynomialGCD}}} - ([http://code.google.com/p/symja/source/browse/trunk/matheclipse-core/src/main/java/org/matheclipse/core/reflection/system/PolynomialGCD.java SVN])
+  * {{{PolynomialQ}}} - ([http://code.google.com/p/symja/source/browse/trunk/matheclipse-core/src/main/java/org/matheclipse/core/reflection/system/PolynomialQ.java SVN])
+  * {{{PolynomialQuotientRemainder}}} - ([http://code.google.com/p/symja/source/browse/trunk/matheclipse-core/src/main/java/org/matheclipse/core/reflection/system/PolynomialQuotientRemainder.java SVN])
+  * {{{Together}}} - ([http://code.google.com/p/symja/source/browse/trunk/matheclipse-core/src/main/java/org/matheclipse/core/reflection/system/Together.java SVN])
