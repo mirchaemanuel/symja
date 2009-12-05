@@ -1,4 +1,4 @@
-#summary main libraries used in the evaluation engine
+#summary External libraries used in the symja project
 
 == Libraries ==
   * [http://commons.apache.org/math/ Commons-Math: The Apache Commons Mathematics Library]
