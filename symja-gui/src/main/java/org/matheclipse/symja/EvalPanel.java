@@ -87,7 +87,8 @@ public class EvalPanel extends JPanel implements DocumentListener {
 
   private final static String versionStr = "Keyboard shortcuts:\n"
       + "  Ctrl+ENTER  - for symbolic evaluation\n"
-      + "  Cursor up   - previous input\n" + "  Cursor down - next input\n"
+      + "  Page up     - previous input\n" 
+      + "  Page down   - next input\n"
       + "Program arguments:\n"
       + "  -f or -file <filename>    - use filename as Editor input script\n"
       + "  -d or -default <filename> - use filename for system startup rules\n";
@@ -377,14 +378,14 @@ public class EvalPanel extends JPanel implements DocumentListener {
             return;
           }
           switch (e.getKeyCode()) {
-          case KeyEvent.VK_UP:
+          case KeyEvent.VK_PAGE_UP:
             commandHistoryReadIndex--;
             if (commandHistoryReadIndex < 0) {
               commandHistoryReadIndex = commandHistory.length - 1;
             }
             jInputArea.setText(commandHistory[commandHistoryReadIndex]);
             break;
-          case KeyEvent.VK_DOWN:
+          case KeyEvent.VK_PAGE_DOWN:
             commandHistoryReadIndex++;
             if (commandHistoryReadIndex >= commandHistory.length) {
               commandHistoryReadIndex = 0;
@@ -641,7 +642,7 @@ public class EvalPanel extends JPanel implements DocumentListener {
     final Font f = new Font("Monospaced", Font.PLAIN, FONT_SIZE_TEXT);
     jOutputPane.setFont(f);
     jInputArea.setFont(f);
-    
+
     // height = jInputArea.getGraphics().getFontMetrics().getHeight();
     jInputArea.setBounds(jInputArea.getBounds().x, getHeight() - height,
         jInputArea.getWidth(), height);
@@ -657,7 +658,7 @@ public class EvalPanel extends JPanel implements DocumentListener {
     jInputArea.requestFocus();
 
     setInputAreaText(file);
-    
+
     jInputArea.setEditable(true);
   }
 
