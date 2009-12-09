@@ -55,7 +55,7 @@ import org.apache.commons.math.util.MathUtils;
  *     <li>Christof Voemel, University of California, Berkeley, USA</li>
  *   </ul>
  * </p>
- * @version $Revision: 833740 $ $Date: 2009-11-07 20:57:02 +0100 (Sa, 07 Nov 2009) $
+ * @version $Revision: 885268 $ $Date: 2009-11-29 22:21:50 +0100 (So, 29 Nov 2009) $
  * @since 2.0
  */
 public class EigenDecompositionImpl implements EigenDecomposition {
@@ -1832,13 +1832,34 @@ public class EigenDecompositionImpl implements EigenDecomposition {
         for (int i = 0; i < nM1; ++i) {
             final double di   = d[i];
             final double li   = l[i];
+            final double ldi  = li * di;
             final double diP1 = di + si;
-            final double liP1 = li * di / diP1;
+            final double liP1 = ldi / diP1;
             work[sixI]        = si;
             work[sixI + 1]    = diP1;
             work[sixI + 2]    = liP1;
             si = li * liP1 * si - lambda;
             sixI += 6;
+        }
+        if (Double.isNaN(si)) {
+            // one of the pivot was null, use a slower but safer version of dstqds
+            si = -lambda;
+            sixI = 0;
+            for (int i = 0; i < nM1; ++i) {
+                final double di   = d[i];
+                final double li   = l[i];
+                final double ldi  = li * di;
+                double diP1 = di + si;
+                if (Math.abs(diP1) < minPivot) {
+                    diP1 = -minPivot;
+                }
+                final double liP1 = ldi / diP1;
+                work[sixI]        = si;
+                work[sixI + 1]    = diP1;
+                work[sixI + 2]    = liP1;
+                si = li * ((liP1 == 0) ? li * di : liP1 * si) - lambda;
+                sixI += 6;
+            }
         }
         work[6 * nM1 + 1] = d[nM1] + si;
         work[6 * nM1]     = si;
@@ -1867,6 +1888,25 @@ public class EigenDecompositionImpl implements EigenDecomposition {
             work[sixI +  5]   = li * t;
             pi = pi * t - lambda;
             sixI -= 6;
+        }
+        if (Double.isNaN(pi)) {
+            // one of the pivot was null, use a slower but safer version of dqds
+            pi = d[nM1] - lambda;
+            sixI = 6 * (nM1 - 1);
+            for (int i = nM1 - 1; i >= 0; --i) {
+                final double di   = d[i];
+                final double li   = l[i];
+                double diP1 = di * li * li + pi;
+                if (Math.abs(diP1) < minPivot) {
+                    diP1 = -minPivot;
+                }
+                final double t    = di / diP1;
+                work[sixI +  9]   = pi;
+                work[sixI + 10]   = diP1;
+                work[sixI +  5]   = li * t;
+                pi = ((t == 0) ? di : pi * t) - lambda;
+                sixI -= 6;
+            }
         }
         work[3] = pi;
         work[4] = pi;

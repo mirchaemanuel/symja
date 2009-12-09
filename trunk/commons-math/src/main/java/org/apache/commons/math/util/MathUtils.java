@@ -25,7 +25,7 @@ import org.apache.commons.math.MathRuntimeException;
 
 /**
  * Some useful additions to the built-in functions in {@link Math}.
- * @version $Revision: 830770 $ $Date: 2009-10-28 22:52:39 +0100 (Mi, 28 Okt 2009) $
+ * @version $Revision: 885027 $ $Date: 2009-11-27 22:45:38 +0100 (Fr, 27 Nov 2009) $
  */
 public final class MathUtils {
 
@@ -1621,9 +1621,9 @@ public final class MathUtils {
      * @return the L<sub>2</sub> distance between the two points
      */
     public static double distance(int[] p1, int[] p2) {
-      int sum = 0;
+      double sum = 0;
       for (int i = 0; i < p1.length; i++) {
-          final int dp = p1[i] - p2[i];
+          final double dp = p1[i] - p2[i];
           sum += dp * dp;
       }
       return Math.sqrt(sum);
