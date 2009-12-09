@@ -29,12 +29,16 @@ import org.apache.commons.math.analysis.UnivariateRealFunction;
  * <a href="http://mathworld.wolfram.com/HornersMethod.html">Horner's Method</a>
  *  is used to evaluate the function.</p>
  *
- * @version $Revision: 811685 $ $Date: 2009-09-05 19:36:48 +0200 (Sa, 05 Sep 2009) $
+ * @version $Revision: 885278 $ $Date: 2009-11-29 22:47:51 +0100 (So, 29 Nov 2009) $
  */
 public class PolynomialFunction implements DifferentiableUnivariateRealFunction, Serializable {
 
+    /** Message for empty coefficients array. */
+    private static final String EMPTY_ARRAY_MESSAGE =
+        "empty polynomials coefficients array";
+
     /**
-     * Serializtion identifier
+     * Serialization identifier
      */
     private static final long serialVersionUID = -7726511984200295583L;
 
@@ -62,7 +66,7 @@ public class PolynomialFunction implements DifferentiableUnivariateRealFunction,
     public PolynomialFunction(double c[]) {
         super();
         if (c.length < 1) {
-            throw MathRuntimeException.createIllegalArgumentException("empty polynomials coefficients array");
+            throw MathRuntimeException.createIllegalArgumentException(EMPTY_ARRAY_MESSAGE);
         }
         int l = c.length;
         while ((l > 1) && (c[l - 1] == 0)) {
@@ -122,7 +126,7 @@ public class PolynomialFunction implements DifferentiableUnivariateRealFunction,
     protected static double evaluate(double[] coefficients, double argument) {
         int n = coefficients.length;
         if (n < 1) {
-            throw MathRuntimeException.createIllegalArgumentException("empty polynomials coefficients array");
+            throw MathRuntimeException.createIllegalArgumentException(EMPTY_ARRAY_MESSAGE);
         }
         double result = coefficients[n - 1];
         for (int j = n -2; j >=0; j--) {
@@ -231,7 +235,7 @@ public class PolynomialFunction implements DifferentiableUnivariateRealFunction,
     protected static double[] differentiate(double[] coefficients) {
         int n = coefficients.length;
         if (n < 1) {
-            throw MathRuntimeException.createIllegalArgumentException("empty polynomials coefficients array");
+            throw MathRuntimeException.createIllegalArgumentException(EMPTY_ARRAY_MESSAGE);
         }
         if (n == 1) {
             return new double[]{0};

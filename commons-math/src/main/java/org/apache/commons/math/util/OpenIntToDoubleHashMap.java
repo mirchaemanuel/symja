@@ -33,7 +33,7 @@ import org.apache.commons.math.MathRuntimeException;
  * {@link #iterator()} are fail-fast: they throw a
  * <code>ConcurrentModificationException</code> when they detect the map has been
  * modified during iteration.</p>
- * @version $Revision: 825919 $ $Date: 2009-10-16 16:51:55 +0200 (Fr, 16 Okt 2009) $
+ * @version $Revision: 885278 $ $Date: 2009-11-29 22:47:51 +0100 (So, 29 Nov 2009) $
  * @since 2.0
  */
 public class OpenIntToDoubleHashMap implements Serializable {
@@ -49,6 +49,14 @@ public class OpenIntToDoubleHashMap implements Serializable {
 
     /** Serializable version identifier */
     private static final long serialVersionUID = -3646337053166149105L;
+
+    /** Message for map modification during iteration. */
+    private static final String CONCURRENT_MODIFICATION_MESSAGE =
+        "map has been modified while iterating";
+
+    /** Message for exhausted iterator. */
+    private static final String EXHAUSTED_ITERATOR_MESSAGE =
+        "iterator exhausted";
 
     /** Load factor for the map. */
     private static final float LOAD_FACTOR = 0.5f;
@@ -526,10 +534,11 @@ public class OpenIntToDoubleHashMap implements Serializable {
         public int key()
             throws ConcurrentModificationException, NoSuchElementException {
             if (referenceCount != count) {
-                throw MathRuntimeException.createConcurrentModificationException("map has been modified while iterating");
+                throw MathRuntimeException.createConcurrentModificationException(
+                      CONCURRENT_MODIFICATION_MESSAGE);
             }
             if (current < 0) {
-                throw MathRuntimeException.createNoSuchElementException("iterator exhausted");
+                throw MathRuntimeException.createNoSuchElementException(EXHAUSTED_ITERATOR_MESSAGE);
             }
             return keys[current];
         }
@@ -543,10 +552,11 @@ public class OpenIntToDoubleHashMap implements Serializable {
         public double value()
             throws ConcurrentModificationException, NoSuchElementException {
             if (referenceCount != count) {
-                throw MathRuntimeException.createConcurrentModificationException("map has been modified while iterating");
+                throw MathRuntimeException.createConcurrentModificationException(
+                      CONCURRENT_MODIFICATION_MESSAGE);
             }
             if (current < 0) {
-                throw MathRuntimeException.createNoSuchElementException("iterator exhausted");
+                throw MathRuntimeException.createNoSuchElementException(EXHAUSTED_ITERATOR_MESSAGE);
             }
             return values[current];
         }
@@ -560,7 +570,8 @@ public class OpenIntToDoubleHashMap implements Serializable {
             throws ConcurrentModificationException, NoSuchElementException {
 
             if (referenceCount != count) {
-                throw MathRuntimeException.createConcurrentModificationException("map has been modified while iterating");
+                throw MathRuntimeException.createConcurrentModificationException(
+                      CONCURRENT_MODIFICATION_MESSAGE);
             }
 
             // advance on step
@@ -574,7 +585,7 @@ public class OpenIntToDoubleHashMap implements Serializable {
             } catch (ArrayIndexOutOfBoundsException e) {
                 next = -2;
                 if (current < 0) {
-                    throw MathRuntimeException.createNoSuchElementException("iterator exhausted");
+                    throw MathRuntimeException.createNoSuchElementException(EXHAUSTED_ITERATOR_MESSAGE);
                 }
             }
 

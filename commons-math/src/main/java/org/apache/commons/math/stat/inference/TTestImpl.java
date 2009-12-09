@@ -29,9 +29,13 @@ import org.apache.commons.math.stat.descriptive.StatisticalSummary;
  * Uses commons-math {@link org.apache.commons.math.distribution.TDistribution}
  * implementation to estimate exact p-values.</p>
  *
- * @version $Revision: 811833 $ $Date: 2009-09-06 18:27:50 +0200 (So, 06 Sep 2009) $
+ * @version $Revision: 885278 $ $Date: 2009-11-29 22:47:51 +0100 (So, 29 Nov 2009) $
  */
 public class TTestImpl implements TTest  {
+
+    /** Message for insufficient data. */
+    private static final String INSUFFICIENT_DATA_MESSAGE =
+        "insufficient data for t statistic, needs at least 2, got {0}";
 
     /** Distribution used to compute inference statistics. */
     private TDistribution distribution;
@@ -1039,7 +1043,7 @@ public class TTestImpl implements TTest  {
         throws IllegalArgumentException {
         if ((data == null) || (data.length < 2)) {
             throw MathRuntimeException.createIllegalArgumentException(
-                  "insufficient data for t statistic, needs at least 2, got {0}",
+                  INSUFFICIENT_DATA_MESSAGE,
                   (data == null) ? 0 : data.length);
         }
     }
@@ -1052,7 +1056,7 @@ public class TTestImpl implements TTest  {
         throws IllegalArgumentException {
         if ((stat == null) || (stat.getN() < 2)) {
             throw MathRuntimeException.createIllegalArgumentException(
-                  "insufficient data for t statistic, needs at least 2, got {0}",
+                  INSUFFICIENT_DATA_MESSAGE,
                   (stat == null) ? 0 : stat.getN());
         }
     }

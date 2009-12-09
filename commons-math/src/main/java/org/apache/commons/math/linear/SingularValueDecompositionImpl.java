@@ -28,7 +28,7 @@ import org.apache.commons.math.util.MathUtils;
  * &Sigma; is a m &times; n diagonal matrix with positive diagonal elements,
  * and V is an n &times; n orthogonal matrix.</p>
  *
- * @version $Revision: 811685 $ $Date: 2009-09-05 19:36:48 +0200 (Sa, 05 Sep 2009) $
+ * @version $Revision: 885279 $ $Date: 2009-11-29 22:53:36 +0100 (So, 29 Nov 2009) $
  * @since 2.0
  */
 public class SingularValueDecompositionImpl implements SingularValueDecomposition {
@@ -115,7 +115,8 @@ public class SingularValueDecompositionImpl implements SingularValueDecompositio
                                        MathUtils.SAFE_MIN);
         singularValues = eigenDecomposition.getRealEigenvalues();
         for (int i = 0; i < singularValues.length; ++i) {
-            singularValues[i] = Math.sqrt(singularValues[i]);
+            final double si = singularValues[i];
+            singularValues[i] = (si < 0) ? 0.0 : Math.sqrt(si);
         }
 
     }
@@ -133,14 +134,15 @@ public class SingularValueDecompositionImpl implements SingularValueDecompositio
                 double[] ei1 = eData[0];
                 iData[0] = ei1;
                 for (int i = 0; i < n - 1; ++i) {
-                    // compute Bt.E.S^(-1) where E is the eigenvectors matrix
+                    // compute B.E.S^(-1) where E is the eigenvectors matrix
                     // we reuse the array from matrix E to store the result
+                    final double mi = mainBidiagonal[i];
+                    final double si = secondaryBidiagonal[i];
                     final double[] ei0 = ei1;
                     ei1 = eData[i + 1];
                     iData[i + 1] = ei1;
                     for (int j = 0; j < n; ++j) {
-                        ei0[j] = (mainBidiagonal[i] * ei0[j] +
-                                  secondaryBidiagonal[i] * ei1[j]) / singularValues[j];
+                        ei0[j] = (mi * ei0[j] + si * ei1[j]) / singularValues[j];
                     }
                 }
                 // last row
@@ -215,12 +217,13 @@ public class SingularValueDecompositionImpl implements SingularValueDecompositio
                 for (int i = 0; i < m - 1; ++i) {
                     // compute Bt.E.S^(-1) where E is the eigenvectors matrix
                     // we reuse the array from matrix E to store the result
+                    final double mi = mainBidiagonal[i];
+                    final double si = secondaryBidiagonal[i];
                     final double[] ei0 = ei1;
                     ei1 = eData[i + 1];
                     iData[i + 1] = ei1;
                     for (int j = 0; j < m; ++j) {
-                        ei0[j] = (mainBidiagonal[i] * ei0[j] +
-                                  secondaryBidiagonal[i] * ei1[j]) / singularValues[j];
+                        ei0[j] = (mi * ei0[j] + si * ei1[j]) / singularValues[j];
                     }
                 }
                 // last row
