@@ -15,7 +15,6 @@ import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.IFraction;
 import org.matheclipse.core.interfaces.IInteger;
-import org.matheclipse.core.interfaces.IRational;
 
 import apache.harmony.math.BigInteger;
 import edu.jas.arith.BigRational;
@@ -29,6 +28,11 @@ import edu.jas.ufd.FactorFactory;
 /**
  * Determine the roots of a univariate polynomial
  * 
+ * See Wikipedia entries for: <a
+ * href="http://en.wikipedia.org/wiki/Quadratic_equation">Quadratic equation
+ * </a>, <a href="http://en.wikipedia.org/wiki/Cubic_function">Cubic
+ * function</a> and <a
+ * href="http://en.wikipedia.org/wiki/Quartic_function">Quartic function</a>
  */
 public class Roots extends AbstractFunctionEvaluator {
 
@@ -95,7 +99,7 @@ public class Roots extends AbstractFunctionEvaluator {
           .getImplementation(BigRational.ONE);
       SortedMap<GenPolynomial<BigRational>, Long> map = factorAbstract
           .baseFactors(poly);
-      IAST result = F.List();//F.function(F.Or);
+      IAST result = F.List();// F.function(F.Or);
       IInteger a;
       IInteger b;
       IInteger c;
@@ -110,6 +114,7 @@ public class Roots extends AbstractFunctionEvaluator {
           continue;
         }
         if (varDegree <= 2) {
+          // solve Quadratic equation
           a = F.C0;
           b = F.C0;
           c = F.C0;
