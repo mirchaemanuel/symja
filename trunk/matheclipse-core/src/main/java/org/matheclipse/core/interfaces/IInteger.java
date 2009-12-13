@@ -24,6 +24,8 @@ public interface IInteger extends IRational {
 	 */
 	public IInteger multiply(IInteger value);
 
+	public IInteger subtract(IInteger value);
+	
 	public IInteger pow(int exponent);
 
 	/**
