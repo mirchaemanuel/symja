@@ -39,13 +39,16 @@ public class Roots extends AbstractFunctionEvaluator {
     if (lst.size() != 2) {
       return null;
     }
+    return roots(lst);
+  }
 
-    ExprVariables eVar = new ExprVariables(lst.get(1));
-    if (!eVar.isSize(1)) {
-      // factor only possible for univariate polynomials
-      return null;
-    }
+  protected static IAST roots(final IAST lst) {
     try {
+      ExprVariables eVar = new ExprVariables(lst.get(1));
+      if (!eVar.isSize(1)) {
+        // factor only possible for univariate polynomials
+        return null;
+      }
       IExpr expr = F.eval(F.ExpandAll, lst.get(1));
       ASTRange r = new ASTRange(eVar.getVarList(), 1);
       List<IExpr> varList = r.toList();
