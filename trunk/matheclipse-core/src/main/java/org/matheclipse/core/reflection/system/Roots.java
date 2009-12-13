@@ -72,7 +72,7 @@ public class Roots extends AbstractFunctionEvaluator {
           continue;
         }
         if (varDegree <= 2) {
-          // solve Quadratic equation
+          // solve Quadratic equation: a*x^2 + b*x + c = 0
           a = F.C0;
           b = F.C0;
           c = F.C0;
@@ -136,12 +136,10 @@ public class Roots extends AbstractFunctionEvaluator {
           // n = m^2 - 4*k^3
           IInteger n = m.pow(2).subtract(F.C4.multiply(k.pow(3)));
 
-          // omega1 = -(1/2) + 1/2* I^(1/3)
-          IExpr omega1 = F
-              .Plus(F.CN1D2, F.Times(F.C1D2, F.Power(F.CI, F.C1D3)));
-          // omega2 = -(1/2) - 1/2* I^(1/3)
-          IExpr omega2 = F.Plus(F.CN1D2, F
-              .Times(F.CN1D2, F.Power(F.CI, F.C1D3)));
+          // omega1 = -(1/2) + 1/2 * Sqrt[3] * I
+          IExpr omega1 = F.Plus(F.CN1D2, F.Times(F.C1D2, F.Sqrt(F.C3), F.CI));
+          // omega2 = -(1/2) - 1/2 * Sqrt[3] * I
+          IExpr omega2 = F.Plus(F.CN1D2, F.Times(F.CN1D2, F.Sqrt(F.C3), F.CI));
 
           // t1 = (1/2 * (m + n^(1/2))) ^ (1/3)
           IExpr t1 = F.Power(F.Times(F.C1D2, F.Plus(m, F.Sqrt(n))), F.C1D3);
