@@ -6,9 +6,7 @@ import java.util.SortedMap;
 import org.matheclipse.basic.Config;
 import org.matheclipse.core.convert.ExprVariables;
 import org.matheclipse.core.convert.JASConvert;
-import org.matheclipse.core.eval.EvalEngine;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
-import org.matheclipse.core.eval.util.Options;
 import org.matheclipse.core.expression.ASTRange;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IAST;
@@ -16,10 +14,7 @@ import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.IFraction;
 import org.matheclipse.core.interfaces.IInteger;
 
-import apache.harmony.math.BigInteger;
 import edu.jas.arith.BigRational;
-import edu.jas.arith.ModInteger;
-import edu.jas.arith.ModIntegerRing;
 import edu.jas.poly.GenPolynomial;
 import edu.jas.poly.Monomial;
 import edu.jas.ufd.FactorAbstract;
@@ -41,7 +36,7 @@ public class Roots extends AbstractFunctionEvaluator {
 
   @Override
   public IExpr evaluate(final IAST lst) {
-    if (lst.size() != 2 && lst.size() != 3) {
+    if (lst.size() != 2) {
       return null;
     }
 
@@ -55,43 +50,6 @@ public class Roots extends AbstractFunctionEvaluator {
       ASTRange r = new ASTRange(eVar.getVarList(), 1);
       List<IExpr> varList = r.toList();
 
-      if (lst.size() == 3) {
-        final EvalEngine engine = EvalEngine.get();
-        final Options options = new Options(F.Factor, engine, lst, 2);
-        IExpr option = options.getOption("Modulus");
-        if (option != null && option instanceof IInteger) {
-          try {
-            // found "Modulus" option
-            final BigInteger value = ((IInteger) option).getBigNumerator();
-            int intValue = ((IInteger) option).toInt();
-            ModIntegerRing modIntegerRing = new ModIntegerRing(intValue, value
-                .isProbablePrime(32));
-            JASConvert<ModInteger> jas = new JASConvert<ModInteger>(varList,
-                modIntegerRing);
-            GenPolynomial<ModInteger> poly = jas.expr2Poly(expr);
-
-            FactorAbstract<ModInteger> factorAbstract = FactorFactory
-                .getImplementation(modIntegerRing);
-            SortedMap<GenPolynomial<ModInteger>, Long> map = factorAbstract
-                .baseFactors(poly);
-            IAST result = F.Times();
-            for (SortedMap.Entry<GenPolynomial<ModInteger>, Long> entry : map
-                .entrySet()) {
-              GenPolynomial<ModInteger> iPoly = entry.getKey();
-              Long val = entry.getValue();
-              result.add(F
-                  .Power(jas.modIntegerPoly2Expr(iPoly), F.integer(val)));
-            }
-            return result;
-          } catch (ArithmeticException ae) {
-            // toInt() conversion failed
-            if (Config.DEBUG) {
-              ae.printStackTrace();
-            }
-            return null; // no evaluation
-          }
-        }
-      }
       JASConvert<BigRational> jas = new JASConvert<BigRational>(varList);
       GenPolynomial<BigRational> poly = jas.expr2Poly(expr);
 
@@ -139,6 +97,44 @@ public class Roots extends AbstractFunctionEvaluator {
             result.add(F.Times(rev2a, F.Plus(b.negate(), sqrt)));
             result.add(F.Times(rev2a, F.Plus(b.negate(), sqrt.negative())));
           }
+        } else if (varDegree <= 3) {
+          // solve Cubic equation: x^3 + a*x^2 + b*x + c = 0
+          a = F.C0;
+          b = F.C0;
+          c = F.C0;
+          for (Monomial<edu.jas.arith.BigInteger> monomial : iPoly) {
+            edu.jas.arith.BigInteger coeff = (edu.jas.arith.BigInteger) monomial
+                .coefficient();
+            long lExp = monomial.exponent().getVal(0);
+            if (lExp == 2) {
+              a = F.integer(coeff.getVal());
+            } else if (lExp == 1) {
+              b = F.integer(coeff.getVal());
+            } else if (lExp == 0) {
+              c = F.integer(coeff.getVal());
+            }
+          }
+          // m = 2*a^3 - 9*a*b + 27* c
+          IInteger m = F.C2.multiply(a.pow(3)).subtract(
+              a.multiply(b.multiply(F.integer(9)))).add(
+              c.multiply(F.integer(27)));
+          // k = a^2 - 3*b
+          IInteger k = a.pow(2).subtract(F.C3.multiply(b));
+          // n = m^2 - 4*k^3
+          IInteger n = m.pow(2).subtract(F.C4.multiply(k.pow(3)));
+          // o1 = -(1/2) + 1/2* I^(1/3)
+          IExpr omega1 = F
+              .Plus(F.CN1D2, F.Times(F.C1D2, F.Power(F.CI, F.C1D3)));
+          // o1 = -(1/2) - 1/2* I^(1/3)
+          IExpr omega2 = F.Plus(F.CN1D2, F
+              .Times(F.CN1D2, F.Power(F.CI, F.C1D3)));
+          IExpr t1 = F.Power(F.Times(F.C1D2, F.Plus(m, F.Sqrt(n))), F.C1D3);
+          IExpr t2 = F.Power(F.Times(F.C1D2, F.Subtract(m, F.Sqrt(n))), F.C1D3);
+          result.add(F.Times(F.CN1D3, F.Plus(a, t1, t2)));
+          result.add(F.Times(F.CN1D3, F.Plus(a, F.Times(omega2, t1), F.Times(
+              omega1, t2))));
+          result.add(F.Times(F.CN1D3, F.Plus(a, F.Times(omega1, t1), F.Times(
+              omega2, t2))));
         } else {
           result.add(F.Power(jas.integerPoly2Expr(iPoly), F.integer(val)));
         }
