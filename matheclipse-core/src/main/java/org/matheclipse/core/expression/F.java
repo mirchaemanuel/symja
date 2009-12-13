@@ -288,6 +288,20 @@ public class F {
   public static IInteger C2;
 
   /**
+   * Constant integer &quot;3&quot;
+   */
+  public static IInteger C3;
+  
+  /**
+   * Constant integer &quot;4&quot;
+   */
+  public static IInteger C4;
+  
+  /**
+   * Constant integer &quot;5&quot;
+   */
+  public static IInteger C5;
+  /**
    * Complex imaginary unit. The parsed symbol &quot;I&quot; is converted on
    * input to this constant.
    */
@@ -303,6 +317,26 @@ public class F {
    */
   public static IFraction CN1D2;
 
+  /**
+   * Constant fraction &quot;1/3&quot;
+   */
+  public static IFraction C1D3;
+  
+  /**
+   * Constant fraction &quot;-1/3&quot;
+   */
+  public static IFraction CN1D3;
+  
+  /**
+   * Constant fraction &quot;1/4&quot;
+   */
+  public static IFraction C1D4;
+  
+  /**
+   * Constant fraction &quot;-1/4&quot;
+   */
+  public static IFraction CN1D4;
+  
   /**
    * Constant double &quot;0.0&quot;
    */
@@ -627,11 +661,18 @@ public class F {
       C0 = IntegerSym.valueOf(0);
       C1 = IntegerSym.valueOf(1);
       C2 = IntegerSym.valueOf(2);
+      C3 = IntegerSym.valueOf(3);
+      C4 = IntegerSym.valueOf(4);
+      C5 = IntegerSym.valueOf(5);
       CN1 = IntegerSym.valueOf(-1);
 
       C1D2 = FractionSym.valueOf(1, 2);
+      C1D3 = FractionSym.valueOf(1, 3);
+      C1D4 = FractionSym.valueOf(1, 4);
       CN1D2 = FractionSym.valueOf(-1, 2);
-
+      CN1D3 = FractionSym.valueOf(-1, 3);
+      CN1D4 = FractionSym.valueOf(-1, 4);
+      
       CI = ComplexSym.valueOf(BigInteger.ZERO, BigInteger.ONE);
 
       CD0 = Num.valueOf(0.0);

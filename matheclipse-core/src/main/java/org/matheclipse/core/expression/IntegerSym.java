@@ -488,8 +488,8 @@ public class IntegerSym extends ExprImpl implements IInteger {
 		return fInteger.minus(that);
 	}
 
-	public IntegerSym subtract(final IntegerSym that) {
-		return newInstance(fInteger.minus(that.fInteger));
+	public IInteger subtract(final IInteger that) {
+		return newInstance(fInteger.minus(that.getBigNumerator()));
 	}
 
 	/**
@@ -621,9 +621,9 @@ public class IntegerSym extends ExprImpl implements IInteger {
 		return list;
 	}
 
-	public IntegerSym eulerPhi() throws ArithmeticException {
+	public IInteger eulerPhi() throws ArithmeticException {
 		IAST ast = factorInteger();
-		IntegerSym phi = IntegerSym.valueOf(1);
+		IInteger phi = IntegerSym.valueOf(1);
 		for (int i = 1; i < ast.size(); i++) {
 			IAST element = (IAST) ast.get(i);
 			IntegerSym q = (IntegerSym) element.get(1);
@@ -702,8 +702,8 @@ public class IntegerSym extends ExprImpl implements IInteger {
 	 * @return the primitive roots
 	 * @throws ArithmeticException
 	 */
-	public IntegerSym[] primitiveRoots() throws ArithmeticException {
-		IntegerSym phi = eulerPhi();
+	public IInteger[] primitiveRoots() throws ArithmeticException {
+	  IntegerSym phi = (IntegerSym)eulerPhi();
 		int size = phi.eulerPhi().toInt();
 		if (size <= 0) {
 			return null;
