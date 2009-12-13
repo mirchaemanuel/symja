@@ -23,6 +23,7 @@ The following functions are based on commons-math implementations:
   * {{{Factor}}} - ([http://code.google.com/p/symja/source/browse/trunk/matheclipse-core/src/main/java/org/matheclipse/core/reflection/system/Factor.java SVN])
   * {{{FactorTerms}}} - ([http://code.google.com/p/symja/source/browse/trunk/matheclipse-core/src/main/java/org/matheclipse/core/reflection/system/FactorTerms.java SVN])
   * {{{Integrate}}} - ([http://code.google.com/p/symja/source/browse/trunk/matheclipse-core/src/main/java/org/matheclipse/core/reflection/system/Integrate.java SVN])
+  * {{{NRoots}}} - ([http://code.google.com/p/symja/source/browse/trunk/matheclipse-core/src/main/java/org/matheclipse/core/reflection/system/NRoots.java SVN])
   * {{{PolynomialGCD}}} - ([http://code.google.com/p/symja/source/browse/trunk/matheclipse-core/src/main/java/org/matheclipse/core/reflection/system/PolynomialGCD.java SVN])
   * {{{PolynomialQ}}} - ([http://code.google.com/p/symja/source/browse/trunk/matheclipse-core/src/main/java/org/matheclipse/core/reflection/system/PolynomialQ.java SVN])
   * {{{PolynomialQuotientRemainder}}} - ([http://code.google.com/p/symja/source/browse/trunk/matheclipse-core/src/main/java/org/matheclipse/core/reflection/system/PolynomialQuotientRemainder.java SVN])
