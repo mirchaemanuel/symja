@@ -14,27 +14,34 @@ import org.matheclipse.parser.client.operator.ASTNodeFactory;
 public class Plus extends AbstractOperator {
 
   public Plus() {
-    super(ASTNodeFactory.MMA_STYLE_FACTORY.get("Plus").getPrecedence(), "mrow", "+");
+    super(ASTNodeFactory.MMA_STYLE_FACTORY.get("Plus").getPrecedence(), "mrow",
+        "+");
   }
 
-  /* (non-Javadoc)
-   * @see org.matheclipse.core.form.mathml.IConverter#convert(java.lang.StringBuffer, org.matheclipse.parser.interfaces.IAST, int)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.matheclipse.core.form.mathml.IConverter#convert(java.lang.StringBuffer,
+   * org.matheclipse.parser.interfaces.IAST, int)
    */
   @Override
-public boolean convert(final StringBuffer buf, final IAST f, final int precedence) {
+  public boolean convert(final StringBuffer buf, final IAST f,
+      final int precedence) {
     IExpr expr;
     fFactory.tagStart(buf, fFirstTag);
     precedenceOpen(buf, precedence);
     final Times timesConverter = (Times) fFactory.reflection("Times");
-    for (int i = 1; i < f.size(); i++) {
-      checkCanceled();
-			expr = f.get(i);
-
-      if ((i>1) && (expr instanceof IAST) && ((IAST) expr).head().toString().equals("Times")) {
+    int size = f.size() - 1;
+    for (int i = size; i > 0; i--) {
+      expr = f.get(i);
+      if ((i < size) && (expr instanceof IAST)
+          && ((IAST) expr).head().toString().equals("Times")) {
         timesConverter.convert(buf, (IAST) expr, fPrecedence, Times.PLUS_CALL);
       } else {
-        if (i > 1) {
-          if ((expr instanceof ISignedNumber) && (((ISignedNumber) expr).isNegative())) {
+        if (i < size) {
+          if ((expr instanceof ISignedNumber)
+              && (((ISignedNumber) expr).isNegative())) {
             fFactory.tag(buf, "mo", "-");
             expr = ((ISignedNumber) expr).negate();
           } else {

@@ -13,7 +13,7 @@
  */
 package org.matheclipse.generic.interfaces;
 
-import com.google.common.base.Nullable;
+import javax.annotation.Nullable;
 
 /**
  * A BiPredicate can determine a true or false value for any input of its
