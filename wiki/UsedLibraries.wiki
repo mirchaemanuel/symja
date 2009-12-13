@@ -7,6 +7,7 @@
 
 === Commons-Math ===
 The following functions are based on commons-math implementations:
+  * {{{Fit}}} - ([http://code.google.com/p/symja/source/browse/trunk/matheclipse-core/src/main/java/org/matheclipse/core/reflection/system/Fit.java SVN]) - [http://commons.apache.org/math/apidocs/org/apache/commons/math/optimization/general/LevenbergMarquardtOptimizer.html Levenberg-Marquardt optimizer]
   * {{{FindRoot}}} - ([http://code.google.com/p/symja/source/browse/trunk/matheclipse-core/src/main/java/org/matheclipse/core/reflection/system/FindRoot.java SVN]) - [http://commons.apache.org/math/apidocs/org/apache/commons/math/analysis/solvers/UnivariateRealSolver.html BisectionSolver, BrentSolver, MullerSolver, NewtonSolver, RiddersSolver, SecantSolver]
   * {{{NIntegrate}}} - ([http://code.google.com/p/symja/source/browse/trunk/matheclipse-core/src/main/java/org/matheclipse/core/reflection/system/NIntegrate.java SVN]) - [http://commons.apache.org/math/apidocs/org/apache/commons/math/analysis/integration/UnivariateRealIntegratorImpl.html LegendreGaussIntegrator, RombergIntegrator, SimpsonIntegrator, TrapezoidIntegrator] 
 
