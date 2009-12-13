@@ -86,6 +86,9 @@ public class Roots extends AbstractFunctionEvaluator {
               b = F.integer(coeff.getVal());
             } else if (lExp == 0) {
               c = F.integer(coeff.getVal());
+            } else {
+              throw new ArithmeticException(
+                  "Roots::Unexpected exponent value: " + lExp);
             }
           }
           if (a.equals(F.C0)) {
@@ -112,6 +115,16 @@ public class Roots extends AbstractFunctionEvaluator {
               b = F.integer(coeff.getVal());
             } else if (lExp == 0) {
               c = F.integer(coeff.getVal());
+            } else if (lExp == 3) {
+              if (!coeff.equals(edu.jas.arith.BigInteger.ONE)) {
+                throw new ArithmeticException(
+                    "Roots::Solution for cubic equation with leading coefficient: \""
+                        + coeff.toString()
+                        + "\" != 1 currently not implemented: ");
+              }
+            } else {
+              throw new ArithmeticException(
+                  "Roots::Unexpected exponent value: " + lExp);
             }
           }
           // m = 2*a^3 - 9*a*b + 27* c
@@ -122,14 +135,19 @@ public class Roots extends AbstractFunctionEvaluator {
           IInteger k = a.pow(2).subtract(F.C3.multiply(b));
           // n = m^2 - 4*k^3
           IInteger n = m.pow(2).subtract(F.C4.multiply(k.pow(3)));
-          // o1 = -(1/2) + 1/2* I^(1/3)
+
+          // omega1 = -(1/2) + 1/2* I^(1/3)
           IExpr omega1 = F
               .Plus(F.CN1D2, F.Times(F.C1D2, F.Power(F.CI, F.C1D3)));
-          // o1 = -(1/2) - 1/2* I^(1/3)
+          // omega2 = -(1/2) - 1/2* I^(1/3)
           IExpr omega2 = F.Plus(F.CN1D2, F
               .Times(F.CN1D2, F.Power(F.CI, F.C1D3)));
+
+          // t1 = (1/2 * (m + n^(1/2))) ^ (1/3)
           IExpr t1 = F.Power(F.Times(F.C1D2, F.Plus(m, F.Sqrt(n))), F.C1D3);
+          // t2 = (1/2 * (m - n^(1/2))) ^ (1/3)
           IExpr t2 = F.Power(F.Times(F.C1D2, F.Subtract(m, F.Sqrt(n))), F.C1D3);
+
           result.add(F.Times(F.CN1D3, F.Plus(a, t1, t2)));
           result.add(F.Times(F.CN1D3, F.Plus(a, F.Times(omega2, t1), F.Times(
               omega1, t2))));
