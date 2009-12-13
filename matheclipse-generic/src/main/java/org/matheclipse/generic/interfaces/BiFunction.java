@@ -16,7 +16,7 @@
 
 package org.matheclipse.generic.interfaces;
 
-import com.google.common.base.Nullable;
+import javax.annotation.Nullable;
 
 /**
  * A BiFunction provides a transformation on two objects and returns the resulting
