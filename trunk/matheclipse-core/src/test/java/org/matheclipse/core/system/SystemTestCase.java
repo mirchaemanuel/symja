@@ -25,8 +25,8 @@ public class SystemTestCase extends AbstractTestCase {
     check("Times[3, Power[1, -1]]", "3");
     check("%", "3");
     check("%%%*%2", "test^2");
-    check("1-x", "1-x");
-    check("5+x^4*(33+x^2)", "5+(33+x^2)*x^4");
+    check("1-x", "-x+1");
+    check("5+x^4*(33+x^2)", "(x^2+33)*x^4+5");
     check("x^(-7)", "x^(-7)");
     check("x^(-7.0)", "x^(-7.0)");
     check("x^(1+I*3)", "x^(1+I*3)");
@@ -37,9 +37,13 @@ public class SystemTestCase extends AbstractTestCase {
     check("x^(I*3.0)", "x^(0.0+I*3.0)");
     check("x^(-I*3)", "x^(-I*3)");
     check("x^(-I*3.0)", "x^(0.0+I*(-3.0))");
-    check("Sin[3/10*Pi]", "1/4+1/4*5^(1/2)");
-    check("Sin[Pi/5]", "1/4*2^(1/2)*(5-5^(1/2))^(1/2)");
+    check("Sin[3/10*Pi]", "1/4*5^(1/2)+1/4");
+    check("Sin[Pi/5]", "1/4*2^(1/2)*(-5^(1/2)+5)^(1/2)");
     check("2^(-1)", "1/2");
+    check("x^3+x^2+x+42", "x^3+x^2+x+42");
+    check("x^3+2*x^2+4*x+3", "x^3+2*x^2+4*x+3");
+    check("y*x^3+y*x^2+y*x+y+x+42", "x^3*y+x^2*y+x*y+y+x+42");
+    check("2I", "I*2");
   }
 
   public void testSystem000a() {
@@ -143,11 +147,11 @@ public class SystemTestCase extends AbstractTestCase {
   }
 
   public void testSystem012() {
-    check("$a=2;$a+=b", "2+b");
+    check("$a=2;$a+=b", "b+2");
   }
 
   public void testSystem013() {
-    check("$a=2;$a-=b", "2-b");
+    check("$a=2;$a-=b", "-b+2");
   }
 
   public void testSystem014() {
@@ -215,8 +219,8 @@ public class SystemTestCase extends AbstractTestCase {
   }
 
   public void testSystem029() {
-    check("Map[(#+2)&, s[x, y]]", "s[2+x,2+y]");
-    check("(#+2)&/@s[x, y]", "s[2+x,2+y]");
+    check("Map[(#+2)&, s[x, y]]", "s[x+2,y+2]");
+    check("(#+2)&/@s[x, y]", "s[x+2,y+2]");
   }
 
   public void testSystem030() {
@@ -229,7 +233,7 @@ public class SystemTestCase extends AbstractTestCase {
   }
 
   public void testSystem032() {
-    check("Map[(#+2)&, s[g[u,v], y],{2}]", "s[g[2+u,2+v],y]");
+    check("Map[(#+2)&, s[g[u,v], y],{2}]", "s[g[u+2,v+2],y]");
   }
 
   public void testSystem033() {
@@ -264,15 +268,16 @@ public class SystemTestCase extends AbstractTestCase {
     check("Trace[D[Sin[x],x]]",
         "{D[Sin[x],x],Cos[x]*D[x,x],{D[x,x],1},1*Cos[x],Cos[x]}");
     check("D[Sin[x]^Cos[x],x]",
-        "(Cos[x]^2*Sin[x]^(-1)-Log[Sin[x]]*Sin[x])*Sin[x]^Cos[x]");
+        "(-Log[Sin[x]]*Sin[x]+Cos[x]^2*Sin[x]^(-1))*Sin[x]^Cos[x]");
     check(
         "Trace[D[Sin[x]^Cos[x],x]]",
-        "{D[Sin[x]^Cos[x],x],Sin[x]^Cos[x]*(Cos[x]*D[Sin[x],x]*Sin[x]^(-1)+Log[Sin[x]]*D[Cos[x],x]),{D[Sin[x],x],Cos[x]*D[x,x],{D[x,x],\n"
-            + "1},1*Cos[x],Cos[x]},{Cos[x]*D[Sin[x],x]*Sin[x]^(-1),Cos[x]*Cos[x]*Sin[x]^(-1),Cos[x]^\n"
-            + "2*Sin[x]^(-1)},{D[Cos[x],x],(-1)*Sin[x]*D[x,x],(-1)*Sin[x]*D[x,x],{D[x,x],1},(-1)*\n"
-            + "1*Sin[x],(-1)*Sin[x]},{Log[Sin[x]]*D[Cos[x],x],Log[Sin[x]]*(-1)*Sin[x],(-1)*Log[Sin[x]]*Sin[x]},{Cos[x]*D[Sin[x],x]*Sin[x]^(\n"
-            + "-1)+Log[Sin[x]]*D[Cos[x],x],Cos[x]^2*Sin[x]^(-1)-Log[Sin[x]]*Sin[x]},(Cos[x]^2*Sin[x]^(\n"
-            + "-1)-Log[Sin[x]]*Sin[x])*Sin[x]^Cos[x]}");
+        "{D[Sin[x]^Cos[x],x],Sin[x]^Cos[x]*(Log[Sin[x]]*D[Cos[x],x]+Cos[x]*D[Sin[x],x]*Sin[x]^(\n"
+            + "-1)),{D[Sin[x],x],Cos[x]*D[x,x],{D[x,x],1},1*Cos[x],Cos[x]},{Cos[x]*D[Sin[x],x]*Sin[x]^(\n"
+            + "-1),Cos[x]*Cos[x]*Sin[x]^(-1),Cos[x]^2*Sin[x]^(-1)},{D[Cos[x],x],(-1)*Sin[x]*D[x,x],(\n"
+            + "-1)*Sin[x]*D[x,x],{D[x,x],1},(-1)*1*Sin[x],(-1)*Sin[x]},{Log[Sin[x]]*D[Cos[x],x],Log[Sin[x]]*(\n"
+            + "-1)*Sin[x],(-1)*Log[Sin[x]]*Sin[x]},{Log[Sin[x]]*D[Cos[x],x]+Cos[x]*D[Sin[x],x]*Sin[x]^(\n"
+            + "-1),-Log[Sin[x]]*Sin[x]+Cos[x]^2*Sin[x]^(-1)},(-Log[Sin[x]]*Sin[x]+Cos[x]^2*Sin[x]^(\n"
+            + "-1))*Sin[x]^Cos[x]}");
     check("Trace[NumberQ[1/3]]", "{NumberQ[1/3],True}");
   }
 
@@ -284,6 +289,7 @@ public class SystemTestCase extends AbstractTestCase {
 
   public void testSystem040() {
     check("N[Sin[1/2]]", "0.479425538604203");
+    check("N[1/6*(I*44^(1/2)+2)]", "0.3333333333333333+I*1.1055415967851332");
     // test automatic numericMode (triggered by double value "0.5"):
   }
 
@@ -468,7 +474,7 @@ public class SystemTestCase extends AbstractTestCase {
 
   public void testSystem070() {
     check("Degree", "1/180*Pi");
-    check("GoldenRatio", "1/2*(1+5^(1/2))");
+    check("GoldenRatio", "1/2*(5^(1/2)+1)");
   }
 
   public void testSystem071() {
@@ -497,12 +503,12 @@ public class SystemTestCase extends AbstractTestCase {
   }
 
   public void testSystem077() {
-    check("D[Sin[x]Cos[x],x]", "Cos[x]^2-Sin[x]^2");
+    check("D[Sin[x]Cos[x],x]", "-Sin[x]^2+Cos[x]^2");
   }
 
   public void testSystem078() {
     check("D[Sin[x]^Cos[x],x]",
-        "(Cos[x]^2*Sin[x]^(-1)-Log[Sin[x]]*Sin[x])*Sin[x]^Cos[x]");
+        "(-Log[Sin[x]]*Sin[x]+Cos[x]^2*Sin[x]^(-1))*Sin[x]^Cos[x]");
   }
 
   public void testSystem079() {
@@ -523,7 +529,7 @@ public class SystemTestCase extends AbstractTestCase {
   public void testSystem082() {
     check("Det[{{1,2},{3,4}}]", "-2");
     check("Det[{{1,2.0},{3,4}}]", "-2.0");
-    check("Det[{{a,b},{c,d}}]", "a*(-a^(-1)*b*c+d)");
+    check("Det[{{a,b},{c,d}}]", "a*(d-a^(-1)*b*c)");
   }
 
   public void testSystem083() {
@@ -535,7 +541,7 @@ public class SystemTestCase extends AbstractTestCase {
 
     check(
         "Fit[{2,3,5,7,11,13},3,x]",
-        "3.0000000000000293+1.1071428571428645*x^2.0-0.08333333333333395*x^3.0-1.9523809523809792*x");
+        "-0.08333333333333395*x^3.0+1.1071428571428645*x^2.0-1.9523809523809792*x+3.0000000000000293");
     check("Fit[{{1,1},{2,4},{3,9},{4,16}},2,x]", "x^2.0");
     check("Fit[{1,4,9,16},2,x]", "x^2.0");
 
@@ -570,7 +576,7 @@ public class SystemTestCase extends AbstractTestCase {
   }
 
   public void testSystem085() {
-    check("Tr[{{a,b,c},{d,e,f}}]", "a+e");
+    check("Tr[{{a,b,c},{d,e,f}}]", "e+a");
   }
 
   public void testSystem086() {
@@ -673,20 +679,20 @@ public class SystemTestCase extends AbstractTestCase {
   }
 
   public void testSystem104() {
-    check("{{a,2}}.{{a},{3}}", "{{6+a^2}}");
+    check("{{a,2}}.{{a},{3}}", "{{a^2+6}}");
   }
 
   public void testSystem105() {
-    check("{{3,4}}.{{a},{3}}", "{{12+3*a}}");
+    check("{{3,4}}.{{a},{3}}", "{{3*a+12}}");
   }
 
   public void testSystem106() {
-    check("{{a,2},{3,4}}.{{a,2},{3,4}}", "{{6+a^2,8+2*a},{12+3*a,22}}");
+    check("{{a,2},{3,4}}.{{a,2},{3,4}}", "{{a^2+6,2*a+8},{3*a+12,22}}");
   }
 
   public void testSystem107() {
     check("MatrixPower[{{a,2},{3,4}},3]",
-        "{{24+12*a+a^3,44+8*a+2*a^2},{66+12*a+3*a^2,112+6*a}}");
+        "{{a^3+12*a+24,2*a^2+8*a+44},{3*a^2+12*a+66,6*a+112}}");
 
   }
 
@@ -711,7 +717,7 @@ public class SystemTestCase extends AbstractTestCase {
   }
 
   public void testSystem111() {
-    check("ArcCos[I]", "1/2*Pi-I*ArcSinh[1]");
+    check("ArcCos[I]", "-I*ArcSinh[1]+1/2*Pi");
     check("Exp[Pi*I]", "-1");
     check("E^(Pi*I)", "-1");
   }
@@ -908,7 +914,7 @@ public class SystemTestCase extends AbstractTestCase {
   }
 
   public void testSystem158() {
-    check("a*(-1/3)+b*(-1/3)", "-1/3*a-1/3*b");
+    check("a*(-1/3)+b*(-1/3)", "-1/3*b-1/3*a");
 
   }
 
@@ -945,20 +951,20 @@ public class SystemTestCase extends AbstractTestCase {
   }
 
   public void testSystem165() {
-    check("Expand[(a+b)*(c+d)]", "a*c+b*c+a*d+b*d");
-    check("Expand[(x+3)/((x+4)*(x+2))]", "(3+x)*(8+6*x+x^2)^(-1)");
+    check("Expand[(a+b)*(c+d)]", "b*d+a*d+b*c+a*c");
+    check("Expand[(x+3)/((x+4)*(x+2))]", "(x+3)*(x^2+6*x+8)^(-1)");
   }
 
   public void testSystem166() {
-    check("Expand[(a+b)^2]", "a^2+2*a*b+b^2");
+    check("Expand[(a+b)^2]", "b^2+2*a*b+a^2");
   }
 
   public void testSystem167() {
-    check("Expand[(a+b+c)^2]", "a^2+2*a*b+b^2+2*a*c+2*b*c+c^2");
+    check("Expand[(a+b+c)^2]", "c^2+2*b*c+2*a*c+b^2+2*a*b+a^2");
   }
 
   public void testSystem168() {
-    check("Expand[x*(x+1)]", "x+x^2");
+    check("Expand[x*(x+1)]", "x^2+x");
   }
 
   public void testSystem169() {
@@ -966,7 +972,7 @@ public class SystemTestCase extends AbstractTestCase {
   }
 
   public void testSystem170() {
-    check("Cross[{1, 2, 3}, {a, b, c}]", "{-3*b+2*c,3*a-c,-2*a+b}");
+    check("Cross[{1, 2, 3}, {a, b, c}]", "{2*c-3*b,-c+3*a,b-2*a}");
   }
 
   public void testSystem171() {
@@ -987,10 +993,10 @@ public class SystemTestCase extends AbstractTestCase {
 
   public void testSystem172() {
     check("Integrate[(10 x^2 - 63 x + 29)/(x^3 - 11 x^2 + 40 x -48),x]",
-        "80*Log[-4+x]-70*Log[-3+x]+63*(-4+x)^(-1)");
+        "63*(x-4)^(-1)-70*Log[x-3]+80*Log[x-4]");
     check(
         "Integrate[(x^7 - 24*x^4 - 4*x^2 + 8*x - 8)/(x^8 + 6*x^6 + 12*x^4 + 8*x^2),x]",
-        "Log[x]+x^(-1)+(3-x)*(2+x^2)^(-1)+6*x*(4+4*x^2+x^4)^(-1)");
+        "6*x*(x^4+4*x^2+4)^(-1)+(-x+3)*(x^2+2)^(-1)+x^(-1)+Log[x]");
   }
 
   public void testSystem173() {
@@ -1598,7 +1604,7 @@ public class SystemTestCase extends AbstractTestCase {
 
   public void testSystem306() {
     check("u[v[w,x,y] /. { x->y, w->y}]", "u[v[y,y,y]]");
-    check("{x,x,x} /. x->y+1", "{1+y,1+y,1+y}");
+    check("{x,x,x} /. x->y+1", "{y+1,y+1,y+1}");
     // check("{a+b,x,c+d+e} /. x_+y_->{x,y}", "");
   }
 
@@ -1631,8 +1637,8 @@ public class SystemTestCase extends AbstractTestCase {
   }
 
   public void testSystem313() {
-    check("Total[{2,4*x^5, y*x},{2}]", "4+x+y");
-    check("Total[{2,4*x^5, y*x},{2,3}]", "9+2*x+y");
+    check("Total[{2,4*x^5, y*x},{2}]", "y+x+4");
+    check("Total[{2,4*x^5, y*x},{2,3}]", "y+2*x+9");
     check("Total[w[{1,2,3},{4,5,6},{7,8,9}]]", "{12,15,18}");
     check("Total[w[{1,2,3},{4,5,6},{7,8,9}],2]", "45");
   }
@@ -1750,7 +1756,7 @@ public class SystemTestCase extends AbstractTestCase {
   }
 
   public void testSystem341() {
-    check("Select[a*c+b*c+a*d+b*d, FreeQ[#,a]&]", "b*c+b*d");
+    check("Select[a*c+b*c+a*d+b*d, FreeQ[#,a]&]", "b*d+b*c");
   }
 
   public void testSystem342() {
@@ -1877,7 +1883,7 @@ public class SystemTestCase extends AbstractTestCase {
   }
 
   public void testSystem371() {
-    check("Mean[{a,b,2,3}]", "1/4*(5+a+b)");
+    check("Mean[{a,b,2,3}]", "1/4*(b+a+5)");
     check("Mean[{1., 0.3, 4.7}]", "2.0");
   }
 
@@ -1885,7 +1891,7 @@ public class SystemTestCase extends AbstractTestCase {
     check("Median[{1,5,2,8,7}]", "5");
     check("Median[{1,5,2,10,8,7}]", "6");
     check("Median[{a,b,c,d,e}]", "c");
-    check("Median[{f,g,h,i,j,k}]", "1/2*(h+i)");
+    check("Median[{f,g,h,i,j,k}]", "1/2*(i+h)");
   }
 
   public void testSystem373() {
@@ -1936,14 +1942,16 @@ public class SystemTestCase extends AbstractTestCase {
   }
 
   public void testSystem380() {
-    check("Exp[3.4341896]","31.006274895944433");
-    check("Pi^3.0","31.006276680299816");
-    check("FindRoot[Exp[x]==Pi^3,{x,-1,10}, Bisection]", "{x->3.434189647436142}");
+    check("Exp[3.4341896]", "31.006274895944433");
+    check("Pi^3.0", "31.006276680299816");
+    check("FindRoot[Exp[x]==Pi^3,{x,-1,10}, Bisection]",
+        "{x->3.434189647436142}");
     check("FindRoot[Exp[x]==Pi^3,{x,-1,10}, Brent]", "{x->3.434189604205737}");
     check("FindRoot[Exp[x]==Pi^3,{x,-1,10}, Muller]", "{x->3.4341896575482025}");
-    check("FindRoot[Exp[x]==Pi^3,{x,-1,10}, Ridders]", "{x->3.4341896575482007}");
+    check("FindRoot[Exp[x]==Pi^3,{x,-1,10}, Ridders]",
+        "{x->3.4341896575482007}");
     check("FindRoot[Exp[x]==Pi^3,{x,-1,10}, Secant]", "{x->3.4341896575482007}");
-    
+
   }
 
   public void testSystem381() {
@@ -2051,11 +2059,11 @@ public class SystemTestCase extends AbstractTestCase {
     check("Denominator[42]", "1");
     check("Numerator[3/4*x^(-3)]", "3");
     check("Denominator[3/4*x^(-3)]", "4*x^3");
-    check("Numerator[x+3/4*x^(-3)]", "3/4*x^(-3)+x");
+    check("Numerator[x+3/4*x^(-3)]", "x+3/4*x^(-3)");
     check("Denominator[x+3/4*x^(-3)]", "1");
-    check("Together[x+3/4*x^(-3)]", "1/4*(3+4*x^4)*x^(-3)");
-    check("Together[(x^2-2)^3/(x^2-2)+(x^2-2)^2/(x^2-2)]", "2-3*x^2+x^4");
-    check("Together[a/b+c/d]", "(b*c+a*d)*b^(-1)*d^(-1)");
+    check("Together[x+3/4*x^(-3)]", "1/4*(4*x^4+3)*x^(-3)");
+    check("Together[(x^2-2)^3/(x^2-2)+(x^2-2)^2/(x^2-2)]", "x^4-3*x^2+2");
+    check("Together[a/b+c/d]", "(a*d+b*c)*b^(-1)*d^(-1)");
   }
 
   public void testSystem399() {
@@ -2064,27 +2072,27 @@ public class SystemTestCase extends AbstractTestCase {
 
   public void testSystem401() {
     check("ExpandAll[3.0+x*(4.0+x*(5.0+(33.0+x^2.0)*x^4.0))]",
-        "3.0+5.0*x^2.0+33.0*x^6.0+x^8.0+4.0*x");
+        "x^8.0+33.0*x^6.0+5.0*x^2.0+4.0*x+3.0");
     check("Horner[3+4*x+5*x^2+33*x^6.0+x^8]",
-        "3.0+x*(4.0+x*(5.0+(33.0+x^2.0)*x^4.0))");
-    check("ExpandAll[3+x*(4+x*(5+(33+x^2)*x^4))]", "3+4*x+5*x^2+33*x^6+x^8");
-    check("Horner[3+4*x+5*x^2+33*x^6+x^8]", "3+x*(4+x*(5+(33+x^2)*x^4))");
+        "x*(x*((x^2.0+33.0)*x^4.0+5.0)+4.0)+3.0");
+    check("ExpandAll[3+x*(4+x*(5+(33+x^2)*x^4))]", "x^8+33*x^6+5*x^2+4*x+3");
+    check("Horner[3+4*x+5*x^2+33*x^6+x^8]", "x*(x*((x^2+33)*x^4+5)+4)+3");
   }
 
   public void testSystem402() {
     check("Expand[(x-1)^10]",
-        "1-10*x+45*x^2-120*x^3+210*x^4-252*x^5+210*x^6-120*x^7+45*x^8-10*x^9+x^10");
+        "x^10-10*x^9+45*x^8-120*x^7+210*x^6-252*x^5+210*x^4-120*x^3+45*x^2-10*x+1");
     check(
         "Expand[(x-1)^20]",
-        "1-20*x+190*x^2-1140*x^3+4845*x^4-15504*x^5+38760*x^6-77520*x^7+125970*x^8-167960*x^\n"
-            + "9+184756*x^10-167960*x^11+125970*x^12-77520*x^13+38760*x^14-15504*x^15+4845*x^16\n"
-            + "-1140*x^17+190*x^18-20*x^19+x^20");
+        "x^20-20*x^19+190*x^18-1140*x^17+4845*x^16-15504*x^15+38760*x^14-77520*x^13+\n" + 
+        "125970*x^12-167960*x^11+184756*x^10-167960*x^9+125970*x^8-77520*x^7+38760*x^6\n" + 
+        "-15504*x^5+4845*x^4-1140*x^3+190*x^2-20*x+1");
     check("ExpandAll[3+x*(4+x*(Sin[5+(33+x^2)*x^4]))]",
-        "3+4*x+x^2*Sin[5+33*x^4+x^6]");
+        "x^2*Sin[x^6+33*x^4+5]+4*x+3");
   }
 
   public void testSystem403() {
-    check("ToString[a^2+2*a*b+b^2]", "\"a^2+2*a*b+b^2\"");
+    check("ToString[a^2+2*a*b+b^2]", "\"b^2+2*a*b+a^2\"");
   }
 
   public void testSystem404() {
@@ -2092,7 +2100,7 @@ public class SystemTestCase extends AbstractTestCase {
   }
 
   public void testSystem405() {
-    check("Taylor[Cos[x],{x,0,4}]", "1-1/2*x^2+1/24*x^4");
+    check("Taylor[Cos[x],{x,0,4}]", "1/24*x^4-1/2*x^2+1");
   }
 
   public void testSystem406() {
@@ -2100,9 +2108,9 @@ public class SystemTestCase extends AbstractTestCase {
         "{{D[f[u],u],0,0},{0,D[f[v],v],0},{0,0,D[f[w],w]},{0,0,0}}");
     check(
         "Curl[{f[u,v,w],f[v,w,u],f[w,u,v],f[x]}, {u,v,w}]",
-        "{D[f[w,u,v],v]-D[f[v,w,u],w],D[f[u,v,w],w]-D[f[w,u,v],u],D[f[v,w,u],u]-D[f[u,v,w],v],f[x]}");
+        "{-D[f[v,w,u],w]+D[f[w,u,v],v],-D[f[w,u,v],u]+D[f[u,v,w],w],-D[f[u,v,w],v]+D[f[v,w,u],u],f[x]}");
     check("Divergence[{f[u,v,w],f[v,w,u],f[w,u,v]}, {u,v,w}]",
-        "D[f[u,v,w],u]+D[f[v,w,u],v]+D[f[w,u,v],w]");
+        "D[f[w,u,v],w]+D[f[v,w,u],v]+D[f[u,v,w],u]");
   }
 
   public void testSystem407() {
@@ -2138,8 +2146,8 @@ public class SystemTestCase extends AbstractTestCase {
     check("Norm[3-4*I]", "5");
     check("Norm[-12/90]", "2/15");
     check("Norm[2/15]", "2/15");
-    check("Norm[{3,I,x,y}]", "(10+Abs[x]^2+Abs[y]^2)^(1/2)");
-    check("Norm[{3.0,I,x,y}]", "(10.0+Abs[x]^2.0+Abs[y]^2.0)^0.5");
+    check("Norm[{3,I,x,y}]", "(Abs[y]^2+Abs[x]^2+10)^(1/2)");
+    check("Norm[{3.0,I,x,y}]", "(Abs[y]^2.0+Abs[x]^2.0+10.0)^0.5");
     check("EuclidianDistance[{1,2,3,4},{5,6,7,8}]", "8");
     check("SquaredEuclidianDistance[{1,2,3,4},{5,6,7,8}]", "64");
     check("ChessboardDistance[{1,2,3,4},{5,6,9,8}]", "6");
@@ -2219,16 +2227,16 @@ public class SystemTestCase extends AbstractTestCase {
   public void testSystem802() {
     check("LegendreP[0,x]", "1");
     check("LegendreP[1,x]", "x");
-    check("LegendreP[4,x]", "1/16*(6-60*x^2+70*x^4)");
-    check("LegendreP[7,x]", "1/128*(-280*x+2520*x^3-5544*x^5+3432*x^7)");
+    check("LegendreP[4,x]", "1/16*(70*x^4-60*x^2+6)");
+    check("LegendreP[7,x]", "1/128*(3432*x^7-5544*x^5+2520*x^3-280*x)");
     check("LegendreP[10,x]",
-        "1/1024*(-252+13860*x^2-120120*x^4+360360*x^6-437580*x^8+184756*x^10)");
+        "1/1024*(184756*x^10-437580*x^8+360360*x^6-120120*x^4+13860*x^2-252)");
   }
 
   public void testSystem991() {
     check("PolynomialQuotient[x^2+2*x+1,x+2]", "x");
-    check("PolynomialQuotient[x^2+x+1,2*x+1]", "1/4+1/2*x");
-    check("PolynomialQuotient[x^2-1,x-1]", "1+x");
+    check("PolynomialQuotient[x^2+x+1,2*x+1]", "1/2*x+1/4");
+    check("PolynomialQuotient[x^2-1,x-1]", "x+1");
   }
 
   public void testSystem992() {
@@ -2239,37 +2247,37 @@ public class SystemTestCase extends AbstractTestCase {
 
   public void testSystem993() {
     check("PolynomialQuotientRemainder[x^2+2*x+1,x+2]", "{x,1}");
-    check("PolynomialQuotientRemainder[x^2+x+1,2*x+1]", "{1/4+1/2*x,3/4}");
-    check("PolynomialQuotientRemainder[x^2-1,x-1]", "{1+x,0}");
+    check("PolynomialQuotientRemainder[x^2+x+1,2*x+1]", "{1/2*x+1/4,3/4}");
+    check("PolynomialQuotientRemainder[x^2-1,x-1]", "{x+1,0}");
   }
 
   public void testSystem994() {
-    check("PolynomialGCD[3+3*x^3,3+3*x^3]", "1+x^3");
-    check("PolynomialGCD[x^2-1,x-1]", "-1+x");
-    check("PolynomialGCD[x+1,x^2-1]", "1+x");
-    check("PolynomialGCD[-1+x^16,(x^2-1)*((1+x^4))]", "-1+x^2-x^4+x^6");
+    check("PolynomialGCD[3+3*x^3,3+3*x^3]", "x^3+1");
+    check("PolynomialGCD[x^2-1,x-1]", "x-1");
+    check("PolynomialGCD[x+1,x^2-1]", "x+1");
+    check("PolynomialGCD[-1+x^16,(x^2-1)*((1+x^4))]", "x^6-x^4+x^2-1");
     check(
         "PolynomialGCD[8*x^5+28*x^4+34*x^3+41*x^2+35*x-14,12*x^5+4*x^4-27*x^3-9*x^2-84*x-28]",
-        "7/2+7/4*x+2*x^2+x^3");
+        "x^3+2*x^2+7/4*x+7/2");
   }
 
   public void testSystem995() {
-    check("Apart[(x)/(x^2-1)]", "1/2*(-1+x)^(-1)+1/2*(1+x)^(-1)");
-    check("Apart[(x+3)/(x^2-3*x-40)]", "11/13*(-8+x)^(-1)+2/13*(5+x)^(-1)");
+    check("Apart[(x)/(x^2-1)]", "1/2*(x+1)^(-1)+1/2*(x-1)^(-1)");
+    check("Apart[(x+3)/(x^2-3*x-40)]", "2/13*(x+5)^(-1)+11/13*(x-8)^(-1)");
     check("Apart[(10*x^2+12*x+20)/(x^3-8)]",
-        "7*(-2+x)^(-1)+(4+3*x)*(4+2*x+x^2)^(-1)");
-    check("Apart[(3*x+5)*(1-2*x)^(-2)]", "13/8*(-1/2+x)^(-2)+3/4*(-1/2+x)^(-1)");
+        "(3*x+4)*(x^2+2*x+4)^(-1)+7*(x-2)^(-1)");
+    check("Apart[(3*x+5)*(1-2*x)^(-2)]", "3/4*(x-1/2)^(-1)+13/8*(x-1/2)^(-2)");
     check("Apart[(10*x^2+12*x+20)/(x^3-8)]",
-        "7*(-2+x)^(-1)+(4+3*x)*(4+2*x+x^2)^(-1)");
+        "(3*x+4)*(x^2+2*x+4)^(-1)+7*(x-2)^(-1)");
     check(
         "Apart[(10*x^2-63*x+29)/((x+2)*(x+3)^5)]",
-        "195*(2+x)^(-1)-308*(3+x)^(-5)-185*(3+x)^(-4)-195*(3+x)^(-3)-195*(3+x)^(-2)-195*(\n"
-            + "3+x)^(-1)");
+        "-195*(x+3)^(-1)-195*(x+3)^(-2)-195*(x+3)^(-3)-185*(x+3)^(-4)-308*(x+3)^(-5)+195*(x+\n" + 
+        "2)^(-1)");
   }
 
   public void testSystem996() {
-    check("FactorTerms[3+3*x^3]", "3*(1+x^3)");
-    check("FactorTerms[3+3/4*x^3+12/17*x^2,x]", "3/68*(68+16*x^2+17*x^3)");
+    check("FactorTerms[3+3*x^3]", "3*(x^3+1)");
+    check("FactorTerms[3+3/4*x^3+12/17*x^2,x]", "3/68*(17*x^3+16*x^2+68)");
   }
 
   // public void testSystem997() {
@@ -2291,23 +2299,41 @@ public class SystemTestCase extends AbstractTestCase {
   // }
 
   public void testSystem998() {
-    check("Factor[4+x^2+2*x+3*x^3]", "(1+x)*(4-2*x+3*x^2)");
+    check(
+        "Roots[x^3+4*x^2+x+2]",
+        "{(-1/3)*((1/2)^(1/3)*(-12528^(1/2)+146)^(1/3)+(1/2)^(1/3)*(12528^(1/2)+146)^(1/3)+\n" + 
+        "4),(-1/3)*((I*1/2*3^(1/2)-1/2)*(1/2)^(1/3)*(-12528^(1/2)+146)^(1/3)+(-I*1/2*3^(1/\n" + 
+        "2)-1/2)*(1/2)^(1/3)*(12528^(1/2)+146)^(1/3)+4),(-1/3)*((-I*1/2*3^(1/2)-1/2)*(1/2)^(\n" + 
+        "1/3)*(-12528^(1/2)+146)^(1/3)+(I*1/2*3^(1/2)-1/2)*(1/2)^(1/3)*(12528^(1/2)+146)^(\n" + 
+        "1/3)+4)}");
+    check(
+        "NRoots[x^3+4*x^2+x+2]", 
+        "{-3.8751297941627785," +
+        "-0.06243510291861069+I*0.7156909967859645," +
+        "-0.06243510291861069+I*(-0.7156909967859645)}");
+    check("Roots[4+x^2+2*x+3*x^3]",
+        "{-1,1/6*(I*44^(1/2)+2),1/6*(-I*44^(1/2)+2)}");
+    check("Roots[Expand[(x-1)^3]]", "{1}");
+    check(
+        "Roots[x^6-1]",
+        "{1,-1,1/2*(I*3^(1/2)+1),1/2*(-I*3^(1/2)+1),1/2*(I*3^(1/2)-1),1/2*(-I*3^(1/2)-1)}");
+    check("Factor[4+x^2+2*x+3*x^3]", "(x+1)*(3*x^2-2*x+4)");
     check("Factor[ Expand[(x^3+4*x^2+3*x+2)*(x^3+4*x^2+x+2)]]",
-        "(2+x+4*x^2+x^3)*(2+3*x+4*x^2+x^3)");
+        "(x^3+4*x^2+x+2)*(x^3+4*x^2+3*x+2)");
     check("Factor[4+8*x+19*x^2+20*x^3+20*x^4+8*x^5+x^6]",
-        "(2+x+4*x^2+x^3)*(2+3*x+4*x^2+x^3)");
-    check("Factor[Expand[(x-1)^3]]", "(-1+x)^3");
-    check("Factor[x^6-1]", "(-1+x)*(1+x)*(1+x+x^2)*(1-x+x^2)");
-    check("Expand[(-1+x)*(1+x)*(1+x+x^2)*(1-x+x^2)]", "-1+x^6");
+        "(x^3+4*x^2+x+2)*(x^3+4*x^2+3*x+2)");
+    check("Factor[Expand[(x-1)^3]]", "(x-1)^3");
+    check("Factor[x^6-1]", "(x-1)*(x+1)*(x^2+x+1)*(x^2-x+1)");
+    check("Expand[(-1+x)*(1+x)*(1+x+x^2)*(1-x+x^2)]", "x^6-1");
 
-    check("Factor[x^5+x^4+x+1]", "(1+x)*(1+x^4)");
+    check("Factor[x^5+x^4+x+1]", "(x+1)*(x^4+1)");
 
-    check("Factor[-1+x^16]", "(-1+x)*(1+x)*(1+x^2)*(1+x^4)*(1+x^8)");
-    check("Expand[(-1+x)*(1+x)*(1+x^2)*(1+x^4)*(1+x^8)]", "-1+x^16");
+    check("Factor[-1+x^16]", "(x-1)*(x+1)*(x^2+1)*(x^4+1)*(x^8+1)");
+    check("Expand[(-1+x)*(1+x)*(1+x^2)*(1+x^4)*(1+x^8)]", "x^16-1");
 
-    check("Factor[5+x^12,Modulus->7]", "(2+x^3)*(4+x^6)*(5+x^3)");
+    check("Factor[5+x^12,Modulus->7]", "(x^3+2)*(x^6+4)*(x^3+5)");
     // not supported by JAS?
-    check("Factor[1+x^10,Modulus->2]", "Factor[1+x^10,Modulus->2]");// "(1+x)^2*(1+x+x^2+x^3+x^4)^2");
+    check("Factor[1+x^10,Modulus->2]", "Factor[x^10+1,Modulus->2]");// "(1+x)^2*(1+x+x^2+x^3+x^4)^2");
   }
   // public void testSystem999() {
   // check("FactorI[4+x^2+2*x+3*x^3, x]", "(1+x)*(4-2*x+3*x^2)");
