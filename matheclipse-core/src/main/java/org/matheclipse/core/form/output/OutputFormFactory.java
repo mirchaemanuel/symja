@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.Map;
 
-import org.matheclipse.core.eval.interfaces.INumericComplex;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.expression.IConstantHeaders;
 import org.matheclipse.core.interfaces.IAST;
@@ -268,16 +267,16 @@ public class OutputFormFactory implements IConstantHeaders {
     convert(buf, obj);
   }
 
-  public void convertPlusOperator(final Writer buf, final IAST list,
+  public void convertPlusOperator(final Writer buf, final IAST plusAST,
       final InfixOperator oper, final int precedence) throws IOException {
     if (oper.getPrecedence() < precedence) {
       buf.write("(");
     }
 
     Object temp;
-    for (int i = 1; i < list.size(); i++) {
-      checkCanceled();
-      temp = list.get(i);
+    int size = plusAST.size()-1;
+    for (int i = size; i > 0 ; i--) {
+      temp = plusAST.get(i);
 
       if ((temp instanceof IAST) && (((IAST) temp).size() > 1)
           && ((IAST) temp).topHead().toString().equals(Times)) {
@@ -302,7 +301,7 @@ public class OutputFormFactory implements IConstantHeaders {
             }
           }
         } else {
-          if (i > 1) {
+          if (i < size) {
             buf.write(ASTNodeFactory.MMA_STYLE_FACTORY.get("Plus")
                 .getOperatorString());
           }
@@ -310,7 +309,6 @@ public class OutputFormFactory implements IConstantHeaders {
         }
 
         for (int j = 2; j < multFun.size(); j++) {
-          checkCanceled();
           temp1 = multFun.get(j);
 
           if ((j > 2) || (flag == false)) {
@@ -326,7 +324,7 @@ public class OutputFormFactory implements IConstantHeaders {
           // special case negative number:
           convert(buf, temp);
         } else {
-          if (i > 1) {
+          if (i < size) {
             buf.write(ASTNodeFactory.MMA_STYLE_FACTORY.get("Plus")
                 .getOperatorString());
           }
