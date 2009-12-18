@@ -3,18 +3,14 @@ package org.matheclipse.generic;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
 import org.matheclipse.core.generic.UnaryFunctorImpl;
-import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.generic.interfaces.Aggregator;
 import org.matheclipse.generic.interfaces.BiFunction;
 import org.matheclipse.generic.interfaces.BiPredicate;
-import org.matheclipse.generic.util.MutuableInteger;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -716,7 +712,6 @@ public class Range<E, L extends List<E>> implements Iterable<E> {
    */
   public L select(L list, Predicate<E> predicate) {
     for (int i = fStart; i < fEnd; i++) {
-
       if (predicate.apply(fList.get(i))) {
         list.add(fList.get(i));
       }
@@ -804,17 +799,6 @@ public class Range<E, L extends List<E>> implements Iterable<E> {
     for (E e : set3) {
       result.add(e);
     }
-    // final Set<E> unionSet = new HashSet<E>();
-    // for (int i = fStart; i < fEnd; i++) {
-    // unionSet.add(fList.get(i));
-    // }
-    // for (int i = secondList.fStart; i < secondList.fEnd; i++) {
-    // unionSet.add(secondList.get(i));
-    // }
-    // final Iterator<E> iter = unionSet.iterator();
-    // while (iter.hasNext()) {
-    // result.add(iter.next());
-    // }
     return result;
   }
 

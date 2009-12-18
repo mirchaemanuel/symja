@@ -36,7 +36,7 @@ import org.apache.commons.math.ode.sampling.StepInterpolator;
  * proposed step (and hence the step should be reduced to ensure the
  * event occurs at a bound rather than inside the step).</p>
  *
- * @version $Revision: 887794 $ $Date: 2009-12-07 00:04:55 +0100 (Mo, 07 Dez 2009) $
+ * @version $Revision: 889006 $ $Date: 2009-12-09 23:46:36 +0100 (Mi, 09 Dez 2009) $
  * @since 1.2
  */
 public class EventState {
@@ -207,7 +207,7 @@ public class EventState {
                             throw MathRuntimeException.createInternalError(null);
                         }
                     }
-                         
+
                     // variation direction, with respect to the integration direction
                     increasing = gb >= ga;
 

@@ -24,10 +24,10 @@ import org.apache.commons.math.util.OpenIntToDoubleHashMap.Iterator;
 
 /**
  * This class implements the {@link RealVector} interface with a {@link OpenIntToDoubleHashMap} backing store.
- * @version $Revision: 811827 $ $Date: 2009-09-06 17:32:50 +0200 (So, 06 Sep 2009) $
+ * @version $Revision: 890159 $ $Date: 2009-12-14 03:53:40 +0100 (Mo, 14 Dez 2009) $
  * @since 2.0
 */
-public class OpenMapRealVector implements SparseRealVector, Serializable {
+public class OpenMapRealVector extends AbstractRealVector implements SparseRealVector, Serializable {
 
     /** Default Tolerance for having a value considered zero. */
     public static final double DEFAULT_ZERO_TOLERANCE = 1.0e-12;
@@ -41,8 +41,11 @@ public class OpenMapRealVector implements SparseRealVector, Serializable {
     /** Dimension of the vector. */
     private final int virtualSize;
 
-    /** Tolerance for having a value considered zero. */
-    private double epsilon;
+    /** Negative tolerance for having a value considered zero. */
+    private double minusEpsilon;
+
+    /** Positive tolerance for having a value considered zero. */
+    private double plusEpsilon;
 
     /**
      * Build a 0-length vector.
@@ -54,7 +57,7 @@ public class OpenMapRealVector implements SparseRealVector, Serializable {
      * into this vector.</p>
      */
     public OpenMapRealVector() {
-        this(0, DEFAULT_ZERO_TOLERANCE);
+        this(0, DEFAULT_ZERO_TOLERANCE, 0);
     }
 
     /**
@@ -62,18 +65,19 @@ public class OpenMapRealVector implements SparseRealVector, Serializable {
      * @param dimension size of the vector
      */
     public OpenMapRealVector(int dimension) {
-        this(dimension, DEFAULT_ZERO_TOLERANCE);
+        this(dimension, DEFAULT_ZERO_TOLERANCE, 0);
     }
 
     /**
      * Construct a (dimension)-length vector of zeros, specifying zero tolerance.
      * @param dimension Size of the vector
      * @param epsilon The tolerance for having a value considered zero
+     * @param defaultValue value for non-specified entries
      */
-    public OpenMapRealVector(int dimension, double epsilon) {
+    public OpenMapRealVector(int dimension, double epsilon, double defaultValue) {
         virtualSize = dimension;
-        entries = new OpenIntToDoubleHashMap(0.0);
-        this.epsilon = epsilon;
+        entries = new OpenIntToDoubleHashMap(defaultValue);
+        setDefault(defaultValue, epsilon);
     }
 
     /**
@@ -84,7 +88,8 @@ public class OpenMapRealVector implements SparseRealVector, Serializable {
     protected OpenMapRealVector(OpenMapRealVector v, int resize) {
         virtualSize = v.getDimension() + resize;
         entries = new OpenIntToDoubleHashMap(v.entries);
-        epsilon = v.getEpsilon();
+        minusEpsilon = v.minusEpsilon;
+        plusEpsilon = v.plusEpsilon;
     }
 
     /**
@@ -101,11 +106,12 @@ public class OpenMapRealVector implements SparseRealVector, Serializable {
      * @param dimension The size of the vector
      * @param expectedSize The expected number of non-zero entries
      * @param epsilon The tolerance for having a value considered zero
+     * @param defaultValue value for non-specified entries
      */
-    public OpenMapRealVector(int dimension, int expectedSize, double epsilon) {
+    public OpenMapRealVector(int dimension, int expectedSize, double epsilon, double defaultValue) {
         virtualSize = dimension;
-        entries = new OpenIntToDoubleHashMap(expectedSize, 0.0);
-        this.epsilon = epsilon;
+        entries = new OpenIntToDoubleHashMap(expectedSize, defaultValue);
+        setDefault(defaultValue, epsilon);
     }
 
     /**
@@ -126,10 +132,10 @@ public class OpenMapRealVector implements SparseRealVector, Serializable {
     public OpenMapRealVector(double[] values, double epsilon) {
         virtualSize = values.length;
         entries = new OpenIntToDoubleHashMap(0.0);
-        this.epsilon = epsilon;
+        setDefault(0, epsilon);
         for (int key = 0; key < values.length; key++) {
             double value = values[key];
-            if (!isZero(value)) {
+            if (!isDefaultValue(value)) {
                 entries.put(key, value);
             }
         }
@@ -141,7 +147,7 @@ public class OpenMapRealVector implements SparseRealVector, Serializable {
      * @param values The set of values to create from
      */
     public OpenMapRealVector(Double[] values) {
-        this(values, DEFAULT_ZERO_TOLERANCE);
+        this(values, DEFAULT_ZERO_TOLERANCE, 0);
     }
 
     /**
@@ -149,14 +155,15 @@ public class OpenMapRealVector implements SparseRealVector, Serializable {
      * Only non-zero entries will be stored
      * @param values The set of values to create from
      * @param epsilon The tolerance for having a value considered zero
+     * @param defaultValue value for non-specified entries
      */
-    public OpenMapRealVector(Double[] values, double epsilon) {
+    public OpenMapRealVector(Double[] values, double epsilon, double defaultValue) {
         virtualSize = values.length;
-        entries = new OpenIntToDoubleHashMap(0.0);
-        this.epsilon = epsilon;
+        entries = new OpenIntToDoubleHashMap(defaultValue);
+        setDefault(defaultValue, epsilon);
         for (int key = 0; key < values.length; key++) {
             double value = values[key].doubleValue();
-            if (!isZero(value)) {
+            if (!isDefaultValue(value)) {
                 entries.put(key, value);
             }
         }
@@ -169,7 +176,8 @@ public class OpenMapRealVector implements SparseRealVector, Serializable {
     public OpenMapRealVector(OpenMapRealVector v) {
         virtualSize = v.getDimension();
         entries = new OpenIntToDoubleHashMap(v.getEntries());
-        epsilon = v.getEpsilon();
+        plusEpsilon = v.plusEpsilon;
+        minusEpsilon = v.minusEpsilon;
     }
 
     /**
@@ -179,13 +187,25 @@ public class OpenMapRealVector implements SparseRealVector, Serializable {
     public OpenMapRealVector(RealVector v) {
         virtualSize = v.getDimension();
         entries = new OpenIntToDoubleHashMap(0.0);
-        epsilon = DEFAULT_ZERO_TOLERANCE;
+        setDefault(0, DEFAULT_ZERO_TOLERANCE);
         for (int key = 0; key < virtualSize; key++) {
             double value = v.getEntry(key);
-            if (!isZero(value)) {
+            if (!isDefaultValue(value)) {
                 entries.put(key, value);
             }
         }
+    }
+
+    /** Set defaults.
+     * @param defaultValue value for non-specified entries
+     * @param epsilon tolerance to check for equality with default value
+     */
+    private void setDefault(double defaultValue, double epsilon) {
+      if (epsilon < 0) {
+        throw new IllegalArgumentException("default tolerance must be > 0 :" + epsilon);
+      }
+      plusEpsilon  = defaultValue + epsilon;
+      minusEpsilon = defaultValue - epsilon;
     }
 
     /**
@@ -197,67 +217,44 @@ public class OpenMapRealVector implements SparseRealVector, Serializable {
     }
 
     /**
-     * Determine if this value is zero.
+     * Determine if this value is within epsilon of the defaultValue (currently always zero).
      * @param value The value to test
-     * @return <code>true</code> if this value is zero, <code>false</code> otherwise
+     * @return <code>true</code> if this value is within epsilon to the defaultValue, <code>false</code> otherwise
      */
-    protected boolean isZero(double value) {
-        return value > -epsilon && value < epsilon;
-    }
-
-    /**
-     * Get the tolerance for having a value considered zero.
-     * @return The test range for testing if a value is zero
-     */
-    public double getEpsilon() {
-        return epsilon;
-    }
-
-    /**
-     * Set the tolerance for having a value considered zero.
-     * @param epsilon The test range for testing if a value is zero
-     */
-    public void setEpsilon(double epsilon) {
-        this.epsilon = epsilon;
+    protected boolean isDefaultValue(double value) {
+        return value < plusEpsilon && value > minusEpsilon;
     }
 
     /** {@inheritDoc} */
-    public OpenMapRealVector add(RealVector v) throws IllegalArgumentException {
+    public RealVector add(RealVector v) throws IllegalArgumentException {
         checkVectorDimensions(v.getDimension());
         if (v instanceof OpenMapRealVector) {
             return add((OpenMapRealVector) v);
+        } else {
+            return super.add(v);
         }
-        return add(v.getData());
     }
 
     /**
-     * Optimized method to add two OpenMapRealVectors.
+     * Optimized method to add two OpenMapRealVectors.  Copies the larger vector, iterates over the smaller.
      * @param v Vector to add with
      * @return The sum of <code>this</code> with <code>v</code>
      * @throws IllegalArgumentException If the dimensions don't match
      */
     public OpenMapRealVector add(OpenMapRealVector v) throws IllegalArgumentException{
         checkVectorDimensions(v.getDimension());
-        OpenMapRealVector res = copy();
-        Iterator iter = v.getEntries().iterator();
+        boolean copyThis = entries.size() > v.entries.size();
+        OpenMapRealVector res = copyThis ? this.copy() : v.copy();
+        Iterator iter = copyThis ? v.entries.iterator() : entries.iterator();
+        OpenIntToDoubleHashMap randomAccess = copyThis ? entries : v.entries;
         while (iter.hasNext()) {
             iter.advance();
             int key = iter.key();
-            if (entries.containsKey(key)) {
-                res.setEntry(key, entries.get(key) + iter.value());
+            if (randomAccess.containsKey(key)) {
+                res.setEntry(key, randomAccess.get(key) + iter.value());
             } else {
                 res.setEntry(key, iter.value());
             }
-        }
-        return res;
-    }
-
-    /** {@inheritDoc} */
-    public OpenMapRealVector add(double[] v) throws IllegalArgumentException {
-        checkVectorDimensions(v.length);
-        OpenMapRealVector res = new OpenMapRealVector(getDimension());
-        for (int i = 0; i < v.length; i++) {
-            res.setEntry(i, v[i] + getEntry(i));
         }
         return res;
     }
@@ -306,32 +303,33 @@ public class OpenMapRealVector implements SparseRealVector, Serializable {
         return new OpenMapRealVector(this);
     }
 
+    /**
+     * Optimized method to compute the dot product with an OpenMapRealVector.
+     * Iterates over the smaller of the two.
+     * @param v The vector to compute the dot product with
+     * @return The dot product of <code>this</code> and <code>v</code>
+     * @throws IllegalArgumentException If the dimensions don't match
+     */
+    public double dotProduct(OpenMapRealVector v) throws IllegalArgumentException {
+        checkVectorDimensions(v.getDimension());
+        boolean thisIsSmaller  = entries.size() < v.entries.size();
+        Iterator iter = thisIsSmaller  ? entries.iterator() : v.entries.iterator();
+        OpenIntToDoubleHashMap larger = thisIsSmaller  ? v.entries : entries;
+        double d = 0;
+        while(iter.hasNext()) {
+            iter.advance();
+            d += iter.value() * larger.get(iter.key());
+        }
+        return d;
+    }
+    
     /** {@inheritDoc} */
     public double dotProduct(RealVector v) throws IllegalArgumentException {
-        checkVectorDimensions(v.getDimension());
-        double res = 0;
-        Iterator iter = entries.iterator();
-        while (iter.hasNext()) {
-            iter.advance();
-            res += v.getEntry(iter.key()) * iter.value();
+        if(v instanceof OpenMapRealVector) {
+            return dotProduct((OpenMapRealVector)v);
+        } else {
+            return super.dotProduct(v);
         }
-        return res;
-    }
-
-    /** {@inheritDoc} */
-    public double dotProduct(double[] v) throws IllegalArgumentException {
-        checkVectorDimensions(v.length);
-        double res = 0;
-        Iterator iter = entries.iterator();
-        while (iter.hasNext()) {
-            int idx = iter.key();
-            double value = 0;
-            if (idx < v.length) {
-                value = v[idx];
-            }
-            res += value * iter.value();
-        }
-        return res;
     }
 
     /** {@inheritDoc} */
@@ -629,34 +627,7 @@ public class OpenMapRealVector implements SparseRealVector, Serializable {
         return false;
     }
 
-    /** {@inheritDoc} */
-    public OpenMapRealVector mapAbs() {
-        return copy().mapAbsToSelf();
-    }
-
-    /** {@inheritDoc} */
-    public OpenMapRealVector mapAbsToSelf() {
-        Iterator iter = entries.iterator();
-        while (iter.hasNext()) {
-            iter.advance();
-            entries.put(iter.key(), Math.abs(iter.value()));
-        }
-        return this;
-    }
-
-    /** {@inheritDoc} */
-    public OpenMapRealVector mapAcos() {
-        return copy().mapAcosToSelf();
-    }
-
-    /** {@inheritDoc} */
-    public OpenMapRealVector mapAcosToSelf() {
-        for (int i = 0; i < virtualSize; i++) {
-            setEntry(i, Math.acos(getEntry(i)));
-        }
-        return this;
-    }
-
+ 
     /** {@inheritDoc} */
     public OpenMapRealVector mapAdd(double d) {
         return copy().mapAddToSelf(d);
@@ -670,405 +641,7 @@ public class OpenMapRealVector implements SparseRealVector, Serializable {
         return this;
     }
 
-    /** {@inheritDoc} */
-    public OpenMapRealVector mapAsin() {
-        return copy().mapAsinToSelf();
-    }
-
-    /** {@inheritDoc} */
-    public OpenMapRealVector mapAsinToSelf() {
-        Iterator iter = entries.iterator();
-        while (iter.hasNext()) {
-            iter.advance();
-            entries.put(iter.key(), Math.asin(iter.value()));
-        }
-        return this;
-    }
-
-    /** {@inheritDoc} */
-    public OpenMapRealVector mapAtan() {
-        return copy().mapAtanToSelf();
-    }
-
-    /** {@inheritDoc} */
-    public OpenMapRealVector mapAtanToSelf() {
-        Iterator iter = entries.iterator();
-        while (iter.hasNext()) {
-            iter.advance();
-            entries.put(iter.key(), Math.atan(iter.value()));
-        }
-        return this;
-    }
-
-    /** {@inheritDoc} */
-    public OpenMapRealVector mapCbrt() {
-        return copy().mapCbrtToSelf();
-    }
-
-    /** {@inheritDoc} */
-    public OpenMapRealVector mapCbrtToSelf() {
-        Iterator iter = entries.iterator();
-        while (iter.hasNext()) {
-            iter.advance();
-            entries.put(iter.key(), Math.cbrt(iter.value()));
-        }
-        return this;
-    }
-
-    /** {@inheritDoc} */
-    public OpenMapRealVector mapCeil() {
-        return copy().mapCeilToSelf();
-    }
-
-    /** {@inheritDoc} */
-    public OpenMapRealVector mapCeilToSelf() {
-        Iterator iter = entries.iterator();
-        while (iter.hasNext()) {
-            iter.advance();
-            entries.put(iter.key(), Math.ceil(iter.value()));
-        }
-        return this;
-    }
-
-    /** {@inheritDoc} */
-    public OpenMapRealVector mapCos() {
-        return copy().mapCosToSelf();
-    }
-
-    /** {@inheritDoc} */
-    public OpenMapRealVector mapCosToSelf() {
-        for (int i = 0; i < virtualSize; i++) {
-            setEntry(i, Math.cos(getEntry(i)));
-        }
-        return this;
-    }
-
-    /** {@inheritDoc} */
-    public OpenMapRealVector mapCosh() {
-        return copy().mapCoshToSelf();
-    }
-
-    /** {@inheritDoc} */
-    public OpenMapRealVector mapCoshToSelf() {
-        for (int i = 0; i < virtualSize; i++) {
-            setEntry(i, Math.cosh(getEntry(i)));
-        }
-        return this;
-    }
-
-    /** {@inheritDoc} */
-    public OpenMapRealVector mapDivide(double d) {
-        return copy().mapDivideToSelf(d);
-    }
-
-    /** {@inheritDoc} */
-    public OpenMapRealVector mapDivideToSelf(double d) {
-        Iterator iter = entries.iterator();
-        while (iter.hasNext()) {
-            iter.advance();
-            entries.put(iter.key(), iter.value() / d);
-        }
-        return this;
-    }
-
-    /** {@inheritDoc} */
-    public OpenMapRealVector mapExp() {
-        return copy().mapExpToSelf();
-    }
-
-    /** {@inheritDoc} */
-    public OpenMapRealVector mapExpToSelf() {
-        for (int i = 0; i < virtualSize; i++) {
-            entries.put(i, Math.exp(entries.get(i)));
-        }
-        return this;
-    }
-
-    /** {@inheritDoc} */
-    public OpenMapRealVector mapExpm1() {
-        return copy().mapExpm1ToSelf();
-    }
-
-    /** {@inheritDoc} */
-    public OpenMapRealVector mapExpm1ToSelf() {
-        Iterator iter = entries.iterator();
-        while (iter.hasNext()) {
-            iter.advance();
-            entries.put(iter.key(), Math.expm1(iter.value()));
-        }
-        return this;
-    }
-
-    /** {@inheritDoc} */
-    public OpenMapRealVector mapFloor() {
-        return copy().mapFloorToSelf();
-    }
-
-    /** {@inheritDoc} */
-    public OpenMapRealVector mapFloorToSelf() {
-        Iterator iter = entries.iterator();
-        while (iter.hasNext()) {
-            iter.advance();
-            entries.put(iter.key(), Math.floor(iter.value()));
-        }
-        return this;
-    }
-
-    /** {@inheritDoc} */
-    public OpenMapRealVector mapInv() {
-        return copy().mapInvToSelf();
-    }
-
-    /** {@inheritDoc} */
-    public OpenMapRealVector mapInvToSelf() {
-        for (int i = 0; i < virtualSize; i++) {
-            setEntry(i, 1.0/getEntry(i));
-        }
-        return this;
-    }
-
-    /** {@inheritDoc} */
-    public OpenMapRealVector mapLog() {
-        return copy().mapLogToSelf();
-    }
-
-    /** {@inheritDoc} */
-    public OpenMapRealVector mapLog10() {
-        return copy().mapLog10ToSelf();
-    }
-
-    /** {@inheritDoc} */
-    public OpenMapRealVector mapLog10ToSelf() {
-        for (int i = 0; i < virtualSize; i++) {
-            setEntry(i, Math.log10(getEntry(i)));
-        }
-        return this;
-    }
-
-    /** {@inheritDoc} */
-    public OpenMapRealVector mapLog1p() {
-        return copy().mapLog1pToSelf();
-    }
-
-    /** {@inheritDoc} */
-    public OpenMapRealVector mapLog1pToSelf() {
-        Iterator iter = entries.iterator();
-        while (iter.hasNext()) {
-            iter.advance();
-            entries.put(iter.key(), Math.log1p(iter.value()));
-        }
-        return this;
-    }
-
-    /** {@inheritDoc} */
-    public OpenMapRealVector mapLogToSelf() {
-        for (int i = 0; i < virtualSize; i++) {
-            setEntry(i, Math.log(getEntry(i)));
-        }
-       return this;
-    }
-
-    /** {@inheritDoc} */
-    public OpenMapRealVector mapMultiply(double d) {
-        return copy().mapMultiplyToSelf(d);
-    }
-
-    /** {@inheritDoc} */
-    public OpenMapRealVector mapMultiplyToSelf(double d) {
-        Iterator iter = entries.iterator();
-        while (iter.hasNext()) {
-            iter.advance();
-            entries.put(iter.key(), iter.value() * d);
-        }
-        return this;
-    }
-    /** {@inheritDoc} */
-    public OpenMapRealVector mapPow(double d) {
-        return copy().mapPowToSelf(d);
-    }
-
-    /** {@inheritDoc} */
-    public OpenMapRealVector mapPowToSelf(double d) {
-        Iterator iter = entries.iterator();
-        while (iter.hasNext()) {
-            iter.advance();
-            entries.put(iter.key(), Math.pow(iter.value(), d));
-        }
-        return this;
-    }
-
-    /** {@inheritDoc} */
-    public OpenMapRealVector mapRint() {
-        return copy().mapRintToSelf();
-    }
-
-    /** {@inheritDoc} */
-    public OpenMapRealVector mapRintToSelf() {
-        Iterator iter = entries.iterator();
-        while (iter.hasNext()) {
-            iter.advance();
-            entries.put(iter.key(), Math.rint(iter.value()));
-        }
-        return this;
-    }
-
-    /** {@inheritDoc} */
-    public OpenMapRealVector mapSignum() {
-        return copy().mapSignumToSelf();
-    }
-
-    /** {@inheritDoc} */
-    public OpenMapRealVector mapSignumToSelf() {
-        Iterator iter = entries.iterator();
-        while (iter.hasNext()) {
-            iter.advance();
-            entries.put(iter.key(), Math.signum(iter.value()));
-        }
-        return this;
-    }
-
-    /** {@inheritDoc} */
-    public OpenMapRealVector mapSin() {
-        return copy().mapSinToSelf();
-    }
-
-    /** {@inheritDoc} */
-    public OpenMapRealVector mapSinToSelf() {
-        Iterator iter = entries.iterator();
-        while (iter.hasNext()) {
-            iter.advance();
-            entries.put(iter.key(), Math.sin(iter.value()));
-        }
-        return this;
-    }
-
-    /** {@inheritDoc} */
-    public OpenMapRealVector mapSinh() {
-        return copy().mapSinhToSelf();
-    }
-
-    /** {@inheritDoc} */
-    public OpenMapRealVector mapSinhToSelf() {
-
-        Iterator iter = entries.iterator();
-        while (iter.hasNext()) {
-            iter.advance();
-            entries.put(iter.key(), Math.sinh(iter.value()));
-        }
-        return this;
-    }
-
-    /** {@inheritDoc} */
-    public OpenMapRealVector mapSqrt() {
-        return copy().mapSqrtToSelf();
-    }
-
-    /** {@inheritDoc} */
-    public OpenMapRealVector mapSqrtToSelf() {
-        Iterator iter = entries.iterator();
-        while (iter.hasNext()) {
-            iter.advance();
-            entries.put(iter.key(), Math.sqrt(iter.value()));
-        }
-        return this;
-    }
-
-    /** {@inheritDoc} */
-    public OpenMapRealVector mapSubtract(double d) {
-        return copy().mapSubtractToSelf(d);
-    }
-
-    /** {@inheritDoc} */
-    public OpenMapRealVector mapSubtractToSelf(double d) {
-        return mapAddToSelf(-d);
-    }
-
-    /** {@inheritDoc} */
-    public OpenMapRealVector mapTan() {
-        return copy().mapTanToSelf();
-    }
-
-    /** {@inheritDoc} */
-    public OpenMapRealVector mapTanToSelf() {
-        Iterator iter = entries.iterator();
-        while (iter.hasNext()) {
-            iter.advance();
-            entries.put(iter.key(), Math.tan(iter.value()));
-        }
-        return this;
-    }
-
-    /** {@inheritDoc} */
-    public OpenMapRealVector mapTanh() {
-        return copy().mapTanhToSelf();
-    }
-
-    /** {@inheritDoc} */
-    public OpenMapRealVector mapTanhToSelf() {
-        Iterator iter = entries.iterator();
-        while (iter.hasNext()) {
-            iter.advance();
-            entries.put(iter.key(), Math.tanh(iter.value()));
-        }
-        return this;
-    }
-
-    /** {@inheritDoc} */
-    public OpenMapRealVector mapUlp() {
-        return copy().mapUlpToSelf();
-    }
-
-    /** {@inheritDoc} */
-    public OpenMapRealVector mapUlpToSelf() {
-        Iterator iter = entries.iterator();
-        while (iter.hasNext()) {
-            iter.advance();
-            entries.put(iter.key(), Math.ulp(iter.value()));
-        }
-        return this;
-    }
-
-    /**
-     * Optimized method to compute the outer product.
-     * @param v The vector to comput the outer product on
-     * @return The outer product of <code>this</code> and <code>v</code>
-     * @throws IllegalArgumentException If the dimensions don't match
-     */
-    public OpenMapRealMatrix outerproduct(OpenMapRealVector v) throws IllegalArgumentException{
-        checkVectorDimensions(v.getDimension());
-        OpenMapRealMatrix res = new OpenMapRealMatrix(virtualSize, virtualSize);
-        Iterator iter = entries.iterator();
-        while (iter.hasNext()) {
-            iter.advance();
-            Iterator iter2 = v.getEntries().iterator();
-            while (iter2.hasNext()) {
-                iter2.advance();
-                res.setEntry(iter.key(), iter2.key(), iter.value()*iter2.value());
-            }
-        }
-        return res;
-    }
-
-    /** {@inheritDoc} */
-    public RealMatrix outerProduct(RealVector v)
-            throws IllegalArgumentException {
-        checkVectorDimensions(v.getDimension());
-        if (v instanceof OpenMapRealVector) {
-            return outerproduct((OpenMapRealVector)v);
-        }
-        RealMatrix res = new OpenMapRealMatrix(virtualSize, virtualSize);
-        Iterator iter = entries.iterator();
-        while (iter.hasNext()) {
-            iter.advance();
-            int row = iter.key();
-            for (int col = 0; col < virtualSize; col++) {
-                res.setEntry(row, col, iter.value()*v.getEntry(col));
-            }
-        }
-        return res;
-    }
-
-    /** {@inheritDoc} */
+     /** {@inheritDoc} */
     public RealMatrix outerProduct(double[] v) throws IllegalArgumentException {
         checkVectorDimensions(v.length);
         RealMatrix res = new OpenMapRealMatrix(virtualSize, virtualSize);
@@ -1099,7 +672,7 @@ public class OpenMapRealVector implements SparseRealVector, Serializable {
     /** {@inheritDoc} */
     public void setEntry(int index, double value) throws MatrixIndexException {
         checkIndex(index);
-        if (!isZero(value)) {
+        if (!isDefaultValue(value)) {
             entries.put(index, value);
         } else if (entries.containsKey(index)) {
             entries.remove(index);
@@ -1185,7 +758,7 @@ public class OpenMapRealVector implements SparseRealVector, Serializable {
     /** {@inheritDoc} */
     public void unitize() {
         double norm = getNorm();
-        if (isZero(norm)) {
+        if (isDefaultValue(norm)) {
             throw  MathRuntimeException.createArithmeticException("cannot normalize a zero norm vector");
         }
         Iterator iter = entries.iterator();
@@ -1196,37 +769,6 @@ public class OpenMapRealVector implements SparseRealVector, Serializable {
 
     }
 
-    /**
-     * Check if an index is valid.
-     *
-     * @param index
-     *            index to check
-     * @exception MatrixIndexException
-     *                if index is not valid
-     */
-    private void checkIndex(final int index) throws MatrixIndexException {
-        if (index < 0 || index >= getDimension()) {
-            throw new MatrixIndexException(
-                    "index {0} out of allowed range [{1}, {2}]",
-                    index, 0, getDimension() - 1);
-        }
-    }
-
-    /**
-     * Check if instance dimension is equal to some expected value.
-     *
-     * @param n
-     *            expected dimension.
-     * @exception IllegalArgumentException
-     *                if the dimension is inconsistent with vector size
-     */
-    protected void checkVectorDimensions(int n) throws IllegalArgumentException {
-        if (getDimension() != n) {
-            throw MathRuntimeException.createIllegalArgumentException(
-                    "vector length mismatch: got {0} but expected {1}",
-                    getDimension(), n);
-        }
-    }
 
     /** {@inheritDoc} */
     public double[] toArray() {
@@ -1243,7 +785,7 @@ public class OpenMapRealVector implements SparseRealVector, Serializable {
         final int prime = 31;
         int result = 1;
         long temp;
-        temp = Double.doubleToLongBits(epsilon);
+        temp = Double.doubleToLongBits(plusEpsilon) + Double.doubleToLongBits(minusEpsilon);
         result = prime * result + (int) (temp ^ (temp >>> 32));
         result = prime * result + virtualSize;
         Iterator iter = entries.iterator();
@@ -1276,8 +818,12 @@ public class OpenMapRealVector implements SparseRealVector, Serializable {
         if (virtualSize != other.virtualSize) {
             return false;
         }
-        if (Double.doubleToLongBits(epsilon) !=
-            Double.doubleToLongBits(other.epsilon)) {
+        if (Double.doubleToLongBits(minusEpsilon) !=
+            Double.doubleToLongBits(other.minusEpsilon)) {
+            return false;
+        }
+        if (Double.doubleToLongBits(plusEpsilon) !=
+            Double.doubleToLongBits(other.plusEpsilon)) {
             return false;
         }
         Iterator iter = entries.iterator();
@@ -1307,4 +853,82 @@ public class OpenMapRealVector implements SparseRealVector, Serializable {
         return (double)entries.size()/(double)getDimension();
     }
 
+    /** {@inheritDoc} */
+    public java.util.Iterator<Entry> sparseIterator() {
+        return new OpenMapSparseIterator();
+    }
+
+    /**
+     *  Implementation of <code>Entry</code> optimized for OpenMap.
+     * <p>This implementation does not allow arbitrary calls to <code>setIndex</code>
+     * since the order that entries are returned is undefined.
+     */
+    protected class OpenMapEntry extends Entry {
+
+        /** Iterator pointing to the entry. */
+        private final Iterator iter;
+
+        /** Build an entry from an iterator point to an element.
+         * @param iter iterator pointing to the entry
+         */
+        protected OpenMapEntry(Iterator iter) {
+            this.iter = iter;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public double getValue() {
+            return iter.value();
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public void setValue(double value) {
+            entries.put(iter.key(), value);
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public int getIndex() {
+            return iter.key();
+        }
+
+    }
+
+    /**
+     *  Iterator class to do iteration over just the non-zero elements.
+     *  <p>This implementation is fail-fast, so cannot be used to modify any zero element.
+     *
+     */
+    protected class OpenMapSparseIterator implements java.util.Iterator<Entry> {
+
+        /** Underlying iterator. */
+        private final Iterator iter;
+
+        /** Current entry. */
+        private final Entry current;
+
+        /** Simple constructor. */
+        protected OpenMapSparseIterator() {
+            iter = entries.iterator();
+            current = new OpenMapEntry(iter);
+        }
+
+        /** {@inheritDoc} */
+        public boolean hasNext() {
+            return iter.hasNext();
+        }
+
+        /** {@inheritDoc} */
+        public Entry next() {
+            iter.advance();
+            return current;
+        }
+
+        /** {@inheritDoc} */
+        public void remove() {
+            throw new UnsupportedOperationException("Not supported");
+       }
+
+    }
 }
