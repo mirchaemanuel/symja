@@ -1294,8 +1294,24 @@ public class F {
    * @param im
    * @return
    */
-  public static ComplexSym complex(final IFraction re, final IFraction im) {
+  public static IComplex complex(final IFraction re, final IFraction im) {
     return ComplexSym.valueOf(re, im);
+  }
+
+  /**
+   * Create a symbolic complex number
+   * 
+   * @param realPart
+   *          the real double value part which should be converted to a complex
+   *          number
+   * @param imagPart
+   *          the imaginary double value part which should be converted to a
+   *          complex number
+   * @return IFraction
+   */
+  public static IComplex complex(final double realPart, final double imagPart) {
+    return ComplexSym.valueOf(FractionSym.valueOf(realPart), FractionSym
+        .valueOf(imagPart));
   }
 
   /**
@@ -1305,7 +1321,7 @@ public class F {
    * @param im
    * @return
    */
-  public static ComplexSym complex(final IInteger re, final IInteger im) {
+  public static IComplex complex(final IInteger re, final IInteger im) {
     return ComplexSym.valueOf(re, im);
   }
 
