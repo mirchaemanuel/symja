@@ -3,10 +3,10 @@ package org.matheclipse.core.reflection.system;
 import org.matheclipse.basic.Config;
 import org.matheclipse.core.eval.EvalEngine;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
-import org.matheclipse.core.eval.interfaces.AbstractTrigArg1;
+import org.matheclipse.core.eval.interfaces.INumericComplex;
 import org.matheclipse.core.expression.F;
-import org.matheclipse.core.expression.Num;
 import org.matheclipse.core.interfaces.IAST;
+import org.matheclipse.core.interfaces.IComplexNum;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.IInteger;
 import org.matheclipse.core.interfaces.INum;
@@ -33,6 +33,9 @@ public class Rationalize extends AbstractFunctionEvaluator {
       }
       if (arg1 instanceof INum) {
         return F.fraction(((INum) arg1).getRealPart());
+      }
+      if (arg1 instanceof IComplexNum) {
+        return F.complex(((IComplexNum) arg1).getRealPart(),((IComplexNum) arg1).getImaginaryPart());
       }
     } catch (Exception e) {
       if (Config.SHOW_STACKTRACE) {
