@@ -1345,7 +1345,7 @@ public class F {
    *          imaginary part
    * @return
    */
-  public static ComplexNum complexNum(final double r, final double i) {
+  public static IComplexNum complexNum(final double r, final double i) {
     return ComplexNum.valueOf(r, i);
   }
 
