@@ -22,11 +22,7 @@ public class N implements IFunctionEvaluator {
 		final boolean numericMode = engine.isNumericMode();
 		try {
 			engine.setNumericMode(true);
-			final IExpr temp = engine.evalLoop(functionList.get(1));
-			if (temp == null) {
-				return functionList.get(1);
-			}
-			return temp;
+			return EvalEngine.eval(functionList.get(1));
 		} finally {
 			engine.setNumericMode(numericMode);
 		}
@@ -36,11 +32,14 @@ public class N implements IFunctionEvaluator {
 		if (functionList.size() != 2) {
 			throw new WrongNumberOfArguments(functionList, 1, functionList.size() - 1);
 		}
-		final IExpr temp = EvalEngine.get().evalLoop(functionList.get(1));
-		if (temp == null) {
-			return functionList.get(1);
-		}
-		return temp;
+		final EvalEngine engine = EvalEngine.get();
+		final boolean numericMode = engine.isNumericMode();
+    try {
+      engine.setNumericMode(true);
+      return EvalEngine.eval(functionList.get(1));
+    } finally {
+      engine.setNumericMode(numericMode);
+    }
 	}
 
 	public void setUp(final ISymbol symbol) {

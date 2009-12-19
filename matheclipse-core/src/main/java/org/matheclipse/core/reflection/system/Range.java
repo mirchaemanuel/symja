@@ -17,35 +17,42 @@ import org.matheclipse.generic.nested.TableGenerator;
 
 public class Range implements IFunctionEvaluator {
 
-	public Range() {
-	}
+  public Range() {
+  }
 
-	public IExpr evaluate(final IAST ast) {
-		return evaluateTable(ast, List());
-	}
+  public IExpr evaluate(final IAST ast) {
+    return evaluateTable(ast, List());
+  }
 
-	public IExpr evaluateTable(final IAST ast, final IAST resultList) {
-		try {
-			if ((ast.size() > 1) && (ast.size() <= 4)) {
-				final EvalEngine engine = EvalEngine.get();
-				final List<Iterator> iterList = new ArrayList<Iterator>();
-				iterList.add(new Iterator(ast, null, engine));
+  public IExpr evaluateTable(final IAST ast, final IAST resultList) {
+    List<Iterator> iterList = null;
+    try {
+      if ((ast.size() > 1) && (ast.size() <= 4)) {
+        final EvalEngine engine = EvalEngine.get();
+        iterList = new ArrayList<Iterator>();
+        iterList.add(new Iterator(ast, null, engine));
 
-				final TableGenerator<IExpr, IAST> generator = new TableGenerator<IExpr, IAST>(iterList, resultList,
-						new UnaryRangeFunction(), AST.COPY);
-				return (IExpr) generator.table();
-			}
-		} catch (final ClassCastException e) {
-			// the iterators are generated only from IASTs
-		}
-		return null;
-	}
+        final TableGenerator<IExpr, IAST> generator = new TableGenerator<IExpr, IAST>(
+            iterList, resultList, new UnaryRangeFunction(), AST.COPY);
+        return (IExpr) generator.table();
+      }
+    } catch (final ClassCastException e) {
+      // the iterators are generated only from IASTs
+    } finally {
+      if (iterList != null) {
+        for (int i = 0; i < iterList.size(); i++) {
+          iterList.get(i).tearDown();
+        }
+      }
+    }
+    return null;
+  }
 
-	public IExpr numericEval(final IAST functionList) {
-		return evaluate(functionList);
-	}
+  public IExpr numericEval(final IAST functionList) {
+    return evaluate(functionList);
+  }
 
-	public void setUp(final ISymbol symbol) {
-		symbol.setAttributes(ISymbol.HOLDALL);
-	}
+  public void setUp(final ISymbol symbol) {
+    symbol.setAttributes(ISymbol.HOLDALL);
+  }
 }

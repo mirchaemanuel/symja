@@ -78,7 +78,7 @@ public class F {
   public static ISymbol D;
 
   public static ISymbol Denominator;
-  
+
   public static ISymbol Depth;
 
   public static ISymbol Det;
@@ -162,7 +162,7 @@ public class F {
   public static ISymbol Mod;
 
   public static ISymbol N;
-  
+
   public static ISymbol Numerator;
 
   public static ISymbol Negative;
@@ -210,7 +210,7 @@ public class F {
   public static ISymbol Quotient;
 
   public static ISymbol Rational;
-  
+
   public static ISymbol RootOf;
 
   public static ISymbol ReplaceAll;
@@ -291,12 +291,12 @@ public class F {
    * Constant integer &quot;3&quot;
    */
   public static IInteger C3;
-  
+
   /**
    * Constant integer &quot;4&quot;
    */
   public static IInteger C4;
-  
+
   /**
    * Constant integer &quot;5&quot;
    */
@@ -321,22 +321,22 @@ public class F {
    * Constant fraction &quot;1/3&quot;
    */
   public static IFraction C1D3;
-  
+
   /**
    * Constant fraction &quot;-1/3&quot;
    */
   public static IFraction CN1D3;
-  
+
   /**
    * Constant fraction &quot;1/4&quot;
    */
   public static IFraction C1D4;
-  
+
   /**
    * Constant fraction &quot;-1/4&quot;
    */
   public static IFraction CN1D4;
-  
+
   /**
    * Constant double &quot;0.0&quot;
    */
@@ -542,7 +542,7 @@ public class F {
 
     return unary(Denominator, a0);
   }
-  
+
   public static IAST Depth(final IExpr a0) {
 
     return unary(Depth, a0);
@@ -622,7 +622,7 @@ public class F {
   public static IAST Numerator(final IExpr a0) {
     return unary(Numerator, a0);
   }
-  
+
   private static boolean isSystemInitialized = false;
 
   /**
@@ -672,7 +672,7 @@ public class F {
       CN1D2 = FractionSym.valueOf(-1, 2);
       CN1D3 = FractionSym.valueOf(-1, 3);
       CN1D4 = FractionSym.valueOf(-1, 4);
-      
+
       CI = ComplexSym.valueOf(BigInteger.ZERO, BigInteger.ONE);
 
       CD0 = Num.valueOf(0.0);
@@ -1343,8 +1343,7 @@ public class F {
   public static IExpr eval(final ISymbol head, final IExpr a0) {
     final IAST ast = ast(head);
     ast.add(a0);
-    final IExpr temp = EvalEngine.get().evalLoop(ast);
-    return temp == null ? ast : temp;
+    return EvalEngine.eval(ast);
   }
 
   /**
@@ -1359,8 +1358,7 @@ public class F {
     final IAST ast = ast(head);
     ast.add(a0);
     ast.add(a1);
-    final IExpr temp = EvalEngine.get().evalLoop(ast);
-    return temp == null ? ast : temp;
+    return EvalEngine.eval(ast);
   }
 
   /**
@@ -1378,8 +1376,7 @@ public class F {
     ast.add(a0);
     ast.add(a1);
     ast.add(a2);
-    final IExpr temp = EvalEngine.get().evalLoop(ast);
-    return temp == null ? ast : temp;
+    return EvalEngine.eval(ast);
   }
 
   /**
@@ -1992,7 +1989,7 @@ public class F {
    * @param a
    *          the expression which should be evaluated
    * @return the evaluated expression
-   * @see EvalEngine#evaluate(IExpr)
+   * @see EvalEngine#eval(IExpr)
    */
   public static IExpr eval(IExpr a) {
     return EvalEngine.eval(a);

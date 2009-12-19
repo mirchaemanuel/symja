@@ -9,6 +9,10 @@ import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.IInteger;
 import org.matheclipse.core.interfaces.ISymbol;
 
+/**
+ * Representation for a rational number
+ *
+ */
 public class Rational extends AbstractFunctionEvaluator {
 	public final static Rational CONST = new Rational();
 
@@ -19,6 +23,7 @@ public class Rational extends AbstractFunctionEvaluator {
 	public IExpr evaluate(final IAST ast) {
 		if ((ast.size() == 3)) {
 			try {
+			  // try to convert into a fractional number
 				final EvalEngine engine = EvalEngine.get();
 				IExpr arg0 = ast.get(1);
 				arg0 = engine.evaluate(arg0);
