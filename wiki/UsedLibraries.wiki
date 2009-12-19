@@ -16,6 +16,8 @@ The following functions are based on commons-math implementations:
   * {{{LinearSolve}}} - ([http://code.google.com/p/symja/source/browse/trunk/matheclipse-core/src/main/java/org/matheclipse/core/reflection/system/LinearSolve.java SVN]) - [http://commons.apache.org/math/apidocs/org/apache/commons/math/linear/FieldLUDecompositionImpl.html LUP-decomposition of a square matrix]
   * {{{LUDecomposition}}} - ([http://code.google.com/p/symja/source/browse/trunk/matheclipse-core/src/main/java/org/matheclipse/core/reflection/system/LUDecomposition.java SVN]) - [http://commons.apache.org/math/apidocs/org/apache/commons/math/linear/FieldLUDecompositionImpl.html LUP-decomposition of a square matrix]
   * {{{NIntegrate}}} - ([http://code.google.com/p/symja/source/browse/trunk/matheclipse-core/src/main/java/org/matheclipse/core/reflection/system/NIntegrate.java SVN]) - [http://commons.apache.org/math/apidocs/org/apache/commons/math/analysis/integration/UnivariateRealIntegratorImpl.html LegendreGaussIntegrator, RombergIntegrator, SimpsonIntegrator, TrapezoidIntegrator] 
+  * {{{SingularValueDecomposition}}} - ([http://code.google.com/p/symja/source/browse/trunk/matheclipse-core/src/main/java/org/matheclipse/core/reflection/system/SingularValueDecomposition.java SVN]) - [http://commons.apache.org/math/apidocs/org/apache/commons/math/linear/SingularValueDecompositionImpl.html Singular Value Decomposition]
+
 
 === Java Algebra System (JAS) ===
 
