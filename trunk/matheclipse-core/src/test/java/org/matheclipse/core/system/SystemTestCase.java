@@ -49,6 +49,7 @@ public class SystemTestCase extends AbstractTestCase {
   public void testSystem000a() {
     check("Rational[2,3]", "2/3");
     check("Rational[3,1]", "3");
+    check("Rationalize[6.75]", "27/4");
   }
 
   public void testSystem000b() {

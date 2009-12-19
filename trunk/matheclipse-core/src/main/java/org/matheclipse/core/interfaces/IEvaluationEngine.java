@@ -13,7 +13,7 @@ public interface IEvaluationEngine {
 	 * @return the evaluated object
 	 *
 	 */
-  public IExpr evaluate(IExpr expr);
+  public IExpr evalWithoutNumericReset(IExpr expr);
 
   /**
    * Resets internal flags and states:

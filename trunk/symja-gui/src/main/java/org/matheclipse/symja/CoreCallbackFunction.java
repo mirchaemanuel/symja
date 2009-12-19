@@ -21,8 +21,7 @@ public class CoreCallbackFunction implements IDoubleCallbackFunction {
     for (int i = 0; i < args.length; i++) {
       fun.add(F.num(args[i]));
     }
-    final EvalEngine engine = EvalEngine.get();
-    final IExpr result = engine.evaluate(N(fun));
+    final IExpr result = F.evaln(fun);
     if (result instanceof INum) {
       return ((INum) result).getRealPart();
     } else {

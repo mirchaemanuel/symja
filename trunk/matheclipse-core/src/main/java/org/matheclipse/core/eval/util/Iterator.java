@@ -22,7 +22,8 @@ public class Iterator implements IIterator<IExpr> {
 	IExpr count;
 
 	// boolean illegalIterator;
-
+  final boolean fNumericMode;
+  
 	EvalEngine evalEngine;
 
 	final IExpr maxCount;
@@ -36,18 +37,19 @@ public class Iterator implements IIterator<IExpr> {
 	public Iterator(final IAST lst, final EvalEngine sess) {
 		// illegalIterator = false;
 		evalEngine = sess;
+		fNumericMode = evalEngine.isNumericMode();
 		switch (lst.size()) {
 
 		case 2:
 			start = F.C1;
-			maxCount = evalEngine.evaluate(lst.get(1));
+			maxCount = evalEngine.evalWithoutNumericReset(lst.get(1));
 			step = F.C1;
 			variable = null;
 
 			break;
 		case 3:
 			start = F.C1;
-			maxCount = evalEngine.evaluate(lst.get(2));
+			maxCount = evalEngine.evalWithoutNumericReset(lst.get(2));
 			step = F.C1;
 
 			if (lst.get(1) instanceof Symbol) {
@@ -58,8 +60,8 @@ public class Iterator implements IIterator<IExpr> {
 
 			break;
 		case 4:
-			start = evalEngine.evaluate(lst.get(2));
-			maxCount = evalEngine.evaluate(lst.get(3));
+			start = evalEngine.evalWithoutNumericReset(lst.get(2));
+			maxCount = evalEngine.evalWithoutNumericReset(lst.get(3));
 			step = F.C1;
 
 			// if (evalEngine.evaluate(LessEqual(start, maxCount)) != F.True) {
@@ -73,9 +75,9 @@ public class Iterator implements IIterator<IExpr> {
 
 			break;
 		case 5:
-			start = evalEngine.evaluate(lst.get(2));
-			maxCount = evalEngine.evaluate(lst.get(3));
-			step = evalEngine.evaluate(lst.get(4));
+			start = evalEngine.evalWithoutNumericReset(lst.get(2));
+			maxCount = evalEngine.evalWithoutNumericReset(lst.get(3));
+			step = evalEngine.evalWithoutNumericReset(lst.get(4));
 			// if (!(step instanceof ISignedNumber)) {
 			// illegalIterator = true;
 			// }
@@ -108,17 +110,18 @@ public class Iterator implements IIterator<IExpr> {
 	public Iterator(final IAST lst, final Symbol symbol, final EvalEngine sess) {
 		// illegalIterator = false;
 		evalEngine = sess;
+		fNumericMode = evalEngine.isNumericMode();
 		switch (lst.size()) {
 
 		case 2:
 			start = F.C1;
-			maxCount = evalEngine.evaluate(lst.get(1));
+			maxCount = evalEngine.evalWithoutNumericReset(lst.get(1));
 			step = F.C1;
 			variable = symbol;
 			break;
 		case 3:
-			start = evalEngine.evaluate(lst.get(1));
-			maxCount = evalEngine.evaluate(lst.get(2));
+			start = evalEngine.evalWithoutNumericReset(lst.get(1));
+			maxCount = evalEngine.evalWithoutNumericReset(lst.get(2));
 			step = F.C1;
 			variable = symbol;
 			// if (evalEngine.evaluate(LessEqual(start, maxCount)) != F.True) {
@@ -126,9 +129,9 @@ public class Iterator implements IIterator<IExpr> {
 			// }
 			break;
 		case 4:
-			start = evalEngine.evaluate(lst.get(1));
-			maxCount = evalEngine.evaluate(lst.get(2));
-			step = evalEngine.evaluate(lst.get(3));
+			start = evalEngine.evalWithoutNumericReset(lst.get(1));
+			maxCount = evalEngine.evalWithoutNumericReset(lst.get(2));
+			step = evalEngine.evalWithoutNumericReset(lst.get(3));
 			variable = symbol;
 			// if (!(step instanceof ISignedNumber)) {
 			// illegalIterator = true;
@@ -227,6 +230,7 @@ public class Iterator implements IIterator<IExpr> {
 			variable.popLocalVariable();
 			// variable.clearSymbolRule(session, variable);
 		}
+		EvalEngine.get().setNumericMode(fNumericMode);
 	}
 
 	/**

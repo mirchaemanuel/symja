@@ -25,7 +25,7 @@ package apache.harmony.math;
  *      Rational Numbers</a>
  */
 public final class Rational {// extends Number<Rational> implements
-                             // Field<Rational> {
+  // Field<Rational> {
 
   // /**
   // * Holds the default XML representation for rational numbers.
@@ -109,53 +109,7 @@ public final class Rational {// extends Number<Rational> implements
    * Constructs an approximated rational for a given double number
    */
   public static Rational valueOf(double x) {
-    // from: http://www.math.uic.edu/~burgiel/Mtht420.99/5/Rational.java
-    final double eps = 1.0e-12;
-    if (x == 0.0) {
-      return Rational.ZERO;
-    }
-    if (Math.abs(x) > Long.MAX_VALUE
-        || Math.abs(x) < 1 / (double) Long.MAX_VALUE) { // NaN
-      return valueOf(0, 0);
-    }
-    int sgn = 1;
-    if (x < 0.0) {
-      sgn = -1;
-      x = -x;
-    }
-    long intPart = (long) x;
-    double z = x - intPart;
-    if (z != 0) {
-      z = 1.0 / z;
-      long a = (long) z;
-      z = z - a;
-      long prevNum = 0;
-      long num = 1;
-      long prevDen = 1;
-      long den = a;
-      long tmp;
-      double approxAns = ((double) den * intPart + num) / den;
-      while (Math.abs((x - approxAns) / x) >= eps) {
-        z = 1.0 / z;
-        a = (long) z;
-        z = z - a;
-        // deal with too-big numbers:
-        if ((double) a * num + prevNum > Long.MAX_VALUE
-            || (double) a * den + prevDen > Long.MAX_VALUE)
-          break;
-        tmp = a * num + prevNum;
-        prevNum = num;
-        num = tmp;
-        tmp = a * den + prevDen;
-        prevDen = den;
-        den = tmp;
-        approxAns = ((double) den * intPart + num) / den;
-      }
-      return valueOf(sgn * (den * intPart + num), den);
-    } else { // is integer
-      return valueOf(sgn * intPart, 1);
-    }
-
+    return valueOf(x, 1.0e-12);
   }
 
   /**
@@ -193,8 +147,9 @@ public final class Rational {// extends Number<Rational> implements
         z = z - a;
         // deal with too-big numbers:
         if ((double) a * num + prevNum > Long.MAX_VALUE
-            || (double) a * den + prevDen > Long.MAX_VALUE)
+            || (double) a * den + prevDen > Long.MAX_VALUE) {
           break;
+        }
         tmp = a * num + prevNum;
         prevNum = num;
         num = tmp;

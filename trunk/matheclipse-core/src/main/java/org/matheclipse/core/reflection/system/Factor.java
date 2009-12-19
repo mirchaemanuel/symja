@@ -24,6 +24,10 @@ import edu.jas.poly.GenPolynomial;
 import edu.jas.ufd.FactorAbstract;
 import edu.jas.ufd.FactorFactory;
 
+/**
+ * Factor a univariate polynomial
+ *
+ */
 public class Factor extends AbstractFunctionEvaluator {
 
 	public Factor() {
