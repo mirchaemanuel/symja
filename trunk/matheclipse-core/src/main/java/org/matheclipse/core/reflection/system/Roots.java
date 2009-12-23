@@ -104,6 +104,7 @@ public class Roots extends AbstractFunctionEvaluator {
             result.add(F.Times(rev2a, F.Plus(b.negate(), sqrt.negative())));
           }
         } else if (varDegree <= 3) {
+          iPoly = iPoly.monic();
           // solve Cubic equation: x^3 + a*x^2 + b*x + c = 0
           a = F.C0;
           b = F.C0;
