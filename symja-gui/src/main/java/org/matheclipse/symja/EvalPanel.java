@@ -87,8 +87,7 @@ public class EvalPanel extends JPanel implements DocumentListener {
 
   private final static String versionStr = "Keyboard shortcuts:\n"
       + "  Ctrl+ENTER  - for symbolic evaluation\n"
-      + "  Page up     - previous input\n" 
-      + "  Page down   - next input\n"
+      + "  Page up     - previous input\n" + "  Page down   - next input\n"
       + "Program arguments:\n"
       + "  -f or -file <filename>    - use filename as Editor input script\n"
       + "  -d or -default <filename> - use filename for system startup rules\n";
@@ -714,16 +713,16 @@ public class EvalPanel extends JPanel implements DocumentListener {
   }
 
   private class CompletionTask implements Runnable {
-    String completion;
-    int position;
-    int w;
-    String replacement;
+    final String completion;
+    final int position;
+    final int w;
+    final String replacement;
 
     CompletionTask(String completion, int position, int w, String replacement) {
       this.completion = completion;
       this.position = position;
       this.w = w;
-      this.replacement = replacement.substring(0, position - w);
+      this.replacement = replacement;
     }
 
     public void run() {
@@ -737,6 +736,7 @@ public class EvalPanel extends JPanel implements DocumentListener {
   }
 
   private class CommitAction extends AbstractAction {
+
     public void actionPerformed(ActionEvent ev) {
       if (mode == Mode.COMPLETION) {
         int pos = jInputArea.getSelectionEnd();
