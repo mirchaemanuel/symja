@@ -44,6 +44,9 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.JTextComponent;
+import javax.swing.text.Style;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
 
 import net.sourceforge.jeuclid.swing.JMathComponent;
 
@@ -106,7 +109,9 @@ public class EvalPanel extends JPanel implements DocumentListener {
 
   public static TimeConstrainedEvaluator EVAL;
 
-  private Thread fInitThread = null;
+  private InitThread fInitThread = null;
+
+  // private InitJEuclidThread fInitJEuclidThread = null;
 
   /**
    * If a string is on the system clipboard, this method returns it; otherwise
@@ -167,7 +172,8 @@ public class EvalPanel extends JPanel implements DocumentListener {
 
         final StringBufferWriter buf0 = new StringBufferWriter();
 
-        eval(buf0, command);
+        final IExpr expr = EVAL.constrainedEval(buf0, command);
+        // eval(buf0, command);
 
         if (printBuffer.getBuffer().length() > 0) {
           // print error messages ...
@@ -175,24 +181,19 @@ public class EvalPanel extends JPanel implements DocumentListener {
         }
 
         if (buf0.getBuffer().length() > 0 && fPrettyPrintStyle.isSelected()) {
-          String result = buf0.toString();
-          // jOutputPane.printOutColored("Out[" +
-          // commandHistoryStoreIndex
-          // +"]=");
 
           final StringBufferWriter buf1 = new StringBufferWriter();
           final MathMLUtilities mathUtil = new MathMLUtilities(EVAL_ENGINE,
               false);
           try {
-            mathUtil.toMathML(result, buf1);
+            if (expr != null) {
+              mathUtil.toMathML(expr, buf1);
 
-            try {
               JMathComponent component = new JMathComponent();
               component.setFontSize(FONT_SIZE_MATHML);
               component.setContent(buf1.toString());
+              setBusy(false);
               jOutputPane.addComponent(component, 0, true);
-            } catch (final Exception e) {
-              e.printStackTrace();
             }
           } catch (final Exception e) {
             e.printStackTrace();
@@ -259,15 +260,17 @@ public class EvalPanel extends JPanel implements DocumentListener {
       jInputArea.setEditable(false);
       // jMenuItemBreak.setEnabled(true);
       // jPopupMenuItemBreak.setEnabled(true);
-      jOutputPane.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-      jInputArea.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+      this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+      // jOutputPane.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+      // jInputArea.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
     } else {
       jInputArea.setEditable(true);
       // jMenuItemBreak.setEnabled(false);
       // jPopupMenuItemBreak.setEnabled(false);
-      jOutputPane.setCursor(Cursor.getDefaultCursor());
-      jInputArea.setCursor(Cursor.getDefaultCursor());
+      this.setCursor(Cursor.getDefaultCursor());
+      // jOutputPane.setCursor(Cursor.getDefaultCursor());
+      // jInputArea.setCursor(Cursor.getDefaultCursor());
       jInputArea.requestFocus();
     }
   }
@@ -310,9 +313,20 @@ public class EvalPanel extends JPanel implements DocumentListener {
       EVAL_ENGINE = new EvalEngine();
       EVAL = new TimeConstrainedEvaluator(EVAL_ENGINE, false, 360000);
       new CompletionLists(fWords, fReplaceWords);
-      // JMathComponent component = new JMathComponent();
-      // component.setFontSize(FONT_SIZE_MATHML);
-      // component.setContent("<math><mn>1</mn></math>");
+    }
+  }
+
+  public class InitJEuclidThread extends Thread {
+
+    public InitJEuclidThread() {
+    }
+
+    @Override
+    public void run() {
+      JMathComponent component = new JMathComponent();
+      component.setFontSize(FONT_SIZE_MATHML);
+      component.setContent("<math><mo>.</mo></math>");
+      jOutputPane.addComponent(component);
     }
   }
 
@@ -488,9 +502,11 @@ public class EvalPanel extends JPanel implements DocumentListener {
       commandHistoryStoreIndex = 0;
     }
     commandHistoryReadIndex = commandHistoryStoreIndex;
-    final MathMLUtilities mathUtil = new MathMLUtilities(EVAL_ENGINE, false);
-    final StringBufferWriter buf = new StringBufferWriter();
     try {
+      setBusy(true);
+      final MathMLUtilities mathUtil = new MathMLUtilities(EVAL_ENGINE, false);
+      final StringBufferWriter buf = new StringBufferWriter();
+
       mathUtil.toMathML(cmd, buf);
       jOutputPane.printOutColored("MathML:\n" + buf.toString() + "\n\n");
     } catch (final Exception e) {
@@ -501,6 +517,8 @@ public class EvalPanel extends JPanel implements DocumentListener {
       } else {
         jOutputPane.printOutColored(e.getMessage());
       }
+    } finally {
+      setBusy(false);
     }
   }
 
@@ -511,16 +529,18 @@ public class EvalPanel extends JPanel implements DocumentListener {
       } catch (InterruptedException e) {
       }
     }
-
-    final MathMLUtilities mathUtil = new MathMLUtilities(EVAL_ENGINE, false);
-    final StringBufferWriter buf = new StringBufferWriter();
     try {
+      setBusy(true);
+      final MathMLUtilities mathUtil = new MathMLUtilities(EVAL_ENGINE, false);
+      final StringBufferWriter buf = new StringBufferWriter();
+
       mathUtil.toMathML(cmd, buf);
 
       try {
         JMathComponent component = new JMathComponent();
         component.setFontSize(FONT_SIZE_MATHML);
         component.setContent(buf.toString());
+        setBusy(false);
         jOutputPane.addComponent(component, 0, true);
       } catch (final Exception e) {
         e.printStackTrace();
@@ -534,6 +554,8 @@ public class EvalPanel extends JPanel implements DocumentListener {
       } else {
         jOutputPane.printErr(e.getMessage());
       }
+    } finally {
+      setBusy(false);
     }
   }
 
@@ -659,6 +681,9 @@ public class EvalPanel extends JPanel implements DocumentListener {
     setInputAreaText(file);
 
     jInputArea.setEditable(true);
+
+    // InitJEuclidThread initJEuclidThread = new InitJEuclidThread();
+    // initJEuclidThread.start();
   }
 
   // Listener methods

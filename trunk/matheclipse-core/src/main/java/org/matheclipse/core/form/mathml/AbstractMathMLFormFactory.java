@@ -18,7 +18,7 @@ abstract public class AbstractMathMLFormFactory implements IConstantHeaders {
 
   public final static boolean USE_IDENTIFIERS = false;
 
-  public final Hashtable<String, String> ENTITY_TABLE = new Hashtable<String, String>(199);
+  public final static Hashtable<String, String> ENTITY_TABLE = new Hashtable<String, String>(199);
 
 //  public final ExprFactory fExprFactory;
 
