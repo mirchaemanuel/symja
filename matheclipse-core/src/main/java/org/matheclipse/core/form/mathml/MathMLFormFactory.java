@@ -43,13 +43,13 @@ public class MathMLFormFactory extends AbstractMathMLFormFactory implements
 	/**
 	 * Table for constant symbols
 	 */
-	public final Hashtable<String, Object> CONSTANT_SYMBOLS = new Hashtable<String, Object>(
+	public final static Hashtable<String, Object> CONSTANT_SYMBOLS = new Hashtable<String, Object>(
 			199);
 
 	/**
 	 * Description of the Field
 	 */
-	public final Hashtable<String, AbstractConverter> operTab = new Hashtable<String, AbstractConverter>(
+	public final static Hashtable<String, AbstractConverter> operTab = new Hashtable<String, AbstractConverter>(
 			199);
 
 	private int plusPrec;
