@@ -1,4 +1,5 @@
 #summary Use MathEclipse as a scripting engine (JSR 223).
+#sidebar TableOfContents
 
 *Note:* this feature is currently only available through the SVN version.
 
