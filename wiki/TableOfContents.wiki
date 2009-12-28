@@ -5,3 +5,4 @@
   * [AddNewFunctions How to add new functions]
   * [MathExpressionParser The basic math expression parser]
   * [UsedLibraries Libraries used to create Symja]
+  * [JSR223Support Use MathEclipse as JSR223 scripting engine].
