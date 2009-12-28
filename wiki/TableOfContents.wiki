@@ -1,7 +1,7 @@
 #summary Table of contents navigation
-  * [RunSymja How to run the Symja Swing and console application]
+  * [RunSymja Getting started]
   * [ReleaseNotes Release Notes]
-  * [SyntaxDescription Syntax overview for the MathEclipse language]
-  * [AddNewFunctions How to add new functions to th MathEclipse core]
-  * [MathExpressionParser The basic math expression parser module]
+  * [SyntaxDescription Syntax overview]
+  * [AddNewFunctions How to add new functions]
+  * [MathExpressionParser The basic math expression parser]
   * [UsedLibraries Libraries used to create Symja]
