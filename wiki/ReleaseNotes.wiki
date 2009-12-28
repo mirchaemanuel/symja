@@ -1,0 +1,6 @@
+#summary Release notes
+
+= Version 0.0.8 (unreleased) =
+  * Added more symbolic polynomial algorithms from the JAS project (see UsedLibraries)
+  * Added more numerical algorithms from the commons-math project (see UsedLibraries)
+  * JSR 223 support (see JSR223Support)
