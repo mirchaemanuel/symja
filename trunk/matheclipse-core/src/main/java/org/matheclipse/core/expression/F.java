@@ -34,7 +34,9 @@ import apache.harmony.math.BigInteger;
 import apache.harmony.math.Rational;
 
 /**
+ * Factory for creating MathEclipse expression objects.
  * 
+ * See <a href="http://code.google.com/p/symja/wiki/AddNewFunctions">AddNewFunctions</a>
  */
 public class F {
   transient private final static HashMap<String, ISymbol> fSymbolMap = new HashMap<String, ISymbol>();
