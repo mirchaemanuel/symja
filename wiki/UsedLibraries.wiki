@@ -1,4 +1,5 @@
 #summary External libraries used in the Symja project
+#sidebar TableOfContents
 
 == Libraries ==
   * [http://commons.apache.org/math/ Commons-Math: The Apache Commons Mathematics Library]
