@@ -1,5 +1,6 @@
 #summary A short syntax description.
 #labels Featured
+#sidebar TableOfContents
 
 = Syntax Description =
 
