@@ -1,4 +1,5 @@
 #summary Release notes
+#sidebar TableOfContents
 
 = Version 0.0.8 (unreleased) =
   * Added more symbolic polynomial algorithms from the JAS project (see UsedLibraries)
