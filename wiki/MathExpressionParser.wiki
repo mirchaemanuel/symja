@@ -1,5 +1,6 @@
 #summary The Math Expression Parser.
 #labels Featured,Phase-Implementation
+#sidebar TableOfContents
 
 = About =
                 
