@@ -11,6 +11,8 @@ Here is a hierarchy overview of the classes, which implement the internal math e
  
 http://symja.googlecode.com/svn/wiki/MathEclipseObjectHierarchy.png
 
+You can use the *F factory* ([http://code.google.com/p/symja/source/browse/trunk/matheclipse-core/src/main/java/org/matheclipse/core/expression/F.java org.matheclipse.core.expression.F]) to create the objects of the type hierarchy.
+
 = Function Interfaces =
 For your own Java math functions you have to add the Java package name to the system namespace:
 {{{
