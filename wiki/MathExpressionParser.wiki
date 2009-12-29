@@ -9,13 +9,16 @@
 The math expression parser module is driven by an operator table as described in the [http://en.wikipedia.org/wiki/Operator-precedence_parser#Example_algorithm_to_parse_infix_notation Wikipedia entry for Operator-precedence parsers]. The parser also contains numeric solvers for double and complex valued expressions. The parser is usable as a [http://code.google.com/webtoolkit/ Google Web Toolkit (GWT)] module. See the SyntaxDescription examples for the input syntax.
 
 The latest API is available as a binary download:
- * [http://code.google.com/p/symja/downloads/list]
+  * [http://code.google.com/p/symja/downloads/list]
 
 Javadoc:
- * [http://symja.googlecode.com/svn/trunk/matheclipse-parser/doc/index.html]
+  * [http://symja.googlecode.com/svn/trunk/matheclipse-parser/doc/index.html]
 
 SVN Sourcecode tree:
- * [http://code.google.com/p/symja/source/browse/#svn/trunk/matheclipse-parser]
+  * [http://code.google.com/p/symja/source/browse/#svn/trunk/matheclipse-parser]
+
+For the Maven integration see:
+  * MavenSupport    
 
 == License ==
 The parser is published under the [http://www.apache.org/licenses/LICENSE-2.0 Apache License, Version 2.0].
