@@ -4,13 +4,13 @@
 
 <wiki:toc max_depth="1" />
 
-== The Symja Swing GUI application ==
+= The Symja Swing GUI application =
 In the folder where you installed the *symja* JAR, run a command similar to this:
 {{{
 C:\Java\jdk1.6.0\jre\bin\java -classpath symja-0.0.7a.jar org.matheclipse.symja.Main
 }}}
 
-== The console application ==
+= The console application =
 In the folder where you've unzipped the downloaded [http://symja.googlecode.com/files/meconsole-0.0.8.zip ZIP file], run a command similar to this:
 {{{
 C:\Java\jdk1.6.0\jre\bin\java -classpath meconsole008.jar;jsr305.jar;google-collect-1.0-rc3.jar;commons-logging-1.1.1.jar;log4j-1.2.11.jar org.matheclipse.core.eval.Console
@@ -37,7 +37,7 @@ Out[2]: Cos[x]
 >>> 
 }}}
 
-==Features available in the latest SVN version==
+= Features available in the latest SVN version =
 With the {{{-f}}} or {{{-file}}} program argument, you can run a default script on startup of the console or Symja application:
 {{{
  -f C:\temp\mymath.script
