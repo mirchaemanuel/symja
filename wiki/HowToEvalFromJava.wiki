@@ -4,7 +4,7 @@
 <wiki:toc max_depth="1" />
 
 = Installing the libraries =
-In the folder where you've unzipped the downloaded [http://symja.googlecode.com/files/meconsole-0.0.8.zip ZIP file], there 5 JARs which should be on your Java classpath:
+In the folder where you've unzipped the downloaded [http://symja.googlecode.com/files/meconsole-0.0.8.zip ZIP file], there are 5 JARs which should be on your Java classpath:
   * meconsole008.jar
   * jsr305.jar
   * google-collect-1.0-rc3.jar
