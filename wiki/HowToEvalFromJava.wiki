@@ -17,7 +17,7 @@ There are 2 options for evaluating an MathEclipse expression from Java
 
 = Direct Java integration=
 {{{
-package org.maheclipse.examples;
+package org.matheclipse.examples;
 
 import org.matheclipse.core.eval.EvalUtilities;
 import org.matheclipse.core.expression.F;
@@ -76,7 +76,7 @@ public class EvalExpand {
 Here is a simple example for the JSR 223 support. More examples can be found here: JSR223Support.
 
 {{{
-package org.maheclipse.examples;
+package org.matheclipse.examples;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
