@@ -1,6 +1,8 @@
-#summary The Math Expression Parser.
+#summary The Math Expression Parser Module
 #labels Featured,Phase-Implementation
 #sidebar TableOfContents
+
+<wiki:toc max_depth="3" />
 
 = About =
                 
