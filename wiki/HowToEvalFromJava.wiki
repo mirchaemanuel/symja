@@ -1,10 +1,19 @@
 #summary How to evaluate an expression from a Java program
+#sidebar TableOfContents
 
-There are 2 options for evaluating an expression
+= Installing the libraries =
+In the folder where you've unzipped the downloaded [http://symja.googlecode.com/files/meconsole-0.0.8.zip ZIP file], there 5 JARs which should be on your Java classpath:
+  * meconsole008.jar
+  * jsr305.jar
+  * google-collect-1.0-rc3.jar
+  * commons-logging-1.1.1.jar
+  * log4j-1.2.11.jar
+
+There are 2 options for evaluating an MathEclipse expression from Java
   # direct Java integration
   # and JSR223Support based scripting engine support
 
-= Direct Java integration integration=
+= Direct Java integration=
 {{{
 package org.maheclipse.examples;
 
