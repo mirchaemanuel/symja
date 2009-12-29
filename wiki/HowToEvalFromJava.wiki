@@ -1,4 +1,5 @@
 #summary How to evaluate an expression from a Java program
+#labels Featured,Phase-Implementation
 #sidebar TableOfContents
 
 <wiki:toc max_depth="1" />
