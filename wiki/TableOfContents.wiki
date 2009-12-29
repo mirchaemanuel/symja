@@ -2,6 +2,7 @@
   * [RunSymja Getting started]
   * [ReleaseNotes Release Notes]
   * [SyntaxDescription Syntax overview]
+  * [HowToEvalFromJava Use it in your Java project]
   * [AddNewFunctions How to add new functions]
   * [MathExpressionParser The basic math expression parser]
   * [UsedLibraries Libraries used to create Symja]
