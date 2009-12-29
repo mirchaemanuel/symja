@@ -1,9 +1,9 @@
 #summary Table of contents navigation
   * [RunSymja Getting started]
-  * [ReleaseNotes Release Notes]
   * [SyntaxDescription Syntax overview]
   * [HowToEvalFromJava Use it in your Java project]
   * [AddNewFunctions How to add new functions]
   * [MathExpressionParser The basic math expression parser]
   * [UsedLibraries Libraries used to create Symja]
-  * [JSR223Support Use MathEclipse as JSR223 scripting engine].
+  * [JSR223Support Use MathEclipse as JSR223 scripting engine]
+  * [ReleaseNotes Release Notes]
