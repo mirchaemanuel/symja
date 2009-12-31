@@ -23,7 +23,7 @@ import org.apache.commons.math.FunctionEvaluationException;
 /**
  * Base class for {@link UnivariateRealFunction} that can be composed with other functions.
  *
- * @version $Revision: 890023 $ $Date: 2009-12-13 05:27:34 +0100 (So, 13 Dez 2009) $
+ * @version $Revision: 894187 $ $Date: 2009-12-28 16:30:03 +0100 (Mo, 28 Dez 2009) $
  */
 public abstract class ComposableFunction implements UnivariateRealFunction {
 
@@ -74,7 +74,7 @@ public abstract class ComposableFunction implements UnivariateRealFunction {
             return 1/d;
         }
     };
-    
+
     /** The {@code Math.sin} method wrapped as a {@link ComposableFunction}. */
     public static final ComposableFunction SIN = new ComposableFunction() {
         /** {@inheritDoc} */
@@ -186,7 +186,7 @@ public abstract class ComposableFunction implements UnivariateRealFunction {
             return Math.log10(d);
         }
     };
-    
+
     /** The {@code Math.log1p} method wrapped as a {@link ComposableFunction}. */
     public static final ComposableFunction LOG1P = new ComposableFunction () {
         public double value(double d){

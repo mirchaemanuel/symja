@@ -87,7 +87,7 @@ import org.apache.commons.math.ode.sampling.StepHandler;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</strong></td></tr>
  * </table>
  *
- * @version $Revision: 811833 $ $Date: 2009-09-06 18:27:50 +0200 (So, 06 Sep 2009) $
+ * @version $Revision: 893281 $ $Date: 2009-12-22 20:30:10 +0100 (Di, 22 Dez 2009) $
  * @since 1.2
  */
 
@@ -746,7 +746,7 @@ public class GraggBulirschStoerIntegrator extends AdaptiveStepsizeIntegrator {
                     // estimate if there is a chance convergence will
                     // be reached on next iteration, using the
                     // asymptotic evolution of error
-                    final double ratio = ((double) sequence [k] * sequence[k+1]) /
+                    final double ratio = ((double) sequence [targetIter] * sequence[targetIter + 1]) /
                                          (sequence[0] * sequence[0]);
                     if (error > ratio * ratio) {
                       // we don't expect to converge on next iteration
