@@ -1,5 +1,5 @@
 /*
- * $Id: Complex.java 2614 2009-05-02 09:24:49Z kredel $
+ * $Id: Complex.java 2928 2009-12-27 22:04:12Z kredel $
  */
 
 package edu.jas.structure;
@@ -34,9 +34,13 @@ public class Complex<C extends RingElem<C> >
              implements StarRingElem<Complex<C>>,
                         GcdRingElem<Complex<C>> {
 
+    private static final Logger logger = Logger.getLogger(Complex.class);
+    private static final boolean debug = logger.isDebugEnabled();
+
+
     /** Complex class factory data structure. 
      */
-    protected final ComplexRing<C> ring;
+    public final ComplexRing<C> ring;
 
 
     /** Real part of the data structure. 
@@ -47,10 +51,6 @@ public class Complex<C extends RingElem<C> >
     /** Imaginary part of the data structure. 
       */
     protected final C im;
-
-
-    private static final Logger logger = Logger.getLogger(Complex.class);
-    private static final boolean debug = logger.isDebugEnabled();
 
 
     /** The constructor creates a Complex object 
@@ -184,10 +184,13 @@ public class Complex<C extends RingElem<C> >
         if ( im.isZERO() ) {
             s.append(re.toScript());
         } else {
-            s.append("(");
-            s.append(re.toScript());
-            s.append(",").append(im.toScript());
-            s.append(")");
+            s.append("");
+            if ( ! re.isZERO() ) {
+                s.append(re.toScript());
+                s.append(" + ");
+            }
+            s.append(im.toScript()).append(" * I");
+            s.append("");
         }
         return s.toString();
     }

@@ -1,5 +1,5 @@
 /*
- * $Id: OrderedModuleList.java 1265 2007-07-29 10:22:22Z kredel $
+ * $Id: OrderedModuleList.java 2920 2009-12-25 16:50:47Z kredel $
  */
 
 package edu.jas.vector;
@@ -75,6 +75,7 @@ public class OrderedModuleList<C extends RingElem<C> >
      * @param l list of polynomial lists.
      * @return sorted list of polynomial lists from l.
      */
+    @SuppressWarnings("unchecked")
     public static <C extends RingElem<C> >
            List<List<GenPolynomial<C>>> 
            sort( GenPolynomialRing<C> r,
@@ -123,7 +124,7 @@ public class OrderedModuleList<C extends RingElem<C> >
 
         List<GenPolynomial<C>>[] s = null;
         try {
-            s = new List[ l.size() ]; //<GenPolynomial<C>>
+            s = (List<GenPolynomial<C>>[]) new List[ l.size() ]; 
             //System.out.println("s.length = " + s.length );
             //s = l.toArray(s); does not work
             //for ( int i = 0; i < l.size(); i++ ) {

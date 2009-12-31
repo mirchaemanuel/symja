@@ -1,5 +1,5 @@
 /*
- * $Id: Examples.java 2873 2009-11-15 16:44:07Z kredel $
+ * $Id: Examples.java 2883 2009-11-27 17:50:23Z kredel $
  */
 
 package edu.jas.ufd;
@@ -258,8 +258,8 @@ public class Examples {
 
         FactorRational engine = new FactorRational();
 
-        //PartialFraction<BigRational> F = engine.baseAlgebraicPartialFraction(N,D);
-        //System.out.println("\nintegral " + F);
+        PartialFraction<BigRational> F = engine.baseAlgebraicPartialFraction(N,D);
+        System.out.println("\nintegral " + F);
 
         //PartialFraction<BigRational> Fa = engine.baseAlgebraicPartialFractionIrreducibleAbsolute(N,D);
         //System.out.println("\nintegral_a " + Fa);

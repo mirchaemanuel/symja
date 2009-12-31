@@ -1,5 +1,5 @@
 /*
- * $Id: DistHashTableServer.java 2827 2009-09-25 12:56:52Z kredel $
+ * $Id: DistHashTableServer.java 2927 2009-12-27 15:33:47Z kredel $
  */
 
 package edu.jas.util;
@@ -247,6 +247,16 @@ public class DistHashTableServer<K> extends Thread {
         synchronized (servers) {
             return servers.size();
         }
+    }
+
+
+    /**
+     * toString.
+     * @return a string representation of this.
+     */
+    @Override
+    public String toString() {
+        return "DHTServer(" + servers.size() + ", " + cf + ", " + super.toString() + ")";
     }
 
 }

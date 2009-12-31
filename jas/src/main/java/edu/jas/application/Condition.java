@@ -1,5 +1,5 @@
 /*
- * $Id: Condition.java 2828 2009-09-27 12:30:52Z kredel $
+ * $Id: Condition.java 2883 2009-11-27 17:50:23Z kredel $
  */
 
 package edu.jas.application;
@@ -360,6 +360,7 @@ public class Condition<C extends GcdRingElem<C>> implements Serializable {
                 System.out.println("error poly green = " + green);
                 System.out.println("error poly   red = " + red);
                 System.out.println("error poly    Ap = " + Ap);
+                System.out.println("error coeff    c = " + c);
                 throw new RuntimeException("error, c is white = " + c);
                 // is catched in minimalGB
             }

@@ -1,5 +1,5 @@
 /*
- * $Id: BigRationalTest.java 1244 2007-07-29 09:54:27Z kredel $
+ * $Id: BigRationalTest.java 2901 2009-12-19 05:20:41Z kredel $
  */
 
 package edu.jas.arith;
@@ -102,6 +102,21 @@ public class BigRationalTest extends TestCase {
 
      assertTrue("1 = 1", a.isONE() );
      assertEquals("1+(-1) = 0",c,BigRational.ZERO);
+
+     s = "1.500000000";
+     a = new BigRational( s );
+     b = new BigRational( "3/2" );
+     assertEquals("decimalConstr = b ",a,b);
+
+     s = "0.750000000";
+     a = new BigRational( s );
+     b = new BigRational( "3/4" );
+     assertEquals("decimalConstr = b ",a,b);
+
+     s = "0.333333333";
+     a = new BigRational( s );
+     t = a.toString(9);
+     assertEquals("decimalConstr = b " + t,s,t);
    }
 
 

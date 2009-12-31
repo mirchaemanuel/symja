@@ -1,5 +1,5 @@
 /*
- * $Id: ComprehensiveGroebnerBaseSeq.java 2828 2009-09-27 12:30:52Z kredel $
+ * $Id: ComprehensiveGroebnerBaseSeq.java 2893 2009-12-04 18:01:12Z kredel $
  */
 
 package edu.jas.application;
@@ -337,7 +337,6 @@ public class ComprehensiveGroebnerBaseSeq<C extends GcdRingElem<C>>
      */
     // @Override
     // @SuppressWarnings("unchecked")
-    //public List<ColoredSystem<C>> GBsys(List<GenPolynomial<GenPolynomial<C>>> F) {
     public GroebnerSystem<C> GBsys(List<GenPolynomial<GenPolynomial<C>>> F) {
         if (F == null) {
             return null;
@@ -524,8 +523,14 @@ public class ComprehensiveGroebnerBaseSeq<C extends GcdRingElem<C>>
                 Sp = new ArrayList<ColorPolynomial<C>>(S);
                 OrderedCPairlist<C> PL = pl.clone();
                 NS = new ColoredSystem<C>(cnd, Sp, PL);
-                if ( !NS.isDetermined() ) {
-                    NS = NS.reDetermine();
+                try {
+                    if ( !NS.isDetermined() ) {
+                        NS = NS.reDetermine();
+                    }
+                } catch(RuntimeException e) {
+                    System.out.println("Contradiction in NS_0 = " + NS);
+                    //e.printStackTrace();
+                    continue;
                 }
                 NCS = NS.addToList(NCS);
                 continue;
@@ -540,8 +545,14 @@ public class ComprehensiveGroebnerBaseSeq<C extends GcdRingElem<C>>
             OrderedCPairlist<C> PL = pl.clone();
             PL.put(nz);
             NS = new ColoredSystem<C>(cnd, Sp, PL);
-            if ( !NS.isDetermined() ) {
-                NS = NS.reDetermine();
+            try {
+                if ( !NS.isDetermined() ) {
+                    NS = NS.reDetermine();
+                }
+            } catch(RuntimeException e) {
+                System.out.println("Contradiction in NS = " + NS);
+                //e.printStackTrace();
+                continue;
             }
             NCS = NS.addToList(NCS);
         }

@@ -1,5 +1,5 @@
 /*
- * $Id: GroebnerBaseDistTest.java 2764 2009-08-01 20:32:36Z kredel $
+ * $Id: GroebnerBaseDistTest.java 2921 2009-12-25 17:06:56Z kredel $
  */
 
 package edu.jas.gb;
@@ -320,7 +320,7 @@ public class GroebnerBaseDistTest extends TestCase {
         Reader source = new StringReader(exam);
         GenPolynomialTokenizer parser = new GenPolynomialTokenizer(source);
         try {
-            F = parser.nextPolynomialSet();
+            F = (PolynomialList<BigRational>) parser.nextPolynomialSet();
         } catch (IOException e) {
             fail("" + e);
         }

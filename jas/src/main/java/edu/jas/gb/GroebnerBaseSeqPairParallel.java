@@ -1,5 +1,5 @@
 /*
- * $Id: GroebnerBaseSeqPairParallel.java 2412 2009-02-07 12:17:54Z kredel $
+ * $Id: GroebnerBaseSeqPairParallel.java 2922 2009-12-25 17:26:22Z kredel $
  */
 
 package edu.jas.gb;
@@ -230,7 +230,7 @@ public class GroebnerBaseSeqPairParallel<C extends RingElem<C>>
             return G;
         }
 
-        MiReducerSeqPair<C>[] mirs = new MiReducerSeqPair[ G.size() ];
+        MiReducerSeqPair<C>[] mirs = (MiReducerSeqPair<C>[]) new MiReducerSeqPair[ G.size() ];
         int i = 0;
         F = new ArrayList<GenPolynomial<C>>( G.size() );
         while ( G.size() > 0 ) {

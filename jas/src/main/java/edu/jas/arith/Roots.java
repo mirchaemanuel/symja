@@ -1,5 +1,5 @@
 /*
- * $Id: Roots.java 2197 2008-10-19 17:31:54Z kredel $
+ * $Id: Roots.java 2915 2009-12-24 16:35:34Z kredel $
  */
 
 package edu.jas.arith;
@@ -171,7 +171,7 @@ public class Roots {
            return A;
         }
         // for small A use root of inverse
-        if ( A.compareTo( BigDecimal.ONE ) <= 0 ) {
+        if ( A.compareTo( BigDecimal.ONE ) < 0 ) {
             BigDecimal Ap = A.inverse();
             Ap = sqrt(Ap);
             return Ap.inverse();

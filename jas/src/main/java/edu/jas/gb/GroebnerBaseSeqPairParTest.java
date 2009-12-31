@@ -1,5 +1,5 @@
 /*
- * $Id: GroebnerBaseSeqPairParTest.java 2412 2009-02-07 12:17:54Z kredel $
+ * $Id: GroebnerBaseSeqPairParTest.java 2921 2009-12-25 17:06:56Z kredel $
  */
 
 package edu.jas.gb;
@@ -297,7 +297,7 @@ public class GroebnerBaseSeqPairParTest extends TestCase {
      GenPolynomialTokenizer parser
                   = new GenPolynomialTokenizer( source );
      try {
-         F = parser.nextPolynomialSet();
+         F = (PolynomialList<BigRational>) parser.nextPolynomialSet();
      } catch(ClassCastException e) {
          fail(""+e);
      } catch(IOException e) {

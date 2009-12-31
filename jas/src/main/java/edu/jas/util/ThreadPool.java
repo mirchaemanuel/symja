@@ -1,5 +1,5 @@
 /*
- * $Id: ThreadPool.java 2816 2009-09-20 20:00:44Z kredel $
+ * $Id: ThreadPool.java 2927 2009-12-27 15:33:47Z kredel $
  */
 
 //package edu.unima.ky.parallel;
@@ -50,7 +50,7 @@ public class ThreadPool {
 
 
     private static final Logger logger = Logger.getLogger(ThreadPool.class);
-    //private static boolean debug = logger.isDebugEnabled();
+    private static boolean debug = logger.isDebugEnabled();
 
 
    /**
@@ -97,6 +97,9 @@ public class ThreadPool {
             workers[i].start();
         }
         logger.info("size = " + size + ", strategy = " + strategy);
+        if ( debug ) {
+            Thread.currentThread().dumpStack();
+        }
 //         if ( size == 1 ) {
 //             throw new RuntimeException("pool with one thread?");
 //         }

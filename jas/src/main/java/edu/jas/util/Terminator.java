@@ -1,5 +1,5 @@
 /*
- * $Id: Terminator.java 2802 2009-09-05 10:36:22Z kredel $
+ * $Id: Terminator.java 2927 2009-12-27 15:33:47Z kredel $
  */
 
 package edu.jas.util;
@@ -39,6 +39,15 @@ public class Terminator {
     public Terminator(int workers) {
         this.workers = workers;
         logger.info("constructor, workers = " + workers);
+    }
+
+
+    /**
+     * to string
+     */
+    @Override
+    public String toString() {
+        return "Terminator(workers=" + workers + ",idler=" + idler + ")";
     }
 
 
@@ -127,12 +136,12 @@ public class Terminator {
      * Release if possible.
      */
     public synchronized void release() {
-        logger.info("release, workers = " + workers);
+        logger.info("release = " + this);
         if ( idler >= workers ) {
             fin.release(); //fin.V();
             //idler++; ??
         }
-        logger.info("release, idler = " + idler);
+        //logger.info("release, idler = " + idler);
     }
 
 
@@ -145,7 +154,7 @@ public class Terminator {
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
-        logger.debug("done, idler = " + idler);
+        logger.info("waitDone " + this);
     }
 
 }
