@@ -1,5 +1,5 @@
 /*
- * $Id: FactorAbsolute.java 2873 2009-11-15 16:44:07Z kredel $
+ * $Id: FactorAbsolute.java 2886 2009-11-27 23:10:38Z kredel $
  */
 
 package edu.jas.ufd;
@@ -560,7 +560,7 @@ public abstract class FactorAbsolute<C extends GcdRingElem<C>> extends FactorAbs
 
         // non linear case
         Factors<C> afacs = factorsAbsoluteIrreducible(P);
-        System.out.println("linear algebraic factors = " + afacs);
+        //System.out.println("linear algebraic factors = " + afacs);
 
         //System.out.println("afactors      = " + afacs.afactors);
         //System.out.println("arfactors     = " + afacs.arfactors);

@@ -1,6 +1,6 @@
 
 /*
- * $Id: GenGcdPolynomial.java 1888 2008-07-12 13:37:34Z kredel $
+ * $Id: GenGcdPolynomial.java 2921 2009-12-25 17:06:56Z kredel $
  */
 
 package edu.jas.poly;
@@ -330,7 +330,7 @@ public class GenGcdPolynomial<C extends GcdRingElem<C> >
             }
         }
         //System.out.println("q = " + q + ", r = " +r);
-        GenPolynomial<C>[] ret = new GenPolynomial[2];
+        GenPolynomial<C>[] ret = (GenPolynomial<C>[]) new GenPolynomial[2];
         ret[0] = q;
         ret[1] = r;
         return ret;
@@ -435,7 +435,7 @@ public class GenGcdPolynomial<C extends GcdRingElem<C> >
      */
     @Override
      public GenPolynomial<C>[] egcd(GenPolynomial<C> S) {
-        GenPolynomial<C>[] ret = new GenPolynomial[3];
+        GenPolynomial<C>[] ret = (GenPolynomial<C>[]) new GenPolynomial[3];
         ret[0] = null;
         ret[1] = null;
         ret[2] = null;

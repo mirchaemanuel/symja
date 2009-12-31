@@ -1,5 +1,5 @@
 /*
- * $Id: ElementaryIntegration.java 2871 2009-11-15 14:13:05Z kredel $
+ * $Id: ElementaryIntegration.java 2921 2009-12-25 17:06:56Z kredel $
  */
 
 package edu.jas.integrate;
@@ -235,7 +235,7 @@ public class ElementaryIntegration<C extends GcdRingElem<C>> {
                 H.add(v); // v
             }
         }
-        List<GenPolynomial<C>>[] ret = new List[2];
+        List<GenPolynomial<C>>[] ret = (List<GenPolynomial<C>>[]) new List[2];
         ret[0] = G;
         ret[1] = H;
         return ret;

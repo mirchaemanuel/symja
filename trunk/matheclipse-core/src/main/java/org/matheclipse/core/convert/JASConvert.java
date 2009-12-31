@@ -62,6 +62,14 @@ public class JASConvert<C extends RingElem<C>> {
         edu.jas.arith.BigInteger.ZERO, fVariables.size(), fTermOrder, vars);
   }
 
+  /**
+   * Convert the given expression into a JAS polynomial
+   * 
+   * @param exprPoly
+   * @return
+   * @throws ArithmeticException
+   * @throws ClassCastException
+   */
   public GenPolynomial<C> expr2Poly(final IExpr exprPoly)
       throws ArithmeticException, ClassCastException {
     if (exprPoly instanceof IAST) {

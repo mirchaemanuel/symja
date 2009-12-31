@@ -1,5 +1,5 @@
 /*
- * $Id: ComplexRing.java 2614 2009-05-02 09:24:49Z kredel $
+ * $Id: ComplexRing.java 2928 2009-12-27 22:04:12Z kredel $
  */
 
 package edu.jas.structure;
@@ -30,15 +30,15 @@ public class ComplexRing<C extends RingElem<C> >
              implements RingFactory<Complex<C>> {
 
 
-    /** Complex class elements factory data structure. 
-     */
-    protected final RingFactory<C> ring;
-
-
     private final static Random random = new Random();
 
 
     private static final Logger logger = Logger.getLogger(ComplexRing.class);
+
+
+    /** Complex class elements factory data structure. 
+     */
+    public final RingFactory<C> ring;
 
 
     /** The constructor creates a ComplexRing object.
@@ -166,8 +166,13 @@ public class ComplexRing<C extends RingElem<C> >
     public String toScript() {
         // Python case
         StringBuffer s = new StringBuffer();
-        s.append("ComplexRing(");
-        s.append(ring.toScript());
+        s.append("CR(");
+        if ( ring instanceof RingElem ) {
+            RingElem ri = (RingElem) ring;
+            s.append(ri.toScriptFactory());
+        } else {
+            s.append(ring.toScript());
+        }
         s.append(")");
         return s.toString();
     }

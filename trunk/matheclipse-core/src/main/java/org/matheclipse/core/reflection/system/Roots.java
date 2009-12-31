@@ -17,8 +17,16 @@ import org.matheclipse.core.interfaces.IInteger;
 import edu.jas.arith.BigRational;
 import edu.jas.poly.GenPolynomial;
 import edu.jas.poly.Monomial;
+import edu.jas.root.ComplexRootsAbstract;
+import edu.jas.root.ComplexRootsSturm;
+import edu.jas.root.InvalidBoundaryException;
+import edu.jas.root.Rectangle;
+import edu.jas.structure.Complex;
+import edu.jas.structure.ComplexRing;
 import edu.jas.ufd.FactorAbstract;
 import edu.jas.ufd.FactorFactory;
+import edu.jas.ufd.Squarefree;
+import edu.jas.ufd.SquarefreeFactory;
 
 /**
  * Determine the roots of a univariate polynomial
@@ -40,6 +48,65 @@ public class Roots extends AbstractFunctionEvaluator {
       return null;
     }
     return roots(lst);
+  }
+
+  /**
+   * Complex roots intervals.
+   * 
+   * @param lst
+   * @return
+   */
+  private static IAST croots(final IAST lst) {
+
+    try {
+      ExprVariables eVar = new ExprVariables(lst.get(1));
+      if (!eVar.isSize(1)) {
+        // factor only possible for univariate polynomials
+        return null;
+      }
+      IExpr expr = F.eval(F.ExpandAll, lst.get(1));
+      ASTRange r = new ASTRange(eVar.getVarList(), 1);
+      List<IExpr> varList = r.toList();
+
+      ComplexRing<BigRational> cfac = new ComplexRing<BigRational>(
+          new BigRational(1));
+      ComplexRootsAbstract<BigRational> cr = new ComplexRootsSturm<BigRational>(
+          cfac);
+      
+      JASConvert<Complex<BigRational>> jas = new JASConvert<Complex<BigRational>>(
+          varList,cfac);
+      GenPolynomial<Complex<BigRational>> poly = jas.expr2Poly(expr);
+      
+      Squarefree<Complex<BigRational>> engine = SquarefreeFactory
+      .<Complex<BigRational>> getImplementation(cfac);
+      poly = engine.squarefreePart(poly);
+
+      List<Rectangle<BigRational>> roots = cr.complexRoots(poly);
+      // System.out.println("a = " + a);
+      // System.out.println("roots = " + roots);
+      // assertTrue("#roots == deg(a) ", roots.size() == poly.degree(0));
+
+      BigRational len = new BigRational(1, 1000);
+      // System.out.println("len = " + len);
+
+      for (Rectangle<BigRational> root : roots) {
+        try {
+          System.out.println(root.toString());
+          Rectangle<BigRational> refine = cr.complexRootRefinement(root, poly,
+              len);
+          System.out.println("refine = " + refine);
+        } catch (InvalidBoundaryException e) {
+          return null;
+          // fail("" + e);
+        }
+      }
+
+    } catch (Exception e) {
+      if (Config.SHOW_STACKTRACE) {
+        e.printStackTrace();
+      }
+    }
+    return null;
   }
 
   protected static IAST roots(final IAST lst) {

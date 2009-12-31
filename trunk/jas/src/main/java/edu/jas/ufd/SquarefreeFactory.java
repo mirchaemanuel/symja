@@ -1,5 +1,5 @@
 /*
- * $Id: SquarefreeFactory.java 2733 2009-07-12 12:03:54Z kredel $
+ * $Id: SquarefreeFactory.java 2906 2009-12-20 14:28:31Z kredel $
  */
 
 package edu.jas.ufd;
@@ -213,6 +213,11 @@ public class SquarefreeFactory {
                 t = 8;
                 break;
             }
+            if (fac.isField()) {
+                //System.out.println("fac_field = " + fac);
+                t = 9;
+                break;
+            }
             break;
         }
         //System.out.println("ft = " + t);
@@ -249,6 +254,11 @@ public class SquarefreeFactory {
             } else {
                 ufd = new SquarefreeFiniteFieldCharP/*raw <C>*/(pfac.coFac);
                 logger.warn("not checked if finite or infinite field" + pfac.coFac);
+            }
+        }
+        if (t == 9) { // other fields of char 0
+            if ( fac.characteristic().signum() == 0 ) {
+                ufd = new SquarefreeFieldChar0/*raw*/(fac);
             }
         }
         if (ufd == null) {

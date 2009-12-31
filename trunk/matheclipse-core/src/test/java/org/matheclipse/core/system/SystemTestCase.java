@@ -681,13 +681,13 @@ public class SystemTestCase extends AbstractTestCase {
     // "{-11/4,33/4,-5/4}");
     check(
         "SingularValueDecomposition[{{ 24.0/25.0, 43.0/25.0 },{57.0/25.0, 24.0/25.0 }}]",
-        "{{{0.6,-0.7999999999999997},\n"
+        "{{{0.6000000000000001,-0.7999999999999996},\n"
             + " {0.8,0.6000000000000001}},{{3.0,0.0},\n"
             + " {0.0,1.0000000000000004}},{{0.7999999999999998,0.6000000000000001},\n"
             + " {0.6,-0.7999999999999998}}}");
-    
+
     // WRONG results. See http://issues.apache.org/jira/browse/MATH-320:
-    // check("SingularValueDecomposition[{{1,2},{1,2}}]", "");
+    // check("SingularValueDecomposition[{{1,2},{1,2"");
   }
 
   public void testSystem104() {
@@ -2323,6 +2323,9 @@ public class SystemTestCase extends AbstractTestCase {
         + "-0.06243510291861069+I*(-0.7156909967859645)}");
     check("Roots[4+x^2+2*x+3*x^3]",
         "{-1,1/6*(I*44^(1/2)+2),1/6*(-I*44^(1/2)+2)}");
+//    check(
+//        "Roots[x^4-2]",
+//        "");
     check("Roots[Expand[(x-1)^3]]", "{1}");
     check(
         "Roots[x^6-1]",

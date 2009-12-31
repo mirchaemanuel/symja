@@ -1,5 +1,5 @@
 /*
- * $Id: SolvableReductionPar.java 2412 2009-02-07 12:17:54Z kredel $
+ * $Id: SolvableReductionPar.java 2921 2009-12-25 17:06:56Z kredel $
  */
 
 package edu.jas.gb;
@@ -54,7 +54,7 @@ public class SolvableReductionPar<C extends RingElem<C>>
         GenSolvablePolynomial<C>[] P;
         synchronized (Pp) {
             l = Pp.size();
-            P = new GenSolvablePolynomial[l];
+            P = (GenSolvablePolynomial<C>[]) new GenSolvablePolynomial[l];
             //P = Pp.toArray();
             for ( int j = 0; j < Pp.size(); j++ ) {
                 P[j] = Pp.get(j);
@@ -75,7 +75,7 @@ public class SolvableReductionPar<C extends RingElem<C>>
                  //long t = System.currentTimeMillis();
                  synchronized (Pp) { // required, bad in parallel
                     l = Pp.size();
-                    P = new GenSolvablePolynomial[ l ];
+                    P = (GenSolvablePolynomial<C>[]) new GenSolvablePolynomial[ l ];
                     //P = Pp.toArray();
                     for ( int i = 0; i < Pp.size(); i++ ) {
                         P[i] = Pp.get(i);
@@ -150,7 +150,7 @@ public class SolvableReductionPar<C extends RingElem<C>>
         GenSolvablePolynomial<C>[] P;
         synchronized (Pp) {
             l = Pp.size();
-            P = new GenSolvablePolynomial[l];
+            P = (GenSolvablePolynomial<C>[]) new GenSolvablePolynomial[l];
             //P = Pp.toArray();
             for ( int j = 0; j < Pp.size(); j++ ) {
                 P[j] = Pp.get(j);
@@ -171,7 +171,7 @@ public class SolvableReductionPar<C extends RingElem<C>>
                  //long t = System.currentTimeMillis();
                  synchronized (Pp) { // required, bad in parallel
                     l = Pp.size();
-                    P = new GenSolvablePolynomial[ l ];
+                    P = (GenSolvablePolynomial<C>[]) new GenSolvablePolynomial[ l ];
                     //P = Pp.toArray();
                     for ( int i = 0; i < Pp.size(); i++ ) {
                         P[i] = Pp.get(i);
