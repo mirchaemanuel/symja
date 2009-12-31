@@ -12,7 +12,7 @@ public class MathScriptEngineFactory implements javax.script.ScriptEngineFactory
 
 	public MathScriptEngineFactory() {
 		F.initSymbols(null);
-		Config.SERVER_MODE = true;
+		Config.SERVER_MODE = false;
 	}
 
 	public String getEngineName() {
