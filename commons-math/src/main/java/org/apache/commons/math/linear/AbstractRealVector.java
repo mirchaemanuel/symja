@@ -28,7 +28,7 @@ import org.apache.commons.math.analysis.ComposableFunction;
 /**
  * This class provides default basic implementations for many methods in the
  * {@link RealVector} interface with.
- * @version $Revision: 890159 $ $Date: 2009-12-14 03:53:40 +0100 (Mo, 14 Dez 2009) $
+ * @version $Revision: 894367 $ $Date: 2009-12-29 13:24:58 +0100 (Di, 29 Dez 2009) $
  * @since 2.1
  */
 public abstract class AbstractRealVector implements RealVector {
@@ -203,6 +203,40 @@ public abstract class AbstractRealVector implements RealVector {
             d += diff * diff;
         }
         return Math.sqrt(d);
+    }
+
+    /** {@inheritDoc} */
+    public double getNorm() {
+        double sum = 0;
+        Iterator<Entry> it = sparseIterator();
+        Entry e;
+        while (it.hasNext() && (e = it.next()) != null) {
+            final double value = e.getValue();
+            sum += value * value;
+        }
+        return Math.sqrt(sum);
+    }
+
+    /** {@inheritDoc} */
+    public double getL1Norm() {
+        double norm = 0;
+        Iterator<Entry> it = sparseIterator();
+        Entry e;
+        while (it.hasNext() && (e = it.next()) != null) {
+            norm += Math.abs(e.getValue());
+        }
+        return norm;
+    }
+
+    /** {@inheritDoc} */
+    public double getLInfNorm() {
+        double norm = 0;
+        Iterator<Entry> it = sparseIterator();
+        Entry e;
+        while (it.hasNext() && (e = it.next()) != null) {
+            norm = Math.max(norm, Math.abs(e.getValue()));
+        }
+        return norm;
     }
 
     /** {@inheritDoc} */
@@ -383,7 +417,7 @@ public abstract class AbstractRealVector implements RealVector {
             throw new IllegalArgumentException(e);
         }
     }
-    
+
     /** {@inheritDoc} */
     public RealVector mapExp() {
         return copy().mapExpToSelf();
@@ -397,12 +431,12 @@ public abstract class AbstractRealVector implements RealVector {
             throw new IllegalArgumentException(e);
         }
     }
-    
+
     /** {@inheritDoc} */
     public RealVector mapExpm1() {
         return copy().mapExpm1ToSelf();
     }
-    
+
     /** {@inheritDoc} */
     public RealVector mapExpm1ToSelf() {
         try {
@@ -411,12 +445,12 @@ public abstract class AbstractRealVector implements RealVector {
             throw new IllegalArgumentException(e);
         }
     }
-    
+
     /** {@inheritDoc} */
     public RealVector mapFloor() {
         return copy().mapFloorToSelf();
     }
-    
+
     /** {@inheritDoc} */
     public RealVector mapFloorToSelf() {
         try {
@@ -425,12 +459,12 @@ public abstract class AbstractRealVector implements RealVector {
             throw new IllegalArgumentException(e);
         }
     }
-    
+
     /** {@inheritDoc} */
     public RealVector mapInv() {
         return copy().mapInvToSelf();
     }
-    
+
     /** {@inheritDoc} */
     public RealVector mapInvToSelf() {
         try {
@@ -486,7 +520,7 @@ public abstract class AbstractRealVector implements RealVector {
     public RealVector mapMultiply(double d) {
         return copy().mapMultiplyToSelf(d);
     }
-    
+
     /** {@inheritDoc} */
     public RealVector mapMultiplyToSelf(double d){
         try {
@@ -500,7 +534,7 @@ public abstract class AbstractRealVector implements RealVector {
     public RealVector mapPow(double d) {
         return copy().mapPowToSelf(d);
     }
-    
+
     /** {@inheritDoc} */
     public RealVector mapPowToSelf(double d){
         try {
@@ -584,7 +618,7 @@ public abstract class AbstractRealVector implements RealVector {
     public RealVector mapSubtract(double d) {
         return copy().mapSubtractToSelf(d);
     }
-    
+
     /** {@inheritDoc} */
     public RealVector mapSubtractToSelf(double d){
         return mapAddToSelf(-d);

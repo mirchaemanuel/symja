@@ -29,7 +29,7 @@ import org.apache.commons.math.MathRuntimeException;
  * Also includes a <code>test</code> method that performs generic parameter
  * validation for the <code>evaluate</code> methods.</p>
  *
- * @version $Revision: 811685 $ $Date: 2009-09-05 19:36:48 +0200 (Sa, 05 Sep 2009) $
+ * @version $Revision: 894705 $ $Date: 2009-12-30 21:24:54 +0100 (Mi, 30 Dez 2009) $
  */
 public abstract class AbstractUnivariateStatistic
     implements UnivariateStatistic {
@@ -130,6 +130,7 @@ public abstract class AbstractUnivariateStatistic
      * @param length the number of elements to include
      * @return true if the parameters are valid and designate a subarray of positive length
      * @throws IllegalArgumentException if the indices are invalid or the array is null
+     * @since 2.1
      */
     protected boolean test(
         final double[] values,

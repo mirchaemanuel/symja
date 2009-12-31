@@ -21,7 +21,7 @@ import java.util.ListResourceBundle;
 
 /**
  * French localization message resources for the commons-math library.
- * @version $Revision: 885278 $ $Date: 2009-11-29 22:47:51 +0100 (So, 29 Nov 2009) $
+ * @version $Revision: 894730 $ $Date: 2009-12-31 00:03:23 +0100 (Do, 31 Dez 2009) $
  * @since 1.2
  */
 public class MessagesResources_fr
@@ -40,6 +40,12 @@ public class MessagesResources_fr
       "n doit \u00eatre positif pour le calcul de n!, or n = {0}" },
     { "overflow: gcd({0}, {1}) is 2^31",
       "d\u00e9passement de capacit\u00e9 : le PGCD de {0} et {1} vaut 2^31" },
+    { "overflow: gcd({0}, {1}) is 2^63",
+      "d\u00e9passement de capacit\u00e9 : le PGCD de {0} et {1} vaut 2^63" },
+    { "overflow: lcm({0}, {1}) is 2^31",
+      "d\u00e9passement de capacit\u00e9 : le MCM de {0} et {1} vaut 2^31" },
+    { "overflow: lcm({0}, {1}) is 2^63",
+      "d\u00e9passement de capacit\u00e9 : le MCM de {0} et {1} vaut 2^63" },
     { "cannot raise an integral value to a negative power ({0}^{1})",
       "impossible d''\u00e9lever une valeur enti\u00e8re " +
       "\u00e0 une puissance n\u00e9gative ({0}^{1})" },
