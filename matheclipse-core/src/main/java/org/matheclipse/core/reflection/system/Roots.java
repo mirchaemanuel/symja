@@ -16,6 +16,7 @@ import org.matheclipse.core.interfaces.IInteger;
 
 import edu.jas.arith.BigRational;
 import edu.jas.poly.GenPolynomial;
+import edu.jas.poly.GenPolynomialRing;
 import edu.jas.poly.Monomial;
 import edu.jas.root.ComplexRootsAbstract;
 import edu.jas.root.ComplexRootsSturm;
@@ -72,13 +73,13 @@ public class Roots extends AbstractFunctionEvaluator {
           new BigRational(1));
       ComplexRootsAbstract<BigRational> cr = new ComplexRootsSturm<BigRational>(
           cfac);
-      
+
       JASConvert<Complex<BigRational>> jas = new JASConvert<Complex<BigRational>>(
-          varList,cfac);
+          varList, cfac);
       GenPolynomial<Complex<BigRational>> poly = jas.expr2Poly(expr);
-      
+
       Squarefree<Complex<BigRational>> engine = SquarefreeFactory
-      .<Complex<BigRational>> getImplementation(cfac);
+          .<Complex<BigRational>> getImplementation(cfac);
       poly = engine.squarefreePart(poly);
 
       List<Rectangle<BigRational>> roots = cr.complexRoots(poly);

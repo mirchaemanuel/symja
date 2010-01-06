@@ -26,6 +26,7 @@ import edu.jas.poly.GenPolynomialRing;
 import edu.jas.poly.Monomial;
 import edu.jas.poly.PolyUtil;
 import edu.jas.poly.TermOrder;
+import edu.jas.structure.Complex;
 import edu.jas.structure.RingElem;
 import edu.jas.structure.RingFactory;
 
