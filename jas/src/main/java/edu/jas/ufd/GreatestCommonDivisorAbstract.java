@@ -1,5 +1,5 @@
 /*
- * $Id: GreatestCommonDivisorAbstract.java 2921 2009-12-25 17:06:56Z kredel $
+ * $Id: GreatestCommonDivisorAbstract.java 2978 2010-01-06 19:42:25Z kredel $
  */
 
 package edu.jas.ufd;
@@ -65,7 +65,10 @@ public abstract class GreatestCommonDivisorAbstract<C extends GcdRingElem<C>> im
                 return d;
             }
         }
-        return d.abs();
+        if ( d.signum() < 0 ) {
+            d = d.negate();
+        }
+        return d;
     }
 
 
@@ -179,7 +182,10 @@ public abstract class GreatestCommonDivisorAbstract<C extends GcdRingElem<C>> im
                 return d;
             }
         }
-        return d.abs();
+        if ( d.signum() < 0 ) {
+            d = d.negate();
+        }
+        return d;
     }
 
 
