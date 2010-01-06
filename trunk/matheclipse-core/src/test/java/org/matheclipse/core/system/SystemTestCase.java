@@ -2314,6 +2314,12 @@ public class SystemTestCase extends AbstractTestCase {
   // }
 
   public void testSystem998() {
+//    check("Roots[x^4-2]", "Roots[x^4-2]");
+//    check("Roots[4+x^2+2*x+3*x^3]",
+//    "Roots[3*x^3+x^2+2*x+4]");
+//    check("Expand[(x-1)^3]", "x^3-3*x^2+3*x-1");
+//    check("Roots[x^3-3*x^2+3*x-1]", "Roots[x^3-3*x^2+3*x-1]");
+    
     check(
         "Roots[x^3+4*x^2+x+2]",
         "{(-1/3)*((1/2)^(1/3)*(-12528^(1/2)+146)^(1/3)+(1/2)^(1/3)*(12528^(1/2)+146)^(1/3)+\n"
@@ -2326,9 +2332,7 @@ public class SystemTestCase extends AbstractTestCase {
         + "-0.06243510291861069+I*(-0.7156909967859645)}");
     check("Roots[4+x^2+2*x+3*x^3]",
         "{-1,1/6*(I*44^(1/2)+2),1/6*(-I*44^(1/2)+2)}");
-    // check(
-    // "Roots[x^4-2]",
-    // "");
+
     check("Roots[Expand[(x-1)^3]]", "{1}");
     check(
         "Roots[x^6-1]",
