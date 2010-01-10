@@ -42,7 +42,7 @@ With the {{{-d}}} or {{{-default}}} program argument, the default pattern-matchi
  -default C:\temp\mysystem.mep
 }}}
 
-= The JSR 223 scripting engine =
+= The jrunscript console application (JSR 223 scripting engine) =
 In the folder where you've unzipped the downloaded [http://symja.googlecode.com/files/meconsole-0.0.9.zip ZIP file], run a command similar to this:
 {{{
 C:\Java\jdk1.6.0\bin\jrunscript -classpath meconsole009.jar;jsr305.jar;google-collect-1.0-rc3.jar;commons-logging-1.1.1.jar;log4j-1.2.11.jar -l "matheclipse script"
