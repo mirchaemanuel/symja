@@ -31,7 +31,7 @@ Out[2]: Cos[x]
 >>> 
 }}}
 
-= Features available in the latest SVN version =
+== Program options ==
 With the {{{-f}}} or {{{-file}}} program argument, you can run a default script on startup of the console or Symja application:
 {{{
  -f C:\temp\mymath.script
