@@ -123,7 +123,7 @@ public class Integrate extends AbstractFunctionEvaluator implements
                   BigRational.ZERO);
               QuotIntegral<BigRational> integral = eIntegrator.integrate(q);
               if (Config.SHOW_STACKTRACE) {
-                System.out.println("Result: " + integral);
+                // System.out.println("Result: " + integral);
               }
               return jas.quotIntegral2Expr(integral);
             } catch (RuntimeException re) {
