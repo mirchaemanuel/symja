@@ -7,6 +7,7 @@ import java.util.SortedMap;
 
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IAST;
+import org.matheclipse.core.interfaces.IComplex;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.IFraction;
 import org.matheclipse.core.interfaces.IInteger;
@@ -26,7 +27,6 @@ import edu.jas.poly.GenPolynomialRing;
 import edu.jas.poly.Monomial;
 import edu.jas.poly.PolyUtil;
 import edu.jas.poly.TermOrder;
-import edu.jas.structure.Complex;
 import edu.jas.structure.RingElem;
 import edu.jas.structure.RingFactory;
 
@@ -462,4 +462,9 @@ public class JASConvert<C extends RingElem<C>> {
     return result;
   }
 
+  public static IComplex jas2Complex(edu.jas.structure.Complex<BigRational> c) {
+    IFraction re = F.fraction(c.getRe().numerator(), c.getRe().denominator());
+    IFraction im = F.fraction(c.getIm().numerator(), c.getIm().denominator());
+    return F.complex(re, im);
+  }
 }
