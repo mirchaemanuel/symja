@@ -55,6 +55,8 @@ Cos[x]
 matheclipse script>
 }}}
 
+For using the scripting engine from Java see the document about [JSR223Support JSR223 Support]
+
 = The Symja Swing GUI application =
 In the folder where you installed the *symja* JAR, run a command similar to this:
 {{{
