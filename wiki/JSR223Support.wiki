@@ -3,8 +3,7 @@
 
 *Note:* this feature is available since version 0.0.8.
 
-MathEclipse is usable as a [http://en.wikipedia.org/wiki/JSR_223 JSR 223] scripting engine.
-
+MathEclipse is usable as a [http://en.wikipedia.org/wiki/JSR_223 JSR 223] scripting engine. For using the scripting engine with the Java *jrunscript* tool see the document about [RunSymja running Symja].
 
 Example:
 {{{
