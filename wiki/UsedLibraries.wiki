@@ -44,6 +44,6 @@ In the {{{edu.jas.ufd.GCDFactory}}} class the following switch lets you choose b
            return GCDFactory.<C> getImplementation(fac);
         }
 ...
-        }
+    }
 }}}
 }}}
