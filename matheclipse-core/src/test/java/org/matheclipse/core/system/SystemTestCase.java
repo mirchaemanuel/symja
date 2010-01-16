@@ -2367,8 +2367,7 @@ public class SystemTestCase extends AbstractTestCase {
     check("Expand[(-1+x)*(1+x)*(1+x^2)*(1+x^4)*(1+x^8)]", "x^16-1");
 
     check("Factor[5+x^12,Modulus->7]", "(x^3+2)*(x^6+4)*(x^3+5)");
-    // not supported by JAS?
-    check("Factor[1+x^10,Modulus->2]", "Factor[x^10+1,Modulus->2]");// "(1+x)^2*(1+x+x^2+x^3+x^4)^2");
+    check("Factor[1+x^10,Modulus->2]", "(x+1)^2*(x^4+x^3+x^2+x+1)^2");// "(1+x)^2*(1+x+x^2+x^3+x^4)^2");
   }
   // public void testSystem999() {
   // check("FactorI[4+x^2+2*x+3*x^3, x]", "(1+x)*(4-2*x+3*x^2)");
