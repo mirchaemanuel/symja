@@ -27,7 +27,7 @@
 
 = Examples =
 
-Simplyfy an expression:
+Simplify an expression:
 {{{ 
 a+a+4*b^2+3*b^2
 }}}
