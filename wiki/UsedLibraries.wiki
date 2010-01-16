@@ -33,7 +33,7 @@ The following functions are based on commons-math implementations:
   * {{{Roots}}} - ([http://code.google.com/p/symja/source/browse/trunk/matheclipse-core/src/main/java/org/matheclipse/core/reflection/system/Roots.java SVN])
   * {{{Together}}} - ([http://code.google.com/p/symja/source/browse/trunk/matheclipse-core/src/main/java/org/matheclipse/core/reflection/system/Together.java SVN])
 
-In the {{{edu.jas.ufd.GCDFactory}}} class the following switch lets you choose between single thread and multiple threa execution inside the JAS library:
+In the {{{edu.jas.ufd.GCDFactory}}} class the following switch lets you choose between single thread and multiple thread execution inside the JAS library:
 {{{
     public static boolean NO_THREADS = true;
 ...
