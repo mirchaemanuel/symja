@@ -22,7 +22,7 @@
 ||Strings	||character strings are enclosed by double quote characters 	||{{{"Hello World"}}}||
 ||Slots	||a '{{{#}}}' character followed by an optional number 	||{{{#}}} or {{{#2}}}||
 ||Pure Functions	||pure functions can be expressed with the & operator 	||{{{(#^3)&[x]}}} gives {{{x^3}}}||
-||Parts of an expression	||{{{ expression[[index]] }}}||{{{a, b, c, d}[[2]]}}} gives {{{b}}}||
+||Parts of an expression	||{{{ expression[[index]] }}}||{{{{a, b, c, d}[[2]]}}} gives {{{b}}}||
 
 
 = Examples =
