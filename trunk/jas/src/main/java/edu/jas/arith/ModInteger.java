@@ -1,5 +1,5 @@
 /*
- * $Id: ModInteger.java 2828 2009-09-27 12:30:52Z kredel $
+ * $Id: ModInteger.java 2931 2009-12-29 08:27:22Z kredel $
  */
 
 package edu.jas.arith;
@@ -17,7 +17,7 @@ import edu.jas.structure.NotInvertibleException;
  * @see java.math.BigInteger
  */
 
-public final class ModInteger implements GcdRingElem<ModInteger> {
+public final class ModInteger implements GcdRingElem<ModInteger>, Modular {
 
 
     /** ModIntegerRing reference. 
@@ -105,6 +105,29 @@ public final class ModInteger implements GcdRingElem<ModInteger> {
             return val.subtract( ring.modul );
         }
         return val;
+    }
+
+
+    /**
+     * Return a BigInteger from this Element.
+     * @return a BigInteger of this.
+     */
+    public BigInteger getInteger() {
+        return new BigInteger( val );
+    }
+
+
+    /**
+     * Return a symmetric BigInteger from this Element.
+     * @return a symmetric BigInteger of this.
+     */
+    public BigInteger getSymmetricInteger() {
+        java.math.BigInteger v = val;
+        if ( val.add( val ).compareTo( ring.modul ) > 0 ) {
+            // val > m/2 as 2*val > m, make symmetric to 0
+            v = val.subtract( ring.modul );
+        }
+        return new BigInteger( v );
     }
 
 

@@ -1,5 +1,5 @@
 /*
- * $Id: GCDProxy.java 2724 2009-07-09 20:16:03Z kredel $
+ * $Id: GCDProxy.java 2960 2010-01-01 19:24:50Z kredel $
  */
 
 package edu.jas.ufd;
@@ -32,7 +32,7 @@ public class GCDProxy<C extends GcdRingElem<C>> extends GreatestCommonDivisorAbs
     private static final Logger logger = Logger.getLogger(GCDProxy.class);
 
 
-    private final boolean debug = logger.isInfoEnabled(); //logger.isInfoEnabled();
+    private final boolean debug = logger.isDebugEnabled(); //logger.isInfoEnabled();
 
 
     /**

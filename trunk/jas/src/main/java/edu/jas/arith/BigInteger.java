@@ -1,5 +1,5 @@
 /*
- * $Id: BigInteger.java 2561 2009-04-18 12:10:18Z kredel $
+ * $Id: BigInteger.java 2931 2009-12-29 08:27:22Z kredel $
  */
 
 package edu.jas.arith;
@@ -9,7 +9,6 @@ import java.io.Reader;
 import java.util.List;
 import java.util.ArrayList;
 
-//import edu.jas.structure.RingElem;
 import edu.jas.structure.GcdRingElem;
 import edu.jas.structure.RingFactory;
 
@@ -87,6 +86,14 @@ public final class BigInteger implements GcdRingElem<BigInteger>,
      */
     public java.math.BigInteger getVal() {
         return val;
+    }
+
+
+    /** Get the value as long.
+     * @return val as long.
+     */
+    public long longValue() {
+        return val.longValue();
     }
 
 

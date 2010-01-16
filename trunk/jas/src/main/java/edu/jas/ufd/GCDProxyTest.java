@@ -1,5 +1,5 @@
 /*
- * $Id: GCDProxyTest.java 2724 2009-07-09 20:16:03Z kredel $
+ * $Id: GCDProxyTest.java 2931 2009-12-29 08:27:22Z kredel $
  */
 
 package edu.jas.ufd;
@@ -233,15 +233,15 @@ public class GCDProxyTest extends TestCase {
      */
     public void testModInteger() {
         long t;
-        // ModIntegerRing mi = new ModIntegerRing(19,true);
-        ModIntegerRing mi = new ModIntegerRing(536870909, true);
+        ModIntegerRing mi = new ModIntegerRing(19,true);
+        //ModIntegerRing mi = new ModIntegerRing(536870909, true);
 
         GenPolynomial<ModInteger> a, b, c, d, e;
 
         GreatestCommonDivisor<ModInteger> ufd_par;
         GreatestCommonDivisorAbstract<ModInteger> ufd;
 
-        ufd_par = GCDFactory./*<ModInteger>*/getProxy(mi);
+        ufd_par = GCDFactory.getProxy(mi);
         //System.out.println("ufd_par = " + ufd_par);
         assertTrue("ufd_par != null " + ufd_par, ufd_par != null);
 

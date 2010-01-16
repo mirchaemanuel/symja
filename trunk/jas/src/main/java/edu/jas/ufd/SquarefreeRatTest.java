@@ -1,5 +1,5 @@
 /*
- * $Id: SquarefreeRatTest.java 2728 2009-07-09 22:02:44Z kredel $
+ * $Id: SquarefreeRatTest.java 2933 2009-12-29 13:13:34Z kredel $
  */
 
 package edu.jas.ufd;
@@ -144,6 +144,12 @@ public class SquarefreeRatTest extends TestCase {
         //ufd = GCDFactory.<BigRational> getImplementation(fac);
         ufd = GCDFactory.getProxy(fac);
         sqf = new SquarefreeFieldChar0<BigRational>(fac);
+
+        SquarefreeAbstract<BigRational> sqff = SquarefreeFactory.getImplementation(fac);
+        //System.out.println("sqf  = " + sqf);
+        //System.out.println("sqff = " + sqff);
+        assertEquals("sqf == sqff ", sqf.getClass(), sqff.getClass());
+
         a = b = c = d = e = null;
         ar = br = cr = dr = er = null;
     }

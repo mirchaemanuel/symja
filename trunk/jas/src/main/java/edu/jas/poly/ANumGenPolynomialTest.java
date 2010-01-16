@@ -1,5 +1,5 @@
 /*
- * $Id: ANumGenPolynomialTest.java 1888 2008-07-12 13:37:34Z kredel $
+ * $Id: ANumGenPolynomialTest.java 2973 2010-01-04 21:59:50Z kredel $
  */
 
 package edu.jas.poly;
@@ -74,6 +74,7 @@ public class ANumGenPolynomialTest extends TestCase {
        while ( modul.isZERO() || modul.isUnit() || modul.isConstant() ) {
              modul = mfac.random(3); 
        }
+       modul = modul.sum( mfac.fromInteger(3L) );
 
        cfac = new AlgebraicNumberRing<BigRational>( modul.monic() );
        fac = new GenPolynomialRing<AlgebraicNumber<BigRational>>(cfac,rl);
@@ -269,13 +270,22 @@ public class ANumGenPolynomialTest extends TestCase {
      fac = new GenPolynomialRing<AlgebraicNumber<BigRational>>(cfac,1);
 
      a = fac.random(2); //.monic();
+     if ( a.isZERO() ) {
+         return;
+     }
      assertTrue("not isZERO( a )", !a.isZERO() );
 
      b = fac.random(2); //.monic();
+     if ( b.isZERO() ) {
+         return;
+     }
      assertTrue("not isZERO( b )", !b.isZERO() );
 
      GenPolynomial<AlgebraicNumber<BigRational>> h = a;
      GenPolynomial<AlgebraicNumber<BigRational>> g = fac.random(1).monic();
+     if ( g.isZERO() ) {
+         return;
+     }
      assertTrue("not isZERO( g )", !g.isZERO() );
      //g = fac.getONE();
      a = a.multiply(g);
@@ -338,7 +348,7 @@ public class ANumGenPolynomialTest extends TestCase {
          assertTrue("a invertible mod b "+x, x.isUnit() );
      } catch (RuntimeException e) {
          // dann halt nicht
-      // not invertible
+         // not invertible
      }
  }
 

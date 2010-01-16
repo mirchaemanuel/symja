@@ -1,5 +1,5 @@
 /*
- * $Id: RealAlgebraicRing.java 2756 2009-07-18 11:13:30Z kredel $
+ * $Id: RealAlgebraicRing.java 2939 2009-12-30 08:56:43Z kredel $
  */
 
 package edu.jas.root;
@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import edu.jas.arith.ToRational;
+import edu.jas.arith.Rational;
 import edu.jas.poly.AlgebraicNumberRing;
 import edu.jas.poly.GenPolynomial;
 import edu.jas.structure.GcdRingElem;
@@ -25,7 +25,7 @@ import edu.jas.structure.RingFactory;
  * @author Heinz Kredel
  */
 
-public class RealAlgebraicRing<C extends GcdRingElem<C> & ToRational>
+public class RealAlgebraicRing<C extends GcdRingElem<C> & Rational>
        /*extends AlgebraicNumberRing<C>*/
     implements RingFactory<RealAlgebraicNumber<C>> {
 

@@ -1,5 +1,5 @@
 /*
- * $Id: SquarefreeQuotModTest.java 2872 2009-11-15 14:33:37Z kredel $
+ * $Id: SquarefreeQuotModTest.java 2933 2009-12-29 13:13:34Z kredel $
  */
 
 package edu.jas.ufd;
@@ -166,6 +166,12 @@ public class SquarefreeQuotModTest extends TestCase {
         ufd = GCDFactory.<Quotient<ModInteger>> getProxy(fac);
 
         sqf = new SquarefreeInfiniteFieldCharP<ModInteger>(fac);
+
+        SquarefreeAbstract<Quotient<ModInteger>> sqff = SquarefreeFactory.getImplementation(fac);
+        //System.out.println("sqf  = " + sqf);
+        //System.out.println("sqff = " + sqff);
+        assertEquals("sqf == sqff ", sqf.getClass(), sqff.getClass());
+
         a = b = c = d = e = null;
         ar = br = cr = dr = er = null;
     }

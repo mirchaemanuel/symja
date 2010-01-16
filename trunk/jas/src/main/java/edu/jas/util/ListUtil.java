@@ -1,5 +1,5 @@
 /*
- * $Id: ListUtil.java 2477 2009-03-08 12:18:23Z kredel $
+ * $Id: ListUtil.java 2955 2010-01-01 12:50:44Z kredel $
  */
 
 package edu.jas.util;
@@ -10,8 +10,7 @@ import java.util.LinkedList;
 
 import org.apache.log4j.Logger;
 
-import edu.jas.structure.RingElem;
-import edu.jas.structure.RingFactory;
+import edu.jas.structure.Element;
 import edu.jas.structure.UnaryFunctor;
 
 
@@ -33,7 +32,7 @@ public class ListUtil {
      * @param f evaluation functor.
      * @return new list elements f(list(i)).
      */
-    public static <C extends RingElem<C>,D extends RingElem<D>>
+    public static <C extends Element<C>,D extends Element<D>>
            List<D> map(List<C> list, UnaryFunctor<C,D> f) {
         if ( list == null ) {
             return (List<D>)null;

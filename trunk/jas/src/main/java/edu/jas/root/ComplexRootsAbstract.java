@@ -1,5 +1,5 @@
 /*
- * $Id: ComplexRootsAbstract.java 2928 2009-12-27 22:04:12Z kredel $
+ * $Id: ComplexRootsAbstract.java 2975 2010-01-05 10:21:17Z kredel $
  */
 
 package edu.jas.root;
@@ -14,6 +14,7 @@ import org.apache.log4j.Logger;
 
 import edu.jas.arith.BigDecimal;
 import edu.jas.arith.BigRational;
+import edu.jas.arith.Rational;
 import edu.jas.poly.GenPolynomial;
 import edu.jas.structure.Complex;
 import edu.jas.structure.ComplexRing;
@@ -28,7 +29,7 @@ import edu.jas.ufd.SquarefreeFactory;
  * @param <C> coefficient type.
  * @author Heinz Kredel
  */
-public abstract class ComplexRootsAbstract<C extends RingElem<C>> implements ComplexRoots<C> {
+public abstract class ComplexRootsAbstract<C extends RingElem<C> & Rational> implements ComplexRoots<C> {
 
 
     private static final Logger logger = Logger.getLogger(ComplexRootsAbstract.class);

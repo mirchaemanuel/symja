@@ -1,5 +1,5 @@
 /*
- * $Id: SquarefreeTest.java 2722 2009-07-09 20:03:30Z kredel $
+ * $Id: SquarefreeTest.java 2934 2009-12-29 14:34:30Z kredel $
  */
 
 package edu.jas.ufd;
@@ -15,6 +15,8 @@ import edu.jas.arith.BigInteger;
 import edu.jas.arith.BigRational;
 import edu.jas.arith.ModInteger;
 import edu.jas.arith.ModIntegerRing;
+import edu.jas.arith.ModLong;
+import edu.jas.arith.ModLongRing;
 import edu.jas.kern.ComputerThreads;
 import edu.jas.poly.AlgebraicNumber;
 import edu.jas.poly.AlgebraicNumberRing;
@@ -24,7 +26,7 @@ import edu.jas.structure.RingFactory;
 
 
 /**
- * Squarefree Factor tests with JUnit.
+ * Squarefree Factory tests with JUnit.
  * @author Heinz Kredel.
  */
 
@@ -78,6 +80,11 @@ public class SquarefreeTest extends TestCase {
         //System.out.println("sqfm = " + sqfm);
         assertTrue("sqf != Modular " + sqfm, sqfm instanceof SquarefreeFiniteFieldCharP);
 
+        ModLongRing ml = new ModLongRing(19, true);
+        Squarefree<ModLong> sqfml = SquarefreeFactory.getImplementation(ml);
+        //System.out.println("sqfml = " + sqfml);
+        assertTrue("sqf != Modular " + sqfml, sqfml instanceof SquarefreeFiniteFieldCharP);
+
         BigInteger bi = new BigInteger(1);
         Squarefree<BigInteger> sqfi = SquarefreeFactory.getImplementation(bi);
         //System.out.println("sqfi = " + sqfi);
@@ -127,6 +134,11 @@ public class SquarefreeTest extends TestCase {
         Squarefree<ModInteger> sqfm = SquarefreeFactory.getImplementation((RingFactory) mi);
         //System.out.println("sqfm = " + sqfm);
         assertTrue("sqf != Modular " + sqfm, sqfm instanceof SquarefreeFiniteFieldCharP);
+
+        ModLongRing ml = new ModLongRing(19, true);
+        Squarefree<ModLong> sqfml = SquarefreeFactory.getImplementation((RingFactory) ml);
+        //System.out.println("sqfml = " + sqfml);
+        assertTrue("sqf != Modular " + sqfml, sqfml instanceof SquarefreeFiniteFieldCharP);
 
         BigInteger bi = new BigInteger(1);
         Squarefree<BigInteger> sqfi = SquarefreeFactory.getImplementation((RingFactory) bi);

@@ -1,5 +1,5 @@
 /*
- * $Id: SquarefreeFactory.java 2906 2009-12-20 14:28:31Z kredel $
+ * $Id: SquarefreeFactory.java 2942 2009-12-30 12:11:03Z kredel $
  */
 
 package edu.jas.ufd;
@@ -13,12 +13,14 @@ import edu.jas.arith.BigInteger;
 import edu.jas.arith.BigRational;
 import edu.jas.arith.ModInteger;
 import edu.jas.arith.ModIntegerRing;
+import edu.jas.arith.ModLong;
+import edu.jas.arith.ModLongRing;
 import edu.jas.poly.AlgebraicNumber;
 import edu.jas.poly.AlgebraicNumberRing;
-import edu.jas.poly.GenPolynomial;
 import edu.jas.poly.GenPolynomialRing;
 import edu.jas.structure.GcdRingElem;
 import edu.jas.structure.RingFactory;
+import edu.jas.structure.ComplexRing;
 
 
 /**
@@ -39,8 +41,7 @@ import edu.jas.structure.RingFactory;
  * c = engine.squarefreeFactors(a);
  * </pre>
  * 
- * For example, if the coefficient type is BigInteger, the usage looks
- *        like
+ * For example, if the coefficient type is BigInteger, the usage looks like
  * 
  * <pre>
  * BigInteger cofac = new BigInteger();
@@ -75,6 +76,17 @@ public class SquarefreeFactory {
      */
     public static SquarefreeAbstract<ModInteger> getImplementation(ModIntegerRing fac) {
         return new SquarefreeFiniteFieldCharP<ModInteger>(fac);
+    }
+
+
+    /**
+     * Determine suitable implementation of factorization algorithm, case
+     * ModLong.
+     * @param fac ModLongRing.
+     * @return squarefree factorization algorithm implementation.
+     */
+    public static SquarefreeAbstract<ModLong> getImplementation(ModLongRing fac) {
+        return new SquarefreeFiniteFieldCharP<ModLong>(fac);
     }
 
 
@@ -141,10 +153,9 @@ public class SquarefreeFactory {
      * @param <C> coefficient type, e.g. BigRational, ModInteger.
      * @return squarefree factorization algorithm implementation.
      */
-    public static <C extends GcdRingElem<C>> 
-           SquarefreeAbstract<C> getImplementation( GenPolynomialRing<C> fac) {
+    public static <C extends GcdRingElem<C>> SquarefreeAbstract<C> getImplementation(GenPolynomialRing<C> fac) {
         if (fac.characteristic().signum() == 0) {
-            if ( fac.coFac.isField() ) {
+            if (fac.coFac.isField()) {
                 return new SquarefreeFieldChar0<C>(fac.coFac);
             } else {
                 return new SquarefreeRingChar0<C>(fac.coFac);
@@ -186,10 +197,15 @@ public class SquarefreeFactory {
                 t = 3;
                 break;
             }
+            if (ofac instanceof ModLongRing) {
+                t = 10;
+                break;
+            }
             if (ofac instanceof AlgebraicNumberRing) {
                 //System.out.println("afac_o = " + ofac);
                 afac = (AlgebraicNumberRing) ofac;
                 ofac = afac.ring.coFac;
+                //System.out.println("o_afac = " + ofac);
                 if (ofac instanceof BigRational) {
                     t = 4;
                 }
@@ -198,6 +214,12 @@ public class SquarefreeFactory {
                 }
                 if (ofac instanceof AlgebraicNumberRing) {
                     t = 6;
+                }
+                if (ofac instanceof ModLongRing) {
+                    t = 11;
+                }
+                if (ofac instanceof ComplexRing) {
+                    t = 12;
                 }
                 break;
             }
@@ -230,7 +252,10 @@ public class SquarefreeFactory {
         if (t == 3) { // ModInteger
             ufd = new SquarefreeFiniteFieldCharP/*raw*/(fac);
         }
-        if (t == 4 || t == 5 || t == 6) { // AlgebraicNumber
+        if (t == 10) { // ModLong
+            ufd = new SquarefreeFiniteFieldCharP/*raw*/(fac);
+        }
+        if (t == 4 || t == 5 || t == 6 || t == 11 || t == 12) { // AlgebraicNumber
             if (afac.characteristic().signum() == 0) {
                 ufd = new SquarefreeFieldChar0/*raw <C>*/(afac);
             } else {
@@ -246,7 +271,7 @@ public class SquarefreeFactory {
         }
         if (t == 8) { // GenPolynomial
             if (pfac.characteristic().signum() == 0) {
-                if ( pfac.coFac.isField() ) {
+                if (pfac.coFac.isField()) {
                     ufd = new SquarefreeFieldChar0/*raw <C>*/(pfac.coFac);
                 } else {
                     ufd = new SquarefreeRingChar0/*raw <C>*/(pfac.coFac);
@@ -257,7 +282,7 @@ public class SquarefreeFactory {
             }
         }
         if (t == 9) { // other fields of char 0
-            if ( fac.characteristic().signum() == 0 ) {
+            if (fac.characteristic().signum() == 0) {
                 ufd = new SquarefreeFieldChar0/*raw*/(fac);
             }
         }

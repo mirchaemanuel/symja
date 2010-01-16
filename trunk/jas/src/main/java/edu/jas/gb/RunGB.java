@@ -1,5 +1,5 @@
 /*
- * $Id: RunGB.java 2815 2009-09-19 09:51:47Z kredel $
+ * $Id: RunGB.java 2930 2009-12-29 08:25:53Z kredel $
  */
 
 package edu.jas.gb;
@@ -257,7 +257,7 @@ public class RunGB {
         long t, t1;
 
         t = System.currentTimeMillis();
-        System.out.println("\nGroebner base distributed[once] (" + threads + "/" + threadsPerNode + ", " + mfile + ", " + port +  ") ...");
+        System.out.println("\nGroebner base distributed hybrid[once] (" + threads + "/" + threadsPerNode + ", " + mfile + ", " + port +  ") ...");
         GBDistHybrid gbd = null;
         //GBDistSP gbds = null; 
         if (pairseq) {

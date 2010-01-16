@@ -1,11 +1,12 @@
 /*
- * $Id: ComplexAlgebraicNumber.java 2925 2009-12-25 17:50:01Z kredel $
+ * $Id: ComplexAlgebraicNumber.java 2975 2010-01-05 10:21:17Z kredel $
  */
 
 package edu.jas.root;
 
 
 //import edu.jas.structure.RingElem;
+import edu.jas.arith.Rational;
 import edu.jas.kern.PrettyPrint;
 import edu.jas.poly.AlgebraicNumber;
 import edu.jas.poly.GenPolynomial;
@@ -20,7 +21,7 @@ import edu.jas.structure.NotInvertibleException;
  * @author Heinz Kredel
  */
 
-public class ComplexAlgebraicNumber<C extends GcdRingElem<C>>
+public class ComplexAlgebraicNumber<C extends GcdRingElem<C>& Rational>
 /*extends AlgebraicNumber<C>*/
 implements GcdRingElem<ComplexAlgebraicNumber<C>> {
 

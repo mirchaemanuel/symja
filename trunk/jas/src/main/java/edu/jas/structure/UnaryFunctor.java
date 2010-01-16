@@ -1,5 +1,5 @@
 /*
- * $Id: UnaryFunctor.java 2208 2008-11-15 18:47:54Z kredel $
+ * $Id: UnaryFunctor.java 2955 2010-01-01 12:50:44Z kredel $
  */
 
 package edu.jas.structure;
@@ -7,12 +7,12 @@ package edu.jas.structure;
 
 /**
  * Unary functor interface.
- * @param <C> ring element type
- * @param <D> ring element type
+ * @param <C> element type
+ * @param <D> element type
  * @author Heinz Kredel
  */
 
-public interface UnaryFunctor< C extends RingElem<C>, D extends RingElem<D> > {
+public interface UnaryFunctor< C extends Element<C>, D extends Element<D> > {
 
 
     /**

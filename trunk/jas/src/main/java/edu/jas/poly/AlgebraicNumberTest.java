@@ -1,6 +1,6 @@
 
 /*
- * $Id: AlgebraicNumberTest.java 1255 2007-07-29 10:16:33Z kredel $
+ * $Id: AlgebraicNumberTest.java 2944 2009-12-30 12:24:55Z kredel $
  */
 
 package edu.jas.poly;
@@ -111,7 +111,9 @@ public class AlgebraicNumberTest extends TestCase {
      for (int i = 0; i < 7; i++) {
          a = fac.random(el);
          //System.out.println("a = " + a);
-
+         if ( a.isZERO() || a.isONE() ) {
+             continue;
+         }
          // fac.random(rl+i, kl*(i+1), ll+2*i, el+i, q );
          assertTrue("length( a"+i+" ) <> 0", a.getVal().length() >= 0);
          assertTrue(" not isZERO( a"+i+" )", !a.isZERO() );
