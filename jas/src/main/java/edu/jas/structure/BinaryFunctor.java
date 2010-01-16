@@ -1,5 +1,5 @@
 /*
- * $Id: BinaryFunctor.java 2208 2008-11-15 18:47:54Z kredel $
+ * $Id: BinaryFunctor.java 2955 2010-01-01 12:50:44Z kredel $
  */
 
 package edu.jas.structure;
@@ -7,15 +7,15 @@ package edu.jas.structure;
 
 /**
  * Binary functor interface.
- * @param <C1> ring element type
- * @param <C2> ring element type
- * @param <D> ring element type
+ * @param <C1> element type
+ * @param <C2> element type
+ * @param <D> element type
  * @author Heinz Kredel
  */
 
-public interface BinaryFunctor<C1 extends RingElem<C1>,
-                               C2 extends RingElem<C2>,
-                               D extends RingElem<D> > {
+public interface BinaryFunctor<C1 extends Element<C1>,
+                               C2 extends Element<C2>,
+                               D extends Element<D> > {
 
 
     /**

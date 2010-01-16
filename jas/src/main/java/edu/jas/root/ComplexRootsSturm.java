@@ -1,5 +1,5 @@
 /*
- * $Id: ComplexRootsSturm.java 2926 2009-12-26 08:26:07Z kredel $
+ * $Id: ComplexRootsSturm.java 2975 2010-01-05 10:21:17Z kredel $
  */
 
 package edu.jas.root;
@@ -11,6 +11,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
+import edu.jas.arith.Rational;
 import edu.jas.poly.GenPolynomial;
 import edu.jas.poly.PolyUtil;
 import edu.jas.structure.Complex;
@@ -25,7 +26,7 @@ import edu.jas.structure.RingFactory;
  * @param <C> coefficient type.
  * @author Heinz Kredel
  */
-public class ComplexRootsSturm<C extends RingElem<C>> extends ComplexRootsAbstract<C> {
+public class ComplexRootsSturm<C extends RingElem<C> & Rational> extends ComplexRootsAbstract<C> {
 
 
     private static final Logger logger = Logger.getLogger(ComplexRootsSturm.class);

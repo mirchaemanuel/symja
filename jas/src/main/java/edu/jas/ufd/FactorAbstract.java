@@ -1,5 +1,5 @@
 /*
- * $Id: FactorAbstract.java 2829 2009-10-01 20:05:40Z kredel $
+ * $Id: FactorAbstract.java 2960 2010-01-01 19:24:50Z kredel $
  */
 
 package edu.jas.ufd;
@@ -320,7 +320,9 @@ public abstract class FactorAbstract<C extends GcdRingElem<C>> implements Factor
                 if (j != null) {
                     k += j;
                 }
-                factors.put(h, k);
+                if ( ! h.isONE() ) {
+                    factors.put(h, k);
+                }
             }
         }
         //System.out.println("factors = " + factors);

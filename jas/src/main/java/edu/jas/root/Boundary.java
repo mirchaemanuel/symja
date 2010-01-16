@@ -1,10 +1,11 @@
 /*
- * $Id: Boundary.java 2926 2009-12-26 08:26:07Z kredel $
+ * $Id: Boundary.java 2975 2010-01-05 10:21:17Z kredel $
  */
 
 package edu.jas.root;
 
 
+import edu.jas.arith.Rational;
 import edu.jas.poly.GenPolynomial;
 import edu.jas.poly.GenPolynomialRing;
 import edu.jas.poly.PolyUtil;
@@ -30,7 +31,7 @@ import edu.jas.ufd.GreatestCommonDivisorAbstract;
  * @param <C> coefficient type.
  * @author Heinz Kredel
  */
-public class Boundary<C extends RingElem<C>> {
+public class Boundary<C extends RingElem<C> & Rational> {
 
 
     /**

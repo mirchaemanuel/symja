@@ -1,5 +1,5 @@
 /*
- * $Id: GCDFactory.java 2725 2009-07-09 20:19:37Z kredel $
+ * $Id: GCDFactory.java 2931 2009-12-29 08:27:22Z kredel $
  */
 
 package edu.jas.ufd;
@@ -7,12 +7,16 @@ package edu.jas.ufd;
 
 import org.apache.log4j.Logger;
 
+import edu.jas.arith.Modular;
 import edu.jas.arith.BigInteger;
 import edu.jas.arith.BigRational;
 import edu.jas.arith.ModInteger;
 import edu.jas.arith.ModIntegerRing;
+import edu.jas.arith.ModLong;
+import edu.jas.arith.ModLongRing;
 import edu.jas.structure.GcdRingElem;
 import edu.jas.structure.RingFactory;
+import edu.jas.structure.ModularRingFactory;
 
 
 /**
@@ -63,7 +67,7 @@ import edu.jas.structure.RingFactory;
 
 public class GCDFactory {
 
-  
+
     private static final Logger logger = Logger.getLogger(GCDFactory.class);
 
     public static boolean NO_THREADS = true;
@@ -76,14 +80,47 @@ public class GCDFactory {
 
 
     /**
+     * Determine suitable implementation of gcd algorithms, case ModLong.
+     * @param fac ModLongRing.
+     * @return gcd algorithm implementation.
+     */
+    public static GreatestCommonDivisorAbstract<ModLong> getImplementation(ModLongRing fac) {
+        GreatestCommonDivisorAbstract<ModLong> ufd;
+        if (fac.isField()) {
+            ufd = new GreatestCommonDivisorModEval<ModLong>();
+            return ufd;
+        }
+        ufd = new GreatestCommonDivisorSubres<ModLong>();
+        return ufd;
+    }
+
+
+    /**
+     * Determine suitable proxy for gcd algorithms, case ModLong.
+     * @param fac ModLongRing.
+     * @return gcd algorithm implementation.
+     */
+    public static GreatestCommonDivisorAbstract<ModLong> getProxy(ModLongRing fac) {
+        GreatestCommonDivisorAbstract<ModLong> ufd1, ufd2;
+        ufd1 = new GreatestCommonDivisorSubres<ModLong>();
+        if (fac.isField()) {
+            ufd2 = new GreatestCommonDivisorModEval<ModLong>();
+        } else {
+            ufd2 = new GreatestCommonDivisorSimple<ModLong>();
+        }
+        return new GCDProxy<ModLong>(ufd1, ufd2);
+    }
+
+
+    /**
      * Determine suitable implementation of gcd algorithms, case ModInteger.
-     * @param fac ModInteger.
+     * @param fac ModIntegerRing.
      * @return gcd algorithm implementation.
      */
     public static GreatestCommonDivisorAbstract<ModInteger> getImplementation(ModIntegerRing fac) {
         GreatestCommonDivisorAbstract<ModInteger> ufd;
         if (fac.isField()) {
-            ufd = new GreatestCommonDivisorModEval();
+            ufd = new GreatestCommonDivisorModEval<ModInteger>();
             return ufd;
         }
         ufd = new GreatestCommonDivisorSubres<ModInteger>();
@@ -93,14 +130,14 @@ public class GCDFactory {
 
     /**
      * Determine suitable proxy for gcd algorithms, case ModInteger.
-     * @param fac ModInteger.
+     * @param fac ModIntegerRing.
      * @return gcd algorithm implementation.
      */
     public static GreatestCommonDivisorAbstract<ModInteger> getProxy(ModIntegerRing fac) {
         GreatestCommonDivisorAbstract<ModInteger> ufd1, ufd2;
         ufd1 = new GreatestCommonDivisorSubres<ModInteger>();
         if (fac.isField()) {
-            ufd2 = new GreatestCommonDivisorModEval();
+            ufd2 = new GreatestCommonDivisorModEval<ModInteger>();
         } else {
             ufd2 = new GreatestCommonDivisorSimple<ModInteger>();
         }
@@ -116,7 +153,7 @@ public class GCDFactory {
     public static GreatestCommonDivisorAbstract<BigInteger> getImplementation(BigInteger fac) {
         GreatestCommonDivisorAbstract<BigInteger> ufd;
         if (true) {
-            ufd = new GreatestCommonDivisorModular();
+            ufd = new GreatestCommonDivisorModular<ModLong>(); // dummy type
             return ufd;
         }
         ufd = new GreatestCommonDivisorSubres<BigInteger>();
@@ -132,7 +169,7 @@ public class GCDFactory {
     public static GreatestCommonDivisorAbstract<BigInteger> getProxy(BigInteger fac) {
         GreatestCommonDivisorAbstract<BigInteger> ufd1, ufd2;
         ufd1 = new GreatestCommonDivisorSubres<BigInteger>();
-        ufd2 = new GreatestCommonDivisorModular();
+        ufd2 = new GreatestCommonDivisorModular<ModLong>(); // dummy type
         return new GCDProxy<BigInteger>(ufd1, ufd2);
     }
 
@@ -183,15 +220,20 @@ public class GCDFactory {
         if (ofac instanceof BigRational) {
             t = 3;
         }
+        if (ofac instanceof ModLongRing) {
+            t = 4;
+        }
         //System.out.println("gt = " + t);
         if (t == 1) {
             ufd = new GreatestCommonDivisorModular/*<BigInteger>*/();
             //ufd = new GreatestCommonDivisorSubres<BigInteger>();
             //ufd = new GreatestCommonDivisorModular/*<BigInteger>*/(true);
         } else if (t == 2) {
-            ufd = new GreatestCommonDivisorModEval/*<ModInteger>*/();
+            ufd = new GreatestCommonDivisorModEval<ModInteger>();
         } else if (t == 3) {
             ufd = new GreatestCommonDivisorSubres<C>();
+        } else if (t == 4) {
+            ufd = new GreatestCommonDivisorModEval<ModLong>();
         } else {
             if (fac.isField()) {
                 ufd = new GreatestCommonDivisorSimple<C>();
@@ -202,6 +244,7 @@ public class GCDFactory {
         logger.debug("ufd = " + ufd);
         return (GreatestCommonDivisorAbstract<C>) ufd;
     }
+
 
     /**
      * Determine suitable proxy for gcd algorithms, other cases.
@@ -228,23 +271,29 @@ public class GCDFactory {
         if (ofac instanceof BigRational) {
             t = 3;
         }
+        if (ofac instanceof ModLongRing) {
+            t = 4;
+        }
         //System.out.println("t     = " + t);
         if (t == 1) {
             ufd = new GCDProxy<BigInteger>(new GreatestCommonDivisorSubres<BigInteger>(),
-                    new GreatestCommonDivisorModular/*<BigInteger>*/());
+                                           new GreatestCommonDivisorModular/*<BigInteger>*/());
             //    new GreatestCommonDivisorModular/*<BigInteger>*/(true) );
         } else if (t == 2) {
             ufd = new GCDProxy<ModInteger>(new GreatestCommonDivisorSubres<ModInteger>(),
-                    new GreatestCommonDivisorModEval/*<ModInteger>*/());
+                                           new GreatestCommonDivisorModEval<ModInteger>());
         } else if (t == 3) {
             ufd = new GCDProxy<C>(new GreatestCommonDivisorSubres<C>(), new GreatestCommonDivisorSimple<C>());
+        } else if (t == 4) {
+            ufd = new GCDProxy<ModLong>(new GreatestCommonDivisorSubres<ModLong>(),
+                                        new GreatestCommonDivisorModEval<ModLong>());
         } else {
             if (fac.isField()) {
                 ufd = new GCDProxy<C>(new GreatestCommonDivisorSimple<C>(),
-                        new GreatestCommonDivisorSubres<C>());
+                                      new GreatestCommonDivisorSubres<C>());
             } else {
                 ufd = new GCDProxy<C>(new GreatestCommonDivisorSubres<C>(),
-                        new GreatestCommonDivisorPrimitive<C>());
+                                      new GreatestCommonDivisorPrimitive<C>());
             }
         }
         logger.debug("ufd = " + ufd);

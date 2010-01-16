@@ -1,5 +1,5 @@
 /*
- * $Id: Complex.java 2928 2009-12-27 22:04:12Z kredel $
+ * $Id: Complex.java 2945 2009-12-30 12:41:42Z kredel $
  */
 
 package edu.jas.structure;
@@ -189,7 +189,11 @@ public class Complex<C extends RingElem<C> >
                 s.append(re.toScript());
                 s.append(" + ");
             }
-            s.append(im.toScript()).append(" * I");
+            if ( im.isONE() ) {
+                s.append("I");
+            } else {
+                s.append(im.toScript()).append(" * I");
+            }
             s.append("");
         }
         return s.toString();

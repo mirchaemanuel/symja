@@ -1,5 +1,5 @@
 /*
- * $Id: SquarefreeAbstract.java 2837 2009-10-04 09:53:05Z kredel $
+ * $Id: SquarefreeAbstract.java 2977 2010-01-06 11:13:30Z kredel $
  */
 
 package edu.jas.ufd;
@@ -300,15 +300,19 @@ public abstract class SquarefreeAbstract<C extends GcdRingElem<C>> implements Sq
             GenPolynomialRing<C> cf = (GenPolynomialRing<C>)P.ring.coFac;
             GreatestCommonDivisorAbstract<C> engine = GCDFactory.getProxy(cf.coFac);
             GenPolynomial<GenPolynomial<C>> Pp = engine.recursivePrimitivePart(P);
+            Pp = PolyUtil.<C>monic(Pp);
             GenPolynomial<GenPolynomial<C>> tp = engine.recursivePrimitivePart(t);
+            tp = PolyUtil.<C>monic(tp);
             f = Pp.equals(tp) || Pp.equals(tp.negate());
             if (f) {
                 return f;
             }
             System.out.println("\nfactorization(map): " + f);
-            System.out.println("F = " + F);
-            System.out.println("P = " + P);
-            System.out.println("t = " + t);
+            System.out.println("F  = " + F);
+            System.out.println("P  = " + P);
+            System.out.println("t  = " + t);
+            System.out.println("Pp = " + Pp);
+            System.out.println("tp = " + tp);
             //RuntimeException e = new RuntimeException("fac-map");
             //e.printStackTrace();
             //throw e;

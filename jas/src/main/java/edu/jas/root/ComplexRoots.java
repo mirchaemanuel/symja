@@ -1,5 +1,5 @@
 /*
- * $Id: ComplexRoots.java 2927 2009-12-27 15:33:47Z kredel $
+ * $Id: ComplexRoots.java 2975 2010-01-05 10:21:17Z kredel $
  */
 
 package edu.jas.root;
@@ -7,6 +7,7 @@ package edu.jas.root;
 
 import java.util.List;
 
+import edu.jas.arith.Rational;
 import edu.jas.arith.BigRational;
 import edu.jas.poly.GenPolynomial;
 import edu.jas.structure.Complex;
@@ -18,7 +19,7 @@ import edu.jas.structure.RingElem;
  * @param <C> coefficient type.
  * @author Heinz Kredel
  */
-public interface ComplexRoots<C extends RingElem<C>> {
+public interface ComplexRoots<C extends RingElem<C> & Rational> {
 
 
     /**

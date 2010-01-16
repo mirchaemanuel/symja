@@ -1,5 +1,5 @@
 /*
- * $Id: RealRootsSturm.java 2756 2009-07-18 11:13:30Z kredel $
+ * $Id: RealRootsSturm.java 2939 2009-12-30 08:56:43Z kredel $
  */
 
 package edu.jas.root;
@@ -10,7 +10,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import edu.jas.arith.ToRational;
+import edu.jas.arith.Rational;
 import edu.jas.poly.GenPolynomial;
 import edu.jas.poly.PolyUtil;
 import edu.jas.structure.RingElem;
@@ -22,7 +22,7 @@ import edu.jas.structure.RingFactory;
  * @param <C> coefficient type.
  * @author Heinz Kredel
  */
-public class RealRootsSturm<C extends RingElem<C> & ToRational> extends RealRootAbstract<C> {
+public class RealRootsSturm<C extends RingElem<C> & Rational> extends RealRootAbstract<C> {
 
 
     private static final Logger logger = Logger.getLogger(RealRootsSturm.class);

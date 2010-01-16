@@ -1,5 +1,5 @@
 /*
- * $Id: FactorFactory.java 2746 2009-07-13 21:41:22Z kredel $
+ * $Id: FactorFactory.java 2942 2009-12-30 12:11:03Z kredel $
  */
 
 package edu.jas.ufd;
@@ -13,12 +13,16 @@ import edu.jas.arith.BigInteger;
 import edu.jas.arith.BigRational;
 import edu.jas.arith.ModInteger;
 import edu.jas.arith.ModIntegerRing;
+import edu.jas.arith.ModLong;
+import edu.jas.arith.ModLongRing;
 import edu.jas.poly.AlgebraicNumber;
 import edu.jas.poly.AlgebraicNumberRing;
 import edu.jas.poly.GenPolynomial;
 import edu.jas.poly.GenPolynomialRing;
 import edu.jas.structure.GcdRingElem;
 import edu.jas.structure.RingFactory;
+import edu.jas.structure.Complex;
+import edu.jas.structure.ComplexRing;
 
 
 /**
@@ -73,7 +77,18 @@ public class FactorFactory {
      * @return factorization algorithm implementation.
      */
     public static FactorAbstract<ModInteger> getImplementation(ModIntegerRing fac) {
-        return new FactorModular();
+        return new FactorModular<ModInteger>(fac);
+    }
+
+
+    /**
+     * Determine suitable implementation of factorization algorithm, case
+     * ModInteger.
+     * @param fac ModIntegerRing.
+     * @return factorization algorithm implementation.
+     */
+    public static FactorAbstract<ModLong> getImplementation(ModLongRing fac) {
+        return new FactorModular<ModLong>(fac);
     }
 
 
@@ -84,7 +99,7 @@ public class FactorFactory {
      * @return factorization algorithm implementation.
      */
     public static FactorAbstract<BigInteger> getImplementation(BigInteger fac) {
-        return new FactorInteger();
+        return new FactorInteger<ModLong>();
     }
 
 
@@ -106,9 +121,22 @@ public class FactorFactory {
      * @param <C> coefficient type, e.g. BigRational, ModInteger.
      * @return factorization algorithm implementation.
      */
-    public static <C extends GcdRingElem<C>> FactorAbstract<AlgebraicNumber<C>> getImplementation(
-            AlgebraicNumberRing<C> fac) {
+    public static <C extends GcdRingElem<C>> 
+        FactorAbstract<AlgebraicNumber<C>> getImplementation(AlgebraicNumberRing<C> fac) {
         return new FactorAlgebraic<C>(fac);
+    }
+
+
+    /**
+     * Determine suitable implementation of factorization algorithms, case
+     * Complex&lt;C&gt;.
+     * @param fac ComplexRing&lt;C&gt;.
+     * @param <C> coefficient type, e.g. BigRational, ModInteger.
+     * @return factorization algorithm implementation.
+     */
+    public static <C extends GcdRingElem<C>> 
+        FactorAbstract<Complex<C>> getImplementation(ComplexRing<C> fac) {
+        return new FactorComplex<C>(fac);
     }
 
 
@@ -166,6 +194,14 @@ public class FactorFactory {
                 t = 3;
                 break;
             }
+            if (ofac instanceof ModLongRing) {
+                t = 9;
+                break;
+            }
+            if (ofac instanceof ComplexRing) {
+                t = 11;
+                break;
+            }
             if (ofac instanceof AlgebraicNumberRing) {
                 //System.out.println("afac_o = " + ofac);
                 afac = (AlgebraicNumberRing) ofac;
@@ -178,6 +214,12 @@ public class FactorFactory {
                 }
                 if (ofac instanceof AlgebraicNumberRing) {
                     t = 6;
+                }
+                if (ofac instanceof ModLongRing) {
+                    t = 10;
+                }
+                if (ofac instanceof ComplexRing) {
+                    t = 12;
                 }
                 break;
             }
@@ -206,9 +248,15 @@ public class FactorFactory {
             ufd = new FactorRational();
         }
         if (t == 3) {
-            ufd = new FactorModular();
+            ufd = new FactorModular(fac);
         }
-        if (t == 4 || t == 5 || t == 6) {
+        if (t == 9) {
+            ufd = new FactorModular(fac);
+        }
+        if (t == 11) {
+            ufd = new FactorComplex(fac);
+        }
+        if (t == 4 || t == 5 || t == 6 || t == 10 || t == 12) {
             ufd = new FactorAlgebraic/*raw <C>*/(afac);
         }
         if (t == 7) {

@@ -1,5 +1,5 @@
 /*
- * $Id: PolyUtil.java 2919 2009-12-25 16:31:08Z kredel $
+ * $Id: PolyUtil.java 2964 2010-01-03 16:59:52Z kredel $
  */
 
 package edu.jas.poly;
@@ -12,19 +12,21 @@ import java.util.ArrayList;
 
 import org.apache.log4j.Logger;
 
-import edu.jas.structure.RingElem;
-import edu.jas.structure.GcdRingElem;
-import edu.jas.structure.RingFactory;
-import edu.jas.structure.UnaryFunctor;
-import edu.jas.structure.Power;
-import edu.jas.structure.Complex;
-import edu.jas.structure.ComplexRing;
-
 import edu.jas.arith.BigInteger;
 import edu.jas.arith.BigRational;
 import edu.jas.arith.ModInteger;
 import edu.jas.arith.ModIntegerRing;
 import edu.jas.arith.BigComplex;
+import edu.jas.arith.Modular;
+
+import edu.jas.structure.RingElem;
+import edu.jas.structure.GcdRingElem;
+import edu.jas.structure.RingFactory;
+import edu.jas.structure.ModularRingFactory;
+import edu.jas.structure.UnaryFunctor;
+import edu.jas.structure.Power;
+import edu.jas.structure.Complex;
+import edu.jas.structure.ComplexRing;
 
 import edu.jas.util.ListUtil;
 
@@ -159,10 +161,34 @@ public class PolyUtil {
      * @param A polynomial with ModInteger coefficients to be converted.
      * @return polynomial with BigInteger coefficients.
      */
-    public static GenPolynomial<BigInteger> 
+    public static <C extends RingElem<C> & Modular> 
+        GenPolynomial<BigInteger> 
         integerFromModularCoefficients( GenPolynomialRing<BigInteger> fac,
-                                        GenPolynomial<ModInteger> A ) {
-        return PolyUtil.<ModInteger,BigInteger>map(fac,A, new ModSymToInt() );
+                                        GenPolynomial<C> A ) {
+        return PolyUtil.<C,BigInteger>map(fac,A, new ModSymToInt<C>() );
+    }
+
+
+
+    /**
+     * BigInteger from ModInteger coefficients, symmetric. 
+     * Represent as polynomial with BigInteger coefficients by 
+     * removing the modules and making coefficients symmetric to 0.
+     * @param fac result polynomial factory.
+     * @param L list of polynomials with ModInteger coefficients to be converted.
+     * @return list of polynomials with BigInteger coefficients.
+     */
+    public static <C extends RingElem<C> & Modular> 
+        List<GenPolynomial<BigInteger>> 
+        integerFromModularCoefficients( final GenPolynomialRing<BigInteger> fac,
+                                        List<GenPolynomial<C>> L ) {
+        return ListUtil.<GenPolynomial<C>,GenPolynomial<BigInteger>>map( L, 
+                        new UnaryFunctor<GenPolynomial<C>,GenPolynomial<BigInteger>>() {
+                            public GenPolynomial<BigInteger> eval(GenPolynomial<C> c) {
+                                return PolyUtil.<C>integerFromModularCoefficients(fac,c);
+                            }
+                        }
+                                                              );
     }
 
 
@@ -174,10 +200,11 @@ public class PolyUtil {
      * @param A polynomial with ModInteger coefficients to be converted.
      * @return polynomial with BigInteger coefficients.
      */
-    public static GenPolynomial<BigInteger> 
+    public static <C extends RingElem<C> & Modular>
+        GenPolynomial<BigInteger> 
         integerFromModularCoefficientsPositive( GenPolynomialRing<BigInteger> fac,
-                                                GenPolynomial<ModInteger> A ) {
-        return PolyUtil.<ModInteger,BigInteger>map(fac,A, new ModToInt() );
+                                                GenPolynomial<C> A ) {
+        return PolyUtil.<C,BigInteger>map(fac,A, new ModToInt<C>() );
     }
 
 
@@ -474,6 +501,36 @@ public class PolyUtil {
     }
 
 
+    /**
+     * Complex from algebraic coefficients. 
+     * @param fac result polynomial factory.
+     * @param A polynomial with AlgebraicNumber coefficients Q(i) to be converted.
+     * @return polynomial with Complex coefficients.
+     */
+    public static <C extends GcdRingElem<C>>
+        GenPolynomial<Complex<C>> 
+        complexFromAlgebraic( GenPolynomialRing<Complex<C>> fac,
+                              GenPolynomial<AlgebraicNumber<C>> A ) {
+        ComplexRing<C> cfac = (ComplexRing<C>) fac.coFac;
+        return PolyUtil.<AlgebraicNumber<C>,Complex<C>>map(fac,A, new AlgebToCompl<C>(cfac) );
+    }
+
+
+    /**
+     * AlgebraicNumber from complex coefficients. 
+     * @param fac result polynomial factory over Q(i).
+     * @param A polynomial with Complex coefficients to be converted.
+     * @return polynomial with AlgebraicNumber coefficients.
+     */
+    public static <C extends GcdRingElem<C>>
+        GenPolynomial<AlgebraicNumber<C>> 
+        algebraicFromComplex( GenPolynomialRing<AlgebraicNumber<C>> fac,
+                              GenPolynomial<Complex<C>> A ) {
+        AlgebraicNumberRing<C> afac = (AlgebraicNumberRing<C>) fac.coFac;
+        return PolyUtil.<Complex<C>,AlgebraicNumber<C>>map(fac,A, new ComplToAlgeb<C>(afac) );
+    }
+
+
     /** ModInteger chinese remainder algorithm on coefficients.
      * @param fac GenPolynomial<ModInteger> result factory 
      * with A.coFac.modul*B.coFac.modul = C.coFac.modul.
@@ -483,22 +540,22 @@ public class PolyUtil {
      * @return S = cra(A,B), with S mod A.coFac.modul == A 
      *                       and S mod B.coFac.modul == B. 
      */
-    public static //<C extends RingElem<C>>
-        GenPolynomial<ModInteger> 
-        chineseRemainder( GenPolynomialRing<ModInteger> fac,
-                          GenPolynomial<ModInteger> A,
-                          ModInteger mi,
-                          GenPolynomial<ModInteger> B ) {
-        ModIntegerRing cfac = (ModIntegerRing)(Object)fac.coFac; // get RingFactory
-        GenPolynomial<ModInteger> S = fac.getZERO().clone(); 
-        GenPolynomial<ModInteger> Ap = A.clone(); 
-        SortedMap<ExpVector,ModInteger> av = Ap.val; //getMap();
-        SortedMap<ExpVector,ModInteger> bv = B.getMap();
-        SortedMap<ExpVector,ModInteger> sv = S.val; //getMap();
-        ModInteger c = null;
+    public static <C extends RingElem<C> & Modular>
+        GenPolynomial<C> 
+        chineseRemainder( GenPolynomialRing<C> fac,
+                          GenPolynomial<C> A,
+                          C mi,
+                          GenPolynomial<C> B ) {
+        ModularRingFactory<C> cfac = (ModularRingFactory<C>) fac.coFac; // get RingFactory
+        GenPolynomial<C> S = fac.getZERO().clone(); 
+        GenPolynomial<C> Ap = A.clone(); 
+        SortedMap<ExpVector,C> av = Ap.val; //getMap();
+        SortedMap<ExpVector,C> bv = B.getMap();
+        SortedMap<ExpVector,C> sv = S.val; //getMap();
+        C c = null;
         for ( ExpVector e : bv.keySet() ) {
-            ModInteger x = av.get( e );
-            ModInteger y = bv.get( e ); // assert y != null
+            C x = av.get( e );
+            C y = bv.get( e ); // assert y != null
             if ( x != null ) {
                av.remove( e );
                c = cfac.chineseRemainder(x,mi,y);
@@ -515,7 +572,7 @@ public class PolyUtil {
         }
         // assert bv is empty = done
         for ( ExpVector e : av.keySet() ) { // rest of av
-            ModInteger x = av.get( e ); // assert x != null
+            C x = av.get( e ); // assert x != null
             //c = cfac.fromInteger( x.getVal() );
             c = cfac.chineseRemainder(x,mi,B.ring.coFac.getZERO());
             if ( ! c.isZERO() ) { // 0 cannot happen
@@ -565,6 +622,28 @@ public class PolyUtil {
                                      return null;
                                 } else {
                                      return c.monic();
+                                }
+                            }
+                        }
+                                                              );
+    }
+
+
+    /**
+     * Polynomial list leading exponent vectors. 
+     * @param <C> coefficient type.
+     * @param L list of polynomials.
+     * @return list of leading exponent vectors.
+     */
+    public static <C extends RingElem<C>>
+        List<ExpVector> leadingExpVector( List<GenPolynomial<C>> L ) {
+        return ListUtil.<GenPolynomial<C>,ExpVector>map( L, 
+                        new UnaryFunctor<GenPolynomial<C>,ExpVector>() {
+                            public ExpVector eval(GenPolynomial<C> c) {
+                                if ( c == null ) {
+                                     return null;
+                                } else {
+                                     return c.leadingExpVector();
                                 }
                             }
                         }
@@ -1736,13 +1815,13 @@ class RatNumer implements UnaryFunctor<BigRational,BigInteger> {
 /**
  * Conversion of symmetric ModInteger to BigInteger functor.
  */
-class ModSymToInt implements UnaryFunctor<ModInteger,BigInteger> {
-    public BigInteger eval(ModInteger c) {
+class ModSymToInt<C extends RingElem<C> & Modular> implements UnaryFunctor<C,BigInteger> {
+    public BigInteger eval(C c) {
         if ( c == null ) {
             return new BigInteger();
         } else {
-            return new BigInteger( c.getSymmetricVal() );
-        }
+            return c.getSymmetricInteger();
+        } 
     }
 }
 
@@ -1750,12 +1829,12 @@ class ModSymToInt implements UnaryFunctor<ModInteger,BigInteger> {
 /**
  * Conversion of ModInteger to BigInteger functor.
  */
-class ModToInt implements UnaryFunctor<ModInteger,BigInteger> {
-    public BigInteger eval(ModInteger c) {
+class ModToInt<C extends RingElem<C> & Modular> implements UnaryFunctor<C,BigInteger> {
+    public BigInteger eval(C c) {
         if ( c == null ) {
             return new BigInteger();
         } else {
-            return new BigInteger( c.getVal() );
+            return c.getInteger();
         }
     }
 }
@@ -1975,6 +2054,69 @@ class RatToCompl implements UnaryFunctor<BigRational,BigComplex> {
             return new BigComplex();
         } else {
             return new BigComplex( c );
+        }
+    }
+}
+
+
+/**
+ * Algebraic to generic complex functor.
+ */
+class AlgebToCompl<C extends GcdRingElem<C>> implements UnaryFunctor<AlgebraicNumber<C>,Complex<C>> {
+    final protected ComplexRing<C> cfac;
+    public AlgebToCompl(ComplexRing<C> fac) {
+        if ( fac == null ) {
+            throw new IllegalArgumentException("fac must not be null");
+        }
+        cfac = fac;
+    }
+    public Complex<C> eval(AlgebraicNumber<C> a) {
+        if ( a == null || a.isZERO() ) { // should not happen
+            return cfac.getZERO();
+        } else if ( a.isONE() ) {
+            return cfac.getONE();
+        } else {
+            GenPolynomial<C> p = a.getVal();
+            C real = cfac.ring.getZERO();
+            C imag = cfac.ring.getZERO();
+            for ( Monomial<C> m : p ) {
+                if ( m.exponent().getVal(0) == 1L ) {
+                    imag = m.coefficient();
+                } else if ( m.exponent().getVal(0) == 0L ) {
+                    real = m.coefficient();
+                } else {
+                    throw new IllegalArgumentException("unexpected monomial " + m);
+                }
+            }
+            //Complex<C> c = new Complex<C>(cfac,real,imag);
+            return new Complex<C>(cfac,real,imag);
+        }
+    }
+}
+
+
+/**
+ * Ceneric complex to algebraic number functor.
+ */
+class ComplToAlgeb<C extends GcdRingElem<C>> implements UnaryFunctor<Complex<C>,AlgebraicNumber<C>> {
+    final protected AlgebraicNumberRing<C> afac;
+    final protected AlgebraicNumber<C> I;
+    public ComplToAlgeb(AlgebraicNumberRing<C> fac) {
+        if ( fac == null ) {
+            throw new IllegalArgumentException("fac must not be null");
+        }
+        afac = fac;
+        I = afac.getGenerator();
+    }
+    public AlgebraicNumber<C> eval(Complex<C> c) {
+        if ( c == null || c.isZERO() ) { // should not happen
+            return afac.getZERO();
+        } else if ( c.isONE() ) {
+            return afac.getONE();
+        } else if ( c.isIMAG() ) {
+            return I;
+        } else {
+            return I.multiply(c.getIm()).sum(c.getRe());
         }
     }
 }
