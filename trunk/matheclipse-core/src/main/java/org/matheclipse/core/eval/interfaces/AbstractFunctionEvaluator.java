@@ -70,7 +70,7 @@ public abstract class AbstractFunctionEvaluator implements IFunctionEvaluator {
 	abstract public IExpr evaluate(final IAST functionList);
 
 	/**
-	 * Create a rule which invokes the method name in this instance
+	 * Create a rule which invokes the method name in this class instance.
 	 * 
 	 * @param symbol
 	 * @param patternString
