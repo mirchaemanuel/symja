@@ -4,6 +4,7 @@ import static org.matheclipse.basic.Util.checkCanceled;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -30,6 +31,8 @@ import org.matheclipse.core.visit.IVisitor;
 import org.matheclipse.core.visit.IVisitorBoolean;
 import org.matheclipse.core.visit.IVisitorInt;
 import org.matheclipse.generic.interfaces.Pair;
+
+import com.google.common.collect.ArrayListMultimap;
 
 /**
  * Implements Symbols for function, constant and variable names
@@ -64,8 +67,11 @@ public class Symbol extends ExprImpl implements ISymbol {
 
   private transient IEvaluator fEvaluator;
 
-  private Map<Integer, List<IPatternMatcher<IExpr>>> fSimplePatternRules = null;
-
+  // private Map<Integer, List<IPatternMatcher<IExpr>>> fSimplePatternRules =
+  // null;
+  private ArrayListMultimap<Integer, IPatternMatcher<IExpr>> fSimplePatternRules = ArrayListMultimap
+      .create();
+  // new ArrayListMultimap<Integer, IPatternMatcher<IExpr>>();
   private List<IPatternMatcher<IExpr>> fPatternRules = null;
 
   /* package private */String fSymbolName;
@@ -297,7 +303,9 @@ public class Symbol extends ExprImpl implements ISymbol {
     pmEvaluator.setCondition(condition);
     if (!isRuleWithPatternAsFirstArgument(leftHandSide)) {
       if (fSimplePatternRules == null) {
-        fSimplePatternRules = new HashMap<Integer, List<IPatternMatcher<IExpr>>>();
+        // fSimplePatternRules = new HashMap<Integer,
+        // List<IPatternMatcher<IExpr>>>();
+        fSimplePatternRules = ArrayListMultimap.create();
       }
       return addSimplePatternRule(leftHandSide, pmEvaluator);
 
@@ -325,20 +333,20 @@ public class Symbol extends ExprImpl implements ISymbol {
       final PatternMatcher pmEvaluator) {
     final Integer hash = Integer.valueOf(((IAST) leftHandSide)
         .patternHashCode());
-    List<IPatternMatcher<IExpr>> list = fSimplePatternRules.get(hash);
-    if (list == null) {
-      list = new ArrayList<IPatternMatcher<IExpr>>();
-      fSimplePatternRules.put(hash, list);
-    } else {
-      for (int i = 0; i < list.size(); i++) {
-        checkCanceled();
-        if (pmEvaluator.equals(fSimplePatternRules.get(i))) {
-          list.set(i, pmEvaluator);
-          return pmEvaluator;
-        }
-      }
+    // List<IPatternMatcher<IExpr>> list = fSimplePatternRules.get(hash);
+    // if (list != null) {
+    // for (int i = 0; i < list.size(); i++) {
+    // if (pmEvaluator.equals(fSimplePatternRules.get(i))) {
+    // list.set(i, pmEvaluator);
+    // return pmEvaluator;
+    // }
+    // }
+    // }
+    // list.add(pmEvaluator);
+    if (fSimplePatternRules.containsEntry(hash, pmEvaluator)) {
+      fSimplePatternRules.remove(hash, pmEvaluator);
     }
-    list.add(pmEvaluator);
+    fSimplePatternRules.put(hash, pmEvaluator);
     return pmEvaluator;
   }
 
@@ -346,7 +354,9 @@ public class Symbol extends ExprImpl implements ISymbol {
     final IExpr leftHandSide = pmEvaluator.getLHS();
     if (!isRuleWithPatternAsFirstArgument(leftHandSide)) {
       if (fSimplePatternRules == null) {
-        fSimplePatternRules = new HashMap<Integer, List<IPatternMatcher<IExpr>>>();
+        // fSimplePatternRules = new HashMap<Integer,
+        // List<IPatternMatcher<IExpr>>>();
+        fSimplePatternRules = ArrayListMultimap.create();
       }
       return addSimplePatternRule(leftHandSide, pmEvaluator);
 
@@ -542,25 +552,45 @@ public class Symbol extends ExprImpl implements ISymbol {
       }
     }
     if (fSimplePatternRules != null && fSimplePatternRules.size() > 0) {
-      Iterator<List<IPatternMatcher<IExpr>>> listIter;
-      listIter = fSimplePatternRules.values().iterator();
+      // Iterator<List<IPatternMatcher<IExpr>>> listIter;
+      // listIter = fSimplePatternRules.values().iterator();
+      // while (listIter.hasNext()) {
+      // final List<IPatternMatcher<IExpr>> list = listIter.next();
+      // for (int i = 0; i < list.size(); i++) {
+      // if (list.get(i) instanceof PatternMatcherAndEvaluator) {
+      // pmEvaluator = (PatternMatcherAndEvaluator) list.get(i);
+      // setSymbol = pmEvaluator.getSetSymbol();
+      //
+      // ast = F.ast(setSymbol);
+      // ast.add(pmEvaluator.getLHS());
+      // condition = pmEvaluator.getCondition();
+      // if (condition != null) {
+      // ast.add(F.Condition(pmEvaluator.getRHS(), condition));
+      // } else {
+      // ast.add(pmEvaluator.getRHS());
+      // }
+      // definitionList.add(ast);
+      // }
+      // }
+      // }
+      Iterator<IPatternMatcher<IExpr>> listIter = fSimplePatternRules.values()
+          .iterator();
+      IPatternMatcher<IExpr> elem;
       while (listIter.hasNext()) {
-        final List<IPatternMatcher<IExpr>> list = listIter.next();
-        for (int i = 0; i < list.size(); i++) {
-          if (list.get(i) instanceof PatternMatcherAndEvaluator) {
-            pmEvaluator = (PatternMatcherAndEvaluator) list.get(i);
-            setSymbol = pmEvaluator.getSetSymbol();
+        elem = listIter.next();
+        if (elem instanceof PatternMatcherAndEvaluator) {
+          pmEvaluator = (PatternMatcherAndEvaluator) elem;
+          setSymbol = pmEvaluator.getSetSymbol();
 
-            ast = F.ast(setSymbol);
-            ast.add(pmEvaluator.getLHS());
-            condition = pmEvaluator.getCondition();
-            if (condition != null) {
-              ast.add(F.Condition(pmEvaluator.getRHS(), condition));
-            } else {
-              ast.add(pmEvaluator.getRHS());
-            }
-            definitionList.add(ast);
+          ast = F.ast(setSymbol);
+          ast.add(pmEvaluator.getLHS());
+          condition = pmEvaluator.getCondition();
+          if (condition != null) {
+            ast.add(F.Condition(pmEvaluator.getRHS(), condition));
+          } else {
+            ast.add(pmEvaluator.getRHS());
           }
+          definitionList.add(ast);
         }
       }
     }
@@ -640,32 +670,33 @@ public class Symbol extends ExprImpl implements ISymbol {
     int condLength;
     PatternMatcherAndEvaluator pmEvaluator;
     if (len > 0) {
-      fSimplePatternRules = new HashMap<Integer, List<IPatternMatcher<IExpr>>>();
-
+      // fSimplePatternRules = new HashMap<Integer,
+      // List<IPatternMatcher<IExpr>>>();
+      fSimplePatternRules = ArrayListMultimap.create();
       for (int i = 0; i < len; i++) {
-        listLength = stream.read();
-        for (int j = 0; j < listLength; j++) {
-          astString = stream.readUTF();
-          setSymbol = F.symbol(astString);
+        // listLength = stream.read();
+        // for (int j = 0; j < listLength; j++) {
+        astString = stream.readUTF();
+        setSymbol = F.symbol(astString);
 
-          astString = stream.readUTF();
-          lhs = engine.parse(astString);
-          astString = stream.readUTF();
-          rhs = engine.parse(astString);
-          pmEvaluator = new PatternMatcherAndEvaluator(setSymbol, lhs, rhs);
+        astString = stream.readUTF();
+        lhs = engine.parse(astString);
+        astString = stream.readUTF();
+        rhs = engine.parse(astString);
+        pmEvaluator = new PatternMatcherAndEvaluator(setSymbol, lhs, rhs);
 
-          condLength = stream.read();
-          if (condLength == 0) {
-            condition = null;
-          } else {
-            astString = stream.readUTF();
-            condition = engine.parse(astString);
-            pmEvaluator.setCondition(condition);
-          }
-          addSimplePatternRule(lhs, pmEvaluator);
+        condLength = stream.read();
+        if (condLength == 0) {
+          condition = null;
+        } else {
+          astString = stream.readUTF();
+          condition = engine.parse(astString);
+          pmEvaluator.setCondition(condition);
         }
-
+        addSimplePatternRule(lhs, pmEvaluator);
       }
+
+      // }
     }
 
     len = stream.read();
@@ -721,26 +752,45 @@ public class Symbol extends ExprImpl implements ISymbol {
     if (fSimplePatternRules == null || fSimplePatternRules.size() == 0) {
       stream.write(0);
     } else {
-      Iterator<List<IPatternMatcher<IExpr>>> listIter;
+      // Iterator<List<IPatternMatcher<IExpr>>> listIter;
+      // stream.write(fSimplePatternRules.size());
+      // listIter = fSimplePatternRules.values().iterator();
+      // while (listIter.hasNext()) {
+      // final List<IPatternMatcher<IExpr>> list = listIter.next();
+      // stream.write(list.size());
+      // for (int i = 0; i < list.size(); i++) {
+      // pmEvaluator = (PatternMatcherAndEvaluator) list.get(i);
+      // setSymbol = pmEvaluator.getSetSymbol();
+      // stream.writeUTF(setSymbol.toString());
+      // stream.writeUTF(pmEvaluator.getLHS().fullFormString());
+      // stream.writeUTF(pmEvaluator.getRHS().fullFormString());
+      // condition = pmEvaluator.getCondition();
+      // if (condition == null) {
+      // stream.write(0);
+      // } else {
+      // stream.write(1);
+      // stream.writeUTF(condition.fullFormString());
+      // }
+      //
+      // }
+      // }
       stream.write(fSimplePatternRules.size());
-      listIter = fSimplePatternRules.values().iterator();
+      Iterator<IPatternMatcher<IExpr>> listIter = fSimplePatternRules.values()
+          .iterator();
+      IPatternMatcher<IExpr> elem;
       while (listIter.hasNext()) {
-        final List<IPatternMatcher<IExpr>> list = listIter.next();
-        stream.write(list.size());
-        for (int i = 0; i < list.size(); i++) {
-          pmEvaluator = (PatternMatcherAndEvaluator) list.get(i);
-          setSymbol = pmEvaluator.getSetSymbol();
-          stream.writeUTF(setSymbol.toString());
-          stream.writeUTF(pmEvaluator.getLHS().fullFormString());
-          stream.writeUTF(pmEvaluator.getRHS().fullFormString());
-          condition = pmEvaluator.getCondition();
-          if (condition == null) {
-            stream.write(0);
-          } else {
-            stream.write(1);
-            stream.writeUTF(condition.fullFormString());
-          }
-
+        elem = listIter.next();
+        pmEvaluator = (PatternMatcherAndEvaluator) elem;
+        setSymbol = pmEvaluator.getSetSymbol();
+        stream.writeUTF(setSymbol.toString());
+        stream.writeUTF(pmEvaluator.getLHS().fullFormString());
+        stream.writeUTF(pmEvaluator.getRHS().fullFormString());
+        condition = pmEvaluator.getCondition();
+        if (condition == null) {
+          stream.write(0);
+        } else {
+          stream.write(1);
+          stream.writeUTF(condition.fullFormString());
         }
       }
     }
