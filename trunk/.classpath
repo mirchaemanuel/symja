@@ -3,6 +3,7 @@
 	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry exported="true" kind="con" path="org.maven.ide.eclipse.MAVEN2_CLASSPATH_CONTAINER"/>
 	<classpathentry kind="src" path="matheclipse-parser/src/main/java"/>
+	<classpathentry kind="src" path="commons-math/src/test/java"/>
 	<classpathentry kind="src" path="surface-plotter/src/main/java"/>
 	<classpathentry kind="src" path="jas/src/main/java"/>
 	<classpathentry kind="src" path="commons-math/src/main/java"/>
@@ -19,10 +20,12 @@
 	<classpathentry kind="lib" path="lib/xmlgraphics-commons-1.3.1.jar"/>
 	<classpathentry kind="lib" path="lib/batik-util-1.7.jar"/>
 	<classpathentry kind="lib" path="lib/batik-xml-1.7.jar"/>
-	<classpathentry kind="lib" path="lib/jeuclid-core-3.1.5.jar"/>
 	<classpathentry kind="lib" path="lib/log4j-1.2.11.jar"/>
-	<classpathentry kind="lib" path="C:/galileo/eclipse/plugins/org.junit4_4.5.0.v20090423/junit.jar"/>
 	<classpathentry kind="lib" path="lib/commons-logging-1.1.1.jar"/>
 	<classpathentry kind="lib" path="lib/commons-io-1.3.1.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+	<classpathentry kind="lib" path="lib/jsr305.jar"/>
+	<classpathentry kind="lib" path="lib/jeuclid-core-3.1.8.jar"/>
+	<classpathentry kind="lib" path="lib/google-collect-1.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
