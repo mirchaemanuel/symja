@@ -1,5 +1,5 @@
 /*
- * $Id: FactorModular.java 2978 2010-01-06 19:42:25Z kredel $
+ * $Id: FactorModular.java 2979 2010-01-18 22:23:20Z kredel $
  */
 
 package edu.jas.ufd;
@@ -22,6 +22,7 @@ import edu.jas.arith.ModLongRing;
 import edu.jas.arith.Modular;
 import edu.jas.poly.GenPolynomial;
 import edu.jas.poly.GenPolynomialRing;
+import edu.jas.poly.PolyUtil;
 import edu.jas.structure.Power;
 import edu.jas.structure.GcdRingElem;
 import edu.jas.structure.RingFactory;
@@ -220,6 +221,7 @@ public class FactorModular<MOD extends GcdRingElem<MOD> & Modular> extends Facto
             factors.addAll(efacs);
         }
         //System.out.println("factors  = " + factors);
+        factors = PolyUtil.<MOD>monic(factors);
         SortedSet<GenPolynomial<MOD>> ss = new TreeSet<GenPolynomial<MOD>>(factors);
         //System.out.println("sorted   = " + ss);
         factors.clear();
