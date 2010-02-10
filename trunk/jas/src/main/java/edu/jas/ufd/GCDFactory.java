@@ -70,8 +70,7 @@ public class GCDFactory {
 
     private static final Logger logger = Logger.getLogger(GCDFactory.class);
 
-    public static boolean NO_THREADS = true;
-    
+
     /**
      * Protected factory constructor.
      */
@@ -253,11 +252,6 @@ public class GCDFactory {
      */
     @SuppressWarnings("unchecked")
     public static <C extends GcdRingElem<C>> GreatestCommonDivisorAbstract<C> getProxy(RingFactory<C> fac) {
-
-        if ( NO_THREADS ) {
-           return GCDFactory.<C> getImplementation(fac);
-        }
-      
         GreatestCommonDivisorAbstract/*raw type<C>*/ufd;
         logger.debug("fac = " + fac.getClass().getName());
         int t = 0;

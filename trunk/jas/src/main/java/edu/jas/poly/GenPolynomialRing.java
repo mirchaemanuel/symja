@@ -1,6 +1,6 @@
 
 /*
- * $Id: GenPolynomialRing.java 2720 2009-07-09 19:32:19Z kredel $
+ * $Id: GenPolynomialRing.java 2991 2010-01-31 12:40:42Z kredel $
  */
 
 package edu.jas.poly;
@@ -16,6 +16,8 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
+import java.util.Set;
+import java.util.HashSet;
 
 import org.apache.log4j.Logger;
 
@@ -71,6 +73,11 @@ public class GenPolynomialRing<C extends RingElem<C> >
      * This value can be modified. 
      */
     protected String[] vars;
+
+
+    /** The names of all known variables.
+     */
+    private static Set<String> knownVars = new HashSet<String>();
 
 
     /**
@@ -169,7 +176,12 @@ public class GenPolynomialRing<C extends RingElem<C> >
         evzero = ExpVector.create(nvar);
         ONE  = new GenPolynomial<C>( this, coeff, evzero );
         if ( vars == null && PrettyPrint.isTrue() ) {
-           vars = evzero.stdVars();
+            vars = newVars("x",nvar);
+        } else {
+            if ( vars.length != nvar ) {
+                throw new IllegalArgumentException("incompatible variable size " + vars.length + ", " + nvar);
+            }
+            addVars(vars);
         }
     }
 
@@ -877,6 +889,82 @@ public class GenPolynomialRing<C extends RingElem<C> >
      */
     public PolynomialComparator<C> getComparator(boolean rev) {
         return new PolynomialComparator<C>(tord,rev);
+    }
+
+
+    /**
+     * New variable names.
+     * Generate new names for variables, 
+     * @param prefix name prefix.
+     * @param n number of variables.
+     * @return new variable names.
+     */
+    public static String[] newVars(String prefix, int n) {
+        String[] vars = new String[n];
+        synchronized (knownVars) {
+            int m = knownVars.size();
+            String name = prefix + m;
+            for ( int i = 0; i < n; i++ ) {
+                while ( knownVars.contains(name) ) {
+                    m++;
+                    name = prefix + m;
+                }
+                vars[i] = name;
+                //System.out.println("new variable: " + name);
+                knownVars.add(name);
+                m++;
+                name = prefix + m;
+            }
+        }
+        return vars;
+    }
+
+
+    /**
+     * New variable names.
+     * Generate new names for variables, 
+     * @param prefix name prefix.
+     * @return new variable names.
+     */
+    public String[] newVars(String prefix) {
+        return newVars(prefix,nvar);
+    }
+
+
+    /**
+     * New variable names.
+     * Generate new names for variables, 
+     * @param n number of variables.
+     * @return new variable names.
+     */
+    public static String[] newVars(int n) {
+        return newVars("x",n);
+    }
+
+
+    /**
+     * New variable names.
+     * Generate new names for variables, 
+     * @return new variable names.
+     */
+    public String[] newVars() {
+        return newVars(nvar);
+    }
+
+
+    /**
+     * Add variable names.
+     * @param vars variable names to be recorded.
+     */
+    public static void addVars(String[] vars) {
+        if ( vars == null ) {
+            return;
+        }
+        synchronized (knownVars) {
+            for ( int i = 0; i < vars.length; i++ ) {
+                knownVars.add( vars[i] ); // eventualy names 'overwritten'
+            }
+        }
     }
 
 }

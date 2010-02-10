@@ -1,5 +1,5 @@
 /*
- * $Id: FactorComplexTest.java 2947 2009-12-30 12:48:35Z kredel $
+ * $Id: FactorComplexTest.java 2981 2010-01-18 22:24:54Z kredel $
  */
 
 package edu.jas.ufd;
@@ -34,7 +34,7 @@ public class FactorComplexTest extends TestCase {
      * main.
      */
     public static void main(String[] args) {
-        BasicConfigurator.configure();
+        //BasicConfigurator.configure();
         junit.textui.TestRunner.run(suite());
     }
 

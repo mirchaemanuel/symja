@@ -1,6 +1,6 @@
 
 /*
- * $Id: GenPolynomial.java 2831 2009-10-01 21:43:12Z kredel $
+ * $Id: GenPolynomial.java 2989 2010-01-31 11:06:39Z kredel $
  */
 
 package edu.jas.poly;
@@ -311,7 +311,7 @@ public class GenPolynomial<C extends RingElem<C> >
         }
         String[] v = ring.vars;
         if ( v == null ) {
-            v = ring.evzero.stdVars();
+            v = ring.newVars("x",ring.nvar);
         }
         boolean parenthesis = false;
         if (    ring.coFac instanceof GenPolynomialRing

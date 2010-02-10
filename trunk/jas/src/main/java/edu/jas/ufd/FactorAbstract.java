@@ -1,5 +1,5 @@
 /*
- * $Id: FactorAbstract.java 2960 2010-01-01 19:24:50Z kredel $
+ * $Id: FactorAbstract.java 2989 2010-01-31 11:06:39Z kredel $
  */
 
 package edu.jas.ufd;
@@ -154,7 +154,7 @@ public abstract class FactorAbstract<C extends GcdRingElem<C>> implements Factor
         long d = P.degree() + 1L;
         GenPolynomial<C> kr = PolyUfdUtil.<C> substituteKronecker(P, d);
         GenPolynomialRing<C> ufac = kr.ring;
-        ufac.setVars(new String[] { "zz" }); // side effects 
+        ufac.setVars( ufac.newVars( "zz" ) ); // side effects 
         if (debug) {
             logger.info("subs(P,d=" + d + ") = " + kr);
             //System.out.println("subs(P,d=" + d + ") = " + kr);
@@ -295,9 +295,11 @@ public abstract class FactorAbstract<C extends GcdRingElem<C>> implements Factor
             factors.put(pc, 1L);
             P = P.divide(c); // make primitive or monic
         }
-        logger.info("squarefree facs P = " + P);
+        if (logger.isInfoEnabled()) {
+            logger.info("squarefree facs P = " + P);
+	}
         SortedMap<GenPolynomial<C>, Long> facs = sengine.baseSquarefreeFactors(P);
-        if (debug) {
+        if (logger.isInfoEnabled() && facs.size() > 1) {
             logger.info("squarefree facs   = " + facs);
             //System.out.println("sfacs   = " + facs);
             //boolean tt = isFactorization(P,facs);
@@ -399,9 +401,12 @@ public abstract class FactorAbstract<C extends GcdRingElem<C>> implements Factor
             factors.put(pc, 1L);
             P = P.divide(c); // make base primitive or base monic
         }
+        if (logger.isInfoEnabled()) {
+            logger.info("squarefree mfacs P = " + P);
+        }
         SortedMap<GenPolynomial<C>, Long> facs = sengine.squarefreeFactors(P);
-        if (debug) {
-            logger.info("squarefree facs   = " + facs);
+        if (logger.isInfoEnabled() && facs.size() > 1) {
+            logger.info("squarefree mfacs   = " + facs);
             //System.out.println("facs   = " + facs);
         }
         for (GenPolynomial<C> g : facs.keySet()) {
