@@ -1,5 +1,5 @@
 /*
- * $Id: FactorInteger.java 2978 2010-01-06 19:42:25Z kredel $
+ * $Id: FactorInteger.java 2998 2010-02-07 18:14:57Z kredel $
  */
 
 package edu.jas.ufd;
@@ -288,11 +288,14 @@ public class FactorInteger<MOD extends GcdRingElem<MOD> & Modular> extends Facto
                     t = System.currentTimeMillis();
                     factors = searchFactorsNonMonic(P, M, mlist, AD);
                     t = System.currentTimeMillis() - t;
-                    //System.out.println("only non monic time = " + t);
+                    System.out.println("only non monic time = " + t);
                 }
             } else {
+                long t = System.currentTimeMillis();
                 factors = searchFactorsNonMonic(P, M, mlist, AD);
-            }
+                t = System.currentTimeMillis() - t;
+                //System.out.println("non monic time = " + t);
+              }
             return factors;
         }
 

@@ -1,5 +1,5 @@
 /*
- * $Id: QuotientRing.java 2712 2009-07-05 13:05:37Z kredel $
+ * $Id: QuotientRing.java 2989 2010-01-31 11:06:39Z kredel $
  */
 
 package edu.jas.application;
@@ -377,7 +377,7 @@ public class QuotientRing<C extends GcdRingElem<C> >
      * @return next Quotient from r.
      */
     public Quotient<C> parse(Reader r) {
-        String s = StringUtil.nextString(r,'}');
+        String s = StringUtil.nextPairedString(r,'{','}');
         return parse( s );
     }
 

@@ -1,5 +1,5 @@
 /*
- * $Id: GenPolynomialTokenizer.java 2845 2009-11-01 10:44:18Z kredel $
+ * $Id: GenPolynomialTokenizer.java 2987 2010-01-30 20:08:49Z kredel $
  */
 
 package edu.jas.poly;
@@ -336,19 +336,33 @@ public class GenPolynomialTokenizer  {
 
             case '{': 
                 StringBuffer rf = new StringBuffer();
-                tt = tok.nextToken();
-                while ( tt != '}' ) {
+                int level = 0;
+                do {
+                    tt = tok.nextToken();
+                    //System.out.println("token { = " + ((char)tt) + ", " + tt + ", level = " + level);
                     //cf.append( " " );
+                    if ( tt == '{' ) {
+                        level++;
+                    }
+                    if ( tt == '}' ) {
+                        level--;
+                        if ( level < 0 ) {
+                            continue; // skip last closing brace 
+                        }
+                    }
                     if ( tok.sval != null ) {
                         rf.append( " " + tok.sval );
                     } else {
                         rf.append( (char)tt );
                     }
-                    tt = tok.nextToken();
-                }
+                } while ( level >= 0 ); // || tt != '}' 
                 //System.out.println("coeff = " + rf.toString() );
                 r = (RingElem)fac.parse( rf.toString() );
                 if (debug) logger.debug("coeff " + r);
+                ie = nextExponent();
+                if (debug) logger.debug("ie " + ie);
+                r = Power.<RingElem>positivePower(r,ie);
+                if (debug) logger.debug("coeff^ie " + r);
                 b = b.multiply(r,leer); 
                 tt = tok.nextToken();
                 if (debug) logger.debug("tt,digit = " + tok);
@@ -363,15 +377,16 @@ public class GenPolynomialTokenizer  {
                 if ( digit(first) ) {
                     r = (RingElem)fac.parse( tok.sval );
                     //System.out.println("r = " + r.toScriptFactory());
-                    // ie = nextExponent();
+                    ie = nextExponent();
+                    if (debug) logger.debug("ie " + ie);
                     // r = r^ie;
-                    // c = new GenPolynomial<BigRational>(r,leer);
+                    r = Power.<RingElem>positivePower(r,ie);
+                    if (debug) logger.debug("coeff^ie " + r);
                     b = b.multiply(r,leer); 
                     tt = tok.nextToken();
                     if (debug) logger.debug("tt,digit = " + tok);
                 } 
                 if ( tt == StreamTokenizer.TT_EOF ) break;
-                // read polynomial (not jet implemented)
                 if ( tok.sval == null ) break;
                 // read monomial 
                 first = tok.sval.charAt(0);

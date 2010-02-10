@@ -1,5 +1,5 @@
 /*
- * $Id: GenVector.java 2849 2009-11-05 21:28:37Z kredel $
+ * $Id: GenVector.java 2990 2010-01-31 11:23:36Z kredel $
  */
 
 package edu.jas.vector;
@@ -59,7 +59,7 @@ public class GenVector<C extends RingElem<C> >
     @Override
     public String toString() {
         StringBuffer s = new StringBuffer();
-        s.append("( ");
+        s.append("[ ");
         boolean first = true;
         for ( C c : val ) {
             if ( first ) {
@@ -69,7 +69,7 @@ public class GenVector<C extends RingElem<C> >
             }
             s.append( c.toString() );
         }
-        s.append(" )");
+        s.append(" ]");
         if ( !PrettyPrint.isTrue() ) {
            s.append(" :: " + modul.toString());
            s.append("\n");

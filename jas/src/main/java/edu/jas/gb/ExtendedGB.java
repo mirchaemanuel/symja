@@ -1,5 +1,5 @@
 /*
- * $Id: ExtendedGB.java 2412 2009-02-07 12:17:54Z kredel $
+ * $Id: ExtendedGB.java 2989 2010-01-31 11:06:39Z kredel $
  */
 
 package edu.jas.gb;
@@ -50,7 +50,7 @@ public class ExtendedGB<C extends RingElem<C>> {
                    }
                }
                if ( r != null && r.getVars() == null ) {
-                  r.setVars( r.evzero.stdVars("y") );
+                  r.setVars( r.newVars("y") );
                }
          }
             this.ring = r;
