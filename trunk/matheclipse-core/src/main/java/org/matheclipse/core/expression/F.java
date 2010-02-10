@@ -1267,12 +1267,12 @@ public class F {
   }
 
   /**
-   * Gives symbols "True" or "False" depending on the boolean value.
+   * Gives symbols "True" or "False" (type ISymbol) depending on the boolean value.
    * 
    * @param value
    * @return
    */
-  public static IExpr bool(final boolean value) {
+  public static ISymbol bool(final boolean value) {
     if (value) {
       return True;
     }
