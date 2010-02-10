@@ -38,7 +38,7 @@ public class Multinomial extends AbstractFunctionEvaluator {
 		return null;
 	}
 
-	public static BigInteger multinomial(final List ast) {
+	public static BigInteger multinomial(final List<IExpr> ast) {
 		BigInteger k;
 		BigInteger n = BigInteger.ZERO;
 		BigInteger denom = BigInteger.ONE;
