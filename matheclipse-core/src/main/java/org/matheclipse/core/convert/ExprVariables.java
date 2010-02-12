@@ -79,6 +79,16 @@ public class ExprVariables {
     return list;
   }
 
+  public String[] getVarListAsString() {
+    String[] result = new String[set.size()];
+    final Iterator<IExpr> iter = set.iterator();
+    int i = 0;
+    while (iter.hasNext()) {
+      result[i++] = iter.next().toString();
+    }
+    return result;
+  }
+
   /**
    * Check if the expression contains the given number of variables.
    * 

@@ -311,6 +311,7 @@ public class JASConvert<C extends RingElem<C>> {
       return F.Plus(F.C0);
     }
 
+    boolean getVar = variable == null;
     IAST result = F.Plus();
     for (Monomial<BigRational> monomial : poly) {
       BigRational coeff = (BigRational) monomial.coefficient();
@@ -321,7 +322,7 @@ public class JASConvert<C extends RingElem<C>> {
       for (int i = 0; i < exp.length(); i++) {
         lExp = exp.getVal(i);
         if (lExp != 0) {
-          if (variable == null) {
+          if (getVar) {
             variable = fVariables.get(i);
           }
           monomTimes.add(F.Power(variable, F.integer(lExp)));
