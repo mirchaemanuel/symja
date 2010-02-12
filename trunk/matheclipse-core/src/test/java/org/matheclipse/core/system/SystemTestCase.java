@@ -2295,23 +2295,16 @@ public class SystemTestCase extends AbstractTestCase {
     check("FactorTerms[3+3/4*x^3+12/17*x^2,x]", "3/68*(17*x^3+16*x^2+68)");
   }
 
-  // public void testSystem997() {
-  //
-  // check("GroebnerBasis[{x-1},{x}]", "{1-x}");
-  // check(
-  // "GroebnerBasis[{a+b+c+d, a*b+a*d+b*c+c*d, a*b*c+a*b*d+a*c*d+b*c*d,
-  // 1-a*b*c*d}, {d,c,b,a}, MonomialOrder->DegreeReverseLexicographic]"
-  // ,
-  // "{a+b+c+d,a^2+2*a*c+c^2,a^3-a*b^2+a^2*c-b^2*c,1+a^4-a^3*b-a^2*b^2+a^3*c-a^2*b*c,a-a^5+c-a^4*c,a+b-a^3*b^2-a^2*b^3,2*a^2-a*b-a^4*b^2+a*c-b*c}"
-  // );
-  // check(
-  // "GroebnerBasis[{a+b+c+d, a*b+a*d+b*c+c*d, a*b*c+a*b*d+a*c*d+b*c*d,
-  // 1-a*b*c*d}, {d,c,b,a}, MonomialOrder->DegreeReverseLexicographic,
-  // Modulus->1]"
-  // ,
-  // "{a+b+c+d,a^2+2*a*c+c^2,a^3-a*b^2+a^2*c-b^2*c,1+a^4-a^3*b-a^2*b^2+a^3*c-a^2*b*c,a-a^5+c-a^4*c,a+b-a^3*b^2-a^2*b^3,2*a^2-a*b-a^4*b^2+a*c-b*c}"
-  // );
-  // }
+  public void testSystem997() {
+    check(
+        "GroebnerBasis[{a+b+c+d, a*b+a*d+b*c+c*d, a*b*c+a*b*d+a*c*d+b*c*d,1-a*b*c*d}, {d,c,b,a}]",
+        "{d+c+b+a,c^2+2*a*c+a^2,a^2*b^3+a^3*b^2-b-a,b*c-a*c+a^4*b^2+a*b-2*a^2,a^4*c-c+a^5-a,a^\n" + 
+        "6*b^2-a^2*b^2-a^4+1}");
+    check("GroebnerBasis[{x-1},{x}]", "{x-1}");
+    // check(
+    // "GroebnerBasis[{a+b+c+d, a*b+a*d+b*c+c*d, a*b*c+a*b*d+a*c*d+b*c*d, 1-a*b*c*d}, {d,c,b,a}, MonomialOrder->DegreeReverseLexicographic, Modulus->1]",
+    // "{a+b+c+d,a^2+2*a*c+c^2,a^3-a*b^2+a^2*c-b^2*c,1+a^4-a^3*b-a^2*b^2+a^3*c-a^2*b*c,a-a^5+c-a^4*c,a+b-a^3*b^2-a^2*b^3,2*a^2-a*b-a^4*b^2+a*c-b*c}");
+  }
 
   public void testSystem998() {
     check(
