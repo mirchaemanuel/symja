@@ -237,14 +237,16 @@ public class Symbol extends ExprImpl implements ISymbol {
     return fSymbolName.equals(str);
   }
 
-  public IPatternMatcher<IExpr> putDownRule(ISymbol symbol, final boolean equalRule,
-      final IExpr leftHandSide, final IExpr rightHandSide) {
+  public IPatternMatcher<IExpr> putDownRule(ISymbol symbol,
+      final boolean equalRule, final IExpr leftHandSide,
+      final IExpr rightHandSide) {
     return putDownRule(symbol, equalRule, leftHandSide, rightHandSide, null,
         DEFAULT_RULE_PRIORITY);
   }
 
-  public IPatternMatcher<IExpr> putDownRule(ISymbol symbol, final boolean equalRule,
-      final IExpr leftHandSide, final IExpr rightHandSide, final IExpr condition) {
+  public IPatternMatcher<IExpr> putDownRule(ISymbol symbol,
+      final boolean equalRule, final IExpr leftHandSide,
+      final IExpr rightHandSide, final IExpr condition) {
     return putDownRule(symbol, equalRule, leftHandSide, rightHandSide,
         condition, DEFAULT_RULE_PRIORITY);
   }
@@ -461,6 +463,22 @@ public class Symbol extends ExprImpl implements ISymbol {
   @Override
   public boolean isTrue() {
     return fSymbolName.equals("True");
+  }
+
+  @Override
+  public boolean isValue(ISymbol symbol) {
+    return EvalEngine.get().evalSymbol((ISymbol) symbol) != null;
+  }
+
+  @Override
+  public boolean isValue(IAST expr) {
+    AST ast = (AST) expr;
+    if (ast.topHead() instanceof ISymbol) {
+      IExpr result = ((ISymbol) ast.head())
+          .evalDownRule(EvalEngine.get(), expr);
+      return result != null;
+    }
+    return false;
   }
 
   @Override
@@ -741,4 +759,5 @@ public class Symbol extends ExprImpl implements ISymbol {
   public int accept(IVisitorInt visitor) {
     return visitor.visit(this);
   }
+
 }

@@ -372,7 +372,7 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 
   /**
    * Returns the ISymbol of the IAST. If the head itself is a IAST it will
-   * recursively call headSymbol().
+   * recursively call head().
    */
   public ISymbol topHead() {
     if (head() instanceof ISymbol) {

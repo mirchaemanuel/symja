@@ -2209,6 +2209,13 @@ public class SystemTestCase extends AbstractTestCase {
     check("Multinomial[11,3,5]", "4232592");
   }
 
+  public void testSystem416() {
+//    check("ValueQ[valueQVar]", "False");
+//    check("valueQVar=10;ValueQ[valueQVar]", "True");
+//    check("ValueQ[valueQVar[10]]", "False");
+    
+    check("ClearAll[valueQVar];valueQVar[x_]:={x*y};ValueQ[valueQVar[10]]", "True");
+  }
   // public void testSystem404() {
   // check("Plot3D[Sin[x]*Cos[y],{x,-10,10},{y,-10,10},{PlotRange->Automatic}]",
   // "");
