@@ -129,6 +129,18 @@ public interface ISymbol extends IExpr{ // Variable<IExpr>
 	public boolean isString(String symbolName);
 
 	/**
+	 * Returns <code>true</code>, if the given symbol is bound to a value.
+	 * 
+	 */
+	public boolean isValue(ISymbol symbol);
+	
+	/**
+   * Returns <code>true</code>, if the given AST is bound to a value.
+   * 
+   */
+  public boolean isValue(IAST ast);
+  
+	/**
 	 * Get the Attributes of this symbol (i.e. LISTABLE, FLAT, ORDERLESS,...)
 	 * 
 	 * @return

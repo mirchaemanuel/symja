@@ -643,7 +643,7 @@ public class EvalEngine implements IEvaluationEngine {
     return null;
   }
 
-  protected IExpr evalSymbol(final ISymbol symbol) {
+  public IExpr evalSymbol(final ISymbol symbol) {
     IExpr result;
     if (symbol.hasLocalVariableStack()) {// &&
       // !symbol.isLocalVariableStackEmpty())
