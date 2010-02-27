@@ -7,6 +7,8 @@ import org.matheclipse.core.expression.ComplexNum;
 import org.matheclipse.core.expression.Num;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IExpr;
+import org.matheclipse.core.interfaces.ISymbol;
+import org.matheclipse.parser.client.SyntaxError;
 
 /**
  * Arctangent
@@ -51,4 +53,10 @@ public class ArcTan extends AbstractTrigArg1 implements INumeric {
 		}
 		return Math.atan(stack[top]);
 	}
+	
+	@Override
+  public void setUp(final ISymbol symbol) throws SyntaxError {
+    symbol.setAttributes(ISymbol.LISTABLE | ISymbol.NUMERICFUNCTION);
+    super.setUp(symbol);
+  }
 }

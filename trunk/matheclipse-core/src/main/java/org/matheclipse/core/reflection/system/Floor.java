@@ -37,7 +37,7 @@ public class Floor implements IFunctionEvaluator, INumeric {
 	}
 
 	public void setUp(final ISymbol symbol) {
-		symbol.setAttributes(ISymbol.LISTABLE);
+		symbol.setAttributes(ISymbol.LISTABLE | ISymbol.NUMERICFUNCTION);
 	}
 
 	public double evalReal(final double[] stack, final int top, final int size) {

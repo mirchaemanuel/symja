@@ -17,6 +17,7 @@ import org.matheclipse.core.interfaces.IInteger;
 import org.matheclipse.core.interfaces.INum;
 import org.matheclipse.core.interfaces.INumber;
 import org.matheclipse.core.interfaces.ISymbol;
+import org.matheclipse.parser.client.SyntaxError;
 
 public class Times extends AbstractArgMultiple implements INumeric {
 
@@ -207,7 +208,7 @@ public class Times extends AbstractArgMultiple implements INumeric {
 
 	@Override
 	public void setUp(final ISymbol symbol) {
-		symbol.setAttributes(ISymbol.ONEIDENTITY | ISymbol.ORDERLESS | ISymbol.FLAT | ISymbol.LISTABLE);
+		symbol.setAttributes(ISymbol.ONEIDENTITY | ISymbol.ORDERLESS | ISymbol.FLAT | ISymbol.LISTABLE | ISymbol.NUMERICFUNCTION);
 	}
 
 	public double evalReal(final double[] stack, final int top, final int size) {

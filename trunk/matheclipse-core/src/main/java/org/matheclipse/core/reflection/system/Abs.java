@@ -7,6 +7,8 @@ import org.matheclipse.core.expression.Num;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.INumber;
+import org.matheclipse.core.interfaces.ISymbol;
+import org.matheclipse.parser.client.SyntaxError;
 
 /**
  * Absolute value of a number.
@@ -46,4 +48,9 @@ public class Abs extends AbstractTrigArg1 implements INumeric {
 		return F.num(arg1.abs());
 	}
 
+	@Override
+  public void setUp(final ISymbol symbol) throws SyntaxError {
+    symbol.setAttributes(ISymbol.LISTABLE | ISymbol.NUMERICFUNCTION);
+    super.setUp(symbol);
+  }
 }

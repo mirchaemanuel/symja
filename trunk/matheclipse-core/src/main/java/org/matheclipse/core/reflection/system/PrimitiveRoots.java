@@ -8,6 +8,8 @@ import org.matheclipse.core.expression.IntegerSym;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.IInteger;
+import org.matheclipse.core.interfaces.ISymbol;
+import org.matheclipse.parser.client.SyntaxError;
 
 /**
  * 
@@ -44,4 +46,9 @@ public class PrimitiveRoots extends AbstractTrigArg1 {
 		return null;
 	}
 
+	@Override
+  public void setUp(final ISymbol symbol) throws SyntaxError {
+    symbol.setAttributes(ISymbol.LISTABLE);
+    super.setUp(symbol);
+  }
 }

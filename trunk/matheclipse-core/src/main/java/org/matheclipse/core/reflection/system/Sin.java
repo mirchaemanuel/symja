@@ -7,6 +7,8 @@ import org.matheclipse.core.expression.ComplexNum;
 import org.matheclipse.core.expression.Num;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IExpr;
+import org.matheclipse.core.interfaces.ISymbol;
+import org.matheclipse.parser.client.SyntaxError;
 
 /**
  * Sine
@@ -65,4 +67,9 @@ public class Sin extends AbstractTrigArg1 implements INumeric {
 		return Math.sin(stack[top]);
 	}
 
+	@Override
+  public void setUp(final ISymbol symbol) throws SyntaxError {
+    symbol.setAttributes(ISymbol.LISTABLE | ISymbol.NUMERICFUNCTION);
+    super.setUp(symbol);
+  }
 }
