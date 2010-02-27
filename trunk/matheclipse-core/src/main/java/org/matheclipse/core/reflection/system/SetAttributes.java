@@ -95,6 +95,12 @@ public IExpr evaluate(final IAST functionList) {
 
           return F.Null;
         }
+        
+        if (((ISymbol) functionList.get(2)) == F.NumericFunction) {
+          sym.setAttributes(ISymbol.NUMERICFUNCTION);
+
+          return F.Null;
+        }
 
       } else {
         if ((functionList.get(2) instanceof IAST) && (((IAST) functionList.get(2)).head() == F.List)) {
@@ -142,6 +148,11 @@ public IExpr evaluate(final IAST functionList) {
             if (((ISymbol) lst.get(i)) == F.NHoldRest) {
               sym.setAttributes(symbolAttributes | ISymbol.NHOLDREST);
             }
+            
+            if (((ISymbol) lst.get(i)) == F.NumericFunction) {
+              sym.setAttributes(symbolAttributes | ISymbol.NUMERICFUNCTION);
+            }
+            
             symbolAttributes = sym.getAttributes();
           }
           // end for
