@@ -7,6 +7,8 @@ import org.matheclipse.core.expression.ComplexUtils;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.expression.Num;
 import org.matheclipse.core.interfaces.IExpr;
+import org.matheclipse.core.interfaces.ISymbol;
+import org.matheclipse.parser.client.SyntaxError;
 
 /**
  * Cosine
@@ -74,4 +76,9 @@ public class Cos extends AbstractTrigArg1 implements INumeric {
 //		super.setUp(symbol);
 //		createRuleFromMethodName(symbol, "Cos[x_Integer]", "evalInteger");
 //	}
+	@Override
+  public void setUp(final ISymbol symbol) throws SyntaxError {
+    symbol.setAttributes(ISymbol.LISTABLE | ISymbol.NUMERICFUNCTION);
+    super.setUp(symbol);
+  }
 }

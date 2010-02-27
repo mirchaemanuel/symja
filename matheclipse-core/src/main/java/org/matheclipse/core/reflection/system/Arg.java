@@ -9,6 +9,8 @@ import org.matheclipse.core.expression.Num;
 import org.matheclipse.core.interfaces.IComplex;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.ISignedNumber;
+import org.matheclipse.core.interfaces.ISymbol;
+import org.matheclipse.parser.client.SyntaxError;
 
 import apache.harmony.math.Rational;
 
@@ -72,4 +74,9 @@ public class Arg extends AbstractTrigArg1 implements INumeric {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
+  public void setUp(final ISymbol symbol) throws SyntaxError {
+    symbol.setAttributes(ISymbol.LISTABLE | ISymbol.NUMERICFUNCTION);
+    super.setUp(symbol);
+  }
 }

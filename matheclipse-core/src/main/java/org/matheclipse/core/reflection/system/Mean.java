@@ -34,4 +34,5 @@ public class Mean extends AbstractTrigArg1 {
 	public void setUp(final ISymbol symbol) throws SyntaxError {
 		symbol.setAttributes(ISymbol.NOATTRIBUTE);
 	}
+	
 }

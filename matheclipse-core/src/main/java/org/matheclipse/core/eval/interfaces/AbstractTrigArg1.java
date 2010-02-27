@@ -70,12 +70,6 @@ public abstract class AbstractTrigArg1 extends AbstractFunctionEvaluator {
 		return null;
 	}
 
-	@Override
-	public void setUp(final ISymbol symbol) throws SyntaxError {
-		symbol.setAttributes(ISymbol.LISTABLE | ISymbol.NUMERICFUNCTION);
-		super.setUp(symbol);
-	}
-
 	/**
 	 * Check if the given expression is canonical negative.
 	 * 

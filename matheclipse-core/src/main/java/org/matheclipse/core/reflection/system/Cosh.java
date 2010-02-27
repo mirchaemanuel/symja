@@ -7,6 +7,8 @@ import org.matheclipse.core.expression.ComplexNum;
 import org.matheclipse.core.expression.Num;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IExpr;
+import org.matheclipse.core.interfaces.ISymbol;
+import org.matheclipse.parser.client.SyntaxError;
 
 /**
  * Hyperbolic cosine
@@ -34,4 +36,10 @@ public IExpr numericEvalDC1(final ComplexNum arg1) {
 		}
 		return Math.cosh(stack[top]);
 	}
+  
+  @Override
+  public void setUp(final ISymbol symbol) throws SyntaxError {
+    symbol.setAttributes(ISymbol.LISTABLE | ISymbol.NUMERICFUNCTION);
+    super.setUp(symbol);
+  }
 }
