@@ -39,7 +39,7 @@ public class ValueQ extends AbstractFunctionEvaluator implements
 
   public boolean apply(final IExpr expr) {
     if (expr instanceof ISymbol) {
-      return ((ISymbol) expr).isValue((ISymbol) expr);
+      return ((ISymbol) expr).isValue();
     }
     if (expr instanceof IAST) {
       return ((IAST) expr).topHead().isValue((IAST) expr);

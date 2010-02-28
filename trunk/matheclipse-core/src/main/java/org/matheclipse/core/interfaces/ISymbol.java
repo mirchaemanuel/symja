@@ -129,10 +129,10 @@ public interface ISymbol extends IExpr{ // Variable<IExpr>
 	public boolean isString(String symbolName);
 
 	/**
-	 * Returns <code>true</code>, if the given symbol is bound to a value.
+	 * Returns <code>true</code>, if this symbol is bound to a value.
 	 * 
 	 */
-	public boolean isValue(ISymbol symbol);
+	public boolean isValue();
 	
 	/**
    * Returns <code>true</code>, if the given AST is bound to a value.

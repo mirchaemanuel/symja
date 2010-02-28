@@ -466,16 +466,15 @@ public class Symbol extends ExprImpl implements ISymbol {
   }
 
   @Override
-  public boolean isValue(ISymbol symbol) {
-    return EvalEngine.get().evalSymbol((ISymbol) symbol) != null;
+  public boolean isValue() {
+    return EvalEngine.get().evalSymbol(this) != null;
   }
 
   @Override
-  public boolean isValue(IAST expr) {
-    AST ast = (AST) expr;
+  public boolean isValue(IAST ast) {
     if (ast.topHead() instanceof ISymbol) {
       IExpr result = ((ISymbol) ast.head())
-          .evalDownRule(EvalEngine.get(), expr);
+          .evalDownRule(EvalEngine.get(), ast);
       return result != null;
     }
     return false;
