@@ -2210,12 +2210,20 @@ public class SystemTestCase extends AbstractTestCase {
   }
 
   public void testSystem416() {
-//    check("ValueQ[valueQVar]", "False");
-//    check("valueQVar=10;ValueQ[valueQVar]", "True");
-//    check("ValueQ[valueQVar[10]]", "False");
-    
-    check("ClearAll[valueQVar];valueQVar[x_]:={x*y};ValueQ[valueQVar[10]]", "True");
+    check("ValueQ[valueQVar]", "False");
+    check("valueQVar=10;ValueQ[valueQVar]", "True");
+    check("ValueQ[valueQVar[10]]", "False");
+
+    check("ClearAll[valueQVar];valueQVar[x_]:={x*y};ValueQ[valueQVar[10]]",
+        "True");
   }
+
+  public void testSystem417() {
+    check("NumericQ[Pi]", "True");
+    check("NumericQ[Sin[Cos[1/2*Pi^3]]]", "True");
+    check("NumericQ[Sin[Cos[1/2*x^3]]]", "False");
+  }
+
   // public void testSystem404() {
   // check("Plot3D[Sin[x]*Cos[y],{x,-10,10},{y,-10,10},{PlotRange->Automatic}]",
   // "");
@@ -2305,8 +2313,8 @@ public class SystemTestCase extends AbstractTestCase {
   public void testSystem997() {
     check(
         "GroebnerBasis[{a+b+c+d, a*b+a*d+b*c+c*d, a*b*c+a*b*d+a*c*d+b*c*d,1-a*b*c*d}, {d,c,b,a}]",
-        "{d+c+b+a,c^2+2*a*c+a^2,a^2*b^3+a^3*b^2-b-a,b*c-a*c+a^4*b^2+a*b-2*a^2,a^4*c-c+a^5-a,a^\n" + 
-        "6*b^2-a^2*b^2-a^4+1}");
+        "{d+c+b+a,c^2+2*a*c+a^2,a^2*b^3+a^3*b^2-b-a,b*c-a*c+a^4*b^2+a*b-2*a^2,a^4*c-c+a^5-a,a^\n"
+            + "6*b^2-a^2*b^2-a^4+1}");
     check("GroebnerBasis[{x-1},{x}]", "{x-1}");
     // check(
     // "GroebnerBasis[{a+b+c+d, a*b+a*d+b*c+c*d, a*b*c+a*b*d+a*c*d+b*c*d, 1-a*b*c*d}, {d,c,b,a}, MonomialOrder->DegreeReverseLexicographic, Modulus->1]",
