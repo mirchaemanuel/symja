@@ -1,5 +1,5 @@
 /*
- * $Id: ExpVector.java 2814 2009-09-17 21:53:19Z kredel $
+ * $Id: ExpVector.java 3003 2010-02-13 11:43:27Z kredel $
  */
 
 package edu.jas.poly;
@@ -258,6 +258,9 @@ public abstract class ExpVector implements AbelianGroupElem<ExpVector>
         if ( r != vars.length ) {
             return toString();
         }
+        if ( r == 0 ) {
+	    return s;
+	}
         long vi;
         for (int i = r-1; i > 0; i-- ) {
             vi = getVal( i );

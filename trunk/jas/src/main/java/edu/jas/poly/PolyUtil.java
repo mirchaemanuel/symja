@@ -1,5 +1,5 @@
 /*
- * $Id: PolyUtil.java 2964 2010-01-03 16:59:52Z kredel $
+ * $Id: PolyUtil.java 3021 2010-03-05 20:48:14Z kredel $
  */
 
 package edu.jas.poly;
@@ -14,11 +14,14 @@ import org.apache.log4j.Logger;
 
 import edu.jas.arith.BigInteger;
 import edu.jas.arith.BigRational;
+import edu.jas.arith.Rational;
+import edu.jas.arith.BigDecimal;
 import edu.jas.arith.ModInteger;
 import edu.jas.arith.ModIntegerRing;
 import edu.jas.arith.BigComplex;
 import edu.jas.arith.Modular;
 
+import edu.jas.structure.Element;
 import edu.jas.structure.RingElem;
 import edu.jas.structure.GcdRingElem;
 import edu.jas.structure.RingFactory;
@@ -351,6 +354,34 @@ public class PolyUtil {
                                  List<GenPolynomial<BigInteger>> L ) {
         return ListUtil.<GenPolynomial<BigInteger>,GenPolynomial<C>>map( L, 
                                                    new FromIntegerPoly<C>(fac) );
+    }
+
+
+    /**
+     * Convert to decimal coefficients.
+     * @param fac result polynomial factory.
+     * @param A polynomial with Rational coefficients to be converted.
+     * @return polynomial with BigDecimal coefficients.
+     */
+    public static <C extends RingElem<C> & Rational> 
+        GenPolynomial<BigDecimal> 
+        decimalFromRational( GenPolynomialRing<BigDecimal> fac,
+                             GenPolynomial<C> A ) {
+        return PolyUtil.<C,BigDecimal>map(fac,A, new RatToDec<C>() );
+    }
+
+
+    /**
+     * Convert to complex decimal coefficients.
+     * @param fac result polynomial factory.
+     * @param A polynomial with complex Rational coefficients to be converted.
+     * @return polynomial with Complex BigDecimal coefficients.
+     */
+    public static <C extends RingElem<C> & Rational> 
+        GenPolynomial<Complex<BigDecimal>> 
+        complexDecimalFromRational( GenPolynomialRing<Complex<BigDecimal>> fac,
+                                    GenPolynomial<Complex<C>> A ) {
+        return PolyUtil.<Complex<C>,Complex<BigDecimal>>map(fac,A, new CompRatToDec<C>(fac.coFac) );
     }
 
 
@@ -1888,6 +1919,42 @@ class RatToIntFactor implements UnaryFunctor<BigRational, BigInteger> {
                 java.math.BigInteger b = lcm.divide(c.denominator());
                 return new BigInteger(a.multiply(b));
             }
+        }
+    }
+}
+
+
+/**
+ * Conversion of Rational to BigDecimal.
+ * result = decimal(r).
+ */
+class RatToDec<C extends Element<C> & Rational> implements UnaryFunctor<C,BigDecimal> {
+    public BigDecimal eval(C c) {
+        if ( c == null ) {
+            return new BigDecimal();
+        } else {
+            return new BigDecimal(c.getRational());
+        }
+    }
+}
+
+
+/**
+ * Conversion of Complex Rational to Complex BigDecimal.
+ * result = decimal(r).
+ */
+class CompRatToDec<C extends RingElem<C> & Rational> implements UnaryFunctor<Complex<C>,Complex<BigDecimal>> {
+    ComplexRing<BigDecimal> ring;
+    public CompRatToDec(RingFactory<Complex<BigDecimal>> ring) {
+        this.ring = (ComplexRing<BigDecimal>) ring;
+    }
+    public Complex<BigDecimal> eval(Complex<C> c) {
+        if ( c == null ) {
+            return ring.getZERO();
+        } else {
+            BigDecimal r = new BigDecimal( c.getRe().getRational() );
+            BigDecimal i = new BigDecimal( c.getIm().getRational() );
+            return new Complex<BigDecimal>(ring,r,i);
         }
     }
 }
