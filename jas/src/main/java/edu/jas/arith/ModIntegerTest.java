@@ -1,5 +1,5 @@
 /*
- * $Id: ModIntegerTest.java 2187 2008-10-12 18:46:57Z kredel $
+ * $Id: ModIntegerTest.java 3017 2010-03-03 22:39:51Z kredel $
  */
 
 package edu.jas.arith;
@@ -320,6 +320,33 @@ public class ModIntegerTest extends TestCase {
      //System.out.println("primes = " + primes);
 
      assertTrue("all primes ", primes.checkPrimes() );
+   }
+
+
+/**
+ * Test Mersenne prime list.
+ * 
+ */
+ public void testMersennePrime() {
+     PrimeList primes = new PrimeList(PrimeList.Range.mersenne);
+     //System.out.println("primes = " + primes);
+
+     //assertTrue("all primes ", primes.checkPrimes() );
+
+     int i = 1;
+     //System.out.println("primes = ");
+     for ( java.math.BigInteger p : primes ) {
+         //System.out.println(i + " = " + p);
+         if ( i++ > 23 ) {
+            break;
+         }
+         //System.out.print(", ");
+     }
+     //System.out.println();
+
+     //System.out.println("primes = " + primes);
+
+     assertTrue("all primes ", primes.checkPrimes(15) );
    }
 
 }

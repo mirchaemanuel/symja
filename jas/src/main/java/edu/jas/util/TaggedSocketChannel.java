@@ -1,5 +1,5 @@
 /*
- * $Id: TaggedSocketChannel.java 2927 2009-12-27 15:33:47Z kredel $
+ * $Id: TaggedSocketChannel.java 3020 2010-03-05 19:47:06Z kredel $
  */
 
 package edu.jas.util;
@@ -118,7 +118,7 @@ public class TaggedSocketChannel extends Thread {
                 tq = queues.get(tag);
                 if (tq == null) {
                     if ( ! isRunning ) { // avoid dead-lock
-                        throw new IOException("receiver not running");
+                        throw new IOException("receiver not running for " + this);
                     }
                     //tq = new LinkedBlockingQueue();
                     //queues.put(tag, tq);

@@ -1,5 +1,5 @@
 /*
- * $Id: FactorInteger.java 2998 2010-02-07 18:14:57Z kredel $
+ * $Id: FactorInteger.java 3027 2010-03-07 19:13:54Z kredel $
  */
 
 package edu.jas.ufd;
@@ -288,7 +288,7 @@ public class FactorInteger<MOD extends GcdRingElem<MOD> & Modular> extends Facto
                     t = System.currentTimeMillis();
                     factors = searchFactorsNonMonic(P, M, mlist, AD);
                     t = System.currentTimeMillis() - t;
-                    System.out.println("only non monic time = " + t);
+                    //System.out.println("only non monic time = " + t);
                 }
             } else {
                 long t = System.currentTimeMillis();
@@ -366,7 +366,8 @@ public class FactorInteger<MOD extends GcdRingElem<MOD> & Modular> extends Facto
      *         p**e.
      * <b>Note:</b> does not work in all cases.
      */
-    List<GenPolynomial<BigInteger>> searchFactorsMonic(GenPolynomial<BigInteger> C, BigInteger M, List<GenPolynomial<MOD>> F, BitSet D) {
+    List<GenPolynomial<BigInteger>> searchFactorsMonic(GenPolynomial<BigInteger> C, BigInteger M, 
+                                                       List<GenPolynomial<MOD>> F, BitSet D) {
         //System.out.println("*** monic factor combination ***");
         if (C == null || C.isZERO() || F == null || F.size() == 0) {
             throw new RuntimeException("C must be nonzero and F must be nonempty");
