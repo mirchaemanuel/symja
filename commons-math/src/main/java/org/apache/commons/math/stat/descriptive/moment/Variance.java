@@ -62,7 +62,7 @@ import org.apache.commons.math.stat.descriptive.AbstractStorelessUnivariateStati
  * one of the threads invokes the <code>increment()</code> or
  * <code>clear()</code> method, it must be synchronized externally.</p>
  *
- * @version $Revision: 894705 $ $Date: 2009-12-30 21:24:54 +0100 (Mi, 30 Dez 2009) $
+ * @version $Revision: 908626 $ $Date: 2010-02-10 19:44:42 +0100 (Mi, 10 Feb 2010) $
  */
 public class Variance extends AbstractStorelessUnivariateStatistic implements Serializable, WeightedEvaluation {
 
@@ -315,7 +315,7 @@ public class Variance extends AbstractStorelessUnivariateStatistic implements Se
         }
         return var;
     }
-    
+
     /**
      * <p>
      * Returns the weighted variance of the entries in the the input array.</p>
@@ -411,7 +411,7 @@ public class Variance extends AbstractStorelessUnivariateStatistic implements Se
         }
         return var;
     }
-    
+
     /**
      * Returns the variance of the entries in the input array, using the
      * precomputed mean value.  Returns <code>Double.NaN</code> if the array
@@ -518,7 +518,7 @@ public class Variance extends AbstractStorelessUnivariateStatistic implements Se
         }
         return var;
     }
-    
+
     /**
      * <p>Returns the weighted variance of the values in the input array, using
      * the precomputed weighted mean value.</p>

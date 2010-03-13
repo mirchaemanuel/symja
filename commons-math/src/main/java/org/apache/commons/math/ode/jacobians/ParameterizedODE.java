@@ -14,33 +14,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.commons.math.distribution;
 
-/**
- * Student's t-Distribution.
+package org.apache.commons.math.ode.jacobians;
+
+import org.apache.commons.math.ode.FirstOrderDifferentialEquations;
+
+
+/** This interface represents {@link FirstOrderDifferentialEquations
+ * first order differential equations} with parameters.
  *
- * <p>
- * References:
- * <ul>
- * <li><a href="http://mathworld.wolfram.com/Studentst-Distribution.html">
- * Student's t-Distribution</a></li>
- * </ul>
- * </p>
+ * @see FirstOrderIntegratorWithJacobians
  *
- * @version $Revision: 920852 $ $Date: 2010-03-09 13:53:44 +0100 (Di, 09 Mrz 2010) $
+ * @version $Revision: 918702 $ $Date: 2010-03-03 22:28:16 +0100 (Mi, 03 Mrz 2010) $
+ * @since 2.1
  */
-public interface TDistribution extends ContinuousDistribution {
-    /**
-     * Modify the degrees of freedom.
-     * @param degreesOfFreedom the new degrees of freedom.
-     * @deprecated as of v2.1
-     */
-    @Deprecated
-    void setDegreesOfFreedom(double degreesOfFreedom);
 
-    /**
-     * Access the degrees of freedom.
-     * @return the degrees of freedom.
+public interface ParameterizedODE
+    extends FirstOrderDifferentialEquations {
+
+    /** Get the number of parameters.
+     * @return number of parameters
      */
-    double getDegreesOfFreedom();
+    int getParametersDimension();
+
+    /** Set a parameter.
+     * @param i index of the parameters (must be between 0
+     * and {@link #getParametersDimension() getParametersDimension() - 1})
+     * @param value value for the parameter
+     */
+    void setParameter(int i, double value);
+
 }

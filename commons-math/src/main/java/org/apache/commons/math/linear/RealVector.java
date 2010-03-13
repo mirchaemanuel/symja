@@ -42,7 +42,7 @@ import org.apache.commons.math.analysis.UnivariateRealFunction;
  *   RealVector result = v.mapAddToSelf(3.0).mapTanToSelf().mapSquareToSelf();
  * </pre>
  *
- * @version $Revision: 889008 $ $Date: 2009-12-09 23:56:11 +0100 (Mi, 09 Dez 2009) $
+ * @version $Revision: 902214 $ $Date: 2010-01-22 19:40:28 +0100 (Fr, 22 Jan 2010) $
  * @since 2.0
  */
 public interface RealVector {
@@ -110,7 +110,7 @@ public interface RealVector {
      * Specialized implementations may choose to not iterate over all dimensions, either because those values are
      * unset, or are equal to defaultValue(), or are small enough to be ignored for the purposes of iteration.
      * No guarantees are made about order of iteration.
-     * In dense implementations, this method will often delegate to {@see #iterator() }
+     * In dense implementations, this method will often delegate to {@link #iterator()}
      * @return a sparse iterator
      */
     Iterator<Entry> sparseIterator();

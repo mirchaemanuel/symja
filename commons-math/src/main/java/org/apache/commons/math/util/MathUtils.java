@@ -25,7 +25,7 @@ import org.apache.commons.math.MathRuntimeException;
 
 /**
  * Some useful additions to the built-in functions in {@link Math}.
- * @version $Revision: 894730 $ $Date: 2009-12-31 00:03:23 +0100 (Do, 31 Dez 2009) $
+ * @version $Revision: 917277 $ $Date: 2010-02-28 20:44:49 +0100 (So, 28 Feb 2010) $
  */
 public final class MathUtils {
 
@@ -691,9 +691,9 @@ public final class MathUtils {
      * <li>The invocation <code>gcd(0L, 0L)</code> is the only one which returns
      * <code>0L</code>.</li>
      * </ul>
-     * 
-     * @param u any number
-     * @param v any number
+     *
+     * @param p any number
+     * @param q any number
      * @return the greatest common divisor, never negative
      * @throws ArithmeticException if the result cannot be represented as a nonnegative long
      * value
@@ -708,7 +708,7 @@ public final class MathUtils {
                         "overflow: gcd({0}, {1}) is 2^63",
                         p, q);
             }
-            return (Math.abs(u) + Math.abs(v));
+            return Math.abs(u) + Math.abs(v);
         }
         // keep u and v negative, as negative integers range down to
         // -2^63, while positive numbers can only be as large as 2^63-1
@@ -901,7 +901,7 @@ public final class MathUtils {
      * <li>The result of <code>lcm(0L, x)</code> and <code>lcm(x, 0L)</code> is
      * <code>0L</code> for any <code>x</code>.
      * </ul>
-     * 
+     *
      * @param a any number
      * @param b any number
      * @return the least common multiple, never negative

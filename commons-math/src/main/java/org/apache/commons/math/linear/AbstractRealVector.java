@@ -28,7 +28,7 @@ import org.apache.commons.math.analysis.ComposableFunction;
 /**
  * This class provides default basic implementations for many methods in the
  * {@link RealVector} interface with.
- * @version $Revision: 894367 $ $Date: 2009-12-29 13:24:58 +0100 (Di, 29 Dez 2009) $
+ * @version $Revision: 904231 $ $Date: 2010-01-28 20:42:31 +0100 (Do, 28 Jan 2010) $
  * @since 2.1
  */
 public abstract class AbstractRealVector implements RealVector {
@@ -290,6 +290,58 @@ public abstract class AbstractRealVector implements RealVector {
             d = Math.max(Math.abs(e.getValue() - v[e.getIndex()]), d);
         }
         return d;
+    }
+
+    /** Get the index of the minimum entry.
+     * @return index of the minimum entry or -1 if vector length is 0
+     * or all entries are NaN
+     */
+    public int getMinIndex() {
+        int minIndex    = -1;
+        double minValue = Double.POSITIVE_INFINITY;
+        Iterator<Entry> iterator = iterator();
+        while (iterator.hasNext()) {
+            final Entry entry = iterator.next();
+            if (entry.getValue() <= minValue) {
+                minIndex = entry.getIndex();
+                minValue = entry.getValue();
+            }
+        }
+        return minIndex;
+    }
+
+    /** Get the value of the minimum entry.
+     * @return value of the minimum entry or NaN if all entries are NaN
+     */
+    public double getMinValue() {
+        final int minIndex = getMinIndex();
+        return minIndex < 0 ? Double.NaN : getEntry(minIndex);
+    }
+
+    /** Get the index of the maximum entry.
+     * @return index of the maximum entry or -1 if vector length is 0
+     * or all entries are NaN
+     */
+    public int getMaxIndex() {
+        int maxIndex    = -1;
+        double maxValue = Double.NEGATIVE_INFINITY;
+        Iterator<Entry> iterator = iterator();
+        while (iterator.hasNext()) {
+            final Entry entry = iterator.next();
+            if (entry.getValue() >= maxValue) {
+                maxIndex = entry.getIndex();
+                maxValue = entry.getValue();
+            }
+        }
+        return maxIndex;
+    }
+
+    /** Get the value of the maximum entry.
+     * @return value of the maximum entry or NaN if all entries are NaN
+     */
+    public double getMaxValue() {
+        final int maxIndex = getMaxIndex();
+        return maxIndex < 0 ? Double.NaN : getEntry(maxIndex);
     }
 
     /** {@inheritDoc} */
@@ -793,11 +845,13 @@ public abstract class AbstractRealVector implements RealVector {
         }
 
         /** {@inheritDoc} */
+        @Override
         public double getValue() {
             return getEntry(getIndex());
         }
 
         /** {@inheritDoc} */
+        @Override
         public void setValue(double newValue) {
             setEntry(getIndex(), newValue);
         }

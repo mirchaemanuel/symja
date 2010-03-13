@@ -24,7 +24,7 @@ import org.apache.commons.math.random.JDKRandomGenerator;
  * of the algorithm can be configured for a specific problem.
  *
  * @since 2.0
- * @version $Revision: 889006 $ $Date: 2009-12-09 23:46:36 +0100 (Mi, 09 Dez 2009) $
+ * @version $Revision: 902929 $ $Date: 2010-01-25 20:03:56 +0100 (Mo, 25 Jan 2010) $
  */
 public class GeneticAlgorithm {
 
@@ -34,6 +34,7 @@ public class GeneticAlgorithm {
      * Use {@link #setRandomGenerator(RandomGenerator)} to supply an alternative
      * to the default JDK-provided PRNG.
      */
+    //@GuardedBy("this")
     private static RandomGenerator randomGenerator = new JDKRandomGenerator();
 
     /** the crossover policy used by the algorithm. */

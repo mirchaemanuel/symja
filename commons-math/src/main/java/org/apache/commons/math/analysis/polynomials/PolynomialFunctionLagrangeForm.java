@@ -30,7 +30,7 @@ import org.apache.commons.math.analysis.UnivariateRealFunction;
  * The approximated function should be smooth enough for Lagrange polynomial
  * to work well. Otherwise, consider using splines instead.</p>
  *
- * @version $Revision: 825919 $ $Date: 2009-10-16 16:51:55 +0200 (Fr, 16 Okt 2009) $
+ * @version $Revision: 908190 $ $Date: 2010-02-09 21:07:36 +0100 (Di, 09 Feb 2010) $
  * @since 1.2
  */
 public class PolynomialFunctionLagrangeForm implements UnivariateRealFunction {
@@ -133,6 +133,9 @@ public class PolynomialFunctionLagrangeForm implements UnivariateRealFunction {
      * Returns a copy of the coefficients array.
      * <p>
      * Changes made to the returned copy will not affect the polynomial.</p>
+     * <p>
+     * Note that coefficients computation can be ill-conditioned. Use with caution
+     * and only when it is necessary.</p>
      *
      * @return a fresh copy of the coefficients array
      */

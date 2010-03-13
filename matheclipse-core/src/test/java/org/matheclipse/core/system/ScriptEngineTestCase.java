@@ -32,16 +32,16 @@ public class ScriptEngineTestCase extends TestCase {
     ScriptEngine engine_2 = scriptManager.getEngineByExtension("m");
     try {
       stringResult = (String) engine_1.eval("D[Sin[x]*Cos[x],x]");
-      assertEquals("Cos[x]^2-Sin[x]^2", stringResult);
+      assertEquals("-Sin[x]^2+Cos[x]^2", stringResult);
     } catch (Exception ex) {
       ex.printStackTrace();
     }
 
     try {
       stringResult = (String) engine_1.eval("Expand[(x+5)^3]");
-      assertEquals("125+75*x+15*x^2+x^3", stringResult);
+      assertEquals("x^3+15*x^2+75*x+125", stringResult);
       stringResult = (String) engine_1.eval("Factor[" + stringResult + "]");
-      assertEquals("(5+x)^3", stringResult);
+      assertEquals("(x+5)^3", stringResult);
     } catch (Exception ex) {
       ex.printStackTrace();
     }

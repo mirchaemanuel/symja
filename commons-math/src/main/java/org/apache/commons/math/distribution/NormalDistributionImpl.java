@@ -28,10 +28,13 @@ import org.apache.commons.math.special.Erf;
  * Default implementation of
  * {@link org.apache.commons.math.distribution.NormalDistribution}.
  *
- * @version $Revision: 811685 $ $Date: 2009-09-05 19:36:48 +0200 (Sa, 05 Sep 2009) $
+ * @version $Revision: 920852 $ $Date: 2010-03-09 13:53:44 +0100 (Di, 09 Mrz 2010) $
  */
 public class NormalDistributionImpl extends AbstractContinuousDistribution
         implements NormalDistribution, Serializable {
+
+    /** Default inverse cumulative probability accuracy */
+    public static final double DEFAULT_INVERSE_ABSOLUTE_ACCURACY = 1e-9;
 
     /** Serializable version identifier */
     private static final long serialVersionUID = 8589540077390120676L;
@@ -45,15 +48,31 @@ public class NormalDistributionImpl extends AbstractContinuousDistribution
     /** The standard deviation of this distribution. */
     private double standardDeviation = 1;
 
+    /** Inverse cumulative probability accuracy */
+    private final double solverAbsoluteAccuracy;
+
     /**
      * Create a normal distribution using the given mean and standard deviation.
      * @param mean mean for this distribution
      * @param sd standard deviation for this distribution
      */
     public NormalDistributionImpl(double mean, double sd){
+        this(mean, sd, DEFAULT_INVERSE_ABSOLUTE_ACCURACY);
+    }
+
+    /**
+     * Create a normal distribution using the given mean, standard deviation and
+     * inverse cumulative distribution accuracy.
+     *
+     * @param mean mean for this distribution
+     * @param sd standard deviation for this distribution
+     * @param inverseCumAccuracy inverse cumulative probability accuracy
+     */
+    public NormalDistributionImpl(double mean, double sd, double inverseCumAccuracy) {
         super();
-        setMean(mean);
-        setStandardDeviation(sd);
+        setMeanInternal(mean);
+        setStandardDeviationInternal(sd);
+        solverAbsoluteAccuracy = inverseCumAccuracy;
     }
 
     /**
@@ -75,8 +94,17 @@ public class NormalDistributionImpl extends AbstractContinuousDistribution
     /**
      * Modify the mean.
      * @param mean for this distribution
+     * @deprecated as of 2.1 (class will become immutable in 3.0)
      */
+    @Deprecated
     public void setMean(double mean) {
+        setMeanInternal(mean);
+    }
+    /**
+     * Modify the mean.
+     * @param mean for this distribution
+     */
+    private void setMeanInternal(double mean) {
         this.mean = mean;
     }
 
@@ -92,8 +120,18 @@ public class NormalDistributionImpl extends AbstractContinuousDistribution
      * Modify the standard deviation.
      * @param sd standard deviation for this distribution
      * @throws IllegalArgumentException if <code>sd</code> is not positive.
+     * @deprecated as of 2.1 (class will become immutable in 3.0)
      */
+    @Deprecated
     public void setStandardDeviation(double sd) {
+        setStandardDeviationInternal(sd);
+    }
+    /**
+     * Modify the standard deviation.
+     * @param sd standard deviation for this distribution
+     * @throws IllegalArgumentException if <code>sd</code> is not positive.
+     */
+    private void setStandardDeviationInternal(double sd) {
         if (sd <= 0.0) {
             throw MathRuntimeException.createIllegalArgumentException(
                   "standard deviation must be positive ({0})",
@@ -109,8 +147,8 @@ public class NormalDistributionImpl extends AbstractContinuousDistribution
      * @return The pdf at point x.
      */
     public double density(Double x) {
-        double x0 = x - getMean();
-        return Math.exp(-x0 * x0 / (2 * getStandardDeviation() * getStandardDeviation())) / (getStandardDeviation() * SQRT2PI);
+        double x0 = x - mean;
+        return Math.exp(-x0 * x0 / (2 * standardDeviation * standardDeviation)) / (standardDeviation * SQRT2PI);
     }
 
     /**
@@ -134,6 +172,17 @@ public class NormalDistributionImpl extends AbstractContinuousDistribution
                 throw ex;
             }
         }
+    }
+
+    /**
+     * Return the absolute accuracy setting of the solver used to estimate
+     * inverse cumulative probabilities.
+     *
+     * @return the solver absolute accuracy
+     */
+    @Override
+    protected double getSolverAbsoluteAccuracy() {
+        return solverAbsoluteAccuracy;
     }
 
     /**
@@ -178,7 +227,7 @@ public class NormalDistributionImpl extends AbstractContinuousDistribution
         if (p < .5) {
             ret = -Double.MAX_VALUE;
         } else {
-            ret = getMean();
+            ret = mean;
         }
 
         return ret;
@@ -198,7 +247,7 @@ public class NormalDistributionImpl extends AbstractContinuousDistribution
         double ret;
 
         if (p < .5) {
-            ret = getMean();
+            ret = mean;
         } else {
             ret = Double.MAX_VALUE;
         }
@@ -219,11 +268,11 @@ public class NormalDistributionImpl extends AbstractContinuousDistribution
         double ret;
 
         if (p < .5) {
-            ret = getMean() - getStandardDeviation();
+            ret = mean - standardDeviation;
         } else if (p > .5) {
-            ret = getMean() + getStandardDeviation();
+            ret = mean + standardDeviation;
         } else {
-            ret = getMean();
+            ret = mean;
         }
 
         return ret;

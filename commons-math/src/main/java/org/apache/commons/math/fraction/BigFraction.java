@@ -28,7 +28,7 @@ import org.apache.commons.math.util.MathUtils;
  * Representation of a rational number without any overflow. This class is
  * immutable.
  *
- * @version $Revision: 885278 $ $Date: 2009-11-29 22:47:51 +0100 (So, 29 Nov 2009) $
+ * @version $Revision: 906251 $ $Date: 2010-02-03 22:19:54 +0100 (Mi, 03 Feb 2010) $
  * @since 2.0
  */
 public class BigFraction
@@ -900,13 +900,12 @@ public class BigFraction
      *             if the fraction is <code>null</code>.
      */
     public BigFraction multiply(final BigFraction fraction) {
-        BigFraction ret = ZERO;
-
-        if (getNumeratorAsInt() != 0 && fraction.getNumeratorAsInt() != 0) {
-            ret = new BigFraction(numerator.multiply(fraction.numerator), denominator.multiply(fraction.denominator));
+        if (numerator.equals(BigInteger.ZERO) ||
+            fraction.numerator.equals(BigInteger.ZERO)) {
+            return ZERO;
         }
-
-        return ret;
+        return new BigFraction(numerator.multiply(fraction.numerator),
+                               denominator.multiply(fraction.denominator));
     }
 
     /**

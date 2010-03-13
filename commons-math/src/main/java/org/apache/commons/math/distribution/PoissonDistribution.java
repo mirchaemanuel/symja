@@ -29,7 +29,7 @@ import org.apache.commons.math.MathException;
  * </ul>
  * </p>
  *
- * @version $Revision: 811786 $ $Date: 2009-09-06 11:36:08 +0200 (So, 06 Sep 2009) $
+ * @version $Revision: 920852 $ $Date: 2010-03-09 13:53:44 +0100 (Di, 09 Mrz 2010) $
  */
 public interface PoissonDistribution extends IntegerDistribution {
 
@@ -47,7 +47,9 @@ public interface PoissonDistribution extends IntegerDistribution {
      *
      * @param p the mean
      * @throws IllegalArgumentException if p &le; 0
+     * @deprecated as of v2.1
      */
+    @Deprecated
     void setMean(double p);
 
     /**

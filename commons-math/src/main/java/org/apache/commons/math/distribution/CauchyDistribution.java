@@ -29,7 +29,7 @@ package org.apache.commons.math.distribution;
  * </p>
  *
  * @since 1.1
- * @version $Revision: 811685 $ $Date: 2009-09-05 19:36:48 +0200 (Sa, 05 Sep 2009) $
+ * @version $Revision: 920852 $ $Date: 2010-03-09 13:53:44 +0100 (Di, 09 Mrz 2010) $
  */
 public interface CauchyDistribution extends ContinuousDistribution {
 
@@ -48,12 +48,16 @@ public interface CauchyDistribution extends ContinuousDistribution {
     /**
      * Modify the median.
      * @param median for this distribution
+     * @deprecated as of v2.1
      */
+    @Deprecated
     void setMedian(double median);
 
     /**
      * Modify the scale parameter.
      * @param s scale parameter for this distribution
+     * @deprecated as of v2.1
      */
+    @Deprecated
     void setScale(double s);
 }
