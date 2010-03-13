@@ -33,7 +33,7 @@ import org.apache.commons.math.fraction.Fraction;
 /**
  * A collection of static methods that operate on or return matrices.
  *
- * @version $Revision: 811685 $ $Date: 2009-09-05 19:36:48 +0200 (Sa, 05 Sep 2009) $
+ * @version $Revision: 903046 $ $Date: 2010-01-26 03:07:26 +0100 (Di, 26 Jan 2010) $
  */
 public class MatrixUtils {
 
@@ -156,11 +156,11 @@ public class MatrixUtils {
      * @throws IllegalArgumentException if dimension is not positive
      * @since 2.0
      */
-    @SuppressWarnings("unchecked")
     public static <T extends FieldElement<T>> FieldMatrix<T>
         createFieldIdentityMatrix(final Field<T> field, final int dimension) {
         final T zero = field.getZero();
         final T one  = field.getOne();
+        @SuppressWarnings("unchecked") // zero is type T
         final T[][] d = (T[][]) Array.newInstance(zero.getClass(), new int[] { dimension, dimension });
         for (int row = 0; row < dimension; row++) {
             final T[] dRow = d[row];

@@ -22,15 +22,17 @@ import org.apache.commons.math.MathException;
  * Computes the cumulative, inverse cumulative and density functions for the beta distribuiton.
  *
  * @see <a href="http://en.wikipedia.org/wiki/Beta_distribution">Beta_distribution</a>
- * @version $Revision: 705239 $ $Date: 2008-10-16 15:32:32 +0200 (Do, 16 Okt 2008) $
+ * @version $Revision: 920852 $ $Date: 2010-03-09 13:53:44 +0100 (Di, 09 Mrz 2010) $
  * @since 2.0
  */
 public interface BetaDistribution extends ContinuousDistribution, HasDensity<Double> {
     /**
-      * Modify the shape parameter, alpha.
-      * @param alpha the new shape parameter.
-      */
-     void setAlpha(double alpha);
+     * Modify the shape parameter, alpha.
+     * @param alpha the new shape parameter.
+     * @deprecated as of 2.1
+     */
+    @Deprecated
+    void setAlpha(double alpha);
 
      /**
       * Access the shape parameter, alpha
@@ -41,7 +43,9 @@ public interface BetaDistribution extends ContinuousDistribution, HasDensity<Dou
      /**
       * Modify the shape parameter, beta.
       * @param beta the new scale parameter.
+      * @deprecated as of 2.1
       */
+     @Deprecated
      void setBeta(double beta);
 
      /**

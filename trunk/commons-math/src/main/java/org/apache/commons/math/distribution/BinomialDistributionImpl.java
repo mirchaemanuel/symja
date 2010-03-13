@@ -25,7 +25,7 @@ import org.apache.commons.math.special.Beta;
 /**
  * The default implementation of {@link BinomialDistribution}.
  *
- * @version $Revision: 830771 $ $Date: 2009-10-28 22:53:35 +0100 (Mi, 28 Okt 2009) $
+ * @version $Revision: 920852 $ $Date: 2010-03-09 13:53:44 +0100 (Di, 09 Mrz 2010) $
  */
 public class BinomialDistributionImpl extends AbstractIntegerDistribution
         implements BinomialDistribution, Serializable {
@@ -48,8 +48,8 @@ public class BinomialDistributionImpl extends AbstractIntegerDistribution
      */
     public BinomialDistributionImpl(int trials, double p) {
         super();
-        setNumberOfTrials(trials);
-        setProbabilityOfSuccess(p);
+        setNumberOfTrialsInternal(trials);
+        setProbabilityOfSuccessInternal(p);
     }
 
     /**
@@ -76,8 +76,20 @@ public class BinomialDistributionImpl extends AbstractIntegerDistribution
      * @param trials the new number of trials.
      * @throws IllegalArgumentException if <code>trials</code> is not a valid
      *             number of trials.
+     * @deprecated as of 2.1 (class will become immutable in 3.0)
      */
+    @Deprecated
     public void setNumberOfTrials(int trials) {
+        setNumberOfTrialsInternal(trials);
+    }
+    /**
+     * Change the number of trials for this distribution.
+     *
+     * @param trials the new number of trials.
+     * @throws IllegalArgumentException if <code>trials</code> is not a valid
+     *             number of trials.
+     */
+    private void setNumberOfTrialsInternal(int trials) {
         if (trials < 0) {
             throw MathRuntimeException.createIllegalArgumentException(
                     "number of trials must be non-negative ({0})", trials);
@@ -91,8 +103,20 @@ public class BinomialDistributionImpl extends AbstractIntegerDistribution
      * @param p the new probability of success.
      * @throws IllegalArgumentException if <code>p</code> is not a valid
      *             probability.
+     * @deprecated as of 2.1 (class will become immutable in 3.0)
      */
+    @Deprecated
     public void setProbabilityOfSuccess(double p) {
+        setProbabilityOfSuccessInternal(p);
+    }
+    /**
+     * Change the probability of success for this distribution.
+     *
+     * @param p the new probability of success.
+     * @throws IllegalArgumentException if <code>p</code> is not a valid
+     *             probability.
+     */
+    private void setProbabilityOfSuccessInternal(double p) {
         if (p < 0.0 || p > 1.0) {
             throw MathRuntimeException.createIllegalArgumentException(
                     "{0} out of [{1}, {2}] range", p, 0.0, 1.0);
@@ -123,7 +147,7 @@ public class BinomialDistributionImpl extends AbstractIntegerDistribution
      */
     @Override
     protected int getDomainUpperBound(double p) {
-        return getNumberOfTrials();
+        return numberOfTrials;
     }
 
     /**
@@ -139,11 +163,11 @@ public class BinomialDistributionImpl extends AbstractIntegerDistribution
         double ret;
         if (x < 0) {
             ret = 0.0;
-        } else if (x >= getNumberOfTrials()) {
+        } else if (x >= numberOfTrials) {
             ret = 1.0;
         } else {
             ret = 1.0 - Beta.regularizedBeta(getProbabilityOfSuccess(),
-                    x + 1.0, getNumberOfTrials() - x);
+                    x + 1.0, numberOfTrials - x);
         }
         return ret;
     }
@@ -156,7 +180,7 @@ public class BinomialDistributionImpl extends AbstractIntegerDistribution
      */
     public double probability(int x) {
         double ret;
-        if (x < 0 || x > getNumberOfTrials()) {
+        if (x < 0 || x > numberOfTrials) {
             ret = 0.0;
         } else {
             ret = Math.exp(SaddlePointExpansion.logBinomialProbability(x,

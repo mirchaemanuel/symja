@@ -17,11 +17,11 @@ public class CombinatoricTestCase extends AbstractTestCase {
   public void testCombinatoric() {
   	check(
       "KOrderlessPartitions[a+b+b+c+d,3]",
-      "{{a,2*b,c+d},{a,2*b+c,d},{a+2*b,c,d},{a,2*b+d,c},{a+2*b,d,c},{a,c,2*b+d},{a+c,2*b,d},{a,c+d,\n" + 
-      "2*b},{a+c,d,2*b},{a,d,2*b+c},{a+d,2*b,c},{a+d,c,2*b},{2*b,a,c+d},{2*b,a+c,d},{2*b,a+d,c},{\n" + 
-      "2*b,c,a+d},{2*b+c,a,d},{2*b,c+d,a},{2*b+c,d,a},{2*b,d,a+c},{2*b+d,a,c},{2*b+d,c,a},{c,a,\n" + 
-      "2*b+d},{c,a+2*b,d},{c,a+d,2*b},{c,2*b,a+d},{c,2*b+d,a},{c,d,a+2*b},{c+d,a,2*b},{c+d,\n" + 
-      "2*b,a},{d,a,2*b+c},{d,a+2*b,c},{d,a+c,2*b},{d,2*b,a+c},{d,2*b+c,a},{d,c,a+2*b}}");
+      "{{a,2*b,d+c},{a,c+2*b,d},{2*b+a,c,d},{a,d+2*b,c},{2*b+a,d,c},{a,c,d+2*b},{c+a,2*b,d},{a,d+c,\n" + 
+      "2*b},{c+a,d,2*b},{a,d,c+2*b},{d+a,2*b,c},{d+a,c,2*b},{2*b,a,d+c},{2*b,c+a,d},{2*b,d+a,c},{\n" + 
+      "2*b,c,d+a},{c+2*b,a,d},{2*b,d+c,a},{c+2*b,d,a},{2*b,d,c+a},{d+2*b,a,c},{d+2*b,c,a},{c,a,d+\n" + 
+      "2*b},{c,2*b+a,d},{c,d+a,2*b},{c,2*b,d+a},{c,d+2*b,a},{c,d,2*b+a},{d+c,a,2*b},{d+c,\n" + 
+      "2*b,a},{d,a,c+2*b},{d,2*b+a,c},{d,c+a,2*b},{d,2*b,c+a},{d,c+2*b,a},{d,c,2*b+a}}");
 
     check(
       "KPartitions[{a,b,c,d,e},3]",

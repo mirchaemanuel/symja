@@ -42,7 +42,7 @@ import java.util.List;
  *
  * @param <T> generic type of the {@link AbstractListChromosome}s for crossover
  * @since 2.0
- * @version $Revision: 811685 $ $Date: 2009-09-05 19:36:48 +0200 (Sa, 05 Sep 2009) $
+ * @version $Revision: 903046 $ $Date: 2010-01-26 03:07:26 +0100 (Di, 26 Jan 2010) $
  *
  */
 public class OnePointCrossover<T> implements CrossoverPolicy {
@@ -66,9 +66,9 @@ public class OnePointCrossover<T> implements CrossoverPolicy {
      * @param second second parent (p2)
      * @return pair of two children (c1,c2)
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("unchecked") // OK because of instanceof checks
     public ChromosomePair crossover(Chromosome first, Chromosome second) {
-        if (! (first instanceof AbstractListChromosome && second instanceof AbstractListChromosome)) {
+        if (! (first instanceof AbstractListChromosome<?> && second instanceof AbstractListChromosome<?>)) {
             throw new IllegalArgumentException("One point crossover works on FixedLengthChromosomes only.");
         }
         return crossover((AbstractListChromosome<T>) first, (AbstractListChromosome<T>) second);

@@ -43,7 +43,7 @@ import org.apache.commons.math.MathRuntimeException;
  * The values are ordered using the default (natural order), unless a
  * <code>Comparator</code> is supplied in the constructor.</p>
  *
- * @version $Revision: 894529 $ $Date: 2009-12-30 02:27:40 +0100 (Mi, 30 Dez 2009) $
+ * @version $Revision: 902203 $ $Date: 2010-01-22 19:27:41 +0100 (Fr, 22 Jan 2010) $
  */
 public class Frequency implements Serializable {
 
@@ -164,6 +164,7 @@ public class Frequency implements Serializable {
      * @param v the value to add.
      * @deprecated to be removed in math 3.0
      */
+    @Deprecated
     public void addValue(Integer v) {
         addValue(Long.valueOf(v.longValue()));
     }
@@ -300,7 +301,7 @@ public class Frequency implements Serializable {
      */
     @Deprecated
     public double getPct(Object v) {
-        return getCumPct((Comparable<?>) v);
+        return getPct((Comparable<?>) v);
     }
 
     /**

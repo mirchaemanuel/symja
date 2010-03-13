@@ -35,7 +35,7 @@ package org.apache.commons.math.distribution;
  * </ul>
  * </p>
  *
- * @version $Revision: 811685 $ $Date: 2009-09-05 19:36:48 +0200 (Sa, 05 Sep 2009) $
+ * @version $Revision: 920852 $ $Date: 2010-03-09 13:53:44 +0100 (Di, 09 Mrz 2010) $
  * @since 1.2
  */
 public interface PascalDistribution extends IntegerDistribution {
@@ -57,13 +57,17 @@ public interface PascalDistribution extends IntegerDistribution {
      * Change the number of successes for this distribution.
      *
      * @param successes the new number of successes
+     * @deprecated as of v2.1
      */
+    @Deprecated
     void setNumberOfSuccesses(int successes);
 
     /**
      * Change the probability of success for this distribution.
      *
      * @param p the new probability of success
+     * @deprecated as of v2.1
      */
+    @Deprecated
     void setProbabilityOfSuccess(double p);
 }

@@ -29,7 +29,7 @@ import org.apache.commons.math.special.Beta;
  * Beta distribution</a></li>
  * </ul>
  * </p>
- * @version $Revision: 762087 $ $Date: 2009-04-05 16:20:18 +0200 (So, 05 Apr 2009) $
+ * @version $Revision: 920852 $ $Date: 2010-03-09 13:53:44 +0100 (Di, 09 Mrz 2010) $
  * @since 2.0
  */
 public class BetaDistributionImpl
@@ -60,7 +60,10 @@ public class BetaDistributionImpl
         z = Double.NaN;
     }
 
-    /** {@inheritDoc} */
+    /** {@inheritDoc}
+     * @deprecated as of 2.1 (class will become immutable in 3.0)
+     */
+    @Deprecated
     public void setAlpha(double alpha) {
         this.alpha = alpha;
         z = Double.NaN;
@@ -71,7 +74,10 @@ public class BetaDistributionImpl
         return alpha;
     }
 
-    /** {@inheritDoc} */
+    /** {@inheritDoc}
+     * @deprecated as of 2.1 (class will become immutable in 3.0)
+     */
+    @Deprecated
     public void setBeta(double beta) {
         this.beta = beta;
         z = Double.NaN;

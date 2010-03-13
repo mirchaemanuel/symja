@@ -54,7 +54,7 @@ import org.apache.commons.math.stat.descriptive.summary.Sum;
  * one of the threads invokes the <code>increment()</code> or
  * <code>clear()</code> method, it must be synchronized externally.
  *
- * @version $Revision: 894705 $ $Date: 2009-12-30 21:24:54 +0100 (Mi, 30 Dez 2009) $
+ * @version $Revision: 908626 $ $Date: 2010-02-10 19:44:42 +0100 (Mi, 10 Feb 2010) $
  */
 public class Mean extends AbstractStorelessUnivariateStatistic
     implements Serializable, WeightedEvaluation {
@@ -216,7 +216,7 @@ public class Mean extends AbstractStorelessUnivariateStatistic
         }
         return Double.NaN;
     }
-    
+
     /**
      * Returns the weighted arithmetic mean of the entries in the input array.
      * <p>

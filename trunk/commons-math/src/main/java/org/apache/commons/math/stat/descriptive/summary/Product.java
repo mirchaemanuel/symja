@@ -32,7 +32,7 @@ import org.apache.commons.math.stat.descriptive.WeightedEvaluation;
  * one of the threads invokes the <code>increment()</code> or
  * <code>clear()</code> method, it must be synchronized externally.</p>
  *
- * @version $Revision: 894705 $ $Date: 2009-12-30 21:24:54 +0100 (Mi, 30 Dez 2009) $
+ * @version $Revision: 917270 $ $Date: 2010-02-28 20:37:53 +0100 (So, 28 Feb 2010) $
  */
 public class Product extends AbstractStorelessUnivariateStatistic implements Serializable, WeightedEvaluation {
 
@@ -167,7 +167,7 @@ public class Product extends AbstractStorelessUnivariateStatistic implements Ser
         }
         return product;
     }
-    
+
     /**
      * <p>Returns the weighted product of the entries in the input array.</p>
      *

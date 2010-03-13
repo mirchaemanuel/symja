@@ -19,7 +19,6 @@ package org.apache.commons.math.stat.descriptive.summary;
 import java.io.Serializable;
 
 import org.apache.commons.math.stat.descriptive.AbstractStorelessUnivariateStatistic;
-import org.apache.commons.math.stat.descriptive.WeightedEvaluation;
 
 
 /**
@@ -33,7 +32,7 @@ import org.apache.commons.math.stat.descriptive.WeightedEvaluation;
  * one of the threads invokes the <code>increment()</code> or
  * <code>clear()</code> method, it must be synchronized externally.</p>
  *
- * @version $Revision: 894705 $ $Date: 2009-12-30 21:24:54 +0100 (Mi, 30 Dez 2009) $
+ * @version $Revision: 917270 $ $Date: 2010-02-28 20:37:53 +0100 (So, 28 Feb 2010) $
  */
 public class Sum extends AbstractStorelessUnivariateStatistic implements Serializable {
 
@@ -167,7 +166,7 @@ public class Sum extends AbstractStorelessUnivariateStatistic implements Seriali
         }
         return sum;
     }
-    
+
     /**
      * The weighted sum of the entries in the the input array.
      * <p>

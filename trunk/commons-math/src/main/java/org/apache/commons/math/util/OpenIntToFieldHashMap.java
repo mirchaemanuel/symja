@@ -36,7 +36,7 @@ import org.apache.commons.math.MathRuntimeException;
  * <code>ConcurrentModificationException</code> when they detect the map has been
  * modified during iteration.</p>
  * @param <T> the type of the field elements
- * @version $Revision: 885278 $ $Date: 2009-11-29 22:47:51 +0100 (So, 29 Nov 2009) $
+ * @version $Revision: 903047 $ $Date: 2010-01-26 03:07:42 +0100 (Di, 26 Jan 2010) $
  * @since 2.0
  */
 public class OpenIntToFieldHashMap<T extends FieldElement<T>> implements Serializable {
@@ -622,7 +622,7 @@ public class OpenIntToFieldHashMap<T extends FieldElement<T>> implements Seriali
      * @param length size of the array to build
      * @return a new array
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("unchecked") // field is of type T
     private T[] buildArray(final int length) {
         return (T[]) Array.newInstance(field.getZero().getClass(), length);
     }

@@ -27,7 +27,7 @@ package org.apache.commons.math.distribution;
  * </ul>
  * </p>
  *
- * @version $Revision: 811786 $ $Date: 2009-09-06 11:36:08 +0200 (So, 06 Sep 2009) $
+ * @version $Revision: 920852 $ $Date: 2010-03-09 13:53:44 +0100 (Di, 09 Mrz 2010) $
  */
 public interface ZipfDistribution extends IntegerDistribution {
 
@@ -45,7 +45,9 @@ public interface ZipfDistribution extends IntegerDistribution {
      *
      * @param n the number of elements
      * @throws IllegalArgumentException if n &le; 0
+     * @deprecated as of v2.1
      */
+    @Deprecated
     void setNumberOfElements(int n);
 
     /**
@@ -62,7 +64,8 @@ public interface ZipfDistribution extends IntegerDistribution {
      *
      * @param s the exponent
      * @throws IllegalArgumentException if s &le; 0.0
+     * @deprecated as of v2.1
      */
+    @Deprecated
     void setExponent(double s);
-
 }

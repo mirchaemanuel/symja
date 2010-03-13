@@ -48,7 +48,7 @@ import org.apache.commons.math.ode.sampling.StepHandler;
  * @see ClassicalRungeKuttaIntegrator
  * @see GillIntegrator
  * @see MidpointIntegrator
- * @version $Revision: 811833 $ $Date: 2009-09-06 18:27:50 +0200 (So, 06 Sep 2009) $
+ * @version $Revision: 919479 $ $Date: 2010-03-05 17:35:56 +0100 (Fr, 05 Mrz 2010) $
  * @since 1.2
  */
 
@@ -120,7 +120,7 @@ public abstract class RungeKuttaIntegrator extends AbstractIntegrator {
       rki.reinitialize(this, yTmp, yDotK, forward);
       interpolator = rki;
     } else {
-      interpolator = new DummyStepInterpolator(yTmp, forward);
+      interpolator = new DummyStepInterpolator(yTmp, yDotK[stages - 1], forward);
     }
     interpolator.storeTime(t0);
 

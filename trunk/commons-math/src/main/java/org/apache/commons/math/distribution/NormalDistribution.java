@@ -28,7 +28,7 @@ package org.apache.commons.math.distribution;
  * </ul>
  * </p>
  *
- * @version $Revision: 693598 $ $Date: 2008-09-09 22:37:08 +0200 (Di, 09 Sep 2008) $
+ * @version $Revision: 920852 $ $Date: 2010-03-09 13:53:44 +0100 (Di, 09 Mrz 2010) $
  */
 public interface NormalDistribution extends ContinuousDistribution, HasDensity<Double> {
     /**
@@ -39,7 +39,9 @@ public interface NormalDistribution extends ContinuousDistribution, HasDensity<D
     /**
      * Modify the mean.
      * @param mean for this distribution
+     * @deprecated as of v2.1
      */
+    @Deprecated
     void setMean(double mean);
     /**
      * Access the standard deviation.
@@ -49,7 +51,9 @@ public interface NormalDistribution extends ContinuousDistribution, HasDensity<D
     /**
      * Modify the standard deviation.
      * @param sd standard deviation for this distribution
+     * @deprecated as of v2.1
      */
+    @Deprecated
     void setStandardDeviation(double sd);
 
     /**

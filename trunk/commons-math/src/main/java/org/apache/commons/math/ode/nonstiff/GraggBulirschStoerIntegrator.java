@@ -87,7 +87,7 @@ import org.apache.commons.math.ode.sampling.StepHandler;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</strong></td></tr>
  * </table>
  *
- * @version $Revision: 893281 $ $Date: 2009-12-22 20:30:10 +0100 (Di, 22 Dez 2009) $
+ * @version $Revision: 919479 $ $Date: 2010-03-05 17:35:56 +0100 (Fr, 05 Mrz 2010) $
  * @since 1.2
  */
 
@@ -624,7 +624,7 @@ public class GraggBulirschStoerIntegrator extends AdaptiveStepsizeIntegrator {
                                                             y1, yDot1,
                                                             yMidDots, forward);
     } else {
-      interpolator = new DummyStepInterpolator(y, forward);
+      interpolator = new DummyStepInterpolator(y, yDot1, forward);
     }
     interpolator.storeTime(t0);
 

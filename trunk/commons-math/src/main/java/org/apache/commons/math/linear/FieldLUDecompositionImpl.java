@@ -34,7 +34,7 @@ import org.apache.commons.math.MathRuntimeException;
  * a zero pivot element, no attempt is done to get the largest pivot element.</p>
  *
  * @param <T> the type of the field elements
- * @version $Revision: 811685 $ $Date: 2009-09-05 19:36:48 +0200 (Sa, 05 Sep 2009) $
+ * @version $Revision: 903046 $ $Date: 2010-01-26 03:07:26 +0100 (Di, 26 Jan 2010) $
  * @since 2.0
  */
 public class FieldLUDecompositionImpl<T extends FieldElement<T>> implements FieldLUDecomposition<T> {
@@ -257,7 +257,6 @@ public class FieldLUDecompositionImpl<T extends FieldElement<T>> implements Fiel
         }
 
         /** {@inheritDoc} */
-        @SuppressWarnings("unchecked")
         public T[] solve(T[] b)
             throws IllegalArgumentException, InvalidMatrixException {
 
@@ -271,6 +270,7 @@ public class FieldLUDecompositionImpl<T extends FieldElement<T>> implements Fiel
                 throw new SingularMatrixException();
             }
 
+            @SuppressWarnings("unchecked") // field is of type T
             final T[] bp = (T[]) Array.newInstance(field.getZero().getClass(), m);
 
             // Apply permutations to b
@@ -300,7 +300,6 @@ public class FieldLUDecompositionImpl<T extends FieldElement<T>> implements Fiel
         }
 
         /** {@inheritDoc} */
-        @SuppressWarnings("unchecked")
         public FieldVector<T> solve(FieldVector<T> b)
             throws IllegalArgumentException, InvalidMatrixException {
             try {
@@ -317,6 +316,7 @@ public class FieldLUDecompositionImpl<T extends FieldElement<T>> implements Fiel
                     throw new SingularMatrixException();
                 }
 
+                @SuppressWarnings("unchecked") // field is of type T
                 final T[] bp = (T[]) Array.newInstance(field.getZero().getClass(), m);
 
                 // Apply permutations to b
@@ -359,7 +359,6 @@ public class FieldLUDecompositionImpl<T extends FieldElement<T>> implements Fiel
         }
 
         /** {@inheritDoc} */
-        @SuppressWarnings("unchecked")
         public FieldMatrix<T> solve(FieldMatrix<T> b)
             throws IllegalArgumentException, InvalidMatrixException {
 
@@ -376,6 +375,7 @@ public class FieldLUDecompositionImpl<T extends FieldElement<T>> implements Fiel
             final int nColB = b.getColumnDimension();
 
             // Apply permutations to b
+            @SuppressWarnings("unchecked") // field is of type T
             final T[][] bp = (T[][]) Array.newInstance(field.getZero().getClass(), new int[] { m, nColB });
             for (int row = 0; row < m; row++) {
                 final T[] bpRow = bp[row];

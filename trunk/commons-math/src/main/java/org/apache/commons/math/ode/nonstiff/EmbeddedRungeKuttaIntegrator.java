@@ -17,8 +17,6 @@
 
 package org.apache.commons.math.ode.nonstiff;
 
-import java.util.Arrays;
-
 import org.apache.commons.math.ode.DerivativeException;
 import org.apache.commons.math.ode.FirstOrderDifferentialEquations;
 import org.apache.commons.math.ode.IntegratorException;
@@ -60,7 +58,7 @@ import org.apache.commons.math.ode.sampling.StepHandler;
  * evaluation is saved. For an <i>fsal</i> method, we have cs = 1 and
  * asi = bi for all i.</p>
  *
- * @version $Revision: 811833 $ $Date: 2009-09-06 18:27:50 +0200 (So, 06 Sep 2009) $
+ * @version $Revision: 919479 $ $Date: 2010-03-05 17:35:56 +0100 (Fr, 05 Mrz 2010) $
  * @since 1.2
  */
 
@@ -216,7 +214,7 @@ public abstract class EmbeddedRungeKuttaIntegrator
       rki.reinitialize(this, yTmp, yDotK, forward);
       interpolator = rki;
     } else {
-      interpolator = new DummyStepInterpolator(yTmp, forward);
+      interpolator = new DummyStepInterpolator(yTmp, yDotK[stages - 1], forward);
     }
     interpolator.storeTime(t0);
 
@@ -244,13 +242,16 @@ public abstract class EmbeddedRungeKuttaIntegrator
         }
 
         if (firstTime) {
-          final double[] scale;
-          if (vecAbsoluteTolerance != null) {
-            scale = vecAbsoluteTolerance;
-          } else {
-            scale = new double[y0.length];
-            Arrays.fill(scale, scalAbsoluteTolerance);
-          }
+          final double[] scale = new double[y0.length];
+          if (vecAbsoluteTolerance == null) {
+              for (int i = 0; i < scale.length; ++i) {
+                scale[i] = scalAbsoluteTolerance + scalRelativeTolerance * Math.abs(y[i]);
+              }
+            } else {
+              for (int i = 0; i < scale.length; ++i) {
+                scale[i] = vecAbsoluteTolerance[i] + vecRelativeTolerance[i] * Math.abs(y[i]);
+              }
+            }
           hNew = initializeStep(equations, forward, getOrder(), scale,
                                 stepStart, y, yDotK[0], yTmp, yDotK[1]);
           firstTime = false;

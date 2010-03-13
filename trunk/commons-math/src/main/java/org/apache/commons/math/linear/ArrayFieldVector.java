@@ -27,7 +27,7 @@ import org.apache.commons.math.MathRuntimeException;
 /**
  * This class implements the {@link FieldVector} interface with a {@link FieldElement} array.
  * @param <T> the type of the field elements
- * @version $Revision: 811827 $ $Date: 2009-09-06 17:32:50 +0200 (So, 06 Sep 2009) $
+ * @version $Revision: 903046 $ $Date: 2010-01-26 03:07:26 +0100 (Di, 26 Jan 2010) $
  * @since 2.0
  */
 public class ArrayFieldVector<T extends FieldElement<T>> implements FieldVector<T>, Serializable {
@@ -223,7 +223,7 @@ public class ArrayFieldVector<T extends FieldElement<T>> implements FieldVector<
      * @param length size of the array to build
      * @return a new array
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("unchecked") // field is of type T
     private T[] buildArray(final int length) {
         return (T[]) Array.newInstance(field.getZero().getClass(), length);
     }
@@ -739,7 +739,6 @@ public class ArrayFieldVector<T extends FieldElement<T>> implements FieldVector<
      *         not equal to this Vector3D instance
      *
      */
-    @SuppressWarnings("unchecked")
     @Override
     public boolean equals(Object other) {
 
@@ -752,7 +751,7 @@ public class ArrayFieldVector<T extends FieldElement<T>> implements FieldVector<
       }
 
       try {
-
+          @SuppressWarnings("unchecked") // May fail, but we ignore ClassCastException
           FieldVector<T> rhs = (FieldVector<T>) other;
           if (data.length != rhs.getDimension()) {
               return false;

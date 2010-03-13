@@ -24,7 +24,7 @@ import org.apache.commons.math.MathRuntimeException;
 /**
  * The default implementation of {@link ExponentialDistribution}.
  *
- * @version $Revision: 811685 $ $Date: 2009-09-05 19:36:48 +0200 (Sa, 05 Sep 2009) $
+ * @version $Revision: 920852 $ $Date: 2010-03-09 13:53:44 +0100 (Di, 09 Mrz 2010) $
  */
 public class ExponentialDistributionImpl extends AbstractContinuousDistribution
     implements ExponentialDistribution, Serializable {
@@ -41,15 +41,25 @@ public class ExponentialDistributionImpl extends AbstractContinuousDistribution
      */
     public ExponentialDistributionImpl(double mean) {
         super();
-        setMean(mean);
+        setMeanInternal(mean);
     }
 
     /**
      * Modify the mean.
      * @param mean the new mean.
      * @throws IllegalArgumentException if <code>mean</code> is not positive.
+     * @deprecated as of 2.1 (class will become immutable in 3.0)
      */
+    @Deprecated
     public void setMean(double mean) {
+        setMeanInternal(mean);
+    }
+    /**
+     * Modify the mean.
+     * @param mean the new mean.
+     * @throws IllegalArgumentException if <code>mean</code> is not positive.
+     */
+    private void setMeanInternal(double mean) {
         if (mean <= 0.0) {
             throw MathRuntimeException.createIllegalArgumentException(
                   "mean must be positive ({0})", mean);
@@ -75,7 +85,7 @@ public class ExponentialDistributionImpl extends AbstractContinuousDistribution
         if (x < 0) {
             return 0;
         }
-        return Math.exp(-x / getMean()) / getMean();
+        return Math.exp(-x / mean) / mean;
     }
 
     /**
@@ -98,7 +108,7 @@ public class ExponentialDistributionImpl extends AbstractContinuousDistribution
         if (x <= 0.0) {
             ret = 0.0;
         } else {
-            ret = 1.0 - Math.exp(-x / getMean());
+            ret = 1.0 - Math.exp(-x / mean);
         }
         return ret;
     }
@@ -125,7 +135,7 @@ public class ExponentialDistributionImpl extends AbstractContinuousDistribution
         } else if (p == 1.0) {
             ret = Double.POSITIVE_INFINITY;
         } else {
-            ret = -getMean() * Math.log(1.0 - p);
+            ret = -mean * Math.log(1.0 - p);
         }
 
         return ret;
@@ -159,7 +169,7 @@ public class ExponentialDistributionImpl extends AbstractContinuousDistribution
 
         if (p < .5) {
             // use mean
-            return getMean();
+            return mean;
         } else {
             // use max
             return Double.MAX_VALUE;
@@ -181,10 +191,10 @@ public class ExponentialDistributionImpl extends AbstractContinuousDistribution
         // Exponential is skewed to the left, therefore, P(X < &mu;) > .5
         if (p < .5) {
             // use 1/2 mean
-            return getMean() * .5;
+            return mean * .5;
         } else {
             // use mean
-            return getMean();
+            return mean;
         }
     }
 }

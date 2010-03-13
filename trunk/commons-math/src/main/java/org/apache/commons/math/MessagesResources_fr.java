@@ -21,7 +21,7 @@ import java.util.ListResourceBundle;
 
 /**
  * French localization message resources for the commons-math library.
- * @version $Revision: 894730 $ $Date: 2009-12-31 00:03:23 +0100 (Do, 31 Dez 2009) $
+ * @version $Revision: 920558 $ $Date: 2010-03-08 23:57:32 +0100 (Mo, 08 Mrz 2010) $
  * @since 1.2
  */
 public class MessagesResources_fr
@@ -190,7 +190,7 @@ public class MessagesResources_fr
     { "the number of robustness iterations must be non-negative, but got {0}",
       "le nombre d''it\u00e9rations robuste ne peut \u00eatre n\u00e9gatif, alors qu''il est de {0}" },
     { "Loess expects the abscissa and ordinate arrays to be of the same size, " +
-      "but got {0} abscisssae and {1} ordinatae",
+      "but got {0} abscissae and {1} ordinatae",
       "la r\u00e9gression Loess n\u00e9cessite autant d''abscisses que d''ordonn\u00e9es, " +
       "mais {0} abscisses et {1} ordonn\u00e9es ont \u00e9t\u00e9 fournies" },
     { "Loess expects at least 1 point",
@@ -215,6 +215,8 @@ public class MessagesResources_fr
       "Divergence de fraction continue \u00e0 l''infini pour la valeur {0}" },
     { "Continued fraction convergents failed to converge for value {0}",
       "\u00c9chec de convergence de fraction continue pour la valeur {0}" },
+    { "Continued fraction diverged to NaN for value {0}",
+      "Divergence de fraction continue \u00e0 NaN pour la valeur {0}"},
 
     // org.apache.commons.math.util.DefaultTransformer
     { "Conversion Exception in Transformation, Object is null",
@@ -649,6 +651,7 @@ public class MessagesResources_fr
      "valeur de quantile {0} hors bornes, doit \u00eatre dans l''intervalle ]0, 100]" },
 
    // org.apache.commons.math.stat.descriptive.moment.Variance
+   // org.apache.commons.math.stat.descriptive.moment.SemiVariance
    // org.apache.commons.math.stat.descriptive.AbstractStorelessUnivariateStatistic
    // org.apache.commons.math.stat.descriptive.AbstractUnivariateStatistic
    { "input values array is null",
@@ -733,6 +736,15 @@ public class MessagesResources_fr
    { "lower endpoint ({0}) must be less than or equal to upper endpoint ({1})",
      "la borne inf\u00e9rieure ({0}) devrait \u00eatre inf\u00e9rieure " +
      "ou \u00e9gale \u00e0 la borne sup\u00e9rieure ({1})" },
+
+   // org.apache.commons.math.distribution.AbstractContinuousDistribution
+   { "Cumulative probability function returned NaN for argument {0} p = {1}",
+     "Fonction de probabilit\u00e9 cumulative retourn\u00e9 NaN \u00e0 l''argument de {0} p = {1}" },
+
+   // org.apache.commons.math.distribution.AbstractIntegerDistribution
+   { "Discrete cumulative probability function returned NaN for argument {0}",
+     "Discr\u00e8tes fonction de probabilit\u00e9 cumulative retourn\u00e9 NaN \u00e0 l''argument de {0}" },
+
 
    // org.apache.commons.math.distribution.BinomialDistributionImpl
    { "number of trials must be non-negative ({0})",

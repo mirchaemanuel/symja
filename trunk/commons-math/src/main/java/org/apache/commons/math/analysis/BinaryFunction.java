@@ -24,13 +24,14 @@ import org.apache.commons.math.FunctionEvaluationException;
 /**
  * Base class for {@link BivariateRealFunction} that can be composed with other functions.
  *
- * @version $Revision: 890002 $ $Date: 2009-12-13 00:15:32 +0100 (So, 13 Dez 2009) $
+ * @version $Revision: 902203 $ $Date: 2010-01-22 19:27:41 +0100 (Fr, 22 Jan 2010) $
  */
 public abstract class BinaryFunction implements BivariateRealFunction {
 
     /** The + operator method wrapped as a {@link BinaryFunction}. */
     public static final BinaryFunction ADD = new BinaryFunction() {
         /** {@inheritDoc} */
+        @Override
         public double value(double x, double y) {
             return x + y;
         }
@@ -39,6 +40,7 @@ public abstract class BinaryFunction implements BivariateRealFunction {
     /** The - operator method wrapped as a {@link BinaryFunction}. */
     public static final BinaryFunction SUBTRACT = new BinaryFunction() {
         /** {@inheritDoc} */
+        @Override
         public double value(double x, double y) {
             return x - y;
         }
@@ -47,6 +49,7 @@ public abstract class BinaryFunction implements BivariateRealFunction {
     /** The * operator method wrapped as a {@link BinaryFunction}. */
     public static final BinaryFunction MULTIPLY = new BinaryFunction() {
         /** {@inheritDoc} */
+        @Override
         public double value(double x, double y) {
             return x * y;
         }
@@ -55,6 +58,7 @@ public abstract class BinaryFunction implements BivariateRealFunction {
     /** The / operator method wrapped as a {@link BinaryFunction}. */
     public static final BinaryFunction DIVIDE = new BinaryFunction() {
         /** {@inheritDoc} */
+        @Override
         public double value(double x, double y) {
             return x / y;
         }
@@ -63,6 +67,7 @@ public abstract class BinaryFunction implements BivariateRealFunction {
     /** The {@code Math.pow} method wrapped as a {@link BinaryFunction}. */
     public static final BinaryFunction POW = new BinaryFunction() {
         /** {@inheritDoc} */
+        @Override
         public double value(double x, double y) {
             return Math.pow(x, y);
         }
@@ -71,6 +76,7 @@ public abstract class BinaryFunction implements BivariateRealFunction {
     /** The {@code Math.atan2} method wrapped as a {@link BinaryFunction}. */
     public static final BinaryFunction ATAN2 = new BinaryFunction() {
         /** {@inheritDoc} */
+        @Override
         public double value(double x, double y) {
             return Math.atan2(x, y);
         }

@@ -70,7 +70,7 @@ import org.apache.commons.math.ode.sampling.StepInterpolator;
  * </table>
  *
  * @see GraggBulirschStoerIntegrator
- * @version $Revision: 811827 $ $Date: 2009-09-06 17:32:50 +0200 (So, 06 Sep 2009) $
+ * @version $Revision: 919479 $ $Date: 2010-03-05 17:35:56 +0100 (Fr, 05 Mrz 2010) $
  * @since 1.2
  */
 
@@ -122,7 +122,7 @@ class GraggBulirschStoerStepInterpolator
    * @param y1 reference to the integrator array holding the state at
    * the end of the step
    * @param y1Dot reference to the integrator array holding the slope
-   * at theend of the step
+   * at the end of the step
    * @param yMidDots reference to the integrator array holding the
    * derivatives at the middle point of the step
    * @param forward integration direction indicator

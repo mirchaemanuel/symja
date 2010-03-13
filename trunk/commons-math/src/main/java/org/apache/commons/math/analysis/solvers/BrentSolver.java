@@ -32,6 +32,17 @@ import org.apache.commons.math.analysis.UnivariateRealFunction;
  */
 public class BrentSolver extends UnivariateRealSolverImpl {
 
+    /** Default absolute accuracy */
+    public static final double DEFAULT_ABSOLUTE_ACCURACY = 1E-6;
+
+    /** Default maximum number of iterations */
+    public static final int DEFAULT_MAXIMUM_ITERATIONS = 100;
+
+    /** Error message for non-bracketing interval. */
+    private static final String NON_BRACKETING_MESSAGE =
+        "function values at endpoints do not have different signs.  " +
+        "Endpoints: [{0}, {1}], Values: [{2}, {3}]";
+
     /** Serializable version identifier */
     private static final long serialVersionUID = 7694577816772532779L;
 
@@ -46,14 +57,33 @@ public class BrentSolver extends UnivariateRealSolverImpl {
      */
     @Deprecated
     public BrentSolver(UnivariateRealFunction f) {
-        super(f, 100, 1E-6);
+        super(f, DEFAULT_MAXIMUM_ITERATIONS, DEFAULT_ABSOLUTE_ACCURACY);
     }
 
     /**
-     * Construct a solver.
+     * Construct a solver with default properties.
      */
     public BrentSolver() {
-        super(100, 1E-6);
+        super(DEFAULT_MAXIMUM_ITERATIONS, DEFAULT_ABSOLUTE_ACCURACY);
+    }
+
+    /**
+     * Construct a solver with the given absolute accuracy.
+     *
+     * @param absoluteAccuracy lower bound for absolute accuracy of solutions returned by the solver
+     */
+    public BrentSolver(double absoluteAccuracy) {
+        super(DEFAULT_MAXIMUM_ITERATIONS, absoluteAccuracy);
+    }
+
+    /**
+     * Contstruct a solver with the given maximum iterations and absolute accuracy.
+     *
+     * @param maximumIterations maximum number of iterations
+     * @param absoluteAccuracy lower bound for absolute accuracy of solutions returned by the solver
+     */
+    public BrentSolver(int maximumIterations, double absoluteAccuracy) {
+        super(maximumIterations, absoluteAccuracy);
     }
 
     /** {@inheritDoc} */
@@ -95,7 +125,11 @@ public class BrentSolver extends UnivariateRealSolverImpl {
         throws MaxIterationsExceededException, FunctionEvaluationException {
 
         clearResult();
-        verifySequence(min, initial, max);
+        if ((initial < min) || (initial > max)) {
+            throw MathRuntimeException.createIllegalArgumentException(
+                  "invalid interval, initial value parameters:  lower={0}, initial={1}, upper={2}",
+                  min, initial, max);
+        }
 
         // return the initial guess if it is good enough
         double yInitial = f.value(initial);
@@ -107,7 +141,7 @@ public class BrentSolver extends UnivariateRealSolverImpl {
         // return the first endpoint if it is good enough
         double yMin = f.value(min);
         if (Math.abs(yMin) <= functionValueAccuracy) {
-            setResult(yMin, 0);
+            setResult(min, 0);
             return result;
         }
 
@@ -119,7 +153,7 @@ public class BrentSolver extends UnivariateRealSolverImpl {
         // return the second endpoint if it is good enough
         double yMax = f.value(max);
         if (Math.abs(yMax) <= functionValueAccuracy) {
-            setResult(yMax, 0);
+            setResult(max, 0);
             return result;
         }
 
@@ -128,8 +162,8 @@ public class BrentSolver extends UnivariateRealSolverImpl {
             return solve(f, initial, yInitial, max, yMax, initial, yInitial);
         }
 
-        // full Brent algorithm starting with provided initial guess
-        return solve(f, min, yMin, max, yMax, initial, yInitial);
+        throw MathRuntimeException.createIllegalArgumentException(
+              NON_BRACKETING_MESSAGE, min, max, yMin, yMax);
 
     }
 
@@ -176,9 +210,7 @@ public class BrentSolver extends UnivariateRealSolverImpl {
             } else {
                 // neither value is close to zero and min and max do not bracket root.
                 throw MathRuntimeException.createIllegalArgumentException(
-                        "function values at endpoints do not have different signs.  " +
-                        "Endpoints: [{0}, {1}], Values: [{2}, {3}]",
-                        min, max, yMin, yMax);
+                        NON_BRACKETING_MESSAGE, min, max, yMin, yMax);
             }
         } else if (sign < 0){
             // solve using only the first endpoint as initial guess
