@@ -2,6 +2,7 @@ package org.matheclipse.core.eval;
 
 import java.io.IOException;
 import java.io.PrintStream;
+import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -42,9 +43,9 @@ import apache.harmony.math.Rational;
 /**
  * 
  */
-public class EvalEngine implements IEvaluationEngine {
+public class EvalEngine implements Serializable, IEvaluationEngine {
   /**
-   * Assciate a symbolname in this ThreadLocal with the symbol created in this
+   * Associate a symbolname in this ThreadLocal with the symbol created in this
    * thread
    * 
    * @see ExprFactory.fSymbolMap for global symbol names
@@ -52,7 +53,7 @@ public class EvalEngine implements IEvaluationEngine {
   transient protected final HashMap<String, ISymbol> fVariableMap;
 
   /**
-   * Assciate a symbolname with a local variable stack in this thread
+   * Associate a symbolname with a local variable stack in this thread
    * 
    */
   transient protected final HashMap<String, Stack<IExpr>> fLocalVariableStackMap;

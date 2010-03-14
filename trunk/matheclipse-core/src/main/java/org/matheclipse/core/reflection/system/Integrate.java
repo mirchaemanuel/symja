@@ -168,6 +168,10 @@ public class Integrate extends AbstractFunctionEvaluator implements
           parts[1] = F.C1;
         }
       }
+    } else {
+    	parts = new IExpr[2];
+    	parts[0] = arg;
+      parts[1] = F.C1;
     }
     return parts;
   }

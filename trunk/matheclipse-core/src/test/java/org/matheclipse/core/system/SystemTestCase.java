@@ -973,6 +973,7 @@ public class SystemTestCase extends AbstractTestCase {
 	}
 
 	public void testSystem172() {
+		check("Integrate[(-1+x)*(1+x)*(1+x^2)*(1+x^4)*(1+x^8),x]", "1/17*x^17-x");
 		check("Integrate[(10 x^2 - 63 x + 29)/(x^3 - 11 x^2 + 40 x -48),x]", "63*(x-4)^(-1)-70*Log[x-3]+80*Log[x-4]");
 		check("Integrate[(x^7 - 24*x^4 - 4*x^2 + 8*x - 8)/(x^8 + 6*x^6 + 12*x^4 + 8*x^2),x]",
 				"6*x*(x^4+4*x^2+4)^(-1)+(-x+3)*(x^2+2)^(-1)+x^(-1)+Log[x]");
