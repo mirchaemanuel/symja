@@ -1,4 +1,4 @@
-#summary symja running on Google App Engine AJAX interface (Eval API)
+#summary Symja running on Google App Engine AJAX interface (Eval API)
 
 = Introduction =
 The simplified online *Eval API* lets you dynamically generate calculation forms. To see the Eval API in action, open up a browser window and copy the following URL into it:
