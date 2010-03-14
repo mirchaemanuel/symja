@@ -1,0 +1,7 @@
+#summary symja running on Google App Engine AJAX interface (Eval API)
+
+= Introduction =
+The simplified online *Eval API* lets you dynamically generate calculation forms. To see the Eval API in action, open up a browser window and copy the following URL into it:
+  * {{{http://mobmath.appspot.com/?ci=x1:X:i:10|y1:Y:i:2&ca=x!:x1!|Fibonacci[x]:Fibonacci[x1]|Binomial[x,y]:Binomial[x1,y1]}}}
+
+On testiphone.com you can try the same example online in an [http://www.testiphone.com/?view=hor&url=http%3A%2F%2Fmobmath.appspot.com%2F%3Fci%3Dx1%3AX%3Ai%3A10%7Cy1%3AY%3Ai%3A2%26ca%3Dx%21%3Ax1%21%7CFibonacci%5Bx%5D%3AFibonacci%5Bx1%5D%7CBinomial%5Bx%2Cy%5D%3ABinomial%5Bx1%2Cy1%5D iPhone simulator] (you should use the Safari browser to get the real experience).
