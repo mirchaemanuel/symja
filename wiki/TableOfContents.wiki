@@ -1,5 +1,6 @@
 #summary Table of contents navigation
   * [RunSymja Getting started]
+  * [AJAXSymja Online AJAX interface]
   * [SyntaxDescription Syntax overview]
   * [HowToEvalFromJava Use it in your Java project]
   * [AddNewFunctions How to add new functions]
