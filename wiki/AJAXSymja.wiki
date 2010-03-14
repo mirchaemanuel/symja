@@ -1,6 +1,7 @@
 #summary Symja running on Google App Engine AJAX interface (Eval API)
+#sidebar TableOfContents
 
-= Introduction =
+= AJAX Evaluation API =
 The simplified online *[http://mobmath.appspot.com/ Eval API]* lets you dynamically generate calculation forms. To see the Eval API in action, open up a browser window and copy the following URL into it:
   * {{{http://mobmath.appspot.com/?ci=x1:X:i:10|y1:Y:i:2&ca=x!:x1!|Fibonacci[x]:Fibonacci[x1]|Binomial[x,y]:Binomial[x1,y1]}}}
 
