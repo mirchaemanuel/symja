@@ -1,4 +1,5 @@
 #summary Symja running on Google App Engine AJAX interface (Eval API)
+#labels Featured
 #sidebar TableOfContents
 
 = AJAX Evaluation API =
