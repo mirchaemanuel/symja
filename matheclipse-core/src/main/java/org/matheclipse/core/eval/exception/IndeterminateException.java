@@ -2,8 +2,9 @@ package org.matheclipse.core.eval.exception;
 
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
+import org.matheclipse.parser.client.math.MathException;
 
-public class IndeterminateException extends RuntimeException {
+public class IndeterminateException extends MathException {
 	/**
 	 * 
 	 */

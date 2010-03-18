@@ -1,10 +1,11 @@
 package org.matheclipse.core.eval.exception;
 
+import org.matheclipse.parser.client.math.MathException;
 
 /**
  *
  */
-public class DivisionByZero extends ArithmeticException {
+public class DivisionByZero extends MathException {
 	/**
 	 * 
 	 */

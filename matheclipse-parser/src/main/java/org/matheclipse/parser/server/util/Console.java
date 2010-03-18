@@ -29,6 +29,7 @@ import org.matheclipse.parser.client.ast.FunctionNode;
 import org.matheclipse.parser.client.eval.ComplexEvaluator;
 import org.matheclipse.parser.client.eval.DoubleEvaluator;
 import org.matheclipse.parser.client.math.Complex;
+import org.matheclipse.parser.client.math.MathException;
 
 /**
  * A java console program to run the evaluator interactivly
@@ -43,13 +44,8 @@ public class Console {
 
 	public static void main(final String args[]) {
 		printUsage();
-		Console console;
-		try {
-			console = new Console();
-		} catch (final SyntaxError e1) {
-			e1.printStackTrace();
-			return;
-		}
+		Console console = new Console();
+	
 		String expr = null;
 		console.setArgs(args);
 		final File file = console.getFile();
@@ -120,7 +116,7 @@ public class Console {
 		System.out.println(msg.toString());
 	}
 
-	public Console() throws SyntaxError {
+	public Console() {
 		super();
 	}
 
@@ -186,7 +182,7 @@ public class Console {
 				double d = engine.evaluate(strEval);
 				return Double.toString(d);
 			}
-		} catch (SyntaxError e) {
+		} catch (MathException e) {
 			System.err.println();
 			System.err.println(e.getMessage());
 		} catch (Exception e) {

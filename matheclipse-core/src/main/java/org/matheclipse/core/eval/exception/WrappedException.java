@@ -1,16 +1,18 @@
 package org.matheclipse.core.eval.exception;
 
-public class WrappedException extends RuntimeException {
-  
-  Throwable fThrowable;
-  
-  public WrappedException(Throwable throwable){
-    fThrowable = throwable;
-  }
-  
-  @Override
-  public String getMessage() {
-    return fThrowable.getMessage();
-  }
+import org.matheclipse.parser.client.math.MathException;
+
+public class WrappedException extends MathException {
+
+	Throwable fThrowable;
+
+	public WrappedException(Throwable throwable) {
+		fThrowable = throwable;
+	}
+
+	@Override
+	public String getMessage() {
+		return fThrowable.getMessage();
+	}
 
 }

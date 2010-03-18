@@ -1,8 +1,9 @@
 package org.matheclipse.core.eval.exception;
 
 import org.matheclipse.core.interfaces.IExpr;
+import org.matheclipse.parser.client.math.MathException;
 
-public class RuleCreationError extends RuntimeException {
+public class RuleCreationError extends MathException {
 	/**
 	 * 
 	 */

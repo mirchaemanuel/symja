@@ -1,10 +1,12 @@
 package org.matheclipse.core.eval.exception;
 
+import org.matheclipse.parser.client.math.MathException;
+
 /**
  * Memory exceeded exception
  * 
  */
-public class PoolMemoryExceededException extends RuntimeException {
+public class PoolMemoryExceededException extends MathException {
 	private String fObjectType;
 
 	private int fSize;
