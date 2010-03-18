@@ -1,10 +1,11 @@
 package org.matheclipse.core.eval.exception;
 
 import org.matheclipse.core.interfaces.IAST;
+import org.matheclipse.parser.client.math.MathException;
 
 /**
  */
-public class NonNegativeIntegerExpected extends RuntimeException {
+public class NonNegativeIntegerExpected extends MathException {
 	/**
 	 * 
 	 */

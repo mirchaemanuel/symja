@@ -2,10 +2,11 @@ package org.matheclipse.core.eval.exception;
 
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
+import org.matheclipse.parser.client.math.MathException;
 
 /**
  */
-public class WrongArgumentType extends RuntimeException {
+public class WrongArgumentType extends MathException {
 	/**
 	 * 
 	 */

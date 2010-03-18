@@ -2,11 +2,12 @@ package org.matheclipse.core.eval.exception;
 
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.reflection.system.ToString;
+import org.matheclipse.parser.client.math.MathException;
 
 /**
  * 
  */
-public class RecursionLimitExceeded extends RuntimeException {
+public class RecursionLimitExceeded extends MathException {
 	/**
 	 * 
 	 */
@@ -30,12 +31,12 @@ public class RecursionLimitExceeded extends RuntimeException {
 	}
 
 	public static void throwIt(final int limit, final IExpr expr) {
-//		HeapContext.enter();
-//		try {
-			throw new RecursionLimitExceeded(limit, expr);//.copy());
-//		} finally {
-//			HeapContext.exit();
-//		}
+		// HeapContext.enter();
+		// try {
+		throw new RecursionLimitExceeded(limit, expr);// .copy());
+		// } finally {
+		// HeapContext.exit();
+		// }
 	}
 
 }

@@ -2,11 +2,12 @@ package org.matheclipse.core.eval.exception;
 
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.reflection.system.ToString;
+import org.matheclipse.parser.client.math.MathException;
 
 /**
  * 
  */
-public class IterationLimitExceeded extends RuntimeException {
+public class IterationLimitExceeded extends MathException {
 	/**
 	 * 
 	 */

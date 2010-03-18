@@ -123,7 +123,7 @@ public class Console {
 	// private static void version() {
 	// System.out.println("MathEclipse " + Config.VERSION);
 	// }
-	public Console() throws SyntaxError {
+	public Console() {
 		// fParser = new Parser(null);
 		// ExpressionFactory factory = ExpressionFactory.get();
 		// fParser.setFactory(factory);

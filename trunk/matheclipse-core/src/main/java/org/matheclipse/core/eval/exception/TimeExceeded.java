@@ -1,6 +1,8 @@
 package org.matheclipse.core.eval.exception;
 
-public class TimeExceeded extends RuntimeException {
+import org.matheclipse.parser.client.math.MathException;
+
+public class TimeExceeded extends MathException {
 	/**
 	 * 
 	 */

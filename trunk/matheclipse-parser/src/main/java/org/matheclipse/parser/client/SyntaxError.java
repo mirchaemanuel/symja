@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2008 Axel Kramer (axellclk@gmail.com)
+ * Copyright 2005-2008 Axel Kramer (axelclk@gmail.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,11 +15,13 @@
  */
 package org.matheclipse.parser.client;
 
+import org.matheclipse.parser.client.math.MathException;
+
 /**
  * Exception for a syntax error detected by the MathEclipse parser
  *
  */
-public class SyntaxError extends RuntimeException {
+public class SyntaxError extends MathException {
 
 	/** 
 	 *

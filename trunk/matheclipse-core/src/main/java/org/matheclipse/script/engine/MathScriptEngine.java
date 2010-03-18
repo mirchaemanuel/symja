@@ -21,7 +21,7 @@ import org.matheclipse.core.form.output.OutputFormFactory;
 import org.matheclipse.core.form.output.StringBufferWriter;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.ISymbol;
-import org.matheclipse.parser.client.SyntaxError;
+import org.matheclipse.parser.client.math.MathException;
 
 public class MathScriptEngine extends AbstractScriptEngine {
 	public final static String RETURN_OBJECT = "RETURN_OBJECT";
@@ -89,7 +89,7 @@ public class MathScriptEngine extends AbstractScriptEngine {
 				return buf.toString();
 			}
 
-		} catch (final SyntaxError e) {
+		} catch (final MathException e) {
 			// catch parser errors here
 			return e.getMessage();
 		} catch (final Exception e) {

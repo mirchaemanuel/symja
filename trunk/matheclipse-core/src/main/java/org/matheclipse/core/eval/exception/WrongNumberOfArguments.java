@@ -1,10 +1,11 @@
 package org.matheclipse.core.eval.exception;
 
 import org.matheclipse.core.interfaces.IAST;
+import org.matheclipse.parser.client.math.MathException;
 
 /**
  */
-public class WrongNumberOfArguments extends RuntimeException {
+public class WrongNumberOfArguments extends MathException {
 	/**
 	 * 
 	 */
