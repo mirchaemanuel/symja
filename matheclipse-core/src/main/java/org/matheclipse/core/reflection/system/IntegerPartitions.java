@@ -10,9 +10,9 @@ import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.IInteger;
 import org.matheclipse.generic.combinatoric.NumberPartitionsIterable;
 
-public class NumberPartitions extends AbstractFunctionEvaluator {
+public class IntegerPartitions extends AbstractFunctionEvaluator {
 
-	public NumberPartitions() {
+	public IntegerPartitions() {
 	}
 
 	/*
