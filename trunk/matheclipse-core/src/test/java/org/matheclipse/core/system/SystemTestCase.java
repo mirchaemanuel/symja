@@ -936,6 +936,7 @@ public class SystemTestCase extends AbstractTestCase {
 	}
 
 	public void testSystem165() {
+		check("Expand[(x+y+z)^3]", "z^3+3*y*z^2+3*x*z^2+3*y^2*z+6*x*y*z+3*x^2*z+y^3+3*x*y^2+3*x^2*y+x^3");
 		check("Expand[(a+b)*(c+d)]", "b*d+a*d+b*c+a*c");
 		check("Expand[(x+3)/((x+4)*(x+2))]", "(x+3)*(x^2+6*x+8)^(-1)");
 	}

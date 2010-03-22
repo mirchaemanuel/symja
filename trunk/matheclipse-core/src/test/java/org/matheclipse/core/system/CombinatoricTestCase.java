@@ -27,8 +27,9 @@ public class CombinatoricTestCase extends AbstractTestCase {
       "KPartitions[{a,b,c,d,e},3]",
       "{{{a},{b},{c,d,e}},{{a},{b,c},{d,e}},{{a},{b,c,d},{e}},{{a,b},{c},{d,e}},{{a,b},{c,d},{e}},{{a,b,c},{d},{e}}}");
    
-    check("NumberPartitions[3]", "{{3},{2,1},{1,1,1}}");
-
+    check("IntegerPartitions[3]", "{{3},{2,1},{1,1,1}}");
+    check("IntegerPartitions[5]", "{{5},{4,1},{3,2},{3,1,1},{2,2,1},{2,1,1,1},{1,1,1,1,1}}");
+    
     check(
       "Permutations[{1,2,2,3}]",
       "{{1,2,2,3},{1,2,3,2},{1,3,2,2},{2,1,2,3},{2,1,3,2},{2,2,1,3},{2,2,3,1},{2,3,1,2},{\n" + 
