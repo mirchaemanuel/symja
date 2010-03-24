@@ -5,7 +5,7 @@ import java.util.List;
 
 /**
  * Generate an Iterable for permutations
- *
+ * 
  * See <a href=" http://en.wikipedia.org/wiki/Permutation">Permutation</a>
  */
 public class KPermutationsIterable implements Iterator<int[]>, Iterable<int[]> {
@@ -26,8 +26,12 @@ public class KPermutationsIterable implements Iterator<int[]>, Iterable<int[]> {
 	 *
 	 */
 	public KPermutationsIterable(final int[] data, final int parts) {
+		this(data, data.length, parts);
+	}
+
+	public KPermutationsIterable(final int[] data, final int len, final int parts) {
 		super();
-		n = data.length;
+		n = len;
 		k = parts;
 		// f = fun;
 		x = new int[n];
@@ -48,7 +52,7 @@ public class KPermutationsIterable implements Iterator<int[]>, Iterable<int[]> {
 	public <T> KPermutationsIterable(final List<T> fun, final int parts, final int headOffset) {
 		n = fun.size() - headOffset;
 		k = parts;
-	 
+
 		x = new int[n];
 		y = new int[n];
 		x[0] = 0;
