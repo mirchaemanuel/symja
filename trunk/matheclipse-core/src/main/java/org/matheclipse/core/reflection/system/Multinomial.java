@@ -14,7 +14,8 @@ import apache.harmony.math.BigInteger;
 /**
  * Returns the multinomial coefficient.
  * 
- * See <a href="http://en.wikipedia.org/wiki/Multinomial_coefficient">Multinomial
+ * See <a
+ * href="http://en.wikipedia.org/wiki/Multinomial_coefficient">Multinomial
  * coefficient</a>
  */
 public class Multinomial extends AbstractFunctionEvaluator {
@@ -33,7 +34,7 @@ public class Multinomial extends AbstractFunctionEvaluator {
 				}
 			}
 
-			return F.integer( multinomial(ast) );
+			return F.integer(multinomial(ast));
 		}
 		return null;
 	}
@@ -48,6 +49,17 @@ public class Multinomial extends AbstractFunctionEvaluator {
 			denom = denom.multiply(Factorial.factorial(k));
 		}
 		return Factorial.factorial(n).divide(denom);
+	}
+
+	public static BigInteger multinomial(final int[] indices, final int n) {
+		BigInteger bn = BigInteger.valueOf(n);
+		BigInteger denom = BigInteger.ONE;
+		for (int i = 0; i < indices.length; i++) {
+			if (indices[i] != 0) {
+				denom = denom.multiply(Factorial.factorial(BigInteger.valueOf(indices[i])));
+			}
+		}
+		return Factorial.factorial(bn).divide(denom);
 	}
 
 	@Override

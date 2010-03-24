@@ -10,6 +10,12 @@ import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.IInteger;
 import org.matheclipse.generic.combinatoric.NumberPartitionsIterable;
 
+/**
+ * Generate all integer partitions for a given integer number. See <a
+ * href="http://en.wikipedia.org/wiki/Integer_partition">Wikipedia - Integer
+ * partition</a>
+ * 
+ */
 public class IntegerPartitions extends AbstractFunctionEvaluator {
 
 	public IntegerPartitions() {
@@ -30,7 +36,6 @@ public class IntegerPartitions extends AbstractFunctionEvaluator {
 			final int n = ((IInteger) functionList.get(1)).getBigNumerator().intValue();
 			final IAST result = F.function(F.List);
 			IAST temp;
-			// final NumberPartitionsIterator comb = new NumberPartitionsIterator(n);
 			final NumberPartitionsIterable comb = new NumberPartitionsIterable(n);
 			int j[];
 			while ((j = comb.next()) != null) {

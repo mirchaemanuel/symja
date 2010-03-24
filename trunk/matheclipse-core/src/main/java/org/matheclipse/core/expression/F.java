@@ -1069,8 +1069,11 @@ public class F {
   }
 
   public static IAST Power(final IExpr a0, final IExpr a1) {
-
     return binary(Power, a0, a1);
+  }
+  
+  public static IAST Power(final IExpr a0, final long exp) {
+    return binary(Power, a0, integer(exp));
   }
 
   public static IAST Prepend(final IExpr a0) {

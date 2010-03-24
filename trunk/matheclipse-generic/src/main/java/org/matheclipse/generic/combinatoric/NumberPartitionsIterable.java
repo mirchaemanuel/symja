@@ -4,11 +4,16 @@ import java.util.Iterator;
 
 /**
  * Returns all partitions of a given int number (i.e. NumberPartitions(3) =>
- * [3,0,0] [2,1,0] [1,1,1] )
+ * [3,0,0] [2,1,0] [1,1,1] ).
+ * 
+ * See <a href="http://en.wikipedia.org/wiki/Integer_partition">Wikipedia -
+ * Integer partition</a>
  */
 public class NumberPartitionsIterable implements Iterator<int[]>, Iterable<int[]> {
 
 	final private int n;
+
+	final private int len;
 
 	final private int x[];
 
@@ -20,10 +25,19 @@ public class NumberPartitionsIterable implements Iterator<int[]>, Iterable<int[]
 	 * 
 	 */
 	public NumberPartitionsIterable(final int num) {
+		this(num, num);
+	}
+
+	public NumberPartitionsIterable(final int num, final int l) {
 		super();
 		n = num;
-		x = new int[num];
-		for (int i = 0; i < num; i++) {
+		len = l;
+		int size = n;
+		if (len > n) {
+			size = len;
+		}
+		x = new int[size];
+		for (int i = 0; i < size; i++) {
 			x[i] = 0;
 		}
 	}
@@ -45,7 +59,9 @@ public class NumberPartitionsIterable implements Iterator<int[]>, Iterable<int[]
 			while (true) {
 				l = k - i;
 				k = i;
-				x[i] = x[i] - 1;
+				// if (i != len - 1) {
+				x[i] -= 1;
+				// }
 				while (x[k] <= l) {
 					l = l - x[k++];
 					x[k] = x[k - 1];
@@ -58,8 +74,14 @@ public class NumberPartitionsIterable implements Iterator<int[]>, Iterable<int[]
 					if (x[i] == 1) {
 						i--;
 					}
+
 				} else {
 					k++;
+					// if (i == len - 1) {
+					// l += 1;
+					// i--;
+					// continue;
+					// }
 					if (x[i] != 1) {
 						i = k;
 					}
