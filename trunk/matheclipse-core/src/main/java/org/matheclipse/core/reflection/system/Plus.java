@@ -77,10 +77,6 @@ public class Plus extends AbstractArgMultiple implements INumeric {
 			return F.Indeterminate;
 		}
 
-		if (o0.equals(o1)) {
-			return Times(F.C2, o0);
-		}
-
 		if (o0.isAST(F.DirectedInfinity, 2)) {
 			temp = eInfinity(o0, o1);
 		} else if (o1.isAST(F.DirectedInfinity, 2)) {
@@ -88,6 +84,10 @@ public class Plus extends AbstractArgMultiple implements INumeric {
 		}
 		if (temp != null) {
 			return temp;
+		}
+		
+		if (o0.equals(o1)) {
+			return Times(F.C2, o0);
 		}
 		
 		if (o0.isAST(F.Times) && (((IAST) o0).size() > 2)) {

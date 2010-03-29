@@ -2169,6 +2169,8 @@ public class SystemTestCase extends AbstractTestCase {
 		check("Limit[a+b+2*x,x->42]", "b+a+84");
 		check("Limit[a+b+2*x,x->Infinity]", "Infinity+b+a");
 		check("Limit[a+b+2*x,x->-Infinity]", "-Infinity+b+a");
+		check("Limit[-x,x->Infinity]", "-Infinity");
+		check("Limit[x-x,x->Infinity]", "0");
 	}
 
 	// public void testSystem404() {
