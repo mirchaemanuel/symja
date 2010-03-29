@@ -9,6 +9,9 @@ public interface IInteger extends IRational {
 
 	public IInteger add(IInteger val);
 
+	public boolean isEven();
+	
+	public boolean isOdd(); 
 	/**
 	 * Returns the numerator of this Rational.
 	 *

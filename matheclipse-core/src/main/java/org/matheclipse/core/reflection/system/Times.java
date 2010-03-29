@@ -16,8 +16,8 @@ import org.matheclipse.core.interfaces.IFraction;
 import org.matheclipse.core.interfaces.IInteger;
 import org.matheclipse.core.interfaces.INum;
 import org.matheclipse.core.interfaces.INumber;
+import org.matheclipse.core.interfaces.ISignedNumber;
 import org.matheclipse.core.interfaces.ISymbol;
-import org.matheclipse.parser.client.SyntaxError;
 
 public class Times extends AbstractArgMultiple implements INumeric {
 
@@ -52,6 +52,7 @@ public class Times extends AbstractArgMultiple implements INumeric {
 	@Override
 	public IExpr e2ObjArg(final IExpr o0, final IExpr o1) {
 		EvalEngine ee = EvalEngine.get();
+		IExpr temp = null;
 		if (ee.isNumericMode()) {
 			if (o0.equals(F.CD0)) {
 				return F.CD0;
@@ -69,7 +70,10 @@ public class Times extends AbstractArgMultiple implements INumeric {
 				return o0;
 			}
 		}
-
+		if (o0.equals(F.Indeterminate) || o1.equals(F.Indeterminate)) {
+			return F.Indeterminate;
+		}
+		
 		if (o0.equals(F.C0)) {
 			return F.C0;
 		}
@@ -90,6 +94,15 @@ public class Times extends AbstractArgMultiple implements INumeric {
 			return F.function(F.Power, o0, F.C2);
 		}
 
+		if (o0.isAST(F.DirectedInfinity, 2)) {
+			temp = eInfinity(o0, o1);
+		} else if (o1.isAST(F.DirectedInfinity, 2)) {
+			temp = eInfinity(o1, o0);
+		}
+		if (temp != null) {
+			return temp;
+		}
+		
 		if (o0.isAST(F.Power, 3)) {
 			final IAST f0 = (IAST) o0;
 			if (f0.get(2) instanceof INumber) {
@@ -117,6 +130,35 @@ public class Times extends AbstractArgMultiple implements INumeric {
 			}
 		}
 
+		return null;
+	}
+
+	private IExpr eInfinity(IExpr inf, IExpr o1) {
+		if (inf.equals(F.CInfinity)) {
+			if (o1.equals(F.CInfinity)) {
+				return F.CInfinity;
+			} else if (o1.equals(F.CNInfinity)) {
+				return F.CNInfinity;
+			} else if (o1 instanceof ISignedNumber) {
+				if (((ISignedNumber) o1).isNegative()) {
+					return F.CNInfinity;
+				} else {
+					return F.CInfinity;
+				}
+			}
+		} else if (inf.equals(F.CNInfinity)) {
+			if (o1.equals(F.CInfinity)) {
+				return F.CNInfinity;
+			} else if (o1.equals(F.CNInfinity)) {
+				return F.CInfinity;
+			} else if (o1 instanceof ISignedNumber) {
+				if (((ISignedNumber) o1).isNegative()) {
+					return F.CInfinity;
+				} else {
+					return F.CNInfinity;
+				}
+			}
+		}
 		return null;
 	}
 
