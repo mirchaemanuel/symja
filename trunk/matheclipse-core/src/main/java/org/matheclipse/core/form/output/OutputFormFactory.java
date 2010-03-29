@@ -462,6 +462,15 @@ public class OutputFormFactory implements IConstantHeaders {
           if (list.get(1).equals(F.C1)) {
             buf.write("Infinity");
             return;
+          } else if (list.get(1).equals(F.CN1)) {
+          	if (ASTNodeFactory.PLUS_PRECEDENCE < precedence) {
+              buf.write("(");
+            }
+            buf.write("-Infinity");
+            if (ASTNodeFactory.PLUS_PRECEDENCE < precedence) {
+              buf.write(")");
+            }
+            return;
           }
         }
       }

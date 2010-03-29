@@ -10,6 +10,8 @@ public interface ISignedNumber extends INumber {
 
 	public boolean isPositive();
 	
+	public boolean isZero();
+	
 	public boolean isLessThan(ISignedNumber that);
 	
 	public boolean isGreaterThan(ISignedNumber that);

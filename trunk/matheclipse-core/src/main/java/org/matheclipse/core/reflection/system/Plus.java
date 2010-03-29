@@ -17,7 +17,9 @@ import org.matheclipse.core.interfaces.IFraction;
 import org.matheclipse.core.interfaces.IInteger;
 import org.matheclipse.core.interfaces.INum;
 import org.matheclipse.core.interfaces.INumber;
+import org.matheclipse.core.interfaces.ISignedNumber;
 import org.matheclipse.core.interfaces.ISymbol;
+
 public class Plus extends AbstractArgMultiple implements INumeric {
 
 	public Plus() {
@@ -50,6 +52,7 @@ public class Plus extends AbstractArgMultiple implements INumeric {
 
 	@Override
 	public IExpr e2ObjArg(final IExpr o0, final IExpr o1) {
+		IExpr temp = null;
 		EvalEngine ee = EvalEngine.get();
 		// Context ct = ((ContextThread) Thread.currentThread()).getContext();
 		if (ee.isNumericMode()) {
@@ -70,10 +73,23 @@ public class Plus extends AbstractArgMultiple implements INumeric {
 			return o0;
 		}
 
+		if (o0.equals(F.Indeterminate) || o1.equals(F.Indeterminate)) {
+			return F.Indeterminate;
+		}
+
 		if (o0.equals(o1)) {
 			return Times(F.C2, o0);
 		}
 
+		if (o0.isAST(F.DirectedInfinity, 2)) {
+			temp = eInfinity(o0, o1);
+		} else if (o1.isAST(F.DirectedInfinity, 2)) {
+			temp = eInfinity(o1, o0);
+		}
+		if (temp != null) {
+			return temp;
+		}
+		
 		if (o0.isAST(F.Times) && (((IAST) o0).size() > 2)) {
 			final AST f0 = (AST) o0;
 
@@ -122,6 +138,29 @@ public class Plus extends AbstractArgMultiple implements INumeric {
 			}
 		}
 
+		return null;
+	}
+
+	private IExpr eInfinity(IExpr inf, IExpr o1) {
+		if (inf.equals(F.CInfinity)) {
+			if (o1.equals(F.CInfinity)) {
+				return F.CInfinity;
+			} else if (o1.equals(F.CNInfinity)) {
+				EvalEngine.get().getOutPrintStream().println("Indeterminate expression Infinity-Infinity");
+				return F.Indeterminate;
+			} else if (o1 instanceof ISignedNumber) {
+				return F.CInfinity;
+			}
+		} else if (inf.equals(F.CNInfinity)) {
+			if (o1.equals(F.CInfinity)) {
+				EvalEngine.get().getOutPrintStream().println("Indeterminate expression Infinity-Infinity");
+				return F.Indeterminate;
+			} else if (o1.equals(F.CNInfinity)) {
+				return F.CNInfinity;
+			} else if (o1 instanceof ISignedNumber) {
+				return F.CNInfinity;
+			}
+		}
 		return null;
 	}
 
