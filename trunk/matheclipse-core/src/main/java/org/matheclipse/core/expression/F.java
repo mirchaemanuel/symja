@@ -305,11 +305,17 @@ public class F {
 	 * Constant integer &quot;5&quot;
 	 */
 	public static IInteger C5;
+
 	/**
 	 * Complex imaginary unit. The parsed symbol &quot;I&quot; is converted on
 	 * input to this constant.
 	 */
 	public static IComplex CI;
+
+	/**
+	 * Complex negative imaginary unit.
+	 */
+	public static IComplex CNI;
 
 	/**
 	 * Constant fraction &quot;1/2&quot;
@@ -388,7 +394,7 @@ public class F {
 	public static ISymbol HoldRest;
 
 	public static ISymbol Indeterminate;
-	
+
 	public static ISymbol Infinity;
 
 	public static ISymbol Line;
@@ -684,6 +690,7 @@ public class F {
 			CN1D4 = FractionSym.valueOf(-1, 4);
 
 			CI = ComplexSym.valueOf(BigInteger.ZERO, BigInteger.ONE);
+			CNI = ComplexSym.valueOf(BigInteger.ZERO, BigInteger.MINUS_ONE);
 
 			CD0 = Num.valueOf(0.0);
 			CD1 = Num.valueOf(1.0);

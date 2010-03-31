@@ -68,7 +68,7 @@ import edu.jas.structure.ModularRingFactory;
 public class GCDFactory {
     public static boolean NO_THREADS = true;
 
-    private static final Logger logger = Logger.getLogger(GCDFactory.class);
+//    private static final Logger logger = Logger.getLogger(GCDFactory.class);
 
 
     /**
@@ -207,7 +207,7 @@ public class GCDFactory {
     public static <C extends GcdRingElem<C>> GreatestCommonDivisorAbstract<C> getImplementation(
             RingFactory<C> fac) {
         GreatestCommonDivisorAbstract/*raw type<C>*/ufd;
-        logger.debug("fac = " + fac.getClass().getName());
+//        logger.debug("fac = " + fac.getClass().getName());
         int t = 0;
         Object ofac = fac;
         if (ofac instanceof BigInteger) {
@@ -240,7 +240,7 @@ public class GCDFactory {
                 ufd = new GreatestCommonDivisorSubres<C>();
             }
         }
-        logger.debug("ufd = " + ufd);
+//        logger.debug("ufd = " + ufd);
         return (GreatestCommonDivisorAbstract<C>) ufd;
     }
 
@@ -258,7 +258,7 @@ public class GCDFactory {
         }
       
         GreatestCommonDivisorAbstract/*raw type<C>*/ufd;
-        logger.debug("fac = " + fac.getClass().getName());
+//        logger.debug("fac = " + fac.getClass().getName());
         int t = 0;
         Object ofac = fac;
         if (ofac instanceof BigInteger) {
@@ -295,7 +295,7 @@ public class GCDFactory {
                                       new GreatestCommonDivisorPrimitive<C>());
             }
         }
-        logger.debug("ufd = " + ufd);
+		// logger.debug("ufd = " + ufd);
         return (GCDProxy<C>) ufd;
     }
 
