@@ -2061,6 +2061,9 @@ public class SystemTestCase extends AbstractTestCase {
 
 	public void testSystem405() {
 		check("Taylor[Cos[x],{x,0,4}]", "1/24*x^4-1/2*x^2+1");
+		check("Taylor[Exp[x],{x,0,10}]", 
+				"1/3628800*x^10+1/362880*x^9+1/40320*x^8+1/5040*x^7+1/720*x^6+1/120*x^5+1/24*x^4+\n" + 
+				"1/6*x^3+1/2*x^2+x+1");
 	}
 
 	public void testSystem406() {
@@ -2172,7 +2175,10 @@ public class SystemTestCase extends AbstractTestCase {
 		check("Limit[-x,x->Infinity]", "-Infinity");
 		check("Limit[x-x,x->Infinity]", "0");
 	}
-
+	public void testSystem419() {
+		check("TrigToExp[a+b+Sin[c+d]]", "b+a-I*1/2*E^(I*(d+c))+I*1/2*E^(-I*(d+c))");
+		check("TrigToExp[Cos[x]+f[a,b]]", "f[a,b]+1/2*E^(I*x)+1/2*E^(-I*x)");
+	}
 	// public void testSystem404() {
 	// check("Plot3D[Sin[x]*Cos[y],{x,-10,10},{y,-10,10},{PlotRange->Automatic}]",
 	// "");
