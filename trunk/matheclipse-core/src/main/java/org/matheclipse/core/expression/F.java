@@ -1334,6 +1334,18 @@ public class F {
 	/**
 	 * Create a symbolic complex number
 	 * 
+	 * @param re
+	 * @param im
+	 * @return
+	 */
+	public static IComplex complex(final long real_numerator, final long real_denominator, final long imag_numerator,
+			final long imag_denominator) {
+		return ComplexSym.valueOf(real_numerator, real_denominator, imag_numerator, imag_denominator);
+	}
+
+	/**
+	 * Create a symbolic complex number
+	 * 
 	 * @param realPart
 	 *          the real double value part which should be converted to a complex
 	 *          number

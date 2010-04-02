@@ -221,9 +221,9 @@ public class FractionSym extends ExprImpl implements IFraction {
 	/**
 	 * @return
 	 */
-//	public byte byteValue() {
-//		return fRational.byteValue();
-//	}
+	// public byte byteValue() {
+	// return fRational.byteValue();
+	// }
 
 	/**
 	 * @param that
@@ -251,9 +251,9 @@ public class FractionSym extends ExprImpl implements IFraction {
 	/**
 	 * @return
 	 */
-//	public float floatValue() {
-//		return fRational.floatValue();
-//	}
+	// public float floatValue() {
+	// return fRational.floatValue();
+	// }
 
 	/**
 	 * @return
@@ -277,9 +277,9 @@ public class FractionSym extends ExprImpl implements IFraction {
 	/**
 	 * @return
 	 */
-//	public int intValue() {
-//		return fRational.intValue();
-//	}
+	// public int intValue() {
+	// return fRational.intValue();
+	// }
 
 	/**
 	 * @return
@@ -299,23 +299,23 @@ public class FractionSym extends ExprImpl implements IFraction {
 	// }
 	// return false;
 	// }
-//	public FractionSym copy() {
-//		// FractionSym r;
-//		// if (Config.SERVER_MODE) {
-//		// r = FACTORY.object();
-//		// } else {
-//		// r = new FractionSym();
-//		// }
-//		FractionSym r = new FractionSym();
-//		r.fRational = fRational.copy();
-//		return r;
-//	}
-//
-//	public FractionSym copyNew() {
-//		FractionSym r = new FractionSym();
-//		r.fRational = fRational.copyNew();
-//		return r;
-//	}
+	// public FractionSym copy() {
+	// // FractionSym r;
+	// // if (Config.SERVER_MODE) {
+	// // r = FACTORY.object();
+	// // } else {
+	// // r = new FractionSym();
+	// // }
+	// FractionSym r = new FractionSym();
+	// r.fRational = fRational.copy();
+	// return r;
+	// }
+	//
+	// public FractionSym copyNew() {
+	// FractionSym r = new FractionSym();
+	// r.fRational = fRational.copyNew();
+	// return r;
+	// }
 
 	// @Override
 	// public void recycle() {
@@ -378,35 +378,36 @@ public class FractionSym extends ExprImpl implements IFraction {
 	 * @param exp
 	 * @return
 	 */
-//	public IFraction pow(final int exp) {
-//		return newInstance(fRational.pow(exp));
-//	}
-	
-	 /**
-   * Returns this number raised at the specified positive exponent.
-   *
-   * @param  exp the positive exponent.
-   * @return <code>this<sup>exp</sup></code>
-   * @throws IllegalArgumentException if <code>exp &lt;= 0</code> 
-   */
-  @SuppressWarnings("unchecked")
-  public IFraction pow(int exp) {
-      if (exp <= 0)
-          throw new IllegalArgumentException("exp: " + exp
-                  + " should be a positive number");
-      IFraction pow2 = (FractionSym) this;
-      IFraction result = null;
-      while (exp >= 1) { // Iteration.
-          checkCanceled();
-					if ((exp & 1) == 1) {
-              result = (result == null) ? pow2 : result.multiply(pow2);
-          }
-          pow2 = pow2.multiply(pow2);
-          exp >>>= 1;
-      }
-      return result;
-  }
-  
+	// public IFraction pow(final int exp) {
+	// return newInstance(fRational.pow(exp));
+	// }
+
+	/**
+	 * Returns this number raised at the specified positive exponent.
+	 * 
+	 * @param exp
+	 *          the positive exponent.
+	 * @return <code>this<sup>exp</sup></code>
+	 * @throws IllegalArgumentException
+	 *           if <code>exp &lt;= 0</code>
+	 */
+	@SuppressWarnings("unchecked")
+	public IFraction pow(int exp) {
+		if (exp <= 0)
+			throw new IllegalArgumentException("exp: " + exp + " should be a positive number");
+		IFraction pow2 = (FractionSym) this;
+		IFraction result = null;
+		while (exp >= 1) { // Iteration.
+			checkCanceled();
+			if ((exp & 1) == 1) {
+				result = (result == null) ? pow2 : result.multiply(pow2);
+			}
+			pow2 = pow2.multiply(pow2);
+			exp >>>= 1;
+		}
+		return result;
+	}
+
 	/**
 	 * @return
 	 */
@@ -425,9 +426,9 @@ public class FractionSym extends ExprImpl implements IFraction {
 	/**
 	 * @return
 	 */
-//	public short shortValue() {
-//		return fRational.shortValue();
-//	}
+	// public short shortValue() {
+	// return fRational.shortValue();
+	// }
 
 	/**
 	 * @param that
@@ -450,6 +451,32 @@ public class FractionSym extends ExprImpl implements IFraction {
 			return this.multiply(valueOf(((IntegerSym) that).fInteger));
 		}
 		return super.times(that);
+	}
+
+	public String internalFormString() {
+		int numerator = fRational.getNumerator().intValue();
+		int denominator = fRational.getDenominator().intValue();
+		if (numerator == 1) {
+			switch (denominator) {
+			case 2:
+				return "C1D2";
+			case 3:
+				return "C1D3";
+			case 4:
+				return "C1D4";
+			}
+		}
+		if (numerator == -1) {
+			switch (denominator) {
+			case 2:
+				return "CN1D2";
+			case 3:
+				return "CN1D3";
+			case 4:
+				return "CN1D4";
+			}
+		}
+		return "fraction(" + numerator + "L," + denominator + "L)";
 	}
 
 	/**
