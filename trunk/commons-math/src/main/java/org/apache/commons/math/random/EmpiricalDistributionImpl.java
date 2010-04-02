@@ -56,7 +56,7 @@ import org.apache.commons.math.stat.descriptive.SummaryStatistics;
  *    entry per line.</li>
  * </ul></p>
  *
- * @version $Revision: 824783 $ $Date: 2009-10-13 16:30:27 +0200 (Di, 13 Okt 2009) $
+ * @version $Revision: 925812 $ $Date: 2010-03-21 16:49:31 +0100 (So, 21 Mrz 2010) $
  */
 public class EmpiricalDistributionImpl implements Serializable, EmpiricalDistribution {
 
@@ -436,6 +436,7 @@ public class EmpiricalDistributionImpl implements Serializable, EmpiricalDistrib
      * bounds now returned by {@link #getGeneratorUpperBounds()}.</p>
      *
      * @return array of bin upper bounds
+     * @since 2.1
      */
     public double[] getUpperBounds() {
         double[] binUpperBounds = new double[binCount];

@@ -58,7 +58,7 @@ import org.apache.commons.math.ode.sampling.StepHandler;
  * evaluation is saved. For an <i>fsal</i> method, we have cs = 1 and
  * asi = bi for all i.</p>
  *
- * @version $Revision: 919479 $ $Date: 2010-03-05 17:35:56 +0100 (Fr, 05 Mrz 2010) $
+ * @version $Revision: 927202 $ $Date: 2010-03-24 23:11:51 +0100 (Mi, 24 Mrz 2010) $
  * @since 1.2
  */
 
@@ -292,8 +292,16 @@ public abstract class EmbeddedRungeKuttaIntegrator
           if (manager.evaluateStep(interpolator)) {
               final double dt = manager.getEventTime() - stepStart;
               if (Math.abs(dt) <= Math.ulp(stepStart)) {
-                  // rejecting the step would lead to a too small next step, we accept it
-                  loop = false;
+                  // we cannot simply truncate the step, reject the current computation
+                  // and let the loop compute another state with the truncated step.
+                  // it is so small (much probably exactly 0 due to limited accuracy)
+                  // that the code above would fail handling it.
+                  // So we set up an artificial 0 size step by copying states
+                  interpolator.storeTime(stepStart);
+                  System.arraycopy(y, 0, yTmp, 0, y0.length);
+                  hNew     = 0;
+                  stepSize = 0;
+                  loop     = false;
               } else {
                   // reject the step to match exactly the next switch time
                   hNew = dt;

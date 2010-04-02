@@ -45,7 +45,7 @@ import org.apache.commons.math.linear.ArrayRealVector;
  * The c<sub>i</sub>, l<sub>i</sub> or r<sub>i</sub> are the coefficients of the constraints, the x<sub>i</sub>
  * are the coordinates of the current point and v is the value of the constraint.
  * </p>
- * @version $Revision: 811685 $ $Date: 2009-09-05 19:36:48 +0200 (Sa, 05 Sep 2009) $
+ * @version $Revision: 922713 $ $Date: 2010-03-14 02:26:13 +0100 (So, 14 Mrz 2010) $
  * @since 2.0
  */
 public class LinearConstraint implements Serializable {
@@ -192,22 +192,13 @@ public class LinearConstraint implements Serializable {
         return true;
       }
 
-      if (other == null) {
-        return false;
-      }
-
-      try {
-
+      if (other instanceof LinearConstraint) {
           LinearConstraint rhs = (LinearConstraint) other;
           return (relationship == rhs.relationship) &&
                  (value        == rhs.value) &&
                  coefficients.equals(rhs.coefficients);
-
-      } catch (ClassCastException ex) {
-          // ignore exception
-          return false;
       }
-
+      return false;
     }
 
     /** {@inheritDoc} */

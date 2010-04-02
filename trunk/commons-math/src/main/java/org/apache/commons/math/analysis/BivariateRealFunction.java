@@ -24,7 +24,8 @@ import org.apache.commons.math.FunctionEvaluationException;
 /**
  * An interface representing a bivariate real function.
  *
- * @version $Revision: 890002 $ $Date: 2009-12-13 00:15:32 +0100 (So, 13 Dez 2009) $
+ * @since 2.1
+ * @version $Revision: 924453 $ $Date: 2010-03-17 21:05:20 +0100 (Mi, 17 Mrz 2010) $
  */
 public interface BivariateRealFunction {
 

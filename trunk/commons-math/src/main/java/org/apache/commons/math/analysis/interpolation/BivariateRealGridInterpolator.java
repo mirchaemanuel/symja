@@ -17,30 +17,29 @@
 package org.apache.commons.math.analysis.interpolation;
 
 import org.apache.commons.math.MathException;
-import org.apache.commons.math.analysis.MultivariateRealFunction;
+import org.apache.commons.math.analysis.BivariateRealFunction;
 
 /**
- * Interface representing a univariate real interpolating function.
+ * Interface representing a bivariate real interpolating function where the
+ * sample points must be specified on a regular grid.
  *
- * @since 2.1
- * @version $Revision: 924794 $ $Date: 2010-03-18 15:15:50 +0100 (Do, 18 Mrz 2010) $
+ * @version $Revision$ $Date$
  */
-public interface MultivariateRealInterpolator {
+public interface BivariateRealGridInterpolator {
 
     /**
      * Computes an interpolating function for the data set.
      *
-     * @param xval the arguments for the interpolation points.
-     * {@code xval[i][0]} is the first component of interpolation point
-     * {@code i}, {@code xval[i][1]} is the second component, and so on
-     * until {@code xval[i][d-1]}, the last component of that interpolation
-     * point (where {@code d} is thus the dimension of the space).
-     * @param yval the values for the interpolation points
+     * @param xval all the x-coordinates of the interpolation points, sorted
+     * in increasing order.
+     * @param yval all the y-coordinates of the interpolation points, sorted
+     * in increasing order.
+     * @param zval the values of the interpolation points on all the grid knots:
+     * {@code zval[i][j] = f(xval[i], yval[j])}
      * @return a function which interpolates the data set
      * @throws MathException if arguments violate assumptions made by the
-     *         interpolation algorithm or some dimension mismatch occurs
-     * @throws IllegalArgumentException if there are no data (xval null or zero length)
+     *         interpolation algorithm
      */
-    MultivariateRealFunction interpolate(double[][] xval, double[] yval)
-        throws MathException, IllegalArgumentException;
+    BivariateRealFunction interpolate(double[] xval, double[] yval, double[][] zval)
+        throws MathException;
 }

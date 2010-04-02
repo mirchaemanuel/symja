@@ -33,7 +33,7 @@ import org.apache.commons.math.complex.Complex;
  * Laguerre's method is global in the sense that it can start with any initial
  * approximation and be able to solve all roots from that point.</p>
  *
- * @version $Revision: 885278 $ $Date: 2009-11-29 22:47:51 +0100 (So, 29 Nov 2009) $
+ * @version $Revision: 922708 $ $Date: 2010-03-14 02:15:47 +0100 (So, 14 Mrz 2010) $
  * @since 1.2
  */
 public class LaguerreSolver extends UnivariateRealSolverImpl {
@@ -50,7 +50,7 @@ public class LaguerreSolver extends UnivariateRealSolverImpl {
      * @deprecated as of 2.0 the function is not stored anymore in the instance
      */
     @Deprecated
-    private PolynomialFunction p;
+    private final PolynomialFunction p;
 
     /**
      * Construct a solver for the given function.
@@ -78,6 +78,7 @@ public class LaguerreSolver extends UnivariateRealSolverImpl {
      */
     public LaguerreSolver() {
         super(100, 1E-6);
+        p = null;
     }
 
     /**

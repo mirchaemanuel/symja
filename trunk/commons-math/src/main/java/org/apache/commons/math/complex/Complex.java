@@ -41,7 +41,7 @@ import org.apache.commons.math.util.MathUtils;
  *
  * implements Serializable since 2.0
  *
- * @version $Revision: 830044 $ $Date: 2009-10-27 02:32:19 +0100 (Di, 27 Okt 2009) $
+ * @version $Revision: 922713 $ $Date: 2010-03-14 02:26:13 +0100 (So, 14 Mrz 2010) $
  */
 public class Complex implements FieldElement<Complex>, Serializable  {
 
@@ -253,27 +253,18 @@ public class Complex implements FieldElement<Complex>, Serializable  {
      */
     @Override
     public boolean equals(Object other) {
-        boolean ret;
-
         if (this == other) {
-            ret = true;
-        } else if (other == null) {
-            ret = false;
-        } else  {
-            try {
-                Complex rhs = (Complex)other;
-                if (rhs.isNaN()) {
-                    ret = this.isNaN();
-                } else {
-                    ret = (real == rhs.real) && (imaginary == rhs.imaginary);
-                }
-            } catch (ClassCastException ex) {
-                // ignore exception
-                ret = false;
+            return true;
+        }
+        if (other instanceof Complex){
+            Complex rhs = (Complex)other;
+            if (rhs.isNaN()) {
+                return this.isNaN();
+            } else {
+                return (real == rhs.real) && (imaginary == rhs.imaginary);
             }
         }
-
-        return ret;
+        return false;
     }
 
     /**

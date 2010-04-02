@@ -29,7 +29,7 @@ import org.apache.commons.math.util.MathUtils;
  * implements Serializable since 2.0
  *
  * @since 1.1
- * @version $Revision: 885278 $ $Date: 2009-11-29 22:47:51 +0100 (So, 29 Nov 2009) $
+ * @version $Revision: 922715 $ $Date: 2010-03-14 02:38:14 +0100 (So, 14 Mrz 2010) $
  */
 public class Fraction
     extends Number
@@ -338,26 +338,17 @@ public class Fraction
      */
     @Override
     public boolean equals(Object other) {
-        boolean ret;
-
         if (this == other) {
-            ret = true;
-        } else if (other == null) {
-            ret = false;
-        } else {
-            try {
-                // since fractions are always in lowest terms, numerators and
-                // denominators can be compared directly for equality.
-                Fraction rhs = (Fraction)other;
-                ret = (numerator == rhs.numerator) &&
-                    (denominator == rhs.denominator);
-            } catch (ClassCastException ex) {
-                // ignore exception
-                ret = false;
-            }
+            return true;
         }
-
-        return ret;
+        if (other instanceof Fraction) {
+            // since fractions are always in lowest terms, numerators and
+            // denominators can be compared directly for equality.
+            Fraction rhs = (Fraction)other;
+            return (numerator == rhs.numerator) &&
+                (denominator == rhs.denominator);
+        }
+        return false;
     }
 
     /**
@@ -392,7 +383,7 @@ public class Fraction
      */
     @Override
     public int hashCode() {
-        return 37 * (37 * 17 + getNumerator()) + getDenominator();
+        return 37 * (37 * 17 + numerator) + denominator;
     }
 
     /**

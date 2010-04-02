@@ -20,11 +20,16 @@ package org.apache.commons.math.distribution;
 import org.apache.commons.math.MathException;
 
 /**
- * Interface that signals that a distribution can compute the probability density function
+ * <p>Interface that signals that a distribution can compute the probability density function
  * for a particular point.
  * @param <P> the type of the point at which density is to be computed, this
- * may be for example <code>Double</code>
- * @version $Revision: 705239 $ $Date: 2008-10-16 15:32:32 +0200 (Do, 16 Okt 2008) $
+ * may be for example <code>Double.</code></p>
+ *
+ * <p>This interface is deprecated.  As of version 2.0, the {@link ContinuousDistribution}
+ * interface will be extended to include a <code>density(double)<code> method.</p>
+ *
+ * @deprecated to be removed in math 3.0
+ * @version $Revision: 924362 $ $Date: 2010-03-17 17:45:31 +0100 (Mi, 17 Mrz 2010) $
  */
 public interface HasDensity<P> {
 

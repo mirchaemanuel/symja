@@ -31,7 +31,7 @@ import org.apache.commons.math.analysis.solvers.UnivariateRealSolverUtils;
  * provided for some of the methods that do not vary from distribution to
  * distribution.
  *
- * @version $Revision: 920558 $ $Date: 2010-03-08 23:57:32 +0100 (Mo, 08 Mrz 2010) $
+ * @version $Revision: 925812 $ $Date: 2010-03-21 16:49:31 +0100 (So, 21 Mrz 2010) $
  */
 public abstract class AbstractContinuousDistribution
     extends AbstractDistribution
@@ -40,7 +40,10 @@ public abstract class AbstractContinuousDistribution
     /** Serializable version identifier */
     private static final long serialVersionUID = -38038050983108802L;
 
-    /** Solver absolute accuracy for inverse cum computation */
+    /**
+     * Solver absolute accuracy for inverse cum computation
+     * @since 2.1
+     */
     private double solverAbsoluteAccuracy = BrentSolver.DEFAULT_ABSOLUTE_ACCURACY;
 
     /**
@@ -48,6 +51,18 @@ public abstract class AbstractContinuousDistribution
      */
     protected AbstractContinuousDistribution() {
         super();
+    }
+
+    /**
+     * Return the probability density for a particular point.
+     * @param x  The point at which the density should be computed.
+     * @return  The pdf at point x.
+     * @throws MathRuntimeException if the specialized class hasn't implemented this function
+     * @since 2.1
+     */
+    public double density(double x) throws MathRuntimeException {
+        throw new MathRuntimeException(new UnsupportedOperationException(),
+                "This distribution does not have a density function implemented");
     }
 
     /**
@@ -101,10 +116,10 @@ public abstract class AbstractContinuousDistribution
              * the default solver's defaultAbsoluteAccuracy of 0 (will be the
              * case if density has bounded support and p is 0 or 1).
              */
-            if (Math.abs(rootFindingFunction.value(lowerBound)) < 1E-6) {
+            if (Math.abs(rootFindingFunction.value(lowerBound)) < getSolverAbsoluteAccuracy()) {
                 return lowerBound;
             }
-            if (Math.abs(rootFindingFunction.value(upperBound)) < 1E-6) {
+            if (Math.abs(rootFindingFunction.value(upperBound)) < getSolverAbsoluteAccuracy()) {
                 return upperBound;
             }
             // Failed bracket convergence was not because of corner solution
@@ -155,6 +170,7 @@ public abstract class AbstractContinuousDistribution
      * Returns the solver absolute accuracy for inverse cum computation.
      *
      * @return the maximum absolute error in inverse cumulative probability estimates
+     * @since 2.1
      */
     protected double getSolverAbsoluteAccuracy() {
         return solverAbsoluteAccuracy;

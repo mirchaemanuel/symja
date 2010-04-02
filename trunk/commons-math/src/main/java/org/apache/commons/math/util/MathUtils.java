@@ -25,7 +25,7 @@ import org.apache.commons.math.MathRuntimeException;
 
 /**
  * Some useful additions to the built-in functions in {@link Math}.
- * @version $Revision: 917277 $ $Date: 2010-02-28 20:44:49 +0100 (So, 28 Feb 2010) $
+ * @version $Revision: 927249 $ $Date: 2010-03-25 02:06:51 +0100 (Do, 25 Mrz 2010) $
  */
 public final class MathUtils {
 
@@ -38,7 +38,10 @@ public final class MathUtils {
      */
     public static final double SAFE_MIN = 0x1.0p-1022;
 
-    /** 2 &pi;. */
+    /**
+     * 2 &pi;.
+     * @since 2.1
+     */
     public static final double TWO_PI = 2 * Math.PI;
 
     /** -1.0 cast as a byte. */
@@ -1141,6 +1144,7 @@ public final class MathUtils {
       * @return normalized array
       * @throws ArithmeticException if the input array contains infinite elements or sums to zero
       * @throws IllegalArgumentException if the target sum is infinite or NaN
+      * @since 2.1
       */
      public static double[] normalizeArray(double[] values, double normalizedSum)
        throws ArithmeticException, IllegalArgumentException {
@@ -1784,5 +1788,46 @@ public final class MathUtils {
         return max;
     }
 
+    /**
+     * Checks that the given array is sorted.
+     *
+     * @param val Values
+     * @param dir Order direction (-1 for decreasing, 1 for increasing)
+     * @param strict Whether the order should be strict
+     * @throws IllegalArgumentException if the array is not sorted.
+     */
+    public static void checkOrder(double[] val, int dir, boolean strict) {
+        double previous = val[0];
 
+        int max = val.length;
+        for (int i = 1; i < max; i++) {
+            if (dir > 0) {
+                if (strict) {
+                    if (val[i] <= previous) {
+                        throw MathRuntimeException.createIllegalArgumentException("points {0} and {1} are not strictly increasing ({2} >= {3})",
+                                                                                  i - 1, i, previous, val[i]);
+                    }
+                } else {
+                    if (val[i] < previous) {
+                        throw MathRuntimeException.createIllegalArgumentException("points {0} and {1} are not increasing ({2} > {3})",
+                                                                                  i - 1, i, previous, val[i]);
+                    }
+                }
+            } else {
+                if (strict) {
+                    if (val[i] >= previous) {
+                        throw MathRuntimeException.createIllegalArgumentException("points {0} and {1} are not strictly decreasing ({2} <= {3})",
+                                                                                  i - 1, i, previous, val[i]);
+                    }
+                } else {
+                    if (val[i] > previous) {
+                        throw MathRuntimeException.createIllegalArgumentException("points {0} and {1} are not decreasing ({2} < {3})",
+                                                                                  i - 1, i, previous, val[i]);
+                    }
+                }
+            }
+
+            previous = val[i];
+        }
+    }
 }

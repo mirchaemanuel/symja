@@ -17,6 +17,7 @@
 package org.apache.commons.math.distribution;
 
 import org.apache.commons.math.MathException;
+import org.apache.commons.math.MathRuntimeException;
 import org.apache.commons.math.special.Gamma;
 import org.apache.commons.math.special.Beta;
 
@@ -29,11 +30,17 @@ import org.apache.commons.math.special.Beta;
  * Beta distribution</a></li>
  * </ul>
  * </p>
- * @version $Revision: 920852 $ $Date: 2010-03-09 13:53:44 +0100 (Di, 09 Mrz 2010) $
+ * @version $Revision: 925900 $ $Date: 2010-03-21 22:10:07 +0100 (So, 21 Mrz 2010) $
  * @since 2.0
  */
 public class BetaDistributionImpl
     extends AbstractContinuousDistribution implements BetaDistribution {
+
+    /**
+     * Default inverse cumulative probability accurac
+     * @since 2.1
+     */
+    public static final double DEFAULT_INVERSE_ABSOLUTE_ACCURACY = 1e-9;
 
     /** Serializable version identifier. */
     private static final long serialVersionUID = -1221965979403477668L;
@@ -49,15 +56,31 @@ public class BetaDistributionImpl
      */
     private double z;
 
+    /** Inverse cumulative probability accuracy */
+    private final double solverAbsoluteAccuracy;
+
+    /**
+     * Build a new instance.
+     * @param alpha first shape parameter (must be positive)
+     * @param beta second shape parameter (must be positive)
+     * @param inverseCumAccuracy the maximum absolute error in inverse cumulative probability estimates
+     * (defaults to {@link #DEFAULT_INVERSE_ABSOLUTE_ACCURACY})
+     * @since 2.1
+     */
+    public BetaDistributionImpl(double alpha, double beta, double inverseCumAccuracy) {
+        this.alpha = alpha;
+        this.beta = beta;
+        z = Double.NaN;
+        solverAbsoluteAccuracy = inverseCumAccuracy;
+    }
+
     /**
      * Build a new instance.
      * @param alpha first shape parameter (must be positive)
      * @param beta second shape parameter (must be positive)
      */
     public BetaDistributionImpl(double alpha, double beta) {
-        this.alpha = alpha;
-        this.beta = beta;
-        z = Double.NaN;
+        this(alpha, beta, DEFAULT_INVERSE_ABSOLUTE_ACCURACY);
     }
 
     /** {@inheritDoc}
@@ -97,19 +120,38 @@ public class BetaDistributionImpl
         }
     }
 
-    /** {@inheritDoc} */
-    public double density(Double x) throws MathException {
+    /**
+     * Return the probability density for a particular point.
+     *
+     * @param x The point at which the density should be computed.
+     * @return The pdf at point x.
+     * @deprecated
+     */
+    public double density(Double x) {
+        return density(x.doubleValue());
+    }
+
+    /**
+     * Return the probability density for a particular point.
+     *
+     * @param x The point at which the density should be computed.
+     * @return The pdf at point x.
+     * @since 2.1
+     */
+    public double density(double x) {
         recomputeZ();
         if (x < 0 || x > 1) {
             return 0;
         } else if (x == 0) {
             if (alpha < 1) {
-                throw new MathException("Cannot compute beta density at 0 when alpha = {0,number}", alpha);
+                throw MathRuntimeException.createIllegalArgumentException(
+                        "Cannot compute beta density at 0 when alpha = {0,number}", alpha);
             }
             return 0;
         } else if (x == 1) {
             if (beta < 1) {
-                throw new MathException("Cannot compute beta density at 1 when beta = %.3g", beta);
+                throw MathRuntimeException.createIllegalArgumentException(
+                        "Cannot compute beta density at 1 when beta = %.3g", beta);
             }
             return 0;
         } else {
@@ -164,5 +206,17 @@ public class BetaDistributionImpl
     @Override
     public double cumulativeProbability(double x0, double x1) throws MathException {
         return cumulativeProbability(x1) - cumulativeProbability(x0);
+    }
+
+    /**
+     * Return the absolute accuracy setting of the solver used to estimate
+     * inverse cumulative probabilities.
+     *
+     * @return the solver absolute accuracy
+     * @since 2.1
+     */
+    @Override
+    protected double getSolverAbsoluteAccuracy() {
+        return solverAbsoluteAccuracy;
     }
 }

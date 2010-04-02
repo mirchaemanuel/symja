@@ -21,7 +21,7 @@ import java.util.ListResourceBundle;
 
 /**
  * French localization message resources for the commons-math library.
- * @version $Revision: 920558 $ $Date: 2010-03-08 23:57:32 +0100 (Mo, 08 Mrz 2010) $
+ * @version $Revision: 927009 $ $Date: 2010-03-24 12:14:07 +0100 (Mi, 24 Mrz 2010) $
  * @since 1.2
  */
 public class MessagesResources_fr
@@ -182,7 +182,13 @@ public class MessagesResources_fr
 
     // org.apache.commons.math.analysis.interpolation.SplineInterpolator
     { "points {0} and {1} are not strictly increasing ({2} >= {3})",
-      "les points {0} et {1} ne sont pas strictements croissants ({2} >= {3})" },
+      "les points {0} et {1} ne sont pas strictement croissants ({2} >= {3})" },
+    { "points {0} and {1} are not strictly decreasing ({2} <= {3})",
+      "les points {0} et {1} ne sont pas strictement d\u00e9croissants ({2} <= {3})" },
+    { "points {0} and {1} are not increasing ({2} > {3})",
+      "les points {0} et {1} ne sont pas croissants ({2} > {3})" },
+    { "points {0} and {1} are not decreasing ({2} < {3})",
+      "les points {0} et {1} ne sont pas d\u00e9croissants ({2} < {3})" },
 
     // org.apache.commons.math.analysis.interpolation.LoessInterpolator
     { "bandwidth must be in the interval [0,1], but got {0}",
@@ -740,6 +746,8 @@ public class MessagesResources_fr
    // org.apache.commons.math.distribution.AbstractContinuousDistribution
    { "Cumulative probability function returned NaN for argument {0} p = {1}",
      "Fonction de probabilit\u00e9 cumulative retourn\u00e9 NaN \u00e0 l''argument de {0} p = {1}" },
+   { "This distribution does not have a density function implemented",
+     "La fonction de densit\u00e9 pour cette distribution n'a pas \u00e9t\u00e9 mis en oeuvre" },
 
    // org.apache.commons.math.distribution.AbstractIntegerDistribution
    { "Discrete cumulative probability function returned NaN for argument {0}",

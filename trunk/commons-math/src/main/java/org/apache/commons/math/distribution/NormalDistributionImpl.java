@@ -28,12 +28,15 @@ import org.apache.commons.math.special.Erf;
  * Default implementation of
  * {@link org.apache.commons.math.distribution.NormalDistribution}.
  *
- * @version $Revision: 920852 $ $Date: 2010-03-09 13:53:44 +0100 (Di, 09 Mrz 2010) $
+ * @version $Revision: 925812 $ $Date: 2010-03-21 16:49:31 +0100 (So, 21 Mrz 2010) $
  */
 public class NormalDistributionImpl extends AbstractContinuousDistribution
         implements NormalDistribution, Serializable {
 
-    /** Default inverse cumulative probability accuracy */
+    /**
+     * Default inverse cumulative probability accuracy
+     * @since 2.1
+     */
     public static final double DEFAULT_INVERSE_ABSOLUTE_ACCURACY = 1e-9;
 
     /** Serializable version identifier */
@@ -67,6 +70,7 @@ public class NormalDistributionImpl extends AbstractContinuousDistribution
      * @param mean mean for this distribution
      * @param sd standard deviation for this distribution
      * @param inverseCumAccuracy inverse cumulative probability accuracy
+     * @since 2.1
      */
     public NormalDistributionImpl(double mean, double sd, double inverseCumAccuracy) {
         super();
@@ -102,10 +106,10 @@ public class NormalDistributionImpl extends AbstractContinuousDistribution
     }
     /**
      * Modify the mean.
-     * @param mean for this distribution
+     * @param newMean for this distribution
      */
-    private void setMeanInternal(double mean) {
-        this.mean = mean;
+    private void setMeanInternal(double newMean) {
+        this.mean = newMean;
     }
 
     /**
@@ -145,8 +149,20 @@ public class NormalDistributionImpl extends AbstractContinuousDistribution
      *
      * @param x The point at which the density should be computed.
      * @return The pdf at point x.
+     * @deprecated
      */
     public double density(Double x) {
+        return density(x.doubleValue());
+    }
+
+    /**
+     * Returns the probability density for a particular point.
+     *
+     * @param x The point at which the density should be computed.
+     * @return The pdf at point x.
+     * @since 2.1
+     */
+    public double density(double x) {
         double x0 = x - mean;
         return Math.exp(-x0 * x0 / (2 * standardDeviation * standardDeviation)) / (standardDeviation * SQRT2PI);
     }
@@ -179,6 +195,7 @@ public class NormalDistributionImpl extends AbstractContinuousDistribution
      * inverse cumulative probabilities.
      *
      * @return the solver absolute accuracy
+     * @since 2.1
      */
     @Override
     protected double getSolverAbsoluteAccuracy() {

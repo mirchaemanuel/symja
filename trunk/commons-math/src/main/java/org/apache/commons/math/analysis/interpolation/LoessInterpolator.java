@@ -35,7 +35,7 @@ import org.apache.commons.math.analysis.polynomials.PolynomialSplineFunction;
  * This class implements both the loess method and serves as an interpolation
  * adapter to it, allowing to build a spline on the obtained loess fit.
  *
- * @version $Revision: 917271 $ $Date: 2010-02-28 20:38:15 +0100 (So, 28 Feb 2010) $
+ * @version $Revision: 925812 $ $Date: 2010-03-21 16:49:31 +0100 (So, 21 Mrz 2010) $
  * @since 2.0
  */
 public class LoessInterpolator
@@ -47,7 +47,10 @@ public class LoessInterpolator
     /** Default value of the number of robustness iterations. */
     public static final int DEFAULT_ROBUSTNESS_ITERS = 2;
 
-    /** Default value for accuracy. */
+    /**
+     * Default value for accuracy.
+     * @since 2.1
+     */
     public static final double DEFAULT_ACCURACY = 1e-12;
 
     /** serializable version identifier. */

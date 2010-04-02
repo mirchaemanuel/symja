@@ -57,7 +57,7 @@ import org.apache.commons.math.util.MathUtils;
  * a1: Artificial variable</br>
  * RHS: Right hand side</br>
  * </p>
- * @version $Revision: 885278 $ $Date: 2009-11-29 22:47:51 +0100 (So, 29 Nov 2009) $
+ * @version $Revision: 922713 $ $Date: 2010-03-14 02:26:13 +0100 (So, 14 Mrz 2010) $
  * @since 2.0
  */
 class SimplexTableau implements Serializable {
@@ -538,12 +538,7 @@ class SimplexTableau implements Serializable {
         return true;
       }
 
-      if (other == null) {
-        return false;
-      }
-
-      try {
-
+      if (other instanceof SimplexTableau) {
           SimplexTableau rhs = (SimplexTableau) other;
           return (restrictToNonNegative  == rhs.restrictToNonNegative) &&
                  (numDecisionVariables   == rhs.numDecisionVariables) &&
@@ -553,12 +548,8 @@ class SimplexTableau implements Serializable {
                  f.equals(rhs.f) &&
                  constraints.equals(rhs.constraints) &&
                  tableau.equals(rhs.tableau);
-
-      } catch (ClassCastException ex) {
-          // ignore exception
-          return false;
       }
-
+      return false;
     }
 
     /** {@inheritDoc} */
