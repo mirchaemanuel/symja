@@ -26,20 +26,32 @@ public class TrigToExp implements IFunctionEvaluator {
 
 		@Override
 		public IExpr visit2(IExpr head, IExpr arg1) {
-			IExpr temp;
+			IExpr temp = arg1;
+			IExpr result = arg1.accept(this);
+			if (result != null) {
+				temp = result;
+			}
 			if (head.equals(Sin)) {
-				temp = arg1.accept(this);
-				if (temp == null) {
-					temp = arg1;
-				}
 				return Subtract(Times(C1D2, CI, Power(E, Times(CNI, temp))), Times(C1D2, CI, Power(E, Times(CI, temp))));
 			}
 			if (head.equals(Cos)) {
-				temp = arg1.accept(this);
-				if (temp == null) {
-					temp = arg1;
-				}
 				return Plus(Times(C1D2, Power(E, Times(CNI, temp))), Times(C1D2, Power(E, Times(CI, temp))));
+			}
+			if (head.equals(Tan)) {
+				return Times(CI, Subtract(Power(E, Times(CNI, temp)), Power(E, Times(CI, temp))), Power(Plus(Power(E, Times(CNI, temp)),
+						Power(E, Times(CI, temp))), CN1));
+			}
+			if (head.equals(ArcSin)) {
+				return Times(CNI, Log(Plus(Sqrt(Subtract(C1, Sqr(temp))), Times(CI, temp))));
+			}
+			if (head.equals(ArcCos)) {
+				return Plus(Times(C1D2, Pi), Times(CI, Log(Plus(Sqrt(Subtract(C1, Sqr(temp))), Times(CI, temp)))));
+			}
+			if (head.equals(ArcTan)) {
+				return Subtract(Times(C1D2, CI, Log(Plus(C1, Times(CNI, temp)))), Times(C1D2, CI, Log(Plus(C1, Times(CI, temp)))));
+			}
+			if (result != null) {
+				return function(head, result);
 			}
 			return null;
 		}

@@ -1517,7 +1517,7 @@ public class F {
 	 * @param head
 	 * @return
 	 */
-	public static IAST function(final IAST head) {
+	public static IAST function(final IExpr head) {
 		final IAST list = ast(head);
 		return list;
 	}
@@ -1529,7 +1529,7 @@ public class F {
 	 * @param arg0
 	 * @return
 	 */
-	public static IAST function(final IAST head, final IExpr arg0) {
+	public static IAST function(final IExpr head, final IExpr arg0) {
 		final IAST list = ast(head);
 		list.add(arg0);
 		return list;
@@ -1545,7 +1545,7 @@ public class F {
 	 *          second argument of the function
 	 * @return
 	 */
-	public static IAST function(final IAST head, final IExpr arg0, final IExpr arg1) {
+	public static IAST function(final IExpr head, final IExpr arg0, final IExpr arg1) {
 		final IAST list = ast(head);
 		list.add(arg0);
 		list.add(arg1);

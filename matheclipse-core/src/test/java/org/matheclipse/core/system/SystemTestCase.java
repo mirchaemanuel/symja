@@ -2177,7 +2177,11 @@ public class SystemTestCase extends AbstractTestCase {
 	}
 	public void testSystem419() {
 		check("TrigToExp[a+b+Sin[c+d]]", "b+a-I*1/2*E^(I*(d+c))+I*1/2*E^(-I*(d+c))");
-		check("TrigToExp[Cos[x]+f[a,b]]", "f[a,b]+1/2*E^(I*x)+1/2*E^(-I*x)");
+		check("TrigToExp[Cos[x]+f[a]]", "f[a]+1/2*E^(I*x)+1/2*E^(-I*x)");
+		check("TrigToExp[Tan[x]]", "I*(-E^(I*x)+E^(-I*x))*(E^(I*x)+E^(-I*x))^(-1)");
+		check("TrigToExp[ArcSin[x]]", "-I*Log[(-x^2+1)^(1/2)+I*x]");
+		check("TrigToExp[ArcCos[x]]", "I*Log[(-x^2+1)^(1/2)+I*x]+1/2*Pi");
+		check("TrigToExp[ArcTan[x]]", "-I*1/2*Log[I*x+1]+I*1/2*Log[-I*x+1]");
 	}
 	// public void testSystem404() {
 	// check("Plot3D[Sin[x]*Cos[y],{x,-10,10},{y,-10,10},{PlotRange->Automatic}]",
