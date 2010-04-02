@@ -74,6 +74,9 @@ public final class Rational {// extends Number<Rational> implements
   public static final Rational ONE = new Rational(BigInteger.ONE,
       BigInteger.ONE);
 
+  public static final Rational MINUS_ONE = new Rational(BigInteger.MINUS_ONE,
+      BigInteger.ONE);
+  
   /**
    * Holds the dividend.
    */

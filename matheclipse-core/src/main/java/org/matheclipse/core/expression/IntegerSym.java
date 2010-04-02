@@ -23,16 +23,19 @@ import apache.harmony.math.Rational;
  * BigInteger methods
  */
 public class IntegerSym extends ExprImpl implements IInteger {
-//	private static final ObjectFactory<IntegerSym> FACTORY = new ObjectFactory<IntegerSym>() {
-//		@Override
-//		protected IntegerSym create() {
-//			if (Config.SERVER_MODE && currentQueue().getSize() >= Config.INTEGER_MAX_POOL_SIZE) {
-//				throw new PoolMemoryExceededException("IntegerImpl", currentQueue().getSize());
-//			}
-//			return new IntegerSym();
-//		}
-//
-//	};
+	// private static final ObjectFactory<IntegerSym> FACTORY = new
+	// ObjectFactory<IntegerSym>() {
+	// @Override
+	// protected IntegerSym create() {
+	// if (Config.SERVER_MODE && currentQueue().getSize() >=
+	// Config.INTEGER_MAX_POOL_SIZE) {
+	// throw new PoolMemoryExceededException("IntegerImpl",
+	// currentQueue().getSize());
+	// }
+	// return new IntegerSym();
+	// }
+	//
+	// };
 
 	/**
 	 * Be cautious with this method, no new internal BigInteger is created
@@ -41,24 +44,24 @@ public class IntegerSym extends ExprImpl implements IInteger {
 	 * @return
 	 */
 	protected static IntegerSym newInstance(final BigInteger value) {
-//		IntegerSym z;
-//		if (Config.SERVER_MODE) {
-//			z = FACTORY.object();
-//		} else {
-//			z = new IntegerSym();
-//		}
+		// IntegerSym z;
+		// if (Config.SERVER_MODE) {
+		// z = FACTORY.object();
+		// } else {
+		// z = new IntegerSym();
+		// }
 		IntegerSym z = new IntegerSym();
 		z.fInteger = value;
 		return z;
 	}
 
 	public static IntegerSym valueOf(final long value) {
-//		IntegerSym z;
-//		if (Config.SERVER_MODE) {
-//			z = FACTORY.object();
-//		} else {
-//			z = new IntegerSym();
-//		}
+		// IntegerSym z;
+		// if (Config.SERVER_MODE) {
+		// z = FACTORY.object();
+		// } else {
+		// z = new IntegerSym();
+		// }
 		IntegerSym z = new IntegerSym();
 		z.fInteger = BigInteger.valueOf(value);
 		return z;
@@ -80,12 +83,12 @@ public class IntegerSym extends ExprImpl implements IInteger {
 	 *           large integer.
 	 */
 	public static IntegerSym valueOf(final String integerString, final int radix) {
-//		IntegerSym z;
-//		if (Config.SERVER_MODE) {
-//			z = FACTORY.object();
-//		} else {
-//			z = new IntegerSym();
-//		}
+		// IntegerSym z;
+		// if (Config.SERVER_MODE) {
+		// z = FACTORY.object();
+		// } else {
+		// z = new IntegerSym();
+		// }
 		IntegerSym z = new IntegerSym();
 		z.fInteger = BigInteger.valueOf(integerString, radix);
 		return z;
@@ -178,9 +181,9 @@ public class IntegerSym extends ExprImpl implements IInteger {
 	/**
 	 * @return
 	 */
-//	public byte byteValue() {
-//		return fInteger.byteValue();
-//	}
+	// public byte byteValue() {
+	// return fInteger.byteValue();
+	// }
 
 	/**
 	 * @param o
@@ -226,9 +229,9 @@ public class IntegerSym extends ExprImpl implements IInteger {
 	/**
 	 * @return
 	 */
-//	public float floatValue() {
-//		return fInteger.floatValue();
-//	}
+	// public float floatValue() {
+	// return fInteger.floatValue();
+	// }
 
 	/**
 	 * Returns the greatest common divisor of this large integer and the one
@@ -286,9 +289,9 @@ public class IntegerSym extends ExprImpl implements IInteger {
 	 * 
 	 * @return
 	 */
-//	public int intValue() {
-//		return fInteger.intValue();
-//	}
+	// public int intValue() {
+	// return fInteger.intValue();
+	// }
 
 	/**
 	 * @param precision
@@ -327,8 +330,9 @@ public class IntegerSym extends ExprImpl implements IInteger {
 	}
 
 	public int intValue() {
-		return (int)fInteger.longValue();
+		return (int) fInteger.longValue();
 	}
+
 	/**
 	 * 
 	 * @return
@@ -351,12 +355,12 @@ public class IntegerSym extends ExprImpl implements IInteger {
 	// return false;
 	// }
 	public IntegerSym copy() {
-//		IntegerSym z;
-//		if (Config.SERVER_MODE) {
-//			z = FACTORY.object();
-//		} else {
-//			z = new IntegerSym();
-//		}
+		// IntegerSym z;
+		// if (Config.SERVER_MODE) {
+		// z = FACTORY.object();
+		// } else {
+		// z = new IntegerSym();
+		// }
 		IntegerSym z = new IntegerSym();
 		z.fInteger = fInteger.copy();
 		return z;
@@ -368,10 +372,10 @@ public class IntegerSym extends ExprImpl implements IInteger {
 		return i;
 	}
 
-//	public void recycle() {
-//		fInteger.recycle();
-//		FACTORY.recycle(this);
-//	}
+	// public void recycle() {
+	// fInteger.recycle();
+	// FACTORY.recycle(this);
+	// }
 
 	/**
 	 * @param that
@@ -476,9 +480,9 @@ public class IntegerSym extends ExprImpl implements IInteger {
 	/**
 	 * @return
 	 */
-//	public short shortValue() {
-//		return fInteger.shortValue();
-//	}
+	// public short shortValue() {
+	// return fInteger.shortValue();
+	// }
 
 	/**
 	 * @param that
@@ -533,18 +537,18 @@ public class IntegerSym extends ExprImpl implements IInteger {
 	/**
 	 * @return
 	 */
-//	public Text toText() {
-//		return fInteger.toText();
-//	}
+	// public Text toText() {
+	// return fInteger.toText();
+	// }
 
 	/**
 	 * @param radix
 	 * @return
 	 */
-//	public Text toText(final int radix) {
-//		return Text.valueOf(fInteger.toString(radix));
-//		// return fInteger.toText(radix);
-//	}
+	// public Text toText(final int radix) {
+	// return Text.valueOf(fInteger.toString(radix));
+	// // return fInteger.toText(radix);
+	// }
 
 	/*
 	 * (non-Javadoc)
@@ -594,8 +598,8 @@ public class IntegerSym extends ExprImpl implements IInteger {
 	}
 
 	public IAST factorInteger() {
-	  IInteger factor;
-	  IInteger last = IntegerSym.valueOf(-2);
+		IInteger factor;
+		IInteger last = IntegerSym.valueOf(-2);
 		int count = 0;
 		final List<IInteger> iFactors = factorize();
 		final IAST list = List();
@@ -703,7 +707,7 @@ public class IntegerSym extends ExprImpl implements IInteger {
 	 * @throws ArithmeticException
 	 */
 	public IInteger[] primitiveRoots() throws ArithmeticException {
-	  IntegerSym phi = (IntegerSym)eulerPhi();
+		IntegerSym phi = (IntegerSym) eulerPhi();
 		int size = phi.eulerPhi().toInt();
 		if (size <= 0) {
 			return null;
@@ -788,7 +792,8 @@ public class IntegerSym extends ExprImpl implements IInteger {
 	 * Returns the integer square root of this integer.
 	 * 
 	 * @return <code>k<code> such as <code>k^2 <= this < (k + 1)^2</code>
-	 * @throws ArithmeticException if this integer is negative.
+	 * @throws ArithmeticException
+	 *           if this integer is negative.
 	 */
 	public IInteger sqrt() {
 		return nthRoot(2);
@@ -798,7 +803,8 @@ public class IntegerSym extends ExprImpl implements IInteger {
 	 * Returns the integer nth-root of this integer.
 	 * 
 	 * @return <code>k<code> such as <code>k^n <= this < (k + 1)^n</code>
-	 * @throws ArithmeticException if this integer is negative and n is even.
+	 * @throws ArithmeticException
+	 *           if this integer is negative and n is even.
 	 */
 	public IInteger nthRoot(int n) throws ArithmeticException {
 		if (sign() == 0)
@@ -884,6 +890,27 @@ public class IntegerSym extends ExprImpl implements IInteger {
 	@Override
 	public String toString() {
 		return fInteger.toString();
+	}
+
+	public String internalFormString() {
+		int value = fInteger.toInt();
+		switch (value) {
+		case -1:
+			return "CN1";
+		case 0:
+			return "C0";
+		case 1:
+			return "C1";
+		case 2:
+			return "C2";
+		case 3:
+			return "C3";
+		case 4:
+			return "C4";
+		case 5:
+			return "C5";
+		}
+		return "integer(" + value + "L)";
 	}
 
 	public <T> T accept(IVisitor<T> visitor) {

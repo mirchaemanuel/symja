@@ -15,7 +15,7 @@ import org.matheclipse.core.visit.IVisitorInt;
  * (I)nterface for a mathematical (Expr)ession
  * 
  */
-public interface IExpr extends Comparable<IExpr>, //FieldElement<IExpr>, 
+public interface IExpr extends Comparable<IExpr>, // FieldElement<IExpr>,
 		IRealtimeElement, Serializable {
 
 	public final static int DOUBLEID = 2;
@@ -40,14 +40,14 @@ public interface IExpr extends Comparable<IExpr>, //FieldElement<IExpr>,
 	 * Returns the product of this object with the one specified.
 	 * 
 	 * @param that
-	 *            the object multiplier.
+	 *          the object multiplier.
 	 * @return <code>this · that</code>.
 	 */
 	IExpr times(IExpr that);
 
 	/**
-	 * Returns the multiplicative inverse of this object. It it the object such
-	 * as <code>this.times(this.inverse()) == ONE </code>, with <code>ONE</code>
+	 * Returns the multiplicative inverse of this object. It it the object such as
+	 * <code>this.times(this.inverse()) == ONE </code>, with <code>ONE</code>
 	 * being the multiplicative identity.
 	 * 
 	 * @return <code>ONE / this</code>.
@@ -73,8 +73,8 @@ public interface IExpr extends Comparable<IExpr>, //FieldElement<IExpr>,
 	public int accept(IVisitorInt visitor);
 
 	/**
-	 * Compares this expression with the specified expression for order. Returns
-	 * a negative integer, zero, or a positive integer as this expression is
+	 * Compares this expression with the specified expression for order. Returns a
+	 * negative integer, zero, or a positive integer as this expression is
 	 * canonical less than, equal to, or greater than the specified expression.
 	 */
 	public int compareTo(IExpr obj);
@@ -109,7 +109,7 @@ public interface IExpr extends Comparable<IExpr>, //FieldElement<IExpr>,
 	 * (&lt; relation).
 	 * 
 	 * @param expr
-	 *            an expression to compare with
+	 *          an expression to compare with
 	 * @return true if this expression is canonical less than the specified
 	 *         expression.
 	 */
@@ -121,7 +121,7 @@ public interface IExpr extends Comparable<IExpr>, //FieldElement<IExpr>,
 	 * expression (&lt;= relation).
 	 * 
 	 * @param expr
-	 *            an expression to compare with
+	 *          an expression to compare with
 	 * @return true if this expression is canonical less than or equal to the
 	 *         specified expression.
 	 */
@@ -129,11 +129,11 @@ public interface IExpr extends Comparable<IExpr>, //FieldElement<IExpr>,
 
 	/**
 	 * Compares this expression with the specified expression for order. Returns
-	 * true if this expression is canonical greater than the specified
-	 * expression (&lt; relation).
+	 * true if this expression is canonical greater than the specified expression
+	 * (&lt; relation).
 	 * 
 	 * @param expr
-	 *            an expression to compare with
+	 *          an expression to compare with
 	 * @return true if this expression is canonical greater than the specified
 	 *         expression.
 	 */
@@ -141,11 +141,11 @@ public interface IExpr extends Comparable<IExpr>, //FieldElement<IExpr>,
 
 	/**
 	 * Compares this expression with the specified expression for order. Returns
-	 * true if this expression is canonical greater than or equal to the
-	 * specified expression (&lt;= relation).
+	 * true if this expression is canonical greater than or equal to the specified
+	 * expression (&lt;= relation).
 	 * 
 	 * @param expr
-	 *            an expression to compare with
+	 *          an expression to compare with
 	 * @return true if this expression is canonical greater than or equal to the
 	 *         specified expression.
 	 */
@@ -190,16 +190,14 @@ public interface IExpr extends Comparable<IExpr>, //FieldElement<IExpr>,
 
 	/**
 	 * Test if this expression equals the given expression. If the compared
-	 * expressions are of the same numeric type, they are equal to a given
-	 * EPSILON
+	 * expressions are of the same numeric type, they are equal to a given EPSILON
 	 * 
 	 */
 	public boolean isSame(IExpr expression);
 
 	/**
 	 * Test if this expression equals the given expression. If the compared
-	 * expressions are of the same numeric type, they are equal to a given
-	 * EPSILON
+	 * expressions are of the same numeric type, they are equal to a given EPSILON
 	 * 
 	 */
 	public boolean isSame(IExpr expression, double epsilon);
@@ -272,14 +270,19 @@ public interface IExpr extends Comparable<IExpr>, //FieldElement<IExpr>,
 	public String fullFormString();
 
 	/**
+	 * Return the internal Java form of this expression
+	 */
+	public String internalFormString();
+
+	/**
 	 * @returnthe head of the expression, which must not be null.
 	 */
 	public IExpr head();
 
 	/**
-	 * @return the 'highest level' head of the expression, before Symbol,
-	 *         Integer, Real or String. for example while the head of a[b][c] is
-	 *         a[b], the top head is a.
+	 * @return the 'highest level' head of the expression, before Symbol, Integer,
+	 *         Real or String. for example while the head of a[b][c] is a[b], the
+	 *         top head is a.
 	 */
 	public ISymbol topHead();
 
@@ -292,15 +295,15 @@ public interface IExpr extends Comparable<IExpr>, //FieldElement<IExpr>,
 
 	/**
 	 * @param leaves
-	 * @return an IExpr instance with the current expression as head(), and
-	 *         leaves as leaves().
+	 * @return an IExpr instance with the current expression as head(), and leaves
+	 *         as leaves().
 	 */
 	public IExpr apply(List<? extends IExpr> leaves);
 
 	/**
 	 * @param leaves
-	 * @return an IExpr instance with the current expression as head(), and
-	 *         leaves as leaves().
+	 * @return an IExpr instance with the current expression as head(), and leaves
+	 *         as leaves().
 	 */
 	public IExpr apply(IExpr... leaves);
 
@@ -308,9 +311,9 @@ public interface IExpr extends Comparable<IExpr>, //FieldElement<IExpr>,
 	 * Convert the variables (i.e. ISymbol's with no lowercase character in the
 	 * 0-th position of their name) in this expression into Slot[] s.
 	 * 
-	 * @return <code>null</code> if the expression contains a variable with a
-	 *         '$' character in the 0-th position of its name and the math
-	 *         engine runs in <i>server mode</i>.
+	 * @return <code>null</code> if the expression contains a variable with a '$'
+	 *         character in the 0-th position of its name and the math engine runs
+	 *         in <i>server mode</i>.
 	 */
 	public IExpr variables2Slots(Map<IExpr, IExpr> map, List<IExpr> variableList);
 

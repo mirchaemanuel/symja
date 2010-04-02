@@ -219,6 +219,10 @@ public abstract class ExprImpl implements IExpr {
     return toString();
   }
 
+  public String internalFormString() {
+    return toString();
+  }
+  
   public List<IExpr> leaves() {
     return null;
   }

@@ -113,6 +113,14 @@ public class ComplexSym extends ExprImpl implements IComplex {
 		return c;
 	}
 
+	public static ComplexSym valueOf(final long real_numerator, final long real_denominator, final long imag_numerator,
+			final long imag_denominator) {
+		final ComplexSym c = new ComplexSym();// FACTORY.object();
+		c._real = Rational.valueOf(real_numerator, real_denominator);
+		c._imaginary = Rational.valueOf(imag_numerator, imag_denominator);
+		return c;
+	}
+
 	public static ComplexSym valueOf(final IFraction real) {
 		final ComplexSym c = new ComplexSym();// FACTORY.object();
 		c._real = real.getRational();
@@ -267,12 +275,12 @@ public class ComplexSym extends ExprImpl implements IComplex {
 	// }
 	// return false;
 	// }
-//	public ComplexSym copy() {
-//		ComplexSym r = new ComplexSym();// FACTORY.object();
-//		r._real = _real.copy();
-//		r._imaginary = _imaginary.copy();
-//		return r;
-//	}
+	// public ComplexSym copy() {
+	// ComplexSym r = new ComplexSym();// FACTORY.object();
+	// r._real = _real.copy();
+	// r._imaginary = _imaginary.copy();
+	// return r;
+	// }
 
 	public ComplexSym copyNew() {
 		ComplexSym r = new ComplexSym();
@@ -333,6 +341,22 @@ public class ComplexSym extends ExprImpl implements IComplex {
 		return buf.toString();
 	}
 
+	public String internalFormString() {
+		int real_numerator = _real.getNumerator().toInt();
+		int real_denominator = _real.getDenominator().toInt();
+		int imag_numerator = _imaginary.getNumerator().toInt();
+		int imag_denominator = _imaginary.getDenominator().toInt();
+		if (_real.equals(Rational.ZERO)) {
+			if (_imaginary.equals(Rational.ONE)) {
+				return "CI";
+			}
+			if (_imaginary.equals(Rational.MINUS_ONE)) {
+				return "CNI";
+			}
+		}
+		return "complex(" + real_numerator + "L," + real_denominator + "L," + imag_numerator + "L," + imag_denominator + "L)";
+	}
+
 	public INumber normalize() {
 		if (_imaginary.equals(Rational.ZERO)) {
 			if (_real.getDenominator().equals(BigInteger.ZERO)) {
@@ -391,8 +415,8 @@ public class ComplexSym extends ExprImpl implements IComplex {
 		return visitor.visit(this);
 	}
 
-  @Override
-  public boolean equalsInt(int i) {
-    return false;
-  }
+	@Override
+	public boolean equalsInt(int i) {
+		return false;
+	}
 }
