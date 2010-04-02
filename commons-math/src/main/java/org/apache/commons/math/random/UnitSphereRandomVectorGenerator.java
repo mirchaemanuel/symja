@@ -21,7 +21,8 @@ package org.apache.commons.math.random;
 /**
  * Generate random vectors isotropically located on the surface of a sphere.
  *
- * @version $Revision: 821626 $ $Date: 2009-10-04 23:57:30 +0200 (So, 04 Okt 2009) $
+ * @since 2.1
+ * @version $Revision: 925812 $ $Date: 2010-03-21 16:49:31 +0100 (So, 21 Mrz 2010) $
  */
 
 public class UnitSphereRandomVectorGenerator

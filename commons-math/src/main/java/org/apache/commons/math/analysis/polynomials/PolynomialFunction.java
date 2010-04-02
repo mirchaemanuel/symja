@@ -29,7 +29,7 @@ import org.apache.commons.math.analysis.UnivariateRealFunction;
  * <a href="http://mathworld.wolfram.com/HornersMethod.html">Horner's Method</a>
  *  is used to evaluate the function.</p>
  *
- * @version $Revision: 885278 $ $Date: 2009-11-29 22:47:51 +0100 (So, 29 Nov 2009) $
+ * @version $Revision: 922714 $ $Date: 2010-03-14 02:35:14 +0100 (So, 14 Mrz 2010) $
  */
 public class PolynomialFunction implements DifferentiableUnivariateRealFunction, Serializable {
 
@@ -341,8 +341,6 @@ public class PolynomialFunction implements DifferentiableUnivariateRealFunction,
     public boolean equals(Object obj) {
         if (this == obj)
             return true;
-        if (obj == null)
-            return false;
         if (!(obj instanceof PolynomialFunction))
             return false;
         PolynomialFunction other = (PolynomialFunction) obj;

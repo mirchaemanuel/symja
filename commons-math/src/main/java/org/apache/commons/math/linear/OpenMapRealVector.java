@@ -24,7 +24,7 @@ import org.apache.commons.math.util.OpenIntToDoubleHashMap.Iterator;
 
 /**
  * This class implements the {@link RealVector} interface with a {@link OpenIntToDoubleHashMap} backing store.
- * @version $Revision: 902203 $ $Date: 2010-01-22 19:27:41 +0100 (Fr, 22 Jan 2010) $
+ * @version $Revision: 925812 $ $Date: 2010-03-21 16:49:31 +0100 (So, 21 Mrz 2010) $
  * @since 2.0
 */
 public class OpenMapRealVector extends AbstractRealVector implements SparseRealVector, Serializable {
@@ -200,6 +200,7 @@ public class OpenMapRealVector extends AbstractRealVector implements SparseRealV
      * Determine if this value is within epsilon of zero.
      * @param value The value to test
      * @return <code>true</code> if this value is within epsilon to zero, <code>false</code> otherwise
+     * @since 2.1
      */
     protected boolean isDefaultValue(double value) {
         return Math.abs(value) < epsilon;
@@ -279,7 +280,10 @@ public class OpenMapRealVector extends AbstractRealVector implements SparseRealV
         return res;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     * @since 2.1
+     */
     @Override
     public OpenMapRealVector copy() {
         return new OpenMapRealVector(this);
@@ -777,9 +781,6 @@ public class OpenMapRealVector extends AbstractRealVector implements SparseRealV
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
-        }
-        if (obj == null) {
-            return false;
         }
         if (!(obj instanceof OpenMapRealVector)) {
             return false;

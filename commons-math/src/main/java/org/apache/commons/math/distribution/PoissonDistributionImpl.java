@@ -26,18 +26,20 @@ import org.apache.commons.math.util.MathUtils;
 /**
  * Implementation for the {@link PoissonDistribution}.
  *
- * @version $Revision: 920852 $ $Date: 2010-03-09 13:53:44 +0100 (Di, 09 Mrz 2010) $
+ * @version $Revision: 925812 $ $Date: 2010-03-21 16:49:31 +0100 (So, 21 Mrz 2010) $
  */
 public class PoissonDistributionImpl extends AbstractIntegerDistribution
         implements PoissonDistribution, Serializable {
 
     /**
      * Default maximum number of iterations for cumulative probability calculations.
+     * @since 2.1
      */
     public static final int DEFAULT_MAX_ITERATIONS = 10000000;
 
     /**
-     * Default convergence criterion
+     * Default convergence criterion.
+     * @since 2.1
      */
     public static final double DEFAULT_EPSILON = 1E-12;
 
@@ -83,6 +85,7 @@ public class PoissonDistributionImpl extends AbstractIntegerDistribution
      * @param p the Poisson mean
      * @param epsilon the convergence criteria for cumulative probabilites
      * @param maxIterations the maximum number of iterations for cumulative probabilites
+     * @since 2.1
      */
     public PoissonDistributionImpl(double p, double epsilon, int maxIterations) {
         setMean(p);
@@ -95,6 +98,7 @@ public class PoissonDistributionImpl extends AbstractIntegerDistribution
      *
      * @param p the Poisson mean
      * @param epsilon the convergence criteria for cumulative probabilites
+     * @since 2.1
      */
     public PoissonDistributionImpl(double p, double epsilon) {
         setMean(p);
@@ -106,6 +110,7 @@ public class PoissonDistributionImpl extends AbstractIntegerDistribution
      *
      * @param p the Poisson mean
      * @param maxIterations the maximum number of iterations for cumulative probabilites
+     * @since 2.1
      */
     public PoissonDistributionImpl(double p, int maxIterations) {
         setMean(p);

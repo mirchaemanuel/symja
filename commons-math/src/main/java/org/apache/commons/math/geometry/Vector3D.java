@@ -25,7 +25,7 @@ import org.apache.commons.math.util.MathUtils;
 /**
  * This class implements vectors in a three-dimensional space.
  * <p>Instance of this class are guaranteed to be immutable.</p>
- * @version $Revision: 811685 $ $Date: 2009-09-05 19:36:48 +0200 (Sa, 05 Sep 2009) $
+ * @version $Revision: 922713 $ $Date: 2010-03-14 02:26:13 +0100 (So, 14 Mrz 2010) $
  * @since 1.2
  */
 
@@ -415,24 +415,15 @@ public class Vector3D
       return true;
     }
 
-    if (other == null) {
-      return false;
-    }
-
-    try {
-
+    if (other instanceof Vector3D) {
       final Vector3D rhs = (Vector3D)other;
       if (rhs.isNaN()) {
           return this.isNaN();
       }
 
       return (x == rhs.x) && (y == rhs.y) && (z == rhs.z);
-
-    } catch (ClassCastException ex) {
-        // ignore exception
-        return false;
     }
-
+    return false;
   }
 
   /**

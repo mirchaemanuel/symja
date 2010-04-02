@@ -24,7 +24,7 @@ import org.apache.commons.math.random.JDKRandomGenerator;
  * of the algorithm can be configured for a specific problem.
  *
  * @since 2.0
- * @version $Revision: 902929 $ $Date: 2010-01-25 20:03:56 +0100 (Mo, 25 Jan 2010) $
+ * @version $Revision: 925812 $ $Date: 2010-03-21 16:49:31 +0100 (So, 21 Mrz 2010) $
  */
 public class GeneticAlgorithm {
 
@@ -219,6 +219,7 @@ public class GeneticAlgorithm {
      * reach {@link StoppingCondition} in the last run.
      *
      * @return number of generations evolved
+     * @since 2.1
      */
     public int getGenerationsEvolved() {
         return generationsEvolved;

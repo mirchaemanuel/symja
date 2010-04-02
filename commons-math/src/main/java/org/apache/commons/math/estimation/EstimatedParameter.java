@@ -27,7 +27,7 @@ import java.io.Serializable;
  * solvers should adjust the value of unbounds parameters until they
  * satisfy convergence criterions specific to each solver.</p>
  *
- * @version $Revision: 811827 $ $Date: 2009-09-06 17:32:50 +0200 (So, 06 Sep 2009) $
+ * @version $Revision: 922710 $ $Date: 2010-03-14 02:20:56 +0100 (So, 14 Mrz 2010) $
  * @since 1.2
  * @deprecated as of 2.0, everything in package org.apache.commons.math.estimation has
  * been deprecated and replaced by package org.apache.commons.math.optimization.general
@@ -44,7 +44,7 @@ public class EstimatedParameter
     protected double  estimate;
 
     /** Name of the parameter */
-    private   String  name;
+    private final String  name;
 
     /** Indicator for bound parameters
      * (ie parameters that should not be estimated)

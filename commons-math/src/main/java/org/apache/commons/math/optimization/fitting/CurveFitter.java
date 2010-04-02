@@ -37,7 +37,7 @@ import org.apache.commons.math.optimization.VectorialPointValuePair;
  * is done by finding the parameters values that minimizes the objective
  * function &sum;(y<sub>i</sub>-f(x<sub>i</sub>))<sup>2</sup>. This is
  * really a least squares problem.</p>
- * @version $Revision: 790380 $ $Date: 2009-07-01 23:03:38 +0200 (Mi, 01 Jul 2009) $
+ * @version $Revision: 927009 $ $Date: 2010-03-24 12:14:07 +0100 (Mi, 24 Mrz 2010) $
  * @since 2.0
  */
 public class CurveFitter {
@@ -101,6 +101,13 @@ public class CurveFitter {
      */
     public WeightedObservedPoint[] getObservations() {
         return observations.toArray(new WeightedObservedPoint[observations.size()]);
+    }
+
+    /**
+     * Remove all observations.
+     */
+    public void clearObservations() {
+        observations.clear();
     }
 
     /** Fit a curve.

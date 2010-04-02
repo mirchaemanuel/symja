@@ -30,7 +30,7 @@ import org.apache.commons.math.analysis.UnivariateRealFunction;
  *            a[n](x-c[0])(x-c[1])...(x-c[n-1])
  * Note that the length of a[] is one more than the length of c[]</p>
  *
- * @version $Revision: 825919 $ $Date: 2009-10-16 16:51:55 +0200 (Fr, 16 Okt 2009) $
+ * @version $Revision: 922708 $ $Date: 2010-03-14 02:15:47 +0100 (So, 14 Mrz 2010) $
  * @since 1.2
  */
 public class PolynomialFunctionNewtonForm implements UnivariateRealFunction {
@@ -45,13 +45,13 @@ public class PolynomialFunctionNewtonForm implements UnivariateRealFunction {
     /**
      * Centers of the Newton polynomial.
      */
-    private double c[];
+    private final double c[];
 
     /**
      * When all c[i] = 0, a[] becomes normal polynomial coefficients,
      * i.e. a[i] = coefficients[i].
      */
-    private double a[];
+    private final double a[];
 
     /**
      * Whether the polynomial coefficients are available.

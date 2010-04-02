@@ -36,7 +36,7 @@ import org.apache.commons.math.optimization.VectorialPointValuePair;
  * Base class for implementing least squares optimizers.
  * <p>This base class handles the boilerplate methods associated to thresholds
  * settings, jacobian and error estimation.</p>
- * @version $Revision: 825919 $ $Date: 2009-10-16 16:51:55 +0200 (Fr, 16 Okt 2009) $
+ * @version $Revision: 925812 $ $Date: 2010-03-21 16:49:31 +0100 (So, 21 Mrz 2010) $
  * @since 1.2
  *
  */
@@ -63,10 +63,16 @@ public abstract class AbstractLeastSquaresOptimizer implements DifferentiableMul
     /** Number of rows of the jacobian matrix. */
     protected int rows;
 
-    /** Target value for the objective functions at optimum. */
+    /**
+     * Target value for the objective functions at optimum.
+     * @since 2.1
+     */
     protected double[] targetValues;
 
-    /** Weight for the least squares cost computation. */
+    /**
+     * Weight for the least squares cost computation.
+     * @since 2.1
+     */
     protected double[] residualsWeights;
 
     /** Current point. */

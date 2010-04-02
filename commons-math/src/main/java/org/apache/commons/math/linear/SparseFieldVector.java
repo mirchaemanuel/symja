@@ -27,7 +27,7 @@ import org.apache.commons.math.util.OpenIntToFieldHashMap;
 /**
  * This class implements the {@link FieldVector} interface with a {@link OpenIntToFieldHashMap} backing store.
  * @param <T> the type of the field elements
- * @version $Revision: 903059 $ $Date: 2010-01-26 03:53:00 +0100 (Di, 26 Jan 2010) $
+ * @version $Revision: 922714 $ $Date: 2010-03-14 02:35:14 +0100 (So, 14 Mrz 2010) $
  * @since 2.0
  */
 public class SparseFieldVector<T extends FieldElement<T>> implements FieldVector<T>, Serializable {
@@ -613,10 +613,6 @@ public class SparseFieldVector<T extends FieldElement<T>> implements FieldVector
 
         if (this == obj) {
             return true;
-        }
-
-        if (obj == null) {
-            return false;
         }
 
         if (!(obj instanceof SparseFieldVector<?>)) {

@@ -26,11 +26,17 @@ import org.apache.commons.math.special.Beta;
  * Default implementation of
  * {@link org.apache.commons.math.distribution.FDistribution}.
  *
- * @version $Revision: 920852 $ $Date: 2010-03-09 13:53:44 +0100 (Di, 09 Mrz 2010) $
+ * @version $Revision: 925897 $ $Date: 2010-03-21 22:06:46 +0100 (So, 21 Mrz 2010) $
  */
 public class FDistributionImpl
     extends AbstractContinuousDistribution
     implements FDistribution, Serializable  {
+
+    /**
+     * Default inverse cumulative probability accuracy
+     * @since 2.1
+     */
+    public static final double DEFAULT_INVERSE_ABSOLUTE_ACCURACY = 1e-9;
 
     /** Message for non positive degrees of freddom. */
     private static final String NON_POSITIVE_DEGREES_OF_FREEDOM_MESSAGE =
@@ -45,6 +51,9 @@ public class FDistributionImpl
     /** The numerator degrees of freedom*/
     private double denominatorDegreesOfFreedom;
 
+    /** Inverse cumulative probability accuracy */
+    private final double solverAbsoluteAccuracy;
+
     /**
      * Create a F distribution using the given degrees of freedom.
      * @param numeratorDegreesOfFreedom the numerator degrees of freedom.
@@ -52,9 +61,42 @@ public class FDistributionImpl
      */
     public FDistributionImpl(double numeratorDegreesOfFreedom,
                              double denominatorDegreesOfFreedom) {
+        this(numeratorDegreesOfFreedom, denominatorDegreesOfFreedom, DEFAULT_INVERSE_ABSOLUTE_ACCURACY);
+    }
+
+    /**
+     * Create a F distribution using the given degrees of freedom and inverse cumulative probability accuracy.
+     * @param numeratorDegreesOfFreedom the numerator degrees of freedom.
+     * @param denominatorDegreesOfFreedom the denominator degrees of freedom.
+     * @param inverseCumAccuracy the maximum absolute error in inverse cumulative probability estimates
+     * (defaults to {@link #DEFAULT_INVERSE_ABSOLUTE_ACCURACY})
+     * @since 2.1
+     */
+    public FDistributionImpl(double numeratorDegreesOfFreedom, double denominatorDegreesOfFreedom,
+            double inverseCumAccuracy) {
         super();
         setNumeratorDegreesOfFreedomInternal(numeratorDegreesOfFreedom);
         setDenominatorDegreesOfFreedomInternal(denominatorDegreesOfFreedom);
+        solverAbsoluteAccuracy = inverseCumAccuracy;
+    }
+
+    /**
+     * Returns the probability density for a particular point.
+     *
+     * @param x The point at which the density should be computed.
+     * @return The pdf at point x.
+     * @since 2.1
+     */
+    @Override
+    public double density(double x) {
+        final double nhalf = numeratorDegreesOfFreedom / 2;
+        final double mhalf = denominatorDegreesOfFreedom / 2;
+        final double logx = Math.log(x);
+        final double logn = Math.log(numeratorDegreesOfFreedom);
+        final double logm = Math.log(denominatorDegreesOfFreedom);
+        final double lognxm = Math.log(numeratorDegreesOfFreedom * x + denominatorDegreesOfFreedom);
+        return Math.exp(nhalf*logn + nhalf*logx - logx + mhalf*logm - nhalf*lognxm -
+               mhalf*lognxm - Beta.logBeta(nhalf, mhalf));
     }
 
     /**
@@ -225,5 +267,17 @@ public class FDistributionImpl
      */
     public double getDenominatorDegreesOfFreedom() {
         return denominatorDegreesOfFreedom;
+    }
+
+    /**
+     * Return the absolute accuracy setting of the solver used to estimate
+     * inverse cumulative probabilities.
+     *
+     * @return the solver absolute accuracy
+     * @since 2.1
+     */
+    @Override
+    protected double getSolverAbsoluteAccuracy() {
+        return solverAbsoluteAccuracy;
     }
 }

@@ -55,13 +55,13 @@ import org.apache.commons.math.analysis.UnivariateRealFunction;
  * than or equal to <code>x</code>.  The value returned is <br>
  * <code>polynomials[j](x - knot[j])</code></li></ol></p>
  *
- * @version $Revision: 811685 $ $Date: 2009-09-05 19:36:48 +0200 (Sa, 05 Sep 2009) $
+ * @version $Revision: 922708 $ $Date: 2010-03-14 02:15:47 +0100 (So, 14 Mrz 2010) $
  */
 public class PolynomialSplineFunction
     implements DifferentiableUnivariateRealFunction {
 
     /** Spline segment interval delimiters (knots).   Size is n+1 for n segments. */
-    private double knots[];
+    private final double knots[];
 
     /**
      * The polynomial functions that make up the spline.  The first element
@@ -70,13 +70,13 @@ public class PolynomialSplineFunction
      * evaluating these functions at <code>(x - knot[i])</code> where i is the
      * knot segment to which x belongs.
      */
-    private PolynomialFunction polynomials[] = null;
+    private final PolynomialFunction polynomials[];
 
     /**
      * Number of spline segments = number of polynomials
      *  = number of partition points - 1
      */
-    private int n = 0;
+    private final int n;
 
 
     /**

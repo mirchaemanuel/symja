@@ -24,10 +24,16 @@ import org.apache.commons.math.MathRuntimeException;
 /**
  * The default implementation of {@link ExponentialDistribution}.
  *
- * @version $Revision: 920852 $ $Date: 2010-03-09 13:53:44 +0100 (Di, 09 Mrz 2010) $
+ * @version $Revision: 925900 $ $Date: 2010-03-21 22:10:07 +0100 (So, 21 Mrz 2010) $
  */
 public class ExponentialDistributionImpl extends AbstractContinuousDistribution
     implements ExponentialDistribution, Serializable {
+
+    /**
+     * Default inverse cumulative probability accuracy
+     * @since 2.1
+     */
+    public static final double DEFAULT_INVERSE_ABSOLUTE_ACCURACY = 1e-9;
 
     /** Serializable version identifier */
     private static final long serialVersionUID = 2401296428283614780L;
@@ -35,13 +41,28 @@ public class ExponentialDistributionImpl extends AbstractContinuousDistribution
     /** The mean of this distribution. */
     private double mean;
 
+    /** Inverse cumulative probability accuracy */
+    private final double solverAbsoluteAccuracy;
+
     /**
      * Create a exponential distribution with the given mean.
      * @param mean mean of this distribution.
      */
     public ExponentialDistributionImpl(double mean) {
+        this(mean, DEFAULT_INVERSE_ABSOLUTE_ACCURACY);
+    }
+
+    /**
+     * Create a exponential distribution with the given mean.
+     * @param mean mean of this distribution.
+     * @param inverseCumAccuracy the maximum absolute error in inverse cumulative probability estimates
+     * (defaults to {@link #DEFAULT_INVERSE_ABSOLUTE_ACCURACY})
+     * @since 2.1
+     */
+    public ExponentialDistributionImpl(double mean, double inverseCumAccuracy) {
         super();
         setMeanInternal(mean);
+        solverAbsoluteAccuracy = inverseCumAccuracy;
     }
 
     /**
@@ -56,15 +77,15 @@ public class ExponentialDistributionImpl extends AbstractContinuousDistribution
     }
     /**
      * Modify the mean.
-     * @param mean the new mean.
-     * @throws IllegalArgumentException if <code>mean</code> is not positive.
+     * @param newMean the new mean.
+     * @throws IllegalArgumentException if <code>newMean</code> is not positive.
      */
-    private void setMeanInternal(double mean) {
-        if (mean <= 0.0) {
+    private void setMeanInternal(double newMean) {
+        if (newMean <= 0.0) {
             throw MathRuntimeException.createIllegalArgumentException(
-                  "mean must be positive ({0})", mean);
+                  "mean must be positive ({0})", newMean);
         }
-        this.mean = mean;
+        this.mean = newMean;
     }
 
     /**
@@ -80,8 +101,21 @@ public class ExponentialDistributionImpl extends AbstractContinuousDistribution
      *
      * @param x The point at which the density should be computed.
      * @return The pdf at point x.
+     * @deprecated - use density(double)
      */
     public double density(Double x) {
+        return density(x.doubleValue());
+    }
+
+    /**
+     * Return the probability density for a particular point.
+     *
+     * @param x The point at which the density should be computed.
+     * @return The pdf at point x.
+     * @since 2.1
+     */
+    @Override
+    public double density(double x) {
         if (x < 0) {
             return 0;
         }
@@ -196,5 +230,17 @@ public class ExponentialDistributionImpl extends AbstractContinuousDistribution
             // use mean
             return mean;
         }
+    }
+
+    /**
+     * Return the absolute accuracy setting of the solver used to estimate
+     * inverse cumulative probabilities.
+     *
+     * @return the solver absolute accuracy
+     * @since 2.1
+     */
+    @Override
+    protected double getSolverAbsoluteAccuracy() {
+        return solverAbsoluteAccuracy;
     }
 }

@@ -33,7 +33,7 @@ import org.apache.commons.math.FieldElement;
  * in order to implement the {@link FieldElement} interface.
  * </p>
  * @since 2.0
- * @version $Revision: 894187 $ $Date: 2009-12-28 16:30:03 +0100 (Mo, 28 Dez 2009) $
+ * @version $Revision: 925812 $ $Date: 2010-03-21 16:49:31 +0100 (So, 21 Mrz 2010) $
  */
 public class BigReal implements FieldElement<BigReal>, Comparable<BigReal>, Serializable {
 
@@ -192,6 +192,7 @@ public class BigReal implements FieldElement<BigReal>, Comparable<BigReal>, Seri
      * Gets the rounding mode for division operations
      * The default is {@code RoundingMode.HALF_UP}
      * @return the rounding mode.
+     * @since 2.1
      */
     public RoundingMode getRoundingMode() {
         return roundingMode;
@@ -200,6 +201,7 @@ public class BigReal implements FieldElement<BigReal>, Comparable<BigReal>, Seri
     /***
      * Sets the rounding mode for decimal divisions.
      * @param roundingMode rounding mode for decimal divisions
+     * @since 2.1
      */
     public void setRoundingMode(RoundingMode roundingMode) {
         this.roundingMode = roundingMode;
@@ -209,6 +211,7 @@ public class BigReal implements FieldElement<BigReal>, Comparable<BigReal>, Seri
      * Sets the scale for division operations.
      * The default is 64
      * @return the scale
+     * @since 2.1
      */
     public int getScale() {
         return scale;
@@ -217,6 +220,7 @@ public class BigReal implements FieldElement<BigReal>, Comparable<BigReal>, Seri
     /***
      * Sets the scale for division operations.
      * @param scale scale for division operations
+     * @since 2.1
      */
     public void setScale(int scale) {
         this.scale = scale;
@@ -264,14 +268,14 @@ public class BigReal implements FieldElement<BigReal>, Comparable<BigReal>, Seri
     /** {@inheritDoc} */
     @Override
     public boolean equals(Object other) {
-        try {
-            if (other == null) {
-                return false;
-            }
-            return d.equals(((BigReal) other).d);
-        } catch (ClassCastException cce) {
-            return false;
+        if (this == other){
+            return true;
         }
+
+        if (other instanceof BigReal){
+            return d.equals(((BigReal) other).d);
+        }
+        return false;
     }
 
     /** {@inheritDoc} */

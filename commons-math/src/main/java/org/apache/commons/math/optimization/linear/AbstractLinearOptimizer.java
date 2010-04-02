@@ -28,7 +28,7 @@ import org.apache.commons.math.optimization.RealPointValuePair;
  * Base class for implementing linear optimizers.
  * <p>This base class handles the boilerplate methods associated to thresholds
  * settings and iterations counters.</p>
- * @version $Revision: 811827 $ $Date: 2009-09-06 17:32:50 +0200 (So, 06 Sep 2009) $
+ * @version $Revision: 925812 $ $Date: 2010-03-21 16:49:31 +0100 (So, 21 Mrz 2010) $
  * @since 2.0
  *
  */
@@ -37,16 +37,28 @@ public abstract class AbstractLinearOptimizer implements LinearOptimizer {
     /** Default maximal number of iterations allowed. */
     public static final int DEFAULT_MAX_ITERATIONS = 100;
 
-    /** Linear objective function. */
+    /**
+     * Linear objective function.
+     * @since 2.1
+     */
     protected LinearObjectiveFunction function;
 
-    /** Linear constraints. */
+    /**
+     * Linear constraints.
+     * @since 2.1
+     */
     protected Collection<LinearConstraint> linearConstraints;
 
-    /** Type of optimization goal: either {@link GoalType#MAXIMIZE} or {@link GoalType#MINIMIZE}. */
+    /**
+     * Type of optimization goal: either {@link GoalType#MAXIMIZE} or {@link GoalType#MINIMIZE}.
+     * @since 2.1
+     */
     protected GoalType goal;
 
-    /** Whether to restrict the variables to non-negative values. */
+    /**
+     * Whether to restrict the variables to non-negative values.
+     * @since 2.1
+     */
     protected boolean nonNegative;
 
     /** Maximal number of iterations allowed. */
