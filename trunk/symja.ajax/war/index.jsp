@@ -60,12 +60,12 @@ function getResult(nameArray, btnStr) {
     poststr = "/calc?" + poststr;
     request = new XMLHttpRequest();
     request.onreadystatechange = stateChanged;
-    request.open("GET", poststr, true);
+    request.open("POST", poststr, true);
     request.send(null);
 <% 
   } else {
 %>
-  $.ajax({ type: "GET", url: 'calc', data: poststr, 
+  $.ajax({ type: "POST", url: 'calc', data: poststr, 
     success: function(responseText){handlerFunc(responseText) },
     error: function(responseText){errFunc(responseText) },
   }); 
