@@ -13,7 +13,7 @@ Here is a link for the general [http://www.testiphone.com/?view=hor&url=http%3A%
 The corresponding JSP file for the evaluation API is the index.jsp file
 
 = Loading self defined packages =
-New packages can be defined through the admin.jsp interface. Only Google Appengine users which are administrators for this application care allowed to use the interface. 
+New packages can be defined through the admin.jsp interface. Only Google Appengine users which are administrators for this application are allowed to use the interface. 
 
 = Development =
 Browse source code in SVN:
