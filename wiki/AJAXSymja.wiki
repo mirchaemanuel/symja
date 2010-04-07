@@ -10,6 +10,11 @@ On testiphone.com you can try the same example online in an [http://www.testipho
 
 Here is a link for the general [http://www.testiphone.com/?view=hor&url=http%3A%2F%2Fmobmath.appspot.com%2F iPhone AJAX interface]
 
+The corresponding JSP file for the evaluation API is the index.jsp file
+
+= Loading self defined packages =
+New packages can be defined through the admin.jsp interface. Only Google Appengine users which are administrators for this application care allowed to use the interface. 
+
 = Development =
 Browse source code in SVN:
   * [http://code.google.com/p/symja/source/browse/#svn/trunk/symja.ajax svn/trunk/symja.ajax]
