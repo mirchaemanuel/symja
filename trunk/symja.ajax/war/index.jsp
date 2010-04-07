@@ -36,7 +36,7 @@ var handlerFunc = function(resultstr) {
 	  return;
 	}
   }
-  document.getElementById('result').innerHTML = 'Got response in wrong format.';        
+  document.getElementById('result').innerHTML = 'No connection or wrong response format.';        
 }
 var errFunc = function(t) {
   document.getElementById('result').innerHTML = 'Error ' + t.status + ' -- ' + t.statusText;   

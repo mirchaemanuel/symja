@@ -54,8 +54,6 @@ public class EvaluateServlet extends HttpServlet {
 	}
 
 	protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-		// Get the value of a request parameter; the name is case-sensitive
-		// The following generates a page showing all the request parameters
 		PrintWriter out = res.getWriter();
 		res.setContentType("text/plain");
 		String name = "evaluate";
@@ -410,7 +408,7 @@ public class EvaluateServlet extends HttpServlet {
 		// e.printStackTrace();
 		// }
 		// }
-		F.initSymbols();
+		F.initSymbols(null, new SymbolObserver());
 		Config.SERVER_MODE = true;
 		System.out.println("Config.SERVER_MODE = true");
 		try {
