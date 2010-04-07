@@ -3,6 +3,7 @@ package org.matheclipse.core.interfaces;
 import java.io.IOException;
 import java.util.List;
 
+import org.matheclipse.core.eval.EvalEngine;
 import org.matheclipse.core.patternmatching.PatternMatcher;
 import org.matheclipse.core.patternmatching.PatternMatcherAndInvoker;
 
@@ -11,8 +12,7 @@ import org.matheclipse.core.patternmatching.PatternMatcherAndInvoker;
  * function-name)
  * 
  */
-public interface ISymbol extends IExpr{ // Variable<IExpr>  
-	
+public interface ISymbol extends IExpr { // Variable<IExpr>
 
 	/**
 	 * ISymbol attribute to indicate that a symbol has a constant value
@@ -53,8 +53,7 @@ public interface ISymbol extends IExpr{ // Variable<IExpr>
 	public final static int LISTABLE = 0x0080;
 
 	/**
-	 * ISymbol attribute for a function, which should not be evaluated
-	 * numerically
+	 * ISymbol attribute for a function, which should not be evaluated numerically
 	 * 
 	 */
 	public final static int NHOLDALL = 0x2000;
@@ -79,9 +78,14 @@ public interface ISymbol extends IExpr{ // Variable<IExpr>
 	public final static int NOATTRIBUTE = 0x0000;
 
 	/**
-	 * Description of the Field
+	 * ISymbol attribute for a numeric function
 	 */
 	public final static int NUMERICFUNCTION = 0x0400;
+
+	/**
+	 * ISymbol flag for a symbol which has already loaded it's package definition
+	 */
+	public final static int PACKAGE_LOADED = 0x0800;
 
 	/**
 	 * ISymbol attribute for a function transformation: f(x) ==> x
@@ -89,8 +93,8 @@ public interface ISymbol extends IExpr{ // Variable<IExpr>
 	public final static int ONEIDENTITY = 0x0001;
 
 	/**
-	 * ISymbol attribute for a commutative function transformation. The
-	 * evaluation of the function will sort the arguments.
+	 * ISymbol attribute for a commutative function transformation. The evaluation
+	 * of the function will sort the arguments.
 	 * 
 	 */
 	public final static int ORDERLESS = 0x0004;
@@ -102,8 +106,8 @@ public interface ISymbol extends IExpr{ // Variable<IExpr>
 	public final static int FLATORDERLESS = FLAT | ORDERLESS;
 
 	/**
-	 * The default priority when associating a new rule to a symbol. Lower
-	 * numbers have higher priorities
+	 * The default priority when associating a new rule to a symbol. Lower numbers
+	 * have higher priorities
 	 */
 	public final static int DEFAULT_RULE_PRIORITY = 100000;
 
@@ -133,13 +137,13 @@ public interface ISymbol extends IExpr{ // Variable<IExpr>
 	 * 
 	 */
 	public boolean isValue();
-	
+
 	/**
-   * Returns <code>true</code>, if the given AST is bound to a value.
-   * 
-   */
-  public boolean isValue(IAST ast);
-  
+	 * Returns <code>true</code>, if the given AST is bound to a value.
+	 * 
+	 */
+	public boolean isValue(IAST ast);
+
 	/**
 	 * Get the Attributes of this symbol (i.e. LISTABLE, FLAT, ORDERLESS,...)
 	 * 
@@ -151,7 +155,7 @@ public interface ISymbol extends IExpr{ // Variable<IExpr>
 	 * Set the Attributes of this symbol (i.e. LISTABLE, FLAT, ORDERLESS,...)
 	 * 
 	 * @param attributes
-	 *            the Attributes of this symbol
+	 *          the Attributes of this symbol
 	 */
 	public void setAttributes(int attributes);
 
@@ -162,8 +166,8 @@ public interface ISymbol extends IExpr{ // Variable<IExpr>
 	public void pushLocalVariable();
 
 	/**
-	 * Create a new variable placeholder on the symbols variable stack and set
-	 * the local value
+	 * Create a new variable placeholder on the symbols variable stack and set the
+	 * local value
 	 * 
 	 */
 	public void pushLocalVariable(IExpr localValue);
@@ -198,56 +202,53 @@ public interface ISymbol extends IExpr{ // Variable<IExpr>
 	 * Associate a new rule with default priority to this symbol.
 	 * 
 	 * @param equalRule
-	 *            <code>true</code> if the leftHandSide could be matched with
-	 *            equality
+	 *          <code>true</code> if the leftHandSide could be matched with
+	 *          equality
 	 * @param leftHandSide
 	 * @param rightHandSide
 	 * @return
 	 * 
 	 * @see ISymbol#DEFAULT_RULE_PRIORITY
 	 */
-	public IPatternMatcher<IExpr> putDownRule(ISymbol symbol, boolean equalRule, IExpr leftHandSide,
-			IExpr rightHandSide);
+	public IPatternMatcher<IExpr> putDownRule(ISymbol symbol, boolean equalRule, IExpr leftHandSide, IExpr rightHandSide);
 
 	/**
 	 * Associate a new rule with default priority to this symbol.
 	 * 
 	 * @param equalRule
-	 *            <code>true</code> if the leftHandSide could be matched with
-	 *            equality
+	 *          <code>true</code> if the leftHandSide could be matched with
+	 *          equality
 	 * @param leftHandSide
 	 * @param rightHandSide
 	 * @param condition
-	 *            additional condition for rules containing patterns
+	 *          additional condition for rules containing patterns
 	 * @return
 	 * 
 	 * @see ISymbol#DEFAULT_RULE_PRIORITY
 	 */
-	public IPatternMatcher putDownRule(ISymbol symbol, boolean equalRule, IExpr leftHandSide,
-			IExpr rightHandSide, IExpr condition);
+	public IPatternMatcher putDownRule(ISymbol symbol, boolean equalRule, IExpr leftHandSide, IExpr rightHandSide, IExpr condition);
 
 	/**
-	 * Associate a new rule with the given priority to this symbol.<br/> Rules
-	 * with lower numbers have higher priorities.
+	 * Associate a new rule with the given priority to this symbol.<br/>
+	 * Rules with lower numbers have higher priorities.
 	 * 
 	 * @param equalRule
-	 *            <code>true</code> if the leftHandSide could be matched with
-	 *            equality
+	 *          <code>true</code> if the leftHandSide could be matched with
+	 *          equality
 	 * @param leftHandSide
 	 * @param rightHandSide
 	 * @return
 	 * 
 	 * @see ISymbol#DEFAULT_RULE_PRIORITY
 	 */
-	public IPatternMatcher putDownRule(ISymbol symbol, boolean equalRule, IExpr leftHandSide,
-			IExpr rightHandSide, IExpr condition, int priority);
-	
+	public IPatternMatcher putDownRule(ISymbol symbol, boolean equalRule, IExpr leftHandSide, IExpr rightHandSide, IExpr condition,
+			int priority);
+
 	/**
 	 * Associate a new rule, which invokes a method, to this symbol.
 	 * 
 	 */
-	public PatternMatcher putDownRule(
-			final PatternMatcherAndInvoker pmEvaluator);
+	public PatternMatcher putDownRule(final PatternMatcherAndInvoker pmEvaluator);
 
 	/**
 	 * Evaluate the given expression for the rules associated with this symbol
@@ -262,21 +263,21 @@ public interface ISymbol extends IExpr{ // Variable<IExpr>
 	 * Clear the associated rules for this symbol
 	 * 
 	 */
-	public void clear();
+	public void clear(EvalEngine engine);
 
 	/**
 	 * Clear all associated rules and attributes for this symbol
 	 * 
 	 */
-	public void clearAll();
+	public void clearAll(EvalEngine engine);
 
 	/**
-	 * Return a list of the rules associated to this symbol 
+	 * Return a list of the rules associated to this symbol
 	 * 
 	 * @return
 	 */
 	public List<IAST> definition();
-	
+
 	/**
 	 * Return the rules associated to this symbol in String representation
 	 * 
@@ -290,8 +291,7 @@ public interface ISymbol extends IExpr{ // Variable<IExpr>
 	 * @param stream
 	 * @throws IOException
 	 */
-	public void readSymbol(java.io.ObjectInputStream stream)
-			throws IOException;
+	public void readSymbol(java.io.ObjectInputStream stream) throws IOException;
 
 	/**
 	 * Serialize the rules associated to this object
@@ -299,6 +299,5 @@ public interface ISymbol extends IExpr{ // Variable<IExpr>
 	 * @param stream
 	 * @throws java.io.IOException
 	 */
-	public void writeSymbol(java.io.ObjectOutputStream stream)
-			throws java.io.IOException;
+	public void writeSymbol(java.io.ObjectOutputStream stream) throws java.io.IOException;
 }

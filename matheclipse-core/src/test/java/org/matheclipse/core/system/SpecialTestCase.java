@@ -29,16 +29,14 @@ public class SpecialTestCase extends TestCase {
 
 	public SpecialTestCase(String name) {
 		super(name);
-		F.initSymbols(null);
+		F.initSymbols(null, null);
 	}
 
 	// public void check(String evalString, String expectedResult) {
 	// check(true, evalString, expectedResult);
 	// }
 
-
-	public void check(ScriptEngine scriptEngine, String evalString,
-			String expectedResult) {
+	public void check(ScriptEngine scriptEngine, String evalString, String expectedResult) {
 		try {
 			if (evalString.length() == 0 && expectedResult.length() == 0) {
 				return;
@@ -53,20 +51,20 @@ public class SpecialTestCase extends TestCase {
 		}
 	}
 
-	
-	
 	public void check(String strEval, String strResult) {
-		check(EvalEngine.get(), true, strEval, strResult, false);
+		check(EvalEngine.get(), false, strEval, strResult, false);
 	}
 
-//	public void check(String strEval, String strResult, boolean relaxedOutput) {
-//		check(EvalEngine.get(), true, strEval, strResult, relaxedOutput);
-//	}
-//
+	// public void check(String strEval, String strResult, boolean relaxedOutput)
+	// {
+	// check(EvalEngine.get(), true, strEval, strResult, relaxedOutput);
+	// }
+	//
 	public void check(IAST ast, String strResult) {
 		check(EvalEngine.get(), true, ast, strResult);
 	}
-//
+
+	//
 	public void check(EvalEngine engine, boolean configMode, String strEval, String strResult) {
 		check(engine, configMode, strEval, strResult, false);
 	}
@@ -80,7 +78,7 @@ public class SpecialTestCase extends TestCase {
 			StringBufferWriter buf = new StringBufferWriter();
 			buf.setIgnoreNewLine(true);
 			// F.initSymbols();
-			Config.SERVER_MODE = true;//configMode;
+			Config.SERVER_MODE = configMode;// configMode;
 			if (Config.SERVER_MODE) {
 				Parser parser = new Parser(relaxedSyntax);
 				ASTNode node = parser.parse(strEval);
@@ -169,7 +167,7 @@ public class SpecialTestCase extends TestCase {
 	 */
 	protected void setUp() {
 		try {
-			
+
 			// setup the evaluation engine (and bind to current thread)
 			EvalEngine engine = new EvalEngine(); // EvalEngine.get();
 			EvalEngine.set(engine);
@@ -190,7 +188,6 @@ public class SpecialTestCase extends TestCase {
 	}
 
 	public void testSystem996() {
-		// EvalEngine.get(), false,
 		check("Package[ \"PackageName\", {Test}, {\n" + "   Test[x_,y_]:=TestIntern[x,y],\n"
 				+ "   TestIntern[x_,y_] := {x,y,mySymbol}, \n" + "   mySymbol = 4711 \n" + " } ]", "");
 		check("Test[a,b]", "{a,b,4711}");
@@ -198,6 +195,8 @@ public class SpecialTestCase extends TestCase {
 		check("TestIntern[a,b]", "TestIntern[a,b]");
 		// the mySymbol constant should not be visible outside the package:
 		check("mySymbol", "mySymbol");
+		check("Test[a,b]", "{a,b,4711}"); 
+		// a new EvalEngine sees the new defined rules:
 		EvalEngine engine = new EvalEngine();
 		check(engine, false, "Test[a,b]", "{a,b,4711}", false);
 		// this should give an syntax error:

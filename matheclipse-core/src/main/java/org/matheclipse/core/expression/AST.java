@@ -1,10 +1,10 @@
 package org.matheclipse.core.expression;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 
-import org.apache.commons.math.Field;
 import org.matheclipse.core.eval.exception.WrongArgumentType;
 import org.matheclipse.core.generic.IsUnaryVariableOrPattern;
 import org.matheclipse.core.generic.UnaryVariable2Slot;
@@ -28,8 +28,6 @@ import org.matheclipse.core.visit.IVisitorInt;
 import org.matheclipse.generic.interfaces.BiFunction;
 
 import apache.harmony.math.BigInteger;
-
-import com.google.common.base.Predicate;
 
 /**
  * 

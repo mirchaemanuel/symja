@@ -30,7 +30,7 @@ public abstract class AbstractTestCase extends TestCase {
 
 	public AbstractTestCase(String name) {
 		super(name);
-		F.initSymbols(null);
+		F.initSymbols(null, null);
 	}
 
 	// public void check(String evalString, String expectedResult) {
