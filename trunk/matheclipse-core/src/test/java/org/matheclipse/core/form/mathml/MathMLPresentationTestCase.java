@@ -17,7 +17,7 @@ public class MathMLPresentationTestCase extends TestCase {
 
   public MathMLPresentationTestCase(String name) {
     super(name);
-    F.initSymbols(null);
+    F.initSymbols(null, null);
   }
 
   /**

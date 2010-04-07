@@ -1,5 +1,6 @@
 package org.matheclipse.core.reflection.system;
 
+import org.matheclipse.core.eval.EvalEngine;
 import org.matheclipse.core.eval.interfaces.IFunctionEvaluator;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IAST;
@@ -14,7 +15,7 @@ public class ClearAll implements IFunctionEvaluator {
 	public IExpr evaluate(final IAST ast) {
 		if (ast.size() == 2) {
 			ISymbol symbol = (ISymbol)ast.get(1);
-			symbol.clearAll();
+			symbol.clearAll(EvalEngine.get());
 			return F.Null;
 		}
 		return null;

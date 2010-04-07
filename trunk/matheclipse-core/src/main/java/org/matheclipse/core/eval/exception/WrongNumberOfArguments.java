@@ -25,7 +25,7 @@ public class WrongNumberOfArguments extends MathException {
 
 	@Override
 	public String getMessage() {
-		return "Allowed number of arguments: " + fAllowed + " but got " + fCurrent + " arguments:\n" + fExpr.toString();
+		return "Expected number of arguments: " + fAllowed + " but got " + fCurrent + " arguments:\n" + fExpr.toString();
 	}
 
 }

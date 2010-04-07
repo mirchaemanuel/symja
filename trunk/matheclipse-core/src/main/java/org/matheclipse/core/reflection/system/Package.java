@@ -1,12 +1,18 @@
 package org.matheclipse.core.reflection.system;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.Reader;
 import java.util.HashMap;
 import java.util.HashSet;
 
+import org.matheclipse.basic.Config;
 import org.matheclipse.core.eval.EvalEngine;
+import org.matheclipse.core.eval.exception.RuleCreationError;
 import org.matheclipse.core.eval.exception.WrongNumberOfArguments;
 import org.matheclipse.core.eval.interfaces.IFunctionEvaluator;
 import org.matheclipse.core.expression.F;
+import org.matheclipse.core.form.output.StringBufferWriter;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.IStringX;
@@ -26,24 +32,34 @@ public class Package implements IFunctionEvaluator {
 		if (ast.size() != 4 || !(ast.get(1) instanceof IStringX) || !ast.get(2).isList() || !ast.get(3).isList()) {
 			throw new WrongNumberOfArguments(ast, 1, ast.size() - 1);
 		}
+		if (Config.SERVER_MODE) {
+			throw new RuleCreationError(null);
+		}
 		IAST symbols = (IAST) ast.get(2);
+		IAST list = (IAST) ast.get(3);
+		evalPackage(symbols, list);
+		// System.out.println(resultList);
+		return F.Null;
+	}
+
+	public static void evalPackage(IAST publicSymbols, IAST list) {
 		HashMap<ISymbol, ISymbol> convertedSymbolMap = new HashMap<ISymbol, ISymbol>();
-		HashSet<ISymbol> unprotectedSymbolSet = new HashSet<ISymbol>();
+		HashSet<ISymbol> publicSymbolSet = new HashSet<ISymbol>();
 
 		ISymbol toSymbol;
-		for (int i = 1; i < symbols.size(); i++) {
-			IExpr expr = symbols.get(i);
+		for (int i = 1; i < publicSymbols.size(); i++) {
+			IExpr expr = publicSymbols.get(i);
 			if (expr instanceof ISymbol) {
-				unprotectedSymbolSet.add((ISymbol) expr);
+				publicSymbolSet.add((ISymbol) expr);
 				toSymbol = F.predefinedSymbol(((ISymbol) expr).toString());
 				convertedSymbolMap.put((ISymbol) expr, toSymbol);
 			}
 		}
-		IAST list = (IAST) ast.get(3);
+
 		// determine "private package rule headers" in convertedSymbolMap
 		for (int i = 1; i < list.size(); i++) {
 			if (list.get(i) instanceof IAST) {
-				determineRuleHead((IAST) list.get(i), unprotectedSymbolSet, convertedSymbolMap);
+				determineRuleHead((IAST) list.get(i), publicSymbolSet, convertedSymbolMap);
 			}
 		}
 
@@ -62,8 +78,6 @@ public class Package implements IFunctionEvaluator {
 		} finally {
 			engine.setPackageMode(false);
 		}
-		// System.out.println(resultList);
-		return F.Null;
 	}
 
 	/**
@@ -73,7 +87,8 @@ public class Package implements IFunctionEvaluator {
 	 * @param unprotectedSymbolSet
 	 * @param convertedSymbolMap
 	 */
-	private void determineRuleHead(IAST rule, HashSet<ISymbol> unprotectedSymbolSet, HashMap<ISymbol, ISymbol> convertedSymbolMap) {
+	private static void determineRuleHead(IAST rule, HashSet<ISymbol> unprotectedSymbolSet,
+			HashMap<ISymbol, ISymbol> convertedSymbolMap) {
 		ISymbol lhsHead;
 		if (rule.size() > 1 && (rule.head().equals(F.Set) || rule.head().equals(F.SetDelayed))) {
 			// determine the head to which this rule is associated
@@ -87,6 +102,7 @@ public class Package implements IFunctionEvaluator {
 			if (lhsHead != null && !unprotectedSymbolSet.contains(lhsHead)) {
 				ISymbol toSymbol = convertedSymbolMap.get(lhsHead);
 				if (toSymbol == null) {
+					// define a package private symbol
 					toSymbol = F.predefinedSymbol("@" + EvalEngine.getNextCounter() + lhsHead.toString());
 					convertedSymbolMap.put(lhsHead, toSymbol);
 				}
@@ -96,14 +112,14 @@ public class Package implements IFunctionEvaluator {
 	}
 
 	/**
-	 * Convert all symbols which are keys in <code>convertedSymbols</code> in
-	 * the given <code>expr</code> and return the resulting expression.
+	 * Convert all symbols which are keys in <code>convertedSymbols</code> in the
+	 * given <code>expr</code> and return the resulting expression.
 	 * 
 	 * @param expr
 	 * @param convertedSymbols
 	 * @return
 	 */
-	private IExpr convertSymbolsInExpr(IExpr expr, HashMap<ISymbol, ISymbol> convertedSymbols) {
+	private static IExpr convertSymbolsInExpr(IExpr expr, HashMap<ISymbol, ISymbol> convertedSymbols) {
 		IExpr result = expr;
 		if (expr instanceof IAST) {
 			result = convertSymbolsInList((IAST) expr, convertedSymbols);
@@ -118,14 +134,14 @@ public class Package implements IFunctionEvaluator {
 	}
 
 	/**
-	 * Convert all symbols which are keys in <code>convertedSymbols</code> in
-	 * the given <code>ast</code> list and return the resulting list.
+	 * Convert all symbols which are keys in <code>convertedSymbols</code> in the
+	 * given <code>ast</code> list and return the resulting list.
 	 * 
 	 * @param ast
 	 * @param convertedSymbols
 	 * @return
 	 */
-	private IAST convertSymbolsInList(IAST ast, HashMap<ISymbol, ISymbol> convertedSymbols) {
+	private static IAST convertSymbolsInList(IAST ast, HashMap<ISymbol, ISymbol> convertedSymbols) {
 		IAST result = (IAST) ast.clone();
 		for (int i = 0; i < result.size(); i++) {
 			IExpr expr = result.get(i);
@@ -148,6 +164,50 @@ public class Package implements IFunctionEvaluator {
 
 	public void setUp(ISymbol symbol) {
 		symbol.setAttributes(ISymbol.HOLDALL);
+	}
+
+	/**
+	 * Load a package from the given reader
+	 * 
+	 * @param is
+	 */
+	public static void loadPackage(final EvalEngine engine, final Reader is) {
+		String record = null;
+		final StringBufferWriter buf = new StringBufferWriter();
+		final BufferedReader r = new BufferedReader(is);// new
+		// InputStreamReader(is));
+		try {
+			StringBuilder builder = new StringBuilder(2048);
+			while ((record = r.readLine()) != null) {
+				builder.append(record);
+				builder.append('\n');
+			}
+			// EvalEngine engine = EvalEngine.get();
+
+			buf.setIgnoreNewLine(true);
+
+			IExpr parsedExpression = engine.parse(builder.toString());
+			if (parsedExpression != null && parsedExpression instanceof IAST) {
+				IAST ast = (IAST) parsedExpression;
+				if (ast.size() != 4 || !(ast.get(1) instanceof IStringX) || !ast.get(2).isList() || !ast.get(3).isList()) {
+					throw new WrongNumberOfArguments(ast, 3, ast.size() - 1);
+				}
+				IAST symbols = (IAST) ast.get(2);
+				IAST list = (IAST) ast.get(3);
+				evalPackage(symbols, list);
+			}
+
+		} catch (final Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				buf.close();
+				r.close();
+				is.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 }

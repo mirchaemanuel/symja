@@ -21,8 +21,7 @@ public class SetDelayed implements IFunctionEvaluator, ICreatePatternMatcher {
 			final IExpr leftHandSide = functionList.get(1);
 			final IExpr rightHandSide = functionList.get(2);
 			if (rightHandSide.isAST("Condition", 3)) {
-				createPatternMatcher(leftHandSide, ((IAST) rightHandSide)
-						.get(1), ((IAST) rightHandSide).get(2));
+				createPatternMatcher(leftHandSide, ((IAST) rightHandSide).get(1), ((IAST) rightHandSide).get(2));
 			} else {
 				createPatternMatcher(leftHandSide, rightHandSide, null);
 			}
@@ -35,50 +34,46 @@ public class SetDelayed implements IFunctionEvaluator, ICreatePatternMatcher {
 		return F.Null;
 	}
 
-	public Object[] createPatternMatcher(IExpr leftHandSide,
-			IExpr rightHandSide, IExpr condition) throws RuleCreationError {
+	public Object[] createPatternMatcher(IExpr leftHandSide, IExpr rightHandSide, IExpr condition) throws RuleCreationError {
 		final Object[] result = new Object[2];
 		final EvalEngine engine = EvalEngine.get();
-//		HeapContext.enter();
-//		try {
-			try {
-				if (leftHandSide instanceof IAST) {
-					final IAST temp = engine
-							.evalSetAttributes((IAST) leftHandSide);
-					if (temp != null) {
-						leftHandSide = temp;
-					}
-				}
-			} catch (final ReturnException e) {
-			}
-
-			result[0] = null; // IPatternMatcher
-//			rightHandSide = rightHandSide.copy();
-			result[1] = rightHandSide;
-			if (leftHandSide instanceof ISymbol) {
-				final ISymbol lhsSymbol = (ISymbol) leftHandSide;
-				if (lhsSymbol.hasLocalVariableStack()) {
-					lhsSymbol.set(rightHandSide);
-					return result;
-				} else {
-					condition = condition == null ? null : condition;//.copy();
-					result[0] = lhsSymbol.putDownRule(F.SetDelayed, true,
-							leftHandSide, rightHandSide, condition);
-					return result;
-				}
-			}
-
+		// HeapContext.enter();
+		// try {
+		try {
 			if (leftHandSide instanceof IAST) {
-				final ISymbol lhsSymbol = ((IAST) leftHandSide).topHead();
-//				leftHandSide = leftHandSide.copy();
-				condition = condition == null ? null : condition;//.copy();
-				result[0] = lhsSymbol.putDownRule(F.SetDelayed, false,
-						leftHandSide, rightHandSide, condition);
+				final IAST temp = engine.evalSetAttributes((IAST) leftHandSide);
+				if (temp != null) {
+					leftHandSide = temp;
+				}
+			}
+		} catch (final ReturnException e) {
+		}
+
+		result[0] = null; // IPatternMatcher
+		// rightHandSide = rightHandSide.copy();
+		result[1] = rightHandSide;
+		if (leftHandSide instanceof ISymbol) {
+			final ISymbol lhsSymbol = (ISymbol) leftHandSide;
+			if (lhsSymbol.hasLocalVariableStack()) {
+				lhsSymbol.set(rightHandSide);
+				return result;
+			} else {
+				condition = condition == null ? null : condition;// .copy();
+				result[0] = lhsSymbol.putDownRule(F.SetDelayed, true, leftHandSide, rightHandSide, condition);
 				return result;
 			}
-//		} finally {
-//			HeapContext.exit();
-//		}
+		}
+
+		if (leftHandSide instanceof IAST) {
+			final ISymbol lhsSymbol = ((IAST) leftHandSide).topHead();
+			// leftHandSide = leftHandSide.copy();
+			condition = condition == null ? null : condition;// .copy();
+			result[0] = lhsSymbol.putDownRule(F.SetDelayed, false, leftHandSide, rightHandSide, condition);
+			return result;
+		}
+		// } finally {
+		// HeapContext.exit();
+		// }
 		throw new RuleCreationError(leftHandSide);
 	}
 

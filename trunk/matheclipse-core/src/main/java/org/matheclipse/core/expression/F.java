@@ -1,9 +1,7 @@
 package org.matheclipse.core.expression;
 
-import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -16,7 +14,6 @@ import org.matheclipse.core.convert.Object2Expr;
 import org.matheclipse.core.eval.EvalEngine;
 import org.matheclipse.core.eval.Namespace;
 import org.matheclipse.core.eval.SystemNamespace;
-import org.matheclipse.core.form.output.StringBufferWriter;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IComplex;
 import org.matheclipse.core.interfaces.IComplexNum;
@@ -29,6 +26,7 @@ import org.matheclipse.core.interfaces.ISignedNumber;
 import org.matheclipse.core.interfaces.IStringX;
 import org.matheclipse.core.interfaces.ISymbol;
 import org.matheclipse.core.patternmatching.PatternMatcher;
+import org.matheclipse.core.reflection.system.Package;
 
 import apache.harmony.math.BigInteger;
 import apache.harmony.math.Rational;
@@ -42,6 +40,13 @@ import apache.harmony.math.Rational;
  */
 public class F {
 	transient private final static HashMap<String, ISymbol> fSymbolMap = new HashMap<String, ISymbol>();
+
+	transient private static ISymbolObserver SYMBOL_OBSERVER = new ISymbolObserver() {
+		@Override
+		public final boolean createSymbol(String symbol) {
+			return false;
+		}
+	};
 
 	public static ISymbol Abs;
 
@@ -642,11 +647,12 @@ public class F {
 	private static boolean isSystemInitialized = false;
 
 	/**
-	 * Initialize the complete System. Calls {@link #initSymbols(String)} with
-	 * parameter <code>null</code>.
+	 * Initialize the complete System. Calls
+	 * {@link #initSymbols(String, ISymbolObserver)} with parameter
+	 * <code>null</code>.
 	 */
 	public synchronized static void initSymbols() {
-		initSymbols(null);
+		initSymbols(null, null);
 	}
 
 	/**
@@ -655,8 +661,10 @@ public class F {
 	 * @param fileName
 	 *          <code>null</code> or optional text filename, which includes the
 	 *          preloaded system rules
+	 * @param symbolObserver
+	 *          TODO
 	 */
-	public synchronized static void initSymbols(String fileName) {
+	public synchronized static void initSymbols(String fileName, ISymbolObserver symbolObserver) {
 
 		if (!isSystemInitialized) {
 			isSystemInitialized = true;
@@ -868,6 +876,11 @@ public class F {
 
 			CInfinity = function(DirectedInfinity, C1);
 			CNInfinity = function(DirectedInfinity, CN1);
+
+			if (symbolObserver != null) {
+				SYMBOL_OBSERVER = symbolObserver;
+			}
+
 			Reader reader = null;
 			if (fileName != null) {
 				try {
@@ -883,40 +896,7 @@ public class F {
 				}
 			}
 			if (reader != null) {
-				loadPackage(reader);
-			}
-		}
-	}
-
-	public static void loadPackage(final Reader is) {
-		String record = null;
-		final StringBufferWriter buf = new StringBufferWriter();
-		final BufferedReader r = new BufferedReader(is);// new
-		// InputStreamReader(is));
-		try {
-			StringBuilder builder = new StringBuilder(2048);
-			while ((record = r.readLine()) != null) {
-				builder.append(record);
-				builder.append('\n');
-			}
-			EvalEngine engine = EvalEngine.get();
-
-			buf.setIgnoreNewLine(true);
-
-			IExpr parsedExpression = engine.parse(builder.toString());
-			if (parsedExpression != null) {
-				engine.evaluate(parsedExpression);
-			}
-
-		} catch (final Exception e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				buf.close();
-				r.close();
-				is.close();
-			} catch (IOException e) {
-				e.printStackTrace();
+				Package.loadPackage(EvalEngine.get(), reader);
 			}
 		}
 	}
@@ -1848,6 +1828,15 @@ public class F {
 			return temp;
 		}
 		if (Config.SERVER_MODE) {
+			if (Character.isUpperCase(symbolName.charAt(0))) {
+				if (SYMBOL_OBSERVER.createSymbol(symbolName)) {
+					// second try, because the symbol may now be added to fSymbolMap
+					ISymbol temp2 = fSymbolMap.get(symbolName);
+					if (temp2 != null) {
+						return temp2;
+					}
+				}
+			}
 			HashMap<String, ISymbol> variableMap = EvalEngine.getVariableMap();
 			temp = variableMap.get(symbolName);
 			if (temp != null) {

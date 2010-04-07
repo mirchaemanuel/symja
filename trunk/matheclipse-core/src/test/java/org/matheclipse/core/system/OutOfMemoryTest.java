@@ -31,7 +31,7 @@ public class OutOfMemoryTest extends TestCase {
 
 	public OutOfMemoryTest(String name) {
 		super(name);
-		F.initSymbols(null);
+		F.initSymbols(null, null);
 	}
 
 	public void check(String strEval, String strResult) {
