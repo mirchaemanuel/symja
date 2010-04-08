@@ -112,6 +112,7 @@ public class EvalExpandJSR223 {
     } catch (Exception ex) {
       ex.printStackTrace();
     } finally {
+      // Call terminate() only one time at the end of the program
       ComputerThreads.terminate();
     }
 
