@@ -32,9 +32,9 @@ import edu.jas.kern.ComputerThreads;
 
 public class EvalExpand {
   public static void main(String[] args) {
-    // static intialization of the MathEclipse engine
-    // instead of null you can set a file name to overload the default initial
-    // rules:
+    // Static initialization of the MathEclipse engine instead of null 
+    // you can set a file name to overload the default initial
+    // rules. This step should be called only once at program setup:
     F.initSymbols(null);
     EvalUtilities util = new EvalUtilities();
 
@@ -68,6 +68,7 @@ public class EvalExpand {
     } catch (final Exception e) {
       e.printStackTrace();
     } finally {
+      // Call terminate() only one time at the end of the program  
       ComputerThreads.terminate();
     }
 
