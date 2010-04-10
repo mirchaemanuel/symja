@@ -12,8 +12,8 @@ Here is a link for the general [http://www.testiphone.com/?view=hor&url=http%3A%
 
 The corresponding JSP file for the Evaluation API is the *index.jsp* file
 
-= Loading self defined packages =
-New packages can be defined through the *admin.jsp* interface. Only Google Appengine users which are administrators for this application are allowed to use the *admin.jsp* interface. 
+= Loading new packages =
+Symja is extendable through the Package[] command. If you've installed AJAXSymja on Google Appengine, you can add new packages through the *admin.jsp* interface. Only users which are administrators for the Google Appengine application are allowed to use the *admin.jsp* interface. 
 
 Example package for generating Laguerre or Legendre polynomials:
 {{{
