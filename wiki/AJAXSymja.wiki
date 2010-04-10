@@ -22,7 +22,7 @@ Package[
   (* define the public available symbols *)
   {LaguerreP, LegendreP}, 
 { 
-  (* Laguerre polynomials \n" + 
+  (* Laguerre polynomials 
      http://en.wikipedia.org/wiki/Laguerre_polynomials *) 
   LaguerreP[0,x_]:=1, 
   LaguerreP[1,x_]:=1-x, 
