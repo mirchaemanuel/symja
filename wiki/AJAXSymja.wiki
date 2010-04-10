@@ -15,6 +15,26 @@ The corresponding JSP file for the Evaluation API is the *index.jsp* file
 = Loading self defined packages =
 New packages can be defined through the *admin.jsp* interface. Only Google Appengine users which are administrators for this application are allowed to use the interface. 
 
+Example package for generating Laguerre or Legendre polynomials:
+{{{
+Package[ 
+  "Polynomials", 
+  (* define the public available symbols *)
+  {LaguerreP, LegendreP}, 
+{ 
+  (* Laguerre polynomials \n" + 
+     http://en.wikipedia.org/wiki/Laguerre_polynomials *) 
+  LaguerreP[0,x_]:=1, 
+  LaguerreP[1,x_]:=1-x, 
+  LaguerreP[n_IntegerQ,x_]:= 
+      ExpandAll[(2*n-1-x)*LaguerreP[n-1,x] - (n-1)^2*LaguerreP[n-2,x]] /; NonNegative[n], 
+  (* Legendre polynomials 
+     http://en.wikipedia.org/wiki/Legendre_polynomials *)
+  LegendreP[n_IntegerQ,x_]:=
+      1/(2^n)*Sum[ExpandAll[Binomial[n,k]^2*(x-1)^(n-k)*(x+1)^k], {k,0,n}] /; NonNegative[n]
+} ]
+}}}
+
 = Development =
 Browse source code in SVN:
   * [http://code.google.com/p/symja/source/browse/#svn/trunk/symja.ajax svn/trunk/symja.ajax]
