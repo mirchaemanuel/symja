@@ -12,7 +12,7 @@ Here is a link for the general [http://www.testiphone.com/?view=hor&url=http%3A%
 
 The corresponding JSP file for the Evaluation API is the *index.jsp* file
 
-= Install addittional packages =
+= Install additional packages =
 Symja is extendable through the Package[] command. If you've installed AJAXSymja on Google Appengine, you can add new packages through the *admin.jsp* interface. Only users which are administrators for the Google Appengine application are allowed to use the *admin.jsp* interface. 
 
 Example package for generating Laguerre or Legendre polynomials (*Note* - public symbols have to start with an uppercase character):
@@ -34,6 +34,12 @@ Package[
       1/(2^n)*Sum[ExpandAll[Binomial[n,k]^2*(x-1)^(n-k)*(x+1)^k], {k,0,n}] /; NonNegative[n]
 } ]
 }}}
+
+After installing the package with the *Save package* button the new command
+{{{
+  LegendreP[7,x]
+}}}
+can be evaluated.
 
 = Development =
 Browse source code in SVN:
