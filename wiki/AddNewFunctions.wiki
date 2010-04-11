@@ -98,9 +98,10 @@ If you do a static import of the *{{{F}}}* factory like this in your classes:
 {{{
 import static org.matheclipse.core.expression.F.*;
 }}}
-you can use the above Java expression to create the *IExpr* instances.
+you can use the above Java expression to create the *{{{IExpr}}}* instances.
 
-With the eval() method you can evaluate the above expressions:
+With the *{{{eval()}}}* method you can evaluate the above expressions:
 {{{
 F.eval(<your expression here>);
 }}}
+to new *{{{IExpr}}}* instances.
