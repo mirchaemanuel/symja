@@ -82,3 +82,20 @@ public class MyFunction extends AbstractFunctionEvaluator {
 
 }
 }}}
+
+= Building expressions =
+With the *JavaForm[]* function you can convert a Symja expression into internal Java form.
+This example:
+{{{
+JavaForm[I/2*E^((-I)*x)-I/2*E^(I*x)]
+}}}
+gives the Java expression:
+{{{
+Plus(Times(complex(0L,1L,1L,2L),Power(E,Times(CNI,x))),Times(complex(0L,1L,-1L,2L),Power(E,Times(CI,x))))
+}}}
+
+If you do a static import of the *F* factory like this in your classes:
+{{{
+import static org.matheclipse.core.expression.F.*;
+}}}
+you can use the above Java expression o create the *IExpr* instances.
