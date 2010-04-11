@@ -2,6 +2,8 @@
 #labels Phase-Implementation
 #sidebar TableOfContents
 
+<wiki:toc max_depth="1" />
+
 = Object Hierarchy =
 
 All atomic math objects like integer numbers ({{{IntegerSym}}}), fractional numbers ({{{FractionSym}}}), complex numbers ({{{ComplexSym}}}), numerical numbers ({{{Num, ComplexNum}}}), patterns ({{{Pattern}}}), strings ({{{StringX}}}) or symbols ({{{Symbol}}}) are derived from {{{org.matheclipse.core.expression.ExprImpl}}}
