@@ -308,7 +308,7 @@ public interface IExpr extends Comparable<IExpr>, // FieldElement<IExpr>,
 	public IExpr apply(IExpr... leaves);
 
 	/**
-	 * Convert the variables (i.e. ISymbol's with no lowercase character in the
+	 * Convert the variables (i.e. ISymbol's with lower case character in the
 	 * 0-th position of their name) in this expression into Slot[] s.
 	 * 
 	 * @return <code>null</code> if the expression contains a variable with a '$'

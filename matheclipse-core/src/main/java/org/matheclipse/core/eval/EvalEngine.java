@@ -45,6 +45,11 @@ import apache.harmony.math.Rational;
  */
 public class EvalEngine implements Serializable, IEvaluationEngine {
   /**
+	 * 
+	 */
+	private static final long serialVersionUID = -2827365622098588921L;
+
+	/**
    * Associate a symbolname in this ThreadLocal with the symbol created in this
    * thread
    * 
@@ -256,7 +261,7 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
    * @return the evaluated object
    * @see EvalEngine#evalWithoutNumericReset(IExpr)
    */
-  public static final IExpr eval(final IExpr obj) {
+	public static final IExpr eval(final IExpr obj) {
     return (instance.get()).evaluate(obj);
   }
 

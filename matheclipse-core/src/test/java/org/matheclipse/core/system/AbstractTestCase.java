@@ -61,12 +61,12 @@ public abstract class AbstractTestCase extends TestCase {
 	}
 
 	public void check(EvalEngine engine, boolean configMode, IAST ast, String strResult) {
+		boolean mode = Config.SERVER_MODE;
 		try {
 
 			IExpr result;
 			StringBufferWriter buf = new StringBufferWriter();
 			buf.setIgnoreNewLine(true);
-			// F.initSymbols();
 			Config.SERVER_MODE = configMode;
 			if (Config.SERVER_MODE) {
 				// Parser parser = new Parser();
@@ -85,6 +85,8 @@ public abstract class AbstractTestCase extends TestCase {
 		} catch (Exception e) {
 			e.printStackTrace();
 			assertEquals(e, "");
+		} finally {
+			Config.SERVER_MODE = mode;
 		}
 	}
 

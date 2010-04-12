@@ -35,14 +35,7 @@ public class SerializableTest extends SpecialTestCase {
 		check(engine, false, "Sin[Pi/2]", "1");
 
 		// deserialize
-		Config.SERVER_MODE = true;
-		// StringReader reader = new StringReader("Package[ \n" +
-		// "  \"Test\", \n" +
-		// "  {MyAbs}, \n" +
-		// "{ MyAbs[x_NumberQ*y_]:=MyAbs[x]*MyAbs[y]\n" +
-		// "} ]");
-		// Package.loadPackage(engine, reader);
-		// check(engine, true, "MyAbs[-2*z]","MyAbs[-2]*MyAbs[z]");
+		// Config.SERVER_MODE = true;
 
 		InputStream in = new FileInputStream("c:\\temp\\testsym.ser");
 		ObjectInputStream ois = new ObjectInputStream(in);
