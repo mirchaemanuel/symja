@@ -38,6 +38,7 @@ public class PackageService {
 			PackageEntity existingEntity = ofy.get(PackageEntity.class, packageData.getId());
 			existingEntity.setName(packageData.getName());
 			existingEntity.setSource(packageData.getSource());
+			existingEntity.setPublicSymbols(packageData.getPublicSymbols());
 			ofy.put(existingEntity);
 
 			cache.put(existingEntity.getName(), existingEntity);
