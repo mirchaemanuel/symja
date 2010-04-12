@@ -1,14 +1,9 @@
 #summary How to evaluate an expression from a Java program
 #sidebar TableOfContents
 
-There are 2 options for evaluating an MathEclipse expression from Java
-  # direct Java integration
-  # and JSR223Support based scripting engine support
-
+Before writing a program you can interactively test your expressions in the [http://code.google.com/p/symja/wiki/RunSymja#The_console_application console application].
 
 <wiki:toc max_depth="1" />
-
-Before writing a program you can interactively test your expressions in the [http://code.google.com/p/symja/wiki/RunSymja#The_console_application console application].
 
 = Direct Java integration=
 {{{
@@ -68,7 +63,7 @@ public class EvalExpand {
 }
 }}}
 
-= JSR 223 Example =
+= JSR223 support based scripting engine support =
 Here is a simple example for the JSR 223 support. More examples can be found here: [JSR223Support].
 
 {{{
