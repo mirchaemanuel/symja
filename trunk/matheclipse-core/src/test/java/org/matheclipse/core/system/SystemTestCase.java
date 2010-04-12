@@ -1,5 +1,6 @@
 package org.matheclipse.core.system;
 
+import org.matheclipse.core.eval.EvalEngine;
 import org.matheclipse.core.expression.Matrix;
 import org.matheclipse.core.expression.Vector;
 
@@ -2222,7 +2223,30 @@ public class SystemTestCase extends AbstractTestCase {
 	}
 
 	public void testSystem802() {
-		check("LegendreP[0,x]", "1");
+		EvalEngine.get().setPackageMode(true);
+		check("Package[ \n" + 
+				"  \"Polynomials\", \n" + 
+				"  (* define the public available symbols *)\n" + 
+				"  {LaguerreP, LegendreP}, \n" + 
+				"{ \n" + 
+				"  (* Laguerre polynomials \n" + 
+				"     http://en.wikipedia.org/wiki/Laguerre_polynomials *)\n" + 
+				"  LaguerreP[0,x_]:=1,\n" + 
+				"  LaguerreP[1,x_]:=1-x,\n" + 
+				"  LaguerreP[n_IntegerQ,x_]:=\n" + 
+				"      ExpandAll[(2*n-1-x)*LaguerreP[n-1,x] - (n-1)^2*LaguerreP[n-2,x]] /; NonNegative[n],\n" + 
+				"  (* Legendre polynomials \n" + 
+				"     http://en.wikipedia.org/wiki/Legendre_polynomials *)\n" + 
+				"  LegendreP[n_IntegerQ,x_]:=\n" + 
+				"      1/(2^n)*Sum[ExpandAll[Binomial[n,k]^2*(x-1)^(n-k)*(x+1)^k], {k,0,n}] /; NonNegative[n]\n" + 
+				"    \n" + 
+				"} ]","");
+		EvalEngine.get().setPackageMode(false);
+		check("LaguerreP[0,x]", "1");
+		check("LaguerreP[1,x]", "-x+1");
+		check("LaguerreP[2,x]", "x^2-4*x+2");
+		check("LaguerreP[3,x]", "-x^3+9*x^2-18*x+6");
+		check("LaguerreP[4,x]", "x^4-16*x^3+72*x^2-96*x+24");
 		check("LegendreP[1,x]", "x");
 		check("LegendreP[4,x]", "1/16*(70*x^4-60*x^2+6)");
 		check("LegendreP[7,x]", "1/128*(3432*x^7-5544*x^5+2520*x^3-280*x)");
@@ -2293,14 +2317,14 @@ public class SystemTestCase extends AbstractTestCase {
 	}
 
 	public void testSystem999() {
+		check("Roots[4+x^2+2*x+3*x^3]", "{-1,1/6*(I*44^(1/2)+2),1/6*(-I*44^(1/2)+2)}");	      
+		
 		check("Roots[x^3+4*x^2+x+2]", "{(-1/3)*((1/2)^(1/3)*(-12528^(1/2)+146)^(1/3)+(1/2)^(1/3)*(12528^(1/2)+146)^(1/3)+\n"
 				+ "4),(-1/3)*((I*1/2*3^(1/2)-1/2)*(1/2)^(1/3)*(-12528^(1/2)+146)^(1/3)+(-I*1/2*3^(1/\n"
 				+ "2)-1/2)*(1/2)^(1/3)*(12528^(1/2)+146)^(1/3)+4),(-1/3)*((-I*1/2*3^(1/2)-1/2)*(1/2)^(\n"
 				+ "1/3)*(-12528^(1/2)+146)^(1/3)+(I*1/2*3^(1/2)-1/2)*(1/2)^(1/3)*(12528^(1/2)+146)^(\n" + "1/3)+4)}");
 		check("NRoots[x^3+4*x^2+x+2]", "{-3.8751297941627785," + "-0.06243510291861069+I*0.7156909967859645,"
 				+ "-0.06243510291861069+I*(-0.7156909967859645)}");
-		check("Roots[4+x^2+2*x+3*x^3]", "{-1,1/6*(I*44^(1/2)+2),1/6*(-I*44^(1/2)+2)}");
-
 		check("Roots[Expand[(x-1)^3]]", "{1}");
 		check("Roots[x^6-1]", "{1,-1,1/2*(I*3^(1/2)+1),1/2*(-I*3^(1/2)+1),1/2*(I*3^(1/2)-1),1/2*(-I*3^(1/2)-1)}");
 		check("Factor[4+x^2+2*x+3*x^3]", "(x+1)*(3*x^2-2*x+4)");

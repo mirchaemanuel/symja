@@ -147,22 +147,5 @@ Package[
   Tan[ArcTan[x_]]:=x,
   Tan[ArcCos[x_]]:=(1-x^2)^(1/2)*x^(-1),
   Tan[ACot[x_]]:=1*x^(-1),
-  Tan[x_NumberQ]:=(-1)*Tan[(-1)*x]/;SignCmp[x]<0,
-  
-  LegendreP[n_IntegerQ,x_]:=
-      1/(2^n)*Sum[ExpandAll[Binomial[n,k]^2*(x-1)^(n-k)*(x+1)^k], {k,0,n}]  /; NonNegative[n]
-    
-(* For tests only: 
-   some internal rules for Legendre polynomials http://en.wikipedia.org/wiki/Legendre_polynomials 
- *)
-(*  
-  LegendrePIntern[0,x_]=1,
-  LegendrePIntern[1,x_]:=x,
-  LegendrePIntern[n_IntegerQ,x_]:=
-    Block[{ln2},
-           ln2=LegendrePIntern[n-2,x];
-           Print[n-2, ",", ExpandAll[ln2]];
-           1/n*((2*n-1)*x*LegendrePIntern[n-1,x]-(n-1)*ln2)
-         ] /; NonNegative[n]
- *)
+  Tan[x_NumberQ]:=(-1)*Tan[(-1)*x]/;SignCmp[x]<0
 } ]
