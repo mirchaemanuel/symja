@@ -1,4 +1,4 @@
-#summary How to evaluate an expression from a Java program
+#summary Installing the libraries for using from a Java program
 #labels Featured,Phase-Implementation
 #sidebar TableOfContents
 
