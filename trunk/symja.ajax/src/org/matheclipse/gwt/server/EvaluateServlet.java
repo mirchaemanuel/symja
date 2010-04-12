@@ -5,18 +5,19 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
-import java.io.Writer;
 import java.net.URLEncoder;
-import java.sql.Connection;
-import java.sql.SQLException;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
+import javax.cache.Cache;
+import javax.cache.CacheFactory;
 import javax.cache.CacheManager;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import javax.sql.DataSource;
 
 import org.matheclipse.basic.Config;
 import org.matheclipse.core.convert.AST2Expr;
@@ -28,6 +29,7 @@ import org.matheclipse.core.form.output.OutputFormFactory;
 import org.matheclipse.core.form.output.StringBufferWriter;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
+import org.matheclipse.core.reflection.system.Function;
 import org.matheclipse.parser.client.Parser;
 import org.matheclipse.parser.client.ast.ASTNode;
 import org.matheclipse.parser.client.math.MathException;
@@ -37,17 +39,15 @@ public class EvaluateServlet extends HttpServlet {
 
 	// private static final boolean UNIT_TEST = false;
 
-	// private static final boolean USE_DATABASE = false;
+	private static final boolean USE_MEMCACHE = true;
+
+	public static Cache cache = null;
 
 	public static int APPLET_NUMBER = 1;
 
 	public static final String UTF8 = "utf-8";
 
 	public static final String EVAL_ENGINE = EvalEngine.class.getName();
-
-	public static DataSource DATA_SOURCE = null;
-
-	public static CacheManager CACHE_MANAGER = null;
 
 	public void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 		doPost(req, res);
@@ -121,42 +121,35 @@ public class EvaluateServlet extends HttpServlet {
 	public static String[] evaluateString(HttpServletRequest request, EvalEngine engine, String inputString, String function)
 			throws UnsupportedEncodingException {
 
-		Connection conn = null; // the database connection
 		try {
-			// if (USE_DATABASE) {
-			// conn = getConnection();
-			// saveLogInDatabase(conn, inputString, request.getRemoteAddr(),
-			// request.getRemoteHost(), request.getSession().getId());
-			// }
 			Parser parser = new Parser();
 			ASTNode node = parser.parse(inputString);
 			IExpr inExpr = AST2Expr.CONST.convert(node);
 			if (inExpr != null) {
 				// inExpr contains the user input from the web interface in
-				// internal
-				// format now
+				// internal format now
 				StringBufferWriter outBuffer = new StringBufferWriter();
 				IExpr outExpr;
-				// if (USE_DATABASE) {
-				// outExpr = getFromDatabase(conn, factory, parser, inExpr);
-				// if (outExpr != null) {
-				// if (!outExpr.equals(ExprFactory.Null)) {
-				// OutputFormFactory.convert(outBuffer, outExpr);
-				// return createOutput(outBuffer, outExpr, engine, function);
-				// }
-				// }
-				// }
-				MathEvaluator.eval(engine, outBuffer, inExpr);
+				if (USE_MEMCACHE) {
+					outExpr = getFromMemcache(inExpr);
+					if (outExpr != null) {
+						if (!outExpr.equals(F.Null)) {
+							OutputFormFactory.get().convert(outBuffer, outExpr);
+							return createOutput(outBuffer, null, engine, function);
+						}
+					}
+				}
+				outExpr = MathEvaluator.eval(engine, outBuffer, inExpr);
 				// TimeConstrainedEvaluator utility = new
 				// TimeConstrainedEvaluator(engine, false,
 				// Config.TIME_CONSTRAINED_MILLISECONDS);
 				// outExpr = utility.constrainedEval(outBuffer, inExpr);
 				// if (outExpr != null) {
-				// if (USE_DATABASE) {
-				// if (inExpr != outExpr) { // compare pointers
-				// saveInDatabase(conn, factory, inExpr, outExpr);
-				// }
-				// }
+				if (USE_MEMCACHE) {
+					if (inExpr != outExpr && outExpr != null) { // compare pointers
+						putToMemcache(inExpr, outExpr);
+					}
+				}
 				return createOutput(outBuffer, null, engine, function);
 				// } else {
 				// // show error messages:
@@ -173,22 +166,7 @@ public class EvaluateServlet extends HttpServlet {
 				e.printStackTrace();
 			}
 			return new String[] { "error", "Error in evaluateString" };
-			// out.println("<font color=\"red\">");
-			// out.println(toHTMLNL(e.getMessage()));
-			// out.println("</font>");
-		} finally {
-			if (conn != null) {
-				try {
-					// release the database connection
-					conn.close();
-					conn = null;
-				} catch (SQLException e) {
-					if (Config.SHOW_STACKTRACE) {
-						e.printStackTrace();
-					}
-					return new String[] { "error", "SQL Error in evaluateString" };
-				}
-			}
+
 		}
 		return new String[] { "error", "Error in evaluateString" };
 	}
@@ -197,21 +175,22 @@ public class EvaluateServlet extends HttpServlet {
 			throws IOException {
 
 		boolean textEval = true;
-		if (rhsExpr != null && rhsExpr instanceof IAST && rhsExpr.isAST(F.Show, 2)) {
-			IAST ast = (IAST) rhsExpr;
-			if (ast.size() == 2 && ast.get(0).toString().equals("Show")) {
-				StringBufferWriter outBuffer = new StringBufferWriter();
-				outBuffer = new StringBufferWriter();
-				StringBufferWriter graphicBuf = new StringBufferWriter();
-				IExpr result = (IExpr) ast.get(1);
-				graphicBuf.setIgnoreNewLine(true);
-				OutputFormFactory outputFormFactory = OutputFormFactory.get();
-				outputFormFactory.convert(graphicBuf, result);
-				createJavaView(outBuffer, graphicBuf.toString());
-				textEval = false;
-				return new String[] { "applet", outBuffer.toString() };
-			}
-		}
+		// if (rhsExpr != null && rhsExpr instanceof IAST && rhsExpr.isAST(F.Show,
+		// 2)) {
+		// IAST ast = (IAST) rhsExpr;
+		// if (ast.size() == 2 && ast.get(0).toString().equals("Show")) {
+		// StringBufferWriter outBuffer = new StringBufferWriter();
+		// outBuffer = new StringBufferWriter();
+		// StringBufferWriter graphicBuf = new StringBufferWriter();
+		// IExpr result = (IExpr) ast.get(1);
+		// graphicBuf.setIgnoreNewLine(true);
+		// OutputFormFactory outputFormFactory = OutputFormFactory.get();
+		// outputFormFactory.convert(graphicBuf, result);
+		// createJavaView(outBuffer, graphicBuf.toString());
+		// textEval = false;
+		// return new String[] { "applet", outBuffer.toString() };
+		// }
+		// }
 
 		if (textEval) {
 			String res = buffer.toString();
@@ -233,107 +212,60 @@ public class EvaluateServlet extends HttpServlet {
 	}
 
 	/**
-	 * Tr to read an older evaluation from the SQL database
+	 * Try to read an older evaluation from the Memcache
 	 * 
-	 * @return null if there is no suitable evaluation stored in the SQL database
+	 * @return null if there is no suitable evaluation stored in the memcache
 	 */
-	// private static IExpr getFromDatabase(Connection conn, F factory, Parser
-	// parser, IExpr lhsExpr) {
-	// try {
-	// IAST list = F.ast(null);
-	// Map map = new HashMap();
-	// lhsExpr = lhsExpr.variables2Slots(map, list);
-	// if (lhsExpr != null) {
-	// String lhsString = lhsExpr.toString();
-	//
-	// Cache cache = CACHE_MANAGER.getCache("meCache");
-	// Element element = cache.get(lhsString);
-	// if (element != null) {
-	// IExpr expr = (IExpr) element.getValue();
-	// if (expr != null) {
-	// if (list.size() > 1) {
-	// expr = Function.replaceSlots(expr, list);
-	// }
-	// }
-	// return expr;
-	// }
-	//
-	// int lhsHash = lhsExpr.hashCode();
-	// IExpr rhsExpr = SQLExpressionMap.select(conn, parser, lhsHash, lhsString);
-	// if (rhsExpr != null) {
-	// cachePut(lhsString, rhsExpr);
-	// if (list.size() > 1) {
-	// rhsExpr = Function.replaceSlots(rhsExpr, list);
-	// }
-	// }
-	// return rhsExpr;
-	// }
-	// } catch (Exception e) {
-	// if (Config.SHOW_STACKTRACE) {
-	// e.printStackTrace();
-	// }
-	// }
-	// return null;
-	// }
+	private static IExpr getFromMemcache(IExpr lhsExpr) {
+		try {
+			IAST list = F.ast(null);
+			Map<IExpr, IExpr> map = new HashMap<IExpr, IExpr>();
+			lhsExpr = lhsExpr.variables2Slots(map, list);
+			if (lhsExpr != null) {
+				String lhsString = lhsExpr.toString();
+
+				IExpr expr = (IExpr) cache.get(lhsString);
+				if (expr != null) {
+					if (list.size() > 1) {
+						expr = Function.replaceSlots(expr, list);
+					}
+					return expr;
+				}
+
+			}
+		} catch (Exception e) {
+			if (Config.SHOW_STACKTRACE) {
+				e.printStackTrace();
+			}
+		}
+		return null;
+	}
 
 	/**
-	 * Save an evaluation in the database
+	 * Save an evaluation in the memcache.
 	 * 
-	 * @return false if the inExpr or outExpr expressions contain $-variables or
+	 * @return false if the lhsExpr or rhsExpr expressions contain $-variables or
 	 *         patterns
 	 */
-	// private static boolean saveInDatabase(Connection conn, F factory, IExpr
-	// lhsExpr, IExpr rhsExpr) {
-	// try {
-	// IAST list = F.ast(null);
-	// Map map = new HashMap();
-	// lhsExpr = lhsExpr.variables2Slots(map, list);
-	// rhsExpr = rhsExpr.variables2Slots(map, list);
-	// if (lhsExpr != null && rhsExpr != null) {
-	// String lhsString = lhsExpr.toString();
-	// int lhsHash = lhsExpr.hashCode();
-	// cachePut(lhsString, rhsExpr);
-	// SQLExpressionMap.insert(conn, lhsHash, lhsString, rhsExpr);
-	// return true;
-	// }
-	// } catch (Exception e) {
-	// if (Config.SHOW_STACKTRACE) {
-	// e.printStackTrace();
-	// }
-	// }
-	// return false;
-	// }
-
-	// private static void cachePut(String lhsString, IExpr outExpr) {
-	// Cache cache = CACHE_MANAGER.getCache("meCache");
-	// Element element = new Element(lhsString, outExpr);
-	// cache.put(element);
-	// }
-
-	// private static boolean saveLogInDatabase(Connection conn, String inExpr,
-	// String addr, String host, String sessionId) {
-	// try {
-	// SQLExpressionMap.insertLog(conn, inExpr, addr, host, sessionId);
-	// return true;
-	// } catch (Exception e) {
-	// if (Config.SHOW_STACKTRACE) {
-	// e.printStackTrace();
-	// }
-	// }
-	// return false;
-	// }
-
-	// private static Connection getConnection() throws NamingException,
-	// Exception, SQLException {
-	// if (UNIT_TEST) {
-	// String url = "jdbc:mysql://localhost:3306/jamwiki";
-	// return DriverManager.getConnection(url, "root", "");
-	// }
-	// if (DATA_SOURCE != null && USE_DATABASE) {
-	// return DATA_SOURCE.getConnection();
-	// }
-	// return null;
-	// }
+	private static boolean putToMemcache(IExpr lhsExpr, IExpr rhsExpr) {
+		try {
+			IAST list = F.ast(null);
+			Map<IExpr, IExpr> map = new HashMap<IExpr, IExpr>();
+			lhsExpr = lhsExpr.variables2Slots(map, list);
+			rhsExpr = rhsExpr.variables2Slots(map, list);
+			if (lhsExpr != null && rhsExpr != null) {
+				String lhsString = lhsExpr.toString();
+				int lhsHash = lhsExpr.hashCode();
+				cache.put(lhsString, rhsExpr);
+				return true;
+			}
+		} catch (Exception e) {
+			if (Config.SHOW_STACKTRACE) {
+				e.printStackTrace();
+			}
+		}
+		return false;
+	}
 
 	public static String toHTML(String res) {
 		if (res != null) {
@@ -412,30 +344,9 @@ public class EvaluateServlet extends HttpServlet {
 		Config.SERVER_MODE = true;
 		System.out.println("Config.SERVER_MODE = true");
 		try {
-			// if (CACHE_MANAGER == null) {
-			// URL url = getClass().getResource("/ehcache.xml");
-			// CACHE_MANAGER = new CacheManager(url);
-			// Cache memoryOnlyCache = new Cache("meCache", 1000, false, false, 0, 0);
-			// CACHE_MANAGER.addCache(memoryOnlyCache);
-			// }
-			// Context ctx = new InitialContext();
-			// if (ctx == null) {
-			// System.out.println("Context not found");
-			// }
-			// if (USE_DATABASE) {
-			// if (UNIT_TEST == true) {
-			// MysqlDataSource mysqlDS = new MysqlDataSource();
-			// mysqlDS.setUser("root");
-			// mysqlDS.setPassword("");
-			// mysqlDS.setDatabaseName("jamwiki");
-			// DATA_SOURCE = mysqlDS;
-			// } else {
-			// DATA_SOURCE = (DataSource) ctx.lookup("java:comp/env/jdbc/jamwiki");
-			// if (DATA_SOURCE == null) {
-			// System.out.println("Datasource not found");
-			// }
-			// }
-			// }
+
+			CacheFactory cacheFactory = CacheManager.getInstance().getCacheFactory();
+			cache = cacheFactory.createCache(Collections.emptyMap());
 		} catch (Exception e) {
 			if (Config.SHOW_STACKTRACE) {
 				e.printStackTrace();
@@ -443,21 +354,21 @@ public class EvaluateServlet extends HttpServlet {
 		}
 	}
 
-	public static void createJavaView(Writer buffer, String graphicData) throws IOException {
-		buffer.write("<applet name=\"jvLite\" code=\"jvLite.class\" "
-				+
-				// jamwiki path
-				"codebase=\"../static/lib\" "
-				+
-
-				// standalone path
-				// "codebase=\"lib\" " +
-				"width=\"720\" height=\"400\" " + "alt=\"JavaView lite applet\" " + "archive=\"jvLite.jar\" id=\"applet" + APPLET_NUMBER
-				+ "\">\n" + "<param name=\"Axes\" value=\"show\" />\n" + "<param name=\"mathematica\" value=\"");
-		// System.out.println(graphicData);
-		// writer.write(replace(graphicData));
-		buffer.write(graphicData);
-		buffer.write("\" /></applet>");
-		APPLET_NUMBER++;
-	}
+//	public static void createJavaView(Writer buffer, String graphicData) throws IOException {
+//		buffer.write("<applet name=\"jvLite\" code=\"jvLite.class\" "
+//				+
+//				// jamwiki path
+//				"codebase=\"../static/lib\" "
+//				+
+//
+//				// standalone path
+//				// "codebase=\"lib\" " +
+//				"width=\"720\" height=\"400\" " + "alt=\"JavaView lite applet\" " + "archive=\"jvLite.jar\" id=\"applet" + APPLET_NUMBER
+//				+ "\">\n" + "<param name=\"Axes\" value=\"show\" />\n" + "<param name=\"mathematica\" value=\"");
+//		// System.out.println(graphicData);
+//		// writer.write(replace(graphicData));
+//		buffer.write(graphicData);
+//		buffer.write("\" /></applet>");
+//		APPLET_NUMBER++;
+//	}
 }
