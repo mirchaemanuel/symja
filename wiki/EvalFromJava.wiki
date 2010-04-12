@@ -1,7 +1,11 @@
 #summary How to evaluate an expression from a Java program
 #sidebar TableOfContents
 
-<wiki:toc max_depth="1" />
+There are 2 options for evaluating an MathEclipse expression from Java
+  # direct Java integration
+  # and JSR223Support based scripting engine support
+
+Before writing a program you can interactively test your expressions in the [http://code.google.com/p/symja/wiki/RunSymja#The_console_application console application].
 
 = Direct Java integration=
 {{{
