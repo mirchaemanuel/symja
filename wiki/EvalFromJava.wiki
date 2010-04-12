@@ -1,7 +1,7 @@
 #summary How to evaluate an expression from a Java program
 #sidebar TableOfContents
 
-Before writing a program you can interactively test your expressions in the [http://code.google.com/p/symja/wiki/RunSymja#The_console_application console application].
+Before writing a Java program you can interactively test your expressions in the [http://code.google.com/p/symja/wiki/RunSymja#The_console_application console application].
 
 <wiki:toc max_depth="1" />
 
