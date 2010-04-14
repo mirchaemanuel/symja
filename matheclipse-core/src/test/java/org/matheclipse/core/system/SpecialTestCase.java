@@ -187,19 +187,4 @@ public class SpecialTestCase extends TestCase {
 
 	}
 
-	public void testSystem996() {
-		check("Package[ \"PackageName\", {Test}, {\n" + "   Test[x_,y_]:=TestIntern[x,y],\n"
-				+ "   TestIntern[x_,y_] := {x,y,mySymbol}, \n" + "   mySymbol = 4711 \n" + " } ]", "");
-		check("Test[a,b]", "{a,b,4711}");
-		// the TestIntern rule should not be visible outside the package:
-		check("TestIntern[a,b]", "TestIntern[a,b]");
-		// the mySymbol constant should not be visible outside the package:
-		check("mySymbol", "mySymbol");
-		check("Test[a,b]", "{a,b,4711}"); 
-		// a new EvalEngine sees the new defined rules:
-		EvalEngine engine = new EvalEngine();
-		check(engine, false, "Test[a,b]", "{a,b,4711}", false);
-		// this should give an syntax error:
-		// check("@1TestIntern[a,b]","");
-	}
 }

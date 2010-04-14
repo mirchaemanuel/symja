@@ -1,6 +1,7 @@
 package org.matheclipse.core.reflection.system;
 
 import org.matheclipse.core.eval.EvalEngine;
+import org.matheclipse.core.eval.exception.WrongNumberOfArguments;
 import org.matheclipse.core.eval.interfaces.IFunctionEvaluator;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IAST;
@@ -14,7 +15,7 @@ public class Trace implements IFunctionEvaluator {
 
 	public IExpr evaluate(final IAST functionList) {
 		if (functionList.size() != 2) {
-			return null;
+			throw new WrongNumberOfArguments(functionList, 1, functionList.size() - 1);
 		}
 		final IExpr temp = functionList.get(1);
 		final IAST holdList = F.function(F.Hold);
