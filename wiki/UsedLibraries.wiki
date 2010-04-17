@@ -9,14 +9,16 @@
 === Commons-Math ===
 The following functions are based on commons-math implementations:
   * {{{Det}}} - ([http://code.google.com/p/symja/source/browse/trunk/matheclipse-core/src/main/java/org/matheclipse/core/reflection/system/Det.java SVN]) - [http://commons.apache.org/math/apidocs/org/apache/commons/math/linear/FieldLUDecompositionImpl.html LUP-decomposition of a square matrix]
-    * Example {{{Det[{{1,2},{3,4}}] gives -2}}}
+    * {{{Det[{{1,2},{3,4}}] gives -2}}}
   * {{{Eigenvalues}}} - ([http://code.google.com/p/symja/source/browse/trunk/matheclipse-core/src/main/java/org/matheclipse/core/reflection/system/Eigenvalues.java SVN]) - [http://commons.apache.org/math/apidocs/org/apache/commons/math/linear/EigenDecompositionImpl.html Calculates the eigen decomposition of a symmetric matrix]
-    * Example {{{Eigenvalues[{{1,0,0},{0,1,0},{0,0,1}}] gives {1.0,1.0,1.0}}}}
+    * {{{Eigenvalues[{{1,0,0},{0,1,0},{0,0,1}}] gives {1.0,1.0,1.0}}}}
   * {{{Eigenvectors}}} - ([http://code.google.com/p/symja/source/browse/trunk/matheclipse-core/src/main/java/org/matheclipse/core/reflection/system/Eigenvectors.java SVN]) - [http://commons.apache.org/math/apidocs/org/apache/commons/math/linear/EigenDecompositionImpl.html Calculates the eigen decomposition of a symmetric matrix]
   * {{{Fit}}} - ([http://code.google.com/p/symja/source/browse/trunk/matheclipse-core/src/main/java/org/matheclipse/core/reflection/system/Fit.java SVN]) - [http://commons.apache.org/math/apidocs/org/apache/commons/math/optimization/general/LevenbergMarquardtOptimizer.html Levenberg-Marquardt optimizer]
-    * Example {{{Fit[{{1,1},{2,4},{3,9},{4,16}},2,x] gives x^2.0}}}
+    * {{{Fit[{{1,1},{2,4},{3,9},{4,16}},2,x] gives x^2.0}}}
   * {{{FindRoot}}} - ([http://code.google.com/p/symja/source/browse/trunk/matheclipse-core/src/main/java/org/matheclipse/core/reflection/system/FindRoot.java SVN]) - [http://commons.apache.org/math/apidocs/org/apache/commons/math/analysis/solvers/UnivariateRealSolver.html BisectionSolver, BrentSolver, MullerSolver, NewtonSolver, RiddersSolver, SecantSolver]
+    * {{{FindRoot[Exp[x]==Pi^3,{x,-1,10}] gives {x->3.4341896575482007}}}}
   * {{{Inverse}}} - ([http://code.google.com/p/symja/source/browse/trunk/matheclipse-core/src/main/java/org/matheclipse/core/reflection/system/Inverse.java SVN]) - [http://commons.apache.org/math/apidocs/org/apache/commons/math/linear/FieldLUDecompositionImpl.html LUP-decomposition of a square matrix]
+    * {{{Inverse[{{1,2},{3,4}}] gives {{-2,1},{3/2,-1/2}}}}}
   * {{{LinearSolve}}} - ([http://code.google.com/p/symja/source/browse/trunk/matheclipse-core/src/main/java/org/matheclipse/core/reflection/system/LinearSolve.java SVN]) - [http://commons.apache.org/math/apidocs/org/apache/commons/math/linear/FieldLUDecompositionImpl.html LUP-decomposition of a square matrix]
   * {{{LUDecomposition}}} - ([http://code.google.com/p/symja/source/browse/trunk/matheclipse-core/src/main/java/org/matheclipse/core/reflection/system/LUDecomposition.java SVN]) - [http://commons.apache.org/math/apidocs/org/apache/commons/math/linear/FieldLUDecompositionImpl.html LUP-decomposition of a square matrix]
   * {{{NIntegrate}}} - ([http://code.google.com/p/symja/source/browse/trunk/matheclipse-core/src/main/java/org/matheclipse/core/reflection/system/NIntegrate.java SVN]) - [http://commons.apache.org/math/apidocs/org/apache/commons/math/analysis/integration/UnivariateRealIntegratorImpl.html LegendreGaussIntegrator, RombergIntegrator, SimpsonIntegrator, TrapezoidIntegrator] 
