@@ -264,14 +264,16 @@ public class Power extends AbstractArg2 implements INumeric {
 
 	private IExpr calculateRoot(IInteger a, IInteger root) {
 		try {
-			if (a.equals(F.C1)) {
-				return F.C1;
-			}
 			int n = root.toInt();
-			IInteger result = a.nthRoot(n);
-			IInteger probe = result.pow(n);
-			if (probe.equals(a)) {
-				return result;
+			if (n > 0) {
+				if (a.equals(F.C1)) {
+					return F.C1;
+				}
+				IInteger result = a.nthRoot(n);
+				IInteger probe = result.pow(n);
+				if (probe.equals(a)) {
+					return result;
+				}
 			}
 		} catch (ArithmeticException e) {
 
