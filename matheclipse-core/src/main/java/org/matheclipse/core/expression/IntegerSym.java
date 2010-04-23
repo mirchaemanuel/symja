@@ -1,6 +1,5 @@
 package org.matheclipse.core.expression;
 
-import static org.matheclipse.basic.Util.checkCanceled;
 import static org.matheclipse.core.expression.F.List;
 
 import java.util.ArrayList;
@@ -579,9 +578,25 @@ public class IntegerSym extends ExprImpl implements IInteger {
 			b = b.multiply(IntegerSym.valueOf(-1));
 			result.add(IntegerSym.valueOf(-1));
 		}
+		// TODO improve performance
 		IntegerSym p = IntegerSym.valueOf(2);
 		while (true) {
-			checkCanceled();
+			// test only p==2
+			final IntegerSym q[] = b.divideAndRemainder(p);
+			if (q[0].compareTo(p) < 0) {
+				result.add(b);
+				return result;
+			}
+			if (q[1].sign() == 0) {
+				result.add(p);
+				b = q[0];
+			} else {
+				p = p.add(IntegerSym.valueOf(1));
+				// leave with p==3
+				break;
+			}
+		}
+		while (true) {
 			final IntegerSym q[] = b.divideAndRemainder(p);
 			if (q[0].compareTo(p) < 0) {
 				result.add(b);
@@ -591,7 +606,8 @@ public class IntegerSym extends ExprImpl implements IInteger {
 				result.add(p);
 				b = q[0];
 			} else {
-				p = p.add(IntegerSym.valueOf(1));
+				// test only odd integers
+				p = p.add(IntegerSym.valueOf(2));
 			}
 		}
 		return result;
@@ -605,7 +621,6 @@ public class IntegerSym extends ExprImpl implements IInteger {
 		final IAST list = List();
 		IAST subList = null;
 		for (int i = 0; i < iFactors.size(); i++) {
-			checkCanceled();
 			factor = iFactors.get(i);
 			if (!last.equals(factor)) {
 				if (subList != null) {
@@ -811,8 +826,10 @@ public class IntegerSym extends ExprImpl implements IInteger {
 			return IntegerSym.valueOf(0);
 		else if (sign() < 0) {
 			if (n % 2 == 0)
+				// even exponent n
 				throw new ArithmeticException();
 			else
+				// odd exponent n
 				return (IntegerSym) ((IntegerSym) negate()).nthRoot(n).negate();
 		} else {
 			IntegerSym result;
