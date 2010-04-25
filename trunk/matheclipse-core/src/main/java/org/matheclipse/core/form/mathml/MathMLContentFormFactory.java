@@ -9,15 +9,19 @@ import org.matheclipse.core.expression.IConstantHeaders;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IComplex;
 import org.matheclipse.core.interfaces.IComplexNum;
+import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.IFraction;
 import org.matheclipse.core.interfaces.IInteger;
 import org.matheclipse.core.interfaces.INum;
 import org.matheclipse.core.interfaces.ISymbol;
 import org.matheclipse.parser.client.operator.ASTNodeFactory;
 
+import apache.harmony.math.BigInteger;
+import apache.harmony.math.Rational;
+
 /**
  * PresentationGenerator generates MathML presentation output
- *
+ * 
  */
 public class MathMLContentFormFactory extends AbstractMathMLFormFactory implements IConstantHeaders {
 
@@ -36,7 +40,7 @@ public class MathMLContentFormFactory extends AbstractMathMLFormFactory implemen
 
 		/*
 		 * (non-Javadoc)
-		 *
+		 * 
 		 * @see java.lang.Object#toString()
 		 */
 		public String toString() {
@@ -102,7 +106,7 @@ public class MathMLContentFormFactory extends AbstractMathMLFormFactory implemen
 		tagStart(buf, "mn");
 		buf.append(i.getBigNumerator().toString());
 		tagEnd(buf, "mn");
-		if (i.isNegative() && (precedence >plusPrec)) {
+		if (i.isNegative() && (precedence > plusPrec)) {
 			tag(buf, "mo", ")");
 		}
 	}
@@ -124,12 +128,35 @@ public class MathMLContentFormFactory extends AbstractMathMLFormFactory implemen
 		}
 	}
 
+	public void convertFraction(final StringBuffer buf, final Rational f, final int precedence) {
+		if (f.isNegative() && (precedence > plusPrec)) {
+			tag(buf, "mo", "(");
+		}
+		if (f.getDenominator().equals(BigInteger.ONE)) {
+			tagStart(buf, "mn");
+			buf.append(f.getNumerator().toString());
+			tagEnd(buf, "mn");
+		} else {
+			tagStart(buf, "mfrac");
+			tagStart(buf, "mn");
+			buf.append(f.getNumerator().toString());
+			tagEnd(buf, "mn");
+			tagStart(buf, "mn");
+			buf.append(f.getDenominator().toString());
+			tagEnd(buf, "mn");
+			tagEnd(buf, "mfrac");
+		}
+		if (f.isNegative() && (precedence > plusPrec)) {
+			tag(buf, "mo", ")");
+		}
+	}
+
 	public void convertComplex(final StringBuffer buf, final IComplex c, final int precedence) {
 		tagStart(buf, "mrow");
-		convert(buf, c.getRealPart(), 0);
+		convertFraction(buf, c.getRealPart(), precedence);
 		tag(buf, "mo", "+");
 		tagStart(buf, "mrow");
-		convert(buf, c.getImaginaryPart(), 0);
+		convertFraction(buf, c.getImaginaryPart(), ASTNodeFactory.TIMES_PRECEDENCE);
 
 		tag(buf, "mo", "&InvisibleTimes;");
 		// <!ENTITY ImaginaryI "&#x02148;" >
@@ -171,7 +198,7 @@ public class MathMLContentFormFactory extends AbstractMathMLFormFactory implemen
 
 	/**
 	 * Description of the Method
-	 *
+	 * 
 	 * @param buf
 	 *          Description of Parameter
 	 * @param p
@@ -182,7 +209,7 @@ public class MathMLContentFormFactory extends AbstractMathMLFormFactory implemen
 	// buf.append(p.toString());
 	// tagEnd(buf, "mi");
 	// }
-	public void convertHead(final StringBuffer buf, final Object obj) {
+	public void convertHead(final StringBuffer buf, final IExpr obj) {
 		if (obj instanceof ISymbol) {
 			final Object ho = CONSTANT_SYMBOLS.get(((ISymbol) obj).toString());
 			tagStart(buf, "mi");
@@ -198,7 +225,7 @@ public class MathMLContentFormFactory extends AbstractMathMLFormFactory implemen
 		convert(buf, obj, 0);
 	}
 
-	public void convert(final StringBuffer buf, final Object o, final int precedence) {
+	public void convert(final StringBuffer buf, final IExpr o, final int precedence) {
 		if (o instanceof IAST) {
 			final IAST f = ((IAST) o);
 			// System.out.println(f.getHeader().toString());
@@ -292,7 +319,7 @@ public class MathMLContentFormFactory extends AbstractMathMLFormFactory implemen
 		try {
 			module = (AbstractConverter) clazz.newInstance();
 			module.setFactory(this);
-//			module.setExpressionFactory(fExprFactory);
+			// module.setExpressionFactory(fExprFactory);
 			operTab.put(headString, module);
 			return module;
 		} catch (final Throwable se) {

@@ -77,4 +77,12 @@ public interface IInteger extends IRational {
 	 * @throws ArithmeticException
 	 */
 	public IInteger nthRoot(int n) throws ArithmeticException;
+	
+	/**
+	 * Split this integer into the nth-root (with prime factors less equal 1021)
+	 * and the &quot;rest factor&quot;
+	 * 
+	 * @return <code>{nth-root, rest factor}</code>
+	 */
+	public IInteger[] nthRootSplit(int n);
 }

@@ -17,8 +17,6 @@
 
 package apache.harmony.math;
 
-import static org.matheclipse.basic.Util.*;
-
 import org.matheclipse.basic.Config;
 import org.matheclipse.basic.ObjectMemoryExceededException;
 
@@ -57,7 +55,6 @@ class Elementary {
 	static int compareArrays(final int[] a, final int[] b, final int size) {
 		int i;
 		for (i = size - 1; (i >= 0) && (a[i] == b[i]); i--) {
-			checkCanceled();
 			;
 		}
 		return ((i < 0) ? BigInteger.EQUALS
@@ -146,26 +143,22 @@ class Elementary {
 
 		if (aSize >= bSize) {
 			for (i = 1; i < bSize; i++) {
-				checkCanceled();
 				carry += (a[i] & 0xFFFFFFFFL) + (b[i] & 0xFFFFFFFFL);
 				res[i] = (int) carry;
 				carry >>= 32;
 			}
 			for (; i < aSize; i++) {
-				checkCanceled();
 				carry += a[i] & 0xFFFFFFFFL;
 				res[i] = (int) carry;
 				carry >>= 32;
 			}
 		} else {
 			for (i = 1; i < aSize; i++) {
-				checkCanceled();
 				carry += (a[i] & 0xFFFFFFFFL) + (b[i] & 0xFFFFFFFFL);
 				res[i] = (int) carry;
 				carry >>= 32;
 			}
 			for (; i < bSize; i++) {
-				checkCanceled();
 				carry += b[i] & 0xFFFFFFFFL;
 				res[i] = (int) carry;
 				carry >>= 32;
@@ -241,13 +234,11 @@ class Elementary {
 		long borrow = 0;
 
 		for (i = 0; i < bSize; i++) {
-			checkCanceled();
 			borrow += (a[i] & 0xFFFFFFFFL) - (b[i] & 0xFFFFFFFFL);
 			res[i] = (int) borrow;
 			borrow >>= 32; // -1 or 0
 		}
 		for (; i < aSize; i++) {
-			checkCanceled();
 			borrow += a[i] & 0xFFFFFFFFL;
 			res[i] = (int) borrow;
 			borrow >>= 32; // -1 or 0
@@ -301,7 +292,6 @@ class Elementary {
 		long carry = addend & 0xFFFFFFFFL;
 
 		for (int i = 0; (carry != 0) && (i < aSize); i++) {
-			checkCanceled();
 			carry += a[i] & 0xFFFFFFFFL;
 			a[i] = (int) carry;
 			carry >>= 32;
@@ -348,26 +338,22 @@ class Elementary {
 		long borrow = 0;
 		if (aSize < bSize) {
 			for (i = 0; i < aSize; i++) {
-				checkCanceled();
 				borrow += (b[i] & 0xFFFFFFFFL) - (a[i] & 0xFFFFFFFFL);
 				res[i] = (int) borrow;
 				borrow >>= 32; // -1 or 0
 			}
 			for (; i < bSize; i++) {
-				checkCanceled();
 				borrow += b[i] & 0xFFFFFFFFL;
 				res[i] = (int) borrow;
 				borrow >>= 32; // -1 or 0
 			}
 		} else {
 			for (i = 0; i < bSize; i++) {
-				checkCanceled();
 				borrow += (b[i] & 0xFFFFFFFFL) - (a[i] & 0xFFFFFFFFL);
 				res[i] = (int) borrow;
 				borrow >>= 32; // -1 or 0
 			}
 			for (; i < aSize; i++) {
-				checkCanceled();
 				borrow -= a[i] & 0xFFFFFFFFL;
 				res[i] = (int) borrow;
 				borrow >>= 32; // -1 or 0

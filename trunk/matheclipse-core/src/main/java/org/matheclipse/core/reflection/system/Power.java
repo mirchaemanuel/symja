@@ -1,8 +1,9 @@
 package org.matheclipse.core.reflection.system;
 
-import static org.matheclipse.basic.Util.checkCanceled;
+import static org.matheclipse.core.expression.F.C1;
 import static org.matheclipse.core.expression.F.Power;
 import static org.matheclipse.core.expression.F.Times;
+import static org.matheclipse.core.expression.F.fraction;
 
 import org.matheclipse.core.eval.EvalEngine;
 import org.matheclipse.core.eval.exception.DivisionByZero;
@@ -177,7 +178,6 @@ public class Power extends AbstractArg2 implements INumeric {
 				final IAST f0 = (IAST) o0;
 				final IAST result = F.Times();
 				for (int i = 1; i < f0.size(); i++) {
-					checkCanceled();
 					result.add(Power(f0.get(i), o1));
 				}
 				return result;
@@ -196,22 +196,26 @@ public class Power extends AbstractArg2 implements INumeric {
 	public IExpr e2FraArg(IFraction f0, IFraction f1) {
 		if (f0.getNumerator().equals(F.C0)) {
 			return F.C0;
-		}
+		} 
 
 		if (f1.getNumerator().equals(F.C0)) {
 			return F.C1;
 		}
-		IInteger a;
-		IInteger b;
-		if (f1.isNegative()) {
-			b = f0.getNumerator();
-			a = f0.getDenominator();
-		} else {
-			a = f0.getNumerator();
-			b = f0.getDenominator();
-		}
 
 		if (!f1.getDenominator().equals(F.C1)) {
+			IInteger a;
+			IInteger b;
+			IFraction f0Temp = f0;
+			if (f0.sign() < 0) {
+				f0Temp = (IFraction) f0Temp.negate();
+			}
+			if (f1.isNegative()) {
+				b = f0Temp.getNumerator();
+				a = f0Temp.getDenominator();
+			} else {
+				a = f0Temp.getNumerator();
+				b = f0Temp.getDenominator();
+			}
 
 			// example: (-27)^(2/3) or 8^(1/3)
 			if (!f1.getNumerator().equals(F.C1)) {
@@ -229,30 +233,40 @@ public class Power extends AbstractArg2 implements INumeric {
 
 			final IInteger root = f1.getDenominator();
 
-			IExpr new_numer = calculateRoot(a, root);
-			IExpr new_denom = calculateRoot(b, root);
-
+			IInteger[] new_numer = calculateRoot(a, root);
+			IInteger[] new_denom = calculateRoot(b, root);
+			final IFraction new_root = F.fraction(C1, root);
+			 
 			if (new_numer != null) {
 				if (new_denom != null) {
-					return Times(new_numer, Power(new_denom, F.CN1));
+					if (f0.sign() < 0) {
+						return Times(fraction(new_numer[0], new_denom[0]), Power(fraction(new_numer[1], new_denom[1]).negate(), new_root));
+					}
+					return Times(fraction(new_numer[0], new_denom[0]), Power(fraction(new_numer[1], new_denom[1]), new_root));
 				} else {
-					if (a.equals(F.C1)) {
+					if (a.equals(C1)) {
 						return null;
 					}
-					return Times(new_numer, Power(F.fraction(F.C1, b), f1));
+					if (f0.sign() < 0) {
+						return Times(new_numer[0], Power(fraction(new_numer[1], b).negate(), new_root));
+					}
+					return Times(new_numer[0], Power(fraction(new_numer[1], b), new_root));
 				}
 			} else {
 				if (new_denom != null) {
-					if (b.equals(F.C1)) {
+					if (b.equals(C1)) {
 						return null;
 					}
-					return Times(Power(a, f1), Power(new_denom, F.CN1));
+					if (f0.sign() < 0) {
+						return Times(fraction(C1, new_denom[0]), Power(F.fraction(a, new_denom[1]).negate(), new_root));
+					}
+					return Times(fraction(C1, new_denom[0]), Power(F.fraction(a, new_denom[1]), new_root));
 				}
 			}
 
 			return null;
 		}
-
+		// now f1 denominator == 1
 		int iNumer;
 		try {
 			iNumer = f1.getNumerator().toInt();
@@ -262,18 +276,46 @@ public class Power extends AbstractArg2 implements INumeric {
 		return f0.pow(iNumer);
 	}
 
-	private IExpr calculateRoot(IInteger a, IInteger root) {
+	/**
+	 * Split this integer into the nth-root (with prime factors less equal 1021)
+	 * and the &quot;rest factor&quot;
+	 * 
+	 * @return <code>{nth-root, rest factor}</code> or <code>null</code> if the
+	 *         root is not available
+	 */
+	private IInteger[] calculateRoot(IInteger a, IInteger root) {
 		try {
+			IInteger[] result = new IInteger[2];
 			int n = root.toInt();
 			if (n > 0) {
 				if (a.equals(F.C1)) {
-					return F.C1;
+					return null;
+//					result[0] = F.C1;
+//					result[1] = F.C1;
+//					return result;
 				}
-				IInteger result = a.nthRoot(n);
-				IInteger probe = result.pow(n);
-				if (probe.equals(a)) {
-					return result;
+				if (a.equals(F.CN1)) {
+					return null;
+					// if (n % 2 == 0) {
+					// // even exponent n
+					// return null;
+					// } else {
+					// // odd exponent n
+					// result[0] = F.CN1;
+					// result[1] = F.C1;
+					// return result;
+					// }
 				}
+				result = a.nthRootSplit(n);
+				if (result[1].equals(a)) {
+					// no roots found
+					return null;
+				}
+				return result;
+				// IInteger probe = result.pow(n);
+				// if (probe.equals(a)) {
+				// return result;
+				// }
 			}
 		} catch (ArithmeticException e) {
 

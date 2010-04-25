@@ -5,6 +5,7 @@ import java.util.Hashtable;
 import org.matheclipse.core.expression.IConstantHeaders;
 import org.matheclipse.core.interfaces.IComplex;
 import org.matheclipse.core.interfaces.IComplexNum;
+import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.IFraction;
 import org.matheclipse.core.interfaces.IInteger;
 import org.matheclipse.core.interfaces.INum;
@@ -152,7 +153,7 @@ abstract public class AbstractMathMLFormFactory implements IConstantHeaders {
    * @param d
    * @param precedence
    */
-  abstract public void convertHead(StringBuffer buf, Object obj);
+  abstract public void convertHead(StringBuffer buf, IExpr obj);
 
   /**
    * general entry point for converting an object
@@ -161,6 +162,6 @@ abstract public class AbstractMathMLFormFactory implements IConstantHeaders {
    * @param d
    * @param precedence
    */
-  abstract public void convert(StringBuffer buf, Object o, int precedence);
+  abstract public void convert(StringBuffer buf, IExpr o, int precedence);
 
 }

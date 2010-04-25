@@ -17,7 +17,8 @@
 
 package apache.harmony.math;
 
-import static org.matheclipse.basic.Util.*;
+import static org.matheclipse.basic.Util.checkCanceled;
+
 
 import org.matheclipse.basic.Config;
 import org.matheclipse.basic.ObjectMemoryExceededException;
@@ -28,14 +29,14 @@ import org.matheclipse.basic.ObjectMemoryExceededException;
  * and immutable way. There are several variants provided listed below:
  * 
  * <ul type="circle">
- * <li> <b>Division</b>
+ * <li><b>Division</b>
  * <ul type="circle">
  * <li>{@link BigInteger} division and remainder by {@link BigInteger}.</li>
  * <li>{@link BigInteger} division and remainder by {@code int}.</li>
  * <li><i>gcd</i> between {@link BigInteger} numbers.</li>
  * </ul>
  * </li>
- * <li> <b>Modular arithmetic </b>
+ * <li><b>Modular arithmetic </b>
  * <ul type="circle">
  * <li>Modular exponentiation between {@link BigInteger} numbers.</li>
  * <li>Modular inverse of a {@link BigInteger} numbers.</li>
@@ -50,38 +51,35 @@ class Division {
 
 	/**
 	 * Divides the array 'a' by the array 'b' and gets the quotient and the
-	 * remainder. Implements the Knuth's division algorithm. See D. Knuth, The
-	 * Art of Computer Programming, vol. 2. Steps D1-D8 correspond the steps in
-	 * the algorithm description.
+	 * remainder. Implements the Knuth's division algorithm. See D. Knuth, The Art
+	 * of Computer Programming, vol. 2. Steps D1-D8 correspond the steps in the
+	 * algorithm description.
 	 * 
 	 * @param quot
-	 *            the quotient
+	 *          the quotient
 	 * @param quotLength
-	 *            the quotient's length
+	 *          the quotient's length
 	 * @param a
-	 *            the dividend
+	 *          the dividend
 	 * @param aLength
-	 *            the dividend's length
+	 *          the dividend's length
 	 * @param b
-	 *            the divisor
+	 *          the divisor
 	 * @param bLength
-	 *            the divisor's length
+	 *          the divisor's length
 	 * @return the remainder
 	 */
-	static int[] divide(int quot[], int quotLength, int a[], int aLength,
-			int b[], int bLength) {
+	static int[] divide(int quot[], int quotLength, int a[], int aLength, int b[], int bLength) {
 		if (Config.SERVER_MODE) {
 			if (Config.BIGINTEGER_MAX_SIZE < aLength + 1) {
-				throw new ObjectMemoryExceededException("BigInteger",
-						aLength + 1);
+				throw new ObjectMemoryExceededException("BigInteger", aLength + 1);
 			}
 		}
 		int normA[] = new int[aLength + 1]; // the normalized dividend
 		// an extra byte is needed for correct shift
 		if (Config.SERVER_MODE) {
 			if (Config.BIGINTEGER_MAX_SIZE < bLength + 1) {
-				throw new ObjectMemoryExceededException("BigInteger",
-						bLength + 1);
+				throw new ObjectMemoryExceededException("BigInteger", bLength + 1);
 			}
 		}
 		int normB[] = new int[bLength + 1]; // the normalized divisor;
@@ -130,20 +128,16 @@ class Division {
 							break;
 						}
 						// leftHand always fits in an unsigned long
-						leftHand = (guessDigit & 0xffffffffL)
-								* (normB[normBLength - 2] & 0xffffffffL);
+						leftHand = (guessDigit & 0xffffffffL) * (normB[normBLength - 2] & 0xffffffffL);
 						/*
-						 * rightHand can overflow; in this case the loop
-						 * condition will be true in the next step of the loop
+						 * rightHand can overflow; in this case the loop condition will be
+						 * true in the next step of the loop
 						 */
-						rightHand = ((long) rem << 32)
-								+ (normA[j - 2] & 0xffffffffL);
-						long longR = (rem & 0xffffffffL)
-								+ (firstDivisorDigit & 0xffffffffL);
+						rightHand = ((long) rem << 32) + (normA[j - 2] & 0xffffffffL);
+						long longR = (rem & 0xffffffffL) + (firstDivisorDigit & 0xffffffffL);
 						/*
-						 * checks that longR does not fit in an unsigned int;
-						 * this ensures that rightHand will overflow unsigned
-						 * long in the next step
+						 * checks that longR does not fit in an unsigned int; this ensures
+						 * that rightHand will overflow unsigned long in the next step
 						 */
 						if (Integer.numberOfLeadingZeros((int) (longR >>> 32)) < 32) {
 							rOverflowed = true;
@@ -156,9 +150,7 @@ class Division {
 			// Step D4: multiply normB by guessDigit and subtract the production
 			// from normA.
 			if (guessDigit != 0) {
-				int borrow = Division.multiplyAndSubtract(normA, j
-						- normBLength, normB, normBLength,
-						guessDigit & 0xffffffffL);
+				int borrow = Division.multiplyAndSubtract(normA, j - normBLength, normB, normBLength, guessDigit & 0xffffffffL);
 				// Step D5: check the borrow
 				if (borrow != 0) {
 					// Step D6: compensating addition
@@ -166,8 +158,7 @@ class Division {
 					long carry = 0;
 					for (int k = 0; k < normBLength; k++) {
 						checkCanceled();
-						carry += (normA[j - normBLength + k] & 0xffffffffL)
-								+ (normB[k] & 0xffffffffL);
+						carry += (normA[j - normBLength + k] & 0xffffffffL) + (normB[k] & 0xffffffffL);
 						normA[j - normBLength + k] = (int) carry;
 						carry >>>= 32;
 					}
@@ -197,17 +188,16 @@ class Division {
 	 * algorithm. See D. Knuth, The Art of Computer Programming, vol. 2.
 	 * 
 	 * @param dest
-	 *            the quotient
+	 *          the quotient
 	 * @param src
-	 *            the dividend
+	 *          the dividend
 	 * @param srcLength
-	 *            the length of the dividend
+	 *          the length of the dividend
 	 * @param divisor
-	 *            the divisor
+	 *          the divisor
 	 * @return remainder
 	 */
-	static int divideArrayByInt(int dest[], int src[], final int srcLength,
-			final int divisor) {
+	static int divideArrayByInt(int dest[], int src[], final int srcLength, final int divisor) {
 
 		long rem = 0;
 		long bLong = divisor & 0xffffffffL;
@@ -221,8 +211,8 @@ class Division {
 				rem = (temp % bLong);
 			} else {
 				/*
-				 * make the dividend positive shifting it right by 1 bit then
-				 * get the quotient an remainder and correct them properly
+				 * make the dividend positive shifting it right by 1 bit then get the
+				 * quotient an remainder and correct them properly
 				 */
 				long aPos = temp >>> 1;
 				long bPos = divisor >>> 1;
@@ -255,15 +245,14 @@ class Division {
 	 * algorithm. See D. Knuth, The Art of Computer Programming, vol. 2.
 	 * 
 	 * @param src
-	 *            the dividend
+	 *          the dividend
 	 * @param srcLength
-	 *            the length of the dividend
+	 *          the length of the dividend
 	 * @param divisor
-	 *            the divisor
+	 *          the divisor
 	 * @return remainder
 	 */
-	static int remainderArrayByInt(int src[], final int srcLength,
-			final int divisor) {
+	static int remainderArrayByInt(int src[], final int srcLength, final int divisor) {
 
 		long result = 0;
 
@@ -277,13 +266,13 @@ class Division {
 	}
 
 	/**
-	 * Divides a <code>BigInteger</code> by a signed <code>int</code> and
-	 * returns the remainder.
+	 * Divides a <code>BigInteger</code> by a signed <code>int</code> and returns
+	 * the remainder.
 	 * 
 	 * @param dividend
-	 *            the BigInteger to be divided. Must be non-negative.
+	 *          the BigInteger to be divided. Must be non-negative.
 	 * @param divisor
-	 *            a signed int
+	 *          a signed int
 	 * @return divide % divisor
 	 */
 	static int remainder(BigInteger dividend, int divisor) {
@@ -295,9 +284,9 @@ class Division {
 	 * most significant bit of b is set to 1, i.e. b < 0
 	 * 
 	 * @param a
-	 *            the dividend
+	 *          the dividend
 	 * @param b
-	 *            the divisor
+	 *          the divisor
 	 * @return the long value containing the unsigned integer remainder in the
 	 *         left half and the unsigned integer quotient in the right half
 	 */
@@ -311,8 +300,8 @@ class Division {
 			rem = (a % bLong);
 		} else {
 			/*
-			 * Make the dividend positive shifting it right by 1 bit then get
-			 * the quotient an remainder and correct them properly
+			 * Make the dividend positive shifting it right by 1 bit then get the
+			 * quotient an remainder and correct them properly
 			 */
 			long aPos = a >>> 1;
 			long bPos = b >>> 1;
@@ -338,13 +327,12 @@ class Division {
 	}
 
 	/**
-	 * Computes the quotient and the remainder after a division by an
-	 * {@code int} number.
+	 * Computes the quotient and the remainder after a division by an {@code int}
+	 * number.
 	 * 
 	 * @return an array of the form {@code [quotient, remainder]}.
 	 */
-	static BigInteger[] divideAndRemainderByInteger(BigInteger val,
-			int divisor, int divisorSign) {
+	static BigInteger[] divideAndRemainderByInteger(BigInteger val, int divisor, int divisorSign) {
 		// res[0] is a quotient and res[1] is a remainder:
 		int[] valDigits = val._words;
 		int valLen = val._size;
@@ -360,22 +348,18 @@ class Division {
 			if (valSign < 0) {
 				rem = -rem;
 			}
-			return new BigInteger[] { BigInteger.valueOf(quo),
-					BigInteger.valueOf(rem) };
+			return new BigInteger[] { BigInteger.valueOf(quo), BigInteger.valueOf(rem) };
 		}
 		int quotientLength = valLen;
 		int quotientSign = ((valSign == divisorSign) ? 1 : -1);
 		int quotientDigits[] = new int[quotientLength];
 		int remainderDigits[];
-		remainderDigits = new int[] { Division.divideArrayByInt(quotientDigits,
-				valDigits, valLen, divisor) };
+		remainderDigits = new int[] { Division.divideArrayByInt(quotientDigits, valDigits, valLen, divisor) };
 		// axelclk
-		BigInteger result0 = BigInteger.newInstance(quotientSign,
-				quotientLength, quotientDigits);
+		BigInteger result0 = BigInteger.newInstance(quotientSign, quotientLength, quotientDigits);
 		// BigInteger result0 = new BigInteger(quotientSign, quotientLength,
 		// quotientDigits);
-		BigInteger result1 = BigInteger
-				.newInstance(valSign, 1, remainderDigits);
+		BigInteger result1 = BigInteger.newInstance(valSign, 1, remainderDigits);
 		// BigInteger result1 = new BigInteger(valSign, 1, remainderDigits);
 		result0.cutOffLeadingZeroes();
 		result1.cutOffLeadingZeroes();
@@ -387,15 +371,15 @@ class Division {
 	 * array.
 	 * 
 	 * @param a
-	 *            the array to subtract from
+	 *          the array to subtract from
 	 * @param start
-	 *            the start element of the subarray of a
+	 *          the start element of the subarray of a
 	 * @param b
-	 *            the array to be multiplied and subtracted
+	 *          the array to be multiplied and subtracted
 	 * @param bLen
-	 *            the length of b
+	 *          the length of b
 	 * @param c
-	 *            the multiplier of b
+	 *          the multiplier of b
 	 * @return the carry element of subtraction
 	 */
 	static int multiplyAndSubtract(int a[], int start, int b[], int bLen, long c) {
@@ -409,8 +393,7 @@ class Division {
 			product = c * (b[i] & 0xffffffffL);
 			productInt = (int) product;
 			productInt += carry;
-			carry = (int) (product >> 32)
-					+ ((productInt ^ 0x80000000) < (carry ^ 0x80000000) ? 1 : 0);
+			carry = (int) (product >> 32) + ((productInt ^ 0x80000000) < (carry ^ 0x80000000) ? 1 : 0);
 			productInt = a[start + i] - productInt;
 			if ((productInt ^ 0x80000000) > (a[start + i] ^ 0x80000000)) {
 				carry++;
@@ -425,13 +408,13 @@ class Division {
 
 	/**
 	 * @param m
-	 *            a positive modulus Return the greatest common divisor of op1
-	 *            and op2,
+	 *          a positive modulus Return the greatest common divisor of op1 and
+	 *          op2,
 	 * 
 	 * @param op1
-	 *            must be greater than zero
+	 *          must be greater than zero
 	 * @param op2
-	 *            must be greater than zero
+	 *          must be greater than zero
 	 * @see BigInteger#gcd(BigInteger)
 	 * @return {@code GCD(op1, op2)}
 	 */
@@ -463,8 +446,7 @@ class Division {
 			// Optimization for small operands
 			// (op2.bitLength() < 64) implies by INV (op1.bitLength() < 64)
 			if ((op2._size == 1) || ((op2._size == 2) && (op2._words[1] > 0))) {
-				op2 = BigInteger.valueOf(Division.gcdBinary(op1.longValue(),
-						op2.longValue()));
+				op2 = BigInteger.valueOf(Division.gcdBinary(op1.longValue(), op2.longValue()));
 				break;
 			}
 
@@ -482,8 +464,8 @@ class Division {
 					checkCanceled();
 					Elementary.inplaceSubtract(op2, op1); // both are odd
 					BitLevel.inplaceShiftRight(op2, op2.getLowestSetBit()); // op2
-																			// is
-																			// even
+					// is
+					// even
 				} while (op2.compareTo(op1) >= BigInteger.EQUALS);
 			}
 			// now op1 >= op2
@@ -495,14 +477,13 @@ class Division {
 	}
 
 	/**
-	 * Performs the same as {@link #gcdBinary(BigInteger, BigInteger)}, but
-	 * with numbers of 63 bits, represented in positives values of {@code long}
-	 * type.
+	 * Performs the same as {@link #gcdBinary(BigInteger, BigInteger)}, but with
+	 * numbers of 63 bits, represented in positives values of {@code long} type.
 	 * 
 	 * @param op1
-	 *            a positive number
+	 *          a positive number
 	 * @param op2
-	 *            a positive number
+	 *          a positive number
 	 * @see #gcdBinary(BigInteger, BigInteger)
 	 * @return <code>GCD(op1, op2)</code>
 	 */
@@ -682,8 +663,7 @@ class Division {
 	 */
 	private static boolean isPowerOfTwo(BigInteger bi, int exp) {
 		boolean result = false;
-		result = (exp >> 5 == bi._size - 1)
-				&& (bi._words[bi._size - 1] == 1 << (exp & 31));
+		result = (exp >> 5 == bi._size - 1) && (bi._words[bi._size - 1] == 1 << (exp & 31));
 		if (result) {
 			for (int i = 0; result && i < bi._size - 1; i++) {
 				checkCanceled();
@@ -694,8 +674,8 @@ class Division {
 	}
 
 	/**
-	 * Calculate how many iteration of Lorencz's algorithm would perform the
-	 * same operation
+	 * Calculate how many iteration of Lorencz's algorithm would perform the same
+	 * operation
 	 * 
 	 * @param bi
 	 * @param n
@@ -717,8 +697,8 @@ class Division {
 
 	/**
 	 * 
-	 * Based on "New Algorithm for Classical Modular Inverse" Róbert Lórencz.
-	 * LNCS 2523 (2002)
+	 * Based on "New Algorithm for Classical Modular Inverse" Róbert Lórencz. LNCS
+	 * 2523 (2002)
 	 * 
 	 * @return a^(-1) mod m
 	 */
@@ -732,13 +712,12 @@ class Division {
 			}
 		}
 		int uDigits[] = new int[max + 1]; // enough place to make all the
-											// inplace operation
+		// inplace operation
 		int vDigits[] = new int[max + 1];
 		System.arraycopy(modulo._words, 0, uDigits, 0, modulo._size);
 		System.arraycopy(a._words, 0, vDigits, 0, a._size);
 		// axelclk
-		BigInteger u = BigInteger.newInstance(modulo._sign, modulo._size,
-				uDigits);
+		BigInteger u = BigInteger.newInstance(modulo._sign, modulo._size, uDigits);
 		// BigInteger u = new BigInteger(modulo._sign, modulo._size,
 		// uDigits);
 		// axelclk
@@ -840,8 +819,7 @@ class Division {
 		return r;
 	}
 
-	static BigInteger squareAndMultiply(BigInteger x2, BigInteger a2,
-			BigInteger exponent, BigInteger modulus, long n2) {
+	static BigInteger squareAndMultiply(BigInteger x2, BigInteger a2, BigInteger exponent, BigInteger modulus, long n2) {
 		BigInteger res = x2;
 		for (int i = exponent.bitLength() - 1; i >= 0; i--) {
 			checkCanceled();
@@ -860,8 +838,7 @@ class Division {
 	 * 
 	 * @see #oddModPow(BigInteger, BigInteger, BigInteger)
 	 */
-	static BigInteger slidingWindow(BigInteger x2, BigInteger a2,
-			BigInteger exponent, BigInteger modulus, long n2) {
+	static BigInteger slidingWindow(BigInteger x2, BigInteger a2, BigInteger exponent, BigInteger modulus, long n2) {
 		// fill odd low pows of a2
 		BigInteger pows[] = new BigInteger[8];
 		BigInteger res = x2;
@@ -908,8 +885,8 @@ class Division {
 	}
 
 	/**
-	 * Performs modular exponentiation using the Montgomery Reduction. It
-	 * requires that all parameters be positive and the modulus be odd. >
+	 * Performs modular exponentiation using the Montgomery Reduction. It requires
+	 * that all parameters be positive and the modulus be odd. >
 	 * 
 	 * @see BigInteger#modPow(BigInteger, BigInteger)
 	 * @see #monPro(BigInteger, BigInteger, BigInteger, long)
@@ -917,8 +894,7 @@ class Division {
 	 * @see #squareAndMultiply(BigInteger, BigInteger, BigInteger, BigInteger,
 	 *      long)
 	 */
-	static BigInteger oddModPow(BigInteger base, BigInteger exponent,
-			BigInteger modulus) {
+	static BigInteger oddModPow(BigInteger base, BigInteger exponent, BigInteger modulus) {
 		// PRE: (base > 0), (exponent > 0), (modulus > 0) and (odd modulus)
 		int k = (modulus._size << 5); // r = 2^k
 		// n-residue of base [base * r (mod modulus)]
@@ -951,17 +927,16 @@ class Division {
 	}
 
 	/**
-	 * Performs modular exponentiation using the Montgomery Reduction. It
-	 * requires that all parameters be positive and the modulus be even. Based
-	 * <i>The square and multiply algorithm and the Montgomery Reduction C. K.
-	 * Koc - Montgomery Reduction with Even Modulus</i>. The square and
-	 * multiply algorithm and the Montgomery Reduction.
+	 * Performs modular exponentiation using the Montgomery Reduction. It requires
+	 * that all parameters be positive and the modulus be even. Based <i>The
+	 * square and multiply algorithm and the Montgomery Reduction C. K. Koc -
+	 * Montgomery Reduction with Even Modulus</i>. The square and multiply
+	 * algorithm and the Montgomery Reduction.
 	 * 
 	 * @ar.org.fitc.ref "C. K. Koc - Montgomery Reduction with Even Modulus"
 	 * @see BigInteger#modPow(BigInteger, BigInteger)
 	 */
-	static BigInteger evenModPow(BigInteger base, BigInteger exponent,
-			BigInteger modulus) {
+	static BigInteger evenModPow(BigInteger base, BigInteger exponent, BigInteger modulus) {
 		// PRE: (base > 0), (exponent > 0), (modulus > 0) and (modulus even)
 		// STEP 1: Obtain the factorization 'modulus'= q * 2^j.
 		int j = modulus.getLowestSetBit();
@@ -997,8 +972,8 @@ class Division {
 		BigInteger baseMod2toN = base.copy();
 		BigInteger res2;
 		/*
-		 * If 'base' is odd then it's coprime with 2^j and phi(2^j) = 2^(j-1);
-		 * so we can reduce reduce the exponent (mod 2^(j-1)).
+		 * If 'base' is odd then it's coprime with 2^j and phi(2^j) = 2^(j-1); so we
+		 * can reduce reduce the exponent (mod 2^(j-1)).
 		 */
 		if (base.testBit(0)) {
 			inplaceModPow2(e, j - 1);
@@ -1043,8 +1018,7 @@ class Division {
 			cs = 0;
 			for (int j = i + 1; j < limit; j++) {
 				checkCanceled();
-				cs += (0xFFFFFFFFL & t[i + j]) + (0xFFFFFFFFL & a[i])
-						* (0xFFFFFFFFL & a[j]);
+				cs += (0xFFFFFFFFL & t[i + j]) + (0xFFFFFFFFL & a[i]) * (0xFFFFFFFFL & a[j]);
 				t[i + j] = (int) cs;
 				cs >>>= 32;
 			}
@@ -1057,8 +1031,7 @@ class Division {
 		long carry = 0;
 		for (int i = 0, index = 0; i < s; i++, index++) {
 			checkCanceled();
-			cs += (0xFFFFFFFFL & a[i]) * (0xFFFFFFFFL & a[i])
-					+ (t[index] & 0xFFFFFFFFL);
+			cs += (0xFFFFFFFFL & a[i]) * (0xFFFFFFFFL & a[i]) + (t[index] & 0xFFFFFFFFL);
 			t[index] = (int) cs;
 			cs >>>= 32;
 			index++;
@@ -1078,8 +1051,7 @@ class Division {
 			m = (int) ((t[i] & 0xFFFFFFFFL) * (n2 & 0xFFFFFFFFL));
 			for (j = 0; j < s; j++) {
 				checkCanceled();
-				cs = (t[i + j] & 0xFFFFFFFFL) + (m & 0xFFFFFFFFL)
-						* (n[j] & 0xFFFFFFFFL) + (cs >>> 32);
+				cs = (t[i + j] & 0xFFFFFFFFL) + (m & 0xFFFFFFFFL) * (n[j] & 0xFFFFFFFFL) + (cs >>> 32);
 				t[i + j] = (int) cs;
 			}
 			// Adding C to the result
@@ -1100,24 +1072,22 @@ class Division {
 	}
 
 	/**
-	 * Implements the Montgomery Product of two integers represented by
-	 * {@code int} arrays. The arrays are supposed in <i>little endian</i>
-	 * notation.
+	 * Implements the Montgomery Product of two integers represented by {@code
+	 * int} arrays. The arrays are supposed in <i>little endian</i> notation.
 	 * 
 	 * @param a
-	 *            The first factor of the product.
+	 *          The first factor of the product.
 	 * @param b
-	 *            The second factor of the product.
+	 *          The second factor of the product.
 	 * @param modulus
-	 *            The modulus of the operations. Z<sub>modulus</sub>.
+	 *          The modulus of the operations. Z<sub>modulus</sub>.
 	 * @param n2
-	 *            The digit modulus'[0].
+	 *          The digit modulus'[0].
 	 * @ar.org.fitc.ref "C. K. Koc - Analyzing and Comparing Montgomery
 	 *                  Multiplication Algorithms"
 	 * @see #modPowOdd(BigInteger, BigInteger, BigInteger)
 	 */
-	static BigInteger monPro(BigInteger a, BigInteger b, BigInteger modulus,
-			long n2) {
+	static BigInteger monPro(BigInteger a, BigInteger b, BigInteger modulus, long n2) {
 		int aFirst = a._size - 1;
 		int bFirst = b._size - 1;
 		int s = modulus._size;
@@ -1127,8 +1097,7 @@ class Division {
 		int i, j;
 		if (Config.SERVER_MODE) {
 			if (Config.BIGINTEGER_MAX_SIZE < (s << 1) + 1) {
-				throw new ObjectMemoryExceededException("BigInteger",
-						(s << 1) + 1);
+				throw new ObjectMemoryExceededException("BigInteger", (s << 1) + 1);
 			}
 		}
 		int t[] = new int[(s << 1) + 1];
@@ -1142,8 +1111,7 @@ class Division {
 			aI = (i > aFirst) ? 0 : (a._words[i] & 0xFFFFFFFFL);
 			for (j = 0; j < s; j++) {
 				checkCanceled();
-				product = (t[j] & 0xFFFFFFFFL) + C
-						+ ((j > bFirst) ? 0 : (b._words[j] & 0xFFFFFFFFL) * aI);
+				product = (t[j] & 0xFFFFFFFFL) + C + ((j > bFirst) ? 0 : (b._words[j] & 0xFFFFFFFFL) * aI);
 				C = product >>> 32;
 				t[j] = (int) product;
 			}
@@ -1153,13 +1121,11 @@ class Division {
 			t[s + 1] = (int) C;
 
 			m = (int) ((t[0] & 0xFFFFFFFFL) * n2);
-			product = (t[0] & 0xFFFFFFFFL) + (m & 0xFFFFFFFFL)
-					* (n[0] & 0xFFFFFFFFL);
+			product = (t[0] & 0xFFFFFFFFL) + (m & 0xFFFFFFFFL) * (n[0] & 0xFFFFFFFFL);
 			C = (int) (product >>> 32);
 			for (j = 1; j < s; j++) {
 				checkCanceled();
-				product = (t[j] & 0xFFFFFFFFL) + (C & 0xFFFFFFFFL)
-						+ (m & 0xFFFFFFFFL) * (n[j] & 0xFFFFFFFFL);
+				product = (t[j] & 0xFFFFFFFFL) + (C & 0xFFFFFFFFL) + (m & 0xFFFFFFFFL) * (n[j] & 0xFFFFFFFFL);
 				C = product >>> 32;
 				t[j - 1] = (int) product;
 			}
@@ -1177,10 +1143,10 @@ class Division {
 	 * Performs the final reduction of the Montgomery algorithm.
 	 * 
 	 * @see monPro(BigInteger, BigInteger, BigInteger, long )
+	 * 
 	 * @see monSquare(BigInteger, BigInteger , long)
 	 */
-	static BigInteger finalSubtraction(int t[], int tLength, int s,
-			BigInteger modulus) {
+	static BigInteger finalSubtraction(int t[], int tLength, int s, BigInteger modulus) {
 		// skipping leading zeros
 		int i;
 		int n[] = modulus._words;
@@ -1209,9 +1175,9 @@ class Division {
 
 	/**
 	 * @param x
-	 *            an odd positive number.
+	 *          an odd positive number.
 	 * @param n
-	 *            the exponent by which 2 is raised.
+	 *          the exponent by which 2 is raised.
 	 * @return {@code x<sup>-1</sup> (mod 2<sup>n</sup>)}.
 	 */
 	static BigInteger modPow2Inverse(BigInteger x, int n) {
@@ -1219,8 +1185,7 @@ class Division {
 		// axelclk
 		if (Config.SERVER_MODE) {
 			if (Config.BIGINTEGER_MAX_SIZE < 1 << n) {
-				throw new ObjectMemoryExceededException("BigInteger",
-						1 << n);
+				throw new ObjectMemoryExceededException("BigInteger", 1 << n);
 			}
 		}
 		BigInteger y = BigInteger.newInstance(1, new int[1 << n]);
@@ -1243,9 +1208,9 @@ class Division {
 	 * Performs {@code x = x mod (2<sup>n</sup>)}.
 	 * 
 	 * @param x
-	 *            a positive number, it will store the result.
+	 *          a positive number, it will store the result.
 	 * @param n
-	 *            a positive exponent of {@code 2}.
+	 *          a positive exponent of {@code 2}.
 	 */
 	static void inplaceModPow2(BigInteger x, int n) {
 		// PRE: (x > 0) and (n >= 0)
