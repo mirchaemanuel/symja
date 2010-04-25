@@ -1,7 +1,5 @@
 package org.matheclipse.core.form.output;
 
-import static org.matheclipse.basic.Util.checkCanceled;
-
 import java.io.IOException;
 import java.io.Writer;
 import java.util.Map;
@@ -155,7 +153,6 @@ public class OutputFormFactory implements IConstantHeaders {
       }
       final int len = str.length();
       for (int j = 0; j < len; j += 79) {
-        checkCanceled();
         if (j + 79 < len) {
           buf.write(str.substring(j, j + 79));
           buf.write('\\');
@@ -177,7 +174,6 @@ public class OutputFormFactory implements IConstantHeaders {
         }
         final int len = str.length();
         for (int j = 0; j < len; j += 79) {
-          checkCanceled();
           if (j + 79 < len) {
             buf.write(str.substring(j, j + 79));
             buf.write('\\');
@@ -349,7 +345,6 @@ public class OutputFormFactory implements IConstantHeaders {
       convert(buf, list.get(1), oper.getPrecedence());
     }
     for (int i = 2; i < list.size(); i++) {
-      checkCanceled();
       buf.write(oper.getOperatorString());
       convert(buf, list.get(i), oper.getPrecedence());
     }

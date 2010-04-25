@@ -14,15 +14,15 @@ public class Config {
 	public static boolean SWING_PLOT_FRAME = false;
 
 	/**
-	 * The time in milliseconds an evaluation thread should run.<br/> 0 =>
-	 * forever
+	 * The time in milliseconds an evaluation thread should run.<br/>
+	 * 0 => forever
 	 * 
 	 */
 	public static long TIME_CONSTRAINED_MILLISECONDS = 60000L;
 
 	/**
-	 * The time in milliseconds an evaluation thread should run.<br/> 0 =>
-	 * forever
+	 * The time in milliseconds an evaluation thread should run.<br/>
+	 * 0 => forever
 	 * 
 	 */
 	public final static long FOREVER = 0L;
@@ -50,13 +50,15 @@ public class Config {
 	 * Version string for console application
 	 * 
 	 */
-	public final static String VERSION = "00.00.70.00";
+	// public final static String VERSION = "00.00.70.00";
 
 	/**
-	 * <code>true</code> if the engine is started by a servlet<br/> In
-	 * <i>server mode</i> the user can only assign values to variables with
-	 * prefix '$' <br/> <br/> SERVER_MODE should be set to <code>true</code>
-	 * in the initialization of a servlet
+	 * <code>true</code> if the engine is started by a servlet<br/>
+	 * In <i>server mode</i> the user can only assign values to variables with
+	 * prefix '$' <br/>
+	 * <br/>
+	 * SERVER_MODE should be set to <code>true</code> in the initialization of a
+	 * servlet
 	 * 
 	 */
 	public static boolean SERVER_MODE = false;
@@ -106,7 +108,7 @@ public class Config {
 	 */
 	public static int FRACTION_MAX_POOL_SIZE = 4096;
 
-	/** 
+	/**
 	 * Maximum size of the ComplexImpl pools in <i>server mode</i>.
 	 * 
 	 * @see org.matheclipse.core.expression.ComplexImpl
@@ -118,14 +120,14 @@ public class Config {
 	 * 
 	 * @see org.matheclipse.core.expression.DoubleImpl
 	 */
-	public static int DOUBLE_MAX_POOL_SIZE = 65536;//16384;
+	public static int DOUBLE_MAX_POOL_SIZE = 65536;// 16384;
 
 	/**
 	 * Maximum size of the DoubleComplexImpl pools in <i>server mode</i>.
 	 * 
 	 * @see org.matheclipse.core.expression.DoubleComplexImpl
 	 */
-	public static int DOUBLECOMPLEX_MAX_POOL_SIZE = 65536;//16384;
+	public static int DOUBLECOMPLEX_MAX_POOL_SIZE = 65536;// 16384;
 
 	/**
 	 * Maximum size of the PatternImpl pools in <i>server mode</i>.

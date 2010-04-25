@@ -648,11 +648,22 @@ public class F {
 
 	/**
 	 * Initialize the complete System. Calls
-	 * {@link #initSymbols(String, ISymbolObserver)} with parameter
-	 * <code>null</code>.
+	 * {@link #initSymbols(String, ISymbolObserver)} with parameters
+	 * <code>null, null</code>.
 	 */
 	public synchronized static void initSymbols() {
 		initSymbols(null, null);
+	}
+
+	/**
+	 * Initialize the complete System. Calls
+	 * {@link #initSymbols(String, ISymbolObserver)} with parameters
+	 * <code>fileName, null</code>.
+	 * 
+	 * @param fileName
+	 */
+	public synchronized static void initSymbols(String fileName) {
+		initSymbols(fileName, null);
 	}
 
 	/**

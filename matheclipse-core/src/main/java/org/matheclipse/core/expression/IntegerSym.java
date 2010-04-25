@@ -4,6 +4,8 @@ import static org.matheclipse.core.expression.F.List;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
@@ -15,6 +17,7 @@ import org.matheclipse.core.visit.IVisitorBoolean;
 import org.matheclipse.core.visit.IVisitorInt;
 
 import apache.harmony.math.BigInteger;
+import apache.harmony.math.Primality;
 import apache.harmony.math.Rational;
 
 /**
@@ -578,24 +581,50 @@ public class IntegerSym extends ExprImpl implements IInteger {
 			b = b.multiply(IntegerSym.valueOf(-1));
 			result.add(IntegerSym.valueOf(-1));
 		}
-		// TODO improve performance
-		IntegerSym p = IntegerSym.valueOf(2);
-		while (true) {
-			// test only p==2
-			final IntegerSym q[] = b.divideAndRemainder(p);
-			if (q[0].compareTo(p) < 0) {
-				result.add(b);
-				return result;
-			}
-			if (q[1].sign() == 0) {
-				result.add(p);
-				b = q[0];
-			} else {
-				p = p.add(IntegerSym.valueOf(1));
-				// leave with p==3
-				break;
+		if (b.fInteger.equals(BigInteger.ZERO)) {
+			result.add(IntegerSym.valueOf(0));
+			return result;
+		}
+		if (b.fInteger.equals(BigInteger.ONE)) {
+			result.add(IntegerSym.valueOf(1));
+			return result;
+		}
+		Map<Integer, Integer> map = new TreeMap<Integer, Integer>();
+		BigInteger rest = Primality.countPrimes1021(b.fInteger, map);
+
+		for (Map.Entry<Integer, Integer> entry : map.entrySet()) {
+			int key = entry.getKey();
+			IntegerSym is = valueOf(key);
+			for (int i = 0; i < entry.getValue(); i++) {
+				result.add(is);
 			}
 		}
+		if (rest.equals(BigInteger.ONE)) {
+			return result;
+		}
+		b = valueOf(rest);
+		if (b.fInteger.isProbablePrime(32)) {
+			result.add(b);
+			return result;
+		}
+		// TODO improve performance
+		IntegerSym p = IntegerSym.valueOf(1023);
+		// while (true) {
+		// // test only p==2
+		// final IntegerSym q[] = b.divideAndRemainder(p);
+		// if (q[0].compareTo(p) < 0) {
+		// result.add(b);
+		// return result;
+		// }
+		// if (q[1].sign() == 0) {
+		// result.add(p);
+		// b = q[0];
+		// } else {
+		// p = p.add(IntegerSym.valueOf(1));
+		// // leave with p==3
+		// break;
+		// }
+		// }
 		while (true) {
 			final IntegerSym q[] = b.divideAndRemainder(p);
 			if (q[0].compareTo(p) < 0) {
@@ -815,22 +844,23 @@ public class IntegerSym extends ExprImpl implements IInteger {
 	}
 
 	/**
-	 * Returns the integer nth-root of this integer.
+	 * Returns the nth-root of this integer.
 	 * 
 	 * @return <code>k<code> such as <code>k^n <= this < (k + 1)^n</code>
 	 * @throws ArithmeticException
 	 *           if this integer is negative and n is even.
 	 */
 	public IInteger nthRoot(int n) throws ArithmeticException {
-		if (sign() == 0)
+		if (sign() == 0) {
 			return IntegerSym.valueOf(0);
-		else if (sign() < 0) {
-			if (n % 2 == 0)
+		} else if (sign() < 0) {
+			if (n % 2 == 0) {
 				// even exponent n
 				throw new ArithmeticException();
-			else
+			} else {
 				// odd exponent n
 				return (IntegerSym) ((IntegerSym) negate()).nthRoot(n).negate();
+			}
 		} else {
 			IntegerSym result;
 			IntegerSym temp = this;
@@ -841,6 +871,53 @@ public class IntegerSym extends ExprImpl implements IInteger {
 			} while (temp.compareTo(result) < 0);
 			return result;
 		}
+	}
+
+	/**
+	 * Split this integer into the nth-root (with prime factors less equal 1021)
+	 * and the &quot;rest factor&quot;
+	 * 
+	 * @return <code>{nth-root, rest factor}</code>
+	 */
+	public IInteger[] nthRootSplit(int n) throws ArithmeticException {
+		IInteger[] result = new IInteger[2];
+		if (sign() == 0) {
+			result[0] = IntegerSym.valueOf(0);
+			result[1] = IntegerSym.valueOf(1);
+			return result;
+		} else if (sign() < 0) {
+			if (n % 2 == 0) {
+				// even exponent n
+				throw new ArithmeticException();
+			} else {
+				// odd exponent n
+				result = ((IntegerSym) negate()).nthRootSplit(n);
+				result[1] = (IInteger) result[1].negate();
+				return result;
+			}
+		}
+
+		IntegerSym b = this;
+		Map<Integer, Integer> map = new TreeMap<Integer, Integer>();
+		BigInteger rest = Primality.countPrimes1021(b.fInteger, map);
+		result[0] = IntegerSym.valueOf(1);
+		result[1] = IntegerSym.valueOf(rest);
+		for (Map.Entry<Integer, Integer> entry : map.entrySet()) {
+			IntegerSym is = valueOf(entry.getKey());
+			int val = entry.getValue();
+			int div = val / n;
+			int mod = val % n;
+			if (div > 0) {
+				// nth-root
+				result[0] = result[0].multiply(is.pow(div));
+			}
+			if (mod > 0) {
+				// rest factor
+				result[1] = result[1].multiply(is.pow(mod));
+			}
+		}
+		return result;
+
 	}
 
 	public int complexSign() {

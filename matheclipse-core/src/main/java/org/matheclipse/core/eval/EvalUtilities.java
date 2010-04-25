@@ -56,7 +56,7 @@ public class EvalUtilities extends MathMLUtilities {
 	@Override
 	public void toMathML(final String inputExpression, final Writer out) {
 		try {
-			final Object result = evaluate(inputExpression);
+			final IExpr result = evaluate(inputExpression);
 			if (result != null) {
 				toMathML(result, out);
 			}

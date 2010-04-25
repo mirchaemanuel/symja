@@ -7,6 +7,7 @@ import org.matheclipse.core.expression.IConstantHeaders;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IComplex;
 import org.matheclipse.core.interfaces.IComplexNum;
+import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.IFraction;
 import org.matheclipse.core.interfaces.IInteger;
 import org.matheclipse.core.interfaces.INum;
@@ -14,12 +15,15 @@ import org.matheclipse.core.interfaces.ISymbol;
 import org.matheclipse.core.list.algorithms.EvaluationSupport;
 import org.matheclipse.parser.client.operator.ASTNodeFactory;
 
+import edu.jas.arith.BigInteger;
+
+import apache.harmony.math.Rational;
+
 /**
  * PresentationGenerator generates MathML presentation output
  * 
  */
-public class MathMLFormFactory extends AbstractMathMLFormFactory implements
-		IConstantHeaders {
+public class MathMLFormFactory extends AbstractMathMLFormFactory implements IConstantHeaders {
 
 	class Operator {
 		String fOperator;
@@ -43,14 +47,12 @@ public class MathMLFormFactory extends AbstractMathMLFormFactory implements
 	/**
 	 * Table for constant symbols
 	 */
-	public final static Hashtable<String, Object> CONSTANT_SYMBOLS = new Hashtable<String, Object>(
-			199);
+	public final static Hashtable<String, Object> CONSTANT_SYMBOLS = new Hashtable<String, Object>(199);
 
 	/**
 	 * Description of the Field
 	 */
-	public final static Hashtable<String, AbstractConverter> operTab = new Hashtable<String, AbstractConverter>(
-			199);
+	public final static Hashtable<String, AbstractConverter> operTab = new Hashtable<String, AbstractConverter>(199);
 
 	private int plusPrec;
 
@@ -66,8 +68,7 @@ public class MathMLFormFactory extends AbstractMathMLFormFactory implements
 		init();
 	}
 
-	public void convertDouble(final StringBuffer buf, final INum d,
-			final int precedence) {
+	public void convertDouble(final StringBuffer buf, final INum d, final int precedence) {
 		if (d.isNegative() && (precedence > plusPrec)) {
 			tag(buf, "mo", "(");
 		}
@@ -79,8 +80,7 @@ public class MathMLFormFactory extends AbstractMathMLFormFactory implements
 		}
 	}
 
-	public void convertDoubleComplex(final StringBuffer buf,
-			final IComplexNum dc, final int precedence) {
+	public void convertDoubleComplex(final StringBuffer buf, final IComplexNum dc, final int precedence) {
 		tagStart(buf, "mrow");
 		buf.append(String.valueOf(dc.getRealPart()));
 		tag(buf, "mo", "+");
@@ -95,8 +95,7 @@ public class MathMLFormFactory extends AbstractMathMLFormFactory implements
 		tagEnd(buf, "mrow");
 	}
 
-	public void convertInteger(final StringBuffer buf, final IInteger i,
-			final int precedence) {
+	public void convertInteger(final StringBuffer buf, final IInteger i, final int precedence) {
 		if (i.isNegative() && (precedence > plusPrec)) {
 			tag(buf, "mo", "(");
 		}
@@ -108,8 +107,7 @@ public class MathMLFormFactory extends AbstractMathMLFormFactory implements
 		}
 	}
 
-	public void convertFraction(final StringBuffer buf, final IFraction f,
-			final int precedence) {
+	public void convertFraction(final StringBuffer buf, final IFraction f, final int precedence) {
 		if (f.isNegative() && (precedence > plusPrec)) {
 			tag(buf, "mo", "(");
 		}
@@ -126,13 +124,35 @@ public class MathMLFormFactory extends AbstractMathMLFormFactory implements
 		}
 	}
 
-	public void convertComplex(final StringBuffer buf, final IComplex c,
-			final int precedence) {
+	public void convertFraction(final StringBuffer buf, final Rational f, final int precedence) {
+		if (f.isNegative() && (precedence > plusPrec)) {
+			tag(buf, "mo", "(");
+		}
+		if (f.getDenominator().equals(BigInteger.ONE)) {
+			tagStart(buf, "mn");
+			buf.append(f.getNumerator().toString());
+			tagEnd(buf, "mn");
+		} else {
+			tagStart(buf, "mfrac");
+			tagStart(buf, "mn");
+			buf.append(f.getNumerator().toString());
+			tagEnd(buf, "mn");
+			tagStart(buf, "mn");
+			buf.append(f.getDenominator().toString());
+			tagEnd(buf, "mn");
+			tagEnd(buf, "mfrac");
+		}
+		if (f.isNegative() && (precedence > plusPrec)) {
+			tag(buf, "mo", ")");
+		}
+	}
+
+	public void convertComplex(final StringBuffer buf, final IComplex c, final int precedence) {
 		tagStart(buf, "mrow");
-		convert(buf, c.getRealPart(), 0);
+		convertFraction(buf, c.getRealPart(), precedence);
 		tag(buf, "mo", "+");
 		tagStart(buf, "mrow");
-		convert(buf, c.getImaginaryPart(), 0);
+		convertFraction(buf, c.getImaginaryPart(), ASTNodeFactory.TIMES_PRECEDENCE);
 		// <!ENTITY InvisibleTimes "&#x2062;" >
 		tag(buf, "mo", "&#x2062;");
 		// <!ENTITY ImaginaryI "&#x2148;" >
@@ -176,16 +196,16 @@ public class MathMLFormFactory extends AbstractMathMLFormFactory implements
 	 * Description of the Method
 	 * 
 	 * @param buf
-	 *            Description of Parameter
+	 *          Description of Parameter
 	 * @param p
-	 *            Description of Parameter
+	 *          Description of Parameter
 	 */
 	// public void convertPattern(StringBuffer buf, HPattern p) {
 	// buf.append(" <mi>");
 	// buf.append(p.toString());
 	// tagEnd(buf, "mi");
 	// }
-	public void convertHead(final StringBuffer buf, final Object obj) {
+	public void convertHead(final StringBuffer buf, final IExpr obj) {
 		if (obj instanceof ISymbol) {
 			final Object ho = CONSTANT_SYMBOLS.get(((ISymbol) obj).toString());
 			tagStart(buf, "mi");
@@ -201,8 +221,7 @@ public class MathMLFormFactory extends AbstractMathMLFormFactory implements
 		convert(buf, obj, 0);
 	}
 
-	public void convert(final StringBuffer buf, final Object o,
-			final int precedence) {
+	public void convert(final StringBuffer buf, final IExpr o, final int precedence) {
 		if (o instanceof IAST) {
 			final IAST f = ((IAST) o);
 			// System.out.println(f.getHeader().toString());
@@ -230,8 +249,7 @@ public class MathMLFormFactory extends AbstractMathMLFormFactory implements
 				}
 			}
 			final IConverter converter = reflection(ast.head().toString());
-			if ((converter == null)
-					|| (converter.convert(buf, ast, precedence) == false)) {
+			if ((converter == null) || (converter.convert(buf, ast, precedence) == false)) {
 				convertAST(buf, ast);
 			}
 			return;

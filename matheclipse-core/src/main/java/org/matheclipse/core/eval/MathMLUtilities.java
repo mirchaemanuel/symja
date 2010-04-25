@@ -70,7 +70,7 @@ public class MathMLUtilities {
 	 * @param objectExpression
 	 * @param out
 	 */
-	synchronized public void toMathML(final Object objectExpression, final Writer out) {
+	synchronized public void toMathML(final IExpr objectExpression, final Writer out) {
 		final StringBuffer buf = new StringBuffer();
 
 		if (objectExpression != null) {
