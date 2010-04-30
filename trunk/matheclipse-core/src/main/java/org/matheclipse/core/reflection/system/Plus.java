@@ -1,11 +1,11 @@
 package org.matheclipse.core.reflection.system;
 
-import static org.matheclipse.basic.Util.checkCanceled;
 import static org.matheclipse.core.expression.F.Plus;
 import static org.matheclipse.core.expression.F.Times;
 
 import org.matheclipse.core.eval.EvalEngine;
 import org.matheclipse.core.eval.interfaces.AbstractArgMultiple;
+import org.matheclipse.core.eval.interfaces.HashRule;
 import org.matheclipse.core.eval.interfaces.INumeric;
 import org.matheclipse.core.expression.AST;
 import org.matheclipse.core.expression.F;
@@ -20,11 +20,20 @@ import org.matheclipse.core.interfaces.INumber;
 import org.matheclipse.core.interfaces.ISignedNumber;
 import org.matheclipse.core.interfaces.ISymbol;
 
+import com.google.common.collect.ArrayListMultimap;
+
 public class Plus extends AbstractArgMultiple implements INumeric {
 
-	public Plus() {
+	private static ArrayListMultimap<Integer, HashRule> RULE_MAP = ArrayListMultimap.create();
+
+	public ArrayListMultimap<Integer, HashRule> getHashRuleMap() {
+		return RULE_MAP;
 	}
 
+	public Plus() {
+
+	}
+ 
 	@Override
 	public IExpr e2ComArg(final IComplex c0, final IComplex c1) {
 		return c0.add(c1);
@@ -85,11 +94,11 @@ public class Plus extends AbstractArgMultiple implements INumeric {
 		if (temp != null) {
 			return temp;
 		}
-		
+
 		if (o0.equals(o1)) {
 			return Times(F.C2, o0);
 		}
-		
+
 		if (o0.isAST(F.Times) && (((IAST) o0).size() > 2)) {
 			final AST f0 = (AST) o0;
 
@@ -172,12 +181,12 @@ public class Plus extends AbstractArgMultiple implements INumeric {
 	@Override
 	public void setUp(final ISymbol symbol) {
 		symbol.setAttributes(ISymbol.ONEIDENTITY | ISymbol.ORDERLESS | ISymbol.FLAT | ISymbol.LISTABLE | ISymbol.NUMERICFUNCTION);
+		setUpHashRule("Sin[x_]^2", "Cos[x_]^2", "1");
 	}
 
 	public double evalReal(final double[] stack, final int top, final int size) {
 		double result = 0;
 		for (int i = top - size + 1; i < top + 1; i++) {
-			checkCanceled();
 			result += stack[i];
 		}
 		return result;

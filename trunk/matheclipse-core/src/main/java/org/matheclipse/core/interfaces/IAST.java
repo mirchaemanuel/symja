@@ -56,8 +56,8 @@ public interface IAST extends IExpr, INestedRealtimeList<IExpr> {
 	 * Returns the header. If the header itself is an ISymbol it will return the
 	 * symbol object. If the header itself is an IAST it will recursively call
 	 * headSymbol(). If the head is of type INumbers The head will return one of
-	 * these headers: "DoubleComplex", "Double", "Integer", "Fraction",
-	 * "Complex" All other objects return <code>null</code>
+	 * these headers: "DoubleComplex", "Double", "Integer", "Fraction", "Complex"
+	 * All other objects return <code>null</code>
 	 */
 	public ISymbol topHead();
 
@@ -137,10 +137,9 @@ public interface IAST extends IExpr, INestedRealtimeList<IExpr> {
 	 * 
 	 * @return the given resultAST.
 	 * @throws IndexOutOfBoundsException
-	 *             if the secondAST size is lesser than this AST size
+	 *           if the secondAST size is lesser than this AST size
 	 */
-	public IAST map(IAST resultAST, IAST secondAST,
-			BiFunction<IExpr, IExpr, IExpr> function);
+	public IAST map(IAST resultAST, IAST secondAST, BiFunction<IExpr, IExpr, IExpr> function);
 
 	/**
 	 * Set the head element of this list
@@ -167,6 +166,12 @@ public interface IAST extends IExpr, INestedRealtimeList<IExpr> {
 	public IAST copyHead();
 
 	/**
+	 * Create a copy of this <code>IAST</code>, which contains alls elements up to
+	 * <code>index</code> (exclusive).
+	 */
+	public IAST copyUntil(int index);
+
+	/**
 	 * Calculate a special hash value for pattern matching
 	 * 
 	 * @return
@@ -174,8 +179,8 @@ public interface IAST extends IExpr, INestedRealtimeList<IExpr> {
 	public int patternHashCode();
 
 	/**
-	 * Get the range of elements [1..ast.size()[. This range elements are the arguments
-	 * of a function.
+	 * Get the range of elements [1..ast.size()[. This range elements are the
+	 * arguments of a function.
 	 * 
 	 * @return
 	 */
@@ -183,7 +188,7 @@ public interface IAST extends IExpr, INestedRealtimeList<IExpr> {
 
 	/**
 	 * Get the range of elements [0..ast.size()[ of the AST. This range elements
-	 * are the head of the function prepended  by the arguments of a function.
+	 * are the head of the function prepended by the arguments of a function.
 	 * 
 	 * @return
 	 */
@@ -210,7 +215,7 @@ public interface IAST extends IExpr, INestedRealtimeList<IExpr> {
 	 * @param index
 	 * @return
 	 * @throws WrongArgumentType
-	 *             if the cast is not possible
+	 *           if the cast is not possible
 	 */
 	public IInteger getInt(int index);
 
@@ -221,7 +226,7 @@ public interface IAST extends IExpr, INestedRealtimeList<IExpr> {
 	 * @param index
 	 * @return
 	 * @throws WrongArgumentType
-	 *             if the cast is not possible
+	 *           if the cast is not possible
 	 */
 	public INumber getNumber(int index);
 
@@ -232,13 +237,13 @@ public interface IAST extends IExpr, INestedRealtimeList<IExpr> {
 	 * @param index
 	 * @return
 	 * @throws WrongArgumentType
-	 *             if the cast is not possible
+	 *           if the cast is not possible
 	 */
 	public IAST getAST(int index);
 
 	/**
-	 * Casts an <code>IExpr</code> which is a list at position
-	 * <code>index</code> to an <code>IAST</code>.
+	 * Casts an <code>IExpr</code> which is a list at position <code>index</code>
+	 * to an <code>IAST</code>.
 	 * 
 	 * @param index
 	 * @return

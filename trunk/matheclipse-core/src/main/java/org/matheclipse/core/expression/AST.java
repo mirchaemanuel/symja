@@ -1,6 +1,5 @@
 package org.matheclipse.core.expression;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
@@ -837,6 +836,10 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 		return newInstance(get(0));
 	}
 
+	public IAST copyUntil(int index) {
+		return newInstance(this, index);
+	}
+
 	public IExpr variables2Slots(final Map<IExpr, IExpr> map, final List<IExpr> variableList) {
 		return AST.COPY.replaceAll(this, new IsUnaryVariableOrPattern<IExpr>(), new UnaryVariable2Slot(map, variableList));
 	}
@@ -1049,6 +1052,14 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 		AST ast = new AST(5, false);
 		ast.add(head);
 		return ast;
+	}
+
+	public static AST newInstance(final IAST ast, int index) {
+		AST result = new AST(5, false);
+		for (int i = 0; i < index; i++) {
+			ast.add(ast.get(i));
+		}
+		return result;
 	}
 
 	public static AST newInstance(final ISymbol symbol, final int[] arr) {
