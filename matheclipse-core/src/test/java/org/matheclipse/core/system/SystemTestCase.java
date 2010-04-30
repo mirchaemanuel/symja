@@ -45,6 +45,10 @@ public class SystemTestCase extends AbstractTestCase {
 		check("x^3+2*x^2+4*x+3", "x^3+2*x^2+4*x+3");
 		check("y*x^3+y*x^2+y*x+y+x+42", "x^3*y+x^2*y+x*y+y+x+42");
 		check("2I", "I*2");
+		
+		check("a+Sin[x]^2+Cos[x]^2+2/3", "a+5/3");
+		check("a+Sin[x]^2+Cos[y]^2+2/3", "Sin[x]^2+Cos[y]^2+a+2/3");
+		
 	}
 
 	public void testSystem000a() {

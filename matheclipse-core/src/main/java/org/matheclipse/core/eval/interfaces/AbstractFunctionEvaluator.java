@@ -1,7 +1,5 @@
 package org.matheclipse.core.eval.interfaces;
 
-import static org.matheclipse.basic.Util.checkCanceled;
-
 import org.matheclipse.basic.Config;
 import org.matheclipse.core.convert.AST2Expr;
 import org.matheclipse.core.eval.EvalEngine;
@@ -58,7 +56,6 @@ public abstract class AbstractFunctionEvaluator implements IFunctionEvaluator {
 
 	private void setUpRules(final String[] rules, final Parser parser, final EvalEngine engine) {
 		for (int i = 0; i < rules.length; i++) {
-			checkCanceled();
 			final ASTNode parsedAST = parser.parse(rules[i]);
 			final IExpr obj = AST2Expr.CONST.convert(parsedAST);
 			// engine.init();
