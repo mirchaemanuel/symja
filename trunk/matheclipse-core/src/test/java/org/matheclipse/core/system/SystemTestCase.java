@@ -2171,11 +2171,11 @@ public class SystemTestCase extends AbstractTestCase {
 	}
 
 	public void testSystem416() {
-		check("ValueQ[valueQVar]", "False");
-		check("valueQVar=10;ValueQ[valueQVar]", "True");
-		check("ValueQ[valueQVar[10]]", "False");
+		check("ValueQ[$valueQVar]", "False");
+		check("$valueQVar=10;ValueQ[$valueQVar]", "True");
+		check("ValueQ[$valueQVar[10]]", "False");
 
-		check("ClearAll[valueQVar];valueQVar[x_]:={x*y};ValueQ[valueQVar[10]]", "True");
+		check("ClearAll[$valueQVar];$valueQVar[x_]:={x*y};ValueQ[$valueQVar[10]]", "True");
 	}
 
 	public void testSystem417() {

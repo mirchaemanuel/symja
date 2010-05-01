@@ -33,7 +33,7 @@ public class Plus extends AbstractArgMultiple implements INumeric {
 	public Plus() {
 
 	}
- 
+
 	@Override
 	public IExpr e2ComArg(final IComplex c0, final IComplex c1) {
 		return c0.add(c1);

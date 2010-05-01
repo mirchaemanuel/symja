@@ -1,14 +1,16 @@
 package org.matheclipse.core.eval.interfaces;
 
+import org.matheclipse.basic.Config;
 import org.matheclipse.core.interfaces.IExpr;
+import org.matheclipse.core.interfaces.IPatternMatcher;
 import org.matheclipse.core.patternmatching.PatternMatcher;
 import org.matheclipse.core.visit.HashValueVisitor;
 
 public class HashRule {
 	int hash1;
 	int hash2;
-	private final PatternMatcher fLHS1;
-	private final PatternMatcher fLHS2;
+	private final IPatternMatcher<IExpr> fLHS1;
+	private final IPatternMatcher<IExpr> fLHS2;
 	private final IExpr fRHS;
 
 	/**
@@ -34,14 +36,20 @@ public class HashRule {
 	/**
 	 * @return the first left-hand-side pattern matcher
 	 */
-	public PatternMatcher getLHS1() {
+	public IPatternMatcher<IExpr> getLHS1() {
+		if (Config.SERVER_MODE) {
+			fLHS1.clone();
+		}
 		return fLHS1;
 	}
 
 	/**
 	 * @return the second left-hand-side pattern matcher
 	 */
-	public PatternMatcher getLHS2() {
+	public IPatternMatcher<IExpr> getLHS2() {
+		if (Config.SERVER_MODE) {
+			fLHS2.clone();
+		}
 		return fLHS2;
 	}
 

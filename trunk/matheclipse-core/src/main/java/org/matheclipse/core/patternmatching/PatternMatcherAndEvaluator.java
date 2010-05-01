@@ -8,8 +8,12 @@ import org.matheclipse.core.list.algorithms.EvaluationSupport;
 
 public class PatternMatcherAndEvaluator extends PatternMatcher implements Serializable {
 
-	final private IExpr fRightHandSide;
-	final private ISymbol fSetSymbol;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2241135467123931061L;
+	private IExpr fRightHandSide;
+	private ISymbol fSetSymbol;
 
 	/**
 	 * 
@@ -26,6 +30,28 @@ public class PatternMatcherAndEvaluator extends PatternMatcher implements Serial
 		super(leftHandSide);
 		fSetSymbol = setSymbol;
 		fRightHandSide = rightHandSide;
+	}
+
+	@Override
+	public Object clone() {
+//		try {
+			PatternMatcherAndEvaluator v = (PatternMatcherAndEvaluator) super.clone();
+			v.fRightHandSide = fRightHandSide;
+			v.fSetSymbol = fSetSymbol;
+			return v;
+//		} catch (CloneNotSupportedException e) {
+//			// this shouldn't happen, since we are Cloneable
+//			throw new InternalError();
+//		}
+	}
+
+	@Override
+	public boolean equals(final Object obj) {
+		if (!(obj instanceof PatternMatcherAndEvaluator)) {
+			return false;
+		}
+		// don't compare fSetSymbol and fRightHandSide here
+		return super.equals(obj);
 	}
 
 	/**
@@ -60,15 +86,6 @@ public class PatternMatcherAndEvaluator extends PatternMatcher implements Serial
 
 	public ISymbol getSetSymbol() {
 		return fSetSymbol;
-	}
-
-	@Override
-	public boolean equals(final Object obj) {
-		if (!(obj instanceof PatternMatcherAndEvaluator)) {
-			return false;
-		}
-		// don't compare fSetSymbol and fRightHandSide here
-		return super.equals(obj);
 	}
 
 }

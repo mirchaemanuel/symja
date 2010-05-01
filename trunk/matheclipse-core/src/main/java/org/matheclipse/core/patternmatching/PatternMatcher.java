@@ -2,6 +2,7 @@ package org.matheclipse.core.patternmatching;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -403,6 +404,7 @@ public class PatternMatcher extends IPatternMatcher<IExpr> implements Serializab
 	 * @return
 	 */
 	public boolean checkPatternMatcher(final PatternMatcher thatMatcher) {
+		// PatternMatcher thatMatcher = (PatternMatcher) thtMatcher;
 		if (fPatternCounter == 0 || thatMatcher.fPatternCounter == 0) {
 			return true;
 		}
@@ -540,6 +542,7 @@ public class PatternMatcher extends IPatternMatcher<IExpr> implements Serializab
 	 * @param resultList
 	 * @param pExpr
 	 */
+	@Override
 	public void getPatterns(final List<IExpr> resultList, final IExpr pExpr) {
 		if (pExpr instanceof IAST) {
 			final IAST list = (IAST) pExpr;
@@ -592,10 +595,12 @@ public class PatternMatcher extends IPatternMatcher<IExpr> implements Serializab
 	 * 
 	 * @return
 	 */
+	@Override
 	final public boolean isRuleWithoutPatterns() {
 		return fPatternCounter == 0;
 	}
 
+	@Override
 	public boolean apply(final IExpr evalExpr) {
 
 		if (fPatternCounter == 0) {
@@ -714,6 +719,7 @@ public class PatternMatcher extends IPatternMatcher<IExpr> implements Serializab
 		return true;
 	}
 
+	@Override
 	public void setCondition(final IExpr condition) {
 		fCondition = condition;
 	}
@@ -722,11 +728,7 @@ public class PatternMatcher extends IPatternMatcher<IExpr> implements Serializab
 		return fLeftHandSide;
 	}
 
-	/**
-	 * 
-	 * @param leftHandSide
-	 * @return <code>null</code>
-	 */
+	@Override
 	public IExpr eval(final IExpr leftHandSide) {
 		return null;
 	}
@@ -755,5 +757,21 @@ public class PatternMatcher extends IPatternMatcher<IExpr> implements Serializab
 	@Override
 	public int hashCode() {
 		return fLeftHandSide.hashCode();
+	}
+
+	@Override
+	public Object clone() {
+		// try {
+		PatternMatcher v = (PatternMatcher) super.clone();
+		v.fCondition = fCondition;
+		v.fPatternCounter = fPatternCounter;
+		v.fLeftHandSide = fLeftHandSide;
+		v.fPatternValuesArray = Arrays.copyOf(fPatternValuesArray, fPatternValuesArray.length);
+		v.fPatternSymbolsArray = (ArrayList<ISymbol>) fPatternSymbolsArray.clone();
+		return v;
+		// } catch (CloneNotSupportedException e) {
+		// // this shouldn't happen, since we are Cloneable
+		// throw new InternalError();
+		// }
 	}
 }
