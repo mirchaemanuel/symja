@@ -6,6 +6,7 @@ import org.matheclipse.core.convert.AST2Expr;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
+import org.matheclipse.core.interfaces.IPatternMatcher;
 import org.matheclipse.core.interfaces.ISymbol;
 import org.matheclipse.core.patternmatching.PatternMatcher;
 import org.matheclipse.core.visit.HashValueVisitor;
@@ -136,7 +137,7 @@ public class AbstractArgMultiple extends AbstractArg2 {
 			final List<HashRule> hashRuleList = hashRuleMap.get(hashValues[i]);
 			if (hashRuleList != null) {
 				evaled: for (HashRule hashRule : hashRuleList) {
-					PatternMatcher matcher1 = hashRule.getLHS1();
+					IPatternMatcher<IExpr> matcher1 = hashRule.getLHS1();
 					if (matcher1.apply(ast.get(i + 1))) {
 						for (int j = 0; j < hashValues.length; j++) {
 							if (hashValues[j] != hashRule.getHash2() || j == i) {
@@ -144,8 +145,8 @@ public class AbstractArgMultiple extends AbstractArg2 {
 								continue;
 							}
 
-							PatternMatcher matcher2 = hashRule.getLHS2();
-							if (matcher2.apply(ast.get(j + 1)) && matcher1.checkPatternMatcher(matcher2)) {
+							IPatternMatcher<IExpr> matcher2 = hashRule.getLHS2();
+							if (matcher2.apply(ast.get(j + 1)) && matcher1.checkPatternMatcher((PatternMatcher) matcher2)) {
 								// found binary combination; mark entries as used
 								hashValues[i] = 0;
 								hashValues[j] = 0;

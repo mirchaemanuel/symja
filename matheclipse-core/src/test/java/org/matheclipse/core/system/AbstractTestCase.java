@@ -1,25 +1,18 @@
 package org.matheclipse.core.system;
 
-import java.util.ArrayList;
-
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 
 import junit.framework.TestCase;
 
 import org.matheclipse.basic.Config;
-import org.matheclipse.core.convert.AST2Expr;
 import org.matheclipse.core.eval.EvalEngine;
-import org.matheclipse.core.eval.EvalUtilities;
 import org.matheclipse.core.eval.TimeConstrainedEvaluator;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.form.output.OutputFormFactory;
 import org.matheclipse.core.form.output.StringBufferWriter;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
-import org.matheclipse.core.patternmatching.PatternMatcher;
-import org.matheclipse.parser.client.Parser;
-import org.matheclipse.parser.client.ast.ASTNode;
 
 /**
  * Tests system.reflection classes
@@ -31,6 +24,7 @@ public abstract class AbstractTestCase extends TestCase {
 	public AbstractTestCase(String name) {
 		super(name);
 		F.initSymbols(null, null);
+		// Config.SERVER_MODE=true;
 	}
 
 	// public void check(String evalString, String expectedResult) {
@@ -40,8 +34,7 @@ public abstract class AbstractTestCase extends TestCase {
 		check(fScriptEngine, evalString, expectedResult);
 	}
 
-	public void check(ScriptEngine scriptEngine, String evalString,
-			String expectedResult) {
+	public void check(ScriptEngine scriptEngine, String evalString, String expectedResult) {
 		try {
 			if (evalString.length() == 0 && expectedResult.length() == 0) {
 				return;
@@ -90,7 +83,6 @@ public abstract class AbstractTestCase extends TestCase {
 		}
 	}
 
-
 	/**
 	 * The JUnit setup method
 	 */
@@ -99,7 +91,7 @@ public abstract class AbstractTestCase extends TestCase {
 			synchronized (fScriptManager) {
 				fScriptEngine = fScriptManager.getEngineByExtension("m");
 			}
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			// assertEquals("", "ParserError");

@@ -92,6 +92,7 @@ public class Symbol extends ExprImpl implements ISymbol {
 		// hash = fSymbolName.hashCode();
 	}
 
+	@Override
 	public IExpr apply(IExpr... expressions) {
 		return F.ast(expressions, this);
 	}
@@ -159,13 +160,17 @@ public class Symbol extends ExprImpl implements ISymbol {
 		}
 
 		IExpr result;
-		PatternMatcher pmEvaluator;
+		IPatternMatcher<IExpr> pmEvaluator;
 		if ((fSimplePatternRules != null) && (expression instanceof IAST)) {
 			final Integer hash = Integer.valueOf(((IAST) expression).patternHashCode());
 			final List<IPatternMatcher<IExpr>> list = fSimplePatternRules.get(hash);
 			if (list != null) {
 				for (int i = 0; i < list.size(); i++) {
-					pmEvaluator = (PatternMatcher) list.get(i);
+					if (Config.SERVER_MODE) {
+						pmEvaluator = (IPatternMatcher<IExpr>) list.get(i).clone();
+					} else {
+						pmEvaluator = list.get(i);
+					}
 					result = pmEvaluator.eval(expression);
 					if (result != null) {
 						return result;
@@ -176,7 +181,11 @@ public class Symbol extends ExprImpl implements ISymbol {
 
 		if (fPatternRules != null) {
 			for (int i = 0; i < fPatternRules.size(); i++) {
-				pmEvaluator = (PatternMatcher) fPatternRules.get(i);
+				if (Config.SERVER_MODE) {
+					pmEvaluator = (IPatternMatcher<IExpr>) fPatternRules.get(i).clone();
+				} else {
+					pmEvaluator = fPatternRules.get(i);
+				}
 				result = pmEvaluator.eval(expression);
 				if (result != null) {
 					return result;
@@ -467,6 +476,7 @@ public class Symbol extends ExprImpl implements ISymbol {
 		return fSymbolName.equals("False");
 	}
 
+	@Override
 	public ISymbol head() {
 		return F.SymbolHead;
 	}
