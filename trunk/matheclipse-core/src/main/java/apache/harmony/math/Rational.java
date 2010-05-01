@@ -8,6 +8,8 @@
  */
 package apache.harmony.math;
 
+import java.io.Serializable;
+
 /**
  * <p>
  * This class represents the ratio of two {@link BigInteger} numbers.
@@ -24,7 +26,7 @@ package apache.harmony.math;
  * @see <a href="http://en.wikipedia.org/wiki/Rational_numbers"> Wikipedia:
  *      Rational Numbers</a>
  */
-public final class Rational {// extends Number<Rational> implements
+public final class Rational implements Serializable {// extends Number<Rational> implements
 	// Field<Rational> {
 
 	// /**

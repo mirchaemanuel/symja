@@ -23,7 +23,7 @@ public class AbstractArgMultiple extends AbstractArg2 {
 
 	@Override
 	public IExpr evaluate(final IAST functionList) {
-		if (functionList.size() > 4) {
+		if (functionList.size() > 2) {
 			IAST temp = evaluateHashs(functionList);
 			if (temp != null) {
 				return temp;

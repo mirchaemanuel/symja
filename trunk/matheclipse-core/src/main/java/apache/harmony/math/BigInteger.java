@@ -17,8 +17,6 @@
 
 package apache.harmony.math;
 
-import static org.matheclipse.basic.Util.checkCanceled;
-
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -224,7 +222,6 @@ public class BigInteger implements Comparable<BigInteger>, Serializable {
 			}
 			_words = new int[_size];
 			for (int i = 0; i < _size; i++) {
-				checkCanceled();
 				_words[i] = rnd.nextInt();
 			}
 			// Using only the necessary bits
@@ -288,7 +285,6 @@ public class BigInteger implements Comparable<BigInteger>, Serializable {
 		}
 		if (signum == 0) {
 			for (byte element : magnitude) {
-				checkCanceled();
 				if (element != 0) {
 					// math.14=signum-magnitude mismatch
 					throw new NumberFormatException("BigInteger");// Messages.getString(
@@ -484,31 +480,26 @@ public class BigInteger implements Comparable<BigInteger>, Serializable {
 				bytesInInteger = highBytes;
 			}
 			for (int i = 0; i < bytesInInteger; i++, digit >>= 8) {
-				checkCanceled();
 				bytes[--bytesLen] = (byte) digit;
 			}
 			while (bytesLen > firstByteNumber) {
-				checkCanceled();
 				digit = ~temp._words[digitIndex];
 				digitIndex++;
 				if (digitIndex == _size) {
 					bytesInInteger = highBytes;
 				}
 				for (int i = 0; i < bytesInInteger; i++, digit >>= 8) {
-					checkCanceled();
 					bytes[--bytesLen] = (byte) digit;
 				}
 			}
 		} else {
 			while (bytesLen > firstByteNumber) {
-				checkCanceled();
 				digit = temp._words[digitIndex];
 				digitIndex++;
 				if (digitIndex == _size) {
 					bytesInInteger = highBytes;
 				}
 				for (int i = 0; i < bytesInInteger; i++, digit >>= 8) {
-					checkCanceled();
 					bytes[--bytesLen] = (byte) digit;
 				}
 			}
@@ -1082,7 +1073,6 @@ public class BigInteger implements Comparable<BigInteger>, Serializable {
 		}
 		BigInteger temp = this;
 		for (int i = 0; i < n; i++) {
-			checkCanceled();
 			temp = Primality.nextProbablePrime(temp);
 		}
 		return temp;
@@ -1098,7 +1088,6 @@ public class BigInteger implements Comparable<BigInteger>, Serializable {
 	/** Decreases {@code numberLength} if there are zero high elements. */
 	final void cutOffLeadingZeroes() {
 		while ((_size > 0) && (_words[--_size] == 0)) {
-			checkCanceled();
 			;
 		}
 		if (_words[_size++] == 0) {
@@ -1127,13 +1116,11 @@ public class BigInteger implements Comparable<BigInteger>, Serializable {
 		int i = 0;
 		// Put bytes to the int array starting from the end of the byte array
 		while (bytesLen > highBytes) {
-			checkCanceled();
 			_words[i++] = (byteValues[--bytesLen] & 0xFF) | (byteValues[--bytesLen] & 0xFF) << 8 | (byteValues[--bytesLen] & 0xFF) << 16
 					| (byteValues[--bytesLen] & 0xFF) << 24;
 		}
 		// Put the first bytes in the highest element of the int array
 		for (int j = 0; j < bytesLen; j++) {
-			checkCanceled();
 			_words[i] = (_words[i] << 8) | (byteValues[j] & 0xFF);
 		}
 	}
@@ -1156,7 +1143,6 @@ public class BigInteger implements Comparable<BigInteger>, Serializable {
 		_words[_size - 1] = -1;
 		// Put bytes to the int array starting from the end of the byte array
 		while (bytesLen > highBytes) {
-			checkCanceled();
 			_words[i] = (byteValues[--bytesLen] & 0xFF) | (byteValues[--bytesLen] & 0xFF) << 8 | (byteValues[--bytesLen] & 0xFF) << 16
 					| (byteValues[--bytesLen] & 0xFF) << 24;
 			if (_words[i] != 0) {
@@ -1164,7 +1150,6 @@ public class BigInteger implements Comparable<BigInteger>, Serializable {
 				firstNonzeroDigit = i;
 				i++;
 				while (bytesLen > highBytes) {
-					checkCanceled();
 					_words[i] = (byteValues[--bytesLen] & 0xFF) | (byteValues[--bytesLen] & 0xFF) << 8
 							| (byteValues[--bytesLen] & 0xFF) << 16 | (byteValues[--bytesLen] & 0xFF) << 24;
 					_words[i] = ~_words[i];
@@ -1178,13 +1163,11 @@ public class BigInteger implements Comparable<BigInteger>, Serializable {
 			// Put the first bytes in the highest element of the int array
 			if (firstNonzeroDigit != -2) {
 				for (int j = 0; j < bytesLen; j++) {
-					checkCanceled();
 					_words[i] = (_words[i] << 8) | (byteValues[j] & 0xFF);
 				}
 				_words[i] = ~_words[i];
 			} else {
 				for (int j = 0; j < bytesLen; j++) {
-					checkCanceled();
 					_words[i] = (_words[i] << 8) | (byteValues[j] & 0xFF);
 				}
 				_words[i] = -_words[i];
