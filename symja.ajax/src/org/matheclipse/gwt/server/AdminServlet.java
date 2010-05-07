@@ -96,9 +96,13 @@ public class AdminServlet extends HttpServlet {
 				// PrintStream pout = new PrintStream();
 				engine = new EvalEngine(session.getId(), 256, 256, outs);
 				session.setAttribute(EVAL_ENGINE, engine);
+				// init ThreadLocal instance:
+				EvalEngine.get();
 			} else {
 				engine.setOutPrintStream(outs);
 				engine.setSessionID(session.getId());
+				// init ThreadLocal instance:
+				EvalEngine.set(engine);
 			}
 		}
 
@@ -112,8 +116,10 @@ public class AdminServlet extends HttpServlet {
 				e.printStackTrace();
 			}
 			return counter + ";error;Exception occurred in evaluate!";
+		} finally {
+			// tear down associated ThreadLocal from EvalEngine
+			EvalEngine.remove();
 		}
-
 	}
 
 	public static String[] evaluateString(HttpServletRequest request, EvalEngine engine, String inputString, String function)
