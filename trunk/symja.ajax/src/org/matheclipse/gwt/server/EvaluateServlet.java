@@ -98,9 +98,13 @@ public class EvaluateServlet extends HttpServlet {
 				// PrintStream pout = new PrintStream();
 				engine = new EvalEngine(session.getId(), 256, 256, outs);
 				session.setAttribute(EVAL_ENGINE, engine);
+				// init ThreadLocal instance:
+				EvalEngine.get();
 			} else {
 				engine.setOutPrintStream(outs);
 				engine.setSessionID(session.getId());
+				// init ThreadLocal instance:
+				EvalEngine.set(engine);
 			}
 		}
 
@@ -114,6 +118,9 @@ public class EvaluateServlet extends HttpServlet {
 				e.printStackTrace();
 			}
 			return counter + ";error;Exception occurred in evaluate!";
+		} finally {
+			// tear down associated ThreadLocal from EvalEngine
+			EvalEngine.remove();
 		}
 
 	}
@@ -354,21 +361,24 @@ public class EvaluateServlet extends HttpServlet {
 		}
 	}
 
-//	public static void createJavaView(Writer buffer, String graphicData) throws IOException {
-//		buffer.write("<applet name=\"jvLite\" code=\"jvLite.class\" "
-//				+
-//				// jamwiki path
-//				"codebase=\"../static/lib\" "
-//				+
-//
-//				// standalone path
-//				// "codebase=\"lib\" " +
-//				"width=\"720\" height=\"400\" " + "alt=\"JavaView lite applet\" " + "archive=\"jvLite.jar\" id=\"applet" + APPLET_NUMBER
-//				+ "\">\n" + "<param name=\"Axes\" value=\"show\" />\n" + "<param name=\"mathematica\" value=\"");
-//		// System.out.println(graphicData);
-//		// writer.write(replace(graphicData));
-//		buffer.write(graphicData);
-//		buffer.write("\" /></applet>");
-//		APPLET_NUMBER++;
-//	}
+	// public static void createJavaView(Writer buffer, String graphicData) throws
+	// IOException {
+	// buffer.write("<applet name=\"jvLite\" code=\"jvLite.class\" "
+	// +
+	// // jamwiki path
+	// "codebase=\"../static/lib\" "
+	// +
+	//
+	// // standalone path
+	// // "codebase=\"lib\" " +
+	// "width=\"720\" height=\"400\" " + "alt=\"JavaView lite applet\" " +
+	// "archive=\"jvLite.jar\" id=\"applet" + APPLET_NUMBER
+	// + "\">\n" + "<param name=\"Axes\" value=\"show\" />\n" +
+	// "<param name=\"mathematica\" value=\"");
+	// // System.out.println(graphicData);
+	// // writer.write(replace(graphicData));
+	// buffer.write(graphicData);
+	// buffer.write("\" /></applet>");
+	// APPLET_NUMBER++;
+	// }
 }
