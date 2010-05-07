@@ -33,7 +33,6 @@ import org.matheclipse.core.interfaces.ISignedNumber;
 import org.matheclipse.core.interfaces.IStringX;
 import org.matheclipse.core.interfaces.ISymbol;
 import org.matheclipse.core.list.algorithms.EvaluationSupport;
-import org.matheclipse.core.reflection.system.Trace;
 import org.matheclipse.core.sql.SerializeVariables2DB;
 import org.matheclipse.parser.client.Parser;
 import org.matheclipse.parser.client.ast.ASTNode;
@@ -128,6 +127,15 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 			return new EvalEngine("ThreadLocal" + (fID++), 0, System.out);
 		}
 	};
+
+	/**
+	 * Removes the current thread's value for the EvalEngine's thread-local variable.  
+	 * 
+	 * @see java.lang.ThreadLocal#remove()
+	 */
+	public static void remove() {
+		instance.remove();
+	}
 
 	/**
 	 * Get the thread local evaluation engine instance
