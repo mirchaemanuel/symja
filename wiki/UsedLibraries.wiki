@@ -1,12 +1,14 @@
 #summary External libraries used in the Symja project
 #sidebar TableOfContents
 
-== Libraries ==
+<wiki:toc max_depth="1" />
+
+= Links to external open source libraries =
   * [http://commons.apache.org/math/ Commons-Math: The Apache Commons Mathematics Library]
   * [http://krum.rz.uni-mannheim.de/jas/ Java Algebra System (JAS)]
   * [http://jeuclid.sourceforge.net/ JEuclid - MathML renderer]
 
-=== Commons-Math ===
+= Commons-Math functions =
 The following functions are based on commons-math implementations:
   * {{{Det}}} - ([http://code.google.com/p/symja/source/browse/trunk/matheclipse-core/src/main/java/org/matheclipse/core/reflection/system/Det.java SVN]) - [http://commons.apache.org/math/apidocs/org/apache/commons/math/linear/FieldLUDecompositionImpl.html LUP-decomposition of a square matrix]
     * {{{Det[{{1,2},{3,4}}] gives -2}}}
@@ -28,7 +30,7 @@ The following functions are based on commons-math implementations:
   * {{{SingularValueDecomposition}}} - ([http://code.google.com/p/symja/source/browse/trunk/matheclipse-core/src/main/java/org/matheclipse/core/reflection/system/SingularValueDecomposition.java SVN]) - [http://commons.apache.org/math/apidocs/org/apache/commons/math/linear/SingularValueDecompositionImpl.html Singular Value Decomposition]
 
 
-=== Java Algebra System (JAS) ===
+= Java Algebra System (JAS) functions =
 
   * {{{Apart}}} - ([http://code.google.com/p/symja/source/browse/trunk/matheclipse-core/src/main/java/org/matheclipse/core/reflection/system/Apart.java SVN])
   * {{{Factor}}} - ([http://code.google.com/p/symja/source/browse/trunk/matheclipse-core/src/main/java/org/matheclipse/core/reflection/system/Factor.java SVN])
