@@ -1,6 +1,6 @@
 
 /*
- * $Id: GenPolynomialRing.java 2991 2010-01-31 12:40:42Z kredel $
+ * $Id: GenPolynomialRing.java 3088 2010-04-26 19:59:45Z kredel $
  */
 
 package edu.jas.poly;
@@ -531,18 +531,18 @@ public class GenPolynomialRing<C extends RingElem<C> >
     }
 
 
-    /** Get a (constant) GenPolynomial<C> element from a long value.
+    /** Get a (constant) GenPolynomial&lt;C&gt; element from a long value.
      * @param a long.
-     * @return a GenPolynomial<C>.
+     * @return a GenPolynomial&lt;C&gt;.
      */
     public GenPolynomial<C> fromInteger(long a) {
         return new GenPolynomial<C>( this, coFac.fromInteger(a), evzero );
     }
 
 
-    /** Get a (constant) GenPolynomial<C> element from a BigInteger value.
+    /** Get a (constant) GenPolynomial&lt;C&gt; element from a BigInteger value.
      * @param a BigInteger.
-     * @return a GenPolynomial<C>.
+     * @return a GenPolynomial&lt;C&gt;.
      */
     public GenPolynomial<C> fromInteger(BigInteger a) {
         return new GenPolynomial<C>( this, coFac.fromInteger(a), evzero );
@@ -778,10 +778,7 @@ public class GenPolynomialRing<C extends RingElem<C> >
      */
     public GenPolynomialRing<C> extend(int i) {
         // add module variable names
-        String[] v = new String[ i ];
-        for ( int k = 0; k < i; k++ ) {
-            v[ k ] = "e" + (k+1);
-        }
+        String[] v = newVars("e",i);
         return extend(v);
     }
 
@@ -806,6 +803,43 @@ public class GenPolynomialRing<C extends RingElem<C> >
         }
 
         TermOrder to = tord.extend(nvar,i);
+        GenPolynomialRing<C> pfac 
+            = new GenPolynomialRing<C>(coFac,nvar+i,to,v);
+        return pfac;
+    }
+
+
+    /**
+     * Extend lower variables. 
+     * Extend number of variables by i.
+     * @param i number of variables to extend.
+     * @return extended polynomial ring factory.
+     */
+    public GenPolynomialRing<C> extendLower(int i) {
+        String[] v = newVars("e",i);
+        return extendLower(v);
+    }
+
+
+    /**
+     * Extend lower variables. 
+     * Extend number of variables by length(vn).
+     * @param vn names for extended lower variables.
+     * @return extended polynomial ring factory.
+     */
+    public GenPolynomialRing<C> extendLower(String[] vn) {
+        if ( vn == null || vars == null ) {
+            throw new RuntimeException("vn and vars may not be null");
+        }
+        int i = vn.length;
+        String[] v = new String[ vars.length + i ];
+        for ( int k = 0; k < vn.length; k++ ) {
+            v[ k ] = vn[k];
+        }
+        for ( int k = 0; k < vars.length; k++ ) {
+            v[ vn.length + k ] = vars[k];
+        }
+        TermOrder to = tord.extendLower(nvar,i);
         GenPolynomialRing<C> pfac 
             = new GenPolynomialRing<C>(coFac,nvar+i,to,v);
         return pfac;

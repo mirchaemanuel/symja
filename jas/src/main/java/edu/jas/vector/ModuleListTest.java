@@ -1,5 +1,5 @@
 /*
- * $Id: ModuleListTest.java 2973 2010-01-04 21:59:50Z kredel $
+ * $Id: ModuleListTest.java 3047 2010-03-14 21:29:42Z kredel $
  */
 
 package edu.jas.vector;
@@ -278,7 +278,7 @@ public static Test suite() {
      assertTrue("p2 == p2", p2.equals(p2) );
      assertEquals("p2.length", 4, p2.list.size() );
 
-     assertTrue("p == p2", p.equals(p2) );
+     assertTrue("p == p2", p.list.equals(p2.list) );
  }
 
 }

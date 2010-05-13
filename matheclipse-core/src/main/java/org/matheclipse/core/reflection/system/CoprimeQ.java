@@ -1,7 +1,5 @@
 package org.matheclipse.core.reflection.system;
 
-import static org.matheclipse.basic.Util.checkCanceled;
-
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IAST;
@@ -30,7 +28,6 @@ public class CoprimeQ extends AbstractFunctionEvaluator {
 					if (!F.eval(F.GCD(expr, list.get(j))).equals(F.C1)) {
 						return F.False;
 					}
-					checkCanceled();
 				}
 			}
 

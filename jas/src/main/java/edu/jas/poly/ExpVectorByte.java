@@ -1,5 +1,5 @@
 /*
- * $Id: ExpVectorByte.java 2814 2009-09-17 21:53:19Z kredel $
+ * $Id: ExpVectorByte.java 3090 2010-04-26 20:28:34Z kredel $
  */
 
 package edu.jas.poly;
@@ -243,6 +243,25 @@ public class ExpVectorByte extends ExpVector
            throw new IllegalArgumentException("exponent to large: "+e);
         }
         w[j] = (byte)e;
+        return new ExpVectorByte( w );
+    }
+
+
+    /**
+     * Extend lower variables. 
+     * Extend this by i lower elements and set val[j] to e.
+     * @param i number of elements to extend.
+     * @param j index of element to be set.
+     * @param e new exponent for val[j].
+     * @return extended exponent vector.
+     */
+    public ExpVectorByte extendLower(int i, int j, long e) {
+        byte[] w = new byte[ val.length + i ];
+        System.arraycopy(val,0,w,0,val.length);
+        if ( j >= i ) {
+           throw new RuntimeException("i "+i+" <= j "+j+" invalid");
+        }
+        w[ val.length + j ] = (byte)e;
         return new ExpVectorByte( w );
     }
 

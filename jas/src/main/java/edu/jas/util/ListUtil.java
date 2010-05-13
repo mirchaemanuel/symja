@@ -1,5 +1,5 @@
 /*
- * $Id: ListUtil.java 2955 2010-01-01 12:50:44Z kredel $
+ * $Id: ListUtil.java 3049 2010-03-20 15:08:52Z kredel $
  */
 
 package edu.jas.util;
@@ -52,4 +52,41 @@ public class ListUtil {
         return nl;
     }
 
+
+    /**
+     * Tuple from lists.
+     * @param A list of lists.
+     * @return new list with tuples (a_1,...,an) with ai in Ai, i=0,...,length(A)-1.
+     */
+    public static <C> List<List<C>> tupleFromList(List<List<C>> A) {
+        if ( A == null ) {
+            return null;
+        }
+        List<List<C>> T = new ArrayList<List<C>>( A.size() );
+        if ( A.size() == 0 ) {
+            return T;
+        }
+        if ( A.size() == 1 ) {
+            List<C> Ap = A.get(0);
+            for ( C a : Ap ) {
+               List<C> Tp = new ArrayList<C>(1);
+               Tp.add(a);
+               T.add( Tp );
+            }
+            return T;
+        }
+        List<List<C>> Ap = new ArrayList<List<C>>( A );
+        List<C> f = Ap.remove( 0 );
+        List<List<C>> Tp = tupleFromList( Ap );
+        //System.out.println("Tp = " + Tp);
+        for ( C a : f ) {
+            for ( List<C> tp : Tp ) {
+                List<C> ts = new ArrayList<C>();
+                ts.add(a);
+                ts.addAll(tp);
+                T.add( ts );
+            }
+        }
+        return T;
+    }
 }

@@ -1,5 +1,5 @@
 /*
- * $Id: FactorFactory.java 2942 2009-12-30 12:11:03Z kredel $
+ * $Id: FactorFactory.java 3071 2010-04-11 20:45:12Z kredel $
  */
 
 package edu.jas.ufd;
@@ -54,7 +54,6 @@ import edu.jas.structure.ComplexRing;
  * </pre>
  * 
  * @see edu.jas.ufd.Factorization#factors(edu.jas.poly.GenPolynomial P)
- * @see edu.jas.ufd.FactorAbstract#factors(edu.jas.poly.GenPolynomial P)
  */
 
 public class FactorFactory {
@@ -206,21 +205,7 @@ public class FactorFactory {
                 //System.out.println("afac_o = " + ofac);
                 afac = (AlgebraicNumberRing) ofac;
                 ofac = afac.ring.coFac;
-                if (ofac instanceof BigRational) {
-                    t = 4;
-                }
-                if (ofac instanceof ModIntegerRing) {
-                    t = 5;
-                }
-                if (ofac instanceof AlgebraicNumberRing) {
-                    t = 6;
-                }
-                if (ofac instanceof ModLongRing) {
-                    t = 10;
-                }
-                if (ofac instanceof ComplexRing) {
-                    t = 12;
-                }
+                t = 4;
                 break;
             }
             if (ofac instanceof QuotientRing) {
@@ -256,7 +241,7 @@ public class FactorFactory {
         if (t == 11) {
             ufd = new FactorComplex(fac);
         }
-        if (t == 4 || t == 5 || t == 6 || t == 10 || t == 12) {
+        if (t == 4) {
             ufd = new FactorAlgebraic/*raw <C>*/(afac);
         }
         if (t == 7) {

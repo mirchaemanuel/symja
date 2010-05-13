@@ -1,5 +1,5 @@
 /*
- * $Id: RootFactory.java 2976 2010-01-05 10:25:15Z kredel $
+ * $Id: RootFactory.java 3111 2010-05-05 21:05:56Z kredel $
  */
 
 package edu.jas.root;
@@ -68,6 +68,25 @@ public class RootFactory {
                 RealAlgebraicNumber<C> rn = rar.getGenerator();
                 list.add(rn);
             }
+        }
+        return list;
+    }
+
+
+    /**
+     * Real algebraic numbers from a irreducible polynomial.
+     * @param f univariate irreducible polynomial.
+     * @return a list of different real algebraic numbers from a field.
+     */
+    public static <C extends GcdRingElem<C> & Rational> 
+      List<RealAlgebraicNumber<C>> realAlgebraicNumbersIrred(GenPolynomial<C> f) {
+        RealRoots<C> rr = new RealRootsSturm<C>();
+        List<RealAlgebraicNumber<C>> list = new ArrayList<RealAlgebraicNumber<C>>();
+        List<Interval<C>> iv = rr.realRoots(f);
+        for (Interval<C> I : iv) {
+            RealAlgebraicRing<C> rar = new RealAlgebraicRing<C>(f, I, true);//field
+            RealAlgebraicNumber<C> rn = rar.getGenerator();
+            list.add(rn);
         }
         return list;
     }

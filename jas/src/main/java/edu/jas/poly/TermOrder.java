@@ -1,5 +1,5 @@
 /*
- * $Id: TermOrder.java 2459 2009-02-27 20:22:52Z kredel $
+ * $Id: TermOrder.java 3099 2010-05-01 19:52:25Z kredel $
  */
 
 package edu.jas.poly;
@@ -17,8 +17,16 @@ import edu.jas.poly.ExpVector;
  * Term order class for ordered polynomials. 
  * Implements the most used term orders: 
  * graded, lexicographical, weight aray and block orders.
- * Does not implement orders by linear forms over Q[t].
+ * For the definitions see for example the articles 
+ * <a href="http://doi.acm.org/10.1145/43882.43887">Kredel, "Admissible term orderings used in computer algebra systems"</a> and
+ * <a href="http://doi.acm.org/10.1145/70936.70941">Sit, "Some comments on term-ordering in Gr&oumlbner basis computations"</a>.
+ * <b>Note: </b> the naming is not quite easy to understand: 
+ * in case of doubt use the term orders with "I" in the name, 
+ * like IGRLEX (the default) or INVLEX.
+ * Not all algorithms may work with all term orders, so watch your step.
+ * This class does not jet implement orders by linear forms over Q[t].
  * Objects of this class are immutable.
+ *
  * @author Heinz Kredel
  */
 
@@ -1388,6 +1396,48 @@ public final class TermOrder implements Serializable {
         //System.out.println("DEFAULT_EVORD = " + DEFAULT_EVORD);
         //System.out.println("tord          = " + this);
         return new TermOrder(DEFAULT_EVORD/*evord*/,evord,r+k,k); // don't change to evord, cause REVITDG
+    }
+
+
+    /**
+     * Extend lower variables. 
+     * Extend TermOrder by k elements.
+     * <b>Note:</b> todo distinguish TOP and POT orders.
+     * @param r current number of variables.
+     * @param k number of variables to extend.
+     * @return extended TermOrder.
+     */
+    public TermOrder extendLower(int r, int k) {
+        if ( weight != null ) {
+           long[][] w = new long[ weight.length ][];
+           for ( int i = 0; i < weight.length; i++ ) {
+               long[] wi = weight[i];
+               //long max = 0;
+               long min = Long.MAX_VALUE;
+               for ( int j = 0; j < wi.length; j++ ) {
+                   //if ( wi[j] > max ) max = wi[j];
+                   if ( wi[j] < min ) min = wi[j];
+               }
+               //max++;
+               long[] wj = new long[ wi.length + k ];
+               for ( int j = 0; j < i; j++ ) {
+                   wj[ wi.length + j ] = min;
+               }
+               System.arraycopy(wi,0,wj,0,wi.length);
+               w[i] = wj;
+           }
+           return new TermOrder( w );
+        }
+        if ( evord2 != 0 ) {
+           if ( debug ) {
+              logger.warn("TermOrder is already extended");
+           }
+           return new TermOrder(evord,evord2,r+k,evend1+k);
+        }
+        //System.out.println("evord         = " + evord);
+        //System.out.println("DEFAULT_EVORD = " + DEFAULT_EVORD);
+        //System.out.println("tord          = " + this);
+        return new TermOrder(evord);
     }
 
 

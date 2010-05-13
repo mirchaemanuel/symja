@@ -1,5 +1,5 @@
 /*
- * $Id: Element.java 2757 2009-07-18 11:16:16Z kredel $
+ * $Id: Element.java 3031 2010-03-08 23:18:01Z kredel $
  */
 
 package edu.jas.structure;
@@ -18,7 +18,7 @@ public interface Element<C extends Element<C>> extends Cloneable,
                                                        Comparable<C>, 
                                                        Serializable {
 
-    /**
+    /*
      * Clone this Element.
      * @return Creates and returns a copy of this Element.
      */

@@ -1,5 +1,5 @@
 /*
- * $Id: RelationTable.java 2651 2009-05-29 20:12:33Z kredel $
+ * $Id: RelationTable.java 3047 2010-03-14 21:29:42Z kredel $
  */
 
 package edu.jas.poly;
@@ -92,7 +92,7 @@ public class RelationTable<C extends RingElem<C>> implements Serializable {
            return false;
         }
         if ( ! ring.equals( tab.ring ) ) {
-            System.out.println("not same Ring");
+            System.out.println("not same Ring " + ring.toScript() + ", " + tab.ring.toScript());
             return false;
         }
         for ( List<Integer> k: table.keySet() ) { 

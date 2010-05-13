@@ -1,5 +1,5 @@
 /*
- * $Id: ReductionAbstract.java 2738 2009-07-12 13:29:12Z kredel $
+ * $Id: ReductionAbstract.java 3116 2010-05-06 21:50:03Z kredel $
  */
 
 package edu.jas.gb;
@@ -61,7 +61,7 @@ public abstract class ReductionAbstract<C extends RingElem<C>>
         }
         if ( debug ) {
            if ( ! Ap.ring.equals( Bp.ring ) ) { 
-              logger.error("rings not equal"); 
+              logger.error("rings not equal " + Ap.ring + ", " + Bp.ring); 
            }
         }
         Map.Entry<ExpVector,C> ma = Ap.leadingMonomial();
@@ -101,7 +101,7 @@ public abstract class ReductionAbstract<C extends RingElem<C>>
                     GenPolynomial<C> Ap, 
                     int j,
                     GenPolynomial<C> Bp) {  
-        if ( logger.isInfoEnabled() ) {
+        if ( debug ) {
             if ( Bp == null || Bp.isZERO() ) {
                 throw new RuntimeException("Spol B is zero");
             }
@@ -109,7 +109,7 @@ public abstract class ReductionAbstract<C extends RingElem<C>>
                 throw new RuntimeException("Spol A is zero");
             }
             if ( ! Ap.ring.equals( Bp.ring ) ) { 
-                logger.error("term orderings not equal"); 
+                logger.error("rings not equal " + Ap.ring + ", " + Bp.ring); 
             }
         }
         Map.Entry<ExpVector,C> ma = Ap.leadingMonomial();
@@ -189,7 +189,7 @@ public abstract class ReductionAbstract<C extends RingElem<C>>
                               ExpVector e) {  
         if ( logger.isInfoEnabled() ) {
            if ( ! A.ring.equals( B.ring ) ) { 
-              logger.error("rings equal"); 
+              logger.error("rings not equal " + A.ring + ", " + B.ring); 
            }
            if (   A instanceof GenSolvablePolynomial
                || B instanceof GenSolvablePolynomial ) {
@@ -374,13 +374,18 @@ public abstract class ReductionAbstract<C extends RingElem<C>>
     /**
      * Irreducible set.
      * @param Pp polynomial list.
-     * @return a list P of polynomials which are in normalform wrt. P.
+     * @return a list P of monic polynomials which are in normalform wrt. P.
      */
     public List<GenPolynomial<C>> irreducibleSet(List<GenPolynomial<C>> Pp) {  
         ArrayList<GenPolynomial<C>> P = new ArrayList<GenPolynomial<C>>();
         for ( GenPolynomial<C> a : Pp ) {
             if ( a.length() != 0 ) {
                a = a.monic();
+               if ( a.isONE() ) {
+                   P.clear();
+                   P.add( a );
+                   return P;
+               }
                P.add( a );
             }
         }

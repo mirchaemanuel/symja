@@ -1,5 +1,5 @@
 /*
- * $Id: GBDistHybrid.java 2815 2009-09-19 09:51:47Z kredel $
+ * $Id: GBDistHybrid.java 3075 2010-04-14 21:50:14Z kredel $
  */
 
 package edu.jas.gb;
@@ -158,7 +158,10 @@ class GBClientHybrid<C extends RingElem<C>> implements RemoteExecutable {
         bbd = new GroebnerBaseDistributedHybrid<C>(1, threadsPerNode, null, port);
         try {
             bbd.clientPart(host);
-        } catch (IOException ignored) {
+        } catch (IOException e) {
+            System.out.println("clientPart, exception " + e);
+        } catch (Exception e) {
+            System.out.println("clientPart, exception " + e);
         }
         bbd.terminate();
     }

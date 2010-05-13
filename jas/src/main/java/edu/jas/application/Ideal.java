@@ -1,5 +1,5 @@
 /*
- * $Id: Ideal.java 3015 2010-02-28 20:06:53Z kredel $
+ * $Id: Ideal.java 3117 2010-05-07 19:15:46Z kredel $
  */
 
 package edu.jas.application;
@@ -12,6 +12,8 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -27,16 +29,21 @@ import edu.jas.poly.GenPolynomial;
 import edu.jas.poly.GenPolynomialRing;
 import edu.jas.poly.OptimizedPolynomialList;
 import edu.jas.poly.PolynomialList;
+import edu.jas.poly.PolyUtil;
 import edu.jas.poly.TermOrderOptimization;
+import edu.jas.poly.TermOrder;
 import edu.jas.structure.GcdRingElem;
+import edu.jas.structure.RingFactory;
 import edu.jas.structure.NotInvertibleException;
 import edu.jas.ufd.SquarefreeAbstract;
 import edu.jas.ufd.SquarefreeFactory;
+import edu.jas.ufd.FactorAbstract;
+import edu.jas.ufd.FactorFactory;
 
 
 /**
- * Ideal implements some methods for ideal arithmetic, for example intersection
- * and quotient.
+ * Ideal implements some methods for ideal arithmetic, for example intersection,
+ * quotient and zero dimensional ideal decomposition.
  * @author Heinz Kredel
  */
 public class Ideal<C extends GcdRingElem<C>> implements Comparable<Ideal<C>>, Serializable, Cloneable {
@@ -637,6 +644,9 @@ public class Ideal<C extends GcdRingElem<C>> implements Comparable<Ideal<C>>, Se
         if (R == null) {
             throw new IllegalArgumentException("R may not be null");
         }
+        if ( list.ring.equals(R) ) {
+            return this;
+        }
         String[] ename = R.getVars();
         Ideal<C> I = eliminate(ename);
         return I.intersect(R);
@@ -663,77 +673,16 @@ public class Ideal<C extends GcdRingElem<C>> implements Comparable<Ideal<C>>, Se
         GroebnerBasePartial<C> bbp = new GroebnerBasePartial<C>(bb, null);
         String[] rname = bbp.remainingVars(aname, ename);
         //System.out.println("rname = " + Arrays.toString(rname));
-
+        if ( rname.length == 0 ) {
+            return this;
+        }
         PolynomialList<C> Pl = bbp.elimPartialGB(getList(), rname, ename); // reversed!
         //System.out.println("Pl = " + Pl);
         if (debug) {
             logger.debug("elimnation GB = " + Pl);
         }
-        //Ideal<C> I = new Ideal<C>( E, G, true );
         Ideal<C> I = new Ideal<C>(Pl, true);
-        //System.out.println("elim, I = " + I);
-        return I; //.intersect(R);
-    }
-
-
-    /**
-     * Permutation of variables for elimination.
-     * @param aname variables for the full polynomial ring.
-     * @param ename variables for the elimination ring, subseteq aname.
-     * @return perm({vars \ ename},ename)
-     * @deprecated use the one in GroebnerBasePartial
-     */
-    @Deprecated
-    public List<Integer> getPermutation(String[] aname, String[] ename) {
-        if (aname == null || ename == null) {
-            throw new IllegalArgumentException("aname or ename may not be null");
-        }
-        List<Integer> perm = new ArrayList<Integer>(aname.length);
-        // add ename permutation
-        for (int i = 0; i < ename.length; i++) {
-            int j = indexOf(ename[i], aname);
-            if (j < 0) {
-                throw new IllegalArgumentException("ename not contained in aname");
-            }
-            perm.add(j);
-        }
-        //System.out.println("perm_low = " + perm);
-        // add aname \ ename permutation
-        for (int i = 0; i < aname.length; i++) {
-            if (!perm.contains(i)) {
-                perm.add(i);
-            }
-        }
-        //System.out.println("perm_all = " + perm);
-        // reverse permutation indices
-        int n1 = aname.length - 1;
-        List<Integer> perm1 = new ArrayList<Integer>(aname.length);
-        for (Integer k : perm) {
-            perm1.add(n1 - k);
-        }
-        perm = perm1;
-        //System.out.println("perm_inv = " + perm1);
-        Collections.reverse(perm);
-        //System.out.println("perm_rev = " + perm);
-        return perm;
-    }
-
-
-    /**
-     * Index of s in A.
-     * @param s search string
-     * @param A string array
-     * @return i if s == A[i] for some i, else -1.
-     * @deprecated use the one in GroebnerBasePartial
-     */
-    @Deprecated
-    public int indexOf(String s, String[] A) {
-        for (int i = 0; i < A.length; i++) {
-            if (s.equals(A[i])) {
-                return i;
-            }
-        }
-        return -1;
+        return I; 
     }
 
 
@@ -1199,15 +1148,61 @@ public class Ideal<C extends GcdRingElem<C>> implements Comparable<Ideal<C>>, Se
 
 
     /**
-     * Ideal dimension.
-     * @return a dimension container (dim,maxIndep,list(maxIndep)).
+     * Univariate head term degrees.
+     * @return a list of the degrees of univariate head terms.
      */
-    public Dim dimension() {
+    public List<Long> univariateDegrees() {
+        List<Long> ud = new ArrayList<Long>();
+        if (this.isZERO()) {
+            return ud;
+        }
+        if (!isGB) {
+            doGB();
+        }
+        if (this.isONE()) {
+            return ud;
+        }
+        if (this.list.ring.nvar <= 0) {
+            return ud;
+        }
+        //int uht = 0;
+        Map<Integer, Long> v = new TreeMap<Integer, Long>(); // for non reduced GBs
+        for (GenPolynomial<C> p : getList()) {
+            ExpVector e = p.leadingExpVector();
+            if (e == null) {
+                continue;
+            }
+            int[] u = e.dependencyOnVariables();
+            if (u == null) {
+                continue;
+            }
+            if (u.length == 1) {
+                //uht++;
+                Long d = v.get(u[0]);
+                if (d == null) {
+                    v.put(u[0], e.getVal(u[0]));
+                }
+            }
+        }
+        for (int i = 0; i < this.list.ring.nvar; i++) {
+            Long d = v.get(i);
+            ud.add(d);
+        }
+        //Collections.reverse(ud);
+        return ud;
+    }
+
+
+    /**
+     * Ideal dimension.
+     * @return a dimension container (dim,maxIndep,list(maxIndep),vars).
+     */
+    public Dimension dimension() {
         int t = commonZeroTest();
         Set<Integer> S = new HashSet<Integer>();
         Set<Set<Integer>> M = new HashSet<Set<Integer>>();
         if (t <= 0) {
-            return new Dim(t, S, M, null);
+            return new Dimension(t, S, M, this.list.ring.getVars());
         }
         int d = 0;
         Set<Integer> U = new HashSet<Integer>();
@@ -1222,7 +1217,7 @@ public class Ideal<C extends GcdRingElem<C>> implements Comparable<Ideal<C>>, Se
                 S = m;
             }
         }
-        return new Dim(d, S, M, this.list.ring.getVars());
+        return new Dimension(d, S, M, this.list.ring.getVars());
     }
 
 
@@ -1313,68 +1308,768 @@ public class Ideal<C extends GcdRingElem<C>> implements Comparable<Ideal<C>>, Se
 
 
     /**
-     * Container for dimension parameters.
+     * Construct univariate polynomials of minimal degree in all variables in
+     * zero dimensional ideal(G).
+     * @return list of univariate polynomial of minimal degree in each variable
+     *         in ideal(G)
      */
-    public static class Dim implements Serializable {
+    public List<GenPolynomial<C>> constructUnivariate() {
+        List<GenPolynomial<C>> univs = new ArrayList<GenPolynomial<C>>();
+        for (int i = list.ring.nvar - 1; i >= 0; i--) {
+            GenPolynomial<C> u = constructUnivariate(i);
+            univs.add(u);
+        }
+        return univs;
+    }
 
 
-        public final int d;
+    /**
+     * Construct univariate polynomial of minimal degree in variable i in zero
+     * dimensional ideal(G).
+     * @param i variable index.
+     * @return univariate polynomial of minimal degree in variable i in ideal(G)
+     */
+    public GenPolynomial<C> constructUnivariate(int i) {
+        return constructUnivariate(i, getList());
+    }
 
 
-        public final Set<Integer> S;
+    /**
+     * Construct univariate polynomial of minimal degree in variable i of a zero
+     * dimensional ideal(G).
+     * @param i variable index.
+     * @param G list of polynomials, a monic reduced Gr&ouml;bner base of a zero
+     *            dimensional ideal.
+     * @return univariate polynomial of minimal degree in variable i in ideal(G)
+     */
+    public GenPolynomial<C> constructUnivariate(int i, List<GenPolynomial<C>> G) {
+        if (G == null || G.size() == 0) {
+            throw new IllegalArgumentException("G may not be null or empty");
+        }
+        List<Long> ud = univariateDegrees();
+        int ll = 0;
+        Long di = ud.get(i);
+        if (di != null) {
+            ll = (int) (long) di;
+        } else {
+            throw new IllegalArgumentException("ideal(G) not zero dimensional");
+        }
+        GenPolynomialRing<C> pfac = G.get(0).ring;
+        RingFactory<C> cfac = pfac.coFac;
+        String var = pfac.getVars()[pfac.nvar - 1 - i];
+        GenPolynomialRing<C> ufac = new GenPolynomialRing<C>(cfac, 1, new TermOrder(TermOrder.INVLEX),
+                new String[] { var });
+        GenPolynomial<C> pol = ufac.getZERO();
+
+        GenPolynomialRing<C> cpfac = new GenPolynomialRing<C>(cfac, ll, new TermOrder(TermOrder.INVLEX));
+        GenPolynomialRing<GenPolynomial<C>> rfac = new GenPolynomialRing<GenPolynomial<C>>(cpfac, pfac);
+        GenPolynomial<GenPolynomial<C>> P = rfac.getZERO();
+        for (int k = 0; k < ll; k++) {
+            GenPolynomial<GenPolynomial<C>> Pp = rfac.univariate(i, k);
+            GenPolynomial<C> cp = cpfac.univariate(cpfac.nvar - 1 - k);
+            Pp = Pp.multiply(cp);
+            P = P.sum(Pp);
+        }
+        GenPolynomial<C> X;
+        GenPolynomial<C> XP;
+        // solve system of linear equations for the coefficients of the univariate polynomial
+        List<GenPolynomial<C>> ls;
+        int z = -1;
+        do {
+            //System.out.println("ll  = " + ll);
+            GenPolynomial<GenPolynomial<C>> Pp = rfac.univariate(i, ll);
+            GenPolynomial<C> cp = cpfac.univariate(cpfac.nvar - 1 - ll);
+            Pp = Pp.multiply(cp);
+            P = P.sum(Pp);
+            X = pfac.univariate(i, ll);
+            XP = red.normalform(G, X);
+            GenPolynomial<GenPolynomial<C>> XPp = PolyUtil.<C> toRecursive(rfac, XP);
+            GenPolynomial<GenPolynomial<C>> XPs = XPp.sum(P);
+            ls = new ArrayList<GenPolynomial<C>>(XPs.getMap().values());
+            ls = red.irreducibleSet(ls);
+            //System.out.println("ls = " + ls);
+            Ideal<C> L = new Ideal<C>(cpfac, ls, true);
+            z = L.commonZeroTest();
+            if (z != 0) {
+                ll++;
+                cpfac = cpfac.extend(1);
+                rfac = new GenPolynomialRing<GenPolynomial<C>>(cpfac, pfac);
+                P = PolyUtil.<C> extendCoefficients(rfac, P, 0, 0L);
+                XPp = PolyUtil.<C> extendCoefficients(rfac, XPp, 0, 1L);
+                P = P.sum(XPp);
+            }
+        } while (z != 0); // && ll <= 5 && !XP.isZERO()
+        // construct result polynomial
+        pol = ufac.univariate(0, ll);
+        for (GenPolynomial<C> pc : ls) {
+            ExpVector e = pc.leadingExpVector();
+            if (e == null) {
+                continue;
+            }
+            int[] v = e.dependencyOnVariables();
+            if (v == null || v.length == 0) {
+                continue;
+            }
+            int vi = v[0];
+            C tc = pc.trailingBaseCoefficient();
+            tc = tc.negate();
+            GenPolynomial<C> pi = ufac.univariate(0, ll - 1 - vi);
+            pi = pi.multiply(tc);
+            pol = pol.sum(pi);
+        }
+        if (logger.isInfoEnabled()) {
+            logger.info("univ pol = " + pol);
+        }
+        return pol;
+    }
 
 
-        public final Set<Set<Integer>> M;
+    /**
+     * Zero dimensional radical decompostition. See Seidenbergs lemma 92, and
+     * BWK lemma 8.13.
+     * @return intersection of radical ideals G_i with ideal(this) subseteq
+     *         cap_i( ideal(G_i) )
+     */
+    public List<IdealWithUniv<C>> zeroDimRadicalDecomposition() {
+        List<IdealWithUniv<C>> dec = new ArrayList<IdealWithUniv<C>>();
+        if (this.isZERO()) {
+            return dec;
+        }
+        IdealWithUniv<C> iwu = new IdealWithUniv<C>(this, new ArrayList<GenPolynomial<C>>());
+        dec.add(iwu);
+        if (this.isONE()) {
+            return dec;
+        }
+        for (int i = list.ring.nvar - 1; i >= 0; i--) {
+            List<IdealWithUniv<C>> part = new ArrayList<IdealWithUniv<C>>();
+            for (IdealWithUniv<C> id : dec) {
+                GenPolynomial<C> u = id.ideal.constructUnivariate(i);
+                SortedMap<GenPolynomial<C>, Long> facs = engine.baseSquarefreeFactors(u);
+                if (facs.size() == 1 && facs.get(facs.firstKey()) == 1L) {
+                    List<GenPolynomial<C>> iup = new ArrayList<GenPolynomial<C>>();
+                    iup.addAll(id.upolys);
+                    iup.add(u);
+                    IdealWithUniv<C> Ipu = new IdealWithUniv<C>(id.ideal, iup);
+                    part.add(Ipu);
+                    continue; // irreducible
+                }
+                if (logger.isInfoEnabled()) {
+                    logger.info("squarefree facs = " + facs);
+                }
+                GenPolynomialRing<C> mfac = id.ideal.list.ring;
+                int j = mfac.nvar - 1 - i;
+                for (GenPolynomial<C> p : facs.keySet()) {
+                    // make p multivariate
+                    GenPolynomial<C> pm = p.extendUnivariate(mfac, j);
+                    // mfac.parse( p.toString() );
+                    //System.out.println("pm = " + pm);
+                    Ideal<C> Ip = id.ideal.sum(pm);
+                    List<GenPolynomial<C>> iup = new ArrayList<GenPolynomial<C>>();
+                    iup.addAll(id.upolys);
+                    iup.add(p);
+                    IdealWithUniv<C> Ipu = new IdealWithUniv<C>(Ip, iup);
+                    part.add(Ipu);
+                }
+            }
+            dec = part;
+            part = new ArrayList<IdealWithUniv<C>>();
+        }
+        return dec;
+    }
 
 
-        public final String[] v;
+    /**
+     * Test for Zero dimensional radical. See Seidenbergs lemma 92, and BWK
+     * lemma 8.13.
+     * @return true if this is an zero dimensional radical ideal, else false
+     */
+    public boolean isZeroDimRadical() {
+        if (this.isZERO()) {
+            return false;
+        }
+        if (this.isONE()) {
+            return false; // not 0-dim
+        }
+        for (int i = list.ring.nvar - 1; i >= 0; i--) {
+            GenPolynomial<C> u = constructUnivariate(i);
+            boolean t = engine.isSquarefree(u);
+            if (!t) {
+                return false;
+            }
+        }
+        return true;
+    }
 
 
-        public Dim(int d, Set<Integer> S, Set<Set<Integer>> M, String[] v) {
-            this.d = d;
-            this.S = S;
-            this.M = M;
-            this.v = v;
+    /**
+     * Zero dimensional ideal decompostition. See algorithm DIRGZD of BGK 1986.
+     * @return intersection of ideals G_i with ideal(this) subseteq cap_i(
+     *         ideal(G_i) )
+     */
+    public List<IdealWithUniv<C>> zeroDimDecomposition() {
+        List<IdealWithUniv<C>> dec = new ArrayList<IdealWithUniv<C>>();
+        if (this.isZERO()) {
+            return dec;
+        }
+        IdealWithUniv<C> iwu = new IdealWithUniv<C>(this, new ArrayList<GenPolynomial<C>>());
+        dec.add(iwu);
+        if (this.isONE()) {
+            return dec;
+        }
+        FactorAbstract<C> ufd = FactorFactory.<C> getImplementation(list.ring.coFac);
+        for (int i = list.ring.nvar - 1; i >= 0; i--) {
+            List<IdealWithUniv<C>> part = new ArrayList<IdealWithUniv<C>>();
+            for (IdealWithUniv<C> id : dec) {
+                GenPolynomial<C> u = id.ideal.constructUnivariate(i);
+                SortedMap<GenPolynomial<C>, Long> facs = ufd.baseFactors(u);
+                if (facs.size() == 1 && facs.get(facs.firstKey()) == 1L) {
+                    List<GenPolynomial<C>> iup = new ArrayList<GenPolynomial<C>>();
+                    iup.addAll(id.upolys);
+                    iup.add(u);
+                    IdealWithUniv<C> Ipu = new IdealWithUniv<C>(id.ideal, iup);
+                    part.add(Ipu);
+                    continue; // irreducible
+                }
+                if (debug) {
+                    logger.info("irreducible facs = " + facs);
+                }
+                GenPolynomialRing<C> mfac = id.ideal.list.ring;
+                int j = mfac.nvar - 1 - i;
+                for (GenPolynomial<C> p : facs.keySet()) {
+                    // make p multivariate
+                    GenPolynomial<C> pm = p.extendUnivariate(mfac, j);
+                    // mfac.parse( p.toString() );
+                    //System.out.println("pm = " + pm);
+                    Ideal<C> Ip = id.ideal.sum(pm);
+                    List<GenPolynomial<C>> iup = new ArrayList<GenPolynomial<C>>();
+                    iup.addAll(id.upolys);
+                    iup.add(p);
+                    IdealWithUniv<C> Ipu = new IdealWithUniv<C>(Ip, iup);
+                    part.add(Ipu);
+                }
+            }
+            dec = part;
+            part = new ArrayList<IdealWithUniv<C>>();
+        }
+        return dec;
+    }
+
+
+    /**
+     * Zero dimensional ideal decompostition extension. 
+     * @param upol list of univariate polynomials
+     * @return intersection of ideals G_i with ideal(this) subseteq cap_i(
+     *         ideal(G_i) )
+     */
+    public List<IdealWithUniv<C>> zeroDimDecompositionExtension(List<GenPolynomial<C>> upol) {
+        if ( upol == null || upol.size()+1 != list.ring.nvar ) {
+            throw new IllegalArgumentException("univariate polynomial list not correct " + upol);
+        }
+        List<IdealWithUniv<C>> dec = new ArrayList<IdealWithUniv<C>>();
+        if (this.isZERO()) {
+            return dec;
+        }
+        IdealWithUniv<C> iwu = new IdealWithUniv<C>(this, upol);
+        if (this.isONE()) {
+            dec.add(iwu);
+            return dec;
+        }
+        FactorAbstract<C> ufd = FactorFactory.<C> getImplementation(list.ring.coFac);
+        int i = list.ring.nvar - 1;
+        //IdealWithUniv<C> id = new IdealWithUniv<C>(this,upol);
+        GenPolynomial<C> u = this.constructUnivariate(i);
+        SortedMap<GenPolynomial<C>, Long> facs = ufd.baseFactors(u);
+        if (facs.size() == 1 && facs.get(facs.firstKey()) == 1L) {
+            List<GenPolynomial<C>> iup = new ArrayList<GenPolynomial<C>>();
+            iup.add(u); // new polynomial first
+            iup.addAll(upol);
+            IdealWithUniv<C> Ipu = new IdealWithUniv<C>(this, iup);
+            dec.add(Ipu);
+            return dec;
+        }
+        if (true) {
+            logger.info("irreducible facs = " + facs);
+        }
+        GenPolynomialRing<C> mfac = list.ring;
+        int j = mfac.nvar - 1 - i;
+        for (GenPolynomial<C> p : facs.keySet()) {
+            // make p multivariate
+            GenPolynomial<C> pm = p.extendUnivariate(mfac, j);
+            //System.out.println("pm = " + pm);
+            Ideal<C> Ip = this.sum(pm);
+            List<GenPolynomial<C>> iup = new ArrayList<GenPolynomial<C>>();
+            iup.add(p); // new polynomial first
+            iup.addAll(upol);
+            IdealWithUniv<C> Ipu = new IdealWithUniv<C>(Ip, iup);
+            dec.add(Ipu);
+        }
+        return dec;
+    }
+
+
+    /**
+     * Test for zero dimensional ideal decompostition.
+     * @param L intersection of ideals G_i with ideal(G) subseteq cap_i(
+     *            ideal(G_i) )
+     * @return true if L is a zero dimensional decomposition of this, else false
+     */
+    public boolean isZeroDimDecomposition(List<IdealWithUniv<C>> L) {
+        if (L == null || L.size() == 0) {
+            if (this.isZERO()) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        GenPolynomialRing<C> ofac = list.ring;
+        int r = ofac.nvar;
+        int rp = L.get(0).ideal.list.ring.nvar;
+        int d = rp - r;
+        //System.out.println("d = " + d);
+        Ideal<C> Id = this;
+        if (d > 0) { // add lower variables
+            GenPolynomialRing<C> nfac = ofac.extendLower(d);
+            //System.out.println("nfac = " + nfac);
+            List<GenPolynomial<C>> elist = new ArrayList<GenPolynomial<C>>(list.list.size());
+            for (GenPolynomial<C> p : getList()) {
+                //System.out.println("p = " + p);
+                GenPolynomial<C> q = p.extendLower(nfac, 0, 0L);
+                //System.out.println("q = "  + q);
+                elist.add(q);
+            }
+            Id = new Ideal<C>(nfac, elist, isGB, isTopt);
         }
 
+        // test if this is contained in the intersection
+        for (IdealWithUniv<C> I : L) {
+            boolean t = I.ideal.contains(Id);
+            if (!t) {
+                System.out.println("not contained " + this + " in " + I.ideal);
+                return false;
+            }
+        }
+        // test if all univariate polynomials are contained in the respective ideal
+        for (IdealWithUniv<C> I : L) {
+            GenPolynomialRing<C> mfac = I.ideal.list.ring;
+            int i = 0;
+            for (GenPolynomial<C> p : I.upolys) {
+                GenPolynomial<C> pm = p.extendUnivariate(mfac, i++);
+                //System.out.println("pm = " + pm + ", p = " + p);
+                boolean t = I.ideal.contains(pm);
+                if (!t) {
+                    System.out.println("not contained " + pm + " in " + I.ideal);
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
 
-        /**
-         * String representation of the ideal.
-         * @see java.lang.Object#toString()
-         */
-        @Override
-        public String toString() {
-            StringBuffer sb = new StringBuffer("Dimension( " + d + ", ");
-            if (v == null) {
-                sb.append("" + S + ", " + M + " )");
-                return sb.toString();
+
+    /**
+     * Compute normal position for variables i and j.
+     * @param i first variable index
+     * @param j second variable index
+     * @return this + (z - x_j - t x_i) in the ring C[z, x_1, ..., x_r]
+     */
+    public Ideal<C> normalPositionFor(int i, int j) {
+        // extend variables by one
+        GenPolynomialRing<C> ofac = list.ring;
+        GenPolynomialRing<C> nfac = ofac.extendLower(1);
+        List<GenPolynomial<C>> elist = new ArrayList<GenPolynomial<C>>(list.list.size() + 1);
+        for (GenPolynomial<C> p : getList()) {
+            GenPolynomial<C> q = p.extendLower(nfac, 0, 0L);
+            //System.out.println("q = "  + q);
+            elist.add(q);
+        }
+        Ideal<C> I = new Ideal<C>(nfac, elist, true);
+        //System.out.println("I = "  + I);
+        int ip = list.ring.nvar - 1 - i;
+        int jp = list.ring.nvar - 1 - j;
+        GenPolynomial<C> xi = nfac.univariate(ip);
+        GenPolynomial<C> xj = nfac.univariate(jp);
+        GenPolynomial<C> z = nfac.univariate(nfac.nvar - 1);
+        // compute GBs until value of t is OK
+        Ideal<C> Ip;
+        int t = 0;
+        do {
+            t--;
+            // zp = z - ( xj - xi * t )
+            GenPolynomial<C> zp = z.subtract(xj.subtract(xi.multiply(nfac.fromInteger(t))));
+            zp = zp.monic();
+            Ip = I.sum(zp);
+            //System.out.println("Ip = " + Ip);
+            if (t % 5 == 0) {
+                logger.info("normal position, t = " + t);
             }
-            String[] s = new String[S.size()];
-            int j = 0;
-            for (Integer i : S) {
-                s[j] = v[i];
-                j++;
+        } while (!Ip.isNormalPositionFor(i + 1, j + 1));
+        if (debug) {
+            logger.info("normal position = " + Ip);
+        }
+        return Ip;
+    }
+
+
+    /**
+     * Test if this ideal is in normal position for variables i and j.
+     * @param i first variable index
+     * @param j second variable index
+     * @return true if this is in normal position with respect to i and j
+     */
+    public boolean isNormalPositionFor(int i, int j) {
+        // called in extended ring!
+        int ip = list.ring.nvar - 1 - i;
+        int jp = list.ring.nvar - 1 - j;
+        boolean iOK = false;
+        boolean jOK = false;
+        for (GenPolynomial<C> p : getList()) {
+            ExpVector e = p.leadingExpVector();
+            int[] dov = e.dependencyOnVariables();
+            //System.out.println("dov = " + Arrays.toString(dov));
+            if (dov.length == 0) {
+                throw new IllegalArgumentException("ideal dimension is not zero");
             }
-            sb.append(Arrays.toString(s) + ", ");
-            sb.append("[ ");
-            boolean first = true;
-            for (Set<Integer> m : M) {
-                if (first) {
-                    first = false;
+            if (dov[0] == ip) {
+                if (e.totalDeg() != 1) {
+                    return false;
                 } else {
-                    sb.append(", ");
+                    iOK = true;
                 }
-                s = new String[m.size()];
-                j = 0;
-                for (Integer i : m) {
-                    s[j] = v[i];
-                    j++;
+            } else if (dov[0] == jp) {
+                if (e.totalDeg() != 1) {
+                    return false;
+                } else {
+                    jOK = true;
                 }
-                sb.append(Arrays.toString(s));
             }
-            sb.append(" ] )");
-            return sb.toString();
+            if (iOK && jOK) {
+                return true;
+            }
         }
+        return iOK && jOK;
+    }
+
+
+    /**
+     * Normal position index, separate more than 2 variables. See also <a
+     * href="http://krum.rz.uni-mannheim.de/mas/src/masring/DIPDEC0.mi.html">mas.masring.DIPDEC0#DIGISR</a>
+     * @return (i,j) for non-normal variables
+     */
+    public int[] normalPositionIndex2Vars() {
+        int[] np = null;
+        int i = -1;
+        int j = -1;
+        for (GenPolynomial<C> p : getList()) {
+            ExpVector e = p.leadingExpVector();
+            int[] dov = e.dependencyOnVariables();
+            //System.out.println("dov_head = " + Arrays.toString(dov));
+            if (dov.length == 0) {
+                throw new IllegalArgumentException("ideal dimension is not zero");
+            }
+            // search bi-variate head terms
+            if (dov.length >= 2) {
+                i = dov[0];
+                j = dov[1];
+                break;
+            }
+            int n = dov[0];
+            GenPolynomial<C> q = p.reductum();
+            e = q.degreeVector();
+            dov = e.dependencyOnVariables();
+            //System.out.println("dov_red  = " + Arrays.toString(dov));
+            int k = Arrays.binarySearch(dov, n);
+            int len = 2;
+            if (k >= 0) {
+                len = 3;
+            }
+            // search bi-variate reductas
+            if (dov.length >= len) {
+                switch (k) {
+                case 0:
+                    i = dov[1];
+                    j = dov[2];
+                    break;
+                case 1:
+                    i = dov[0];
+                    j = dov[2];
+                    break;
+                case 2:
+                    i = dov[0];
+                    j = dov[1];
+                    break;
+                default:
+                    i = dov[0];
+                    j = dov[1];
+                    break;
+                }
+                break;
+            }
+        }
+        if (i < 0 || j < 0) {
+            return np;
+        }
+        // adjust index
+        i = list.ring.nvar - 1 - i;
+        j = list.ring.nvar - 1 - j;
+        np = new int[] { j, i }; // reverse
+        logger.info("normalPositionIndex2Vars, np = " + Arrays.toString(np));
+        return np;
+    }
+
+
+    /**
+     * Normal position index, separate multiple univariate polynomials. See also
+     * <a
+     * href="http://krum.rz.uni-mannheim.de/mas/src/masring/DIPDEC0.mi.html">mas.masring.DIPDEC0#DIGISM</a>
+     * @return (i,j) for non-normal variables
+     */
+    public int[] normalPositionIndexUnivars() {
+        int[] np = null; //new int[] { -1, -1 };
+        int i = -1;
+        int j = -1;
+        // search multiple univariate polynomials with degree &gt;= 2
+        for (GenPolynomial<C> p : getList()) {
+            ExpVector e = p.degreeVector();
+            int[] dov = e.dependencyOnVariables();
+            long t = e.totalDeg(); // lt(p) would be enough
+            //System.out.println("dov_univ = " + Arrays.toString(dov));
+            if (dov.length == 0) {
+                throw new IllegalArgumentException("ideal dimension is not zero");
+            }
+            if (dov.length == 1 && t >= 2L) {
+                if (i == -1) {
+                    i = dov[0];
+                } else if (j == -1) {
+                    j = dov[0];
+                    if (i > j) {
+                        int x = i;
+                        i = j;
+                        j = x;
+                    }
+                }
+            }
+            if (i >= 0 && j >= 0) {
+                break;
+            }
+        }
+        if (i < 0 || j < 0) {
+            // search polynomials with univariate head term and degree &gt;= 2
+            for (GenPolynomial<C> p : getList()) {
+                ExpVector e = p.leadingExpVector();
+                long t = e.totalDeg();
+                if (t >= 2) {
+                    e = p.degreeVector();
+                    int[] dov = e.dependencyOnVariables();
+                    //System.out.println("dov_univ2 = " + Arrays.toString(dov));
+                    if (dov.length == 0) {
+                        throw new IllegalArgumentException("ideal dimension is not zero");
+                    }
+                    if (dov.length >= 2) {
+                        i = dov[0];
+                        j = dov[1];
+                    }
+                }
+                if (i >= 0 && j >= 0) {
+                    break;
+                }
+            }
+        }
+        if (i < 0 || j < 0) {
+            return np;
+        }
+        // adjust index
+        i = list.ring.nvar - 1 - i;
+        j = list.ring.nvar - 1 - j;
+        np = new int[] { j, i }; // reverse
+        logger.info("normalPositionIndex2Vars, np = " + Arrays.toString(np));
+        return np;
+    }
+
+
+    /**
+     * Zero dimensional ideal decompostition for real roots. See algorithm
+     * mas.masring.DIPDEC0#DINTSR.
+     * @return intersection of ideals G_i with ideal(this) subseteq cap_i(
+     *         ideal(G_i) ) and each G_i contains at most bi-variate polynomials
+     */
+    public List<IdealWithUniv<C>> zeroDimRootDecomposition() {
+        List<IdealWithUniv<C>> dec = zeroDimDecomposition();
+        if (this.isZERO()) {
+            return dec;
+        }
+        if (this.isONE()) {
+            return dec;
+        }
+        List<IdealWithUniv<C>> rdec = new ArrayList<IdealWithUniv<C>>();
+        while (dec.size() > 0) {
+            IdealWithUniv<C> id = dec.remove(0);
+            int[] ri = id.ideal.normalPositionIndex2Vars();
+            if (ri == null || ri.length != 2) {
+                rdec.add(id);
+            } else {
+                Ideal<C> I = id.ideal.normalPositionFor(ri[0], ri[1]);
+                //List<IdealWithUniv<C>> rd1 = I.zeroDimDecomposition();
+                List<IdealWithUniv<C>> rd = I.zeroDimDecompositionExtension(id.upolys);
+                //System.out.println("r_rd = " + rd);
+                dec.addAll(rd);
+            }
+        }
+        return rdec;
+    }
+
+
+    /**
+     * Zero dimensional ideal prime decompostition. See algorithm
+     * mas.masring.DIPDEC0#DINTSS.
+     * @return intersection of ideals G_i with ideal(this) subseteq cap_i(
+     *         ideal(G_i) ) and each G_i is a prime ideal
+     */
+    public List<IdealWithUniv<C>> zeroDimPrimeDecomposition() {
+        List<IdealWithUniv<C>> dec = zeroDimRootDecomposition();
+        if (this.isZERO()) {
+            return dec;
+        }
+        if (this.isONE()) {
+            return dec;
+        }
+        List<IdealWithUniv<C>> rdec = new ArrayList<IdealWithUniv<C>>();
+        while (dec.size() > 0) {
+            IdealWithUniv<C> id = dec.remove(0);
+            int[] ri = id.ideal.normalPositionIndexUnivars();
+            if (ri == null || ri.length != 2) {
+                rdec.add(id);
+            } else {
+                Ideal<C> I = id.ideal.normalPositionFor(ri[0], ri[1]);
+                //List<IdealWithUniv<C>> rd1 = I.zeroDimDecomposition();
+                List<IdealWithUniv<C>> rd = I.zeroDimDecompositionExtension(id.upolys);
+                //System.out.println("rd = " + rd);
+                dec.addAll(rd);
+            }
+        }
+        return rdec;
+    }
+
+
+    /**
+     * Zero dimensional ideal associated primary ideal. See algorithm
+     * mas.masring.DIPIDEAL#DIRLPI.
+     * @param P prime ideal associated to this
+     * @return primary ideal of this with respect to the associated pime ideal P
+     */
+    public Ideal<C> primaryIdeal(Ideal<C> P) {
+        Ideal<C> Qs = P;
+        Ideal<C> Q;
+        int e = 0;
+        do {
+            Q = Qs;
+            e++;
+            Qs = Q.product(P);
+        } while (Qs.contains(this));
+        boolean t;
+        Ideal<C> As;
+        do {
+            As = this.sum(Qs);
+            t = As.contains(Q);
+            if (!t) {
+                Q = Qs;
+                e++;
+                Qs = Q.product(P);
+            }
+        } while (!t);
+        logger.info("exponent = " + e);
+        return As;
+    }
+
+
+    /**
+     * Zero dimensional ideal primary decompostition.
+     * @return intersection of primary ideals G_i with ideal(this) = cap_i(
+     *         ideal(G_i) )
+     */
+    public List<Ideal<C>> zeroDimPrimaryDecomposition() {
+        List<IdealWithUniv<C>> pdec = zeroDimPrimeDecomposition();
+        return zeroDimPrimaryDecomposition(pdec);
+    }
+
+
+    /**
+     * Zero dimensional ideal elimination to original ring.
+     * @param pdec list of prime ideals G_i
+     * @return intersection of prime ideals G_i in the ring of this with ideal(this) = cap_i(
+     *         ideal(G_i) )
+     */
+    public List<IdealWithUniv<C>> zeroDimElimination(List<IdealWithUniv<C>> pdec) {
+        List<IdealWithUniv<C>> dec = new ArrayList<IdealWithUniv<C>>();
+        if (this.isZERO()) {
+            return dec;
+        }
+        if (this.isONE()) {
+            dec.add(pdec.get(0));
+            return dec;
+        }
+        List<IdealWithUniv<C>> qdec = new ArrayList<IdealWithUniv<C>>();
+        for (IdealWithUniv<C> Ip : pdec) {
+            Ideal<C> Is = Ip.ideal.eliminate(list.ring);
+            int k = Ip.upolys.size() - list.ring.nvar;
+            List<GenPolynomial<C>> up = new ArrayList<GenPolynomial<C>>();
+            for ( int i = 0; i < list.ring.nvar; i++ ) {
+                up.add( Ip.upolys.get(i+k) ); 
+            }
+            IdealWithUniv<C> Ie = new IdealWithUniv<C>(Is,up);
+            qdec.add(Ie);
+        }
+        return qdec;
+    }
+
+
+    /**
+     * Zero dimensional ideal primary decompostition.
+     * @param pdec list of prime ideals G_i
+     * @return intersection of primary ideals G_i with ideal(this) = cap_i(
+     *         ideal(G_i) )
+     */
+    public List<Ideal<C>> zeroDimPrimaryDecomposition(List<IdealWithUniv<C>> pdec) {
+        List<Ideal<C>> dec = new ArrayList<Ideal<C>>();
+        if (this.isZERO()) {
+            return dec;
+        }
+        if (this.isONE()) {
+            dec.add(pdec.get(0).ideal);
+            return dec;
+        }
+        List<Ideal<C>> qdec = new ArrayList<Ideal<C>>();
+        for (IdealWithUniv<C> Ip : pdec) {
+            Ideal<C> Is = Ip.ideal.eliminate(list.ring);
+            Ideal<C> Qs = this.primaryIdeal(Is);
+            qdec.add(Qs);
+        }
+        return qdec;
+    }
+
+
+    /**
+     * Test for zero dimensional primary ideal decompostition.
+     * @param L list of primary ideals G_i
+     * @return true if ideal(this) == cap_i( ideal(G_i) )
+     */
+    public boolean isZeroDimPrimaryDecomposition(List<Ideal<C>> L) {
+        // test if this is contained in the intersection
+        for (Ideal<C> I : L) {
+            boolean t = I.contains(this);
+            if (!t) {
+                System.out.println("not contained " + this + " in " + I);
+                return false;
+            }
+        }
+        Ideal<C> isec = null;
+        for (Ideal<C> I : L) {
+            if (isec == null) {
+                isec = I;
+            } else {
+                isec = isec.intersect(I);
+            }
+        }
+        return this.contains(isec);
     }
 
 }

@@ -1,5 +1,5 @@
 /*
- * $Id: ExpVectorLong.java 2814 2009-09-17 21:53:19Z kredel $
+ * $Id: ExpVectorLong.java 3088 2010-04-26 19:59:45Z kredel $
  */
 
 package edu.jas.poly;
@@ -179,6 +179,26 @@ public class ExpVectorLong extends ExpVector
         w[j] = e;
         return new ExpVectorLong( w );
     }
+
+
+    /**
+     * Extend lower variables. 
+     * Extend this by i lower elements and set val[j] to e.
+     * @param i number of elements to extend.
+     * @param j index of element to be set.
+     * @param e new exponent for val[j].
+     * @return extended exponent vector.
+     */
+    public ExpVectorLong extendLower(int i, int j, long e) {
+        long[] w = new long[ val.length + i ];
+        System.arraycopy(val,0,w,0,val.length);
+        if ( j >= i ) {
+           throw new RuntimeException("i "+i+" <= j "+j+" invalid");
+        }
+        w[ val.length + j ] = e;
+        return new ExpVectorLong( w );
+    }
+
 
 
     /**

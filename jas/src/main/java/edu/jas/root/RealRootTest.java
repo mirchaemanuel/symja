@@ -1,5 +1,5 @@
 /*
- * $Id: RealRootTest.java 3027 2010-03-07 19:13:54Z kredel $
+ * $Id: RealRootTest.java 3037 2010-03-12 21:09:15Z kredel $
  */
 
 package edu.jas.root;
@@ -197,7 +197,7 @@ public class RealRootTest extends TestCase {
 
     /**
      * Test real root isolation Wilkinson polynomials.
-     * 
+     * p = (x-0)*(x-1)*(x-2)*(x-3)*...*(x-n)
      */
     public void testRealRootIsolationWilkinson() {
         final int N = 10;
@@ -240,7 +240,7 @@ public class RealRootTest extends TestCase {
 
     /**
      * Test real root isolation Wilkinson polynomials inverse.
-     * 
+     * p = (x-1)*(x-1/2)*(x-1/3)*...*(x-1/n)
      */
     public void testRealRootIsolationWilkinsonInverse() {
         final int N = 9;
@@ -344,7 +344,7 @@ public class RealRootTest extends TestCase {
 
     /**
      * Test real root isolation and decimal refinement of Wilkinson polynomials.
-     * 
+     * p = (x-0)*(x-1)*(x-2)*(x-3)*...*(x-n)
      */
     public void testRealRootIsolationDecimalWilkinson() {
         final int N = 10;
@@ -393,7 +393,7 @@ public class RealRootTest extends TestCase {
 
     /**
      * Test real root isolation and decimal refinement of Wilkinson polynomials, inverse roots.
-     * 
+     * p = (x-1)*(x-1/2)*(x-1/3)*...*(x-1/n)
      */
     public void testRealRootIsolationDecimalWilkinsonInverse() {
         final int N = 10;
@@ -448,10 +448,10 @@ public class RealRootTest extends TestCase {
 
     /**
      * Test real root isolation and decimal refinement of Wilkinson polynomials, all roots.
-     * 
+     * p = (x-0)*(x-1)*(x-2)*(x-3)*...*(x-n)
      */
     public void testRealRootIsolationDecimalWilkinsonAll() {
-        final int N = 10;
+        final int N = 10; 
         d = dfac.getONE();
         e = dfac.univariate(0);
 
@@ -475,13 +475,9 @@ public class RealRootTest extends TestCase {
         //System.out.println("eps2 = " + eps2);
 
         List<BigDecimal> R = null;
-        try {
-            R = rr.approximateRoots(a,eps);
-            //System.out.println("R = " + R);
-            assertTrue("#roots = " + N + " ", R.size() == N);
-        } catch (NoConvergenceException e) {
-            fail(e.toString());
-        }
+        R = rr.approximateRoots(a,eps);
+        //System.out.println("R = " + R);
+        assertTrue("#roots = " + N + " ", R.size() == N);
 
         int i = 0;
         for (BigDecimal dd : R) {
@@ -490,13 +486,14 @@ public class RealRootTest extends TestCase {
             //System.out.println("di = " + di);
             assertTrue("|dd - di| < eps ", dd.subtract(di).abs().compareTo(eps2) <= 0);
         }
-
+        boolean t = rr.isApproximateRoot(R,a,eps);
+        assertTrue("some |a(dd)| < eps ", t);
     }
 
 
     /**
      * Test real root isolation and decimal refinement of Wilkinson polynomials, inverse roots, all roots.
-     * 
+     * p = (x-1)*(x-1/2)*(x-1/3)*...*(x-1/n)
      */
     public void testRealRootIsolationDecimalWilkinsonInverseAll() {
         final int N = 10;
@@ -529,13 +526,9 @@ public class RealRootTest extends TestCase {
         //System.out.println("eps2 = " + eps2);
 
         List<BigDecimal> R = null;
-        try {
-             R = rr.approximateRoots(a,eps);
-             //System.out.println("R = " + R);
-             assertTrue("#roots = " + (N - 1) + " ", R.size() == (N - 1));
-        } catch (NoConvergenceException e) {
-            fail(e.toString());
-        }
+        R = rr.approximateRoots(a,eps);
+        //System.out.println("R = " + R);
+        assertTrue("#roots = " + (N - 1) + " ", R.size() == (N - 1));
 
         int i = 0;
         for (BigDecimal dd : R) {
@@ -544,6 +537,8 @@ public class RealRootTest extends TestCase {
             //System.out.println("di = " + di);
             assertTrue("|dd - di| < eps ", dd.subtract(di).abs().compareTo(eps2) <= 0);
         }
+        boolean t = rr.isApproximateRoot(R,a,eps);
+        assertTrue("some |a(dd)| < eps ", t);
     }
 
 }

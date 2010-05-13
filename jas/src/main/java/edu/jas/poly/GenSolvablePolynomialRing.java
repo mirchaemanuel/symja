@@ -1,6 +1,6 @@
 
 /*
- * $Id: GenSolvablePolynomialRing.java 2652 2009-05-29 20:13:07Z kredel $
+ * $Id: GenSolvablePolynomialRing.java 3031 2010-03-08 23:18:01Z kredel $
  */
 
 package edu.jas.poly;
@@ -316,9 +316,9 @@ public class GenSolvablePolynomialRing<C extends RingElem<C> >
     }
 
 
-    /** Get a (constant) GenSolvablePolynomial<C> element from a long value.
+    /** Get a (constant) GenSolvablePolynomial&lt;C&gt; element from a long value.
      * @param a long.
-     * @return a GenSolvablePolynomial<C>.
+     * @return a GenSolvablePolynomial&lt;C&gt;.
      */
     @Override
     public GenSolvablePolynomial<C> fromInteger(long a) {
@@ -327,10 +327,10 @@ public class GenSolvablePolynomialRing<C extends RingElem<C> >
     }
 
 
-    /** Get a (constant) GenSolvablePolynomial<C> element from 
+    /** Get a (constant) GenSolvablePolynomial&lt;C&gt; element from 
      * a BigInteger value.
      * @param a BigInteger.
-     * @return a GenSolvablePolynomial<C>.
+     * @return a GenSolvablePolynomial&lt;C&gt;.
      */
     @Override
     public GenSolvablePolynomial<C> fromInteger(BigInteger a) {

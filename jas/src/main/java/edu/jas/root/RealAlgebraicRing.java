@@ -1,5 +1,5 @@
 /*
- * $Id: RealAlgebraicRing.java 2939 2009-12-30 08:56:43Z kredel $
+ * $Id: RealAlgebraicRing.java 3101 2010-05-02 17:18:53Z kredel $
  */
 
 package edu.jas.root;
@@ -102,6 +102,16 @@ public class RealAlgebraicRing<C extends GcdRingElem<C> & Rational>
      * @return modul. public GenPolynomial<C> getModul() { return
      *         algebraic.modul; }
      */
+
+
+    /**
+     * Get the interval for the real root. <b>Note: </b> interval may
+     * shrink later.
+     * @return real root isolating interval
+     */
+    public synchronized Interval<C> getRoot() {
+       return root;
+    }
 
 
     /**
