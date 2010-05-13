@@ -34,6 +34,8 @@ The following functions are based on commons-math implementations:
 
   * {{{Apart}}} - ([http://code.google.com/p/symja/source/browse/trunk/matheclipse-core/src/main/java/org/matheclipse/core/reflection/system/Apart.java SVN])
   * {{{Factor}}} - ([http://code.google.com/p/symja/source/browse/trunk/matheclipse-core/src/main/java/org/matheclipse/core/reflection/system/Factor.java SVN])
+  * {{{GroebnerBasis}}} - ([http://code.google.com/p/symja/source/browse/trunk/matheclipse-core/src/main/java/org/matheclipse/core/reflection/system/GroebnerBasis.java SVN])
+    * {{{GroebnerBasis[{x-1},{x}]] gives {x-1}}}}
   * {{{FactorTerms}}} - ([http://code.google.com/p/symja/source/browse/trunk/matheclipse-core/src/main/java/org/matheclipse/core/reflection/system/FactorTerms.java SVN])
   * {{{Integrate}}} - ([http://code.google.com/p/symja/source/browse/trunk/matheclipse-core/src/main/java/org/matheclipse/core/reflection/system/Integrate.java SVN])
   * {{{NRoots}}} - ([http://code.google.com/p/symja/source/browse/trunk/matheclipse-core/src/main/java/org/matheclipse/core/reflection/system/NRoots.java SVN])
