@@ -1,5 +1,5 @@
 /*
- * $Id: GreatestCommonDivisor.java 2832 2009-10-02 17:53:31Z kredel $
+ * $Id: GreatestCommonDivisor.java 3079 2010-04-19 20:53:23Z kredel $
  */
 
 package edu.jas.ufd;
@@ -14,6 +14,7 @@ import edu.jas.structure.GcdRingElem;
 
 /**
  * Greatest common divisor algorithm interface.
+ * @param <C> coefficient type
  * @author Heinz Kredel
  * @usage To create classes that implement this interface use the
  *        GreatestCommonDivisorFactory. It will select an appropriate
@@ -29,12 +30,11 @@ import edu.jas.structure.GcdRingElem;
  * 
  * <pre>
  * BigInteger cofac = new BigInteger();
- * GreatestCommonDivisor&lt;BigInteger&gt; engine = GCDFactory.&lt;BigInteger&gt; getImplementation(cofac);
+ * GreatestCommonDivisor&lt;BigInteger&gt; engine = GCDFactory.getImplementation(cofac);
  * c = engine.gcd(a, b);
  * </pre>
  * 
- * @see edu.jas.ufd.GCDFactory#getImplementation( edu.jas.structure.RingFactory
- *      f)
+ * @see edu.jas.ufd.GCDFactory#getImplementation
  */
 
 public interface GreatestCommonDivisor<C extends GcdRingElem<C>> extends Serializable {
@@ -76,9 +76,11 @@ public interface GreatestCommonDivisor<C extends GcdRingElem<C>> extends Seriali
 
     /**
      * GenPolynomial resultant.
+     * The input polynomials are considered as univariate polynomials in the main variable. 
      * @param P GenPolynomial.
      * @param S GenPolynomial.
      * @return res(P,S).
+     * @see edu.jas.ufd.GreatestCommonDivisorSubres#recursiveResultant
      */
     public GenPolynomial<C> resultant(GenPolynomial<C> P, GenPolynomial<C> S);
 

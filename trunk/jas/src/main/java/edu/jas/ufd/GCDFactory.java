@@ -1,5 +1,5 @@
 /*
- * $Id: GCDFactory.java 2931 2009-12-29 08:27:22Z kredel $
+ * $Id: GCDFactory.java 3068 2010-04-11 17:27:16Z kredel $
  */
 
 package edu.jas.ufd;
@@ -56,8 +56,8 @@ import edu.jas.structure.ModularRingFactory;
  * <pre>
  * BigInteger cofac = new BigInteger();
  * GreatestCommonDivisor&lt;BigInteger&gt; engine;
- * engine = GCDFactory.&lt;BigInteger&gt; getImplementation(cofac);
- * or engine = GCDFactory.&lt;BigInteger&gt; getProxy(cofac);
+ * engine = GCDFactory.getImplementation(cofac);
+ * or engine = GCDFactory.getProxy(cofac);
  * c = engine.gcd(a, b);
  * </pre>
  * 
@@ -67,6 +67,7 @@ import edu.jas.structure.ModularRingFactory;
 
 public class GCDFactory {
     public static boolean NO_THREADS = true;
+
 
 //    private static final Logger logger = Logger.getLogger(GCDFactory.class);
 
@@ -295,7 +296,7 @@ public class GCDFactory {
                                       new GreatestCommonDivisorPrimitive<C>());
             }
         }
-		// logger.debug("ufd = " + ufd);
+//        logger.debug("ufd = " + ufd);
         return (GCDProxy<C>) ufd;
     }
 

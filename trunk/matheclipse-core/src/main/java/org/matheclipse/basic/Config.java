@@ -70,7 +70,7 @@ public class Config {
 	 * 
 	 * @see apache.harmony.math.BigInteger
 	 */
-	public static int BIGINTEGER_MAX_SIZE = 2048;
+	public static int BIGINTEGER_MAX_SIZE = 65536;
 
 	/**
 	 * Maximum size of the FastTable entries in <i>server mode</i>.
@@ -85,7 +85,7 @@ public class Config {
 	 * 
 	 * @see org.matheclipse.core.expression.StringImpl
 	 */
-	public static int STRING_MAX_SIZE = 2048;
+	public static int STRING_MAX_SIZE = 4096;
 
 	/**
 	 * Maximum size of the AST pools in <i>server mode</i>.

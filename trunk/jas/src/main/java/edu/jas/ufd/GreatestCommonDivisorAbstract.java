@@ -1,5 +1,5 @@
 /*
- * $Id: GreatestCommonDivisorAbstract.java 2978 2010-01-06 19:42:25Z kredel $
+ * $Id: GreatestCommonDivisorAbstract.java 3079 2010-04-19 20:53:23Z kredel $
  */
 
 package edu.jas.ufd;
@@ -390,9 +390,11 @@ public abstract class GreatestCommonDivisorAbstract<C extends GcdRingElem<C>> im
 
     /**
      * GenPolynomial resultant.
+     * The input polynomials are considered as univariate polynomials in the main variable. 
      * @param P GenPolynomial.
      * @param S GenPolynomial.
      * @return res(P,S).
+     * @see edu.jas.ufd.GreatestCommonDivisorSubres#recursiveResultant
      */
     public GenPolynomial<C> resultant(GenPolynomial<C> P, GenPolynomial<C> S) {
         if (S == null || S.isZERO()) {
@@ -401,7 +403,7 @@ public abstract class GreatestCommonDivisorAbstract<C extends GcdRingElem<C>> im
         if (P == null || P.isZERO()) {
             return P;
         }
-        // hack
+        // hack for now:
         GreatestCommonDivisorSubres<C> ufd_sr = new GreatestCommonDivisorSubres<C>();
         GenPolynomialRing<C> pfac = P.ring;
         if (pfac.nvar <= 1) {

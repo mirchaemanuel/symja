@@ -1,5 +1,5 @@
 /*
- * $Id: Quotient.java 2870 2009-11-15 12:03:03Z kredel $
+ * $Id: Quotient.java 3031 2010-03-08 23:18:01Z kredel $
  */
 
 package edu.jas.application;
@@ -176,7 +176,7 @@ public class Quotient<C extends GcdRingElem<C>> implements GcdRingElem<Quotient<
     }
 
 
-    /** Is Qoutient<C> a constant. 
+    /** Is Qoutient a constant. 
      * @return true, if this has constant numerator and denominator, else false.
      */
     public boolean isConstant() {

@@ -1,6 +1,6 @@
 /*
  * Created on 03.10.2004
- * $Id: Katsura.java 2412 2009-02-07 12:17:54Z kredel $
+ * $Id: Katsura.java 3058 2010-03-27 11:05:23Z kredel $
   */
 
 package edu.jas.gb;
@@ -121,9 +121,10 @@ public class Katsura {
            StringBuffer s = new StringBuffer();
            s.append(coeff);
            s.append("(");
-           for (int i = 0; i <= N; i++) {
+           // for (int i = 0; i <= N; i++) {
+           for (int i = N; i >=0; i--) {
                s.append(variable(i));
-               if (i < N) {
+               if (i > 0) {
                   s.append(",");
                }
            }

@@ -1,6 +1,6 @@
 
 /*
- * $Id: GenPolynomial.java 2989 2010-01-31 11:06:39Z kredel $
+ * $Id: GenPolynomial.java 3088 2010-04-26 19:59:45Z kredel $
  */
 
 package edu.jas.poly;
@@ -366,7 +366,7 @@ public class GenPolynomial<C extends RingElem<C> >
     }
 
 
-    /** Is GenPolynomial<C> zero. 
+    /** Is GenPolynomial&lt;C&gt; zero. 
      * @return If this is 0 then true is returned, else false.
      * @see edu.jas.structure.RingElem#isZERO()
      */
@@ -375,7 +375,7 @@ public class GenPolynomial<C extends RingElem<C> >
     }
 
 
-    /** Is GenPolynomial<C> one. 
+    /** Is GenPolynomial&lt;C&gt; one. 
      * @return If this is 1 then true is returned, else false.
      * @see edu.jas.structure.RingElem#isONE()
      */
@@ -394,7 +394,7 @@ public class GenPolynomial<C extends RingElem<C> >
     }
 
 
-    /** Is GenPolynomial<C> a unit. 
+    /** Is GenPolynomial&lt;C&gt; a unit. 
      * @return If this is a unit then true is returned, else false.
      * @see edu.jas.structure.RingElem#isUnit()
      */
@@ -413,7 +413,7 @@ public class GenPolynomial<C extends RingElem<C> >
     }
 
 
-    /** Is GenPolynomial<C> a constant. 
+    /** Is GenPolynomial&lt;C&gt; a constant. 
      * @return If this is a constant polynomial then true is returned, else false.
      */
     public boolean isConstant() {
@@ -1387,6 +1387,32 @@ public class GenPolynomial<C extends RingElem<C> >
 
 
     /**
+     * Extend lower variables. Used e.g. in module embedding.
+     * Extend all ExpVectors by i lower elements and multiply by x_j^k.
+     * @param pfac extended polynomial ring factory (by i variables).
+     * @param j index of variable to be used for multiplication.
+     * @param k exponent for x_j.
+     * @return extended polynomial.
+     */
+    public GenPolynomial<C> extendLower(GenPolynomialRing<C> pfac, int j, long k) {
+        GenPolynomial<C> Cp = pfac.getZERO().clone();
+        if ( this.isZERO() ) { 
+           return Cp;
+        }
+        int i = pfac.nvar - ring.nvar;
+        Map<ExpVector,C> C = Cp.val; //getMap();
+        Map<ExpVector,C> A = val;
+        for ( Map.Entry<ExpVector,C> y: A.entrySet() ) {
+            ExpVector e = y.getKey();
+            C a = y.getValue();
+            ExpVector f = e.extendLower(i,j,k);
+            C.put( f, a );
+        }
+        return Cp;
+    }
+
+
+    /**
      * Contract variables. Used e.g. in module embedding.
      * remove i elements of each ExpVector.
      * @param pfac contracted polynomial ring factory (by i variables).
@@ -1416,6 +1442,42 @@ public class GenPolynomial<C extends RingElem<C> >
             B.put( f, p );
         }
         return B;
+    }
+
+
+    /**
+     * Extend univariate to multivariate polynomial.
+     * This is an univariate polynomial in variable i of the polynomial ring,
+     * it is extended to the given polynomial ring.
+     * @param pfac extended polynomial ring factory.
+     * @param i index of the variable of this polynomial in pfac.
+     * @return extended multivariate polynomial.
+     */
+    public GenPolynomial<C> extendUnivariate(GenPolynomialRing<C> pfac, int i) {
+        if ( i < 0 || pfac.nvar < i ) {
+           throw new IllegalArgumentException("index " + i +  "out of range " + pfac.nvar);
+        }
+        if ( ring.nvar != 1 ) {
+           throw new IllegalArgumentException("polynomial not univariate " + ring.nvar);
+        }
+        if ( this.isONE() ) {
+            return pfac.getONE();
+        }
+        int j = pfac.nvar - 1 - i;
+        GenPolynomial<C> Cp = pfac.getZERO().clone();
+        if ( this.isZERO() ) { 
+           return Cp;
+        }
+        Map<ExpVector,C> C = Cp.val; //getMap();
+        Map<ExpVector,C> A = val;
+        for ( Map.Entry<ExpVector,C> y: A.entrySet() ) {
+            ExpVector e = y.getKey();
+            long n = e.getVal(0);
+            C a = y.getValue();
+            ExpVector f = ExpVector.create(pfac.nvar,j,n);
+            C.put( f, a ); // assert not contained
+        }
+        return Cp;
     }
 
 

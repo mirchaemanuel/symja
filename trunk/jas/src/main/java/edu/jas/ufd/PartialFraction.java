@@ -1,5 +1,5 @@
 /*
- * $Id: PartialFraction.java 2873 2009-11-15 16:44:07Z kredel $
+ * $Id: PartialFraction.java 3030 2010-03-08 22:43:41Z kredel $
  */
 
 package edu.jas.ufd;
@@ -28,7 +28,7 @@ public class PartialFraction<C extends GcdRingElem<C>> implements Serializable {
 
 
     /**
-     * Original numerator polynomial coefficients from C and deg(num) < deg(den).
+     * Original numerator polynomial coefficients from C and deg(num) &lt; deg(den).
      */
     public final GenPolynomial<C> num;
 
@@ -58,7 +58,7 @@ public class PartialFraction<C extends GcdRingElem<C>> implements Serializable {
 
 
     /**
-     * List of factors of the denominator with coefficients from an AlgebraicNumberRing<C>. 
+     * List of factors of the denominator with coefficients from an AlgebraicNumberRing&lt;C&gt;. 
      */
     public final List<GenPolynomial<AlgebraicNumber<C>>> adenom;
 

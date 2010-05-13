@@ -1,5 +1,5 @@
 /*
- * $Id: DistHashTableServer.java 2927 2009-12-27 15:33:47Z kredel $
+ * $Id: DistHashTableServer.java 3077 2010-04-15 21:19:24Z kredel $
  */
 
 package edu.jas.util;
@@ -219,7 +219,8 @@ public class DistHashTableServer<K> extends Thread {
         long dec = DHTTransport.dtime - dtime;
         long encr = DHTTransport.ertime - ertime;
         long decr = DHTTransport.drtime - drtime;
-        logger.info("DHT time: encode = " + enc + ", decode = " + dec + ", enc raw = " + encr + ", dec raw = " + decr + ", total = " + (enc+dec+encr+decr));
+        long drest = (encr*dec)/(enc+1);
+        logger.info("DHT time: encode = " + enc + ", decode = " + dec + ", enc raw = " + encr + ", dec raw wait = " + decr + ", dec raw est = " + drest + ", sum est = " + (enc+dec+encr+drest)); // +decr not meaningful
         if (mythread == null) {
             return;
         }
@@ -330,6 +331,7 @@ class DHTBroadcaster<K> extends Thread /*implements Runnable*/{
         //   return;
         //}
         tc = (DHTTransport<K, Object>) o;
+        K key = null;
         synchronized (theList) {
             //test
             //Object x = theList.get( tc.key );
@@ -337,15 +339,20 @@ class DHTBroadcaster<K> extends Thread /*implements Runnable*/{
             //   logger.info("theList duplicate key " + tc.key );
             //}
             try {
-                theList.put(tc.key(), tc);
+                key = tc.key();
+                theList.put(key, tc);
             } catch (IOException e) {
+                logger.warn("IO exception: tc.key() not ok " + tc);
                 e.printStackTrace();
-                logger.warn("tc.key() not ok " + tc);
             } catch (ClassNotFoundException e) {
+                logger.warn("CNF exception: tc.key() not ok " + tc);
                 e.printStackTrace();
-                logger.warn("tc.key() not ok " + tc);
+            } catch (Exception e) {
+                logger.warn("exception:tc.key() not ok " + tc);
+                e.printStackTrace();
             }
         }
+        logger.info("sending key=" + key + " to " + bcaster.size() + " nodes");
         synchronized (bcaster) {
             Iterator<DHTBroadcaster<K>> it = bcaster.iterator();
             while (it.hasNext()) {
@@ -356,6 +363,7 @@ class DHTBroadcaster<K> extends Thread /*implements Runnable*/{
                     }
                     br.sendChannel(tc);
                 } catch (IOException e) {
+                    logger.info("bcaster, exception " + e);
                     try {
                         br.closeChannel();
                         while (br.isAlive()) {
@@ -367,6 +375,8 @@ class DHTBroadcaster<K> extends Thread /*implements Runnable*/{
                     }
                     it.remove( /*br*/); //ConcurrentModificationException
                     logger.debug("bcaster.remove() " + br);
+                } catch (Exception e) {
+                    logger.info("bcaster, exception " + e);
                 }
             }
         }
@@ -400,9 +410,15 @@ class DHTBroadcaster<K> extends Thread /*implements Runnable*/{
                 }
             } catch (IOException e) {
                 goon = false;
+                logger.info("receive, IO exception " + e);
                 //e.printStackTrace();
             } catch (ClassNotFoundException e) {
                 goon = false;
+                logger.info("receive, CNF exception " + e);
+                e.printStackTrace();
+            } catch (Exception e) {
+                goon = false;
+                logger.info("receive, exception " + e);
                 e.printStackTrace();
             }
         }

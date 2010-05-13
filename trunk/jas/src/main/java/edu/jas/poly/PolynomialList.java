@@ -1,5 +1,5 @@
 /*
- * $Id: PolynomialList.java 2641 2009-05-28 20:40:19Z kredel $
+ * $Id: PolynomialList.java 3047 2010-03-14 21:29:42Z kredel $
  */
 
 package edu.jas.poly;
@@ -103,7 +103,7 @@ public class PolynomialList<C extends RingElem<C> >
            return false;
         }
         if ( ! ring.equals( pl.ring ) ) {
-            System.out.println("not same Ring");
+            System.out.println("not same Ring " + ring.toScript() + ", " + pl.ring.toScript());
             return false;
         }
         return ( compareTo(pl) == 0 );

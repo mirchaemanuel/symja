@@ -1,5 +1,5 @@
 /*
- * $Id: Residue.java 2748 2009-07-15 19:47:15Z kredel $
+ * $Id: Residue.java 3031 2010-03-08 23:18:01Z kredel $
  */
 
 package edu.jas.application;
@@ -143,7 +143,7 @@ public class Residue<C extends GcdRingElem<C> >
 
 
     /** Is Residue a constant. 
-     * @return If this.val is a constant polynomial then true is returned, else false.
+     * @return true if this.val is a constant polynomial, else false.
      */
     public boolean isConstant() {
         return val.isConstant();
@@ -154,7 +154,7 @@ public class Residue<C extends GcdRingElem<C> >
      * @see java.lang.Object#toString()
      */
     @Override
-     public String toString() {
+    public String toString() {
         if ( PrettyPrint.isTrue() ) {
            return val.toString( ring.ring.getVars() );
         } else {

@@ -1,5 +1,5 @@
 /*
- * $Id: KsubSet.java 2477 2009-03-08 12:18:23Z kredel $
+ * $Id: KsubSet.java 3067 2010-04-10 11:07:46Z kredel $
  */
 
 package edu.jas.util;
@@ -168,7 +168,7 @@ class OneSubSetIterator<E> implements Iterator<List<E>> {
 
     /**
      * OneSubSetIterator constructor.
-     * @param S generating set.
+     * @param set generating set.
      */
     public OneSubSetIterator(List<E> set) {
         this.set = set;
@@ -228,7 +228,7 @@ class ZeroSubSetIterator<E> implements Iterator<List<E>> {
 
     /**
      * ZeroSubSetIterator constructor.
-     * @param S generating set (ignored).
+     * @param set generating set (ignored).
      */
     public ZeroSubSetIterator(List<E> set) {
         hasNext = true;

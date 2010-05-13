@@ -1,5 +1,5 @@
 /*
- * $Id: DistHashTable.java 2827 2009-09-25 12:56:52Z kredel $
+ * $Id: DistHashTable.java 3076 2010-04-15 21:00:37Z kredel $
  */
 
 package edu.jas.util;
@@ -262,6 +262,10 @@ public class DistHashTable<K, V> extends AbstractMap<K, V> /* implements Map<K,V
             channel.send(tc);
             //System.out.println("send: "+tc+" @ "+listener);
         } catch (IOException e) {
+            logger.info("send, exception " + e);
+            e.printStackTrace();
+        } catch (Exception e) {
+            logger.info("send, exception " + e);
             e.printStackTrace();
         }
         return null;
@@ -413,18 +417,25 @@ class DHTListener<K, V> extends Thread {
                     tc = (DHTTransport<K, V>) o;
                     K key = tc.key();
                     if (key != null) {
-                        //logger.debug("receive, put(" + tc + ")");
+                        logger.info("receive, put(key=" + key + ")");
+                        V val = tc.value();
                         synchronized (theList) {
-                            theList.put(key, tc.value());
+                            theList.put(key, val);
                             theList.notifyAll();
                         }
                     }
                 }
             } catch (IOException e) {
                 goon = false;
+                logger.info("receive, IO exception " + e);
                 //e.printStackTrace();
             } catch (ClassNotFoundException e) {
                 goon = false;
+                logger.info("receive, CNF exception " + e);
+                e.printStackTrace();
+            } catch (Exception e) {
+                goon = false;
+                logger.info("receive, exception " + e);
                 e.printStackTrace();
             }
         }

@@ -1,5 +1,5 @@
 /*
- * $Id: GCDProxyTest.java 2931 2009-12-29 08:27:22Z kredel $
+ * $Id: GCDProxyTest.java 3031 2010-03-08 23:18:01Z kredel $
  */
 
 package edu.jas.ufd;
@@ -330,7 +330,7 @@ public class GCDProxyTest extends TestCase {
 
 
     /**
-     * Test get AlgebraicNumber<BigRational> implementation.
+     * Test get AlgebraicNumber&lt;BigRational&gt; implementation.
      * 
      */
     public void xtestAlgebraicNumberBigRational() {
@@ -361,7 +361,7 @@ public class GCDProxyTest extends TestCase {
 
 
     /**
-     * Test get AlgebraicNumber<ModInteger> implementation.
+     * Test get AlgebraicNumber&lt;ModInteger&glt; implementation.
      * 
      */
     public void testAlgebraicNumberModInteger() {

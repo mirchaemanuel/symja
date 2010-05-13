@@ -1,5 +1,5 @@
 /*
- * $Id: LogIntegral.java 2867 2009-11-14 11:30:48Z kredel $
+ * $Id: LogIntegral.java 3030 2010-03-08 22:43:41Z kredel $
  */
 
 package edu.jas.integrate;
@@ -28,7 +28,7 @@ public class LogIntegral<C extends GcdRingElem<C>> implements Serializable {
 
 
     /**
-     * Original numerator polynomial with coefficients from C and deg(num) < deg(den).
+     * Original numerator polynomial with coefficients from C and deg(num) &lt; deg(den).
      */
     public final GenPolynomial<C> num;
 
@@ -58,7 +58,7 @@ public class LogIntegral<C extends GcdRingElem<C>> implements Serializable {
 
 
     /**
-     * List of factors of the denominator with coefficients from an AlgebraicNumberRing<C>. 
+     * List of factors of the denominator with coefficients from an AlgebraicNumberRing&lt;C&gt;. 
      */
     public final List<GenPolynomial<AlgebraicNumber<C>>> adenom;
 

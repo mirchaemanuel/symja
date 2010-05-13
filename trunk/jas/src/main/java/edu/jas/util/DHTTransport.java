@@ -1,5 +1,5 @@
 /*
- * $Id: DHTTransport.java 2827 2009-09-25 12:56:52Z kredel $
+ * $Id: DHTTransport.java 3076 2010-04-15 21:00:37Z kredel $
  */
 
 package edu.jas.util;
@@ -161,7 +161,7 @@ class DHTTransportMarshal<K, V> extends DHTTransport<K, V> {
     private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {
         long t = System.currentTimeMillis();
         in.defaultReadObject();
-        t = System.currentTimeMillis() - t;
+        t = System.currentTimeMillis() - t; // not meaningful, includes waiting time
         synchronized( DHTTransport.class ) {
             drtime += t;
         }

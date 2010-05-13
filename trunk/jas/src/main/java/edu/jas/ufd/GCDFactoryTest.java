@@ -1,5 +1,5 @@
 /*
- * $Id: GCDFactoryTest.java 2724 2009-07-09 20:16:03Z kredel $
+ * $Id: GCDFactoryTest.java 3031 2010-03-08 23:18:01Z kredel $
  */
 
 package edu.jas.ufd;
@@ -217,7 +217,7 @@ public class GCDFactoryTest extends TestCase {
 
 
     /**
-     * Test get AlgebraicNumber<BigRational> implementation.
+     * Test get AlgebraicNumber&lt;BigRational&gt; implementation.
      * 
      */
     public void testAlgebraicNumberBigRational() {
@@ -249,7 +249,7 @@ public class GCDFactoryTest extends TestCase {
 
 
     /**
-     * Test get AlgebraicNumber<ModInteger> implementation.
+     * Test get AlgebraicNumber&lt;ModInteger&gt; implementation.
      * 
      */
     public void testAlgebraicNumberModInteger() {

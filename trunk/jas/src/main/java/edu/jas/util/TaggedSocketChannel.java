@@ -1,5 +1,5 @@
 /*
- * $Id: TaggedSocketChannel.java 3020 2010-03-05 19:47:06Z kredel $
+ * $Id: TaggedSocketChannel.java 3076 2010-04-15 21:00:37Z kredel $
  */
 
 package edu.jas.util;
@@ -221,6 +221,8 @@ public class TaggedSocketChannel extends Thread {
                     r = e;
                 } catch (ClassNotFoundException e) {
                     r = e;
+                } catch (Exception e) {
+                    r = e;
                 }
                 //logger.debug("Socket = " +s);
                 logger.debug("object recieved");
@@ -261,11 +263,11 @@ public class TaggedSocketChannel extends Thread {
                     synchronized (queues) { // deliver to all queues
                         isRunning = false;
                         Exception e;
-                           if ( r.equals(DONE) ) {
-                               e = new Exception("DONE message");
-                           } else {
-                               e = new IllegalArgumentException("no tagged message and no exception '" + r + "'");
-                           }
+                        if ( r.equals(DONE) ) {
+                            e = new Exception("DONE message");
+                        } else {
+                            e = new IllegalArgumentException("no tagged message and no exception '" + r + "'");
+                        }
                         for ( BlockingQueue q : queues.values() ) {
                             final int bc = blockedCount.get();
                             for ( int i = 0; i <= bc; i++ ) { // one more

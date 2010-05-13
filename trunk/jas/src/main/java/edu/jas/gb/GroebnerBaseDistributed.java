@@ -1,5 +1,5 @@
 /*
- * $Id: GroebnerBaseDistributed.java 2825 2009-09-23 18:36:40Z kredel $
+ * $Id: GroebnerBaseDistributed.java 3066 2010-04-10 11:07:19Z kredel $
  */
 
 package edu.jas.gb;
@@ -163,6 +163,9 @@ public class GroebnerBaseDistributed<C extends RingElem<C>> extends GroebnerBase
                 }
                 if (pairlist == null) {
                     pairlist = new OrderedPairlist<C>(modv, p.ring);
+                    if ( ! p.ring.coFac.isField() ) {
+                        throw new RuntimeException("coefficients not from a field");
+                    }
                 }
                 // theList not updated here
                 if (p.isONE()) {

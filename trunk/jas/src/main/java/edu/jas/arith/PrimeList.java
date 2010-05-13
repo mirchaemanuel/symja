@@ -1,5 +1,5 @@
 /*
- * $Id: PrimeList.java 3017 2010-03-03 22:39:51Z kredel $
+ * $Id: PrimeList.java 3058 2010-03-27 11:05:23Z kredel $
  */
 
 package edu.jas.arith;
@@ -33,7 +33,7 @@ public final class PrimeList implements Iterable<java.math.BigInteger> {
     /** The list of probable primes in requested range. 
      */
     protected final List<java.math.BigInteger> val
-	= new ArrayList<java.math.BigInteger>(50);
+        = new ArrayList<java.math.BigInteger>(50);
 
 
     /** The last prime in the list.
@@ -198,13 +198,13 @@ public final class PrimeList implements Iterable<java.math.BigInteger> {
      * @return 2**n - m
      */
     protected static java.math.BigInteger getLongPrime(int n, int m) {
-	long prime = 2; // knuth (2,390)
-	for ( int i = 1; i < n; i++ ) {
-	    prime *= 2;
-	}
-	prime -= m;
-	//System.out.println("p1 = " + prime);
-	return new java.math.BigInteger(""+prime);
+        long prime = 2; // knuth (2,390)
+        for ( int i = 1; i < n; i++ ) {
+            prime *= 2;
+        }
+        prime -= m;
+        //System.out.println("p1 = " + prime);
+        return new java.math.BigInteger(""+prime);
     }
 
 
@@ -214,12 +214,12 @@ public final class PrimeList implements Iterable<java.math.BigInteger> {
      * @return 2**n - 1
      */
     protected static java.math.BigInteger getMersennePrime(int n) {
-	BigInteger t = new BigInteger(2);
-	BigInteger p = Power.positivePower(t,n);
-	p = p.subtract(new BigInteger(1));
-	java.math.BigInteger prime = p.getVal();
-	//System.out.println("p1 = " + prime);
-	return prime;
+        BigInteger t = new BigInteger(2);
+        BigInteger p = Power.positivePower(t,n);
+        p = p.subtract(new BigInteger(1));
+        java.math.BigInteger prime = p.getVal();
+        //System.out.println("p1 = " + prime);
+        return prime;
     }
 
 

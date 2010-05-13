@@ -1,5 +1,5 @@
 /*
- * $Id: SolvableModuleListTest.java 1891 2008-07-12 13:38:47Z kredel $
+ * $Id: SolvableModuleListTest.java 3047 2010-03-14 21:29:42Z kredel $
  */
 
 package edu.jas.vector;
@@ -265,7 +265,7 @@ public class SolvableModuleListTest extends TestCase {
      assertTrue("p2 == p2", p2.equals(p2) );
      assertEquals("p2.length", 4, p2.list.size() );
 
-     assertTrue("p == p2", p.equals(p2) );
+     assertTrue("p == p2", p.list.equals(p2.list) );
  }
 
 
@@ -340,10 +340,10 @@ public class SolvableModuleListTest extends TestCase {
      assertTrue("p2 == p2", p2.equals(p2) );
      assertEquals("p2.length", 4, p2.list.size() );
 
-     assertTrue("p == p2", p.equals(p2) );
+     assertTrue("p == p2", p.list.equals(p2.list) );
      table5 = ((GenSolvablePolynomialRing<BigRational>)p2.ring).table;
      //System.out.println("table 5= " + table5);
-     assertEquals("table2 == table4", table3, table5 );
+     assertEquals("table2 == table4", table3.table, table5.table );
  }
 
 }

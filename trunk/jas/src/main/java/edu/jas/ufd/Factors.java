@@ -1,5 +1,5 @@
 /*
- * $Id: Factors.java 2848 2009-11-01 17:50:43Z kredel $
+ * $Id: Factors.java 3031 2010-03-08 23:18:01Z kredel $
  */
 
 package edu.jas.ufd;
@@ -41,20 +41,20 @@ public class Factors<C extends GcdRingElem<C>> implements Comparable<Factors<C>>
 
     /**
      * Original polynomial to be factored with coefficients from
-     * AlgebraicNumberRing<C>. Should be null, if p is absolutely irreducible.
+     * AlgebraicNumberRing&lt;C&gt;. Should be null, if p is absolutely irreducible.
      */
     public final GenPolynomial<AlgebraicNumber<C>> apoly;
 
 
     /**
-     * List of factors with coefficients from AlgebraicNumberRing<C>. Should be
+     * List of factors with coefficients from AlgebraicNumberRing&lt;C&gt;. Should be
      * null, if p is absolutely irreducible.
      */
     public final List<GenPolynomial<AlgebraicNumber<C>>> afactors;
 
 
     /**
-     * List of factors with coefficients from AlgebraicNumberRing<AlgebraicNumber<C>>.
+     * List of factors with coefficients from AlgebraicNumberRing&lt;AlgebraicNumber&lt;C&gt;&gt;.
      * Should be null, if p is absolutely irreducible.
      */
     public final List<Factors<AlgebraicNumber<C>>> arfactors;

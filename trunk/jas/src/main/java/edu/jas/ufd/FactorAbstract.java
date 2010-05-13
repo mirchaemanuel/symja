@@ -1,5 +1,5 @@
 /*
- * $Id: FactorAbstract.java 2989 2010-01-31 11:06:39Z kredel $
+ * $Id: FactorAbstract.java 3068 2010-04-11 17:27:16Z kredel $
  */
 
 package edu.jas.ufd;
@@ -32,7 +32,6 @@ import edu.jas.util.KsubSet;
  * convenience.
  * @param <C> coefficient type
  * @author Heinz Kredel
- * @usage
  * @see edu.jas.ufd.FactorFactory
  */
 
@@ -297,7 +296,7 @@ public abstract class FactorAbstract<C extends GcdRingElem<C>> implements Factor
         }
         if (logger.isInfoEnabled()) {
             logger.info("squarefree facs P = " + P);
-	}
+        }
         SortedMap<GenPolynomial<C>, Long> facs = sengine.baseSquarefreeFactors(P);
         if (logger.isInfoEnabled() && facs.size() > 1) {
             logger.info("squarefree facs   = " + facs);

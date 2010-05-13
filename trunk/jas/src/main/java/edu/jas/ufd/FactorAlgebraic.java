@@ -1,5 +1,5 @@
 /*
- * $Id: FactorAlgebraic.java 2752 2009-07-15 21:49:01Z kredel $
+ * $Id: FactorAlgebraic.java 3038 2010-03-13 14:04:38Z kredel $
  */
 
 package edu.jas.ufd;
@@ -159,7 +159,7 @@ public class FactorAlgebraic<C extends GcdRingElem<C>> extends FactorAbsolute<Al
             // compute gcds of factors with polynomial
             GenPolynomial<AlgebraicNumber<C>> pni = engine.gcd(Ni, Pp);
             if (!pni.leadingBaseCoefficient().isONE()) {
-                System.out.println("gcd(Ni,Pp) not monic " + pni);
+                //System.out.println("gcd(Ni,Pp) not monic " + pni);
                 pni = pni.monic();
             }
             if (logger.isInfoEnabled()) {
