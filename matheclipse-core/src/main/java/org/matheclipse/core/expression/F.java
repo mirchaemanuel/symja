@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.matheclipse.basic.Config;
 import org.matheclipse.core.convert.AST2Expr;
@@ -1848,7 +1849,8 @@ public class F {
 					}
 				}
 			}
-			HashMap<String, ISymbol> variableMap = EvalEngine.getVariableMap();
+			EvalEngine engine = EvalEngine.get();
+			Map<String, ISymbol> variableMap = engine.getVariableMap();
 			temp = variableMap.get(symbolName);
 			if (temp != null) {
 				return temp;

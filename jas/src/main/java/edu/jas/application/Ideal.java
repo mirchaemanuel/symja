@@ -1,5 +1,5 @@
 /*
- * $Id: Ideal.java 3117 2010-05-07 19:15:46Z kredel $
+ * $Id: Ideal.java 3157 2010-05-27 19:46:36Z kredel $
  */
 
 package edu.jas.application;
@@ -8,13 +8,12 @@ package edu.jas.application;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
-import java.util.Set;
 
 import org.apache.log4j.Logger;
 
@@ -28,22 +27,26 @@ import edu.jas.poly.ExpVector;
 import edu.jas.poly.GenPolynomial;
 import edu.jas.poly.GenPolynomialRing;
 import edu.jas.poly.OptimizedPolynomialList;
-import edu.jas.poly.PolynomialList;
 import edu.jas.poly.PolyUtil;
-import edu.jas.poly.TermOrderOptimization;
+import edu.jas.poly.PolynomialList;
 import edu.jas.poly.TermOrder;
+import edu.jas.poly.TermOrderOptimization;
 import edu.jas.structure.GcdRingElem;
-import edu.jas.structure.RingFactory;
 import edu.jas.structure.NotInvertibleException;
-import edu.jas.ufd.SquarefreeAbstract;
-import edu.jas.ufd.SquarefreeFactory;
+import edu.jas.structure.Power;
+import edu.jas.structure.RingFactory;
 import edu.jas.ufd.FactorAbstract;
 import edu.jas.ufd.FactorFactory;
+import edu.jas.ufd.GCDFactory;
+import edu.jas.ufd.GreatestCommonDivisor;
+import edu.jas.ufd.PolyUfdUtil;
+import edu.jas.ufd.SquarefreeAbstract;
+import edu.jas.ufd.SquarefreeFactory;
 
 
 /**
  * Ideal implements some methods for ideal arithmetic, for example intersection,
- * quotient and zero dimensional ideal decomposition.
+ * quotient and zero and positive dimensional ideal decomposition.
  * @author Heinz Kredel
  */
 public class Ideal<C extends GcdRingElem<C>> implements Comparable<Ideal<C>>, Serializable, Cloneable {
@@ -240,6 +243,29 @@ public class Ideal<C extends GcdRingElem<C>> implements Comparable<Ideal<C>>, Se
      */
     public GenPolynomialRing<C> getRing() {
         return list.ring;
+    }
+
+
+    /**
+     * Get the zero ideal.
+     * @return ideal(0)
+     */
+    public Ideal<C> getZERO() {
+        List<GenPolynomial<C>> z = new ArrayList<GenPolynomial<C>>(0);
+        PolynomialList<C> pl = new PolynomialList<C>(getRing(), z);
+        return new Ideal<C>(pl, true, isTopt, bb, red);
+    }
+
+
+    /**
+     * Get the one ideal.
+     * @return ideal(1)
+     */
+    public Ideal<C> getONE() {
+        List<GenPolynomial<C>> one = new ArrayList<GenPolynomial<C>>(1);
+        one.add(list.ring.getONE());
+        PolynomialList<C> pl = new PolynomialList<C>(getRing(), one);
+        return new Ideal<C>(pl, true, isTopt, bb, red);
     }
 
 
@@ -468,6 +494,7 @@ public class Ideal<C extends GcdRingElem<C>> implements Comparable<Ideal<C>>, Se
             }
             GenPolynomial<C> z = red.normalform(getList(), b);
             if (!z.isZERO()) {
+                //System.out.println("contains nf(b) != 0: " + b);
                 return false;
             }
         }
@@ -525,6 +552,29 @@ public class Ideal<C extends GcdRingElem<C>> implements Comparable<Ideal<C>>, Se
 
 
     /**
+     * Summation. Generators for the sum of this ideal and a list of
+     * polynomials. Note: if this ideal is a Groebner base, a Groebner base is
+     * returned.
+     * @param L list of polynomials
+     * @return ideal(this+L)
+     */
+    public Ideal<C> sum(List<GenPolynomial<C>> L) {
+        if (L == null || L.isEmpty()) {
+            return this;
+        }
+        int s = getList().size() + L.size();
+        List<GenPolynomial<C>> c = new ArrayList<GenPolynomial<C>>(s);
+        c.addAll(getList());
+        c.addAll(L);
+        Ideal<C> I = new Ideal<C>(getRing(), c, false);
+        if (isGB) {
+            I.doGB();
+        }
+        return I;
+    }
+
+
+    /**
      * Product. Generators for the product of ideals. Note: if both ideals are
      * Groebner bases, a Groebner base is returned.
      * @param B ideal
@@ -549,6 +599,30 @@ public class Ideal<C extends GcdRingElem<C>> implements Comparable<Ideal<C>>, Se
         Ideal<C> I = new Ideal<C>(getRing(), c, false);
         if (isGB && B.isGB) {
             I.doGB();
+        }
+        return I;
+    }
+
+
+    /**
+     * Intersection. Generators for the intersection of ideals.
+     * @param Bl list of ideals
+     * @return ideal(cap_i B_i), a Groebner base
+     */
+    public Ideal<C> intersect(List<Ideal<C>> Bl) {
+        if (Bl == null || Bl.size() == 0) {
+            return getZERO();
+        }
+        Ideal<C> I = null;
+        for (Ideal<C> B : Bl) {
+            if (I == null) {
+                I = B;
+                continue;
+            }
+            if (I.isONE()) {
+                return I;
+            }
+            I = I.intersect(B);
         }
         return I;
     }
@@ -610,12 +684,7 @@ public class Ideal<C extends GcdRingElem<C>> implements Comparable<Ideal<C>>, Se
         if (d <= 0) {
             return this;
         }
-        //GenPolynomialRing<C> tfac = getRing().contract(d);
-        //if ( ! tfac.equals( R ) ) { // check ?
-        //   throw new RuntimeException("contract(this) != R");
-        //}
-        List<GenPolynomial<C>> h;
-        h = new ArrayList<GenPolynomial<C>>(getList().size());
+        List<GenPolynomial<C>> H = new ArrayList<GenPolynomial<C>>(getList().size());
         for (GenPolynomial<C> p : getList()) {
             Map<ExpVector, GenPolynomial<C>> m = null;
             m = p.contract(R);
@@ -625,12 +694,18 @@ public class Ideal<C extends GcdRingElem<C>> implements Comparable<Ideal<C>>, Se
             if (m.size() == 1) { // contains one power of variables
                 for (ExpVector e : m.keySet()) {
                     if (e.isZERO()) {
-                        h.add(m.get(e));
+                        H.add(m.get(e));
                     }
                 }
             }
         }
-        return new Ideal<C>(R, h, isGB, isTopt);
+        GenPolynomialRing<C> tfac = getRing().contract(d);
+        if (tfac.equals(R)) { // check 
+            return new Ideal<C>(R, H, isGB, isTopt);
+        }
+        logger.info("tfac, R = " + tfac + ", " + R);
+        // throw new RuntimeException("contract(this) != R");
+        return new Ideal<C>(R, H); // compute GB
     }
 
 
@@ -644,7 +719,7 @@ public class Ideal<C extends GcdRingElem<C>> implements Comparable<Ideal<C>>, Se
         if (R == null) {
             throw new IllegalArgumentException("R may not be null");
         }
-        if ( list.ring.equals(R) ) {
+        if (list.ring.equals(R)) {
             return this;
         }
         String[] ename = R.getVars();
@@ -673,16 +748,22 @@ public class Ideal<C extends GcdRingElem<C>> implements Comparable<Ideal<C>>, Se
         GroebnerBasePartial<C> bbp = new GroebnerBasePartial<C>(bb, null);
         String[] rname = bbp.remainingVars(aname, ename);
         //System.out.println("rname = " + Arrays.toString(rname));
-        if ( rname.length == 0 ) {
-            return this;
+        PolynomialList<C> Pl = null;
+        if (rname.length == 0) {
+            if (Arrays.equals(aname, ename)) {
+                return this;
+            } else {
+                Pl = bbp.partialGB(getList(), ename); // normal GB
+            }
+        } else {
+            Pl = bbp.elimPartialGB(getList(), rname, ename); // reversed!
         }
-        PolynomialList<C> Pl = bbp.elimPartialGB(getList(), rname, ename); // reversed!
         //System.out.println("Pl = " + Pl);
         if (debug) {
-            logger.debug("elimnation GB = " + Pl);
+            logger.debug("elimination GB = " + Pl);
         }
         Ideal<C> I = new Ideal<C>(Pl, true);
-        return I; 
+        return I;
     }
 
 
@@ -752,10 +833,10 @@ public class Ideal<C extends GcdRingElem<C>> implements Comparable<Ideal<C>>, Se
      * @return ideal(this : h<sup>s</sup>), a Groebner base
      */
     public Ideal<C> infiniteQuotientRab(GenPolynomial<C> h) {
-        if (h == null) { // == (0)
-            return this;
+        if (h == null || h.isZERO()) { // == (0)
+            return getONE();
         }
-        if (h.isZERO()) {
+        if (h.isONE()) {
             return this;
         }
         if (this.isZERO()) {
@@ -776,14 +857,52 @@ public class Ideal<C extends GcdRingElem<C>> implements Comparable<Ideal<C>>, Se
         GenPolynomial<C> r = tfac.getONE(); // h.extend( tfac, 0, 0L );
         GenPolynomial<C> hs = q.subtract(r); // 1 - t*h // (1-t)*h
         c.add(hs);
-        logger.warn("infiniteQuotientRab computing GB");
+        logger.warn("infiniteQuotientRab computing GB ");
         List<GenPolynomial<C>> g = bb.GB(c);
         if (debug) {
-            logger.debug("infiniteQuotientRab GB = " + g);
+            logger.info("infiniteQuotientRab    = " + tfac + ", c = " + c);
+            logger.info("infiniteQuotientRab GB = " + g);
         }
         Ideal<C> E = new Ideal<C>(tfac, g, true);
         Ideal<C> Is = E.intersect(getRing());
         return Is;
+    }
+
+
+    /**
+     * Infinite quotient exponent.
+     * @param h polynomial
+     * @param Q quotient this : h^\infinity
+     * @return s with Q = this : h<sup>s</sup>
+     */
+    public int infiniteQuotientExponent(GenPolynomial<C> h, Ideal<C> Q) {
+        int s = 0;
+        if (h == null) { // == 0
+            return s;
+        }
+        if (h.isZERO() || h.isONE()) {
+            return s;
+        }
+        if (this.isZERO() || this.isONE()) {
+            return s;
+        }
+        //see below: if (this.contains(Q)) {
+        //    return s;
+        //}
+        GenPolynomial<C> p = getRing().getONE();
+        for (GenPolynomial<C> q : Q.getList()) {
+            if (this.contains(q)) {
+                continue;
+            }
+            //System.out.println("q = " + q + ", p = " + p + ", s = " + s);
+            GenPolynomial<C> qp = q.multiply(p);
+            while (!this.contains(qp)) {
+                p = p.multiply(h);
+                s++;
+                qp = q.multiply(p);
+            }
+        }
+        return s;
     }
 
 
@@ -1275,7 +1394,7 @@ public class Ideal<C extends GcdRingElem<C>> implements Comparable<Ideal<C>>, Se
             if (v == null) {
                 continue;
             }
-            // System.out.println("v = " + Arrays.toString(v));
+            //System.out.println("v = " + Arrays.toString(v));
             if (S == null) { // revert indices
                 S = new HashSet<Integer>(H.size());
                 int r = e.length() - 1;
@@ -1443,6 +1562,7 @@ public class Ideal<C extends GcdRingElem<C>> implements Comparable<Ideal<C>>, Se
         for (int i = list.ring.nvar - 1; i >= 0; i--) {
             List<IdealWithUniv<C>> part = new ArrayList<IdealWithUniv<C>>();
             for (IdealWithUniv<C> id : dec) {
+                //System.out.println("id = " + id + ", i = " + i);
                 GenPolynomial<C> u = id.ideal.constructUnivariate(i);
                 SortedMap<GenPolynomial<C>, Long> facs = engine.baseSquarefreeFactors(u);
                 if (facs.size() == 1 && facs.get(facs.firstKey()) == 1L) {
@@ -1462,12 +1582,15 @@ public class Ideal<C extends GcdRingElem<C>> implements Comparable<Ideal<C>>, Se
                     // make p multivariate
                     GenPolynomial<C> pm = p.extendUnivariate(mfac, j);
                     // mfac.parse( p.toString() );
-                    //System.out.println("pm = " + pm);
+                    //stem.out.println("pm = " + pm);
                     Ideal<C> Ip = id.ideal.sum(pm);
                     List<GenPolynomial<C>> iup = new ArrayList<GenPolynomial<C>>();
                     iup.addAll(id.upolys);
                     iup.add(p);
                     IdealWithUniv<C> Ipu = new IdealWithUniv<C>(Ip, iup);
+                    if (debug) {
+                        logger.info("ideal with squarefree facs = " + Ipu);
+                    }
                     part.add(Ipu);
                 }
             }
@@ -1494,6 +1617,7 @@ public class Ideal<C extends GcdRingElem<C>> implements Comparable<Ideal<C>>, Se
             GenPolynomial<C> u = constructUnivariate(i);
             boolean t = engine.isSquarefree(u);
             if (!t) {
+                System.out.println("not squarefree " + engine.squarefreePart(u) + ", " + u);
                 return false;
             }
         }
@@ -1502,9 +1626,10 @@ public class Ideal<C extends GcdRingElem<C>> implements Comparable<Ideal<C>>, Se
 
 
     /**
-     * Zero dimensional ideal decompostition. See algorithm DIRGZD of BGK 1986.
-     * @return intersection of ideals G_i with ideal(this) subseteq cap_i(
-     *         ideal(G_i) )
+     * Zero dimensional ideal irreducible decompostition. See algorithm DIRGZD of BGK 1986.
+     * @return intersection of ideals G_i with ideal(this) subseteq
+     *         cap_i( ideal(G_i) ) and each ideal G_i has irreducible minimal
+     *         univariate polynomials
      */
     public List<IdealWithUniv<C>> zeroDimDecomposition() {
         List<IdealWithUniv<C>> dec = new ArrayList<IdealWithUniv<C>>();
@@ -1556,13 +1681,17 @@ public class Ideal<C extends GcdRingElem<C>> implements Comparable<Ideal<C>>, Se
 
 
     /**
-     * Zero dimensional ideal decompostition extension. 
+     * Zero dimensional ideal irreducible decompostition extension.
+     * One step decomposition via a minimal univariate polynomial in the lowest variable, 
+     * used after each normalPosition step.
      * @param upol list of univariate polynomials
+     * @param og list of other generators for the ideal
      * @return intersection of ideals G_i with ideal(this) subseteq cap_i(
-     *         ideal(G_i) )
+     *         ideal(G_i) ) and all minimal univariate polynomials of all G_i are irreducible
      */
-    public List<IdealWithUniv<C>> zeroDimDecompositionExtension(List<GenPolynomial<C>> upol) {
-        if ( upol == null || upol.size()+1 != list.ring.nvar ) {
+    public List<IdealWithUniv<C>> zeroDimDecompositionExtension(List<GenPolynomial<C>> upol,
+            List<GenPolynomial<C>> og) {
+        if (upol == null || upol.size() + 1 != list.ring.nvar) {
             throw new IllegalArgumentException("univariate polynomial list not correct " + upol);
         }
         List<IdealWithUniv<C>> dec = new ArrayList<IdealWithUniv<C>>();
@@ -1583,7 +1712,7 @@ public class Ideal<C extends GcdRingElem<C>> implements Comparable<Ideal<C>>, Se
             List<GenPolynomial<C>> iup = new ArrayList<GenPolynomial<C>>();
             iup.add(u); // new polynomial first
             iup.addAll(upol);
-            IdealWithUniv<C> Ipu = new IdealWithUniv<C>(this, iup);
+            IdealWithUniv<C> Ipu = new IdealWithUniv<C>(this, iup, og);
             dec.add(Ipu);
             return dec;
         }
@@ -1600,7 +1729,7 @@ public class Ideal<C extends GcdRingElem<C>> implements Comparable<Ideal<C>>, Se
             List<GenPolynomial<C>> iup = new ArrayList<GenPolynomial<C>>();
             iup.add(p); // new polynomial first
             iup.addAll(upol);
-            IdealWithUniv<C> Ipu = new IdealWithUniv<C>(Ip, iup);
+            IdealWithUniv<C> Ipu = new IdealWithUniv<C>(Ip, iup, og);
             dec.add(Ipu);
         }
         return dec;
@@ -1610,8 +1739,8 @@ public class Ideal<C extends GcdRingElem<C>> implements Comparable<Ideal<C>>, Se
     /**
      * Test for zero dimensional ideal decompostition.
      * @param L intersection of ideals G_i with ideal(G) subseteq cap_i(
-     *            ideal(G_i) )
-     * @return true if L is a zero dimensional decomposition of this, else false
+     *            ideal(G_i) ) and all minimal univariate polynomials of all G_i are irreducible
+     * @return true if L is a zero dimensional irreducible decomposition of this, else false
      */
     public boolean isZeroDimDecomposition(List<IdealWithUniv<C>> L) {
         if (L == null || L.size() == 0) {
@@ -1621,13 +1750,14 @@ public class Ideal<C extends GcdRingElem<C>> implements Comparable<Ideal<C>>, Se
                 return false;
             }
         }
+        // add lower variables if L contains ideals from field extensions
         GenPolynomialRing<C> ofac = list.ring;
         int r = ofac.nvar;
         int rp = L.get(0).ideal.list.ring.nvar;
         int d = rp - r;
         //System.out.println("d = " + d);
         Ideal<C> Id = this;
-        if (d > 0) { // add lower variables
+        if (d > 0) { 
             GenPolynomialRing<C> nfac = ofac.extendLower(d);
             //System.out.println("nfac = " + nfac);
             List<GenPolynomial<C>> elist = new ArrayList<GenPolynomial<C>>(list.list.size());
@@ -1639,7 +1769,6 @@ public class Ideal<C extends GcdRingElem<C>> implements Comparable<Ideal<C>>, Se
             }
             Id = new Ideal<C>(nfac, elist, isGB, isTopt);
         }
-
         // test if this is contained in the intersection
         for (IdealWithUniv<C> I : L) {
             boolean t = I.ideal.contains(Id);
@@ -1649,6 +1778,7 @@ public class Ideal<C extends GcdRingElem<C>> implements Comparable<Ideal<C>>, Se
             }
         }
         // test if all univariate polynomials are contained in the respective ideal
+        //List<GenPolynomial<C>> upprod = new ArrayList<GenPolynomial<C>>(rp);
         for (IdealWithUniv<C> I : L) {
             GenPolynomialRing<C> mfac = I.ideal.list.ring;
             int i = 0;
@@ -1670,17 +1800,29 @@ public class Ideal<C extends GcdRingElem<C>> implements Comparable<Ideal<C>>, Se
      * Compute normal position for variables i and j.
      * @param i first variable index
      * @param j second variable index
+     * @param og other generators for the ideal
      * @return this + (z - x_j - t x_i) in the ring C[z, x_1, ..., x_r]
      */
-    public Ideal<C> normalPositionFor(int i, int j) {
+    public IdealWithUniv<C> normalPositionFor(int i, int j, List<GenPolynomial<C>> og) {
         // extend variables by one
         GenPolynomialRing<C> ofac = list.ring;
+        if (ofac.tord.getEvord() != TermOrder.INVLEX) {
+            throw new RuntimeException("invalid term order for normalPosition " + ofac.tord);
+        }
         GenPolynomialRing<C> nfac = ofac.extendLower(1);
         List<GenPolynomial<C>> elist = new ArrayList<GenPolynomial<C>>(list.list.size() + 1);
         for (GenPolynomial<C> p : getList()) {
             GenPolynomial<C> q = p.extendLower(nfac, 0, 0L);
             //System.out.println("q = "  + q);
             elist.add(q);
+        }
+        List<GenPolynomial<C>> ogen = new ArrayList<GenPolynomial<C>>();
+        if (og != null && og.size() > 0) {
+            for (GenPolynomial<C> p : og) {
+                GenPolynomial<C> q = p.extendLower(nfac, 0, 0L);
+                //System.out.println("q = "  + q);
+                ogen.add(q);
+            }
         }
         Ideal<C> I = new Ideal<C>(nfac, elist, true);
         //System.out.println("I = "  + I);
@@ -1691,22 +1833,25 @@ public class Ideal<C extends GcdRingElem<C>> implements Comparable<Ideal<C>>, Se
         GenPolynomial<C> z = nfac.univariate(nfac.nvar - 1);
         // compute GBs until value of t is OK
         Ideal<C> Ip;
+        GenPolynomial<C> zp;
         int t = 0;
         do {
             t--;
             // zp = z - ( xj - xi * t )
-            GenPolynomial<C> zp = z.subtract(xj.subtract(xi.multiply(nfac.fromInteger(t))));
+            zp = z.subtract(xj.subtract(xi.multiply(nfac.fromInteger(t))));
             zp = zp.monic();
             Ip = I.sum(zp);
             //System.out.println("Ip = " + Ip);
-            if (t % 5 == 0) {
+            if (-t % 5 == 0) {
                 logger.info("normal position, t = " + t);
             }
         } while (!Ip.isNormalPositionFor(i + 1, j + 1));
         if (debug) {
             logger.info("normal position = " + Ip);
         }
-        return Ip;
+        ogen.add(zp);
+        IdealWithUniv<C> Ips = new IdealWithUniv<C>(Ip, null, ogen);
+        return Ips;
     }
 
 
@@ -1751,8 +1896,8 @@ public class Ideal<C extends GcdRingElem<C>> implements Comparable<Ideal<C>>, Se
 
 
     /**
-     * Normal position index, separate more than 2 variables. See also <a
-     * href="http://krum.rz.uni-mannheim.de/mas/src/masring/DIPDEC0.mi.html">mas.masring.DIPDEC0#DIGISR</a>
+     * Normal position index, separate for polynomials with more than 2 variables. See also 
+     * <a href="http://krum.rz.uni-mannheim.de/mas/src/masring/DIPDEC0.mi.html">mas.masring.DIPDEC0#DIGISR</a>
      * @return (i,j) for non-normal variables
      */
     public int[] normalPositionIndex2Vars() {
@@ -1819,8 +1964,7 @@ public class Ideal<C extends GcdRingElem<C>> implements Comparable<Ideal<C>>, Se
 
     /**
      * Normal position index, separate multiple univariate polynomials. See also
-     * <a
-     * href="http://krum.rz.uni-mannheim.de/mas/src/masring/DIPDEC0.mi.html">mas.masring.DIPDEC0#DIGISM</a>
+     * <a href="http://krum.rz.uni-mannheim.de/mas/src/masring/DIPDEC0.mi.html">mas.masring.DIPDEC0#DIGISM</a>
      * @return (i,j) for non-normal variables
      */
     public int[] normalPositionIndexUnivars() {
@@ -1881,7 +2025,7 @@ public class Ideal<C extends GcdRingElem<C>> implements Comparable<Ideal<C>>, Se
         i = list.ring.nvar - 1 - i;
         j = list.ring.nvar - 1 - j;
         np = new int[] { j, i }; // reverse
-        logger.info("normalPositionIndex2Vars, np = " + Arrays.toString(np));
+        logger.info("normalPositionIndexUnivars, np = " + Arrays.toString(np));
         return np;
     }
 
@@ -1889,8 +2033,10 @@ public class Ideal<C extends GcdRingElem<C>> implements Comparable<Ideal<C>>, Se
     /**
      * Zero dimensional ideal decompostition for real roots. See algorithm
      * mas.masring.DIPDEC0#DINTSR.
-     * @return intersection of ideals G_i with ideal(this) subseteq cap_i(
-     *         ideal(G_i) ) and each G_i contains at most bi-variate polynomials
+     * @return intersection of ideals G_i with ideal(this) subseteq
+     *         cap_i( ideal(G_i) ) and each G_i contains at most bi-variate
+     *         polynomials and all univariate minimal polynomials are
+     *         irreducible
      */
     public List<IdealWithUniv<C>> zeroDimRootDecomposition() {
         List<IdealWithUniv<C>> dec = zeroDimDecomposition();
@@ -1907,9 +2053,8 @@ public class Ideal<C extends GcdRingElem<C>> implements Comparable<Ideal<C>>, Se
             if (ri == null || ri.length != 2) {
                 rdec.add(id);
             } else {
-                Ideal<C> I = id.ideal.normalPositionFor(ri[0], ri[1]);
-                //List<IdealWithUniv<C>> rd1 = I.zeroDimDecomposition();
-                List<IdealWithUniv<C>> rd = I.zeroDimDecompositionExtension(id.upolys);
+                IdealWithUniv<C> I = id.ideal.normalPositionFor(ri[0], ri[1], id.others);
+                List<IdealWithUniv<C>> rd = I.ideal.zeroDimDecompositionExtension(id.upolys, I.others);
                 //System.out.println("r_rd = " + rd);
                 dec.addAll(rd);
             }
@@ -1925,6 +2070,42 @@ public class Ideal<C extends GcdRingElem<C>> implements Comparable<Ideal<C>>, Se
      *         ideal(G_i) ) and each G_i is a prime ideal
      */
     public List<IdealWithUniv<C>> zeroDimPrimeDecomposition() {
+        List<IdealWithUniv<C>> pdec = zeroDimPrimeDecompositionFE();
+        List<IdealWithUniv<C>> dec = new ArrayList<IdealWithUniv<C>>();
+        for (IdealWithUniv<C> Ip : pdec) {
+            if (Ip.ideal.getRing().nvar == getRing().nvar) { // no field extension
+                dec.add(Ip);
+            } else { // remove field extension
+                // add other generators for performance
+                Ideal<C> Id = Ip.ideal;
+                if (Ip.others != null) {
+                    //System.out.println("adding Ip.others = " + Ip.others);
+                    List<GenPolynomial<C>> pp = new ArrayList<GenPolynomial<C>>();
+                    pp.addAll(Id.getList());
+                    pp.addAll(Ip.others);
+                    Id = new Ideal<C>(Id.getRing(), pp);
+                }
+                Ideal<C> Is = Id.eliminate(getRing());
+                //System.out.println("Is = " + Is);
+                int s = Ip.upolys.size() - getRing().nvar; // skip field ext univariate polys
+                List<GenPolynomial<C>> upol = Ip.upolys.subList(s, Ip.upolys.size());
+                IdealWithUniv<C> Iu = new IdealWithUniv<C>(Is, upol);
+                //,Ip.others); used above and must be ignored here 
+                dec.add(Iu);
+            }
+        }
+        return dec;
+    }
+
+
+    /**
+     * Zero dimensional ideal prime decompostition, with field extension. See
+     * algorithm mas.masring.DIPDEC0#DINTSS.
+     * @return intersection of ideals G_i with ideal(this) subseteq cap_i(
+     *         ideal(G_i) ) and each G_i is a prime ideal with eventually
+     *         containing field extension variables
+     */
+    public List<IdealWithUniv<C>> zeroDimPrimeDecompositionFE() {
         List<IdealWithUniv<C>> dec = zeroDimRootDecomposition();
         if (this.isZERO()) {
             return dec;
@@ -1939,9 +2120,8 @@ public class Ideal<C extends GcdRingElem<C>> implements Comparable<Ideal<C>>, Se
             if (ri == null || ri.length != 2) {
                 rdec.add(id);
             } else {
-                Ideal<C> I = id.ideal.normalPositionFor(ri[0], ri[1]);
-                //List<IdealWithUniv<C>> rd1 = I.zeroDimDecomposition();
-                List<IdealWithUniv<C>> rd = I.zeroDimDecompositionExtension(id.upolys);
+                IdealWithUniv<C> I = id.ideal.normalPositionFor(ri[0], ri[1], id.others);
+                List<IdealWithUniv<C>> rd = I.ideal.zeroDimDecompositionExtension(id.upolys, I.others);
                 //System.out.println("rd = " + rd);
                 dec.addAll(rd);
             }
@@ -1986,8 +2166,11 @@ public class Ideal<C extends GcdRingElem<C>> implements Comparable<Ideal<C>>, Se
      * @return intersection of primary ideals G_i with ideal(this) = cap_i(
      *         ideal(G_i) )
      */
-    public List<Ideal<C>> zeroDimPrimaryDecomposition() {
+    public List<PrimaryComponent<C>> zeroDimPrimaryDecomposition() {
         List<IdealWithUniv<C>> pdec = zeroDimPrimeDecomposition();
+        if (logger.isInfoEnabled()) {
+            logger.info("prim decomp = " + pdec);
+        }
         return zeroDimPrimaryDecomposition(pdec);
     }
 
@@ -1995,8 +2178,8 @@ public class Ideal<C extends GcdRingElem<C>> implements Comparable<Ideal<C>>, Se
     /**
      * Zero dimensional ideal elimination to original ring.
      * @param pdec list of prime ideals G_i
-     * @return intersection of prime ideals G_i in the ring of this with ideal(this) = cap_i(
-     *         ideal(G_i) )
+     * @return intersection of prime ideals G_i in the ring of this with
+     *         ideal(this) = cap_i( ideal(G_i) )
      */
     public List<IdealWithUniv<C>> zeroDimElimination(List<IdealWithUniv<C>> pdec) {
         List<IdealWithUniv<C>> dec = new ArrayList<IdealWithUniv<C>>();
@@ -2009,13 +2192,59 @@ public class Ideal<C extends GcdRingElem<C>> implements Comparable<Ideal<C>>, Se
         }
         List<IdealWithUniv<C>> qdec = new ArrayList<IdealWithUniv<C>>();
         for (IdealWithUniv<C> Ip : pdec) {
-            Ideal<C> Is = Ip.ideal.eliminate(list.ring);
+            //System.out.println("Ip = " + Ip);
+            List<GenPolynomial<C>> epol = new ArrayList<GenPolynomial<C>>();
+            epol.addAll(Ip.ideal.getList());
+            GenPolynomialRing<C> mfac = Ip.ideal.list.ring;
+            int j = 0;
+            // add univariate polynomials for performance
+            for (GenPolynomial<C> p : Ip.upolys) {
+                GenPolynomial<C> pm = p.extendUnivariate(mfac, j++);
+                if (j != 1) { // skip double
+                    epol.add(pm);
+                }
+            }
+            // add other generators for performance
+            if (Ip.others != null) {
+                epol.addAll(Ip.others);
+            }
+            Ideal<C> Ipp = new Ideal<C>(mfac, epol);
+            // logger.info("eliminate_1 = " + Ipp);
+            TermOrder to = null;
+            if (mfac.tord.getEvord() != TermOrder.IGRLEX) {
+                List<GenPolynomial<C>> epols = new ArrayList<GenPolynomial<C>>();
+                to = new TermOrder(TermOrder.IGRLEX);
+                GenPolynomialRing<C> smfac 
+                   = new GenPolynomialRing<C>(mfac.coFac, mfac.nvar, to, mfac.getVars());
+                for (GenPolynomial<C> p : epol) {
+                    GenPolynomial<C> pm = smfac.copy(p);
+                    epols.add(pm.monic());
+                }
+                //epol = epols; 
+                Ipp = new Ideal<C>(smfac, epols);
+            }
+            epol = red.irreducibleSet(Ipp.getList());
+            Ipp = new Ideal<C>(Ipp.getRing(), epol);
+            if (logger.isInfoEnabled()) {
+                logger.info("eliminate = " + Ipp);
+            }
+            Ideal<C> Is = Ipp.eliminate(list.ring);
+            //System.out.println("Is = " + Is);
+            if (to != null && !Is.list.ring.equals(list.ring)) {
+                List<GenPolynomial<C>> epols = new ArrayList<GenPolynomial<C>>();
+                for (GenPolynomial<C> p : Is.getList()) {
+                    GenPolynomial<C> pm = list.ring.copy(p);
+                    epols.add(pm);
+                }
+                Is = new Ideal<C>(list.ring, epols);
+                //System.out.println("Is = " + Is);
+            }
             int k = Ip.upolys.size() - list.ring.nvar;
             List<GenPolynomial<C>> up = new ArrayList<GenPolynomial<C>>();
-            for ( int i = 0; i < list.ring.nvar; i++ ) {
-                up.add( Ip.upolys.get(i+k) ); 
+            for (int i = 0; i < list.ring.nvar; i++) {
+                up.add(Ip.upolys.get(i + k));
             }
-            IdealWithUniv<C> Ie = new IdealWithUniv<C>(Is,up);
+            IdealWithUniv<C> Ie = new IdealWithUniv<C>(Is, up);
             qdec.add(Ie);
         }
         return qdec;
@@ -2024,52 +2253,747 @@ public class Ideal<C extends GcdRingElem<C>> implements Comparable<Ideal<C>>, Se
 
     /**
      * Zero dimensional ideal primary decompostition.
-     * @param pdec list of prime ideals G_i
+     * @param pdec list of prime ideals G_i with no field extensions
      * @return intersection of primary ideals G_i with ideal(this) = cap_i(
      *         ideal(G_i) )
      */
-    public List<Ideal<C>> zeroDimPrimaryDecomposition(List<IdealWithUniv<C>> pdec) {
-        List<Ideal<C>> dec = new ArrayList<Ideal<C>>();
+    public List<PrimaryComponent<C>> zeroDimPrimaryDecomposition(List<IdealWithUniv<C>> pdec) {
+        List<PrimaryComponent<C>> dec = new ArrayList<PrimaryComponent<C>>();
         if (this.isZERO()) {
             return dec;
         }
         if (this.isONE()) {
-            dec.add(pdec.get(0).ideal);
+            PrimaryComponent<C> pc = new PrimaryComponent<C>(pdec.get(0).ideal, pdec.get(0));
+            dec.add(pc);
             return dec;
         }
-        List<Ideal<C>> qdec = new ArrayList<Ideal<C>>();
         for (IdealWithUniv<C> Ip : pdec) {
-            Ideal<C> Is = Ip.ideal.eliminate(list.ring);
-            Ideal<C> Qs = this.primaryIdeal(Is);
-            qdec.add(Qs);
+            Ideal<C> Qs = this.primaryIdeal(Ip.ideal);
+            PrimaryComponent<C> pc = new PrimaryComponent<C>(Qs, Ip);
+            dec.add(pc);
         }
-        return qdec;
+        return dec;
     }
 
 
     /**
-     * Test for zero dimensional primary ideal decompostition.
-     * @param L list of primary ideals G_i
+     * Test for primary ideal decompostition.
+     * @param L list of primary components G_i
      * @return true if ideal(this) == cap_i( ideal(G_i) )
      */
-    public boolean isZeroDimPrimaryDecomposition(List<Ideal<C>> L) {
+    public boolean isPrimaryDecomposition(List<PrimaryComponent<C>> L) {
         // test if this is contained in the intersection
-        for (Ideal<C> I : L) {
-            boolean t = I.contains(this);
+        for (PrimaryComponent<C> I : L) {
+            boolean t = I.primary.contains(this);
             if (!t) {
                 System.out.println("not contained " + this + " in " + I);
                 return false;
             }
         }
         Ideal<C> isec = null;
-        for (Ideal<C> I : L) {
+        for (PrimaryComponent<C> I : L) {
             if (isec == null) {
-                isec = I;
+                isec = I.primary;
             } else {
-                isec = isec.intersect(I);
+                isec = isec.intersect(I.primary);
             }
         }
         return this.contains(isec);
+    }
+
+
+    /**
+     * Ideal extension.
+     * @param vars list of variables for a polynomial ring for extension
+     * @return ideal G, with coefficients in QuotientRing(GenPolynomialRing<C>(vars))
+     */
+    public IdealWithUniv<Quotient<C>> extension(String[] vars) {
+        GenPolynomialRing<C> fac = getRing();
+        GenPolynomialRing<C> efac = new GenPolynomialRing<C>(fac.coFac, vars.length, fac.tord, vars);
+        IdealWithUniv<Quotient<C>> ext = extension(efac);
+        return ext;
+    }
+
+
+    /**
+     * Ideal extension.
+     * @param efac polynomial ring for extension
+     * @return ideal G, with coefficients in QuotientRing(efac)
+     */
+    public IdealWithUniv<Quotient<C>> extension(GenPolynomialRing<C> efac) {
+        QuotientRing<C> qfac = new QuotientRing<C>(efac);
+        IdealWithUniv<Quotient<C>> ext = extension(qfac);
+        return ext;
+    }
+
+
+    /**
+     * Ideal extension.
+     * @param qfac quotient polynomial ring for extension
+     * @return ideal G, with coefficients in qfac
+     */
+    public IdealWithUniv<Quotient<C>> extension(QuotientRing<C> qfac) {
+        GenPolynomialRing<C> fac = getRing();
+        GenPolynomialRing<C> efac = qfac.ring;
+        String[] rvars = GroebnerBasePartial.remainingVars(fac.getVars(), efac.getVars());
+        //System.out.println("rvars = " + Arrays.toString(rvars));
+
+        GroebnerBasePartial<C> bbp = new GroebnerBasePartial<C>();
+        //wrong: OptimizedPolynomialList<C> pgb = bbp.partialGB(getList(),rvars);
+        OptimizedPolynomialList<C> pgb = bbp.elimPartialGB(getList(), rvars, efac.getVars());
+        if (logger.isInfoEnabled()) {
+            logger.info("rvars = " + Arrays.toString(rvars));
+            logger.info("partialGB = " + pgb);
+        }
+
+        GenPolynomialRing<GenPolynomial<C>> rfac 
+            = new GenPolynomialRing<GenPolynomial<C>>(efac, rvars.length, fac.tord, rvars);
+        List<GenPolynomial<C>> list = pgb.list;
+        List<GenPolynomial<GenPolynomial<C>>> rpgb = PolyUtil.<C> recursive(rfac, list);
+        //System.out.println("rfac = " + rfac);
+        GenPolynomialRing<Quotient<C>> qpfac = new GenPolynomialRing<Quotient<C>>(qfac, rfac);
+        List<GenPolynomial<Quotient<C>>> qpgb = PolyUfdUtil.<C> quotientFromIntegralCoefficients(qpfac, rpgb);
+        //System.out.println("qpfac = " + qpfac);
+
+        // compute f 
+        GreatestCommonDivisor<C> ufd = GCDFactory.getImplementation(fac.coFac);
+        GenPolynomial<C> f = null; // qfac.ring.getONE();
+        for (GenPolynomial<GenPolynomial<C>> p : rpgb) {
+            if (f == null) {
+                f = p.leadingBaseCoefficient();
+            } else {
+                f = ufd.lcm(f, p.leadingBaseCoefficient());
+            }
+        }
+        //SquarefreeAbstract<C> sqf = SquarefreeFactory.getImplementation(fac.coFac);
+        //not required: f = sqf.squarefreePart(f);
+        GenPolynomial<GenPolynomial<C>> fp = rfac.getONE().multiply(f);
+        GenPolynomial<Quotient<C>> fq = PolyUfdUtil.<C> quotientFromIntegralCoefficients(qpfac, fp);
+        if (logger.isInfoEnabled()) {
+            logger.info("extension f = " + f);
+            logger.info("ext = " + qpgb);
+        }
+        List<GenPolynomial<Quotient<C>>> upols = new ArrayList<GenPolynomial<Quotient<C>>>(0);
+        List<GenPolynomial<Quotient<C>>> opols = new ArrayList<GenPolynomial<Quotient<C>>>(1);
+        opols.add(fq);
+
+        qpgb = PolyUtil.<Quotient<C>> monic(qpgb);
+        Ideal<Quotient<C>> ext = new Ideal<Quotient<C>>(qpfac, qpgb);
+        IdealWithUniv<Quotient<C>> extu = new IdealWithUniv<Quotient<C>>(ext, upols, opols);
+        return extu;
+    }
+
+
+    /**
+     * Ideal contraction and permutation.
+     * @param eideal extension ideal of this.
+     * @return contraction ideal of eideal in this polynomial ring
+     */
+    public IdealWithUniv<C> permContraction(IdealWithUniv<Quotient<C>> eideal) {
+        return Ideal.<C> permutation(getRing(), Ideal.<C> contraction(eideal));
+    }
+
+
+    /**
+     * Ideal contraction.
+     * @param eid extension ideal of this.
+     * @return contraction ideal of eid in distributed polynomial ring
+     */
+    public static <C extends GcdRingElem<C>> IdealWithUniv<C> contraction(IdealWithUniv<Quotient<C>> eid) {
+        Ideal<Quotient<C>> eideal = eid.ideal;
+        List<GenPolynomial<Quotient<C>>> qgb = eideal.getList();
+        QuotientRing<C> qfac = (QuotientRing<C>) eideal.getRing().coFac;
+        GenPolynomialRing<GenPolynomial<C>> rfac = new GenPolynomialRing<GenPolynomial<C>>(qfac.ring, eideal.getRing());
+        GenPolynomialRing<C> dfac = qfac.ring.extend(eideal.getRing().getVars());
+        TermOrder to = new TermOrder(qfac.ring.tord.getEvord());
+        dfac = new GenPolynomialRing<C>(dfac.coFac, dfac.nvar, to, dfac.getVars());
+        //System.out.println("qfac = " + qfac);
+        //System.out.println("rfac = " + rfac);
+        //System.out.println("dfac = " + dfac);
+	// convert polynomials
+        List<GenPolynomial<GenPolynomial<C>>> cgb = PolyUfdUtil.<C> integralFromQuotientCoefficients(rfac,qgb);
+        List<GenPolynomial<C>> dgb = PolyUtil.<C> distribute(dfac, cgb);
+        Ideal<C> cont = new Ideal<C>(dfac, dgb);
+	// convert other polynomials
+        List<GenPolynomial<C>> opols = new ArrayList<GenPolynomial<C>>();
+        if (eid.others != null && eid.others.size() > 0) {
+            List<GenPolynomial<GenPolynomial<C>>> orpol 
+                = PolyUfdUtil.<C> integralFromQuotientCoefficients(rfac, eid.others);
+            List<GenPolynomial<C>> opol = PolyUtil.<C> distribute(dfac, orpol);
+            opols.addAll(opol);
+        }
+	// convert univariate polynomials
+        List<GenPolynomial<C>> upols = new ArrayList<GenPolynomial<C>>(0);
+        int i = 0;
+        for (GenPolynomial<Quotient<C>> p : eid.upolys) {
+	    GenPolynomial<Quotient<C>> pm = p.extendUnivariate(eideal.getRing(), i++);
+            //System.out.println("pm = " + pm + ", p = " + p);
+            GenPolynomial<GenPolynomial<C>> urpol = PolyUfdUtil.<C> integralFromQuotientCoefficients(rfac, pm);
+            GenPolynomial<C> upol = PolyUtil.<C> distribute(dfac, urpol);
+            upols.add(upol);
+            //System.out.println("upol = " + upol);
+	}
+        // compute f 
+        GreatestCommonDivisor<C> ufd = GCDFactory.getImplementation(qfac.ring.coFac);
+        GenPolynomial<C> f = null; // qfac.ring.getONE();
+        for (GenPolynomial<GenPolynomial<C>> p : cgb) {
+            if (f == null) {
+                f = p.leadingBaseCoefficient();
+            } else {
+                f = ufd.lcm(f, p.leadingBaseCoefficient());
+            }
+        }
+        GenPolynomial<GenPolynomial<C>> fp = rfac.getONE().multiply(f);
+        f = PolyUtil.<C> distribute(dfac, fp);
+        if (logger.isInfoEnabled()) {
+            logger.info("contraction f = " + f);
+            logger.info("cont = " + cont);
+        }
+        opols.add(f);
+        if (f.isONE()) {
+            IdealWithUniv<C> cf = new IdealWithUniv<C>(cont, upols, opols);
+            return cf;
+        }
+        // compute ideal quotient by f
+        Ideal<C> Q = cont.infiniteQuotientRab(f);
+        IdealWithUniv<C> Qu = new IdealWithUniv<C>(Q, upols, opols);
+        return Qu;
+    }
+
+
+    /**
+     * Ideal permutation.
+     * @param oring polynomial ring to which variables are back permuted.
+     * @param Cont ideal to be permuted
+     * @return permutation of cont in polynomial ring oring
+     */
+    public static <C extends GcdRingElem<C>> IdealWithUniv<C> permutation(GenPolynomialRing<C> oring,
+            IdealWithUniv<C> Cont) {
+        Ideal<C> cont = Cont.ideal;
+        GenPolynomialRing<C> dfac = cont.getRing();
+        // (back) permutation of variables
+        String[] ovars = oring.getVars();
+        String[] dvars = dfac.getVars();
+        //System.out.println("ovars = " + Arrays.toString(ovars));
+        //System.out.println("dvars = " + Arrays.toString(dvars));
+        if (Arrays.equals(ovars, dvars)) { // nothing to do
+            return Cont;
+        }
+        List<Integer> perm = GroebnerBasePartial.getPermutation(dvars, ovars);
+        //System.out.println("perm  = " + perm);
+        GenPolynomialRing<C> pfac = TermOrderOptimization.<C> permutation(perm, cont.getRing());
+        if (logger.isInfoEnabled()) {
+            logger.info("pfac = " + pfac);
+        }
+        List<GenPolynomial<C>> ppolys = TermOrderOptimization.<C> permutation(perm, pfac, cont.getList());
+        //System.out.println("ppolys = " + ppolys);
+        cont = new Ideal<C>(pfac, ppolys);
+        if (logger.isDebugEnabled()) {
+            logger.info("perm cont = " + cont);
+        }
+        List<GenPolynomial<C>> opolys = TermOrderOptimization.<C> permutation(perm, pfac, Cont.others);
+        //System.out.println("opolys = " + opolys);
+        List<GenPolynomial<C>> upolys = TermOrderOptimization.<C> permutation(perm, pfac, Cont.upolys);
+        //System.out.println("opolys = " + opolys);
+        IdealWithUniv<C> Cu = new IdealWithUniv<C>(cont, upolys, opolys);
+        return Cu;
+    }
+
+
+    /**
+     * Ideal radical.
+     * @return the radical ideal of this
+     */
+    public Ideal<C> radical() {
+        List<IdealWithUniv<C>> rdec = radicalDecomposition();
+        List<Ideal<C>> dec = new ArrayList<Ideal<C>>(rdec.size());
+        for (IdealWithUniv<C> ru : rdec) {
+            dec.add(ru.ideal);
+        }
+        Ideal<C> R = intersect(dec);
+        return R;
+    }
+
+
+    /**
+     * Ideal radical decompostition.
+     * @return intersection of ideals G_i with ideal(this) subseteq cap_i(
+     *         ideal(G_i) ) and each G_i is a radical ideal
+     */
+    public List<IdealWithUniv<C>> radicalDecomposition() {
+        // check dimension
+        int z = commonZeroTest();
+        List<IdealWithUniv<C>> dec = new ArrayList<IdealWithUniv<C>>();
+        List<GenPolynomial<C>> ups = new ArrayList<GenPolynomial<C>>();
+        // dimension -1
+        if (z < 0) {
+            IdealWithUniv<C> id = new IdealWithUniv<C>(this, ups);
+            dec.add(id);
+            return dec;
+        }
+        // dimension 0
+        if (z == 0) {
+            dec = zeroDimRadicalDecomposition();
+            return dec;
+        }
+        // dimension > 0
+        if (this.isZERO()) {
+            return dec;
+        }
+        Dimension dim = dimension();
+        if (logger.isInfoEnabled()) {
+            logger.info("dimension = " + dim);
+        }
+
+        // shortest maximal independent set
+        Set<Set<Integer>> M = dim.M;
+        Set<Integer> min = null;
+        for (Set<Integer> m : M) {
+            if (min == null) {
+                min = m;
+                continue;
+            }
+            if (m.size() < min.size()) {
+                min = m;
+            }
+        }
+        //System.out.println("min = " + min);
+        String[] mvars = new String[min.size()];
+        int j = 0;
+        for (Integer i : min) {
+            mvars[j++] = dim.v[i];
+        }
+        if (logger.isInfoEnabled()) {
+            logger.info("extension for variables = " + Arrays.toString(mvars));
+        }
+        // reduce to dimension zero
+        IdealWithUniv<Quotient<C>> Ext = extension(mvars);
+        if (logger.isInfoEnabled()) {
+            logger.info("extension = " + Ext);
+        }
+
+        List<IdealWithUniv<Quotient<C>>> edec = Ext.ideal.zeroDimRadicalDecomposition();
+        if (logger.isInfoEnabled()) {
+            logger.info("0-dim radical decomp = " + edec);
+        }
+        // remove field extensions are not required
+        // reconstruct dimension
+        for (IdealWithUniv<Quotient<C>> ep : edec) {
+            IdealWithUniv<C> cont = permContraction(ep);
+            //System.out.println("cont = " + cont);
+            dec.add(cont);
+        }
+        IdealWithUniv<C> extcont = permContraction(Ext);
+        //System.out.println("extcont = " + extcont);
+
+        // get f
+        List<GenPolynomial<C>> ql = extcont.others;
+        if (ql.size() == 0) { // should not happen
+            return dec;
+        }
+        GenPolynomial<C> fx = ql.get(0);
+        //System.out.println("cont(Ext) fx = " + fx + ", " + fx.ring);
+        if (fx.isONE()) {
+            return dec;
+        }
+        Ideal<C> T = sum(fx);
+        //System.out.println("T.rec = " + T.getList());
+        if (T.isONE()) {
+            logger.info("1 in ideal for " + fx);
+            return dec;
+        }
+        if (logger.isInfoEnabled()) {
+            logger.info("radical decomp ext-cont fx = " + fx);
+            logger.info("recursion radical decomp T = " + T);
+        }
+        // recursion:
+        List<IdealWithUniv<C>> Tdec = T.radicalDecomposition();
+        if (logger.isInfoEnabled()) {
+            logger.info("recursion radical decomp = " + Tdec);
+        }
+        dec.addAll(Tdec);
+        return dec;
+    }
+
+
+    /**
+     * Ideal irreducible decompostition.
+     * @return intersection of ideals G_i with ideal(this) subseteq cap_i(
+     *         ideal(G_i) ) and each G_i is an ideal with irreducible univariate
+     *         polynomials (after extension to a zero dimensional ideal)
+     */
+    public List<IdealWithUniv<C>> decomposition() {
+        // check dimension
+        int z = commonZeroTest();
+        List<IdealWithUniv<C>> dec = new ArrayList<IdealWithUniv<C>>();
+        List<GenPolynomial<C>> ups = new ArrayList<GenPolynomial<C>>();
+        // dimension -1
+        if (z < 0) {
+            IdealWithUniv<C> id = new IdealWithUniv<C>(this, ups);
+            dec.add(id);
+            return dec;
+        }
+        // dimension 0
+        if (z == 0) {
+            dec = zeroDimDecomposition();
+            return dec;
+        }
+        // dimension > 0
+        if (this.isZERO()) {
+            return dec;
+        }
+        Dimension dim = dimension();
+        if (logger.isInfoEnabled()) {
+            logger.info("dimension = " + dim);
+        }
+
+        // shortest maximal independent set
+        Set<Set<Integer>> M = dim.M;
+        Set<Integer> min = null;
+        for (Set<Integer> m : M) {
+            if (min == null) {
+                min = m;
+                continue;
+            }
+            if (m.size() < min.size()) {
+                min = m;
+            }
+        }
+        //System.out.println("min = " + min);
+        String[] mvars = new String[min.size()];
+        int j = 0;
+        for (Integer i : min) {
+            mvars[j++] = dim.v[i];
+        }
+        if (logger.isInfoEnabled()) {
+            logger.info("extension for variables = " + Arrays.toString(mvars));
+        }
+        // reduce to dimension zero
+        IdealWithUniv<Quotient<C>> Ext = extension(mvars);
+        if (logger.isInfoEnabled()) {
+            logger.info("extension = " + Ext);
+        }
+
+        List<IdealWithUniv<Quotient<C>>> edec = Ext.ideal.zeroDimDecomposition();
+        if (logger.isInfoEnabled()) {
+            logger.info("0-dim irred decomp = " + edec);
+        }
+        // remove field extensions are not required
+        // reconstruct dimension
+        for (IdealWithUniv<Quotient<C>> ep : edec) {
+            IdealWithUniv<C> cont = permContraction(ep);
+            //System.out.println("cont = " + cont);
+            dec.add(cont);
+        }
+        IdealWithUniv<C> extcont = permContraction(Ext);
+        //System.out.println("extcont = " + extcont);
+
+        // get f
+        List<GenPolynomial<C>> ql = extcont.others;
+        if (ql.size() == 0) { // should not happen
+            return dec;
+        }
+        GenPolynomial<C> fx = ql.get(0);
+        //System.out.println("cont(Ext) fx = " + fx + ", " + fx.ring);
+        if (fx.isONE()) {
+            return dec;
+        }
+        Ideal<C> T = sum(fx);
+        //System.out.println("T.rec = " + T.getList());
+        if (T.isONE()) {
+            logger.info("1 in ideal for " + fx);
+            return dec;
+        }
+        if (logger.isInfoEnabled()) {
+            logger.info("radical decomp ext-cont fx = " + fx);
+            logger.info("recursion radical decomp T = " + T);
+        }
+        // recursion:
+        List<IdealWithUniv<C>> Tdec = T.decomposition();
+        if (logger.isInfoEnabled()) {
+            logger.info("recursion irred decomposition = " + Tdec);
+        }
+        dec.addAll(Tdec);
+        return dec;
+    }
+
+
+    /**
+     * Ideal prime decompostition.
+     * @return intersection of ideals G_i with ideal(this) subseteq cap_i(
+     *         ideal(G_i) ) and each G_i is a prime ideal
+     */
+    public List<IdealWithUniv<C>> primeDecomposition() {
+        // check dimension
+        int z = commonZeroTest();
+        List<IdealWithUniv<C>> dec = new ArrayList<IdealWithUniv<C>>();
+        List<GenPolynomial<C>> ups = new ArrayList<GenPolynomial<C>>();
+        // dimension -1
+        if (z < 0) {
+            IdealWithUniv<C> id = new IdealWithUniv<C>(this, ups);
+            dec.add(id);
+            return dec;
+        }
+        // dimension 0
+        if (z == 0) {
+            dec = zeroDimPrimeDecomposition();
+            return dec;
+        }
+        // dimension > 0
+        if (this.isZERO()) {
+            return dec;
+        }
+        Dimension dim = dimension();
+        if (logger.isInfoEnabled()) {
+            logger.info("dimension = " + dim);
+        }
+
+        // shortest maximal independent set
+        Set<Set<Integer>> M = dim.M;
+        Set<Integer> min = null;
+        for (Set<Integer> m : M) {
+            if (min == null) {
+                min = m;
+                continue;
+            }
+            if (m.size() < min.size()) {
+                min = m;
+            }
+        }
+        //System.out.println("min = " + min);
+        String[] mvars = new String[min.size()];
+        int j = 0;
+        for (Integer i : min) {
+            mvars[j++] = dim.v[i];
+        }
+        if (logger.isInfoEnabled()) {
+            logger.info("extension for variables = " + Arrays.toString(mvars));
+        }
+        // reduce to dimension zero
+        IdealWithUniv<Quotient<C>> Ext = extension(mvars);
+        if (logger.isInfoEnabled()) {
+            logger.info("extension = " + Ext);
+        }
+        List<IdealWithUniv<Quotient<C>>> edec = Ext.ideal.zeroDimPrimeDecomposition();
+        if (logger.isInfoEnabled()) {
+            logger.info("0-dim prime decomp = " + edec);
+        }
+        // remove field extensions, already done
+        // reconstruct dimension
+        for (IdealWithUniv<Quotient<C>> ep : edec) {
+            IdealWithUniv<C> cont = permContraction(ep);
+            //System.out.println("cont = " + cont);
+            dec.add(cont);
+        }
+        // get f
+        IdealWithUniv<C> extcont = permContraction(Ext);
+        //System.out.println("extcont = " + extcont);
+        List<GenPolynomial<C>> ql = extcont.others;
+        if (ql.size() == 0) { // should not happen
+            return dec;
+        }
+        GenPolynomial<C> fx = ql.get(0);
+        //System.out.println("cont(Ext) fx = " + fx + ", " + fx.ring);
+        if (fx.isONE()) {
+            return dec;
+        }
+        // compute exponent not required
+        Ideal<C> T = sum(fx);
+        //System.out.println("T.rec = " + T.getList());
+        if (T.isONE()) {
+            logger.info("1 in ideal for " + fx);
+            return dec;
+        }
+        if (logger.isInfoEnabled()) {
+            logger.info("radical decomp ext-cont fx = " + fx);
+            logger.info("recursion radical decomp T = " + T);
+        }
+        // recursion:
+        List<IdealWithUniv<C>> Tdec = T.primeDecomposition();
+        if (logger.isInfoEnabled()) {
+            logger.info("recursion prime decomp = " + Tdec);
+        }
+        dec.addAll(Tdec);
+        return dec;
+    }
+
+
+    /**
+     * Test for ideal decompostition.
+     * @param L intersection of ideals G_i with ideal(G) eq cap_i(ideal(G_i) )
+     * @return true if L is a decomposition of this, else false
+     */
+    public boolean isDecomposition(List<IdealWithUniv<C>> L) {
+        if (L == null || L.size() == 0) {
+            if (this.isZERO()) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        GenPolynomialRing<C> ofac = list.ring;
+        int r = ofac.nvar;
+        int rp = L.get(0).ideal.list.ring.nvar;
+        int d = rp - r;
+        //System.out.println("d = " + d);
+        Ideal<C> Id = this;
+        if (d > 0) { // add lower variables
+            GenPolynomialRing<C> nfac = ofac.extendLower(d);
+            //System.out.println("nfac = " + nfac);
+            List<GenPolynomial<C>> elist = new ArrayList<GenPolynomial<C>>(list.list.size());
+            for (GenPolynomial<C> p : getList()) {
+                //System.out.println("p = " + p);
+                GenPolynomial<C> q = p.extendLower(nfac, 0, 0L);
+                //System.out.println("q = "  + q);
+                elist.add(q);
+            }
+            Id = new Ideal<C>(nfac, elist, isGB, isTopt);
+        }
+
+        // test if this is contained in the intersection
+        for (IdealWithUniv<C> I : L) {
+            boolean t = I.ideal.contains(Id);
+            if (!t) {
+                System.out.println("not contained " + this + " in " + I.ideal);
+                return false;
+            }
+        }
+        //         // test if all univariate polynomials are contained in the respective ideal
+        //         for (IdealWithUniv<C> I : L) {
+        //             GenPolynomialRing<C> mfac = I.ideal.list.ring;
+        //             int i = 0;
+        //             for (GenPolynomial<C> p : I.upolys) {
+        //                 GenPolynomial<C> pm = p.extendUnivariate(mfac, i++);
+        //                 //System.out.println("pm = " + pm + ", p = " + p);
+        //                 boolean t = I.ideal.contains(pm);
+        //                 if (!t) {
+        //                     System.out.println("not contained " + pm + " in " + I.ideal);
+        //                     return false;
+        //                 }
+        //             }
+        //         }
+        return true;
+    }
+
+
+    /**
+     * Ideal primary decompostition.
+     * @return intersection of ideals G_i with ideal(this) eq cap_i( ideal(G_i) )
+     *         and each G_i is a primary ideal
+     */
+    public List<PrimaryComponent<C>> primaryDecomposition() {
+        // check dimension
+        int z = commonZeroTest();
+        List<PrimaryComponent<C>> dec = new ArrayList<PrimaryComponent<C>>();
+        List<GenPolynomial<C>> ups = new ArrayList<GenPolynomial<C>>();
+        // dimension -1
+        if (z < 0) {
+            IdealWithUniv<C> id = new IdealWithUniv<C>(this, ups);
+            PrimaryComponent<C> pc = new PrimaryComponent<C>(this, id);
+            dec.add(pc);
+            return dec;
+        }
+        // dimension 0
+        if (z == 0) {
+            dec = zeroDimPrimaryDecomposition();
+            return dec;
+        }
+        // dimension > 0
+        if (this.isZERO()) {
+            return dec;
+        }
+        Dimension dim = dimension();
+        if (logger.isInfoEnabled()) {
+            logger.info("dimension = " + dim);
+        }
+
+        // shortest maximal independent set
+        Set<Set<Integer>> M = dim.M;
+        Set<Integer> min = null;
+        for (Set<Integer> m : M) {
+            if (min == null) {
+                min = m;
+                continue;
+            }
+            if (m.size() < min.size()) {
+                min = m;
+            }
+        }
+        //System.out.println("min = " + min);
+        String[] mvars = new String[min.size()];
+        int j = 0;
+        for (Integer i : min) {
+            mvars[j++] = dim.v[i];
+        }
+        if (logger.isInfoEnabled()) {
+            logger.info("extension for variables = " + Arrays.toString(mvars));
+        }
+        // reduce to dimension zero
+        IdealWithUniv<Quotient<C>> Ext = extension(mvars);
+        if (logger.isInfoEnabled()) {
+            logger.info("extension = " + Ext);
+        }
+
+        List<PrimaryComponent<Quotient<C>>> edec = Ext.ideal.zeroDimPrimaryDecomposition();
+        if (logger.isInfoEnabled()) {
+            logger.info("0-dim primary decomp = " + edec);
+        }
+        // remove field extensions, already done
+        // reconstruct dimension
+        List<GenPolynomial<Quotient<C>>> upq = new ArrayList<GenPolynomial<Quotient<C>>>();
+        for (PrimaryComponent<Quotient<C>> ep : edec) {
+            IdealWithUniv<Quotient<C>> epu = new IdealWithUniv<Quotient<C>>(ep.primary, upq);
+            IdealWithUniv<C> contq = permContraction(epu);
+            IdealWithUniv<C> contp = permContraction(ep.prime);
+            PrimaryComponent<C> pc = new PrimaryComponent<C>(contq.ideal, contp);
+            //System.out.println("pc = " + pc);
+            dec.add(pc);
+        }
+
+        // get f
+        IdealWithUniv<C> extcont = permContraction(Ext);
+        if (debug) {
+            logger.info("cont(Ext) = " + extcont);
+        }
+        List<GenPolynomial<C>> ql = extcont.others;
+        if (ql.size() == 0) { // should not happen
+            return dec;
+        }
+        GenPolynomial<C> fx = ql.get(0);
+        //System.out.println("cont(Ext) fx = " + fx + ", " + fx.ring);
+        if (fx.isONE()) {
+            return dec;
+        }
+        // compute exponent
+        int s = this.infiniteQuotientExponent(fx, extcont.ideal);
+        if (s == 0) {
+            logger.info("exponent is 0 ");
+            return dec;
+        }
+        if (s > 1) {
+            fx = Power.<GenPolynomial<C>> positivePower(fx, s);
+        }
+        if (debug) {
+            logger.info("exponent fx = " + s + ", fx^s = " + fx);
+        }
+
+        Ideal<C> T = sum(fx);
+        //System.out.println("T.rec = " + T.getList());
+        if (T.isONE()) {
+            logger.info("1 in ideal for " + fx);
+            return dec;
+        }
+        if (logger.isInfoEnabled()) {
+            logger.info("radical decomp ext-cont fx = " + fx);
+            logger.info("recursion radical decomp T = " + T);
+        }
+        // recursion:
+        List<PrimaryComponent<C>> Tdec = T.primaryDecomposition();
+        if (logger.isInfoEnabled()) {
+            logger.info("recursion primary decomp = " + Tdec);
+        }
+        dec.addAll(Tdec);
+        return dec;
     }
 
 }

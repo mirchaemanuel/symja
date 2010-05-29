@@ -1,5 +1,5 @@
 /*
- * $Id: GCDFactory.java 3068 2010-04-11 17:27:16Z kredel $
+ * $Id: GCDFactory.java 3145 2010-05-23 09:35:27Z kredel $
  */
 
 package edu.jas.ufd;
@@ -17,6 +17,7 @@ import edu.jas.arith.ModLongRing;
 import edu.jas.structure.GcdRingElem;
 import edu.jas.structure.RingFactory;
 import edu.jas.structure.ModularRingFactory;
+import edu.jas.kern.ComputerThreads;
 
 
 /**
@@ -66,10 +67,9 @@ import edu.jas.structure.ModularRingFactory;
  */
 
 public class GCDFactory {
-    public static boolean NO_THREADS = true;
 
 
-//    private static final Logger logger = Logger.getLogger(GCDFactory.class);
+    private static final Logger logger = Logger.getLogger(GCDFactory.class);
 
 
     /**
@@ -208,7 +208,7 @@ public class GCDFactory {
     public static <C extends GcdRingElem<C>> GreatestCommonDivisorAbstract<C> getImplementation(
             RingFactory<C> fac) {
         GreatestCommonDivisorAbstract/*raw type<C>*/ufd;
-//        logger.debug("fac = " + fac.getClass().getName());
+        logger.debug("fac = " + fac.getClass().getName());
         int t = 0;
         Object ofac = fac;
         if (ofac instanceof BigInteger) {
@@ -241,7 +241,7 @@ public class GCDFactory {
                 ufd = new GreatestCommonDivisorSubres<C>();
             }
         }
-//        logger.debug("ufd = " + ufd);
+        logger.debug("ufd = " + ufd);
         return (GreatestCommonDivisorAbstract<C>) ufd;
     }
 
@@ -250,16 +250,16 @@ public class GCDFactory {
      * Determine suitable proxy for gcd algorithms, other cases.
      * @param fac RingFactory<C>.
      * @return gcd algorithm implementation.
+     * <b>Note:</b> This method contains a hack for Google app engine to not use threads.
+     * @see edu.jas.kern.ComputerThreads#NO_THREADS
      */
     @SuppressWarnings("unchecked")
     public static <C extends GcdRingElem<C>> GreatestCommonDivisorAbstract<C> getProxy(RingFactory<C> fac) {
-    
-        if ( NO_THREADS ) {
+        if ( ComputerThreads.NO_THREADS ) { // hack for Google app engine
            return GCDFactory.<C> getImplementation(fac);
         }
-      
         GreatestCommonDivisorAbstract/*raw type<C>*/ufd;
-//        logger.debug("fac = " + fac.getClass().getName());
+        logger.debug("fac = " + fac.getClass().getName());
         int t = 0;
         Object ofac = fac;
         if (ofac instanceof BigInteger) {
@@ -296,7 +296,7 @@ public class GCDFactory {
                                       new GreatestCommonDivisorPrimitive<C>());
             }
         }
-//        logger.debug("ufd = " + ufd);
+        logger.debug("ufd = " + ufd);
         return (GCDProxy<C>) ufd;
     }
 
