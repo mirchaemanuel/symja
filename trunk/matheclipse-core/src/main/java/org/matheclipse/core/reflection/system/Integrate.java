@@ -135,6 +135,7 @@ public class Integrate extends AbstractFunctionEvaluator implements IConstantHea
 	}
 
 	/**
+	 * Split the expression into numerator and denominator part
 	 * 
 	 * @param arg
 	 * @return <code>null</code> if the expression couldn't be split into

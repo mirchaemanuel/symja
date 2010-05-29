@@ -8,12 +8,13 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Stack;
 
 import org.matheclipse.basic.Config;
 import org.matheclipse.basic.Util;
 import org.matheclipse.core.convert.AST2Expr;
-import org.matheclipse.core.eval.exception.RecursionLimitExceeded; 
+import org.matheclipse.core.eval.exception.RecursionLimitExceeded;
 import org.matheclipse.core.eval.interfaces.IFunctionEvaluator;
 import org.matheclipse.core.eval.interfaces.ISymbolEvaluator;
 import org.matheclipse.core.expression.ComplexSym;
@@ -47,7 +48,7 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -2827365622098588921L;
+	private static final long serialVersionUID = 407328682800652434L;
 
 	/**
 	 * Associate a symbolname in this ThreadLocal with the symbol created in this
@@ -55,13 +56,13 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 	 * 
 	 * @see ExprFactory.fSymbolMap for global symbol names
 	 */
-	transient protected final HashMap<String, ISymbol> fVariableMap;
+	private HashMap<String, ISymbol> fVariableMap;
 
 	/**
 	 * Associate a symbolname with a local variable stack in this thread
 	 * 
 	 */
-	transient protected final HashMap<String, Stack<IExpr>> fLocalVariableStackMap;
+	transient private HashMap<String, Stack<IExpr>> fLocalVariableStackMap = null;
 
 	/**
 	 * if set the current thread should stop evaluation;
@@ -129,7 +130,8 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 	};
 
 	/**
-	 * Removes the current thread's value for the EvalEngine's thread-local variable.  
+	 * Removes the current thread's value for the EvalEngine's thread-local
+	 * variable.
 	 * 
 	 * @see java.lang.ThreadLocal#remove()
 	 */
@@ -200,8 +202,7 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 		fRecursionLimit = recursionLimit;
 		fIterationLimit = iterationLimit;
 		fOutPrintStream = out;
-		fVariableMap = new HashMap<String, ISymbol>();
-		fLocalVariableStackMap = new HashMap<String, Stack<IExpr>>();
+		
 		// fNamespace = fExpressionFactory.getNamespace();
 
 		init();
@@ -928,6 +929,13 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 		return evaluate(parse(expression));
 	}
 
+	final public Map<String, Stack<IExpr>> getLocalVariableStackMap() {
+		if (fLocalVariableStackMap == null) {
+			fLocalVariableStackMap = new HashMap<String, Stack<IExpr>>();
+		}
+		return fLocalVariableStackMap;
+	}
+
 	/**
 	 * Get the local variable stack for a given symbol name. If the local variable
 	 * stack doesn't exist, return <code>null</code>
@@ -936,7 +944,7 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 	 * @return <code>null</code> if the stack doesn't exist
 	 */
 	final public static Stack<IExpr> localStack(final String symbolName) {
-		return get().fLocalVariableStackMap.get(symbolName);
+		return get().getLocalVariableStackMap().get(symbolName);
 	}
 
 	/**
@@ -947,7 +955,7 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 	 * @return
 	 */
 	public static Stack<IExpr> localStackCreate(final String symbolName) {
-		HashMap<String, Stack<IExpr>> localVariableStackMap = get().fLocalVariableStackMap;
+		Map<String, Stack<IExpr>> localVariableStackMap = get().getLocalVariableStackMap();
 		Stack<IExpr> temp = localVariableStackMap.get(symbolName);
 		if (temp != null) {
 			return temp;
@@ -957,10 +965,14 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 		return temp;
 	}
 
-	public static HashMap<String, ISymbol> getVariableMap() {
-		return get().fVariableMap;
-	}
 
+	final public Map<String, ISymbol> getVariableMap() {
+		if (fVariableMap == null) {
+			fVariableMap = new HashMap<String, ISymbol>();
+		}
+		return fVariableMap;
+	}
+	
 	public String toString() {
 		StringBuffer buf = new StringBuffer();
 		if (fVariableMap != null) {

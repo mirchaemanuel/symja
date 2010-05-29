@@ -1,5 +1,5 @@
 /*
- * $Id: SquarefreeInfiniteFieldCharP.java 2752 2009-07-15 21:49:01Z kredel $
+ * $Id: SquarefreeInfiniteFieldCharP.java 3154 2010-05-24 19:56:13Z kredel $
  */
 
 package edu.jas.ufd;
@@ -139,12 +139,15 @@ public class SquarefreeInfiniteFieldCharP<C extends GcdRingElem<C>> extends Squa
         if (sf == null || sf.size() == 0) {
             return null;
         }
-        //System.out.println("sf,quot = " + sf);
+        if ( logger.isInfoEnabled() ) {
+            logger.info("sf,quot = " + sf);
+        }
         // better: test if sf.size() == 2 // no, since num and den factors 
         Long k = null;
         Long cl = c.longValue();
         for (Quotient<C> p : sf.keySet()) {
-            if (p.isConstant()) {
+            //System.out.println("p = " + p);
+            if (p.isConstant()) { // todo: check for non-constants in coefficients
                 continue;
             }
             Long e = sf.get(p);
@@ -167,16 +170,15 @@ public class SquarefreeInfiniteFieldCharP<C extends GcdRingElem<C>> extends Squa
         Quotient<C> rp = P.ring.getONE();
         for (Quotient<C> q : sf.keySet()) {
             Long e = sf.get(q);
-            if (e > k) {
-                long ep = e / cl;
-                q = Power.<Quotient<C>> positivePower(q, ep);
+            //System.out.println("q = " + q + ", e = " + e);
+            if (e >= k) {
+                e = e / cl;
+                //q = Power.<Quotient<C>> positivePower(q, e);
+                root.put(q, e);
+            } else { // constant case
+                root.put(q, e);
             }
-            rp = rp.multiply(q);
         }
-        if (k >= cl) {
-            k = k / cl;
-        }
-        root.put(rp, k);
         //System.out.println("root = " + root);
         return root;
     }
@@ -237,6 +239,7 @@ public class SquarefreeInfiniteFieldCharP<C extends GcdRingElem<C>> extends Squa
             ExpVector e = ExpVector.create(1, 0, fl);
             d.doPutToMap(e, r);
         }
+        logger.info("sm,root,d = " + d);
         return d;
     }
 
@@ -280,14 +283,21 @@ public class SquarefreeInfiniteFieldCharP<C extends GcdRingElem<C>> extends Squa
             }
             Quotient<C> r = rf.getONE();
             for (Quotient<C> rp : sm.keySet()) {
+                //System.out.println("rp = " + rp);
                 long gl = sm.get(rp);
+                //System.out.println("gl = " + gl);
+                Quotient<C> re = rp;
                 if (gl > 1) {
-                    rp = Power.<Quotient<C>> positivePower(rp, gl);
+                    re = Power.<Quotient<C>> positivePower(rp, gl);
                 }
-                r = r.multiply(rp);
+                //System.out.println("re = " + re);
+                r = r.multiply(re); 
             }
             ExpVector e = ExpVector.create(1, 0, fl);
             d.doPutToMap(e, r);
+        }
+        if (logger.isInfoEnabled()) {
+            logger.info("sm,base,d = " + d);
         }
         return d;
     }

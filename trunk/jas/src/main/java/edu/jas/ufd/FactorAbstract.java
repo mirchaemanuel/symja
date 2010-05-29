@@ -1,5 +1,5 @@
 /*
- * $Id: FactorAbstract.java 3068 2010-04-11 17:27:16Z kredel $
+ * $Id: FactorAbstract.java 3127 2010-05-10 21:50:05Z kredel $
  */
 
 package edu.jas.ufd;
@@ -182,7 +182,7 @@ public abstract class FactorAbstract<C extends GcdRingElem<C>> implements Factor
             factors.add(P);
             return factors;
         }
-        //List<GenPolynomial<C>> klist = PolyUfdUtil.<C> backSubstituteKronecker(pfac, ulist, d);
+        //wrong: List<GenPolynomial<C>> klist = PolyUfdUtil.<C> backSubstituteKronecker(pfac, ulist, d);
         //System.out.println("back(klist) = " + PolyUfdUtil.<C> backSubstituteKronecker(pfac, ulist, d));
         if (logger.isInfoEnabled()) {
             logger.info("ulist = " + ulist);
@@ -207,6 +207,7 @@ public abstract class FactorAbstract<C extends GcdRingElem<C>> implements Factor
                 if (trial.degree() > deg || trial.isConstant()) {
                     continue;
                 }
+		trial = trial.monic();
                 ti++;
                 if (ti % 1000 == 0) {
                     System.out.print("ti(" + ti + ") ");
@@ -224,13 +225,19 @@ public abstract class FactorAbstract<C extends GcdRingElem<C>> implements Factor
                     //System.out.println("trial = " + trial);
                     factors.add(trial);
                     u = PolyUtil.<C> basePseudoDivide(u, trial); //u = u.divide( trial );
-                    if (ulist.removeAll(flist)) {
+                    if ( u.isConstant() ) {
+                        j = dl+1;
+                        break;
+                    }
+                    //if (ulist.removeAll(flist)) {
+                    ulist = removeOnce(ulist,flist);
+                    if ( ulist != null ) {
                         //System.out.println("new ulist = " + ulist);
                         dl = (ulist.size() + 1) / 2;
                         j = 0; // since j++
                         break;
-                    } else {
-                        logger.error("error removing flist from ulist = " + ulist);
+		    //} else {
+                    //    logger.error("error removing flist from ulist = " + ulist);
                     }
                 }
             }
@@ -246,6 +253,16 @@ public abstract class FactorAbstract<C extends GcdRingElem<C>> implements Factor
             factors.add(P);
         }
         return factors;
+    }
+
+
+    private static <T> List<T> removeOnce(List<T> a, List<T> b) {
+	List<T> res = new ArrayList<T>();
+	res.addAll(a);
+	for ( T e : b ) {
+	    boolean t = res.remove(e);
+	}
+	return res;
     }
 
 

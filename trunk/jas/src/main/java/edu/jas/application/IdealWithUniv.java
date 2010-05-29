@@ -1,5 +1,5 @@
 /*
- * $Id: IdealWithUniv.java 3111 2010-05-05 21:05:56Z kredel $
+ * $Id: IdealWithUniv.java 3157 2010-05-27 19:46:36Z kredel $
  */
 
 package edu.jas.application;
@@ -27,8 +27,21 @@ public class IdealWithUniv<C extends GcdRingElem<C>> implements Serializable {
 
     /**
      * The list of univariate polynomials.
+     * Contains polynomials from serveral rings, depending on the stage of the decomposition. 
+     * 1) polynomials in a ring of one variable,
+     * 2) polynomials depending on only one variable but in a ring with multiple variables,
+     * 3) after contraction to a non-zero dimensional ring multivariate polynomials depending on 
+     * one significant variable and multiple variables from the quotient coefficients.
      */
     public final List<GenPolynomial<C>> upolys;
+
+
+    /**
+     * A list of other useful polynomials.
+     * 1) field extension polynomials,
+     * 2) generators for infinite quotients.
+     */
+    public final List<GenPolynomial<C>> others;
 
 
     /**
@@ -42,11 +55,23 @@ public class IdealWithUniv<C extends GcdRingElem<C>> implements Serializable {
     /**
      * Constructor.
      * @param id the ideal
-     * @param up the list of univaraite polynomials
+     * @param up the list of univariate polynomials
      */
     protected IdealWithUniv(Ideal<C> id, List<GenPolynomial<C>> up) {
+        this(id, up, null);
+    }
+
+
+    /**
+     * Constructor.
+     * @param id the ideal
+     * @param up the list of univariate polynomials
+     * @param og the list of other polynomials
+     */
+    protected IdealWithUniv(Ideal<C> id, List<GenPolynomial<C>> up, List<GenPolynomial<C>> og) {
         ideal = id;
         upolys = up;
+        others = og;
     }
 
 
@@ -56,7 +81,12 @@ public class IdealWithUniv<C extends GcdRingElem<C>> implements Serializable {
      */
     @Override
     public String toString() {
-        return ideal.toString() + "\nunivariate polynomials:\n" + upolys.toString();
+        String s = ideal.toString() + "\nunivariate polynomials:\n" + upolys.toString();
+        if (others == null) {
+            return s;
+        } else {
+            return s + "\nother polynomials:\n" + others.toString();
+        }
     }
 
 
@@ -67,7 +97,12 @@ public class IdealWithUniv<C extends GcdRingElem<C>> implements Serializable {
      */
     public String toScript() {
         // Python case
-        return ideal.toScript() + ",  " + upolys.toString();
+        String s = ideal.toScript() + ",  " + upolys.toString();
+        if (others == null) {
+            return s;
+        } else {
+            return s + ", " + others.toString();
+        }
     }
 
 }
