@@ -12,6 +12,12 @@ gives {{{42}}}.
 == Identifiers ==
 An identifier is a user-choosen name for a variable or function. The first character in an identifier must be a letter or the "$" character. Following characters may also include digits. Predefined identifiers for functions like Sin, Cos, and constants like Pi, E etc. are starting with an upper case letter.
 
+== Strings ==
+A string is a representation of text as a sequence of characters. Strings must be surrounded by double quotes. An example string:
+{{{
+  "...Hello world..." 
+}}}
+
 = Expression types =
 
 || *Type*	|| *Description*	 || *Input Example* ||
