@@ -9,6 +9,9 @@ Symja has an evaluation engine for mathematical expressions. A semicolon operato
 }}}
 gives {{{42}}}.
 
+== Identifiers ==
+An identifier is a user-choosen name for a variable or function. The first character in an identifier must be a letter or the "$" character. Following characters may also include digits. Predefined identifiers for functions like Sin, Cos, and constants like Pi, E etc. are starting with an upper case letter.
+
 = Expression types =
 ||*Type*	||*Description*	 ||*Input Example*||
 ||Integer	||integer numbers 	||{{{ 42 }}}||
