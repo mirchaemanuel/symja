@@ -3,10 +3,11 @@
 #sidebar TableOfContents
 
 = Syntax Description =
-Symja has an evaluation engine for mathematical expressions. A semicolon operator ";" is used to separate multiple expressions. The following example shows two expressions using ";" operator, only the result for the second expression will be returned back after evaluation: 
+Symja has an evaluation engine for mathematical expressions. A semicolon operator ";" is used to separate multiple expressions. The following example shows two expressions separated by the ";" operator, only the result for the second expression will be returned back after evaluation: 
 {{{
-    100!;32+8+4
+    100!;32+8+2
 }}}
+gives {{{42}}}.
 
 = Expression types =
 ||*Type*	||*Description*	 ||*Input Example*||
