@@ -3,9 +3,14 @@
 #sidebar TableOfContents
 
 = Syntax Description =
+Symja has an evaluation engine for mathematical expressions. A semicolon operator ";" is used to separate multiple expressions. The following example shows two expressions using ";" operator, only the result for the second expression will be returned back after evaluation: 
+{{{
+    100!;32+8+4
+}}}
 
+= Expression types =
 ||*Type*	||*Description*	 ||*Input Example*||
-||Integer	||integer numbers 	||{{{ 42 }}}||
+||Integer	||integer numbers 	||{{{ 42 }}}|
 ||Rational	||rational numbers 	||{{{ 13/17 }}}||
 ||Complex	||complex numbers 	||{{{ 2+I*(1/3) }}}||
 ||Real	||double values 	||{{{ 0.5 }}}||
