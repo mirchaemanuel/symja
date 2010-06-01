@@ -14,6 +14,7 @@ import java.util.Stack;
 import org.matheclipse.basic.Config;
 import org.matheclipse.basic.Util;
 import org.matheclipse.core.convert.AST2Expr;
+import org.matheclipse.core.eval.exception.IterationLimitExceeded;
 import org.matheclipse.core.eval.exception.RecursionLimitExceeded;
 import org.matheclipse.core.eval.interfaces.IFunctionEvaluator;
 import org.matheclipse.core.eval.interfaces.ISymbolEvaluator;
@@ -202,7 +203,7 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 		fRecursionLimit = recursionLimit;
 		fIterationLimit = iterationLimit;
 		fOutPrintStream = out;
-		
+
 		// fNamespace = fExpressionFactory.getNamespace();
 
 		init();
@@ -555,6 +556,7 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 		IExpr result = expr;
 		IExpr temp = expr;
 		boolean evaled = false;
+		int iterationCounter = 1;
 		IAST traceList = null;
 		try {
 			fRecursionCounter++;
@@ -573,7 +575,6 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 				evaled = true;
 				result = temp;
 			} else {
-				fRecursionCounter--;
 				return null;
 			}
 
@@ -584,6 +585,9 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 						traceList.add(temp);
 					}
 					result = temp;
+					if (fIterationLimit >= 0 && fIterationLimit <= ++iterationCounter) {
+						IterationLimitExceeded.throwIt(iterationCounter, result);
+					}
 				}
 			}
 			if (evaled) {
@@ -602,7 +606,6 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 					// }
 					// fTraceList = fTraceStack.pop();
 				}
-				fRecursionCounter--;
 			}
 			fRecursionCounter--;
 		}
@@ -965,14 +968,13 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 		return temp;
 	}
 
-
 	final public Map<String, ISymbol> getVariableMap() {
 		if (fVariableMap == null) {
 			fVariableMap = new HashMap<String, ISymbol>();
 		}
 		return fVariableMap;
 	}
-	
+
 	public String toString() {
 		StringBuffer buf = new StringBuffer();
 		if (fVariableMap != null) {
