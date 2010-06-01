@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Collections;
 import java.util.HashMap;
@@ -56,6 +55,8 @@ public class EvaluateServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 		PrintWriter out = res.getWriter();
 		res.setContentType("text/plain");
+		res.setHeader("Cache-Control", "no-cache");
+
 		String name = "evaluate";
 		String value = req.getParameter(name);
 		if (value == null) {
@@ -67,12 +68,8 @@ public class EvaluateServlet extends HttpServlet {
 			return;
 		}
 		value = value.trim();
-		try {
-			String result = evaluate(req, value, "", 0);
-			out.println(result);// URLEncoder.encode(result, "UTF-8"));
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		String result = evaluate(req, value, "", 0);
+		out.println(result);// URLEncoder.encode(result, "UTF-8"));
 
 	}
 
@@ -98,9 +95,8 @@ public class EvaluateServlet extends HttpServlet {
 				// PrintStream pout = new PrintStream();
 				engine = new EvalEngine(session.getId(), 256, 256, outs);
 				session.setAttribute(EVAL_ENGINE, engine);
-				// init ThreadLocal instance:
-				EvalEngine.get();
 			} else {
+				engine.init();
 				engine.setOutPrintStream(outs);
 				engine.setSessionID(session.getId());
 				// init ThreadLocal instance:
@@ -113,11 +109,11 @@ public class EvaluateServlet extends HttpServlet {
 			StringBuffer buf = outWriter.getBuffer();
 			buf.append(result[1]);
 			return counter + ";" + result[0] + ";" + buf.toString();
-		} catch (Exception e) {
-			if (Config.SHOW_STACKTRACE) {
-				e.printStackTrace();
-			}
-			return counter + ";error;Exception occurred in evaluate!";
+			// } catch (Exception e) {
+			// if (Config.SHOW_STACKTRACE) {
+			// e.printStackTrace();
+			// }
+			// return counter + ";error;Exception occurred in evaluate!";
 		} finally {
 			// tear down associated ThreadLocal from EvalEngine
 			EvalEngine.remove();
@@ -125,8 +121,7 @@ public class EvaluateServlet extends HttpServlet {
 
 	}
 
-	public static String[] evaluateString(HttpServletRequest request, EvalEngine engine, String inputString, String function)
-			throws UnsupportedEncodingException {
+	public static String[] evaluateString(HttpServletRequest request, EvalEngine engine, String inputString, String function) {
 
 		try {
 			Parser parser = new Parser();
@@ -164,18 +159,31 @@ public class EvaluateServlet extends HttpServlet {
 				// // out.println(toHTML(outBuffer.toString()));
 				// }
 
+			} else {
+				return new String[] { "error", "Input string parsed to null" };
 			}
 		} catch (MathException se) {
 			return new String[] { "error", se.getMessage() };
-		} catch (Exception e) {
-			// error message
-			if (Config.SHOW_STACKTRACE) {
-				e.printStackTrace();
+		} catch (IOException e) {
+			String msg = e.getMessage();
+			if (msg != null) {
+				return new String[] { "error", "IOException occured: " + msg };
 			}
-			return new String[] { "error", "Error in evaluateString" };
+			return new String[] { "error", "IOException occured" };
 
 		}
-		return new String[] { "error", "Error in evaluateString" };
+		// catch (Exception e) {
+		// // error message
+		// // if (Config.SHOW_STACKTRACE) {
+		// e.printStackTrace();
+		// // }
+		// String msg = e.getMessage();
+		// if (msg != null) {
+		// return new String[] { "error", "Error in evaluateString: " + msg };
+		// }
+		// return new String[] { "error", "Error in evaluateString" };
+		//
+		// }
 	}
 
 	private static String[] createOutput(StringBufferWriter buffer, IExpr rhsExpr, EvalEngine engine, String function)
@@ -230,7 +238,6 @@ public class EvaluateServlet extends HttpServlet {
 			lhsExpr = lhsExpr.variables2Slots(map, list);
 			if (lhsExpr != null) {
 				String lhsString = lhsExpr.toString();
-
 				IExpr expr = (IExpr) cache.get(lhsString);
 				if (expr != null) {
 					if (list.size() > 1) {
@@ -347,16 +354,19 @@ public class EvaluateServlet extends HttpServlet {
 		// e.printStackTrace();
 		// }
 		// }
-		F.initSymbols(null, new SymbolObserver());
-		Config.SERVER_MODE = true;
-		System.out.println("Config.SERVER_MODE = true");
-		try {
-
-			CacheFactory cacheFactory = CacheManager.getInstance().getCacheFactory();
-			cache = cacheFactory.createCache(Collections.emptyMap());
-		} catch (Exception e) {
-			if (Config.SHOW_STACKTRACE) {
-				e.printStackTrace();
+		if (!Config.SERVER_MODE) {
+			F.initSymbols(null, new SymbolObserver());
+			Config.SERVER_MODE = true;
+			System.out.println("Config.SERVER_MODE = true");
+		}
+		if (cache == null) {
+			try {
+				CacheFactory cacheFactory = CacheManager.getInstance().getCacheFactory();
+				cache = cacheFactory.createCache(Collections.emptyMap());
+			} catch (Exception e) {
+				if (Config.SHOW_STACKTRACE) {
+					e.printStackTrace();
+				}
 			}
 		}
 	}
