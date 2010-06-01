@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <appengine-web-app xmlns="http://appengine.google.com/ns/1.0">
   <application>mobmath</application>
-  <version>1</version>
+  <version>5</version>
 
   <static-files>
     <!-- Do not serve these files publicly. -->
@@ -22,5 +22,9 @@
   <system-properties>
 	<property name="java.util.logging.config.file" value="WEB-INF/logging.properties"/>
   </system-properties>
+	
+  <admin-console>
+    <page name="Load Package" url="/admin.jsp" />
+  </admin-console>
 	
 </appengine-web-app>

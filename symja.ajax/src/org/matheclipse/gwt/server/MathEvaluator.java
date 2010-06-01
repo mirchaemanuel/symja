@@ -1,5 +1,7 @@
 package org.matheclipse.gwt.server;
 
+import java.io.IOException;
+
 import org.matheclipse.core.eval.EvalEngine;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.form.output.OutputFormFactory;
@@ -46,7 +48,7 @@ public class MathEvaluator {
 		return null;
 	}
 
-	public static IExpr eval(EvalEngine evalEngine, final StringBufferWriter buf, final IExpr parsedExpression) throws Exception {
+	public static IExpr eval(EvalEngine evalEngine, final StringBufferWriter buf, final IExpr parsedExpression) throws IOException {
 		// EvalEngine fEvalEngine = new EvalEngine("", 64, 100000,System.out);
 		evalEngine.reset();
 		IExpr evaluationResult = evalEngine.evaluate(parsedExpression);

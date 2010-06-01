@@ -99,6 +99,7 @@ public class AdminServlet extends HttpServlet {
 				// init ThreadLocal instance:
 				EvalEngine.get();
 			} else {
+				engine.init();
 				engine.setOutPrintStream(outs);
 				engine.setSessionID(session.getId());
 				// init ThreadLocal instance:
