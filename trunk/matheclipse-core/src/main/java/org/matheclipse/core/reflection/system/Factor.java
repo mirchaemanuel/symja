@@ -7,6 +7,7 @@ import org.matheclipse.basic.Config;
 import org.matheclipse.core.convert.ExprVariables;
 import org.matheclipse.core.convert.JASConvert;
 import org.matheclipse.core.eval.EvalEngine;
+import org.matheclipse.core.eval.exception.WrongArgumentType;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
 import org.matheclipse.core.eval.util.Options;
 import org.matheclipse.core.expression.ASTRange;
@@ -16,7 +17,6 @@ import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.IInteger;
 
 import apache.harmony.math.BigInteger;
-
 import edu.jas.arith.BigRational;
 import edu.jas.arith.ModInteger;
 import edu.jas.arith.ModIntegerRing;
@@ -26,7 +26,7 @@ import edu.jas.ufd.FactorFactory;
 
 /**
  * Factor a univariate polynomial
- *
+ * 
  */
 public class Factor extends AbstractFunctionEvaluator {
 
@@ -40,35 +40,34 @@ public class Factor extends AbstractFunctionEvaluator {
 		}
 
 		ExprVariables eVar = new ExprVariables(lst.get(1));
-    if (!eVar.isSize(1)) {
-      // factor only possible for univariate polynomials
-      return null;
-    }
+		if (!eVar.isSize(1)) {
+			throw new WrongArgumentType(lst, lst.get(1), 1, "Factorization only implemented for univariate polynomials");
+		}
 		try {
 			IExpr expr = F.eval(F.ExpandAll, lst.get(1));
 			ASTRange r = new ASTRange(eVar.getVarList(), 1);
 			List<IExpr> varList = r.toList();
-			
+
 			if (lst.size() == 3) {
 				final EvalEngine engine = EvalEngine.get();
 				final Options options = new Options(F.Factor, engine, lst, 2);
 				IExpr option = options.getOption("Modulus");
 				if (option != null && option instanceof IInteger) {
 					try {
-						// found "Modulus" option
+						// found "Modulus" option => use ModIntegerRing
 						final BigInteger value = ((IInteger) option).getBigNumerator();
 						int intValue = ((IInteger) option).toInt();
 						ModIntegerRing modIntegerRing = new ModIntegerRing(intValue, value.isProbablePrime(32));
-						JASConvert<ModInteger> jas =  new JASConvert<ModInteger>(varList, modIntegerRing);
+						JASConvert<ModInteger> jas = new JASConvert<ModInteger>(varList, modIntegerRing);
 						GenPolynomial<ModInteger> poly = jas.expr2Poly(expr);
 
 						FactorAbstract<ModInteger> factorAbstract = FactorFactory.getImplementation(modIntegerRing);
-						SortedMap<GenPolynomial<ModInteger>, Long> map = factorAbstract.baseFactors(poly);
+						SortedMap<GenPolynomial<ModInteger>, Long> map = factorAbstract.factors(poly);
 						IAST result = F.Times();
 						for (SortedMap.Entry<GenPolynomial<ModInteger>, Long> entry : map.entrySet()) {
-							GenPolynomial<ModInteger> iPoly = entry.getKey();
+							GenPolynomial<ModInteger> singleFactor = entry.getKey();
 							Long val = entry.getValue();
-							result.add(F.Power(jas.modIntegerPoly2Expr(iPoly), F.integer(val)));
+							result.add(F.Power(jas.modIntegerPoly2Expr(singleFactor), F.integer(val)));
 						}
 						return result;
 					} catch (ArithmeticException ae) {
@@ -84,16 +83,17 @@ public class Factor extends AbstractFunctionEvaluator {
 			GenPolynomial<BigRational> poly = jas.expr2Poly(expr);
 
 			FactorAbstract<BigRational> factorAbstract = FactorFactory.getImplementation(BigRational.ONE);
-			SortedMap<GenPolynomial<BigRational>, Long> map = factorAbstract.baseFactors(poly);
+			SortedMap<GenPolynomial<BigRational>, Long> map = factorAbstract.factors(poly);
 			IAST result = F.Times();
 			for (SortedMap.Entry<GenPolynomial<BigRational>, Long> entry : map.entrySet()) {
-				GenPolynomial<BigRational> key = entry.getKey();
-				GenPolynomial<edu.jas.arith.BigInteger> iPoly = (GenPolynomial<edu.jas.arith.BigInteger>) jas.factorTerms(key)[2];
+				GenPolynomial<BigRational> singleFactor = entry.getKey();
+				GenPolynomial<edu.jas.arith.BigInteger> integerCoefficientPoly = (GenPolynomial<edu.jas.arith.BigInteger>) jas
+						.factorTerms(singleFactor)[2];
 				Long val = entry.getValue();
-				result.add(F.Power(jas.integerPoly2Expr(iPoly), F.integer(val)));
+				result.add(F.Power(jas.integerPoly2Expr(integerCoefficientPoly), F.integer(val)));
 			}
 			return result;
-			
+
 		} catch (Exception e) {
 			if (Config.DEBUG) {
 				e.printStackTrace();

@@ -45,10 +45,10 @@ public class SystemTestCase extends AbstractTestCase {
 		check("x^3+2*x^2+4*x+3", "x^3+2*x^2+4*x+3");
 		check("y*x^3+y*x^2+y*x+y+x+42", "x^3*y+x^2*y+x*y+y+x+42");
 		check("2I", "I*2");
-		
+
 		check("a+Sin[x]^2+Cos[x]^2+2/3", "a+5/3");
 		check("a+Sin[x]^2+Cos[y]^2+2/3", "Sin[x]^2+Cos[y]^2+a+2/3");
-		
+
 	}
 
 	public void testSystem000a() {
@@ -128,7 +128,7 @@ public class SystemTestCase extends AbstractTestCase {
 	public void testSystem007() {
 		check("(-1)^(1/3)", "(-1)^(1/3)");
 		check("-12528^(1/2)", "(-12)*87^(1/2)");
-		check("(-27)^(1/3)", "3*(-1)^(1/3)"); 
+		check("(-27)^(1/3)", "3*(-1)^(1/3)");
 		check("(-27)^(2/3)", "9*(-1)^(1/3)");
 		check("8^(1/3)", "2");
 		check("81^(3/4)", "27");
@@ -2235,23 +2235,14 @@ public class SystemTestCase extends AbstractTestCase {
 
 	public void testSystem802() {
 		EvalEngine.get().setPackageMode(true);
-		check("Package[ \n" + 
-				"  \"Polynomials\", \n" + 
-				"  (* define the public available symbols *)\n" + 
-				"  {LaguerreP, LegendreP}, \n" + 
-				"{ \n" + 
-				"  (* Laguerre polynomials \n" + 
-				"     http://en.wikipedia.org/wiki/Laguerre_polynomials *)\n" + 
-				"  LaguerreP[0,x_]:=1,\n" + 
-				"  LaguerreP[1,x_]:=1-x,\n" + 
-				"  LaguerreP[n_IntegerQ,x_]:=\n" + 
-				"      ExpandAll[(2*n-1-x)*LaguerreP[n-1,x] - (n-1)^2*LaguerreP[n-2,x]] /; NonNegative[n],\n" + 
-				"  (* Legendre polynomials \n" + 
-				"     http://en.wikipedia.org/wiki/Legendre_polynomials *)\n" + 
-				"  LegendreP[n_IntegerQ,x_]:=\n" + 
-				"      1/(2^n)*Sum[ExpandAll[Binomial[n,k]^2*(x-1)^(n-k)*(x+1)^k], {k,0,n}] /; NonNegative[n]\n" + 
-				"    \n" + 
-				"} ]","");
+		check("Package[ \n" + "  \"Polynomials\", \n" + "  (* define the public available symbols *)\n"
+				+ "  {LaguerreP, LegendreP}, \n" + "{ \n" + "  (* Laguerre polynomials \n"
+				+ "     http://en.wikipedia.org/wiki/Laguerre_polynomials *)\n" + "  LaguerreP[0,x_]:=1,\n" + "  LaguerreP[1,x_]:=1-x,\n"
+				+ "  LaguerreP[n_IntegerQ,x_]:=\n"
+				+ "      ExpandAll[(2*n-1-x)*LaguerreP[n-1,x] - (n-1)^2*LaguerreP[n-2,x]] /; NonNegative[n],\n"
+				+ "  (* Legendre polynomials \n" + "     http://en.wikipedia.org/wiki/Legendre_polynomials *)\n"
+				+ "  LegendreP[n_IntegerQ,x_]:=\n"
+				+ "      1/(2^n)*Sum[ExpandAll[Binomial[n,k]^2*(x-1)^(n-k)*(x+1)^k], {k,0,n}] /; NonNegative[n]\n" + "    \n" + "} ]", "");
 		EvalEngine.get().setPackageMode(false);
 		check("LaguerreP[0,x]", "1");
 		check("LaguerreP[1,x]", "-x+1");
@@ -2328,13 +2319,12 @@ public class SystemTestCase extends AbstractTestCase {
 	}
 
 	public void testSystem999() {
-		check("Roots[4+x^2+2*x+3*x^3]", "{-1,1/6*(I*2*11^(1/2)+2),1/6*(-I*2*11^(1/2)+2)}");	      
-		
-		check("Roots[x^3+4*x^2+x+2]", "{(-1/3)*((1/2)^(1/3)*(12*87^(1/2)+146)^(1/3)+(1/2)^(1/3)*(-12*87^(1/2)+146)^(1/3)+\n" + 
-				"4),(-1/3)*((-I*1/2*3^(1/2)-1/2)*(1/2)^(1/3)*(12*87^(1/2)+146)^(1/3)+(I*1/2*3^(1/\n" + 
-				"2)-1/2)*(1/2)^(1/3)*(-12*87^(1/2)+146)^(1/3)+4),(-1/3)*((I*1/2*3^(1/2)-1/2)*(1/2)^(\n" + 
-				"1/3)*(12*87^(1/2)+146)^(1/3)+(-I*1/2*3^(1/2)-1/2)*(1/2)^(1/3)*(-12*87^(1/2)+146)^(\n" + 
-				"1/3)+4)}");
+		check("Roots[4+x^2+2*x+3*x^3]", "{-1,1/6*(I*2*11^(1/2)+2),1/6*(-I*2*11^(1/2)+2)}");
+
+		check("Roots[x^3+4*x^2+x+2]", "{(-1/3)*((1/2)^(1/3)*(12*87^(1/2)+146)^(1/3)+(1/2)^(1/3)*(-12*87^(1/2)+146)^(1/3)+\n"
+				+ "4),(-1/3)*((-I*1/2*3^(1/2)-1/2)*(1/2)^(1/3)*(12*87^(1/2)+146)^(1/3)+(I*1/2*3^(1/\n"
+				+ "2)-1/2)*(1/2)^(1/3)*(-12*87^(1/2)+146)^(1/3)+4),(-1/3)*((I*1/2*3^(1/2)-1/2)*(1/2)^(\n"
+				+ "1/3)*(12*87^(1/2)+146)^(1/3)+(-I*1/2*3^(1/2)-1/2)*(1/2)^(1/3)*(-12*87^(1/2)+146)^(\n" + "1/3)+4)}");
 		check("NRoots[x^3+4*x^2+x+2]", "{-3.8751297941627785," + "-0.06243510291861069+I*0.7156909967859645,"
 				+ "-0.06243510291861069+I*(-0.7156909967859645)}");
 		check("Roots[Expand[(x-1)^3]]", "{1}");
@@ -2344,6 +2334,8 @@ public class SystemTestCase extends AbstractTestCase {
 		check("Factor[4+8*x+19*x^2+20*x^3+20*x^4+8*x^5+x^6]", "(x^3+4*x^2+x+2)*(x^3+4*x^2+3*x+2)");
 		check("Factor[Expand[(x-1)^3]]", "(x-1)^3");
 		check("Factor[x^6-1]", "(x-1)*(x+1)*(x^2+x+1)*(x^2-x+1)");
+		// check("Factor[x^10-y^10]", "");
+
 		check("Expand[(-1+x)*(1+x)*(1+x+x^2)*(1-x+x^2)]", "x^6-1");
 
 		check("Factor[x^5+x^4+x+1]", "(x+1)*(x^4+1)");
