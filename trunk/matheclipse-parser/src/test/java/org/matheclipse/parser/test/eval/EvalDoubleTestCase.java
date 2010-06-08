@@ -173,6 +173,23 @@ public class EvalDoubleTestCase extends TestCase {
     }
   }
 
+  public void testEval009() {
+    try {
+      DoubleEvaluator engine = new DoubleEvaluator();
+
+      BooleanVariable vb = new BooleanVariable(true);
+      engine.defineVariable("$1", vb);
+      double d = engine.evaluate("If[$1, 1, 0]");
+      Assert.assertEquals(d, 1d, DoubleEvaluator.EPSILON);
+      vb.setValue(false);
+      d = engine.evaluate();
+      Assert.assertEquals(d, 0d, DoubleEvaluator.EPSILON);
+    } catch (Exception e) {
+      e.printStackTrace();
+      Assert.assertEquals("", e.getMessage());
+    }
+  }
+  
   public void testMissingFunction009() {
     try {
       DoubleEvaluator engine = new DoubleEvaluator();
