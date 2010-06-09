@@ -5,8 +5,9 @@
 <wiki:toc max_depth="3" />
 
 = About =
-                
-The math expression parser module is driven by an operator table as described in the [http://en.wikipedia.org/wiki/Operator-precedence_parser#Example_algorithm_to_parse_infix_notation Wikipedia entry for Operator-precedence parsers]. The parser also contains numeric solvers for double and complex valued expressions. The parser is usable as a [http://code.google.com/webtoolkit/ Google Web Toolkit (GWT)] module. See the SyntaxDescription examples for the input syntax.
+The math expression parser module contains numeric calculators for double and complex valued mathematical expressions. The parser is usable as a [http://code.google.com/webtoolkit/ Google Web Toolkit (GWT)] module. See the SyntaxDescription examples for the input syntax.
+
+The parser is driven by an operator table as described in the [http://en.wikipedia.org/wiki/Operator-precedence_parser#Example_algorithm_to_parse_infix_notation Wikipedia entry for Operator-precedence parsers]. Quote from Wikipedia: _an operator precedence parser is a bottom-up parser that interprets an operator-precedence grammar. For example, most calculators use operator precedence parsers to convert from the human-readable infix notation with order of operations format into an internally optimized computer-readable format._
 
 The latest API is available as a binary download:
   * [http://code.google.com/p/symja/downloads/list]
