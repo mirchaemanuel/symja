@@ -268,7 +268,7 @@ The parsers operator table is driven by three arrays in the {{{org.matheclipse.p
 There is a simplified way to create the Java sources for a given operator table.
 Simply define an operator table in a text file similar to the 
 {{{
-  /org.matheclipse.parser/src/operators.txt
+  /matheclipse-parser/src/main/resources/operators.txt
 }}} 
 file given in the source code distribution.
  
