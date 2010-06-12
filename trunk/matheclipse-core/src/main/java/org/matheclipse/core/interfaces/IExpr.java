@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.math.FieldElement;
-import org.matheclipse.core.generic.util.IRealtimeElement;
+import org.matheclipse.core.generic.util.INestedListElement;
 import org.matheclipse.core.visit.IVisitor;
 import org.matheclipse.core.visit.IVisitorBoolean;
 import org.matheclipse.core.visit.IVisitorInt;
@@ -16,7 +16,7 @@ import org.matheclipse.core.visit.IVisitorInt;
  * 
  */
 public interface IExpr extends Comparable<IExpr>, // FieldElement<IExpr>,
-		IRealtimeElement, Serializable {
+		INestedListElement, Serializable {
 
 	public final static int DOUBLEID = 2;
 

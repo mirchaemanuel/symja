@@ -14,7 +14,7 @@ import java.util.NoSuchElementException;
  * <code>head</code> object to the FastTable implementation
  * 
  */ 
-public class NestedFastTable<E extends IRealtimeElement> extends ArrayList<E> implements INestedRealtimeList<E> {
+public class NestedFastTable<E extends INestedListElement> extends ArrayList<E> implements INestedList<E> {
 	/**
 	 * Holds the factory for this NestedList.
 	 */
