@@ -6,8 +6,8 @@ import java.util.List;
 
 /**
  * Interface for a nested list. I.e. for a list which contains elements of type
- * IRealtimeElement lists
+ * INestedListElement lists
  */
-public interface INestedRealtimeList<E extends IRealtimeElement> extends List<E>, Cloneable , IRealtimeElement {
+public interface INestedList<E extends INestedListElement> extends List<E>, Cloneable , INestedListElement {
 
 }

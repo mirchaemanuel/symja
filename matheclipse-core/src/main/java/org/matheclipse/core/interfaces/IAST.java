@@ -2,7 +2,7 @@ package org.matheclipse.core.interfaces;
 
 import org.matheclipse.core.eval.exception.WrongArgumentType;
 import org.matheclipse.core.expression.ASTRange;
-import org.matheclipse.core.generic.util.INestedRealtimeList;
+import org.matheclipse.core.generic.util.INestedList;
 import org.matheclipse.generic.interfaces.BiFunction;
 
 //import org.matheclipse.generic.INestedList;
@@ -24,7 +24,7 @@ import org.matheclipse.generic.interfaces.BiFunction;
  * <li>an atomic IExpr</li>
  * </ul>
  */
-public interface IAST extends IExpr, INestedRealtimeList<IExpr> {
+public interface IAST extends IExpr, INestedList<IExpr> {
 	/**
 	 * NO_FLAG ACTIVATED
 	 */

@@ -23,7 +23,6 @@ import java.io.InputStreamReader;
 import java.io.PrintStream;
 
 import org.matheclipse.parser.client.Parser;
-import org.matheclipse.parser.client.SyntaxError;
 import org.matheclipse.parser.client.ast.ASTNode;
 import org.matheclipse.parser.client.ast.FunctionNode;
 import org.matheclipse.parser.client.eval.ComplexEvaluator;
