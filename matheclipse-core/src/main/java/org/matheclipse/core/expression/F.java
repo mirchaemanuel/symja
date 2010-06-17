@@ -2036,6 +2036,26 @@ public class F {
 	}
 
 	/**
+	 * Test if the absolute value is less <code>Config.DOUBLE_EPSILON</code>.
+	 * 
+	 * @param value
+	 * @return
+	 */
+	public static boolean isZero(double value) {
+		return isZero(value, Config.DOUBLE_EPSILON);
+	}
+
+	/**
+	 * Test if the absolute value is less than the given epsilon.
+	 * 
+	 * @param value
+	 * @return
+	 */
+	public static boolean isZero(double value, double epsilon) {
+		return Math.abs(value) < epsilon;
+	}
+
+	/**
 	 * Evaluate an object. If no evaluation was possible this method returns the
 	 * given argument.
 	 * 

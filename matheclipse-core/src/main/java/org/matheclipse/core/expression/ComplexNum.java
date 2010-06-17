@@ -122,6 +122,10 @@ public class ComplexNum extends ExprImpl implements IComplexNum {
 		return newInstance(fComplex.multiply(((ComplexNum) val).fComplex));
 	}
 
+	public IComplexNum pow(final IComplexNum val) {
+		return newInstance(fComplex.pow(((ComplexNum) val).fComplex));
+	}
+
 	/**
 	 * @param that
 	 * @return
@@ -180,8 +184,12 @@ public class ComplexNum extends ExprImpl implements IComplexNum {
 
 	public boolean isSame(IExpr expression, double epsilon) {
 		if (expression instanceof ComplexNum) {
-			return Math.abs(fComplex.getReal() - ((ComplexNum) expression).fComplex.getReal()) < epsilon
-					&& Math.abs(fComplex.getImaginary() - ((ComplexNum) expression).fComplex.getImaginary()) < epsilon;
+			return F.isZero(fComplex.getReal() - ((ComplexNum) expression).fComplex.getReal(), epsilon)
+					&& F.isZero(fComplex.getImaginary() - ((ComplexNum) expression).fComplex.getImaginary(), epsilon);
+			// return Math.abs(fComplex.getReal() - ((ComplexNum)
+			// expression).fComplex.getReal()) < epsilon
+			// && Math.abs(fComplex.getImaginary() - ((ComplexNum)
+			// expression).fComplex.getImaginary()) < epsilon;
 		}
 		return false;
 	}
@@ -311,23 +319,23 @@ public class ComplexNum extends ExprImpl implements IComplexNum {
 	// fComplex.move(cs);
 	// return true;
 	// }
-//	public ComplexNum copy() {
-//		// ComplexNum d;
-//		// if (Config.SERVER_MODE) {
-//		// d = FACTORY.object();
-//		// } else {
-//		// d = new ComplexNum(0.0, 0.0);
-//		// }
-//		ComplexNum d = new ComplexNum(0.0, 0.0);
-//		d.fComplex = fComplex.copy();
-//		return d;
-//	}
-//
-//	public ComplexNum copyNew() {
-//		ComplexNum dci = new ComplexNum(0.0, 0.0);
-//		dci.fComplex = new Complex(fComplex.getReal(), fComplex.getImaginary());
-//		return dci;
-//	}
+	// public ComplexNum copy() {
+	// // ComplexNum d;
+	// // if (Config.SERVER_MODE) {
+	// // d = FACTORY.object();
+	// // } else {
+	// // d = new ComplexNum(0.0, 0.0);
+	// // }
+	// ComplexNum d = new ComplexNum(0.0, 0.0);
+	// d.fComplex = fComplex.copy();
+	// return d;
+	// }
+	//
+	// public ComplexNum copyNew() {
+	// ComplexNum dci = new ComplexNum(0.0, 0.0);
+	// dci.fComplex = new Complex(fComplex.getReal(), fComplex.getImaginary());
+	// return dci;
+	// }
 
 	// public void recycle() {
 	// FACTORY.recycle(this);
@@ -534,9 +542,9 @@ public class ComplexNum extends ExprImpl implements IComplexNum {
 	public int accept(IVisitorInt visitor) {
 		return visitor.visit(this);
 	}
-	
-  @Override
-  public boolean equalsInt(int i) {
-    return false;
-  }
+
+	@Override
+	public boolean equalsInt(int i) {
+		return false;
+	}
 }

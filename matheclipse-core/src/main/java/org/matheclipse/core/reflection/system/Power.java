@@ -12,6 +12,7 @@ import org.matheclipse.core.eval.interfaces.INumeric;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IComplex;
+import org.matheclipse.core.interfaces.IComplexNum;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.IFraction;
 import org.matheclipse.core.interfaces.IInteger;
@@ -31,21 +32,21 @@ public class Power extends AbstractArg2 implements INumeric {
 	// }
 
 	@Override
+	public IExpr e2DblComArg(final IComplexNum c0, final IComplexNum c1) {
+		return c0.pow(c1);
+	}
+	
+	@Override
 	public IExpr e2ComArg(final IComplex c0, final IComplex c1) {
 		return null;
 	}
 
 	@Override
 	public IExpr e2DblArg(final INum d0, final INum d1) {
-		final INum res = d0.pow(d1);
-
-		// TODO rework this
-		// if (Double.isNaN(res.getRealPart())) {
-		// return new IDoubleComplex(d0.doubleValue()).pow(new
-		// IDoubleComplex(d1));
-		// }
-
-		return res;
+		if (d0.isNegative()) {
+			return F.complexNum(d0.doubleValue()).pow(F.complexNum(d1.doubleValue()));
+		}
+	  return d0.pow(d1);
 	}
 
 	@Override
@@ -196,7 +197,7 @@ public class Power extends AbstractArg2 implements INumeric {
 	public IExpr e2FraArg(IFraction f0, IFraction f1) {
 		if (f0.getNumerator().equals(F.C0)) {
 			return F.C0;
-		} 
+		}
 
 		if (f1.getNumerator().equals(F.C0)) {
 			return F.C1;
@@ -236,7 +237,7 @@ public class Power extends AbstractArg2 implements INumeric {
 			IInteger[] new_numer = calculateRoot(a, root);
 			IInteger[] new_denom = calculateRoot(b, root);
 			final IFraction new_root = F.fraction(C1, root);
-			 
+
 			if (new_numer != null) {
 				if (new_denom != null) {
 					if (f0.sign() < 0) {
@@ -290,9 +291,9 @@ public class Power extends AbstractArg2 implements INumeric {
 			if (n > 0) {
 				if (a.equals(F.C1)) {
 					return null;
-//					result[0] = F.C1;
-//					result[1] = F.C1;
-//					return result;
+					// result[0] = F.C1;
+					// result[1] = F.C1;
+					// return result;
 				}
 				if (a.equals(F.CN1)) {
 					return null;

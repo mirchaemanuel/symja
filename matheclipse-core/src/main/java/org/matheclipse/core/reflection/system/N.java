@@ -15,6 +15,10 @@ public class N implements IFunctionEvaluator {
 	}
 
 	public IExpr evaluate(final IAST functionList) {
+		return numericEval(functionList);
+	}
+
+	public IExpr numericEval(final IAST functionList) {
 		if (functionList.size() != 2) {
 			throw new WrongNumberOfArguments(functionList, 1, functionList.size() - 1);
 		}
@@ -26,20 +30,7 @@ public class N implements IFunctionEvaluator {
 		} finally {
 			engine.setNumericMode(numericMode);
 		}
-	}
-
-	public IExpr numericEval(final IAST functionList) {
-		if (functionList.size() != 2) {
-			throw new WrongNumberOfArguments(functionList, 1, functionList.size() - 1);
-		}
-		final EvalEngine engine = EvalEngine.get();
-		final boolean numericMode = engine.isNumericMode();
-    try {
-      engine.setNumericMode(true);
-      return EvalEngine.eval(functionList.get(1));
-    } finally {
-      engine.setNumericMode(numericMode);
-    }
+		// return functionList.get(1);
 	}
 
 	public void setUp(final ISymbol symbol) {

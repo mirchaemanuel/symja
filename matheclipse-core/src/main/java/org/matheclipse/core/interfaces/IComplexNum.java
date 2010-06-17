@@ -14,4 +14,6 @@ public interface IComplexNum extends INumber {
 	public IComplexNum add(IComplexNum val);
 
 	public IComplexNum multiply(IComplexNum val);
+	
+	public IComplexNum pow(IComplexNum val);
 }
