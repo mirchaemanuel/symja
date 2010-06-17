@@ -194,7 +194,7 @@ public class Num extends ExprImpl implements INum {
 	@Override
 	public boolean isSame(IExpr expression, double epsilon) {
 		if (expression instanceof Num) {
-			return Math.abs(fDouble - ((Num) expression).fDouble) < epsilon;
+			return F.isZero(fDouble - ((Num) expression).fDouble, epsilon);
 		}
 		return false;
 	}
