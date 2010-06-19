@@ -21,17 +21,21 @@ import apache.harmony.math.Rational;
 
 /**
  * PresentationGenerator generates MathML presentation output
- * 
+ * @deprecated
  */
 public class MathMLContentFormFactory extends AbstractMathMLFormFactory implements IConstantHeaders {
 
-	class Operator {
+	private class Operator {
 		String fOperator;
 
 		Operator(final String oper) {
 			fOperator = oper;
 		}
 
+		/**
+		 * 
+		 * @param buf
+		 */
 		public void convert(final StringBuffer buf) {
 			tagStart(buf, "mo");
 			buf.append(fOperator);
@@ -63,11 +67,17 @@ public class MathMLContentFormFactory extends AbstractMathMLFormFactory implemen
 
 	/**
 	 * Constructor
+	 *  @deprecated
 	 */
 	public MathMLContentFormFactory() {
 		this("");
 	}
 
+	/**
+	 * 
+	 * @param tagPrefix
+	 *  @deprecated
+	 */
 	public MathMLContentFormFactory(final String tagPrefix) {
 		super(tagPrefix);
 		init();
@@ -75,6 +85,7 @@ public class MathMLContentFormFactory extends AbstractMathMLFormFactory implemen
 
 	public void convertDouble(final StringBuffer buf, final INum d, final int precedence) {
 		if (d.isNegative() && (precedence > plusPrec)) {
+			tagStart(buf, "mrow");
 			tag(buf, "mo", "(");
 		}
 		tagStart(buf, "mn");
@@ -82,6 +93,7 @@ public class MathMLContentFormFactory extends AbstractMathMLFormFactory implemen
 		tagEnd(buf, "mn");
 		if (d.isNegative() && (precedence > plusPrec)) {
 			tag(buf, "mo", ")");
+			tagEnd(buf, "mrow");
 		}
 	}
 
@@ -101,6 +113,7 @@ public class MathMLContentFormFactory extends AbstractMathMLFormFactory implemen
 
 	public void convertInteger(final StringBuffer buf, final IInteger i, final int precedence) {
 		if (i.isNegative() && (precedence > plusPrec)) {
+			tagStart(buf, "mrow");
 			tag(buf, "mo", "(");
 		}
 		tagStart(buf, "mn");
@@ -108,11 +121,13 @@ public class MathMLContentFormFactory extends AbstractMathMLFormFactory implemen
 		tagEnd(buf, "mn");
 		if (i.isNegative() && (precedence > plusPrec)) {
 			tag(buf, "mo", ")");
+			tagEnd(buf, "mrow");
 		}
 	}
 
 	public void convertFraction(final StringBuffer buf, final IFraction f, final int precedence) {
 		if (f.isNegative() && (precedence > plusPrec)) {
+			tagStart(buf, "mrow");
 			tag(buf, "mo", "(");
 		}
 		tagStart(buf, "mfrac");
@@ -125,11 +140,13 @@ public class MathMLContentFormFactory extends AbstractMathMLFormFactory implemen
 		tagEnd(buf, "mfrac");
 		if (f.isNegative() && (precedence > plusPrec)) {
 			tag(buf, "mo", ")");
+			tagEnd(buf, "mrow");
 		}
 	}
 
 	public void convertFraction(final StringBuffer buf, final Rational f, final int precedence) {
 		if (f.isNegative() && (precedence > plusPrec)) {
+			tagStart(buf, "mrow");
 			tag(buf, "mo", "(");
 		}
 		if (f.getDenominator().equals(BigInteger.ONE)) {
@@ -148,6 +165,7 @@ public class MathMLContentFormFactory extends AbstractMathMLFormFactory implemen
 		}
 		if (f.isNegative() && (precedence > plusPrec)) {
 			tag(buf, "mo", ")");
+			tagEnd(buf, "mrow");
 		}
 	}
 
@@ -225,6 +243,9 @@ public class MathMLContentFormFactory extends AbstractMathMLFormFactory implemen
 		convert(buf, obj, 0);
 	}
 
+	/**
+	 *  @deprecated
+	 */
 	public void convert(final StringBuffer buf, final IExpr o, final int precedence) {
 		if (o instanceof IAST) {
 			final IAST f = ((IAST) o);

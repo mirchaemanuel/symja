@@ -1,7 +1,5 @@
 package org.matheclipse.core.form.mathml;
 
-import static org.matheclipse.basic.Util.checkCanceled;
-
 import org.matheclipse.core.interfaces.IAST;
 
 /**
@@ -23,6 +21,7 @@ public abstract class AbstractOperator extends AbstractConverter {
 	
   public void precedenceOpen(final StringBuffer buf, final int precedence) {
     if (precedence > fPrecedence) {
+    	fFactory.tagStart(buf, "mrow");
       fFactory.tag(buf, "mo", "(");
     }
   }
@@ -30,6 +29,7 @@ public abstract class AbstractOperator extends AbstractConverter {
   public void precedenceClose(final StringBuffer buf, final int precedence) {
     if (precedence > fPrecedence) {
       fFactory.tag(buf, "mo", ")");
+      fFactory.tagEnd(buf, "mrow");
     }
   }
 
@@ -43,7 +43,6 @@ public abstract class AbstractOperator extends AbstractConverter {
     fFactory.tagStart(buf, fFirstTag);
     precedenceOpen(buf, precedence);
     for (int i = 1; i < f.size(); i++) {
-      checkCanceled();
 			fFactory.convert(buf, f.get(i), fPrecedence);
       if (i < f.size() - 1) {
         if (fOperator.compareTo("") != 0) {

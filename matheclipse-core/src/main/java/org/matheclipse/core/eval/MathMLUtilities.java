@@ -21,8 +21,8 @@ public class MathMLUtilities {
 
 	protected MathMLFormFactory fMathMLFactory;
 
-	/** 
-	 * MS Internet Explorer client ? 
+	/**
+	 * MS Internet Explorer client ?
 	 */
 	boolean fMSIE;
 
@@ -83,8 +83,10 @@ public class MathMLUtilities {
 				} else {
 					// out.write("<math xmlns=\"&mathml;\">");
 
-					// out.write("<math xmlns=\"http://www.w3.org/1998/Math/MathML\">");
-					out.write("<math>");
+					//out.write("<math xmlns=\"http://www.w3.org/1998/Math/MathML\">");
+					out.write("<?xml version=\"1.0\"?>\n"
+							+ "<!DOCTYPE math PUBLIC \"-//W3C//DTD MathML 2.0//EN\" \"http://www.w3.org/TR/MathML2/dtd/mathml2.dtd\">\n"
+							+ "<math mode=\"display\">\n");
 					out.write(buf.toString());
 					out.write("</math>");
 				}
