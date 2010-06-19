@@ -58,6 +58,11 @@ import org.matheclipse.symja.plot.PlotWindow;
  * window (JFrame).
  */
 public class Main extends JApplet {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	protected static JFrame frame = null;
 	protected String fDefaultSystemRulesFilename = null;
 	protected File fFile = null;
@@ -77,8 +82,7 @@ public class Main extends JApplet {
 					fFile = new File(args[i + 1]);
 					i++;
 				} catch (final ArrayIndexOutOfBoundsException aioobe) {
-					final String msg = "You must specify a file when "
-							+ "using the -file argument";
+					final String msg = "You must specify a file when " + "using the -file argument";
 					System.out.println(msg);
 					return;
 				}
@@ -87,8 +91,7 @@ public class Main extends JApplet {
 					fDefaultSystemRulesFilename = args[i + 1];
 					i++;
 				} catch (final ArrayIndexOutOfBoundsException aioobe) {
-					final String msg = "You must specify a file when "
-							+ "using the -file argument";
+					final String msg = "You must specify a file when " + "using the -file argument";
 					System.out.println(msg);
 					return;
 				}
@@ -99,9 +102,9 @@ public class Main extends JApplet {
 	}
 
 	/**
-	 * Launches CAS as an application. Creates a window (JFrame) and displays
-	 * the Cas panel inside that window. Calls init() and start() on the Cas to
-	 * mimic the applet initialization behavior.
+	 * Launches CAS as an application. Creates a window (JFrame) and displays the
+	 * Cas panel inside that window. Calls init() and start() on the Cas to mimic
+	 * the applet initialization behavior.
 	 */
 	public static void main(String args[]) {
 		frame = new JFrame("Symja");
@@ -155,14 +158,13 @@ public class Main extends JApplet {
 	// protected JTextField commandLine;
 
 	/**
-	 * Button to execute commands. Displayed at bottom right corner of the
-	 * screen.
+	 * Button to execute commands. Displayed at bottom right corner of the screen.
 	 */
 	// protected JButton exec;
 
 	/**
-	 * Initializes the applet. Lays out the controls and registers listeners
-	 * with them.
+	 * Initializes the applet. Lays out the controls and registers listeners with
+	 * them.
 	 */
 	public void init() {
 		JComponent content = (JComponent) getContentPane();
@@ -183,8 +185,8 @@ public class Main extends JApplet {
 	 * them.
 	 */
 	/*
-	 * public void stop() { Plotter.clearCache();
-	 * ParametricPlotter.clearCache(); Plotter3D.clearCache(); }
+	 * public void stop() { Plotter.clearCache(); ParametricPlotter.clearCache();
+	 * Plotter3D.clearCache(); }
 	 */
 
 	/**
@@ -206,8 +208,8 @@ public class Main extends JApplet {
 	}
 
 	/**
-	 * Sets up the center and bottom portions of the display. Setup of the
-	 * bottom part of the screen is delegated to setupBottom().
+	 * Sets up the center and bottom portions of the display. Setup of the bottom
+	 * part of the screen is delegated to setupBottom().
 	 */
 	protected EvalPanel createCenter() {
 		return new EvalPanel(fFile, fDefaultSystemRulesFilename);
@@ -219,12 +221,9 @@ public class Main extends JApplet {
 	 */
 	protected JToolBar createToolbar() {
 		JToolBar tools = new JToolBar();
-		JButton insert = new JButton(new ImageIcon(getClass().getResource(
-				"Import24.gif")));
-		JButton preferences = new JButton(new ImageIcon(getClass().getResource(
-				"Preferences24.gif")));
-		JButton about = new JButton(new ImageIcon(getClass().getResource(
-				"About24.gif")));
+		JButton insert = new JButton(new ImageIcon(getClass().getResource("Import24.gif")));
+		JButton preferences = new JButton(new ImageIcon(getClass().getResource("Preferences24.gif")));
+		JButton about = new JButton(new ImageIcon(getClass().getResource("About24.gif")));
 		// InsertListener il = new InsertListener(commandLine, this);
 
 		// insert.addActionListener(il);
@@ -260,20 +259,17 @@ public class Main extends JApplet {
 						if (page > 0)
 							return NO_SUCH_PAGE;
 						Graphics2D g2d = (Graphics2D) g;
-						g2d.translate(pageFormat.getImageableX(), pageFormat
-								.getImageableY());
+						g2d.translate(pageFormat.getImageableX(), pageFormat.getImageableY());
 						commands.print(g2d);
 						return PAGE_EXISTS;
 					}
 				};
 				try {
 					// load the service
-					PrintService ps = (PrintService) ServiceManager
-							.lookup("javax.jnlp.PrintService");
+					PrintService ps = (PrintService) ServiceManager.lookup("javax.jnlp.PrintService");
 
 					// select a page format
-					PageFormat pf = ps
-							.showPageFormatDialog(ps.getDefaultPage());
+					PageFormat pf = ps.showPageFormatDialog(ps.getDefaultPage());
 
 					// send the page to the printer
 					ps.print(p);
@@ -284,8 +280,7 @@ public class Main extends JApplet {
 						try {
 							job.print();
 						} catch (Exception exc) {
-							JOptionPane
-									.showMessageDialog(frame, exc.toString());
+							JOptionPane.showMessageDialog(frame, exc.toString());
 						}
 					}
 				}
@@ -325,23 +320,14 @@ public class Main extends JApplet {
 		// plot.add(plot3D);
 
 		examplesMenu.setMnemonic('e');
-		examplesMenu.add(new EvalExampleMenuItem("Simplify an expression",
-				evalPanel, "a+a+4*b^2+3*b^2"));
-		examplesMenu.add(new EvalExampleMenuItem("Factor an integer number",
-				evalPanel, "FactorInteger[2^15-5]"));
-		examplesMenu.add(new EvalExampleMenuItem("Derivative of a function",
-				evalPanel, "D[Sin[x^3],x]"));
-		examplesMenu.add(new EvalExampleMenuItem("Factor a polynomial",
-				evalPanel, "Factor[-1+x^16]"));
-		examplesMenu.add(new EvalExampleMenuItem(
-				"Factor a polynomial modulo an integer", evalPanel,
-				"Factor[5+x^12,Modulus->7]"));
-		examplesMenu.add(new EvalExampleMenuItem("Expand a polynomial",
-				evalPanel, "Expand[(-1+x)*(1+x)*(1+x^2)*(1+x^4)*(1+x^8)]"));
-		examplesMenu.add(new EvalExampleMenuItem("Inverse of a matrix",
-				evalPanel, "Inverse[{{1,2},{3,4}}]"));
-		examplesMenu.add(new EvalExampleMenuItem("Determinant of a matrix",
-				evalPanel, "Det[{{1,2},{3,4}}]"));
+		examplesMenu.add(new EvalExampleMenuItem("Simplify an expression", evalPanel, "a+a+4*b^2+3*b^2"));
+		examplesMenu.add(new EvalExampleMenuItem("Factor an integer number", evalPanel, "FactorInteger[2^15-5]"));
+		examplesMenu.add(new EvalExampleMenuItem("Derivative of a function", evalPanel, "D[Sin[x^3],x]"));
+		examplesMenu.add(new EvalExampleMenuItem("Factor a polynomial", evalPanel, "Factor[-1+x^16]"));
+		examplesMenu.add(new EvalExampleMenuItem("Factor a polynomial modulo an integer", evalPanel, "Factor[5+x^12,Modulus->7]"));
+		examplesMenu.add(new EvalExampleMenuItem("Expand a polynomial", evalPanel, "Expand[(-1+x)*(1+x)*(1+x^2)*(1+x^4)*(1+x^8)]"));
+		examplesMenu.add(new EvalExampleMenuItem("Inverse of a matrix", evalPanel, "Inverse[{{1,2},{3,4}}]"));
+		examplesMenu.add(new EvalExampleMenuItem("Determinant of a matrix", evalPanel, "Det[{{1,2},{3,4}}]"));
 		// examplesMenu.add(new EvalExampleMenuItem("", evalPanel, ""));
 		// examplesMenu.add(new EvalExampleMenuItem("", evalPanel, ""));
 		// examplesMenu.add(new EvalExampleMenuItem("", evalPanel, ""));
@@ -615,8 +601,7 @@ class AboutListener implements ActionListener {
 	}
 
 	public void actionPerformed(ActionEvent e) {
-		JOptionPane.showMessageDialog(parent, "(Description would go here.)",
-				"About Symja", JOptionPane.INFORMATION_MESSAGE, new ImageIcon(
-						getClass().getResource("About24.gif")));
+		JOptionPane.showMessageDialog(parent, "(Description would go here.)", "About Symja", JOptionPane.INFORMATION_MESSAGE,
+				new ImageIcon(getClass().getResource("About24.gif")));
 	}
 }

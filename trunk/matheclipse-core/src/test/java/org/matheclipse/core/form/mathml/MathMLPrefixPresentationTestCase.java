@@ -24,7 +24,7 @@ public class MathMLPrefixPresentationTestCase extends TestCase {
 	 */
 	public void testMathMLPresentation() {
 		check("a*b+c",
-				"<m:mrow><m:mrow><m:mi>a</m:mi><m:mo>&#x2062;</m:mo><m:mi>b</m:mi></m:mrow><m:mo>+</m:mo><m:mi>c</m:mi></m:mrow>");
+				"<m:mrow><m:mi>c</m:mi><m:mo>+</m:mo><m:mrow><m:mi>a</m:mi><m:mo>&#x2062;</m:mo><m:mi>b</m:mi></m:mrow></m:mrow>");
 		check("I", "<m:mi>&#x02148;</m:mi>");
 		check("2I", "<m:mrow><m:mn>2</m:mn><m:mo>&#x2062;</m:mo><m:mi>&#x02148;</m:mi></m:mrow>");
 		check("2/3", "<m:mfrac><m:mn>2</m:mn><m:mn>3</m:mn></m:mfrac>");

@@ -70,6 +70,7 @@ public class MathMLFormFactory extends AbstractMathMLFormFactory implements ICon
 
 	public void convertDouble(final StringBuffer buf, final INum d, final int precedence) {
 		if (d.isNegative() && (precedence > plusPrec)) {
+			tagStart(buf, "mrow");
 			tag(buf, "mo", "(");
 		}
 		tagStart(buf, "mn");
@@ -77,6 +78,7 @@ public class MathMLFormFactory extends AbstractMathMLFormFactory implements ICon
 		tagEnd(buf, "mn");
 		if (d.isNegative() && (precedence > plusPrec)) {
 			tag(buf, "mo", ")");
+			tagEnd(buf, "mrow");
 		}
 	}
 
@@ -97,6 +99,7 @@ public class MathMLFormFactory extends AbstractMathMLFormFactory implements ICon
 
 	public void convertInteger(final StringBuffer buf, final IInteger i, final int precedence) {
 		if (i.isNegative() && (precedence > plusPrec)) {
+			tagStart(buf, "mrow");
 			tag(buf, "mo", "(");
 		}
 		tagStart(buf, "mn");
@@ -104,11 +107,13 @@ public class MathMLFormFactory extends AbstractMathMLFormFactory implements ICon
 		tagEnd(buf, "mn");
 		if (i.isNegative() && (precedence > plusPrec)) {
 			tag(buf, "mo", ")");
+			tagEnd(buf, "mrow");
 		}
 	}
 
 	public void convertFraction(final StringBuffer buf, final IFraction f, final int precedence) {
 		if (f.isNegative() && (precedence > plusPrec)) {
+			tagStart(buf, "mrow");
 			tag(buf, "mo", "(");
 		}
 		tagStart(buf, "mfrac");
@@ -121,11 +126,13 @@ public class MathMLFormFactory extends AbstractMathMLFormFactory implements ICon
 		tagEnd(buf, "mfrac");
 		if (f.isNegative() && (precedence > plusPrec)) {
 			tag(buf, "mo", ")");
+			tagEnd(buf, "mrow");
 		}
 	}
 
 	public void convertFraction(final StringBuffer buf, final Rational f, final int precedence) {
 		if (f.isNegative() && (precedence > plusPrec)) {
+			tagStart(buf, "mrow");
 			tag(buf, "mo", "(");
 		}
 		if (f.getDenominator().equals(BigInteger.ONE)) {
@@ -144,20 +151,39 @@ public class MathMLFormFactory extends AbstractMathMLFormFactory implements ICon
 		}
 		if (f.isNegative() && (precedence > plusPrec)) {
 			tag(buf, "mo", ")");
+			tagEnd(buf, "mrow");
 		}
 	}
 
 	public void convertComplex(final StringBuffer buf, final IComplex c, final int precedence) {
+		boolean isReZero = c.getRealPart().compareTo(Rational.ZERO) == 0;
+		final boolean isImOne = c.getImaginaryPart().compareTo(Rational.ONE) == 0;
+		final boolean isImNegative = c.getImaginaryPart().compareTo(Rational.ZERO) < 0;
+		final boolean isImMinusOne = isImNegative && c.getImaginaryPart().compareTo(Rational.valueOf(-1, 1)) == 0;
 		tagStart(buf, "mrow");
-		convertFraction(buf, c.getRealPart(), precedence);
-		tag(buf, "mo", "+");
-		tagStart(buf, "mrow");
-		convertFraction(buf, c.getImaginaryPart(), ASTNodeFactory.TIMES_PRECEDENCE);
-		// <!ENTITY InvisibleTimes "&#x2062;" >
-		tag(buf, "mo", "&#x2062;");
-		// <!ENTITY ImaginaryI "&#x2148;" >
-		tag(buf, "mi", "&#x2148;");
-		tagEnd(buf, "mrow");
+		if (!isReZero) {
+			convertFraction(buf, c.getRealPart(), precedence);
+			if (isImNegative) {
+				tag(buf, "mo", "-");
+			} else {
+				tag(buf, "mo", "+");
+			}
+		} else {
+			if (isImMinusOne) {
+				tag(buf, "mo", "-");
+			}
+		}
+		if (!isImOne && !isImMinusOne) {
+			tagStart(buf, "mrow");
+			convertFraction(buf, c.getImaginaryPart(), ASTNodeFactory.TIMES_PRECEDENCE);
+			// <!ENTITY InvisibleTimes "&#x2062;" >
+			tag(buf, "mo", "&InvisibleTimes;"); // "&#x2062;");
+			// <!ENTITY ImaginaryI "&#x2148;" >
+			tag(buf, "mi", "&ImaginaryI;"); // "&#x2148;");
+			tagEnd(buf, "mrow");
+		} else {
+			tag(buf, "mi", "&ImaginaryI;"); // "&#x2148;");
+		}
 		tagEnd(buf, "mrow");
 	}
 
@@ -380,7 +406,7 @@ public class MathMLFormFactory extends AbstractMathMLFormFactory implements ICon
 		// operTab.put("Binomial", new MMLBinomial(this));
 
 		CONSTANT_SYMBOLS.put("E", "\u2147");
-		CONSTANT_SYMBOLS.put("I", "\u2148"); // IMaginaryI
+//		CONSTANT_SYMBOLS.put("I", "\u2148"); // IMaginaryI
 		CONSTANT_SYMBOLS.put("HEllipsis", new Operator("&hellip;"));
 		// greek Symbols:
 		CONSTANT_SYMBOLS.put("Pi", "\u03A0");
@@ -439,6 +465,7 @@ public class MathMLFormFactory extends AbstractMathMLFormFactory implements ICon
 
 		ENTITY_TABLE.put("&af;", "\uE8A0");
 		ENTITY_TABLE.put("&dd;", "\uF74C");
+		ENTITY_TABLE.put("&ImaginaryI;","i");//"\u2148");
 		ENTITY_TABLE.put("&InvisibleTimes;", "\uE89E");
 
 		ENTITY_TABLE.put("&Integral;", "\u222B");
