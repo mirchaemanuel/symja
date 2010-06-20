@@ -92,7 +92,7 @@ public class MathMLFormFactory extends AbstractMathMLFormFactory implements ICon
 		// <!ENTITY InvisibleTimes "&#x2062;" >
 		tag(buf, "mo", "&#x2062;");
 		// <!ENTITY ImaginaryI "&#x2148;" >
-		tag(buf, "mi", "&#x2148;");
+		tag(buf, "mi", "&ImaginaryI;");// "&#x2148;");
 		tagEnd(buf, "mrow");
 		tagEnd(buf, "mrow");
 	}
@@ -112,18 +112,25 @@ public class MathMLFormFactory extends AbstractMathMLFormFactory implements ICon
 	}
 
 	public void convertFraction(final StringBuffer buf, final IFraction f, final int precedence) {
+		boolean isInteger = f.getBigDenominator().equals(BigInteger.ONE);
 		if (f.isNegative() && (precedence > plusPrec)) {
 			tagStart(buf, "mrow");
 			tag(buf, "mo", "(");
 		}
-		tagStart(buf, "mfrac");
-		tagStart(buf, "mn");
-		buf.append(f.getBigNumerator().toString());
-		tagEnd(buf, "mn");
-		tagStart(buf, "mn");
-		buf.append(f.getBigDenominator().toString());
-		tagEnd(buf, "mn");
-		tagEnd(buf, "mfrac");
+		if (isInteger) {
+			tagStart(buf, "mn");
+			buf.append(f.getBigNumerator().toString());
+			tagEnd(buf, "mn");
+		} else {
+			tagStart(buf, "mfrac");
+			tagStart(buf, "mn");
+			buf.append(f.getBigNumerator().toString());
+			tagEnd(buf, "mn");
+			tagStart(buf, "mn");
+			buf.append(f.getBigDenominator().toString());
+			tagEnd(buf, "mn");
+			tagEnd(buf, "mfrac");
+		}
 		if (f.isNegative() && (precedence > plusPrec)) {
 			tag(buf, "mo", ")");
 			tagEnd(buf, "mrow");
@@ -406,7 +413,7 @@ public class MathMLFormFactory extends AbstractMathMLFormFactory implements ICon
 		// operTab.put("Binomial", new MMLBinomial(this));
 
 		CONSTANT_SYMBOLS.put("E", "\u2147");
-//		CONSTANT_SYMBOLS.put("I", "\u2148"); // IMaginaryI
+		// CONSTANT_SYMBOLS.put("I", "\u2148"); // IMaginaryI
 		CONSTANT_SYMBOLS.put("HEllipsis", new Operator("&hellip;"));
 		// greek Symbols:
 		CONSTANT_SYMBOLS.put("Pi", "\u03A0");
@@ -465,7 +472,7 @@ public class MathMLFormFactory extends AbstractMathMLFormFactory implements ICon
 
 		ENTITY_TABLE.put("&af;", "\uE8A0");
 		ENTITY_TABLE.put("&dd;", "\uF74C");
-		ENTITY_TABLE.put("&ImaginaryI;","i");//"\u2148");
+		ENTITY_TABLE.put("&ImaginaryI;", "i");// "\u2148");
 		ENTITY_TABLE.put("&InvisibleTimes;", "\uE89E");
 
 		ENTITY_TABLE.put("&Integral;", "\u222B");
