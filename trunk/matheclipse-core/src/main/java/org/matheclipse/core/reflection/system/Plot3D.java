@@ -63,7 +63,7 @@ public class Plot3D implements IFunctionEvaluator {
 			final IAST lst1 = (IAST) ast.get(2); // x-Range
 			final IAST lst2 = (IAST) ast.get(3); // y-Range
 			if ((lst1.size() == 4) && (lst2.size() == 4)) {
-				final Options hOptions = new Options(F.Plot3D, engine, ast, 4);
+				final Options hOptions = new Options(F.Plot3D, ast, 4);
 				// IAST allOptions = List();
 				// for (int i = 0; i < optionsArray.length; i++) {
 				// allOptions.add(optionsArray[i]);

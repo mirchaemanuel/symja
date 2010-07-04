@@ -49,8 +49,7 @@ public class Factor extends AbstractFunctionEvaluator {
 			List<IExpr> varList = r.toList();
 
 			if (lst.size() == 3) {
-				final EvalEngine engine = EvalEngine.get();
-				final Options options = new Options(F.Factor, engine, lst, 2);
+				final Options options = new Options(F.Factor, lst, 2);
 				IExpr option = options.getOption("Modulus");
 				if (option != null && option instanceof IInteger) {
 					try {
