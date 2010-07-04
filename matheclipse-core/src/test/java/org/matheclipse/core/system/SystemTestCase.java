@@ -1424,7 +1424,7 @@ public class SystemTestCase extends AbstractTestCase {
 		check("ExtendedGCD[12,256]", "{4,{-21,1}}");
 		check("ExtendedGCD[12,60,256]", "{4,{-21,0,1}}");
 		check("ExtendedGCD[12,60,256,282]", "{2,{1470,0,-70,1}}");
-		
+
 	}
 
 	public void testSystem267() {
@@ -2277,15 +2277,17 @@ public class SystemTestCase extends AbstractTestCase {
 
 	public void testSystem994() {
 		check("PolynomialGCD[3+3*x^3,3+3*x^3]", "x^3+1");
-		check("PolynomialExtendedGCD[3+3*x^3,3+3*x^3,x]", "{x^3+1,0,1/3}");
+		check("PolynomialExtendedGCD[3+3*x^3,3+3*x^3,x]", "{x^3+1,{0,1/3}}");
 		check("PolynomialGCD[x^2-1,x-1]", "x-1");
 		check("PolynomialGCD[x+1,x^2-1]", "x+1");
-		check("PolynomialExtendedGCD[x+1,x^2-1,x]", "{x+1,1,0}");
+		check("PolynomialExtendedGCD[x+1,x^2-1,x]", "{x+1,{1,0}}");
 		check("PolynomialGCD[-1+x^16,(x^2-1)*((1+x^4))]", "x^6-x^4+x^2-1");
 		check("PolynomialGCD[8*x^5+28*x^4+34*x^3+41*x^2+35*x-14,12*x^5+4*x^4-27*x^3-9*x^2-84*x-28]", "x^3+2*x^2+7/4*x+7/2");
-	
+
 		check("PolynomialGCD[2*x^5-2*x,(x^2-1)^2]", "x^2-1");
-		check("PolynomialExtendedGCD[2*x^5-2*x,(x^2-1)^2,x]", "{x^2-1,1/4*x,-1/2*x^2-1}");
+		check("PolynomialGCD[2*x^5-2*x,(x^2-1)^2,Modulus->2]", "x^4+1");
+		check("PolynomialExtendedGCD[2*x^5-2*x,(x^2-1)^2,x]", "{x^2-1,{1/4*x,-1/2*x^2-1}}");
+		check("PolynomialExtendedGCD[2*x^5-2*x,(x^2-1)^2,x, Modulus->2]", "{x^4+1,{0,1}}");
 	}
 
 	public void testSystem995() {
