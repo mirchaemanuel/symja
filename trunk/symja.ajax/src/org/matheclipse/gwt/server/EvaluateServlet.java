@@ -8,6 +8,7 @@ import java.net.URLEncoder;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import javax.cache.Cache;
 import javax.cache.CacheFactory;
@@ -35,6 +36,8 @@ import org.matheclipse.parser.client.math.MathException;
 
 public class EvaluateServlet extends HttpServlet {
 	private static final long serialVersionUID = 6265703737413093134L;
+
+	private static final Logger log = Logger.getLogger(EvaluateServlet.class.getName());
 
 	// private static final boolean UNIT_TEST = false;
 
@@ -68,7 +71,10 @@ public class EvaluateServlet extends HttpServlet {
 			return;
 		}
 		value = value.trim();
+		log.warning("In::" + value);
+
 		String result = evaluate(req, value, "", 0);
+		log.warning("Out::" + result);
 		out.println(result);// URLEncoder.encode(result, "UTF-8"));
 
 	}
@@ -89,19 +95,21 @@ public class EvaluateServlet extends HttpServlet {
 		PrintStream outs = new PrintStream(wouts);
 		EvalEngine engine = null;
 		if (session != null) {
-			engine = (EvalEngine) session.getAttribute(EVAL_ENGINE);
-			if (engine == null) {
-				// ExprFactory f = new ExprFactory(new SystemNamespace());
-				// PrintStream pout = new PrintStream();
-				engine = new EvalEngine(session.getId(), 256, 256, outs);
-				session.setAttribute(EVAL_ENGINE, engine);
-			} else {
-				engine.init();
-				engine.setOutPrintStream(outs);
-				engine.setSessionID(session.getId());
-				// init ThreadLocal instance:
-				EvalEngine.set(engine);
-			}
+			// engine = (EvalEngine) session.getAttribute(EVAL_ENGINE);
+			// if (engine == null) {
+			// ExprFactory f = new ExprFactory(new SystemNamespace());
+			// PrintStream pout = new PrintStream();
+			engine = new EvalEngine(session.getId(), 256, 256, outs);
+			// session.setAttribute(EVAL_ENGINE, engine);
+			// } else {
+			// engine.init();
+			// engine.setOutPrintStream(outs);
+			// engine.setSessionID(session.getId());
+			// // init ThreadLocal instance:
+			// EvalEngine.set(engine);
+			// }
+		} else {
+			engine = new EvalEngine("no-session", 256, 256, outs);
 		}
 
 		try {
@@ -171,19 +179,18 @@ public class EvaluateServlet extends HttpServlet {
 			}
 			return new String[] { "error", "IOException occured" };
 
+		} catch (Exception e) {
+			// error message
+			// if (Config.SHOW_STACKTRACE) {
+			// e.printStackTrace();
+			// }
+			String msg = e.getMessage();
+			if (msg != null) {
+				return new String[] { "error", "Error in evaluateString: " + msg };
+			}
+			return new String[] { "error", "Error in evaluateString" };
+
 		}
-		// catch (Exception e) {
-		// // error message
-		// // if (Config.SHOW_STACKTRACE) {
-		// e.printStackTrace();
-		// // }
-		// String msg = e.getMessage();
-		// if (msg != null) {
-		// return new String[] { "error", "Error in evaluateString: " + msg };
-		// }
-		// return new String[] { "error", "Error in evaluateString" };
-		//
-		// }
 	}
 
 	private static String[] createOutput(StringBufferWriter buffer, IExpr rhsExpr, EvalEngine engine, String function)

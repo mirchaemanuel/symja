@@ -3,9 +3,9 @@ package org.matheclipse.gwt.server;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.PrintWriter;
-import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.logging.Logger;
 
 import javax.cache.CacheManager;
 import javax.servlet.ServletException;
@@ -30,6 +30,8 @@ public class AdminServlet extends HttpServlet {
 	 * 
 	 */
 	private static final long serialVersionUID = -5138122751860950428L;
+	
+	private static final Logger log = Logger.getLogger(AdminServlet.class.getName());
 
 	public static int APPLET_NUMBER = 1;
 
@@ -65,8 +67,10 @@ public class AdminServlet extends HttpServlet {
 			return;
 		}
 		value = value.trim();
+		log.warning("In::"+value);
 		try {
 			String result = evaluate(req, value, "", 0);
+			log.warning("Out::"+result);
 			out.println(result);// URLEncoder.encode(result, "UTF-8"));
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -90,21 +94,23 @@ public class AdminServlet extends HttpServlet {
 		PrintStream outs = new PrintStream(wouts);
 		EvalEngine engine = null;
 		if (session != null) {
-			engine = (EvalEngine) session.getAttribute(EVAL_ENGINE);
-			if (engine == null) {
-				// ExprFactory f = new ExprFactory(new SystemNamespace());
-				// PrintStream pout = new PrintStream();
-				engine = new EvalEngine(session.getId(), 256, 256, outs);
-				session.setAttribute(EVAL_ENGINE, engine);
-				// init ThreadLocal instance:
-				EvalEngine.get();
-			} else {
-				engine.init();
-				engine.setOutPrintStream(outs);
-				engine.setSessionID(session.getId());
-				// init ThreadLocal instance:
-				EvalEngine.set(engine);
-			}
+			// engine = (EvalEngine) session.getAttribute(EVAL_ENGINE);
+			// if (engine == null) {
+			// ExprFactory f = new ExprFactory(new SystemNamespace());
+			// PrintStream pout = new PrintStream();
+			engine = new EvalEngine(session.getId(), 256, 256, outs);
+			// session.setAttribute(EVAL_ENGINE, engine);
+			// // init ThreadLocal instance:
+			// EvalEngine.get();
+			// } else {
+			// engine.init(); 
+			// engine.setOutPrintStream(outs);
+			// engine.setSessionID(session.getId());
+			// // init ThreadLocal instance:
+			// EvalEngine.set(engine);
+			// }
+		} else {
+			engine = new EvalEngine("no-session", 256, 256, outs);
 		}
 
 		try {
