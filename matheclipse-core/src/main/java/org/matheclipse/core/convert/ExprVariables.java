@@ -99,4 +99,40 @@ public class ExprVariables {
   public boolean isSize(int size) {
     return set.size() == size;
   }
+
+	/**
+	 * @param o
+	 * @return
+	 * @see java.util.Set#contains(java.lang.Object)
+	 */
+	public boolean contains(IExpr o) {
+		return set.contains(o);
+	}
+
+	/**
+	 * @param c
+	 * @return
+	 * @see java.util.Set#containsAll(java.util.Collection)
+	 */
+	public boolean containsAll(Collection<? extends IExpr> c) {
+		return set.containsAll(c);
+	}
+
+	/**
+	 * @return
+	 * @see java.util.Set#isEmpty()
+	 */
+	public boolean isEmpty() {
+		return set.isEmpty();
+	}
+
+	/**
+	 * @param <T>
+	 * @param a
+	 * @return
+	 * @see java.util.Set#toArray(T[])
+	 */
+	public <IExpr> IExpr[] toArray(IExpr[] a) {
+		return set.toArray(a);
+	}
 }
