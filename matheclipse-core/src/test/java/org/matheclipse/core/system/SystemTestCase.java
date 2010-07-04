@@ -2288,6 +2288,10 @@ public class SystemTestCase extends AbstractTestCase {
 		check("PolynomialGCD[2*x^5-2*x,(x^2-1)^2,Modulus->2]", "x^4+1");
 		check("PolynomialExtendedGCD[2*x^5-2*x,(x^2-1)^2,x]", "{x^2-1,{1/4*x,-1/2*x^2-1}}");
 		check("PolynomialExtendedGCD[2*x^5-2*x,(x^2-1)^2,x, Modulus->2]", "{x^4+1,{0,1}}");
+
+		check("ExpandAll[(1+x)^2*(7+x)*(11+x)*(17+x)]", "x^5+37*x^4+454*x^3+2110*x^2+3001*x+1309");
+		check("PolynomialLCM[(1+x)^2*(7+x)*(17+x),(1+x)(7+x)(11+x)]", "x^5+37*x^4+454*x^3+2110*x^2+3001*x+1309");
+		check("PolynomialLCM[(1+x)^2*(7+x)*(17+x),(1+x)(7+x)(11+x), Modulus->31]", "x^5+6*x^4+20*x^3+2*x^2+25*x+7");
 	}
 
 	public void testSystem995() {
