@@ -5,7 +5,6 @@ import static org.matheclipse.core.expression.F.List;
 import static org.matheclipse.core.expression.F.Options;
 import static org.matheclipse.core.expression.F.ReplaceAll;
 
-import org.matheclipse.core.eval.EvalEngine;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
@@ -20,12 +19,10 @@ public class Options {
 
 	private IAST fCurrentOptionsList;
 
-	private EvalEngine fEvalEngine;
 
-	public Options(final ISymbol symbol, final EvalEngine engine, final IAST currentOptionsList, final int startIndex) {
-		fEvalEngine = engine;
+	public Options(final ISymbol symbol, final IAST currentOptionsList, final int startIndex) {
 		// get the List of pre-defined options:
-		final IExpr temp = engine.evaluate(Options(symbol));
+		final IExpr temp = F.eval(Options(symbol));
 		if ((temp != null) && (temp instanceof IAST) && temp.isList()) {
 			fDefaultOptionsList = (IAST) temp;
 		} else {
@@ -79,10 +76,10 @@ public class Options {
 	public IAST replaceAll(final IAST options) {
 		IAST result = (IAST) options.clone();
 		if (fCurrentOptionsList != null) {
-			result = (IAST) fEvalEngine.evaluate(ReplaceAll(result, fCurrentOptionsList));
+			result = (IAST) F.eval(ReplaceAll(result, fCurrentOptionsList));
 		}
 		if (fDefaultOptionsList != null) {
-			result = (IAST) fEvalEngine.evaluate(ReplaceAll(result, fDefaultOptionsList));
+			result = (IAST) F.eval(ReplaceAll(result, fDefaultOptionsList));
 		}
 		return result;
 	}
