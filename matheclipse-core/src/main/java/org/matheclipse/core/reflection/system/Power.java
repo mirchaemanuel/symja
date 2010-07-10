@@ -18,6 +18,7 @@ import org.matheclipse.core.interfaces.IFraction;
 import org.matheclipse.core.interfaces.IInteger;
 import org.matheclipse.core.interfaces.INum;
 import org.matheclipse.core.interfaces.INumber;
+import org.matheclipse.core.interfaces.IRational;
 import org.matheclipse.core.interfaces.ISignedNumber;
 import org.matheclipse.core.interfaces.ISymbol;
 
@@ -35,7 +36,7 @@ public class Power extends AbstractArg2 implements INumeric {
 	public IExpr e2DblComArg(final IComplexNum c0, final IComplexNum c1) {
 		return c0.pow(c1);
 	}
-	
+
 	@Override
 	public IExpr e2ComArg(final IComplex c0, final IComplex c1) {
 		return null;
@@ -46,7 +47,7 @@ public class Power extends AbstractArg2 implements INumeric {
 		if (d0.isNegative()) {
 			return F.complexNum(d0.doubleValue()).pow(F.complexNum(d1.doubleValue()));
 		}
-	  return d0.pow(d1);
+		return d0.pow(d1);
 	}
 
 	@Override
@@ -240,28 +241,46 @@ public class Power extends AbstractArg2 implements INumeric {
 
 			if (new_numer != null) {
 				if (new_denom != null) {
-					if (f0.sign() < 0) {
-						return Times(fraction(new_numer[0], new_denom[0]), Power(fraction(new_numer[1], new_denom[1]).negate(), new_root));
+					IRational p0 = null;
+					if (new_denom[1].equals(F.C1)) {
+						p0 = new_numer[1];
+					} else {
+						p0 = fraction(new_numer[1], new_denom[1]);
 					}
-					return Times(fraction(new_numer[0], new_denom[0]), Power(fraction(new_numer[1], new_denom[1]), new_root));
+					if (f0.sign() < 0) {
+						return Times(fraction(new_numer[0], new_denom[0]), Power(p0.negate(), new_root));
+					}
+					return Times(fraction(new_numer[0], new_denom[0]), Power(p0, new_root));
 				} else {
 					if (a.equals(C1)) {
 						return null;
 					}
-					if (f0.sign() < 0) {
-						return Times(new_numer[0], Power(fraction(new_numer[1], b).negate(), new_root));
+					IRational p0 = null;
+					if (b.equals(F.C1)) {
+						p0 = new_numer[1];
+					} else {
+						p0 = fraction(new_numer[1], b);
 					}
-					return Times(new_numer[0], Power(fraction(new_numer[1], b), new_root));
+					if (f0.sign() < 0) {
+						return Times(new_numer[0], Power(p0.negate(), new_root));
+					}
+					return Times(new_numer[0], Power(p0, new_root));
 				}
 			} else {
 				if (new_denom != null) {
 					if (b.equals(C1)) {
 						return null;
 					}
-					if (f0.sign() < 0) {
-						return Times(fraction(C1, new_denom[0]), Power(F.fraction(a, new_denom[1]).negate(), new_root));
+					IRational p0 = null;
+					if (new_denom[1].equals(F.C1)) {
+						p0 = a;
+					} else {
+						p0 = F.fraction(a, new_denom[1]);
 					}
-					return Times(fraction(C1, new_denom[0]), Power(F.fraction(a, new_denom[1]), new_root));
+					if (f0.sign() < 0) {
+						return Times(fraction(C1, new_denom[0]), Power(p0.negate(), new_root));
+					}
+					return Times(fraction(C1, new_denom[0]), Power(p0, new_root));
 				}
 			}
 

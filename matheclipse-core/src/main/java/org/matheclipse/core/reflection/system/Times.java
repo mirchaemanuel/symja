@@ -122,7 +122,7 @@ public class Times extends AbstractArgMultiple implements INumeric {
 			}
 		}
 
-		if (o1.isAST(F.Power, 3) && (((IAST) o1).get(2) instanceof INumber)) {
+		if (o1.isAST(F.Power, 3) && (((IAST) o1).get(2) instanceof IInteger)) {
 			final IAST f1 = (IAST) o1;
 
 			if (f1.get(1).equals(o0)) {
