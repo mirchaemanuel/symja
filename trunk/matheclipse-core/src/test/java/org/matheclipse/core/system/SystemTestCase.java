@@ -126,6 +126,7 @@ public class SystemTestCase extends AbstractTestCase {
 	}
 
 	public void testSystem007() {
+		check("32^(1/4)", "2*2^(1/4)");
 		check("(-1)^(1/3)", "(-1)^(1/3)");
 		check("-12528^(1/2)", "(-12)*87^(1/2)");
 		check("(-27)^(1/3)", "3*(-1)^(1/3)");
