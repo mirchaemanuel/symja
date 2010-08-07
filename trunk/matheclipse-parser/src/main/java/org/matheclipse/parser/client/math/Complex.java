@@ -18,7 +18,6 @@
 package org.matheclipse.parser.client.math;
 
 import java.io.Serializable;
- 
 
 /**
  * Representation of a Complex number - a number which has both a real and
@@ -65,16 +64,14 @@ public class Complex implements Serializable {
 	/**
 	 * The imaginary part
 	 * 
-	 * @deprecated to be made final and private in 2.0
 	 */
-	protected double imaginary;
+	private final double imaginary;
 
 	/**
 	 * The real part
 	 * 
-	 * @deprecated to be made final and private in 2.0
 	 */
-	protected double real;
+	private final double real;
 
 	/**
 	 * Create a complex number given the real and imaginary parts.
@@ -733,13 +730,19 @@ public class Complex implements Serializable {
 		if (x == null) {
 			throw new NullPointerException();
 		}
-		if (x.real == 0.0 && x.imaginary == 0.0) {
-			if (real == 0.0 && imaginary == 0.0) {
-				// 0^0 => NaN
-				return Complex.NaN;
+		if (x.imaginary == 0.0) {
+			if (x.real == 0.0) {
+				if (real == 0.0 && imaginary == 0.0) {
+					// 0^0 => NaN
+					return Complex.NaN;
+				}
+				// THIS^0 => 1
+				return Complex.ONE;
 			}
-			// THIS^0 => 1
-			return Complex.ONE;
+			if (x.real == 0.5) {
+				// THIS^(1/2)
+				return sqrt();
+			}
 		}
 		if (real == 0.0 && imaginary == 0.0) {
 			// 0^x => 0 for x<>0
