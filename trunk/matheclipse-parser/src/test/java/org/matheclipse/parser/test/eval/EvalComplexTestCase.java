@@ -54,6 +54,9 @@ public class EvalComplexTestCase extends TestCase {
 		check("+42.2", "42.2");
 		check("-3/4", "-0.75");
 		check("+3/4", "0.75");
+		check("0^2", "0.0");
+		check("0^0", "NaN+I*(NaN)");
+		check("0^I", "0.0");
 		check("3^3", "27.0");
 		check("2^9", "511.99999999999994");
 		check("2^3^2", "512.0000000000005");
