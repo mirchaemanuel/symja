@@ -1,6 +1,6 @@
 
 /*
- * $Id: LocalTest.java 1241 2007-07-29 09:25:03Z kredel $
+ * $Id: LocalTest.java 3244 2010-08-04 19:26:16Z kredel $
  */
 
 package edu.jas.application;
@@ -15,10 +15,9 @@ import junit.framework.TestSuite;
 //import org.apache.log4j.BasicConfigurator;
 //import org.apache.log4j.Logger;
 
-import edu.jas.arith.BigRational;
-
 //import edu.jas.structure.RingElem;
-
+import edu.jas.arith.BigRational;
+import edu.jas.kern.ComputerThreads;
 import edu.jas.poly.GenPolynomial;
 import edu.jas.poly.GenPolynomialRing;
 
@@ -99,6 +98,7 @@ public class LocalTest extends TestCase {
        fac = null;
        id = null;
        mfac = null;
+       ComputerThreads.terminate();
    }
 
 
@@ -186,9 +186,13 @@ public class LocalTest extends TestCase {
  public void testMultiplication() {
 
      a = fac.random(kl,ll,el,q);
-     assertTrue("not isZERO( a )", !a.isZERO() );
 
      b = fac.random(kl,ll,el,q);
+
+     if ( a.isZERO() || b.isZERO() ) {
+         return;
+     }
+     assertTrue("not isZERO( a )", !a.isZERO() );
      assertTrue("not isZERO( b )", !b.isZERO() );
 
      c = b.multiply(a);

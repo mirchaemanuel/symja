@@ -1,5 +1,5 @@
 /*
- * $Id: Examples.java 2823 2009-09-23 18:00:19Z kredel $
+ * $Id: Examples.java 3163 2010-06-03 19:06:31Z kredel $
  */
 
 package edu.jas.application;
@@ -16,6 +16,7 @@ import edu.jas.structure.ProductRing;
 import edu.jas.gb.GroebnerBase;
 import edu.jas.gb.GroebnerBasePseudoSeq;
 import edu.jas.gb.GroebnerBaseSeq;
+import edu.jas.gb.GBFactory;
 import edu.jas.gb.RGroebnerBasePseudoSeq;
 import edu.jas.gb.RReductionSeq;
 import edu.jas.kern.ComputerThreads;
@@ -72,7 +73,8 @@ public class Examples {
         System.out.println("cp = " + cp + "\n");
 
         List<GenPolynomial<BigInteger>> gb;
-        GroebnerBaseSeq<BigInteger> sgb = new GroebnerBaseSeq<BigInteger>();
+        //GroebnerBase<BigInteger> sgb = new GroebnerBaseSeq<BigInteger>();
+        GroebnerBase<BigInteger> sgb = GBFactory.getImplementation(fac);
         gb = sgb.GB( cp );
         System.out.println("gb = " + gb);
 
@@ -217,8 +219,9 @@ public class Examples {
         }
         System.out.println("L = " + L);
 
-        GroebnerBase<Residue<BigRational>> bb 
-            = new GroebnerBasePseudoSeq<Residue<BigRational>>(rr);
+        GroebnerBase<Residue<BigRational>> bb;
+        //bb = new GroebnerBasePseudoSeq<Residue<BigRational>>(rr);
+        bb = GBFactory.getImplementation(rr);
 
         System.out.println("isGB(L) = " + bb.isGB(L));
 
