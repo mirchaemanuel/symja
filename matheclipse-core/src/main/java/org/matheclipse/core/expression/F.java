@@ -1255,9 +1255,16 @@ public class F {
 		return ast(a, head);
 	}
 
-	public static IAST ast(final IExpr head, final int initialCapacity, final boolean setLength) {
+	/**
+	 * 
+	 * @param head
+	 * @param initialCapacity
+	 * @param initNull initialize all elements with <code>null</code>.
+	 * @return
+	 */
+	public static IAST ast(final IExpr head, final int initialCapacity, final boolean initNull) {
 		final AST ast = AST.newInstance(head);
-		if (setLength) {
+		if (initNull) {
 			for (int i = 0; i < initialCapacity; i++) {
 				ast.add(null);
 			}

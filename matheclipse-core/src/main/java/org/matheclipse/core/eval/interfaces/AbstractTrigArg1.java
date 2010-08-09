@@ -1,5 +1,6 @@
 package org.matheclipse.core.eval.interfaces;
 
+import org.matheclipse.core.eval.exception.Validate;
 import org.matheclipse.core.eval.exception.WrongNumberOfArguments;
 import org.matheclipse.core.expression.AST;
 import org.matheclipse.core.expression.ComplexNum;
@@ -8,22 +9,18 @@ import org.matheclipse.core.expression.Num;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.INumber;
-import org.matheclipse.core.interfaces.ISymbol;
-import org.matheclipse.parser.client.SyntaxError;
 
 /**
- * Base class for functions with 1 argument (i.e. Sin, Cos...)
- * with Attributes <i>Listable</i> and <i>NumericFunction</i>
+ * Base class for functions with 1 argument (i.e. Sin, Cos...) with Attributes
+ * <i>Listable</i> and <i>NumericFunction</i>
  * 
  */
 public abstract class AbstractTrigArg1 extends AbstractFunctionEvaluator {
 
 	@Override
-	public IExpr evaluate(final IAST functionList) {
-		if (functionList.size() != 2) {
-			throw new WrongNumberOfArguments(functionList, 1, functionList.size() - 1);
-		}
-		return evaluateArg1(functionList.get(1));
+	public IExpr evaluate(final IAST ast) {
+		Validate.checkSize(ast, 2);
+		return evaluateArg1(ast.get(1));
 	}
 
 	public IExpr evaluateArg1(final IExpr arg1) {
@@ -32,9 +29,7 @@ public abstract class AbstractTrigArg1 extends AbstractFunctionEvaluator {
 
 	@Override
 	public IExpr numericEval(final IAST functionList) {
-		if (functionList.size() != 2) {
-			throw new WrongNumberOfArguments(functionList, 1, functionList.size() - 1);
-		}
+		Validate.checkSize(functionList, 2);
 		if (functionList.get(1) instanceof Num) {
 			return numericEvalD1((Num) functionList.get(1));
 		}
@@ -46,8 +41,9 @@ public abstract class AbstractTrigArg1 extends AbstractFunctionEvaluator {
 
 	/**
 	 * Evaluate this function for one double argument
+	 * 
 	 * @param arg1
-	 *            a double number
+	 *          a double number
 	 * 
 	 * @return
 	 */
@@ -57,8 +53,9 @@ public abstract class AbstractTrigArg1 extends AbstractFunctionEvaluator {
 
 	/**
 	 * Evaluate this function for one double complex argument
+	 * 
 	 * @param arg1
-	 *            a double complex number
+	 *          a double complex number
 	 * 
 	 * @return
 	 */
@@ -80,13 +77,11 @@ public abstract class AbstractTrigArg1 extends AbstractFunctionEvaluator {
 			return (((INumber) expr).complexSign() == (-1));
 		} else if (expr instanceof AST) {
 			final AST exprAST = (AST) expr;
-			if ((exprAST.head() == F.Times)
-					&& (exprAST.size() > 1)) {
+			if ((exprAST.head() == F.Times) && (exprAST.size() > 1)) {
 				if (exprAST.get(1) instanceof INumber) {
 					return (((INumber) exprAST.get(1)).complexSign() == (-1));
 				}
-			} else if ((exprAST.head() == F.Plus)
-					&& (exprAST.size() > 2)) {
+			} else if ((exprAST.head() == F.Plus) && (exprAST.size() > 2)) {
 				if (exprAST.get(1) instanceof INumber) {
 					return (((INumber) exprAST.get(1)).complexSign() == (-1));
 					// } else if (exprAST.get(0) instanceof AST) {
