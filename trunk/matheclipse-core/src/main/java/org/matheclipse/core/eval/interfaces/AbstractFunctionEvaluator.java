@@ -16,8 +16,8 @@ import org.matheclipse.parser.client.ast.ASTNode;
  */
 public abstract class AbstractFunctionEvaluator implements IFunctionEvaluator {
 
-	public IExpr numericEval(final IAST functionList) {
-		return evaluate(functionList);
+	public IExpr numericEval(final IAST ast) {
+		return evaluate(ast);
 	}
 
 	/**

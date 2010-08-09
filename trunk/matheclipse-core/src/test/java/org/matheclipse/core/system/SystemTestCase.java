@@ -1717,10 +1717,22 @@ public class SystemTestCase extends AbstractTestCase {
 
 	public void testSystem334() {
 		check("Complement[{1},{2}]", "{1}");
+		check("Complement[{1,2,2,4,6},{2,3,4,5}]", "{1,6}");
 	}
 
 	public void testSystem335() {
-		check("Complement[{1,2,2,4,6},{2,3,4,5}]", "{1,6}");
+		check("CartesianProduct[{},{}]", "{}");
+		check("CartesianProduct[{a},{}]", "{}");
+		check("CartesianProduct[{},{b}]", "{}");
+		check("CartesianProduct[{a},{b}]", "{{a,b}}");
+		check("CartesianProduct[{a},{b},{c}]", "{{a,b,c}}");
+		check("CartesianProduct[{a,b},{c},{d,e,f}]", "{{a,c,d},{a,c,e},{a,c,f},{b,c,d},{b,c,e},{b,c,f}}");
+		check(
+				"CartesianProduct[{a,b},{c,d},{e,f},{g,h}]",
+				"{{a,c,e,g},{a,c,e,h},{a,c,f,g},{a,c,f,h},{a,d,e,g},{a,d,e,h},{a,d,f,g},{a,d,f,h},{b,c,e,g},{b,c,e,h},{b,c,f,g},{b,c,f,h},{b,d,e,g},{b,d,e,h},{b,d,f,g},{b,d,f,h}}");
+		check("CartesianProduct[{1,2,2,4,6},{2,3,4,5}]",
+				"{{1,2},{1,3},{1,4},{1,5},{2,2},{2,3},{2,4},{2,5},{2,2},{2,3},{2,4},{2,5},{4,2},{\n"
+						+ "4,3},{4,4},{4,5},{6,2},{6,3},{6,4},{6,5}}");
 	}
 
 	public void testSystem336() {
@@ -2352,7 +2364,10 @@ public class SystemTestCase extends AbstractTestCase {
 		check("Factor[4+8*x+19*x^2+20*x^3+20*x^4+8*x^5+x^6]", "(x^3+4*x^2+x+2)*(x^3+4*x^2+3*x+2)");
 		check("Factor[Expand[(x-1)^3]]", "(x-1)^3");
 		check("Factor[x^6-1]", "(x-1)*(x+1)*(x^2+x+1)*(x^2-x+1)");
-		// check("Factor[x^10-y^10]", "");
+
+		check("Expand[(y+x)*(-y+x)*(y^4+x*y^3+x^2*y^2+x^3*y+x^4)*(y^4-x*y^3+x^2*y^2-x^3*y+x^4)]", "-y^10+x^10");
+		// check("Factor[x^10-y^10]",
+		// "(y+x)*(-y+x)*(y^4+x*y^3+x^2*y^2+x^3*y+x^4)*(y^4-x*y^3+x^2*y^2-x^3*y+x^4)");
 
 		check("Expand[(-1+x)*(1+x)*(1+x+x^2)*(1-x+x^2)]", "x^6-1");
 

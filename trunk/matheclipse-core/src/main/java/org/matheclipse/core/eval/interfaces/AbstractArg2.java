@@ -1,5 +1,6 @@
 package org.matheclipse.core.eval.interfaces;
 
+import org.matheclipse.core.eval.exception.Validate;
 import org.matheclipse.core.eval.exception.WrongNumberOfArguments;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IAST;
@@ -140,11 +141,13 @@ public abstract class AbstractArg2 extends AbstractFunctionEvaluator {
 
 	@Override
 	public IExpr evaluate(final IAST functionList) {
-		if (functionList.size() != 3) {
-			throw new WrongNumberOfArguments(functionList, 2, functionList.size() - 1);
-		} else {
-			return binaryOperator(functionList.get(1), functionList.get(2));
-		}
+		Validate.checkSize(functionList, 3);
+		// if (functionList.size() != 3) {
+		// throw new WrongNumberOfArguments(functionList, 2, functionList.size() -
+		// 1);
+		// } else {
+		return binaryOperator(functionList.get(1), functionList.get(2));
+		// }
 	}
 
 }
