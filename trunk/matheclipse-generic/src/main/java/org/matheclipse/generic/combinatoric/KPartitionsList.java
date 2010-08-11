@@ -41,13 +41,13 @@ public class KPartitionsList<T, L extends List<T>> implements Iterator<L>, Itera
 		if (partitionsIndex == null) {
 			return null;
 		}
-		L part = fCopier.clone(fResultList);
+		L part = fCopier.newInstance(fResultList);
 		L temp;
 		// System.out.println("Part:");
 		int j = 0;
 		for (int i = 1; i < partitionsIndex.length; i++) {
 			// System.out.println(partitionsIndex[i] + ",");
-			temp = fCopier.clone(fResultList);
+			temp = fCopier.newInstance(fResultList);
 			for (int m = j; m < partitionsIndex[i]; m++) {
 				temp.add(fList.get(m + fOffset));
 			}
@@ -55,7 +55,7 @@ public class KPartitionsList<T, L extends List<T>> implements Iterator<L>, Itera
 			part.add(fCopier.castList(temp));
 		}
 
-		temp = fCopier.clone(fResultList);
+		temp = fCopier.newInstance(fResultList);
 		int n = fList.size() - fOffset;
 		for (int m = j; m < n; m++) {
 			temp.add(fList.get(m + fOffset));
