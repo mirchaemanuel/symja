@@ -9,9 +9,9 @@ public class Generating<T, L extends List<T>> {
 
 	final private int fHeadOffset;
 
-	final private NestedAlgorithms<T, L> fCopier;
+	final private INestedList<T, L> fCopier;
 
-	public Generating(L outerList, L innerList, int headOffset, NestedAlgorithms<T, L> copier) {
+	public Generating(L outerList, L innerList, int headOffset, INestedList<T, L> copier) {
 		this.fOuterList = outerList;
 		this.fInnerList = innerList;
 		this.fHeadOffset = headOffset;

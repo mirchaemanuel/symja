@@ -7,12 +7,11 @@ import org.matheclipse.core.generic.LevelSpecification;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.generic.combinatoric.KSubsetsList;
-import org.matheclipse.generic.nested.LevelSpec;
 
 /**
  * Generate a list of all k-combinations from a given list
  * 
- * See <a href=" http://en.wikipedia.org/wiki/Combination">Combination</a>
+ * See <a href="http://en.wikipedia.org/wiki/Combination">Combination</a>
  */
 public class Subsets extends AbstractFunctionEvaluator {
 

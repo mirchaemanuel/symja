@@ -3,7 +3,7 @@ package org.matheclipse.generic.combinatoric;
 import java.util.Iterator;
 import java.util.List;
 
-import org.matheclipse.generic.nested.NestedAlgorithms;
+import org.matheclipse.generic.nested.INestedList;
 
 /**
  * Iterate over the lists of all k-combinations from a given list
@@ -16,14 +16,14 @@ public class KSubsetsList<T, L extends List<T>> implements Iterator<L>, Iterable
 	final private L fResultList;
 	final private int fOffset;
 	final private Iterator<int[]> fIterable;
-	final private NestedAlgorithms<T, L> fCopier;
+	final private INestedList<T, L> fCopier;
 	final private int fK;
 
-	public KSubsetsList(final Iterator<int[]> iterable, final L list, final int k, L resultList, NestedAlgorithms<T, L> copier) {
+	public KSubsetsList(final Iterator<int[]> iterable, final L list, final int k, L resultList, INestedList<T, L> copier) {
 		this(iterable, list, k, resultList, copier, 0);
 	}
 
-	public KSubsetsList(final Iterator<int[]> iterable, final L list, final int k, L resultList, NestedAlgorithms<T, L> copier,
+	public KSubsetsList(final Iterator<int[]> iterable, final L list, final int k, L resultList, INestedList<T, L> copier,
 			final int offset) {
 		fIterable = iterable;
 		fList = list;
@@ -34,7 +34,7 @@ public class KSubsetsList<T, L extends List<T>> implements Iterator<L>, Iterable
 	}
 
 	public static <T, L extends List<T>> KSubsetsList<T, L> createKSubsets(final L list, final int k, L resultList,
-			NestedAlgorithms<T, L> copier, final int offset) {
+			INestedList<T, L> copier, final int offset) {
 		return new KSubsetsList<T, L>(new KSubsetsIterable(list.size() - offset, k), list, k, resultList, copier, offset);
 	}
 

@@ -1,25 +1,27 @@
-package org.matheclipse.core.combinatoric;
+package org.matheclipse.generic.combinatoric;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.matheclipse.core.expression.F;
-import org.matheclipse.core.interfaces.IAST;
-import org.matheclipse.core.interfaces.IExpr;
+import org.matheclipse.generic.nested.INestedList;
 
 /**
- * Cartesian product with iterator.
+ * Cartesian product iterable.
  * 
  * @author Heinz Kredel
  * @author Axel Kramer (Modifications for MathEclipse)
  */
-public class CartesianProductIterable implements Iterable<IAST> {
+public class CartesianProductIterable<T, L extends List<T>> implements Iterable<L> {
 
 	/**
 	 * data structure.
 	 */
-	public final List<IAST> comps; // List<Iterable<E>> also ok
+	public final List<L> comps; // List<Iterable<E>> also ok
+
+	private final L fEmptyResultList;
+
+	private final INestedList<T, L> fCopier;
 
 	/**
 	 * CartesianProduct constructor.
@@ -27,11 +29,13 @@ public class CartesianProductIterable implements Iterable<IAST> {
 	 * @param comps
 	 *          components of the cartesian product.
 	 */
-	public CartesianProductIterable(List<IAST> comps) {
+	public CartesianProductIterable(List<L> comps, L emptyResultList, INestedList<T, L> copier) {
 		if (comps == null) {
 			throw new IllegalArgumentException("null components not allowed");
 		}
 		this.comps = comps;
+		this.fEmptyResultList = emptyResultList;
+		this.fCopier = copier;
 	}
 
 	/**
@@ -39,8 +43,8 @@ public class CartesianProductIterable implements Iterable<IAST> {
 	 * 
 	 * @return an iterator.
 	 */
-	public Iterator<IAST> iterator() {
-		return new CartesianProductIterator(comps);
+	public Iterator<L> iterator() {
+		return new CartesianProductIterator<T, L>(comps, fEmptyResultList, fCopier);
 	}
 
 }
@@ -50,18 +54,20 @@ public class CartesianProductIterable implements Iterable<IAST> {
  * 
  * @author Heinz Kredel
  */
-class CartesianProductIterator implements Iterator<IAST> {
+class CartesianProductIterator<T, L extends List<T>> implements Iterator<L> {
 
 	/**
 	 * data structure.
 	 */
-	final List<IAST> comps;
+	final List<L> comps;
 
-	final List<Iterator<IExpr>> compit;
+	final List<Iterator<T>> compit;
 
-	IAST current;
+	L current;
 
 	boolean empty;
+
+	final private INestedList<T, L> fCopier;
 
 	/**
 	 * CartesianProduct iterator constructor.
@@ -69,16 +75,17 @@ class CartesianProductIterator implements Iterator<IAST> {
 	 * @param comps
 	 *          components of the cartesian product.
 	 */
-	public CartesianProductIterator(List<IAST> comps) {
+	public CartesianProductIterator(List<L> comps, L emptyResultList, INestedList<T, L> copier) {
 		if (comps == null) {
 			throw new IllegalArgumentException("null comps not allowed");
 		}
+		this.fCopier = copier;
 		this.comps = comps;
-		current = F.List();
-		compit = new ArrayList<Iterator<IExpr>>(comps.size());
+		current = emptyResultList;
+		compit = new ArrayList<Iterator<T>>(comps.size());
 		empty = false;
-		for (IAST ci : comps) {
-			Iterator<IExpr> it = ci.iterator();
+		for (L ci : comps) {
+			Iterator<T> it = ci.iterator();
 			if (!it.hasNext()) {
 				empty = true;
 				current.clear();
@@ -104,15 +111,16 @@ class CartesianProductIterator implements Iterator<IAST> {
 	 * 
 	 * @return next tuple.
 	 */
-	public synchronized IAST next() {
+	public synchronized L next() {
 		if (empty) {
 			throw new RuntimeException("invalid call of next()");
 		}
-		IAST res = (IAST) current.clone();
+		// IAST res = (IAST) current.clone();
+		L res = fCopier.clone(current);
 		// search iterator which hasNext
 		int i = compit.size() - 1;
 		for (; i >= 0; i--) {
-			Iterator<IExpr> iter = compit.get(i);
+			Iterator<T> iter = compit.get(i);
 			if (iter.hasNext()) {
 				break;
 			}
@@ -123,13 +131,13 @@ class CartesianProductIterator implements Iterator<IAST> {
 		}
 		// update iterators
 		for (int j = i + 1; j < compit.size(); j++) {
-			Iterator<IExpr> iter = comps.get(j).iterator();
+			Iterator<T> iter = comps.get(j).iterator();
 			compit.set(j, iter);
 		}
 		// update current
 		for (int j = i; j < compit.size(); j++) {
-			Iterator<IExpr> iter = compit.get(j);
-			IExpr el = iter.next();
+			Iterator<T> iter = compit.get(j);
+			T el = iter.next();
 			current.set(j + 1, el);
 		}
 		return res;

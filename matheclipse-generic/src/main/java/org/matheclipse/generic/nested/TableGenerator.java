@@ -22,15 +22,15 @@ public class TableGenerator<T, L extends List<T>> {
 
 	Object[] fCurrentIndex;
 
-	private final NestedAlgorithms<T, L> fCopier;
+	private final INestedList<T, L> fCopier;
 
 	public TableGenerator(final List<? extends IIterator<T>> iterList, final L prototypeList, final IArrayFunction<T> function,
-			NestedAlgorithms<T, L> copier) {
+			INestedList<T, L> copier) {
 		this(iterList, prototypeList, function, copier, null);
 	}
 
 	public TableGenerator(final List<? extends IIterator<T>> iterList, final L prototypeList, final IArrayFunction<T> function,
-			NestedAlgorithms<T, L> copier, T defaultValue) {
+			INestedList<T, L> copier, T defaultValue) {
 		fIterList = iterList;
 		fPrototypeList = prototypeList;
 		fFunction = function;

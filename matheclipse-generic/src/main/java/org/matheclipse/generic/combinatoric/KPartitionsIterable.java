@@ -3,26 +3,21 @@ package org.matheclipse.generic.combinatoric;
 import java.util.Iterator;
 
 /**
- * This class returns the indexes for partitioning a list of N elements.
- * <br/> <b>Note:</b> in contrast to <i>normal</i> Iterable behavior, the
- * {@link hasNext} method always returns true, and the {@link next} method
- * returns <code>null</code> if the iteration stops. Usage pattern:
- * 
+ * This class returns the indexes for partitioning a list of N elements. <br/>
+ * Usage pattern:
  * <pre>
  * final KPartitionsIterable iter = new KPartitionsIterable(n, k);
  * for (int[] partitionsIndex : iter) {
- *   if (partitionsIndex==null) {
- *     break;
- *   }
  *   ...
+ * }
  * </pre>
  * 
- * Example: KPartitionsIterable(3,5) gives the following sequences [0, 1,
- * 2], [0, 1, 3], [0, 1, 4], [0, 2, 3], [0, 2, 4], [0, 3, 4] <br/> If you
- * interpret these integer lists as indexes for a list {a,b,c,d,e} which should
- * be partitioned into 3 parts the result is: <br/> {{{a},{b},{c,d,e}},
- * {{a},{b,c},{d,e}}, {{a},{b,c,d},{e}}, {{a,b},{c},{d,e}}, {{a,b},{c,d},{e}},
- * {{a,b,c},{d},{e}}}
+ * Example: KPartitionsIterable(3,5) gives the following sequences [0, 1, 2],
+ * [0, 1, 3], [0, 1, 4], [0, 2, 3], [0, 2, 4], [0, 3, 4] <br/>
+ * If you interpret these integer lists as indexes for a list {a,b,c,d,e} which
+ * should be partitioned into 3 parts the results are: <br/>
+ * {{{a},{b},{c,d,e}}, {{a},{b,c},{d,e}}, {{a},{b,c,d},{e}}, {{a,b},{c},{d,e}},
+ * {{a,b},{c,d},{e}}, {{a,b,c},{d},{e}}}
  */
 public class KPartitionsIterable implements Iterator<int[]>, Iterable<int[]> {
 
@@ -32,19 +27,27 @@ public class KPartitionsIterable implements Iterator<int[]>, Iterable<int[]> {
 
 	final private int fPartitionsIndex[];
 
+	final private int fCopiedResultIndex[];
+
+	private int fResultIndex[];
+
 	public KPartitionsIterable(final int length, final int parts) {
 		super();
 		fLength = length;
 		fNumberOfParts = parts;
 		fPartitionsIndex = new int[fNumberOfParts];
+		fCopiedResultIndex = new int[fNumberOfParts];
 		fPartitionsIndex[0] = -1;
+		fResultIndex = nextBeforehand();
 	}
 
 	public final void reset() {
+		fResultIndex = null;
 		for (int i = 1; i < fNumberOfParts; i++) {
 			fPartitionsIndex[i] = 0;
 		}
 		fPartitionsIndex[0] = -1;
+		fResultIndex = nextBeforehand();
 	}
 
 	/**
@@ -52,7 +55,7 @@ public class KPartitionsIterable implements Iterator<int[]>, Iterable<int[]> {
 	 * 
 	 * @return <code>null</code> if no further index array could be generated
 	 */
-	public int[] next() {
+	private final int[] nextBeforehand() {
 		int i;
 		if (fPartitionsIndex[0] < 0) {
 			for (i = 0; i < fNumberOfParts; ++i) {
@@ -61,8 +64,7 @@ public class KPartitionsIterable implements Iterator<int[]>, Iterable<int[]> {
 			return fPartitionsIndex;
 		} else {
 			i = 0;
-			for (i = fNumberOfParts - 1; (i >= 0)
-					&& (fPartitionsIndex[i] >= fLength - fNumberOfParts + i); --i) {
+			for (i = fNumberOfParts - 1; (i >= 0) && (fPartitionsIndex[i] >= fLength - fNumberOfParts + i); --i) {
 			}
 			if (i <= 0) {
 				return null;
@@ -75,8 +77,21 @@ public class KPartitionsIterable implements Iterator<int[]>, Iterable<int[]> {
 		}
 	}
 
+	/**
+	 * Get the index array for the next partition.
+	 * 
+	 * @return <code>null</code> if no further index array could be generated
+	 */
+	public int[] next() {
+		System.arraycopy(fResultIndex, 0, fCopiedResultIndex, 0, fResultIndex.length);
+		if (fResultIndex != null) {
+			fResultIndex = nextBeforehand();
+		}
+		return fCopiedResultIndex;
+	}
+
 	public boolean hasNext() {
-		return true;
+		return fResultIndex != null;
 	}
 
 	public void remove() {
