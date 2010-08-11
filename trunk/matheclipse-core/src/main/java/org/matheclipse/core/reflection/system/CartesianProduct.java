@@ -3,12 +3,13 @@ package org.matheclipse.core.reflection.system;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.matheclipse.core.combinatoric.CartesianProductIterable;
 import org.matheclipse.core.eval.exception.Validate;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
+import org.matheclipse.core.expression.AST;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
+import org.matheclipse.generic.combinatoric.CartesianProductIterable;
 
 /**
  * Cartesian product for multiple lists.
@@ -32,7 +33,7 @@ public class CartesianProduct extends AbstractFunctionEvaluator {
 				return null;
 			}
 		}
-		CartesianProductIterable cpi = new CartesianProductIterable(la);
+		CartesianProductIterable<IExpr, IAST> cpi = new CartesianProductIterable<IExpr, IAST>(la, F.List(), AST.COPY);
 		IAST result = F.List();
 		for (IAST iast : cpi) {
 			result.add(iast);

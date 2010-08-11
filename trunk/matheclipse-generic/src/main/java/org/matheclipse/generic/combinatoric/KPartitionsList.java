@@ -3,41 +3,27 @@ package org.matheclipse.generic.combinatoric;
 import java.util.Iterator;
 import java.util.List;
 
-import org.matheclipse.generic.nested.NestedAlgorithms;
+import org.matheclipse.generic.nested.INestedList;
 
 /**
- * This class returns the indexes for partitioning a list of N elements. <br/>
- * <b>Note:</b> in contrast to <i>normal</i> Iterable behavior, the
- * {@link hasNext} method always returns true, and the {@link next} method
- * returns <code>null</code> if the iteration stops. Usage pattern:
+ * This <code>Iterable</code> iterates through all k-partition lists for a given
+ * list with N elements. <br/>
  * 
- * <pre>
- *   ...
- * </pre>
- * 
- * Example: KPartitionsIterable(3,5) gives the following sequences [0, 1, 2],
- * [0, 1, 3], [0, 1, 4], [0, 2, 3], [0, 2, 4], [0, 3, 4] <br/> If you interpret
- * these integer lists as indexes for a list {a,b,c,d,e} which should be
- * partitioned into 3 parts the result is: <br/> {{{a},{b},{c,d,e}},
- * {{a},{b,c},{d,e}}, {{a},{b,c,d},{e}}, {{a,b},{c},{d,e}}, {{a,b},{c,d},{e}},
- * {{a,b,c},{d},{e}}}
  */
-public class KPartitionsList<T, L extends List<T>> implements Iterator<L>,
-		Iterable<L> {
+public class KPartitionsList<T, L extends List<T>> implements Iterator<L>, Iterable<L> {
 
 	final private L fList;
 	final private L fResultList;
 	final private int fOffset;
 	final private KPartitionsIterable fIterable;
-	final private NestedAlgorithms<T, L> fCopier;
+	final private INestedList<T, L> fCopier;
 
-	public KPartitionsList(final L list, final int parts, L resultList,
-			NestedAlgorithms<T, L> copier) {
+	public KPartitionsList(final L list, final int parts, L resultList, INestedList<T, L> copier) {
 		this(list, parts, resultList, copier, 0);
 	}
 
-	public KPartitionsList(final L list, final int parts, L resultList,
-			NestedAlgorithms<T, L> copier, final int offset) {
+	public KPartitionsList(final L list, final int parts, L resultList, INestedList<T, L> copier, final int offset) {
+		super();
 		fIterable = new KPartitionsIterable(list.size() - offset, parts);
 		fList = list;
 		fResultList = resultList;

@@ -4,29 +4,40 @@ import java.util.ArrayList;
 
 import org.matheclipse.generic.nested.NestedAlgorithms;
 
-
 /**
- * Interface for nested list. I.e. for a list which contains elements of type
- * <code>T</code>lists
+ * Class for generating (nested) <code>java.util.ArrayList</code>s. <br/>
+ * I.e. in the nested case, for an <code>java.util.ArrayList</code>, which
+ * contains elements of type <code>T</code> and of type
+ * <code>java.util.ArrayList&lt;T&gt;</code>
  */
 public class ArrayListAlgorithms<T, L extends ArrayList<T>> extends NestedAlgorithms<T, L> {
 
-	final Class<L> fType; 
+	final Class<L> fType;
+
 	public ArrayListAlgorithms(Class<L> type) {
 		fType = type;
 	}
-	
+
+	/**
+	 * Returns a shallow copy of the <code>list</code> instance.
+	 * 
+	 * @return a clone of this <code>list</code> instance.
+	 */
 	public L clone(L list) {
-		return (L)list.clone();
+		return (L) list.clone();
 	}
 
-	public L copyHead(L list) {
-		// same as clone for ArrayList
-		return (L)list.clone();
+	/**
+	 * Create a copy of the given list, which only contains the head
+	 * element of the list (i.e. the element with index 0).
+	 */
+	public L newInstance(L list) {
+		// same as clone for ArrayLists
+		return (L)new ArrayList<T>();
 	}
-	
+
 	public boolean isInstance(Object object) {
-		return fType.isInstance(object);			
+		return fType.isInstance(object);
 	}
 
 }

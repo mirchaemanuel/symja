@@ -1,7 +1,5 @@
 package org.matheclipse.core.reflection.system;
 
-import static org.matheclipse.basic.Util.checkCanceled;
-
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
 import org.matheclipse.core.expression.AST;
 import org.matheclipse.core.expression.F;
@@ -31,26 +29,25 @@ public class Permutations extends AbstractFunctionEvaluator {
 				}
 				return result;
 			}
-			int k = f.size() - 1;
-			if (functionList.size() == 3) {
-				if (!(functionList.get(2) instanceof IInteger)) {
-					return null;
+			try {
+				int k = f.size() - 1;
+				if (functionList.size() == 3) {
+					if (!(functionList.get(2) instanceof IInteger)) {
+						return null;
+					}
+					k = ((IInteger) functionList.get(2)).toInt();
+					if (k > f.size() - 1) {
+						return null;
+					}
 				}
-				k = ((IInteger) functionList.get(2)).getBigNumerator().intValue();
-				if (k > f.size() - 1) {
-					return null;
+				final KPermutationsList<IExpr, IAST> perm = new KPermutationsList<IExpr, IAST>(f, k, F.ast(f.head()), AST.COPY, 1);
+				for (IAST temp : perm) {
+					result.add(temp);
 				}
-			}
-			final KPermutationsList<IExpr, IAST> perm = new KPermutationsList<IExpr, IAST>(f, k, F.ast(f.head()), AST.COPY, 1);
-			// int j[];
-			IAST temp;
-			while ((temp = perm.next()) != null) {
-				checkCanceled();
+				return result;
+			} catch (ArithmeticException ae) {
 
-				result.add(temp);
 			}
-			return result;
-
 		}
 		return null;
 	}

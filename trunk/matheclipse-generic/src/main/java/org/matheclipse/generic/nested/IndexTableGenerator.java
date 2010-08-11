@@ -18,7 +18,7 @@ public class IndexTableGenerator<T, L extends List<T>> {
 
 	int[] fCurrentIndex;
 
-	private final NestedAlgorithms<T, L> fCopier;
+	private final INestedList<T, L> fCopier;
 
 	/**
 	 * 
@@ -27,7 +27,7 @@ public class IndexTableGenerator<T, L extends List<T>> {
 	 * @param function
 	 * @param copier
 	 */
-	public IndexTableGenerator(final int[] indexArray, final L prototypeList, final IIndexFunction<? extends T> function, NestedAlgorithms<T, L> copier) {
+	public IndexTableGenerator(final int[] indexArray, final L prototypeList, final IIndexFunction<? extends T> function, INestedList<T, L> copier) {
 		fIndexArray = indexArray;
 		fPrototypeList = prototypeList;
 		fFunction = function;

@@ -226,9 +226,8 @@ public class Expand extends AbstractFunctionEvaluator implements IConstantHeader
 				continue;
 			}
 			final KPermutationsIterable perm = new KPermutationsIterable(j, m, m);
-			int[] indices;
 			multinomial = F.integer(Multinomial.multinomial(j, n));
-			while ((indices = perm.next()) != null) {
+			for (int[] indices : perm) {
 				final IAST tList = Times();
 				tList.add(multinomial);
 				for (int k = 0; k < m; k++) {

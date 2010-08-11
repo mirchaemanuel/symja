@@ -1,7 +1,5 @@
 package org.matheclipse.core.reflection.system;
 
-import static org.matheclipse.basic.Util.checkCanceled;
-
 import org.matheclipse.basic.Util;
 import org.matheclipse.core.combinatoric.KPartitionsIterator;
 import org.matheclipse.core.combinatoric.KPermutationsIterator;
@@ -33,16 +31,12 @@ public class KOrderlessPartitions extends AbstractFunctionEvaluator {
 
 			// first generate all permutations:
 			while ((permutationsIndex = permutationIterator.nextElement()) != null) {
-				checkCanceled();
 				// second generate all partitions:
 				while ((partitionsIndex = partitionIterator.nextElement()) != null) {
-					checkCanceled();
 					partition = createSinglePartition(listArg0, sym, permutationsIndex, partitionsIndex);
 					if (partition != null) {
 						result.add(partition);
 					}
-
-					Util.checkCanceled();
 				}
 				partitionIterator.reset();
 			}
@@ -62,7 +56,6 @@ public class KOrderlessPartitions extends AbstractFunctionEvaluator {
 		// 0 is always the first index of a partition
 		partitionStartIndex = 0;
 		for (int i = 1; i < partitionsIndex.length; i++) {
-			checkCanceled();
 			// System.out.println(partitionsIndex[i] + ",");
 			partitionElement = F.function(sym);
 			if (partitionStartIndex + 1 == partitionsIndex[i]) {
@@ -75,7 +68,6 @@ public class KOrderlessPartitions extends AbstractFunctionEvaluator {
 				}
 			} else {
 				for (int m = partitionStartIndex; m < partitionsIndex[i]; m++) {
-					checkCanceled();
 					if (m + 1 < partitionsIndex[i]) {
 						if ((listArg0.get(permutationsIndex[m + 1]+1)).isLTOrdered(listArg0.get(permutationsIndex[m]+1))) {
 							return null;
@@ -100,7 +92,6 @@ public class KOrderlessPartitions extends AbstractFunctionEvaluator {
 			}
 		} else {
 			for (int m = partitionStartIndex; m < n; m++) {
-				checkCanceled();
 				if (m + 1 < n) {
 					if ((listArg0.get(permutationsIndex[m + 1]+1)).isLTOrdered(listArg0.get(permutationsIndex[m]+1))) {
 						return null;

@@ -3,7 +3,7 @@ package org.matheclipse.generic.combinatoric;
 import java.util.Iterator;
 import java.util.List;
 
-import org.matheclipse.generic.nested.NestedAlgorithms;
+import org.matheclipse.generic.nested.INestedList;
 
 /**
  * Generate a list of permutations
@@ -16,13 +16,13 @@ public class KPermutationsList<T, L extends List<T>> implements Iterator<L>, Ite
 	final private L fResultList;
 	final private int fOffset;
 	final private KPermutationsIterable fIterable;
-	final private NestedAlgorithms<T, L> fCopier;
+	final private INestedList<T, L> fCopier;
 
-	public KPermutationsList(final L list, final int parts, L resultList, NestedAlgorithms<T, L> copier) {
+	public KPermutationsList(final L list, final int parts, L resultList, INestedList<T, L> copier) {
 		this(list, parts, resultList, copier, 0);
 	}
 
-	public KPermutationsList(final L list, final int parts, L resultList, NestedAlgorithms<T, L> copier, final int offset) {
+	public KPermutationsList(final L list, final int parts, L resultList, INestedList<T, L> copier, final int offset) {
 		fIterable = new KPermutationsIterable(list, parts, offset);
 		fList = list;
 		fResultList = resultList;

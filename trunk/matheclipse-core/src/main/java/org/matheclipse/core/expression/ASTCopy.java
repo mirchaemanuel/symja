@@ -20,8 +20,11 @@ public class ASTCopy extends NestedAlgorithms<IExpr, IAST> {
 		return (IAST) list.clone();
 	}
 
-	public IAST copyHead(IAST list) {
-		// same as clone for ArrayList
+	/**
+	 * Create a copy of this <code>IAST</code>, which only contains the head
+	 * element of the list (i.e. the element with index 0).
+	 */
+	public IAST newInstance(IAST list) {
 		return (IAST) list.copyHead();
 	}
 
