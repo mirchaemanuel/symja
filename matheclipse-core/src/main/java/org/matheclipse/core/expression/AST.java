@@ -337,12 +337,6 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 	 */
 	@Override
 	public Object clone() {
-		// AST ast;
-		// if (Config.SERVER_MODE) {
-		// ast = FACTORY.object();
-		// } else {
-		// ast = new AST(5, false);
-		// }
 		AST ast = new AST(5, false);
 		ast.addAll(this);
 		return ast;

@@ -40,7 +40,7 @@ public class KPermutationsList<T, L extends List<T>> implements Iterator<L>, Ite
 		if (permutationsIndex == null) {
 			return null;
 		}
-		L temp = fCopier.clone(fResultList);
+		L temp = fCopier.newInstance(fResultList);
 		for (int i = 0; i < permutationsIndex.length; i++) {
 			temp.add(fList.get(permutationsIndex[i] + fOffset));
 		}

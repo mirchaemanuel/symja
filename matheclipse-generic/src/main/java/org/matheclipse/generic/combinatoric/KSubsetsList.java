@@ -49,7 +49,7 @@ public class KSubsetsList<T, L extends List<T>> implements Iterator<L>, Iterable
 			return null;
 		}
 
-		L temp = fCopier.clone(fResultList);
+		L temp = fCopier.newInstance(fResultList);
 		for (int i = 0; i < fK; i++) {
 			temp.add(fList.get(j[i] + fOffset));
 		}
