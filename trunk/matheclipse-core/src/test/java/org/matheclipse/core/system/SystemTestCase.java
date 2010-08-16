@@ -988,6 +988,10 @@ public class SystemTestCase extends AbstractTestCase {
 	public void testSystem171() {
 		check("Integrate[x,x]", "1/2*x^2");
 		check("Integrate[Sin[x],x]", "(-1)*Cos[x]");
+		check("Integrate[E^(a*x),x]", "E^(a*x)*a^(-1)");
+		check("Integrate[x*E^(a*x),x]", "(a*x-1)*E^(a*x)*a^(-2)");
+		check("Integrate[x^2*E^(a*x),x]", "E^(a*x)*a^(-1)*x^2-2*(a*x-1)*E^(a*x)*a^(-3)");
+		check("Integrate[x^3*E^(a*x),x]", "E^(a*x)*a^(-1)*x^3-3*(E^(a*x)*a^(-1)*x^2-2*(a*x-1)*E^(a*x)*a^(-3))*a^(-1)");
 
 		// check("Integrate[1/(x^5+x-7),x]", "");
 		check("(-1.0)/48", "-0.020833333333333332");
@@ -2345,6 +2349,8 @@ public class SystemTestCase extends AbstractTestCase {
 	}
 
 	public void testSystem999() {
+		// check("Factor[1+x^2,GaussianIntegers->True]", "");
+
 		check("Roots[x^2 + 5*x + 10]", "{1/2*(I*15^(1/2)-5),1/2*(-I*15^(1/2)-5)}");
 		check("Roots[4+x^2+2*x+3*x^3]", "{-1,1/6*(I*2*11^(1/2)+2),1/6*(-I*2*11^(1/2)+2)}");
 
@@ -2378,6 +2384,7 @@ public class SystemTestCase extends AbstractTestCase {
 
 		check("Factor[5+x^12,Modulus->7]", "(x^3+2)*(x^6+4)*(x^3+5)");
 		check("Factor[1+x^10,Modulus->2]", "(x+1)^2*(x^4+x^3+x^2+x+1)^2");// "(1+x)^2*(1+x+x^2+x^3+x^4)^2");
+
 	}
 
 	// public void testSystem999() {

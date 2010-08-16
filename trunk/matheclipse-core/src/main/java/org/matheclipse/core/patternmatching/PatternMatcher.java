@@ -6,8 +6,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-import org.matheclipse.core.combinatoric.KPartitionsIterator;
-import org.matheclipse.core.combinatoric.KPermutationsIterator;
 import org.matheclipse.core.eval.EvalEngine;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IAST;
@@ -16,6 +14,8 @@ import org.matheclipse.core.interfaces.IPattern;
 import org.matheclipse.core.interfaces.IPatternMatcher;
 import org.matheclipse.core.interfaces.ISymbol;
 import org.matheclipse.core.list.algorithms.EvaluationSupport;
+import org.matheclipse.generic.combinatoric.KPartitionsIterable;
+import org.matheclipse.generic.combinatoric.KPermutationsIterable;
 
 public class PatternMatcher extends IPatternMatcher<IExpr> implements Serializable {
 
@@ -45,12 +45,13 @@ public class PatternMatcher extends IPatternMatcher<IExpr> implements Serializab
 			// AbstractExpressionFactory f = fSession.getExpressionFactory();
 			final int n = lhsEvalList.size() - 1;
 			final int k = fLhsPatternList.size() - 1;
-			final KPartitionsIterator partitionIterator = new KPartitionsIterator(n, k);
+			final KPartitionsIterable partitionIterator = new KPartitionsIterable(n, k);
 			// save fPatternValuesArray in local variable
 			final IExpr[] localPatternValuesArrayCopy = new IExpr[fPatternValuesArray.length];
 			System.arraycopy(fPatternValuesArray, 0, localPatternValuesArrayCopy, 0, fPatternValuesArray.length);
 			// generate all partitions:
-			while ((fPartitionsIndex = partitionIterator.nextElement()) != null) {
+			for (int partitionsIndex[] : partitionIterator) {
+				fPartitionsIndex = partitionsIndex;
 				if (matchSingleFlatPartition() && checkCondition()) {
 					return true;
 				}
@@ -170,19 +171,19 @@ public class PatternMatcher extends IPatternMatcher<IExpr> implements Serializab
 			// AbstractExpressionFactory f = fSession.getExpressionFactory();
 			final int n = lhsEvalList.size() - 1;
 			final int k = fLhsPatternList.size() - 1;
-			final KPermutationsIterator permutationIterator = new KPermutationsIterator(lhsEvalList, n, 1);
-			final KPartitionsIterator partitionIterator = new KPartitionsIterator(n, k);
+			final KPermutationsIterable permutationIterator = new KPermutationsIterable(lhsEvalList, n, 1);
+			final KPartitionsIterable partitionIterator = new KPartitionsIterable(n, k);
 
 			// save fPatternValuesArray in local variable
 			final IExpr[] localPatternValuesArrayCopy = new IExpr[fPatternValuesArray.length];
 			System.arraycopy(fPatternValuesArray, 0, localPatternValuesArrayCopy, 0, fPatternValuesArray.length);
 
 			// first generate all permutations:
-			while ((fPermutationsIndex = permutationIterator.nextElement()) != null) {
-
+			for (int permutationsIndex[] : permutationIterator) {
+				fPermutationsIndex = permutationsIndex;
 				// second generate all partitions:
-				while ((fPartitionsIndex = partitionIterator.nextElement()) != null) {
-
+				for (int partitionsIndex[] : partitionIterator) {
+					fPartitionsIndex = partitionsIndex;
 					if (matchSingleFlatOrderlessPartition() && checkCondition()) {
 						return true;
 					}
@@ -303,15 +304,15 @@ public class PatternMatcher extends IPatternMatcher<IExpr> implements Serializab
 
 		public boolean matchOrderlessList() {
 			final int n = lhsEvalList.size() - 1;
-			final KPermutationsIterator permutationIterator = new KPermutationsIterator(lhsEvalList, n, 1);
+			final KPermutationsIterable permutationIterator = new KPermutationsIterable(lhsEvalList, n, 1);
 
 			// save fPatternValuesArray in local variable
 			final IExpr[] localPatternValuesArrayCopy = new IExpr[fPatternValuesArray.length];
 			System.arraycopy(fPatternValuesArray, 0, localPatternValuesArrayCopy, 0, fPatternValuesArray.length);
 
 			// first generate all permutations:
-			while ((fPermutationsIndex = permutationIterator.nextElement()) != null) {
-
+			for (int permutationsIndex[] : permutationIterator) {
+				fPermutationsIndex = permutationsIndex;
 				// check all permutations:
 				if (matchSingleOrderlessPermutation() && checkCondition()) {
 					return true;

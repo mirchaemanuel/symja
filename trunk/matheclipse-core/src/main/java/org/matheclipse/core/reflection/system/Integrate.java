@@ -39,6 +39,8 @@ public class Integrate extends AbstractFunctionEvaluator implements IConstantHea
 			"Integrate[(a_*x_+b_)^n_NumberQ,x_]:= (a*x+b)^(n+1)/(a*(n+1)) /; (n!=(-1))&&FreeQ[a,x]&&FreeQ[b,x]",
 			"Integrate[E_^x_, x_]:=E^x",
 			"Integrate[E_^(a_*x_), x_]:=a^(-1)*E^(a*x) /; FreeQ[a,x]",
+			"Integrate[x_ * E_^(a_*x_), x_]:=a^(-2)*E^(a*x)*(a*x-1) /; FreeQ[a,x]",
+			"Integrate[x_^n_IntegerQ * E_^(a_*x_), x_]:=a^(-1)*x^n*E^(a*x)-n/a*Integrate[x^(n-1)*E^(a*x),x] /; Positive[n]&&FreeQ[a,x]",
 			"Integrate[Log[x_], x_]:=x*Log[x]-x",
 			"Integrate[Log[a_*x_], x_]:=Log[a*x]*x-x",
 			"Integrate[Sinh[x_], x_]:=Cosh[x]",
@@ -94,7 +96,7 @@ public class Integrate extends AbstractFunctionEvaluator implements IConstantHea
 				// Integrate[a,x]+Integrate[b,x]+Integrate[c,x]
 				final IAST resultList = (IAST) list.clone();
 				for (int i = 1; i < list.size(); i++) {
-					resultList.set(i, F.Integrate( list.get(i), lst.get(2)));
+					resultList.set(i, F.Integrate(list.get(i), lst.get(2)));
 				}
 				return resultList;
 			}

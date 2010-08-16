@@ -6,8 +6,6 @@ import java.util.SortedMap;
 import org.matheclipse.basic.Config;
 import org.matheclipse.core.convert.ExprVariables;
 import org.matheclipse.core.convert.JASConvert;
-import org.matheclipse.core.eval.EvalEngine;
-import org.matheclipse.core.eval.exception.WrongArgumentType;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
 import org.matheclipse.core.eval.util.Options;
 import org.matheclipse.core.expression.ASTRange;
@@ -17,10 +15,12 @@ import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.IInteger;
 
 import apache.harmony.math.BigInteger;
+import edu.jas.arith.BigComplex;
 import edu.jas.arith.BigRational;
 import edu.jas.arith.ModInteger;
 import edu.jas.arith.ModIntegerRing;
 import edu.jas.poly.GenPolynomial;
+import edu.jas.structure.ComplexRing;
 import edu.jas.ufd.FactorAbstract;
 import edu.jas.ufd.FactorFactory;
 
@@ -78,6 +78,45 @@ public class Factor extends AbstractFunctionEvaluator {
 						return null; // no evaluation
 					}
 				}
+				// option = options.getOption("GaussianIntegers");
+				// if (option != null && option.equals(F.True)) {
+				// try {
+				// ComplexRing<edu.jas.arith.BigInteger> fac = new
+				// ComplexRing<edu.jas.arith.BigInteger>(edu.jas.arith.BigInteger.ONE);
+				//						
+				// JASConvert<edu.jas.structure.Complex<edu.jas.arith.BigInteger>> jas =
+				// new JASConvert<edu.jas.structure.Complex<edu.jas.arith.BigInteger>>(
+				// varList, fac);
+				// GenPolynomial<edu.jas.structure.Complex<edu.jas.arith.BigInteger>>
+				// poly = jas.expr2Poly(expr);
+				// FactorAbstract<edu.jas.structure.Complex<edu.jas.arith.BigInteger>>
+				// factorAbstract = FactorFactory
+				// .getImplementation(fac);
+				// SortedMap<GenPolynomial<edu.jas.structure.Complex<edu.jas.arith.BigInteger>>,
+				// Long> map = factorAbstract.factors(poly);
+				// IAST result = F.Times();
+				// for
+				// (SortedMap.Entry<GenPolynomial<edu.jas.structure.Complex<edu.jas.arith.BigInteger>>,
+				// Long> entry : map.entrySet()) {
+				// GenPolynomial<edu.jas.structure.Complex<edu.jas.arith.BigInteger>>
+				// singleFactor = entry.getKey();
+				// // GenPolynomial<edu.jas.arith.BigComplex> integerCoefficientPoly
+				// // = (GenPolynomial<edu.jas.arith.BigComplex>) jas
+				// // .factorTerms(singleFactor)[2];
+				// // Long val = entry.getValue();
+				// // result.add(F.Power(jas.integerPoly2Expr(integerCoefficientPoly),
+				// // F.integer(val)));
+				// System.out.println(singleFactor);
+				// }
+				// return result;
+				// } catch (ArithmeticException ae) {
+				// // toInt() conversion failed
+				// if (Config.DEBUG) {
+				// ae.printStackTrace();
+				// }
+				// return null; // no evaluation
+				// }
+				// }
 			}
 			JASConvert<BigRational> jas = new JASConvert<BigRational>(varList);
 			GenPolynomial<BigRational> poly = jas.expr2Poly(expr);
@@ -95,9 +134,9 @@ public class Factor extends AbstractFunctionEvaluator {
 			return result;
 
 		} catch (Exception e) {
-			if (Config.DEBUG) {
-				e.printStackTrace();
-			}
+			// if (Config.DEBUG) {
+			e.printStackTrace();
+			// }
 		}
 		return null;
 	}
