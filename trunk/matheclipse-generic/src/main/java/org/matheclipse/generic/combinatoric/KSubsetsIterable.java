@@ -5,7 +5,7 @@ import java.util.Iterator;
 /**
  * Iterable for all k-combinations from a set
  * 
- * See <a href=" http://en.wikipedia.org/wiki/Combination">Combination</a>
+ * See <a href="http://en.wikipedia.org/wiki/Combination">Combination</a>
  */
 public class KSubsetsIterable implements Iterator<int[]>, Iterable<int[]> {
 

@@ -5,6 +5,7 @@ import java.util.Iterator;
 /**
  * This class returns the indexes for partitioning a list of N elements. <br/>
  * Usage pattern:
+ * 
  * <pre>
  * final KPartitionsIterable iter = new KPartitionsIterable(n, k);
  * for (int[] partitionsIndex : iter) {
@@ -18,6 +19,11 @@ import java.util.Iterator;
  * should be partitioned into 3 parts the results are: <br/>
  * {{{a},{b},{c,d,e}}, {{a},{b,c},{d,e}}, {{a},{b,c,d},{e}}, {{a,b},{c},{d,e}},
  * {{a,b},{c,d},{e}}, {{a,b,c},{d},{e}}}
+ * 
+ * <br/>
+ * <br/>
+ * See <a href="http://en.wikipedia.org/wiki/Partition_of_a_set">Wikipedia -
+ * Partition of a set</a>
  */
 public class KPartitionsIterable implements Iterator<int[]>, Iterable<int[]> {
 

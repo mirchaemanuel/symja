@@ -9,6 +9,9 @@ import org.matheclipse.generic.nested.INestedList;
  * This <code>Iterable</code> iterates through all k-partition lists for a given
  * list with N elements. <br/>
  * 
+ * See <a href="http://en.wikipedia.org/wiki/Partition_of_a_set">Wikipedia -
+ * Partition of a set</a>
+ * 
  */
 public class KPartitionsList<T, L extends List<T>> implements Iterator<L>, Iterable<L> {
 

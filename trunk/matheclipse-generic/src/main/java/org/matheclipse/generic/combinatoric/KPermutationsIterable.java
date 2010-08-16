@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * Generate an Iterable for permutations
  * 
- * See <a href=" http://en.wikipedia.org/wiki/Permutation">Permutation</a>
+ * See <a href="http://en.wikipedia.org/wiki/Permutation">Permutation</a>
  */
 public class KPermutationsIterable implements Iterator<int[]>, Iterable<int[]> {
 

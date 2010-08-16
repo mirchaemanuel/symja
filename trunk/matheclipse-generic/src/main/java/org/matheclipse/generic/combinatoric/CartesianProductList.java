@@ -9,15 +9,19 @@ import org.matheclipse.generic.nested.INestedList;
 /**
  * Cartesian product iterable.
  * 
+ * <br/>
+ * See <a
+ * href="http://en.wikipedia.org/wiki/Cartesian_product">Wikipedia - Cartesian product</a>
+ * 
  * @author Heinz Kredel
  * @author Axel Kramer (Modifications for MathEclipse)
  */
-public class CartesianProductIterable<T, L extends List<T>> implements Iterable<L> {
+public class CartesianProductList<T, L extends List<T>> implements Iterable<L> {
 
 	/**
 	 * data structure.
 	 */
-	public final List<L> comps; // List<Iterable<E>> also ok
+	public final List<L> comps;
 
 	private final L fEmptyResultList;
 
@@ -29,7 +33,7 @@ public class CartesianProductIterable<T, L extends List<T>> implements Iterable<
 	 * @param comps
 	 *          components of the cartesian product.
 	 */
-	public CartesianProductIterable(List<L> comps, L emptyResultList, INestedList<T, L> copier) {
+	public CartesianProductList(List<L> comps, L emptyResultList, INestedList<T, L> copier) {
 		if (comps == null) {
 			throw new IllegalArgumentException("null components not allowed");
 		}

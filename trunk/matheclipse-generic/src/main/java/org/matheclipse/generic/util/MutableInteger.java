@@ -1,9 +1,9 @@
 package org.matheclipse.generic.util;
 
-public class MutuableInteger {
+public class MutableInteger {
 	int fValue;
 
-	public MutuableInteger(int i) {
+	public MutableInteger(int i) {
 		fValue = i;
 	}
 
@@ -52,8 +52,8 @@ public class MutuableInteger {
 	 *         otherwise.
 	 */
 	public boolean equals(Object obj) {
-		if (obj instanceof MutuableInteger) {
-			return fValue == ((MutuableInteger) obj).intValue();
+		if (obj instanceof MutableInteger) {
+			return fValue == ((MutableInteger) obj).intValue();
 		}
 		return false;
 	}
@@ -71,7 +71,7 @@ public class MutuableInteger {
 	 *         greater than the argument <code>MutuableInteger</code> (signed
 	 *         comparison).
 	 */
-	public int compareTo(MutuableInteger anotherInteger) {
+	public int compareTo(MutableInteger anotherInteger) {
 		int thisVal = this.fValue;
 		int anotherVal = anotherInteger.fValue;
 		return (thisVal < anotherVal ? -1 : (thisVal == anotherVal ? 0 : 1));

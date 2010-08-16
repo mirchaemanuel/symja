@@ -8,7 +8,7 @@ import org.matheclipse.generic.nested.INestedList;
 /**
  * Generate a list of permutations
  *
- * See <a href=" http://en.wikipedia.org/wiki/Permutation">Permutation</a>
+ * See <a href="http://en.wikipedia.org/wiki/Permutation">Permutation</a>
  */
 public class KPermutationsList<T, L extends List<T>> implements Iterator<L>, Iterable<L> {
 
