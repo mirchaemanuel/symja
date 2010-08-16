@@ -8,7 +8,7 @@ import org.matheclipse.generic.nested.INestedList;
 /**
  * Iterate over the lists of all k-combinations from a given list
  * 
- * See <a href=" http://en.wikipedia.org/wiki/Combination">Combination</a>
+ * See <a href="http://en.wikipedia.org/wiki/Combination">Combination</a>
  */
 public class KSubsetsList<T, L extends List<T>> implements Iterator<L>, Iterable<L> {
 
@@ -53,7 +53,7 @@ public class KSubsetsList<T, L extends List<T>> implements Iterator<L>, Iterable
 		for (int i = 0; i < fK; i++) {
 			temp.add(fList.get(j[i] + fOffset));
 		}
-
+ 
 		return temp;
 	}
 

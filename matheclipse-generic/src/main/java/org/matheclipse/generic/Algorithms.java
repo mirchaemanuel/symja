@@ -13,8 +13,8 @@ import com.google.common.base.Predicate;
  * Functional Programming algorithms for <code>java.util.List</code> and
  * <code>java.util.Collection</code>.
  * 
- * @see org.matheclipse.generic.nested.NestedAlgorithms for algorithms for
- *      nested lists
+ * @see org.matheclipse.generic.nested.NestedAlgorithms NestedAlgorithms for
+ *      nested lists algorithms
  */
 public class Algorithms {
 

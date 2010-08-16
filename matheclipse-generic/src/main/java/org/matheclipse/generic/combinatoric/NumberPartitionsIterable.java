@@ -15,11 +15,15 @@ public class NumberPartitionsIterable implements Iterator<int[]>, Iterable<int[]
 
 	final private int len;
 
-	final private int x[];
+	final private int fPartititionsIndex[];
 
 	private int i;
 
 	private int k;
+
+	final private int fCopiedResultIndex[];
+
+	private int fResultIndex[];
 
 	/**
 	 * 
@@ -36,42 +40,44 @@ public class NumberPartitionsIterable implements Iterator<int[]>, Iterable<int[]
 		if (len > n) {
 			size = len;
 		}
-		x = new int[size];
+		fPartititionsIndex = new int[size];
+		fCopiedResultIndex = new int[size];
 		for (int i = 0; i < size; i++) {
-			x[i] = 0;
+			fPartititionsIndex[i] = 0;
 		}
+		fResultIndex = nextBeforehand();
 	}
 
 	/**
 	 * 
 	 */
-	public int[] next() {
+	private final int[] nextBeforehand() {
 		int l;
 		int k1;
 		if (i == -1) {
 			return null;
 		}
-		if (x[0] != 0) {
+		if (fPartititionsIndex[0] != 0) {
 			k1 = k;
-			while (x[k1] == 1) {
-				x[k1--] = 0;
+			while (fPartititionsIndex[k1] == 1) {
+				fPartititionsIndex[k1--] = 0;
 			}
 			while (true) {
 				l = k - i;
 				k = i;
 				// if (i != len - 1) {
-				x[i] -= 1;
+				fPartititionsIndex[i] -= 1;
 				// }
-				while (x[k] <= l) {
-					l = l - x[k++];
-					x[k] = x[k - 1];
+				while (fPartititionsIndex[k] <= l) {
+					l = l - fPartititionsIndex[k++];
+					fPartititionsIndex[k] = fPartititionsIndex[k - 1];
 				}
 				if (k != n - 1) {
-					x[++k] = l + 1;
-					if (x[i] != 1) {
+					fPartititionsIndex[++k] = l + 1;
+					if (fPartititionsIndex[i] != 1) {
 						i = k;
 					}
-					if (x[i] == 1) {
+					if (fPartititionsIndex[i] == 1) {
 						i--;
 					}
 
@@ -82,28 +88,36 @@ public class NumberPartitionsIterable implements Iterator<int[]>, Iterable<int[]
 					// i--;
 					// continue;
 					// }
-					if (x[i] != 1) {
+					if (fPartititionsIndex[i] != 1) {
 						i = k;
 					}
-					if (x[i] == 1) {
+					if (fPartititionsIndex[i] == 1) {
 						i--;
 					}
 					continue;
 				}
 
-				return x;
+				return fPartititionsIndex;
 			}
 		} else {
-			x[0] = n;
+			fPartititionsIndex[0] = n;
 
 			k = 0;
 			i = 0;
 		}
-		return x;
+		return fPartititionsIndex;
+	}
+
+	public int[] next() {
+		System.arraycopy(fResultIndex, 0, fCopiedResultIndex, 0, fResultIndex.length);
+		if (fResultIndex != null) {
+			fResultIndex = nextBeforehand();
+		}
+		return fCopiedResultIndex;
 	}
 
 	public boolean hasNext() {
-		return true;
+		return fResultIndex != null;
 	}
 
 	public void remove() {

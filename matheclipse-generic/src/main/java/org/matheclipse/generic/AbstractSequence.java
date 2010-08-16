@@ -27,6 +27,7 @@ public abstract class AbstractSequence implements ISequence {
 	public int getStep() {
 		return fStep;
 	}
+
 	public int[] getIndices() {
 		int j = getStart();
 		int step = getStep();
