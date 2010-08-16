@@ -9,7 +9,7 @@ import org.matheclipse.core.expression.AST;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
-import org.matheclipse.generic.combinatoric.CartesianProductIterable;
+import org.matheclipse.generic.combinatoric.CartesianProductList;
 
 /**
  * Cartesian product for multiple lists.
@@ -33,7 +33,7 @@ public class CartesianProduct extends AbstractFunctionEvaluator {
 				return null;
 			}
 		}
-		CartesianProductIterable<IExpr, IAST> cpi = new CartesianProductIterable<IExpr, IAST>(la, F.List(), AST.COPY);
+		CartesianProductList<IExpr, IAST> cpi = new CartesianProductList<IExpr, IAST>(la, F.List(), AST.COPY);
 		IAST result = F.List();
 		for (IAST iast : cpi) {
 			result.add(iast);

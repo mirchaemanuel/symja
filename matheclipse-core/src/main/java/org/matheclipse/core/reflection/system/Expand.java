@@ -218,10 +218,9 @@ public class Expand extends AbstractFunctionEvaluator implements IConstantHeader
 
 		int m = expr0.size() - 1;
 		final NumberPartitionsIterable comb = new NumberPartitionsIterable(n, m);
-		int j[];
 		IInteger multinomial;
 		final IAST result = Plus();
-		while ((j = comb.next()) != null) {
+		for (int j[] : comb) {
 			if (m < n && j[m] != 0) {
 				continue;
 			}

@@ -1,8 +1,5 @@
 package org.matheclipse.core.reflection.system;
 
-import static org.matheclipse.basic.Util.checkCanceled;
-
-import org.matheclipse.basic.Util;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IAST;
@@ -37,17 +34,12 @@ public class IntegerPartitions extends AbstractFunctionEvaluator {
 			final IAST result = F.function(F.List);
 			IAST temp;
 			final NumberPartitionsIterable comb = new NumberPartitionsIterable(n);
-			int j[];
-			while ((j = comb.next()) != null) {
-				checkCanceled();
+			for (int j[] : comb) {
 				temp = F.function(F.List);
 				for (int i = 0; i < j.length; i++) {
-					checkCanceled();
 					if (j[i] != 0) {
 						temp.add(F.integer(j[i]));
 					}
-
-					Util.checkCanceled();
 				}
 				result.add(temp);
 			}
