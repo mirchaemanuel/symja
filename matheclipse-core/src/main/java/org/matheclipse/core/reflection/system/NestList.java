@@ -3,6 +3,7 @@ package org.matheclipse.core.reflection.system;
 import static org.matheclipse.core.expression.F.List;
 
 import org.matheclipse.core.eval.exception.NonNegativeIntegerExpected;
+import org.matheclipse.core.eval.exception.Validate;
 import org.matheclipse.core.eval.interfaces.IFunctionEvaluator;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.generic.UnaryMap;
@@ -22,15 +23,7 @@ public class NestList implements IFunctionEvaluator {
 
 	public static IExpr evaluateNestList(final IAST ast, final IAST resultList) {
 		if ((ast.size() == 4) && (ast.get(3) instanceof IInteger)) {
-			int n = 0;
-			try {
-				n = ((IInteger) ast.get(3)).toInt();
-				if (n < 0) {
-					throw new NonNegativeIntegerExpected(ast, 3);
-				}
-			} catch (final ArithmeticException e) {
-				throw new NonNegativeIntegerExpected(ast, 3);
-			}
+			final int n = Validate.checkIntType(ast, 3);
 			Algorithms.nestList(ast.get(2), n, new UnaryMap(F.ast(ast.get(1))), resultList);
 			return resultList;
 		}
