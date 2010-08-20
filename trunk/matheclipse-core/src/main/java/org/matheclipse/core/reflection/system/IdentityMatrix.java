@@ -1,6 +1,6 @@
 package org.matheclipse.core.reflection.system;
 
-import org.matheclipse.core.eval.exception.NonNegativeIntegerExpected;
+import org.matheclipse.core.eval.exception.Validate;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
 import org.matheclipse.core.expression.AST;
 import org.matheclipse.core.expression.F;
@@ -27,12 +27,7 @@ public class IdentityMatrix extends AbstractFunctionEvaluator {
 		}
 
 		if (functionList.get(1) instanceof IInteger) {
-			int indx = 0;
-			try {
-				indx = ((IInteger) functionList.get(1)).toInt();
-			} catch (final ArithmeticException e) {
-				throw new NonNegativeIntegerExpected(functionList, 1);
-			}
+			int indx = Validate.checkIntType(functionList, 1);
 			final IAST resultList = F.List();
 			final int[] indexArray = new int[2];
 			indexArray[0] = indx;

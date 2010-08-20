@@ -69,16 +69,16 @@ public class TrigToExp implements IFunctionEvaluator {
 		return functionList.get(1);
 	}
 
-	public static IExpr trigToExp(IExpr expr) {
-		if (expr instanceof IAST) {
-			IAST ast = (IAST) expr;
-			if (ast.size() == 2) {
-
-			}
-		}
-		return expr;
-
-	}
+	// private static IExpr trigToExp(IExpr expr) {
+	// if (expr instanceof IAST) {
+	// IAST ast = (IAST) expr;
+	// if (ast.size() == 2) {
+	//
+	// }
+	// }
+	// return expr;
+	//
+	// }
 
 	public IExpr numericEval(final IAST functionList) {
 		return evaluate(functionList);

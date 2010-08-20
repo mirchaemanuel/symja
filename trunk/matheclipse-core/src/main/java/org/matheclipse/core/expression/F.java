@@ -91,6 +91,8 @@ public class F {
 
 	public static ISymbol Depth;
 
+	public static ISymbol Derivative;
+
 	public static ISymbol Det;
 
 	public static ISymbol Dot;
@@ -556,7 +558,6 @@ public class F {
 	}
 
 	public static IAST D(final IExpr a0, final IExpr a1) {
-
 		return binary(D, a0, a1);
 	}
 
@@ -798,6 +799,7 @@ public class F {
 			Cross = predefinedSymbol("Cross");
 			D = predefinedSymbol("D");
 			Denominator = predefinedSymbol("Denominator");
+			Derivative = predefinedSymbol("Derivative");
 			Det = predefinedSymbol("Det");
 			Dot = predefinedSymbol("Dot");
 			Equal = predefinedSymbol("Equal");
@@ -974,6 +976,14 @@ public class F {
 	public static IAST List(final IExpr a0, final IExpr a1) {
 
 		return binary(List, a0, a1);
+	}
+
+	public static IAST List(final long... numbers) {
+		IInteger a[] = new IInteger[numbers.length];
+		for (int i = 0; i < numbers.length; i++) {
+			a[i] = F.integer(numbers[i]);
+		}
+		return ast(a, List);
 	}
 
 	public static IAST List(final IExpr... a) {// 0, final IExpr a1, final IExpr
@@ -1259,7 +1269,8 @@ public class F {
 	 * 
 	 * @param head
 	 * @param initialCapacity
-	 * @param initNull initialize all elements with <code>null</code>.
+	 * @param initNull
+	 *          initialize all elements with <code>null</code>.
 	 * @return
 	 */
 	public static IAST ast(final IExpr head, final int initialCapacity, final boolean initNull) {
@@ -1397,7 +1408,7 @@ public class F {
 	 * 
 	 * @param head
 	 * @param a0
-	 * @return
+	 * @return the evaluated object
 	 */
 	public static IExpr eval(final ISymbol head, final IExpr a0) {
 		final IAST ast = ast(head);
@@ -1411,7 +1422,7 @@ public class F {
 	 * @param head
 	 * @param a0
 	 * @param a1
-	 * @return
+	 * @return the evaluated object
 	 */
 	public static IExpr eval(final ISymbol head, final IExpr a0, final IExpr a1) {
 		final IAST ast = ast(head);
@@ -1427,7 +1438,7 @@ public class F {
 	 * @param a0
 	 * @param a1
 	 * @param a2
-	 * @return
+	 * @return the evaluated object
 	 */
 	public static IExpr eval(final ISymbol head, final IExpr a0, final IExpr a1, final IExpr a2) {
 		final IAST ast = ast(head);
@@ -1435,6 +1446,54 @@ public class F {
 		ast.add(a1);
 		ast.add(a2);
 		return EvalEngine.eval(ast);
+	}
+
+	/**
+	 * Create a function with 1 argument and evaluate it.
+	 * 
+	 * @param head
+	 * @param a0
+	 * @return the evaluated object or <code>null</code> if no evaluation was
+	 *         possible.
+	 */
+	public static IExpr evalNull(final ISymbol head, final IExpr a0) {
+		final IAST ast = ast(head);
+		ast.add(a0);
+		return EvalEngine.evalNull(ast);
+	}
+
+	/**
+	 * Create a function with 2 arguments and evaluate it.
+	 * 
+	 * @param head
+	 * @param a0
+	 * @param a1
+	 * @return the evaluated object or <code>null</code> if no evaluation was
+	 *         possible.
+	 */
+	public static IExpr evalNull(final ISymbol head, final IExpr a0, final IExpr a1) {
+		final IAST ast = ast(head);
+		ast.add(a0);
+		ast.add(a1);
+		return EvalEngine.evalNull(ast);
+	}
+
+	/**
+	 * Create a function with 3 arguments and evaluate it.
+	 * 
+	 * @param head
+	 * @param a0
+	 * @param a1
+	 * @param a2
+	 * @return the evaluated object or <code>null</code> if no evaluation was
+	 *         possible.
+	 */
+	public static IExpr evalNull(final ISymbol head, final IExpr a0, final IExpr a1, final IExpr a2) {
+		final IAST ast = ast(head);
+		ast.add(a0);
+		ast.add(a1);
+		ast.add(a2);
+		return EvalEngine.evalNull(ast);
 	}
 
 	/**

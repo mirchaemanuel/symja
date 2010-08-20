@@ -1,12 +1,12 @@
 package org.matheclipse.core.reflection.system;
 
-import static org.matheclipse.basic.Util.checkCanceled;
 import static org.matheclipse.core.expression.F.List;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.matheclipse.core.eval.EvalEngine;
+import org.matheclipse.core.eval.exception.Validate;
 import org.matheclipse.core.eval.interfaces.IFunctionEvaluator;
 import org.matheclipse.core.expression.AST;
 import org.matheclipse.core.expression.F;
@@ -72,27 +72,30 @@ public class Array implements IFunctionEvaluator {
 	public static IExpr evaluateArray(final IAST ast, IAST resultList) {
 		try {
 			if ((ast.size() >= 3) && (ast.size() <= 5)) {
+				int indx1, indx2;
 				final EvalEngine engine = EvalEngine.get();
 				final List<ArrayIterator> iterList = new ArrayList<ArrayIterator>();
 				if ((ast.size() == 3) && (ast.get(2) instanceof IInteger)) {
-					iterList.add(new ArrayIterator(((IInteger) ast.get(2)).toInt()));
+					indx1 = Validate.checkIntType(ast, 2);
+					iterList.add(new ArrayIterator(indx1));
 				} else if ((ast.size() == 3) && ast.get(2).isList()) {
 					final IAST dimIter = (IAST) ast.get(2);
 					for (int i = 1; i < dimIter.size(); i++) {
-						checkCanceled();
-						// may throw ClassCastException:
-						iterList.add(new ArrayIterator(((IInteger) dimIter.get(i)).toInt()));
+						indx1 = Validate.checkIntType(dimIter, i);
+						iterList.add(new ArrayIterator(indx1));
 					}
 				} else if (ast.size() >= 4) {
 					if ((ast.get(2) instanceof IInteger) && (ast.get(3) instanceof IInteger)) {
-						iterList.add(new ArrayIterator(((IInteger) ast.get(3)).toInt(), ((IInteger) ast.get(2)).toInt()));
+						indx1 = Validate.checkIntType(ast, 3);
+						indx2 = Validate.checkIntType(ast, 2);
+						iterList.add(new ArrayIterator(indx1, indx2));
 					} else if (ast.get(2).isList() && ast.get(3).isList()) {
 						final IAST dimIter = (IAST) ast.get(2); // dimensions
 						final IAST originIter = (IAST) ast.get(3); // origins
 						for (int i = 1; i < dimIter.size(); i++) {
-							checkCanceled();
-							// may throw ClassCastException:
-							iterList.add(new ArrayIterator(((IInteger) originIter.get(i)).toInt(), ((IInteger) dimIter.get(i)).toInt()));
+							indx1 = Validate.checkIntType(originIter, i);
+							indx2 = Validate.checkIntType(dimIter, i);
+							iterList.add(new ArrayIterator(indx1, indx2));
 						}
 					}
 				}

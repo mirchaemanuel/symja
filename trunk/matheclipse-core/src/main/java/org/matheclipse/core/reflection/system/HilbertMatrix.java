@@ -1,6 +1,7 @@
 package org.matheclipse.core.reflection.system;
 
 import org.matheclipse.core.eval.exception.NonNegativeIntegerExpected;
+import org.matheclipse.core.eval.exception.Validate;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
 import org.matheclipse.core.expression.AST;
 import org.matheclipse.core.expression.F;
@@ -11,8 +12,9 @@ import org.matheclipse.generic.interfaces.IIndexFunction;
 import org.matheclipse.generic.nested.IndexTableGenerator;
 
 /**
- * Hilbert matrix, defined by A<sub>i,j</sub> = 1 / (i+j-1).
- * See <a> href="http://en.wikipedia.org/wiki/Hilbert_matrix">Wikipedia:Hilbert matrix</a>
+ * Hilbert matrix, defined by A<sub>i,j</sub> = 1 / (i+j-1). See <a>
+ * href="http://en.wikipedia.org/wiki/Hilbert_matrix">Wikipedia:Hilbert
+ * matrix</a>
  */
 public class HilbertMatrix extends AbstractFunctionEvaluator {
 
@@ -24,7 +26,7 @@ public class HilbertMatrix extends AbstractFunctionEvaluator {
 		public IExpr evaluate(final int[] index) {
 			int res = index[0] + index[1] + 1;
 
-			return F.Power(F.integer(res),F.CN1);
+			return F.Power(F.integer(res), F.CN1);
 		}
 	}
 
@@ -36,23 +38,11 @@ public class HilbertMatrix extends AbstractFunctionEvaluator {
 		int rowSize = 0;
 		int columnSize = 0;
 		if (functionList.size() == 2 && functionList.get(1) instanceof IInteger) {
-			try {
-				rowSize = ((IInteger) functionList.get(1)).toInt();
-			} catch (final ArithmeticException e) {
-				throw new NonNegativeIntegerExpected(functionList, 1);
-			}
+			rowSize = Validate.checkIntType(functionList, 1);
 			columnSize = rowSize;
 		} else if (functionList.size() == 3 && functionList.get(1) instanceof IInteger && functionList.get(2) instanceof IInteger) {
-			try {
-				rowSize = ((IInteger) functionList.get(1)).toInt();
-			} catch (final ArithmeticException e) {
-				throw new NonNegativeIntegerExpected(functionList, 1);
-			}
-			try {
-				columnSize = ((IInteger) functionList.get(2)).toInt();
-			} catch (final ArithmeticException e) {
-				throw new NonNegativeIntegerExpected(functionList, 2);
-			}
+			rowSize = Validate.checkIntType(functionList, 1);
+			columnSize = Validate.checkIntType(functionList, 2);
 		} else {
 			return null;
 		}

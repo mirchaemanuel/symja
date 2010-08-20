@@ -17,6 +17,14 @@ public class WrongNumberOfArguments extends MathException {
 
 	IAST fExpr;
 
+	/**
+	 * Expected number of arguments: {@code allowed} but got {@code current}
+	 * arguments:<br/> {@code expr}.
+	 * 
+	 * @param expr
+	 * @param allowed
+	 * @param current
+	 */
 	public WrongNumberOfArguments(final IAST expr, final int allowed, final int current) {
 		fAllowed = allowed;
 		fCurrent = current;

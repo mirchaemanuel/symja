@@ -279,6 +279,43 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 	}
 
 	/**
+	 * 
+	 * Evaluate an object and reset the numeric mode to the value before the
+	 * evaluation step. If evaluation is not possible return <code>null</code>.
+	 * 
+	 * @param expr
+	 *          the object which should be evaluated
+	 * @param numericMode
+	 *          reset the numericMode to this value after evaluation
+	 * @return the evaluated object of <code>null</code> if no evaluation was
+	 *         possible
+	 */
+	public final IExpr evaluateNull(final IExpr expr) {
+//		boolean numericMode = fNumericMode;
+//		// StackContext.enter();
+//		try {
+			return evalLoop(expr);
+//		} finally {
+//			fNumericMode = numericMode;
+//			// StackContext.exit();
+//		}
+	}
+
+	/**
+	 * Evaluate an expression. If evaluation is not possible return the input
+	 * object.
+	 * 
+	 * @param expr
+	 *          the expression which should be evaluated
+	 * @return the evaluated object or <code>null</code> if no evaluation was
+	 *         possible
+	 * @see EvalEngine#evalWithoutNumericReset(IExpr)
+	 */
+	public static final IExpr evalNull(final IExpr expr) {
+		return (instance.get()).evaluateNull(expr);
+	}
+
+	/**
 	 * Evaluate an expression step by step. If evaluation is not possible return
 	 * <code>null</code>, otherwise return the first evaluated subexpression.
 	 * 

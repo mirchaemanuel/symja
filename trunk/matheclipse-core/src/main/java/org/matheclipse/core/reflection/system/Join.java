@@ -1,7 +1,5 @@
 package org.matheclipse.core.reflection.system;
 
-import static org.matheclipse.basic.Util.checkCanceled;
-
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IAST;
@@ -13,19 +11,17 @@ public class Join extends AbstractFunctionEvaluator {
 	}
 
 	@Override
-	public IExpr evaluate(final IAST functionList) {
-		if (functionList.size() < 3) {
+	public IExpr evaluate(final IAST ast) {
+		if (ast.size() < 3) {
 			return null;
 		}
-		if (functionList.args().any(AtomQ.CONST)) {
+		if (ast.args().any(AtomQ.CONST)) {
 			return null;
 		}
 		final IAST result = F.List();
-		for (int i = 1; i < functionList.size(); i++) {
-			checkCanceled();
-			final IAST subList = (IAST) functionList.get(i);
+		for (int i = 1; i < ast.size(); i++) {
+			final IAST subList = (IAST) ast.get(i);
 			for (int j = 1; j < subList.size(); j++) {
-				checkCanceled();
 				result.add(subList.get(j));
 			}
 		}

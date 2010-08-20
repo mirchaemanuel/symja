@@ -10,6 +10,8 @@ import org.matheclipse.core.convert.JASConvert;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.expression.IConstantHeaders;
+import org.matheclipse.core.generic.BinaryBindIth1st;
+import org.matheclipse.core.generic.UnaryBind1st;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.INumber;
@@ -40,7 +42,9 @@ public class Integrate extends AbstractFunctionEvaluator implements IConstantHea
 			"Integrate[E_^x_, x_]:=E^x",
 			"Integrate[E_^(a_*x_), x_]:=a^(-1)*E^(a*x) /; FreeQ[a,x]",
 			"Integrate[x_ * E_^(a_*x_), x_]:=a^(-2)*E^(a*x)*(a*x-1) /; FreeQ[a,x]",
+			"Integrate[x_ * E_^x_, x_]:=E^x*(x-1)",
 			"Integrate[x_^n_IntegerQ * E_^(a_*x_), x_]:=a^(-1)*x^n*E^(a*x)-n/a*Integrate[x^(n-1)*E^(a*x),x] /; Positive[n]&&FreeQ[a,x]",
+			"Integrate[x_^n_IntegerQ * E_^x_, x_]:=x^n*E^x-n*Integrate[x^(n-1)*E^x,x] /; Positive[n]",
 			"Integrate[Log[x_], x_]:=x*Log[x]-x",
 			"Integrate[Log[a_*x_], x_]:=Log[a*x]*x-x",
 			"Integrate[Sinh[x_], x_]:=Cosh[x]",
@@ -92,13 +96,8 @@ public class Integrate extends AbstractFunctionEvaluator implements IConstantHea
 			final IAST list = (IAST) lst.get(1);
 			final IExpr header = list.head();
 			if (header == F.Plus) {
-				// Integrate[a_+b_+c_,x_] ->
-				// Integrate[a,x]+Integrate[b,x]+Integrate[c,x]
-				final IAST resultList = (IAST) list.clone();
-				for (int i = 1; i < list.size(); i++) {
-					resultList.set(i, F.Integrate(list.get(i), lst.get(2)));
-				}
-				return resultList;
+				// Integrate[a_+b_+...,x_] -> Integrate[a,x]+Integrate[b,x]+...
+				return list.args().map(F.Plus(), new UnaryBind1st(F.Integrate(F.Null, lst.get(2))));
 			}
 			if (header == F.Times || header == F.Power) {
 				IExpr arg = F.eval(F.ExpandAll, list);// ExpandAll.expandAll(list);

@@ -16,11 +16,9 @@ public class Rule extends AbstractFunctionEvaluator {
 
 	@Override
 	public IExpr evaluate(final IAST ast) {
-		final EvalEngine engine = EvalEngine.get();
 		if (ast.size() == 3) {
 			IExpr a0 = ast.get(1);
-			IExpr arg2 = engine.evalLoop(ast.get(2));
-
+			IExpr arg2 = EvalEngine.evalNull(ast.get(2));
 			if (a0 instanceof Symbol) {
 				if (arg2 == null) {
 					return null;

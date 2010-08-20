@@ -5,6 +5,7 @@ import org.apache.commons.math.linear.FieldMatrix;
 import org.matheclipse.basic.Config;
 import org.matheclipse.core.convert.Convert;
 import org.matheclipse.core.eval.exception.NonNegativeIntegerExpected;
+import org.matheclipse.core.eval.exception.Validate;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
 import org.matheclipse.core.expression.ExprField;
 import org.matheclipse.core.expression.ExprFieldElement;
@@ -27,7 +28,7 @@ public class MatrixPower extends AbstractFunctionEvaluator {
 		FieldMatrix<ExprFieldElement> resultMatrix;
 		try {
 			matrix = Convert.list2Matrix((IAST) lst.get(1));
-			final int p = ((IntegerSym) lst.get(2)).toInt();
+			final int p = Validate.checkIntType(lst, 2, Integer.MIN_VALUE);
 			if (p < 0) {
 				return null;
 			}
