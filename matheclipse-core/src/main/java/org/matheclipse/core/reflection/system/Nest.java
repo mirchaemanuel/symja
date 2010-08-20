@@ -1,6 +1,7 @@
 package org.matheclipse.core.reflection.system;
 
 import org.matheclipse.core.eval.exception.NonNegativeIntegerExpected;
+import org.matheclipse.core.eval.exception.Validate;
 import org.matheclipse.core.eval.interfaces.IFunctionEvaluator;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.generic.UnaryMap;
@@ -21,15 +22,7 @@ public class Nest implements IFunctionEvaluator {
 
 	public static IExpr evaluateNest(final IAST ast) {
 		if ((ast.size() == 4) && (ast.get(3) instanceof IInteger)) {
-			int n = 0;
-			try {
-				n = ((IInteger) ast.get(3)).toInt();
-				if (n < 0) {
-					throw new NonNegativeIntegerExpected(ast, 3);
-				}
-			} catch (final ArithmeticException e) {
-				throw new NonNegativeIntegerExpected(ast, 3);
-			}
+			final int n = Validate.checkIntType(ast, 3);
 			return Algorithms.nest(ast.get(2), n, new UnaryMap(F.ast(ast.get(1))));
 		}
 

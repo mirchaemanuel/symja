@@ -6,7 +6,7 @@ import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
 
 /**
- * Retun the evaluation of an unary AST object
+ * Collect the arguments in a new constructed internal AST.
  * 
  */
 public class UnaryCollect extends UnaryFunctorImpl<IExpr> {
@@ -15,7 +15,8 @@ public class UnaryCollect extends UnaryFunctorImpl<IExpr> {
 	protected IAST fAST;
 
 	/**
-	 * Define an unary AST with the header <code>head</code>.
+	 * Define an unary AST with the header <code>head</code>. This new AST
+	 * collects the arguments of the <code>apply()</code> method.
 	 * 
 	 * @param head
 	 *          the AST's head expresion
@@ -34,7 +35,7 @@ public class UnaryCollect extends UnaryFunctorImpl<IExpr> {
 		return fAST;
 	}
 
-	public IAST getAST() {
+	public IAST getCollectedAST() {
 		return fAST;
 	}
 

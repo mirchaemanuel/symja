@@ -7,10 +7,13 @@ import static org.matheclipse.core.expression.F.Times;
 import org.matheclipse.basic.Config;
 import org.matheclipse.core.eval.EvalEngine;
 import org.matheclipse.core.eval.exception.NonNegativeIntegerExpected;
+import org.matheclipse.core.eval.exception.Validate;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.expression.IConstantHeaders;
 import org.matheclipse.core.expression.IntegerSym;
+import org.matheclipse.core.generic.UnaryBind1st;
+import org.matheclipse.core.generic.UnaryBind2nd;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.IInteger;
@@ -81,38 +84,20 @@ public class Expand extends AbstractFunctionEvaluator implements IConstantHeader
 	}
 
 	public static IExpr expand(final IAST ast) {
-		IExpr header = ast.head();
-		if ((header == F.Power) && (ast.size() == 3)) {
+		if (ast.isAST(F.Power, 3)) {
 			// (a+b)^exp
-			if ((ast.get(1) instanceof IAST) && (ast.get(2) instanceof IntegerSym)) {
-				header = ((IAST) ast.get(1)).head();
+			if ((ast.get(1) instanceof IAST) && (ast.get(2) instanceof IInteger)) {
+				IExpr header = ((IAST) ast.get(1)).head();
 				if (header == F.Plus) {
-					final IntegerSym exponent = (IntegerSym) ast.get(2);
-					if (!exponent.isPositive()) {
-						try {
-							final int exp = ((IntegerSym) exponent.negate()).toInt();
-							return F.Power(expandPower((IAST) ast.get(1), exp), F.CN1);
-						} catch (final ArithmeticException e) {
-							if (Config.SHOW_STACKTRACE) {
-								e.printStackTrace();
-							}
-							throw new NonNegativeIntegerExpected(ast, 2);
-						}
+					int exp = Validate.checkIntType(ast, 2, Integer.MIN_VALUE);
+					if (exp < 0) {
+						exp *= (-1);
+						return F.Power(expandPower((IAST) ast.get(1), exp), F.CN1);
 					}
-					try {
-						final int exp = exponent.toInt();
-						return expandPower((IAST) ast.get(1), exp);
-					} catch (final ArithmeticException e) {
-						if (Config.SHOW_STACKTRACE) {
-							e.printStackTrace();
-						}
-						throw new NonNegativeIntegerExpected(ast, 2);
-					}
+					return expandPower((IAST) ast.get(1), exp);
 				}
 			}
-		}
-
-		if ((header == F.Times) && (ast.size() >= 3)) {
+		} else if (ast.isASTSizeGE(F.Times, 3)) {
 			// (a+b)*(c+d)...
 			// return expandTimes(ast);
 			IAST[] temp = getFractionalParts(ast);
@@ -125,14 +110,8 @@ public class Expand extends AbstractFunctionEvaluator implements IConstantHeader
 			}
 
 			return F.Times(expandTimes(temp[0]), F.Power(expandTimes(temp[1]), F.CN1));
-		}
-
-		if ((header == F.Plus) && (ast.size() >= 3)) {
-			final IAST result = Plus();
-			for (int i = 1; i < ast.size(); i++) {
-				result.add(Expand(ast.get(i)));
-			}
-			return result;
+		} else if (ast.isASTSizeGE(F.Plus, 3)) {
+			return ast.args().map(Plus(), new UnaryBind1st(Expand(F.Null)));
 		}
 		return null;
 	}
@@ -170,11 +149,10 @@ public class Expand extends AbstractFunctionEvaluator implements IConstantHeader
 	}
 
 	public static IAST expandTimesPlus(final IAST expr0, final IAST expr1) {
+		// (a+b)*(c+d) -> a*c+a*d+b*c+b*d
 		final IAST pList = Plus();
 		for (int i = 1; i < expr0.size(); i++) {
-			for (int j = 1; j < expr1.size(); j++) {
-				pList.add(Times(expr0.get(i), expr1.get(j)));
-			}
+			expr1.args().map(pList, new UnaryBind2nd(Times(expr0.get(i), F.Null)));
 		}
 		return pList;
 	}

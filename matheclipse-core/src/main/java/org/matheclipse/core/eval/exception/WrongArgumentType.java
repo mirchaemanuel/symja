@@ -20,10 +20,26 @@ public class WrongArgumentType extends MathException {
 
 	String fMessage;
 
+	/**
+	 * The function {@code expr} has wrong argument {@code arg} at position:
+	 * {@code position}
+	 * 
+	 * @param expr
+	 * @param arg
+	 * @param position
+	 */
 	public WrongArgumentType(final IAST expr, final IExpr arg, final int position) {
 		this(expr, arg, position, null);
 	}
 
+	/**
+	 * The function {@code expr} has wrong argument {@code arg} at position:
+	 * {@code position}: {@code message}
+	 * 
+	 * @param expr
+	 * @param arg
+	 * @param position
+	 */
 	public WrongArgumentType(final IAST expr, final IExpr arg, final int position, String message) {
 		fPosition = position;
 		fArg = arg;

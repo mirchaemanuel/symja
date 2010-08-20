@@ -1,7 +1,5 @@
 package org.matheclipse.core.reflection.system;
 
-import static org.matheclipse.basic.Util.checkCanceled;
-
 import org.matheclipse.core.eval.EvalEngine;
 import org.matheclipse.core.eval.interfaces.IFunctionEvaluator;
 import org.matheclipse.core.expression.F;
@@ -18,7 +16,7 @@ public class CompoundExpression implements IFunctionEvaluator {
 		final EvalEngine engine = EvalEngine.get();
 		if (functionList.size() > 1) {
 			for (int i = 1; i < functionList.size() - 1; i++) {
-				checkCanceled();
+				// as sideeffect evaluate the i-th argument
 				engine.evaluate(functionList.get(i));
 			}
 			return engine.evaluate(functionList.get(functionList.size() - 1));
@@ -26,16 +24,10 @@ public class CompoundExpression implements IFunctionEvaluator {
 		return F.Null;
 	}
 
-
 	public IExpr numericEval(final IAST functionList) {
 		return evaluate(functionList);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.matheclipse.parser.interfaces.IEvaluator#setUp(org.matheclipse.parser.interfaces.ISymbol)
-	 */
 	public void setUp(final ISymbol symbol) {
 		symbol.setAttributes(ISymbol.HOLDALL);
 	}

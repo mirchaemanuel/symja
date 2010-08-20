@@ -22,7 +22,7 @@ public class NonNegativeIntegerExpected extends MathException {
 
 	@Override
 	public String getMessage() {
-		return "Non negative int expectd at arguments position: " + fCurrent + " in expression:\n" + fExpr.toString();
+		return "Non negative int expected at arguments position: " + fCurrent + " in expression:\n" + fExpr.toString();
 	}
 
 }

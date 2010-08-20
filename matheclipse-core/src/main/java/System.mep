@@ -1,7 +1,9 @@
 Package[ 
   "System", 
   (* define the public available symbols *)
-  {Abs, ArcCos, ArcSin, ArcTan, Cos, D,  Log, Power, Sin, Tan, LegendreP}, 
+  {Abs, ArcCos, ArcCosh, ArcCot, ArcCoth, ArcSin, ArcSinh, ArcTan, ArcTanh, 
+   Cos, Cosh, Cot, Coth, Derivative, Log, Power, Sin, Sinh, 
+   Tan, Tanh, LegendreP}, 
 { 
   Abs[Pi]=Pi, 
   Abs[E]=E, 
@@ -82,24 +84,24 @@ Package[
   Cos[ArcSin[x_]]:=(1-x^2)^(1/2),
   Cos[x_NumberQ]:=Cos[(-1)*x]/;SignCmp[x]<0,
   
-  D[ArcCot[x_],y_]:=(-1)*(1+x^2)^(-1)*D[x,y],
-  D[Sinh[x_],y_]:=Cosh[x]*D[x,y],
-  D[Coth[x_],y_]:=(-1)*Sinh[x]^(-2)*D[x,y],
-  D[Log[x_],y_]:=x^(-1)*D[x,y],
-  D[ArcCos[x_],y_]:=(-1)*(1-x^2)^(-1/2)*D[x,y],
-  D[ArcSinh[x_],y_]:=(1+x^2)^(-1/2)*D[x,y],
-  D[Tanh[x_],y_]:=Cosh[x]^(-2)*D[x,y],
-  D[Cot[x_],y_]:=(-1)*Sin[x]^2^(-1)*D[x,y],
-  D[Cos[x_],y_]:=(-1)*Sin[x]*D[x,y],
-  D[ArcSin[x_],y_]:=(1-x^2)^(-1/2)*D[x,y],
-  D[Sin[x_],y_]:=Cos[x]*D[x,y],
-  D[Tan[x_],y_]:=1*Cos[x]^2^(-1)*D[x,y],
-  D[ArcCosh[x_],y_]:=(x^2-1)^(-1/2)*D[x,y],
-  D[ArcCoth[x_],y_]:=(1-x^2)^(-1)*D[x,y],
-  D[ArcTan[x_],y_]:=(1+x^2)^(-1)*D[x,y],
-  D[ArcTanh[x_],y_]:=(1-x^2)^(-1)*D[x,y],
-  D[Cosh[x_],y_]:=(-1)*Sinh[x]*D[x,y],
-  
+  Derivative[ArcCot]=(-1)*(1+#^2)^(-1)&,
+  Derivative[Sinh]=Cosh[#]&,
+  Derivative[Coth]=(-1)*Sinh[#]^(-2)&,
+  Derivative[Log]=#^(-1)&,
+  Derivative[ArcCos]=(-1)*(1-#^2)^(-1/2)&,
+  Derivative[ArcSinh]=(1+#^2)^(-1/2)&,
+  Derivative[Tanh]=Cosh[#]^(-2)&,
+  Derivative[Cot]=(-1)*Sin[#]^2^(-1)&,
+  Derivative[Cos]=(-1)*Sin[#]&,
+  Derivative[ArcSin]=(1-#^2)^(-1/2)&,
+  Derivative[Sin]=Cos[#]&,
+  Derivative[Tan]=1*Cos[#]^2^(-1)&,
+  Derivative[ArcCosh]=(#^2-1)^(-1/2)&,
+  Derivative[ArcCoth]=(1-#^2)^(-1)&,
+  Derivative[ArcTan]=(1+#^2)^(-1)&,
+  Derivative[ArcTanh]=(1-#^2)^(-1)&,
+  Derivative[Cosh]=(-1)*Sinh[#]&,
+
   Log[E]=1,
   
   (* rules for Power[] *)

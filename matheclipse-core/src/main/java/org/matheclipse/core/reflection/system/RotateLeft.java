@@ -1,6 +1,7 @@
 package org.matheclipse.core.reflection.system;
 
 import org.matheclipse.core.eval.exception.NonNegativeIntegerExpected;
+import org.matheclipse.core.eval.exception.Validate;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
 import org.matheclipse.core.expression.ASTRange;
 import org.matheclipse.core.expression.F;
@@ -28,16 +29,8 @@ public class RotateLeft extends AbstractFunctionEvaluator {
 					return result;
 				} else {
 					if (functionList.get(2) instanceof IInteger) {
-						int n = 0;
-						try {
-							n = ((IInteger) functionList.get(2)).toInt();// throws
-																	// ArithmeticException
-							if (n < 0) {
-								throw new NonNegativeIntegerExpected(functionList, 2);
-							}
-						} catch (final ArithmeticException e) {
-							throw new NonNegativeIntegerExpected(functionList, 3);
-						}
+						int n = Validate.checkIntType(functionList, 2, 1);
+				
 						ASTRange range = ((IAST) functionList.get(1)).args();
 						range.rotateLeft(result, n);
 						// Rotating.rotateLeft((IAST) list.get(1), result, n+1,

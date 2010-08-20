@@ -1,10 +1,10 @@
 package org.matheclipse.core.reflection.system;
 
+import org.matheclipse.core.eval.exception.Validate;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
-import org.matheclipse.core.interfaces.IInteger;
 import org.matheclipse.core.interfaces.ISymbol;
 
 /**
@@ -23,11 +23,7 @@ public class DiagonalMatrix extends AbstractFunctionEvaluator {
 			IAST res = F.List();
 			int offset = 0;
 			if ((ast.size() == 3)) {
-				try {
-					offset = ((IInteger) ast.get(2)).toInt();
-				} catch (Exception e) {
-					return null;
-				}
+				offset = Validate.checkIntType(ast, 2, Integer.MIN_VALUE);
 			}
 			for (int i = 1; i < m; i++) {
 				IAST row = F.List();

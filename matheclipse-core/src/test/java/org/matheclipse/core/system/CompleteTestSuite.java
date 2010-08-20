@@ -20,14 +20,13 @@ public class CompleteTestSuite extends TestCase {
 	 */
 	public static Test suite() {
 		TestSuite suite = new TestSuite();
-		suite.addTestSuite(SystemTestCase.class);
 		suite.addTestSuite(PatternMatchingTestCase.class);
 		suite.addTestSuite(CombinatoricTestCase.class);
 		suite.addTestSuite(HeadlistTestCase.class);
 		suite.addTestSuite(FindRootScriptTestCase.class);
-		suite.addTestSuite(SerializableTest.class);
-		suite.addTestSuite(SpecialTestCase.class);
 		suite.addTestSuite(ScriptEngineTestCase.class);
+		suite.addTestSuite(SystemTestCase.class);
+		suite.addTestSuite(SerializableTest.class);
 		return suite;
 
 	}

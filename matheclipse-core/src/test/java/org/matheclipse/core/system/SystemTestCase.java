@@ -277,14 +277,16 @@ public class SystemTestCase extends AbstractTestCase {
 	}
 
 	public void testSystem038() {
-		check("Trace[D[Sin[x],x]]", "{D[Sin[x],x],Cos[x]*D[x,x],{D[x,x],1},1*Cos[x],Cos[x]}");
+		check("Trace[D[Sin[x],x]]", "{{Derivative[Sin],Cos[#1]&},{x&,Cos[x]},{D[Sin[x],x],Cos[x]*D[x,x],{D[x,x],1},1*Cos[x],Cos[x]}}");
 		check("D[Sin[x]^Cos[x],x]", "(-Log[Sin[x]]*Sin[x]+Cos[x]^2*Sin[x]^(-1))*Sin[x]^Cos[x]");
-		check("Trace[D[Sin[x]^Cos[x],x]]", "{D[Sin[x]^Cos[x],x],Sin[x]^Cos[x]*(Log[Sin[x]]*D[Cos[x],x]+Cos[x]*D[Sin[x],x]*Sin[x]^(\n"
-				+ "-1)),{D[Sin[x],x],Cos[x]*D[x,x],{D[x,x],1},1*Cos[x],Cos[x]},{Cos[x]*D[Sin[x],x]*Sin[x]^(\n"
-				+ "-1),Cos[x]*Cos[x]*Sin[x]^(-1),Cos[x]^2*Sin[x]^(-1)},{D[Cos[x],x],(-1)*Sin[x]*D[x,x],(\n"
-				+ "-1)*Sin[x]*D[x,x],{D[x,x],1},(-1)*1*Sin[x],(-1)*Sin[x]},{Log[Sin[x]]*D[Cos[x],x],Log[Sin[x]]*(\n"
-				+ "-1)*Sin[x],(-1)*Log[Sin[x]]*Sin[x]},{Log[Sin[x]]*D[Cos[x],x]+Cos[x]*D[Sin[x],x]*Sin[x]^(\n"
-				+ "-1),-Log[Sin[x]]*Sin[x]+Cos[x]^2*Sin[x]^(-1)},(-Log[Sin[x]]*Sin[x]+Cos[x]^2*Sin[x]^(\n" + "-1))*Sin[x]^Cos[x]}");
+		check("Trace[D[Sin[x]^Cos[x],x]]", "{D[Sin[x]^Cos[x],x],Sin[x]^Cos[x]*(Log[Sin[x]]*D[Cos[x],x]+Cos[x]*D[Sin[x],x]*Sin[x]^(\n" + 
+				"-1)),{Derivative[Sin],Cos[#1]&},{x&,Cos[x]},{D[Sin[x],x],Cos[x]*D[x,x],{D[x,x],1},\n" + 
+				"1*Cos[x],Cos[x]},{Cos[x]*D[Sin[x],x]*Sin[x]^(-1),Cos[x]*Cos[x]*Sin[x]^(-1),Cos[x]^\n" + 
+				"2*Sin[x]^(-1)},{Derivative[Cos],(-1)*Sin[#1]&},{x&,(-1)*Sin[x]},{D[Cos[x],x],(-1)*Sin[x]*D[x,x],(\n" + 
+				"-1)*Sin[x]*D[x,x],{D[x,x],1},(-1)*1*Sin[x],(-1)*Sin[x]},{Log[Sin[x]]*D[Cos[x],x],Log[Sin[x]]*(\n" + 
+				"-1)*Sin[x],(-1)*Log[Sin[x]]*Sin[x]},{Log[Sin[x]]*D[Cos[x],x]+Cos[x]*D[Sin[x],x]*Sin[x]^(\n" + 
+				"-1),-Log[Sin[x]]*Sin[x]+Cos[x]^2*Sin[x]^(-1)},(-Log[Sin[x]]*Sin[x]+Cos[x]^2*Sin[x]^(\n" + 
+				"-1))*Sin[x]^Cos[x]}");
 		check("Trace[NumberQ[1/3]]", "{NumberQ[1/3],True}");
 	}
 
@@ -295,7 +297,9 @@ public class SystemTestCase extends AbstractTestCase {
 	}
 
 	public void testSystem040() {
+		check("(-15.0)^.5", "2.3715183290419594E-16+I*3.872983346207417");
 		check("(-15.0)^0.5", "2.3715183290419594E-16+I*3.872983346207417");
+		check(".5^.5", "0.7071067811865476");
 		check("N[(-15)^(1/2)]", "2.3715183290419594E-16+I*3.872983346207417");
 		check("N[Sin[1/2]]", "0.479425538604203");
 		check("N[1/6*(I*44^(1/2)+2)]", "0.3333333333333333+I*1.1055415967851332");
@@ -512,11 +516,23 @@ public class SystemTestCase extends AbstractTestCase {
 	}
 
 	public void testSystem078() {
+		check("D[Sin[x] + Cos[y], {x, y}]", "D[Sin[x]+Cos[y],{x,y}]");
 		check("D[Sin[x]^Cos[x],x]", "(-Log[Sin[x]]*Sin[x]+Cos[x]^2*Sin[x]^(-1))*Sin[x]^Cos[x]");
+		check("D[Cos[x]^10,{x,3}]", "280*Cos[x]^9*Sin[x]-720*Cos[x]^7*Sin[x]^3");
+		check("D[Cos[x*y]/(x+y),x,y]", "-(y+x)^(-1)*Sin[x*y]+y*(y+x)^(-2)*Sin[x*y]+x*(y+x)^(-2)*Sin[x*y]-x*y*Cos[x*y]*(y+x)^(\n"
+				+ "-1)+2*Cos[x*y]*(y+x)^(-3)");
+		check("D[x^2*Sin[y], x, y]", "2*x*Cos[y]");
+		check("D[x^2*Sin[y], y, x]", "2*x*Cos[y]");
+		check("D[x^2*Sin[y], {{x, y}}]", "{2*x*Sin[y],Cos[y]*x^2}");
+		check("D[{Sin[y], Sin[x] + Cos[y]}, {{x, y}}, {{x,y}}]", "{{{0,0},{0,(-1)*Sin[y]}},{{(-1)*Sin[x],0},{0,(-1)*Cos[y]}}}");
+		check("D[Sin[y],{{x,y}},{{x,y}}]", "{{0,0},{0,(-1)*Sin[y]}}");
+		check("D[Sin[y],{{x,y},2}]", "{{0,0},{0,(-1)*Sin[y]}}");
+		check("D[{Sin[y], Sin[x] + Cos[y]}, {{x, y}, 2}]", "{{{0,0},{0,(-1)*Sin[y]}},{{(-1)*Sin[x],0},{0,(-1)*Cos[y]}}}");
 	}
 
 	public void testSystem079() {
 		check("{{1,2},{3,4}}.{{1,2},{3,4}}", "{{7,10},\n" + " {15,22}}");
+		check("$x.$y", "$x.$y");
 	}
 
 	public void testSystem080() {
@@ -987,9 +1003,12 @@ public class SystemTestCase extends AbstractTestCase {
 
 	public void testSystem171() {
 		check("Integrate[x,x]", "1/2*x^2");
+		check("Integrate[f[x]+g[x]+h[x],x]", "Integrate[h[x],x]+Integrate[g[x],x]+Integrate[f[x],x]");
 		check("Integrate[Sin[x],x]", "(-1)*Cos[x]");
 		check("Integrate[E^(a*x),x]", "E^(a*x)*a^(-1)");
 		check("Integrate[x*E^(a*x),x]", "(a*x-1)*E^(a*x)*a^(-2)");
+		check("Integrate[x*E^x,x]", "(x-1)*E^x");
+		check("Integrate[x^2*E^x,x]", "E^x*x^2-2*(x-1)*E^x");
 		check("Integrate[x^2*E^(a*x),x]", "E^(a*x)*a^(-1)*x^2-2*(a*x-1)*E^(a*x)*a^(-3)");
 		check("Integrate[x^3*E^(a*x),x]", "E^(a*x)*a^(-1)*x^3-3*(E^(a*x)*a^(-1)*x^2-2*(a*x-1)*E^(a*x)*a^(-3))*a^(-1)");
 

@@ -1,6 +1,5 @@
 package org.matheclipse.core.reflection.system;
 
-import static org.matheclipse.basic.Util.checkCanceled;
 import static org.matheclipse.core.expression.F.Plus;
 import static org.matheclipse.core.expression.F.Power;
 
@@ -195,13 +194,11 @@ public class Times extends AbstractArgMultiple implements INumeric {
 
 			while (i < functionList.size()) {
 
-				checkCanceled();
 				tres = binaryOperator(temp, functionList.get(i));
 
 				if (tres == null) {
 
 					for (int j = i + 1; j < functionList.size(); j++) {
-						checkCanceled();
 						tres = binaryOperator(temp, functionList.get(j));
 
 						if (tres != null) {
@@ -256,7 +253,6 @@ public class Times extends AbstractArgMultiple implements INumeric {
 	public double evalReal(final double[] stack, final int top, final int size) {
 		double result = 1;
 		for (int i = top - size + 1; i < top + 1; i++) {
-			checkCanceled();
 			result *= stack[i];
 		}
 		return result;

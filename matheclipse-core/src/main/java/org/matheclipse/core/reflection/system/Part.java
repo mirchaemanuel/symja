@@ -1,9 +1,7 @@
 package org.matheclipse.core.reflection.system;
 
-import static org.matheclipse.basic.Util.checkCanceled;
-
 import org.matheclipse.basic.Config;
-import org.matheclipse.core.eval.exception.NonNegativeIntegerExpected;
+import org.matheclipse.core.eval.exception.Validate;
 import org.matheclipse.core.eval.interfaces.IFunctionEvaluator;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IAST;
@@ -23,7 +21,8 @@ public class Part implements IFunctionEvaluator {
 
 				if (arg1 instanceof IInteger) {
 					try {
-						return getIndex(arg0, (IInteger) arg1);
+						final int indx = Validate.checkIntType(ast, 2);
+						return getIndex(arg0, indx); // (IInteger) arg1);
 					} catch (final IndexOutOfBoundsException e) {
 						if (Config.DEBUG) {
 							e.printStackTrace();
@@ -36,19 +35,14 @@ public class Part implements IFunctionEvaluator {
 					final IAST result = F.ast(F.List);
 
 					for (int i = 1; i < lst.size(); i++) {
-						checkCanceled();
 						final IExpr expr = lst.get(i);
 
 						if (expr instanceof IInteger) {
 							IExpr ires = null;
-							try {
-								ires = getIndex(arg0, (IInteger) expr);
-							} catch (final ArithmeticException e) {
-								if (Config.DEBUG) {
-									e.printStackTrace();
-								}
-								throw new NonNegativeIntegerExpected(lst, i);
-							}
+
+							final int indx = Validate.checkIntType(lst, i);
+							ires = getIndex(arg0, indx);// (IInteger) expr);
+
 							if (ires == null) {
 								return null;
 							}
@@ -70,9 +64,12 @@ public class Part implements IFunctionEvaluator {
 		return null;
 	}
 
-	IExpr getIndex(final IAST ast, final IInteger iIndx) {
-		final int indx = iIndx.toInt();
+	IExpr getIndex(final IAST ast, int indx) {
+
+		// final int indx = iIndx.toInt();
 		// check index range
+		
+		Validate.checkRange(ast, 0, ast.size());
 		if ((indx < 0) || (indx >= ast.size())) {
 			throw new IndexOutOfBoundsException("index: " + indx);
 		}

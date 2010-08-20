@@ -36,7 +36,7 @@ public class Total extends AbstractFunctionEvaluator {
 					AST.COPY.total(ast.get(i), level, uCollect, 1);
 				}
 			}
-			return uCollect.getAST();
+			return uCollect.getCollectedAST();
 		}
 		return null;
 	}
