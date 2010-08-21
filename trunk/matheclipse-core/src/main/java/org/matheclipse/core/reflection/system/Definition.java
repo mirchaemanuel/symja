@@ -10,6 +10,7 @@ import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.ISymbol;
+import org.matheclipse.parser.client.SyntaxError;
 
 public class Definition extends AbstractFunctionEvaluator {
 
@@ -38,6 +39,12 @@ public class Definition extends AbstractFunctionEvaluator {
 		}
 
 		return F.Null;
+	}
+
+	@Override
+	public void setUp(ISymbol symbol) throws SyntaxError {
+		symbol.setAttributes(ISymbol.HOLDALL);
+    super.setUp(symbol);
 	}
 
 }

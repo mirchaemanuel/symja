@@ -28,7 +28,7 @@ public class RuleCreationError extends MathException {
 	@Override
 	public String getMessage() {
 		if (fLHS == null) {
-			return "Operation not allowed in server mode (use variable names starting with a '$' character.)";
+			return "Operation not allowed in server mode.\nUse variable names starting with a '$' character and be sure that you are logged in.";
 		}
 		if (fCondition != null) {
 			return "Error in rule creation: Condition not allowed in rules containing no pattern (" + fLHS.toString() + " "
@@ -38,7 +38,7 @@ public class RuleCreationError extends MathException {
 			return "Error in rule creation: " + fLHS.toString() + " " + fRHS.toString();
 		}
 		return "Not allowed left-hand-side expression in server mode: " + fLHS.toString()
-				+ "(use variable names starting with a '$' character for assignments).";
+				+ "\nUse variable names starting with a '$' character for assignments and be sure that you are logged in.";
 	}
 
 }

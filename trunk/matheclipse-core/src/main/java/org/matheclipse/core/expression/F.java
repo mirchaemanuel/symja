@@ -42,11 +42,17 @@ import apache.harmony.math.Rational;
 public class F {
 	transient private final static HashMap<String, ISymbol> fSymbolMap = new HashMap<String, ISymbol>();
 
-	transient private static ISymbolObserver SYMBOL_OBSERVER = new ISymbolObserver() {
+	transient public static ISymbolObserver SYMBOL_OBSERVER = new ISymbolObserver() {
 		@Override
-		public final boolean createSymbol(String symbol) {
+		public final boolean createPredefinedSymbol(String symbol) {
 			return false;
 		}
+
+		@Override
+		public void createUserSymbol(ISymbol symbol) {
+
+		}
+
 	};
 
 	public static ISymbol Abs;
@@ -1907,7 +1913,7 @@ public class F {
 		}
 		if (Config.SERVER_MODE) {
 			if (Character.isUpperCase(symbolName.charAt(0))) {
-				if (SYMBOL_OBSERVER.createSymbol(symbolName)) {
+				if (SYMBOL_OBSERVER.createPredefinedSymbol(symbolName)) {
 					// second try, because the symbol may now be added to fSymbolMap
 					ISymbol temp2 = fSymbolMap.get(symbolName);
 					if (temp2 != null) {
@@ -1923,6 +1929,9 @@ public class F {
 			}
 			temp = new Symbol(symbolName);
 			variableMap.put(symbolName, temp);
+			if (symbolName.charAt(0) == '$') {
+				SYMBOL_OBSERVER.createUserSymbol(temp);
+			}
 		} else {
 			temp = new Symbol(symbolName);
 			fSymbolMap.put(symbolName, temp);

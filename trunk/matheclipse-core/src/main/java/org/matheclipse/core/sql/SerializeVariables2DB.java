@@ -8,25 +8,22 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.List;
+import java.util.Set;
 
 import org.matheclipse.core.interfaces.ISymbol;
 
 public class SerializeVariables2DB {
-	
-	public static void write(Connection con, String sessionID,
-			List<ISymbol> list) throws SQLException, IOException {
-		PreparedStatement deleteStatement = con
-				.prepareStatement("DELETE FROM variables WHERE session='?' AND name ='?'");
-		PreparedStatement insertStatement = con
-				.prepareStatement("INSERT INTO variables(session, name, symbol_data) VALUES(?,?,?)");
-		ISymbol symbol;
+
+	public static void write(Connection con, String sessionID, Set<ISymbol> list) throws SQLException, IOException {
+		PreparedStatement deleteStatement = con.prepareStatement("DELETE FROM variables WHERE session='?' AND name ='?'");
+		PreparedStatement insertStatement = con.prepareStatement("INSERT INTO variables(session, name, symbol_data) VALUES(?,?,?)");
 		ByteArrayOutputStream baos;
 		ObjectOutputStream out;
-		for (int i = 0; i < list.size(); i++) {
+		// for (int i = 0; i < list.size(); i++) {
+		for (ISymbol symbol : list) {
 			baos = new ByteArrayOutputStream();
 			out = new ObjectOutputStream(baos);
-			symbol = list.get(i);
+			// symbol = list.get(i);
 			symbol.writeSymbol(out);
 			out.close();
 			deleteStatement.setString(1, sessionID);
@@ -41,16 +38,14 @@ public class SerializeVariables2DB {
 		con.commit();
 	}
 
-	public static void read(Connection con, String sessionID, ISymbol symbol)
-			throws SQLException, IOException {
+	public static void read(Connection con, String sessionID, ISymbol symbol) throws SQLException, IOException {
 		PreparedStatement selectStatement = con
 				.prepareStatement("SELECT session, name, symbol_data FROM variables WHERE session='?' AND name ='?'");
 		selectStatement.setString(1, sessionID);
 		selectStatement.setString(2, symbol.toString());
 		ResultSet result = selectStatement.executeQuery();
 		while (result.next()) {
-			ObjectInputStream in = new ObjectInputStream(result
-					.getBinaryStream(3));
+			ObjectInputStream in = new ObjectInputStream(result.getBinaryStream(3));
 			symbol.readSymbol(in);
 			in.close();
 			break;
@@ -65,10 +60,8 @@ public class SerializeVariables2DB {
 	 * @throws SQLException
 	 * @throws IOException
 	 */
-	public static void deleteSession(Connection con, String sessionID)
-			throws SQLException, IOException {
-		PreparedStatement deleteStatement = con
-				.prepareStatement("DELETE FROM variables WHERE session='?'");
+	public static void deleteSession(Connection con, String sessionID) throws SQLException, IOException {
+		PreparedStatement deleteStatement = con.prepareStatement("DELETE FROM variables WHERE session='?'");
 		deleteStatement.setString(1, sessionID);
 		deleteStatement.execute();
 		con.commit();

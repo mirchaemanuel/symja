@@ -7,8 +7,10 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Stack;
 
 import org.matheclipse.basic.Config;
@@ -52,7 +54,7 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 	private static final long serialVersionUID = 407328682800652434L;
 
 	/**
-	 * Associate a symbolname in this ThreadLocal with the symbol created in this
+	 * Associate a symbol name in this ThreadLocal with the symbol created in this
 	 * thread
 	 * 
 	 * @see ExprFactory.fSymbolMap for global symbol names
@@ -60,7 +62,7 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 	private HashMap<String, ISymbol> fVariableMap;
 
 	/**
-	 * Associate a symbolname with a local variable stack in this thread
+	 * Associate a symbol name with a local variable stack in this thread
 	 * 
 	 */
 	transient private HashMap<String, Stack<IExpr>> fLocalVariableStackMap = null;
@@ -112,7 +114,7 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 
 	// protected ExprFactory fExpressionFactory;
 
-	protected List<ISymbol> fModifiedVariablesList;
+	protected Set<ISymbol> fModifiedVariablesList;
 
 	transient protected List<IExpr> fOutList = new ArrayList<IExpr>(10);
 
@@ -222,7 +224,7 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 		fTraceStack = new Stack<IAST>();
 		// fTraceList = null;
 		fStopRequested = false;
-		fModifiedVariablesList = new ArrayList<ISymbol>();
+		fModifiedVariablesList = new HashSet<ISymbol>();
 	}
 
 	/**
@@ -291,14 +293,14 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 	 *         possible
 	 */
 	public final IExpr evaluateNull(final IExpr expr) {
-//		boolean numericMode = fNumericMode;
-//		// StackContext.enter();
-//		try {
-			return evalLoop(expr);
-//		} finally {
-//			fNumericMode = numericMode;
-//			// StackContext.exit();
-//		}
+		// boolean numericMode = fNumericMode;
+		// // StackContext.enter();
+		// try {
+		return evalLoop(expr);
+		// } finally {
+		// fNumericMode = numericMode;
+		// // StackContext.exit();
+		// }
 	}
 
 	/**
@@ -931,7 +933,7 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 	 * 
 	 * @return
 	 */
-	public List<ISymbol> getModifiedVariables() {
+	public Set<ISymbol> getModifiedVariables() {
 		return fModifiedVariablesList;
 	}
 
@@ -1005,6 +1007,12 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 		return temp;
 	}
 
+	/**
+	 * Get a local user symbol name in this ThreadLocal associated with the symbol
+	 * created in this thread.
+	 * 
+	 * @see ExprFactory.fSymbolMap for global symbol names
+	 */
 	final public Map<String, ISymbol> getVariableMap() {
 		if (fVariableMap == null) {
 			fVariableMap = new HashMap<String, ISymbol>();
