@@ -16,7 +16,7 @@ The following buttons are always defined in the user interface:
 
 == Persisting user defined symbols into Google Appengine datastore ==
 Through the *Login* link users can sign in with their Google User Account.
-When logged in, it's possible to persist so called _$ user symbol_ (i.e. user variables) in the [http://en.wikipedia.org/wiki/Google_App_Engine Google App Engine] datastore.
+When logged in, it's possible to persist so called _$ user symbols_ (i.e. user variables) in the [http://en.wikipedia.org/wiki/Google_App_Engine Google App Engine] datastore.
 
 You can for example create your own rules for a new defined _$ user symbol_ {{{$cube}}}. Type this in the input text area and press the *Sym* button:
 {{{
