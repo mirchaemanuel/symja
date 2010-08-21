@@ -12,9 +12,9 @@ The following buttons are always defined in the user interface:
   * *Num* - numeric evaluation
   * *C* - clears the input text area
 
-== Persisting user variables into Google Appengine datastore ==
+== Persisting user defined symbols into Google Appengine datastore ==
 Through the *Login* link users can sign in with their Google User Account.
-When logged in, it's possible to persist so called _$ user symbol_ in the datastore.
+When logged in, it's possible to persist so called _$ user symbol_ (i.e. user variables) in the datastore.
 
 You can for example create your own rules for a new defined _$ user symbol_ {{{$cube}}}. Type this in the input text area and press the *Sym* button:
 {{{
@@ -40,7 +40,7 @@ you get the defined value.
 
 == Buttons for logged in users ==
 The following buttons are *only* defined in the user interface, if you are logged in with your Google Account:
-  * *Def* - shows the definition of the variable that the user ha typed into the upper input text area
+  * *Def* - shows the definition of the _$ user symbol_ that the user has typed into the upper input text area (i.e. the _$ user symbol_ *$cube* used in the example above, will return the defined rules).
   * *Vars* - show all defined user variabeles from Google Appengine store (up to 100 are allowed)
 
 = Advanced configuration =
