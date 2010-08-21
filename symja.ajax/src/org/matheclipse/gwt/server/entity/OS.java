@@ -6,5 +6,6 @@ public class OS extends ObjectifyService {
 	public static synchronized void initialize() {
 		factory.register(PackageEntity.class);
 		factory.register(SymbolEntity.class);
+		factory.register(UserSymbolEntity.class);
 	}
 }

@@ -8,6 +8,7 @@ import java.net.URLEncoder;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import javax.cache.Cache;
@@ -29,10 +30,18 @@ import org.matheclipse.core.form.output.OutputFormFactory;
 import org.matheclipse.core.form.output.StringBufferWriter;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
+import org.matheclipse.core.interfaces.ISymbol;
 import org.matheclipse.core.reflection.system.Function;
+import org.matheclipse.gwt.server.entity.UserSymbolEntity;
+import org.matheclipse.gwt.server.entity.UserSymbolService;
 import org.matheclipse.parser.client.Parser;
 import org.matheclipse.parser.client.ast.ASTNode;
 import org.matheclipse.parser.client.math.MathException;
+
+import com.google.appengine.api.datastore.QueryResultIterable;
+import com.google.appengine.api.users.User;
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
 
 public class EvaluateServlet extends HttpServlet {
 	private static final long serialVersionUID = 6265703737413093134L;
@@ -41,7 +50,9 @@ public class EvaluateServlet extends HttpServlet {
 
 	// private static final boolean UNIT_TEST = false;
 
-	private static final boolean USE_MEMCACHE = true;
+	private static final boolean USE_MEMCACHE = false;
+
+	private static final int MAX_NUMBER_OF_VARS = 100;
 
 	public static Cache cache = null;
 
@@ -66,15 +77,15 @@ public class EvaluateServlet extends HttpServlet {
 			out.println(URLEncoder.encode("0;error;No input expression posted!", "UTF-8"));
 			return;
 		}
+		value = value.trim();
 		if (value.length() > Short.MAX_VALUE) {
 			out.println(URLEncoder.encode("0;error;Input expression to large!", "UTF-8"));
 			return;
 		}
-		value = value.trim();
-		log.warning("In::" + value);
+		log.info("In::" + value);
 
 		String result = evaluate(req, value, "", 0);
-		log.warning("Out::" + result);
+		log.info("Out::" + result);
 		out.println(result);// URLEncoder.encode(result, "UTF-8"));
 
 	}
@@ -114,6 +125,9 @@ public class EvaluateServlet extends HttpServlet {
 
 		try {
 			String[] result = evaluateString(request, engine, expression, function);
+			if (!saveModifiedUserSymbols(engine)) {
+				return counter + ";error;Number of user '$'-variables\ngreater than " + MAX_NUMBER_OF_VARS + "!";
+			}
 			StringBuffer buf = outWriter.getBuffer();
 			buf.append(result[1]);
 			return counter + ";" + result[0] + ";" + buf.toString();
@@ -129,6 +143,49 @@ public class EvaluateServlet extends HttpServlet {
 
 	}
 
+	private boolean saveModifiedUserSymbols(EvalEngine engine) {
+		UserService userService = UserServiceFactory.getUserService();
+		if (userService.getCurrentUser() != null) {
+			User user = userService.getCurrentUser();
+			if (user != null) {
+
+				Set<ISymbol> modifiedSymbols = engine.getModifiedVariables();
+				for (ISymbol symbol : modifiedSymbols) {
+					// StringBuilder bldr = new StringBuilder(256);
+					// List<IAST> defList = symbol.definition();
+					//
+					// if (defList.size() > 0) {
+					// for (int i = 0; i < defList.size(); i++) {
+					// bldr.append(defList.get(i).toString());
+					// if (i < defList.size() - 1) {
+					// bldr.append(";");
+					// }
+					// }
+					// }
+					int attributes = symbol.getAttributes();
+					String source;
+					try {
+						source = symbol.definitionToString();
+						UserSymbolEntity symbolEntity = new UserSymbolEntity(user, symbol.toString(), source, attributes);
+						UserSymbolEntity newSymbolEntity = UserSymbolService.modify(symbolEntity);
+						if (newSymbolEntity != null) {
+							if (UserSymbolService.countAll(user.getUserId()) > MAX_NUMBER_OF_VARS) {
+								UserSymbolService.delete(newSymbolEntity);
+								return false;
+							}
+						}
+					} catch (IOException e) {
+						if (Config.DEBUG) {
+							e.printStackTrace();
+						}
+						return false;
+					}
+				}
+			}
+		}
+		return true;
+	}
+
 	public static String[] evaluateString(HttpServletRequest request, EvalEngine engine, String inputString, String function) {
 
 		try {
@@ -136,6 +193,20 @@ public class EvaluateServlet extends HttpServlet {
 			ASTNode node = parser.parse(inputString);
 			IExpr inExpr = AST2Expr.CONST.convert(node);
 			if (inExpr != null) {
+				if (inExpr instanceof IAST) {
+					IAST ast = (IAST) inExpr;
+					ISymbol sym = ast.topHead();
+					if (sym.toString().equals("UserVariables")) {
+						UserService userService = UserServiceFactory.getUserService();
+						if (userService.getCurrentUser() != null) {
+							User user = userService.getCurrentUser();
+							if (user != null) {
+								return listUserVariables(user.getUserId());
+							}
+						}
+
+					}
+				}
 				// inExpr contains the user input from the web interface in
 				// internal format now
 				StringBufferWriter outBuffer = new StringBufferWriter();
@@ -191,6 +262,23 @@ public class EvaluateServlet extends HttpServlet {
 			return new String[] { "error", "Error in evaluateString" };
 
 		}
+	}
+
+	private static String[] listUserVariables(String userId) {
+		StringBuilder bldr = new StringBuilder();
+		boolean rest = false;
+		bldr.append("{");
+		QueryResultIterable<UserSymbolEntity> qri = UserSymbolService.getAll(userId);
+		for (UserSymbolEntity userSymbolEntity : qri) {
+			if (rest) {
+				bldr.append(", ");
+			} else {
+				rest = true;
+			}
+			bldr.append(userSymbolEntity.getSymbolName());
+		}
+		bldr.append("}");
+		return new String[] { "expr", bldr.toString() };
 	}
 
 	private static String[] createOutput(StringBufferWriter buffer, IExpr rhsExpr, EvalEngine engine, String function)
@@ -352,6 +440,7 @@ public class EvaluateServlet extends HttpServlet {
 		return "";
 	}
 
+	@Override
 	public void init() throws ServletException {
 		super.init();
 		// try {
