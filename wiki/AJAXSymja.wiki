@@ -6,6 +6,8 @@
 
 = The user interface =
 
+http://symja.googlecode.com/svn/wiki/SymjaAjaxGUI.png
+
 == Common evaluation buttons ==
 The following buttons are always defined in the user interface:
   * *Sym* - symbolic evaluation
