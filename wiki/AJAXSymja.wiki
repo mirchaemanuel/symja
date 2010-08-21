@@ -28,6 +28,7 @@ Now you can evaluate a list of numbers by evaluating
 {{{
  $cube[{1,2,3,4,5}] 
 }}}
+and get the result {{{{1,8,27,64,125}}}}.
 
 In the same way you can define constants:
 {{{
@@ -38,7 +39,7 @@ By evaluating
 {{{
  $theAnswerToAllQuestions 
 }}} 
-you get the defined value.
+you get the defined value {{{42}}}.
 
 If you are logged in again at a later date, you can reuse the _$ user symbols_ without redefining them.
 
