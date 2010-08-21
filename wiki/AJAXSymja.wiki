@@ -39,6 +39,7 @@ By evaluating
 you get the defined value.
 
 == Buttons for logged in users ==
+The following buttons are *only* defined in the user interface, if you are logged in with your Google Account:
   * *Def* - shows the definition of the variable that the user ha typed into the upper input text area
   * *Vars* - show all defined user variabeles from Google Appengine store (up to 100 are allowed)
 
