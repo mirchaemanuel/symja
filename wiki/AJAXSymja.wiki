@@ -38,6 +38,8 @@ By evaluating
 }}} 
 you get the defined value.
 
+If you are logging in again at a later date you can reuse the _$ user symbols_ without redefining.
+
 == Buttons for logged in users ==
 The following buttons are *only* defined in the user interface, if you are logged in with your Google Account:
   * *Def* - shows the definition of the _$ user symbol_ that the user has typed into the upper input text area (i.e. the _$ user symbol_ *$cube* used in the example above, will return the defined rules).
