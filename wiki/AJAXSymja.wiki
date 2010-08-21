@@ -14,7 +14,29 @@ The following buttons are always defined in the user interface:
 
 == Persisting user variables into Google Appengine datastore ==
 Through the *Login* link users can sign in with their Google User Account.
-When logged in, it's possible to persist so called _$ user variables_ in the datastore.
+When logged in, it's possible to persist so called _$ user symbol_ in the datastore.
+
+You can for example create your own rules for a new defined _$ user symbol_ {{{$cube}}}. Type this in the input text area and press the *Sym* button:
+{{{
+ SetAttributes[$cube,Listable];
+ $cube[x_]:=x^3
+}}}
+
+Now you can evaluate a list of numbers by evaluating
+{{{
+ $cube[{1,2,3,4,5}] 
+}}}
+
+In the same way you can define constants:
+{{{
+ $theAnswerToAllQuestions = 42 
+}}}
+
+By evaluating
+{{{
+ $theAnswerToAllQuestions 
+}}} 
+you get the defined value.
 
 == Buttons for logged in users ==
   * *Def* - shows the definition of the variable that the user ha typed into the upper input text area
