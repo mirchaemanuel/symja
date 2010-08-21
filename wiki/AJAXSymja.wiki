@@ -45,7 +45,7 @@ If you are logged in again at a later date, you can reuse the _$ user symbols_ w
 == Buttons for logged in users ==
 The following buttons are *only* defined in the user interface, if you are logged in with your Google Account:
   * *Def* - shows the definition of the _$ user symbol_ that the user has typed into the upper input text area (i.e. the _$ user symbol_ *$cube* used in the example above, will return the defined rules).
-  * *Vars* - show all defined user variabeles from Google Appengine store (up to 100 are allowed)
+  * *Vars* - shows all defined user variables from Google Appengine store (up to 100 are allowed)
 
 = Advanced configuration =
 
