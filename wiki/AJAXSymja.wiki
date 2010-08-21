@@ -38,7 +38,7 @@ By evaluating
 }}} 
 you get the defined value.
 
-If you are logging in again at a later date you can reuse the _$ user symbols_ without redefining.
+If you are logged in again at a later date, you can reuse the _$ user symbols_ without redefining them.
 
 == Buttons for logged in users ==
 The following buttons are *only* defined in the user interface, if you are logged in with your Google Account:
