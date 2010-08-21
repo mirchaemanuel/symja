@@ -371,6 +371,10 @@ public class Symbol extends ExprImpl implements ISymbol {
 
 	public void setAttributes(final int attributes) {
 		fAttributes = attributes;
+		if (fSymbolName.charAt(0) == '$' && Config.SERVER_MODE) {
+			EvalEngine engine = EvalEngine.get();
+			engine.addModifiedVariable(this);
+		}
 	}
 
 	/**
@@ -567,14 +571,14 @@ public class Symbol extends ExprImpl implements ISymbol {
 		StringBufferWriter buf = new StringBufferWriter();
 		buf.setIgnoreNewLine(true);
 		List<IAST> list = definition();
-		buf.append("{\n  ");
+		buf.append("{");
 		for (int i = 0; i < list.size(); i++) {
 			OutputFormFactory.get().convert(buf, list.get(i));
 			if (i < list.size() - 1) {
-				buf.append(",\n  ");
+				buf.append(",\n ");
 			}
 		}
-		buf.append("\n}\n");
+		buf.append("}\n");
 		return buf.toString();
 	}
 
