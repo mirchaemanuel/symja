@@ -6,13 +6,17 @@
 
 = The user interface =
 
-== Evaluation buttons ==
+== Common evaluation buttons ==
 The following buttons are always defined in the user interface:
   * *Sym* - symbolic evaluation
   * *Num* - numeric evaluation
   * *C* - clears the input text area
 
-== Buttons for logge in users ==
+== Persisting user variables into Google Appengine datastore ==
+Through the *Login* link users can sign in with their Google User Account.
+When logged in, it's possible to persist so called _$ user variables_ in the datastore.
+
+== Buttons for logged in users ==
   * *Def* - shows the definition of the variable that the user ha typed into the upper input text area
   * *Vars* - show all defined user variabeles from Google Appengine store (up to 100 are allowed)
 
