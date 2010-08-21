@@ -2,7 +2,23 @@
 #labels Featured
 #sidebar TableOfContents
 
-= AJAX Evaluation API =
+<wiki:toc max_depth="2" />
+
+= The user interface =
+
+== Evaluation buttons ==
+The following buttons are always defined in the user interface:
+  * *Sym* - symbolic evaluation
+  * *Num* - numeric evaluation
+  * *C* - clears the input text area
+
+== Buttons for logge in users ==
+  * *Def* - shows the definition of the variable that the user ha typed into the upper input text area
+  * *Vars* - show all defined user variabeles from Google Appengine store (up to 100 are allowed)
+
+= Advanced configuration =
+
+== AJAX Evaluation API ==
 The simplified online *[http://mobmath.appspot.com/ Eval API]* lets you dynamically generate calculation forms. To see the Eval API in action, open up a browser window and copy the following URL into it:
   * {{{http://mobmath.appspot.com/?ci=x1:X:i:10|y1:Y:i:2&ca=x!:x1!|Fibonacci[x]:Fibonacci[x1]|Binomial[x,y]:Binomial[x1,y1]}}}
 
@@ -12,7 +28,7 @@ Here is a link for the general [http://www.testiphone.com/?view=hor&url=http%3A%
 
 The corresponding JSP file for the Evaluation API is the *index.jsp* file
 
-= Install additional packages =
+== Install additional packages ==
 Symja is extendable through the Package[] command. If you've installed AJAXSymja on Google Appengine, you can add new packages through the *admin.jsp* interface. Only users which are administrators for the Google Appengine application are allowed to use the *admin.jsp* interface. 
 
 Example package for generating Laguerre or Legendre polynomials (*Note* - public symbols have to start with an uppercase character):
@@ -41,6 +57,6 @@ After installing the package with the *Save package* button the new command
 }}}
 can be evaluated.
 
-= Development =
+== Development ==
 Browse source code in SVN:
   * [http://code.google.com/p/symja/source/browse/#svn/trunk/symja.ajax svn/trunk/symja.ajax]
