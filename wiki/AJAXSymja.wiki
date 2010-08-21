@@ -5,6 +5,7 @@
 <wiki:toc max_depth="2" />
 
 = The user interface =
+This is a screenshot of the [http://mobmath.appspot.com/ Symja AJAX user interface]:
 
 http://symja.googlecode.com/svn/wiki/SymjaAjaxGUI.png
 
