@@ -15,21 +15,27 @@ The following buttons are always defined in the user interface:
   * *Num* - numeric evaluation
   * *C* - clears the input text area
 
-== Persisting user defined symbols into Google Appengine datastore ==
+== Persisting user defined formulas into Google Appengine datastore ==
 Through the *Login* link users can sign in with their Google User Account.
-When logged in, it's possible to persist so called _$ user symbols_ (i.e. user variables) in the [http://en.wikipedia.org/wiki/Google_App_Engine Google App Engine] datastore.
+When logged in, it's possible to persist formulas and constants with the so-called _$ user symbols_ (i.e. user variables) in the [http://en.wikipedia.org/wiki/Google_App_Engine Google App Engine] datastore.
 
-You can for example create your own rules for a new defined _$ user symbol_ {{{$cube}}}. Type this in the input text area and press the *Sym* button:
+You can for example create your own rules or formulas for a new defined _$ user symbol_ {{{$cube}}}. Type the following rules in the input area and press the *Sym* button:
 {{{
  SetAttributes[$cube,Listable];
  $cube[x_]:=x^3
 }}}
 
-Now you can evaluate a list of numbers by evaluating
+Now you can use the rule by evaluating an argument
+{{{
+ $cube[a] 
+}}}
+and you get the result {{{a^3}}}.
+
+Because the {{{$cube}}} symbol has the attribute {{{Listable}}} you can also evaluate list of numbers like this
 {{{
  $cube[{1,2,3,4,5}] 
 }}}
-and get the result {{{{1,8,27,64,125}}}}.
+and you get the result {{{{1,8,27,64,125}}}}.
 
 In the same way you can define constants:
 {{{
