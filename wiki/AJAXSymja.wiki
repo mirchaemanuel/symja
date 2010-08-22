@@ -15,9 +15,9 @@ The following buttons are always defined in the user interface:
   * *Num* - numeric evaluation
   * *C* - clears the input text area
 
-== Persisting user defined formulas into Google Appengine datastore ==
+== Persisting formulas ==
 Through the *Login* link users can sign in with their Google User Account.
-When logged in, it's possible to persist formulas and constants with the so-called _$ user symbols_ in the [http://en.wikipedia.org/wiki/Google_App_Engine Google App Engine] datastore.
+When logged in, it's possible to persist user defined formulas and constants with the so-called _$ user symbols_ in the [http://en.wikipedia.org/wiki/Google_App_Engine Google App Engine] datastore.
 
 You can for example create your own rules or formulas for a new defined symbol {{{$cube}}}. Type the following rules in the input area and press the *Sym* button to define your rules:
 {{{
