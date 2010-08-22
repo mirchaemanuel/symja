@@ -17,21 +17,21 @@ The following buttons are always defined in the user interface:
 
 == Persisting user defined formulas into Google Appengine datastore ==
 Through the *Login* link users can sign in with their Google User Account.
-When logged in, it's possible to persist formulas and constants with the so-called _$ user symbols_ (i.e. user variables) in the [http://en.wikipedia.org/wiki/Google_App_Engine Google App Engine] datastore.
+When logged in, it's possible to persist formulas and constants with the so-called _$ user symbols_ in the [http://en.wikipedia.org/wiki/Google_App_Engine Google App Engine] datastore.
 
-You can for example create your own rules or formulas for a new defined _$ user symbol_ {{{$cube}}}. Type the following rules in the input area and press the *Sym* button:
+You can for example create your own rules or formulas for a new defined symbol {{{$cube}}}. Type the following rules in the input area and press the *Sym* button to define your rules:
 {{{
  SetAttributes[$cube,Listable];
  $cube[x_]:=x^3
 }}}
 
-Now you can use the rule by evaluating an argument
+Now you can use this rule by evaluating a symbolic argument
 {{{
  $cube[a] 
 }}}
-and you get the result {{{a^3}}}.
+and you get the result {{{a^3}}} in the output area.
 
-Because the {{{$cube}}} symbol has the attribute {{{Listable}}} you can also evaluate list of numbers like this
+Because the {{{$cube}}} symbol has the attribute {{{Listable}}} you can also evaluate a list of numbers like this
 {{{
  $cube[{1,2,3,4,5}] 
 }}}
@@ -52,8 +52,8 @@ If you are logged in again at a later date, you can reuse the _$ user symbols_ w
 
 == Buttons for logged in users ==
 The following buttons are *only* defined in the user interface, if you are logged in with your Google Account:
-  * *Def* - shows the definition of the _$ user symbol_ that the user has typed into the upper input text area (i.e. the _$ user symbol_ *$cube* used in the example above, will return the defined rules).
-  * *Vars* - shows all defined user variables from the [http://en.wikipedia.org/wiki/Google_App_Engine Google App Engine] datastore (up to 100 are allowed)
+  * *Def* - shows the definition of the _$ user symbol_ that the user has typed into the input area (i.e. the _$ user symbol_ *$cube* used in the example above, will show the defined rules for *$cube* in the output area).
+  * *Vars* - shows all defined user variables from the [http://en.wikipedia.org/wiki/Google_App_Engine Google App Engine] datastore. At the moment a user can define up to 100 _$ user symbol_ formulas.
 
 = Advanced configuration =
 
