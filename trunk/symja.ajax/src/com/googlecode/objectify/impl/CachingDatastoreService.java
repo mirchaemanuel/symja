@@ -15,6 +15,7 @@ import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.KeyRange;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
@@ -36,12 +37,18 @@ import com.googlecode.objectify.annotation.Cached;
  * <li>Transactional reads bypass the cache, but successful transaction commits will update the cache.</li>
  * </ul>
  * 
+ * <p>Note:  There is a horrible, obscure, and utterly bizarre bug in GAE's memcache
+ * relating to Key serialization.  It manifests in certain circumstances when a Key
+ * has a parent Key that has the same String name.  For this reason, we use the
+ * keyToString method to stringify Keys as cache keys.  The actual structure
+ * stored in the memcache will be String -> Entity.</p>  
+ * 
  * @author Jeff Schnitzer <jeff@infohazard.org>
  */
 public class CachingDatastoreService implements DatastoreService
 {
 	/** Our memcache namespace */
-	public static final String MEMCACHE_NAMESPACE = "Objectify Cache";
+	public static final String MEMCACHE_NAMESPACE = "ObjectifyCache";
 	
 	/**
 	 * This is necessary to track writes and update the cache only on successful commit. 
@@ -64,17 +71,16 @@ public class CachingDatastoreService implements DatastoreService
 		}
 
 		@Override
-		@SuppressWarnings("unchecked")
 		public void commit()
 		{
 			this.raw.commit();
 			
 			// Only after successful commit should we modify the cache
 			if (this.deferredDeletes != null)
-				getMemcache().deleteAll((Set)deferredDeletes);
+				deleteFromCache(this.deferredDeletes);
 			
 			if (this.deferredPuts != null)
-				getMemcache().putAll((Map)this.deferredPuts);
+				putInCache(this.deferredPuts);
 		}
 
 		@Override
@@ -163,10 +169,7 @@ public class CachingDatastoreService implements DatastoreService
 	protected MemcacheService getMemcache()
 	{
 		if (this.memcache == null)
-		{
-			this.memcache = MemcacheServiceFactory.getMemcacheService();
-			this.memcache.setNamespace(MEMCACHE_NAMESPACE);
-		}
+			this.memcache = MemcacheServiceFactory.getMemcacheService(MEMCACHE_NAMESPACE);
 		
 		return this.memcache;
 	}
@@ -218,22 +221,30 @@ public class CachingDatastoreService implements DatastoreService
 		return result;
 	}
 
-	/** Hides the ugly casting */
-	@SuppressWarnings("unchecked")
+	/** Hides the ugly casting and deals with String/Key conversion */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private Map<Key, Entity> getFromCacheRaw(Iterable<Key> keys)
 	{
-		Collection<Key> keysColl;
+		Collection<String> keysColl = new ArrayList<String>();
+		for (Key key: keys)
+			keysColl.add(KeyFactory.keyToString(key));
 		
-		if (keys instanceof Collection<?>)
-			keysColl = (Collection<Key>)keys;
-		else
-		{
-			keysColl = new ArrayList<Key>();
-			for (Key key: keys)
-				keysColl.add(key);
+		Map<String, Entity> rawResults;
+		try {
+			rawResults = (Map)this.getMemcache().getAll((Collection)keysColl);
+		}
+		catch (Exception ex) {
+			// This should only be an issue if Google changes the serialization
+			// format of an Entity.  It's possible, but this is just a cache so we
+			// can safely ignore the error.
+			return new HashMap<Key, Entity>();
 		}
 		
-		return (Map)this.getMemcache().getAll((Collection)keysColl);
+		Map<Key, Entity> keyMapped = new HashMap<Key, Entity>((int)(rawResults.size() * 1.5));
+		for(Map.Entry<String, Entity> entry: rawResults.entrySet())
+			keyMapped.put(KeyFactory.stringToKey(entry.getKey()), entry.getValue());
+
+		return keyMapped;
 	}
 	
 	/**
@@ -254,13 +265,18 @@ public class CachingDatastoreService implements DatastoreService
 	 * Puts entries in the cache with the specified expiration.
 	 * @param expirationSeconds can be -1 to indicate "keep as long as possible". 
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	private void putInCache(Map<Key, Entity> entities, int expirationSeconds)
 	{
+		Map<String, Entity> rawMap = new HashMap<String, Entity>((int)(entities.size() * 1.5));
+
+		for (Map.Entry<Key, Entity> entry: entities.entrySet())
+			rawMap.put(KeyFactory.keyToString(entry.getKey()), entry.getValue());
+		
 		if (expirationSeconds < 0)
-			this.getMemcache().putAll((Map)entities);
+			this.getMemcache().putAll((Map)rawMap);
 		else
-			this.getMemcache().putAll((Map)entities, Expiration.byDeltaSeconds(expirationSeconds));
+			this.getMemcache().putAll((Map)rawMap, Expiration.byDeltaSeconds(expirationSeconds));
 	}
 	
 	/**
@@ -277,14 +293,14 @@ public class CachingDatastoreService implements DatastoreService
 	/**
 	 * Deletes from the cache, ignoring any noncacheable keys
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private void deleteFromCache(Iterable<Key> keys)
 	{
-		Collection<Key> cacheables = new ArrayList<Key>();
+		Collection<String> cacheables = new ArrayList<String>();
 		
 		for (Key key: keys)
 			if (this.fact.getMetadata(key).getCached() != null)
-				cacheables.add(key);
+				cacheables.add(KeyFactory.keyToString(key));
 		
 		if (!cacheables.isEmpty())
 			this.getMemcache().deleteAll((Collection)cacheables);
@@ -306,6 +322,15 @@ public class CachingDatastoreService implements DatastoreService
 	public KeyRange allocateIds(Key parent, String kind, long num)
 	{
 		return this.raw.allocateIds(parent, kind, num);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.google.appengine.api.datastore.DatastoreService#allocateIdRange(com.google.appengine.api.datastore.KeyRange)
+	 */
+	@Override
+	public KeyRangeState allocateIdRange(KeyRange range)
+	{
+		return this.raw.allocateIdRange(range);
 	}
 
 	/* (non-Javadoc)

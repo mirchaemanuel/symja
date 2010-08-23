@@ -2,6 +2,7 @@ package com.googlecode.objectify.impl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -14,12 +15,12 @@ import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.PreparedQuery;
-import com.google.appengine.api.datastore.QueryResultIterable;
-import com.google.appengine.api.datastore.QueryResultIterator;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.appengine.api.datastore.Query.SortPredicate;
+import com.google.appengine.api.datastore.QueryResultIterable;
+import com.google.appengine.api.datastore.QueryResultIterator;
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.Objectify;
 import com.googlecode.objectify.ObjectifyFactory;
@@ -31,7 +32,7 @@ import com.googlecode.objectify.helper.TranslatingQueryResultIterator;
  *
  * @author Jeff Schnitzer <jeff@infohazard.org>
  */
-public class QueryImpl<T> implements Query<T>
+public class QueryImpl<T> implements Query<T>, Cloneable
 {
 	/** */
 	ObjectifyFactory factory;
@@ -93,11 +94,40 @@ public class QueryImpl<T> implements Query<T>
 			{
 				if (meta.hasParentField())
 					throw new IllegalStateException("Cannot (yet) filter by @Id fields on entities which have @Parent fields. Tried '" + prop + "' on " + this.classRestriction.getName() + ".");
+
+				boolean isNumericId = meta.isIdField(prop);
 				
-				if (meta.isIdField(prop))
-					value = KeyFactory.createKey(meta.getKind(), ((Number)value).longValue());
+				if (op == FilterOperator.IN)
+				{
+					if (!(value instanceof Iterable<?> || value instanceof Object[]))
+						throw new IllegalStateException("IN operator requires a collection value.  Value was " + value);
+
+					if (value instanceof Object[])
+						value = Arrays.asList(((Object[])value));
+					
+					// This is a bit complicated - we need to make a list of vanilla datastore Key objects.
+					
+					List<Object> keys = (value instanceof Collection<?>)
+						? new ArrayList<Object>(((Collection<?>)value).size())
+						: new ArrayList<Object>();
+						
+					for (Object obj: (Iterable<?>)value)
+					{
+						if (isNumericId)
+							keys.add(KeyFactory.createKey(meta.getKind(), ((Number)obj).longValue()));
+						else
+							keys.add(KeyFactory.createKey(meta.getKind(), obj.toString()));
+					}
+					
+					value = keys;
+				}
 				else
-					value = KeyFactory.createKey(meta.getKind(), value.toString());
+				{
+					if (isNumericId)
+						value = KeyFactory.createKey(meta.getKind(), ((Number)value).longValue());
+					else
+						value = KeyFactory.createKey(meta.getKind(), value.toString());
+				}
 				
 				prop = "__key__";
 			}
@@ -426,6 +456,25 @@ public class QueryImpl<T> implements Query<T>
 		
 		return result;
 	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#clone()
+	 */
+	@SuppressWarnings("unchecked")
+	public Query<T> clone()
+	{
+		try
+		{
+			QueryImpl<T> impl = (QueryImpl<T>)super.clone();
+			impl.actual = this.cloneRawQuery(this.actual);
+			return impl;
+		}
+		catch (CloneNotSupportedException e)
+		{
+			// impossible
+			throw new RuntimeException(e);
+		}
+	}
 
 	/**
 	 * Create a PreparedQuery relevant to our current state.
@@ -550,7 +599,7 @@ public class QueryImpl<T> implements Query<T>
 		protected T translate(Entity from)
 		{
 			EntityMetadata<T> meta = factory.getMetadata(from.getKey());
-			return meta.toObject(from);
+			return meta.toObject(from, ofy);
 		}
 	}
 }

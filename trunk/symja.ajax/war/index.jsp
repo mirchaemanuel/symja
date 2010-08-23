@@ -209,6 +209,7 @@ function clearta(nameArray) {
 	}
 	} else {
 %> <a href="<%=userService.createLoginURL(request.getRequestURI())%>" title="Login to persist your '$'-user variables in the datastore">Login</a>
+   <a href="http://code.google.com/p/symja/wiki/AJAXSymja#Persisting_formulas">Help</a>
 <%
 	}
 

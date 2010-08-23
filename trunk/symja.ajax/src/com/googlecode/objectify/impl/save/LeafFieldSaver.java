@@ -139,7 +139,7 @@ public class LeafFieldSaver extends FieldSaver
 		}
 		else if (value instanceof Enum<?>)
 		{
-			return value.toString();
+			return ((Enum<?>)value).name();
 		}
 		else if (value.getClass().isArray())
 		{
@@ -174,6 +174,10 @@ public class LeafFieldSaver extends FieldSaver
 		else if (value instanceof Key<?>)
 		{
 			return this.factory.typedKeyToRawKey((Key<?>)value);
+		}
+		else if (value instanceof java.sql.Date)
+		{
+			return new java.util.Date(((java.sql.Date)value).getTime());
 		}
 
 		// Usually we just want to return the value

@@ -6,6 +6,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URLEncoder;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -32,6 +33,8 @@ import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.ISymbol;
 import org.matheclipse.core.reflection.system.Function;
+import org.matheclipse.gwt.server.entity.UserDataEntity;
+import org.matheclipse.gwt.server.entity.UserDataService;
 import org.matheclipse.gwt.server.entity.UserSymbolEntity;
 import org.matheclipse.gwt.server.entity.UserSymbolService;
 import org.matheclipse.parser.client.Parser;
@@ -49,6 +52,8 @@ public class EvaluateServlet extends HttpServlet {
 	private static final Logger log = Logger.getLogger(EvaluateServlet.class.getName());
 
 	// private static final boolean UNIT_TEST = false;
+
+	private static final boolean DEBUG = true;
 
 	private static final boolean USE_MEMCACHE = false;
 
@@ -82,10 +87,10 @@ public class EvaluateServlet extends HttpServlet {
 			out.println(URLEncoder.encode("0;error;Input expression to large!", "UTF-8"));
 			return;
 		}
-		log.info("In::" + value);
+		log.warning("In::" + value);
 
 		String result = evaluate(req, value, "", 0);
-		log.info("Out::" + result);
+		// log.warning("Out::" + result);
 		out.println(result);// URLEncoder.encode(result, "UTF-8"));
 
 	}
@@ -126,7 +131,7 @@ public class EvaluateServlet extends HttpServlet {
 		try {
 			String[] result = evaluateString(request, engine, expression, function);
 			if (!saveModifiedUserSymbols(engine)) {
-				return counter + ";error;Number of user '$'-variables\ngreater than " + MAX_NUMBER_OF_VARS + "!";
+				return counter + ";error;Number of user '$'-symbols\ngreater than " + MAX_NUMBER_OF_VARS + " or \nformula to big!";
 			}
 			StringBuffer buf = outWriter.getBuffer();
 			buf.append(result[1]);
@@ -148,38 +153,49 @@ public class EvaluateServlet extends HttpServlet {
 		if (userService.getCurrentUser() != null) {
 			User user = userService.getCurrentUser();
 			if (user != null) {
+				try {
+					UserDataEntity userData = UserDataService.findByUserId(user);
+					if (userData == null) {
+						userData = new UserDataEntity(user);
+						UserDataService.save(userData);
+					}
+					Set<ISymbol> modifiedSymbols = engine.getModifiedVariables();
+					for (ISymbol symbol : modifiedSymbols) {
+						// StringBuilder bldr = new StringBuilder(256);
+						// List<IAST> defList = symbol.definition();
+						//
+						// if (defList.size() > 0) {
+						// for (int i = 0; i < defList.size(); i++) {
+						// bldr.append(defList.get(i).toString());
+						// if (i < defList.size() - 1) {
+						// bldr.append(";");
+						// }
+						// }
+						// }
+						int attributes = symbol.getAttributes();
+						String source;
 
-				Set<ISymbol> modifiedSymbols = engine.getModifiedVariables();
-				for (ISymbol symbol : modifiedSymbols) {
-					// StringBuilder bldr = new StringBuilder(256);
-					// List<IAST> defList = symbol.definition();
-					//
-					// if (defList.size() > 0) {
-					// for (int i = 0; i < defList.size(); i++) {
-					// bldr.append(defList.get(i).toString());
-					// if (i < defList.size() - 1) {
-					// bldr.append(";");
-					// }
-					// }
-					// }
-					int attributes = symbol.getAttributes();
-					String source;
-					try {
 						source = symbol.definitionToString();
+						if (source.length() > Short.MAX_VALUE) {
+							return false;
+						}
 						UserSymbolEntity symbolEntity = new UserSymbolEntity(user, symbol.toString(), source, attributes);
 						UserSymbolEntity newSymbolEntity = UserSymbolService.modify(symbolEntity);
 						if (newSymbolEntity != null) {
-							if (UserSymbolService.countAll(user.getUserId()) > MAX_NUMBER_OF_VARS) {
+							userData.incSymbolCounter();
+							if (userData.getSymbolCounter() > MAX_NUMBER_OF_VARS) {
 								UserSymbolService.delete(newSymbolEntity);
+								userData.decSymbolCounter();
 								return false;
 							}
 						}
-					} catch (IOException e) {
-						if (Config.DEBUG) {
-							e.printStackTrace();
-						}
-						return false;
 					}
+					UserDataService.update(userData, new Date());
+				} catch (IOException e) {
+					if (DEBUG) {
+						e.printStackTrace();
+					}
+					return false;
 				}
 			}
 		}

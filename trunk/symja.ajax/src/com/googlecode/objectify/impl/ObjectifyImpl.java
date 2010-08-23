@@ -1,6 +1,7 @@
 package com.googlecode.objectify.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -50,7 +51,6 @@ public class ObjectifyImpl implements Objectify
 	 * @see com.google.code.objectify.Objectify#get(java.lang.Iterable)
 	 */
 	@Override
-	@SuppressWarnings("unchecked")
 	public <T> Map<Key<T>, T> get(Iterable<? extends Key<? extends T>> keys)
 	{
 		// First we need to turn the keys into raw keys
@@ -65,9 +65,9 @@ public class ObjectifyImpl implements Objectify
 		{
 			Entity entity = entities.get(rawKey);
 			if (entity != null) {
-				EntityMetadata metadata = this.factory.getMetadata(rawKey);
+				EntityMetadata<T> metadata = this.factory.getMetadata(rawKey);
 				Key<T> obKey = this.factory.rawKeyToTypedKey(rawKey);
-				result.put(obKey, (T)metadata.toObject(entity));
+				result.put(obKey, (T)metadata.toObject(entity, this));
 			}
 		}
 		
@@ -140,6 +140,15 @@ public class ObjectifyImpl implements Objectify
 	}
 	
 	/* (non-Javadoc)
+	 * @see com.googlecode.objectify.Objectify#get(java.lang.Class, S[])
+	 */
+	@Override
+	public <S, T> Map<S, T> get(Class<? extends T> clazz, S... idsOrNames)
+	{
+		return this.get(clazz, Arrays.asList(idsOrNames));
+	}
+
+	/* (non-Javadoc)
 	 * @see com.googlecode.objectify.Objectify#find(com.google.appengine.api.datastore.Key)
 	 */
 	@Override
@@ -148,7 +157,7 @@ public class ObjectifyImpl implements Objectify
 		try
 		{
 			Entity ent = this.ds.get(this.txn, this.factory.typedKeyToRawKey(key));
-			return this.factory.getMetadata(key).toObject(ent);
+			return this.factory.getMetadata(key).toObject(ent, this);
 		}
 		catch (EntityNotFoundException e)
 		{
@@ -182,7 +191,7 @@ public class ObjectifyImpl implements Objectify
 	{
 		EntityMetadata<T> metadata = this.factory.getMetadataForEntity(obj);
 		
-		Entity ent = metadata.toEntity(obj);
+		Entity ent = metadata.toEntity(obj, this);
 		
 		com.google.appengine.api.datastore.Key rawKey = this.ds.put(this.txn, ent);
 
@@ -202,7 +211,7 @@ public class ObjectifyImpl implements Objectify
 		for (T obj: objs)
 		{
 			EntityMetadata<T> metadata = this.factory.getMetadataForEntity(obj);
-			entityList.add(metadata.toEntity(obj));
+			entityList.add(metadata.toEntity(obj, this));
 		}
 		
 		List<com.google.appengine.api.datastore.Key> rawKeys = this.ds.put(this.txn, entityList);
@@ -222,6 +231,15 @@ public class ObjectifyImpl implements Objectify
 		}
 		
 		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see com.googlecode.objectify.Objectify#put(T[])
+	 */
+	@Override
+	public <T> Map<Key<T>, T> put(T... objs)
+	{
+		return this.put(Arrays.asList(objs));
 	}
 
 	/* (non-Javadoc)
@@ -310,5 +328,4 @@ public class ObjectifyImpl implements Objectify
 	{
 		return this.factory;
 	}
-
 }
