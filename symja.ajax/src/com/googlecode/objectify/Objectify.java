@@ -70,6 +70,11 @@ public interface Objectify
 	 */
 	<S, T> Map<S, T> get(Class<? extends T> clazz, Iterable<S> idsOrNames);
 	
+	/**
+	 * Convenient varargs alias for get(Class<?>, Iterable<?>)
+	 */
+	<S, T> Map<S, T> get(Class<? extends T> clazz, S... idsOrNames);
+	
 	/** Same as {@code get(Key)} but returns null instead of throwing NotFoundException */ 
 	<T> T find(Key<? extends T> key);
 	
@@ -112,6 +117,11 @@ public interface Objectify
 	 * @see DatastoreService#put(Iterable) 
 	 */
 	<T> Map<Key<T>, T> put(Iterable<? extends T> objs);
+
+	/**
+	 * Convenient varargs alias for put(Iterable<?>)
+	 */
+	<T> Map<Key<T>, T> put(T... objs);
 	
 	/**
 	 * Deletes the specified entity.

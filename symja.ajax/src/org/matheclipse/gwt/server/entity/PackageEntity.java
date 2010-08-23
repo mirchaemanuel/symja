@@ -6,6 +6,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 
 import com.google.appengine.api.datastore.Text;
+import com.googlecode.objectify.annotation.Unindexed;
 
 @Entity
 public class PackageEntity implements Serializable {
@@ -22,7 +23,7 @@ public class PackageEntity implements Serializable {
 
 	private Text source;
 
-	private String publicSymbols;
+	@Unindexed private String publicSymbols;
 
 	public PackageEntity() {
 		super();
