@@ -151,7 +151,7 @@ To continue an input line type '\' at the end of the line.
 }}}
  
 ==== Parsing an abstract syntax tree (AST) ====
- 
+The parser maps the source code in a tree form called Abstract Syntax Tree (AST)
 This is a JUnit example for parsing a math string expression into an abstract syntax tree node (ASTNode):
 
 {{{
