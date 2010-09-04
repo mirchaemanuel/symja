@@ -23,8 +23,8 @@ public abstract class AbstractTestCase extends TestCase {
 
 	public AbstractTestCase(String name) {
 		super(name);
-		F.initSymbols(null, null);
-		// Config.SERVER_MODE=true;
+		F.initSymbols(null, null, false);
+		 Config.SERVER_MODE=true;
 	}
 
 	// public void check(String evalString, String expectedResult) {

@@ -10,7 +10,6 @@ import org.matheclipse.core.convert.JASConvert;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.expression.IConstantHeaders;
-import org.matheclipse.core.generic.BinaryBindIth1st;
 import org.matheclipse.core.generic.UnaryBind1st;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;

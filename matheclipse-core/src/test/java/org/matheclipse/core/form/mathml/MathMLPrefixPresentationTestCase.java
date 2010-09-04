@@ -16,7 +16,7 @@ public class MathMLPrefixPresentationTestCase extends TestCase {
 
 	public MathMLPrefixPresentationTestCase(String name) {
 		super(name);
-		F.initSymbols(null, null);
+		F.initSymbols(null, null, false);
 	}
 
 	/**

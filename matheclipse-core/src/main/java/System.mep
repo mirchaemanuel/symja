@@ -3,7 +3,7 @@ Package[
   (* define the public available symbols *)
   {Abs, ArcCos, ArcCosh, ArcCot, ArcCoth, ArcSin, ArcSinh, ArcTan, ArcTanh, 
    Cos, Cosh, Cot, Coth, Derivative, Log, Power, Sin, Sinh, 
-   Tan, Tanh, LegendreP}, 
+   Tan, Tanh}, 
 { 
   Abs[Pi]=Pi, 
   Abs[E]=E, 

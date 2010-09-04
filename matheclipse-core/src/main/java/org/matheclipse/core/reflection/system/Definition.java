@@ -5,6 +5,7 @@ import java.io.PrintStream;
 
 import org.matheclipse.basic.Config;
 import org.matheclipse.core.eval.EvalEngine;
+import org.matheclipse.core.eval.exception.Validate;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IAST;
@@ -19,7 +20,8 @@ public class Definition extends AbstractFunctionEvaluator {
 
 	@Override
 	public IExpr evaluate(final IAST ast) {
-		if (ast.size() != 2 && ast.get(1) instanceof ISymbol) {
+		Validate.checkSize(ast, 2);
+		if (!(ast.get(1) instanceof ISymbol)) {
 			return null;
 		}
 		final EvalEngine engine = EvalEngine.get();

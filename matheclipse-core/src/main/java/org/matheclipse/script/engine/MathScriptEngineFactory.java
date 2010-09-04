@@ -11,7 +11,7 @@ import org.matheclipse.core.expression.F;
 public class MathScriptEngineFactory implements javax.script.ScriptEngineFactory {
 
 	public MathScriptEngineFactory() {
-		F.initSymbols(null, null);
+		F.initSymbols(null, null, false);
 		Config.SERVER_MODE = false;
 	}
 

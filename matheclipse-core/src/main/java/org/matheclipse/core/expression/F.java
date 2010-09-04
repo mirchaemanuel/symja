@@ -27,6 +27,7 @@ import org.matheclipse.core.interfaces.ISignedNumber;
 import org.matheclipse.core.interfaces.IStringX;
 import org.matheclipse.core.interfaces.ISymbol;
 import org.matheclipse.core.patternmatching.PatternMatcher;
+import org.matheclipse.core.reflection.system.*;
 import org.matheclipse.core.reflection.system.Package;
 
 import apache.harmony.math.BigInteger;
@@ -75,7 +76,7 @@ public class F {
 
 	public static ISymbol Break;
 
-	public static ISymbol Ceil;
+	public static ISymbol Ceiling;
 
 	public static ISymbol Complex;
 
@@ -135,7 +136,7 @@ public class F {
 
 	public static ISymbol GreaterEqual;
 
-	public static ISymbol GroebnerBasis;
+	// public static ISymbol GroebnerBasis;
 
 	public static ISymbol Head;
 
@@ -149,13 +150,13 @@ public class F {
 
 	public static ISymbol Inverse;
 
-	public static ISymbol KOrderlessPartitions;
-
-	public static ISymbol KPartitions;
-
-	public static ISymbol KSubsets;
-
-	public static ISymbol LeafCount;
+	// public static ISymbol KOrderlessPartitions;
+	//
+	// public static ISymbol KPartitions;
+	//
+	// public static ISymbol KSubsets;
+	//
+	// public static ISymbol LeafCount;
 
 	public static ISymbol Length;
 
@@ -189,7 +190,7 @@ public class F {
 
 	public static ISymbol Not;
 
-	public static ISymbol NumberPartitions;
+	// public static ISymbol NumberPartitions;
 
 	public static ISymbol NumberQ;
 
@@ -203,9 +204,9 @@ public class F {
 
 	public static ISymbol Part;
 
-	public static ISymbol Partition;
-
-	public static ISymbol Permutations;
+	// public static ISymbol Partition;
+	//
+	// public static ISymbol Permutations;
 
 	public static ISymbol Plot;
 
@@ -656,22 +657,22 @@ public class F {
 
 	/**
 	 * Initialize the complete System. Calls
-	 * {@link #initSymbols(String, ISymbolObserver)} with parameters
+	 * {@link #initSymbols(String, ISymbolObserver, boolean)} with parameters
 	 * <code>null, null</code>.
 	 */
 	public synchronized static void initSymbols() {
-		initSymbols(null, null);
+		initSymbols(null, null, false);
 	}
 
 	/**
 	 * Initialize the complete System. Calls
-	 * {@link #initSymbols(String, ISymbolObserver)} with parameters
+	 * {@link #initSymbols(String, ISymbolObserver, boolean)} with parameters
 	 * <code>fileName, null</code>.
 	 * 
 	 * @param fileName
 	 */
 	public synchronized static void initSymbols(String fileName) {
-		initSymbols(fileName, null);
+		initSymbols(fileName, null, false);
 	}
 
 	/**
@@ -681,12 +682,16 @@ public class F {
 	 *          <code>null</code> or optional text filename, which includes the
 	 *          preloaded system rules
 	 * @param symbolObserver
-	 *          TODO
+	 *          the observer for newly created <code>ISymbols</code>
+	 * @param noPackageLoading
+	 *          don't load any package at start up
 	 */
-	public synchronized static void initSymbols(String fileName, ISymbolObserver symbolObserver) {
+	public synchronized static void initSymbols(String fileName, ISymbolObserver symbolObserver, boolean noPackageLoading) {
 
 		if (!isSystemInitialized) {
 			isSystemInitialized = true;
+			// long start = System.currentTimeMillis();
+
 			// try {
 			// JSCL_LEXICOGRAPHIC = Variable.valueOf("lex").expressionValue();
 			// JSCL_DEGREE_LEXICOGRAPHIC =
@@ -796,7 +801,7 @@ public class F {
 			AtomQ = predefinedSymbol("AtomQ");
 			Binomial = predefinedSymbol("Binomial");
 			Break = predefinedSymbol("Break");
-			Ceil = predefinedSymbol("Ceil");
+			Ceiling = predefinedSymbol("Ceil");
 			CompoundExpression = predefinedSymbol("CompoundExpression");
 			Condition = predefinedSymbol("Condition");
 			Continue = predefinedSymbol("Continue");
@@ -824,16 +829,17 @@ public class F {
 			GCD = predefinedSymbol("GCD");
 			Greater = predefinedSymbol("Greater");
 			GreaterEqual = predefinedSymbol("GreaterEqual");
-			GroebnerBasis = predefinedSymbol("GroebnerBasis");
+			// GroebnerBasis = predefinedSymbol("GroebnerBasis", new GroebnerBasis());
 			Head = predefinedSymbol("Head");
 			Hold = predefinedSymbol("Hold");
 			IntegerQ = predefinedSymbol("IntegerQ");
 			Integrate = predefinedSymbol("Integrate");
 			Inverse = predefinedSymbol("Inverse");
-			KOrderlessPartitions = predefinedSymbol("KOrderlessPartitions");
-			KPartitions = predefinedSymbol("KPartitions");
-			KSubsets = predefinedSymbol("KSubsets");
-			LeafCount = predefinedSymbol("LeafCount");
+			// KOrderlessPartitions = predefinedSymbol("KOrderlessPartitions", new
+			// KOrderlessPartitions());
+			// KPartitions = predefinedSymbol("KPartitions", new KPartitions());
+			// KSubsets = predefinedSymbol("KSubsets", new KSubsets());
+			// LeafCount = predefinedSymbol("LeafCount", new LeafCount());
 			Length = predefinedSymbol("Length");
 			Less = predefinedSymbol("Less");
 			LessEqual = predefinedSymbol("LessEqual");
@@ -850,7 +856,8 @@ public class F {
 			Negative = predefinedSymbol("Negative");
 			NonNegative = predefinedSymbol("NonNegative");
 			Not = predefinedSymbol("Not");
-			NumberPartitions = predefinedSymbol("NumberPartitions");
+			// NumberPartitions = predefinedSymbol("NumberPartitions", new
+			// NumberPartitions());
 			NumberQ = predefinedSymbol("NumberQ");
 			Numerator = predefinedSymbol("Numerator");
 			OddQ = predefinedSymbol("OddQ");
@@ -858,8 +865,8 @@ public class F {
 			Order = predefinedSymbol("Order");
 			OrderedQ = predefinedSymbol("OrderedQ");
 			Part = predefinedSymbol("Part");
-			Partition = predefinedSymbol("Partition");
-			Permutations = predefinedSymbol("Permutations");
+			// Partition = predefinedSymbol("Partition", new Partition());
+			// Permutations = predefinedSymbol("Permutations", new Permutations());
 			Plot = predefinedSymbol("Plot");
 			Plot3D = predefinedSymbol("Plot3D");
 			Plus = predefinedSymbol("Plus");
@@ -901,23 +908,27 @@ public class F {
 				SYMBOL_OBSERVER = symbolObserver;
 			}
 
-			Reader reader = null;
-			if (fileName != null) {
-				try {
-					reader = new FileReader(fileName);
-				} catch (FileNotFoundException e) {
-					e.printStackTrace();
+			if (!noPackageLoading) {
+				Reader reader = null;
+				if (fileName != null) {
+					try {
+						reader = new FileReader(fileName);
+					} catch (FileNotFoundException e) {
+						e.printStackTrace();
+					}
+				}
+				if (reader == null) {
+					InputStream systemPackage = F.class.getResourceAsStream("/System.mep");
+					if (systemPackage != null) {
+						reader = new InputStreamReader(systemPackage);
+					}
+				}
+				if (reader != null) {
+					Package.loadPackage(EvalEngine.get(), reader);
 				}
 			}
-			if (reader == null) {
-				InputStream systemPackage = F.class.getResourceAsStream("/System.mep");
-				if (systemPackage != null) {
-					reader = new InputStreamReader(systemPackage);
-				}
-			}
-			if (reader != null) {
-				Package.loadPackage(EvalEngine.get(), reader);
-			}
+			// long end = System.currentTimeMillis();
+			// System.out.println("Init time: " + (end - start));
 		}
 	}
 
@@ -931,25 +942,25 @@ public class F {
 		return unary(Inverse, a0);
 	}
 
-	public static IAST KOrderlessPartitions(final IExpr a0) {
-
-		return unary(KOrderlessPartitions, a0);
-	}
-
-	public static IAST KPartitions(final IExpr a0) {
-
-		return unary(KPartitions, a0);
-	}
-
-	public static IAST KSubsets(final IExpr a0) {
-
-		return unary(KSubsets, a0);
-	}
-
-	public static IAST LeafCount(final IExpr a0) {
-
-		return unary(LeafCount, a0);
-	}
+	// public static IAST KOrderlessPartitions(final IExpr a0) {
+	//
+	// return unary(KOrderlessPartitions, a0);
+	// }
+	//
+	// public static IAST KPartitions(final IExpr a0) {
+	//
+	// return unary(KPartitions, a0);
+	// }
+	//
+	// public static IAST KSubsets(final IExpr a0) {
+	//
+	// return unary(KSubsets, a0);
+	// }
+	//
+	// public static IAST LeafCount(final IExpr a0) {
+	//
+	// return unary(LeafCount, a0);
+	// }
 
 	public static IAST Less(final IExpr a0, final IExpr a1) {
 
@@ -1055,10 +1066,11 @@ public class F {
 		return binary(Times, C1, a);
 	}
 
-	public static IAST NumberPartitions(final IExpr a0) {
-
-		return unary(NumberPartitions, a0);
-	}
+	//
+	// public static IAST NumberPartitions(final IExpr a0) {
+	//
+	// return unary(NumberPartitions, a0);
+	// }
 
 	public static IAST NumberQ(final IExpr a0) {
 
@@ -1070,15 +1082,15 @@ public class F {
 		return unary(Options, a0);
 	}
 
-	public static IAST Partition(final IExpr a0) {
-
-		return unary(Partition, a0);
-	}
-
-	public static IAST Permutations(final IExpr a0) {
-
-		return unary(Permutations, a0);
-	}
+	// public static IAST Partition(final IExpr a0) {
+	//
+	// return unary(Partition, a0);
+	// }
+	//
+	// public static IAST Permutations(final IExpr a0) {
+	//
+	// return unary(Permutations, a0);
+	// }
 
 	public static IAST Plus() {
 		return function(Plus);
@@ -1229,22 +1241,23 @@ public class F {
 	}
 
 	/**
-	 * Creates a new list from the given ast and symbol. if <code>include</code>
-	 * is set to <code>true </code> all arguments from index first to last-1 are
-	 * copied in the new list if <code>include</code> is set to
-	 * <code> false </code> all arguments excluded from index first to last-1 are
-	 * copied in the new list
+	 * Creates a new AST from the given <code>ast</code> and <code>head</code>. if
+	 * <code>include</code> is set to <code>true </code> all arguments from index
+	 * first to last-1 are copied in the new list if <code>include</code> is set
+	 * to <code> false </code> all arguments excluded from index first to last-1
+	 * are copied in the new list
 	 * 
 	 */
-	public static IAST ast(final IAST f, final IExpr sym, final boolean include, final int first, final int last) {
-		// return new AST(f, sym, incl, first, last);
-		final AST ast = AST.newInstance(sym);
+	public static IAST ast(final IAST f, final IExpr head, final boolean include, final int first, final int last) {
+		AST ast = null;
 		if (include == true) {
+			ast = AST.newInstance(last - first, head);
 			// range include
 			for (int i = first; i < last; i++) {
 				ast.add(f.get(i));
 			}
 		} else {
+			ast = AST.newInstance(f.size() - last + first - 1, head);
 			// range exclude
 			for (int i = 1; i < first; i++) {
 				ast.add(f.get(i));
@@ -1256,14 +1269,26 @@ public class F {
 		return ast;
 	}
 
+	/**
+	 * Create a new abstract syntax tree (AST).
+	 * 
+	 * @param head
+	 *          the header expression of the function. If the ast represents a
+	 *          function like <code>f[x,y], Sin[x],...</code>, the
+	 *          <code>head</code> will be an instance of type ISymbol.
+	 * 
+	 */
 	public static IAST ast(final IExpr head) {
 		return AST.newInstance(head);
 	}
 
 	/**
-	 * Short form for creating an AST
+	 * Create a new abstract syntax tree (AST).
 	 * 
 	 * @param head
+	 *          the header expression of the function. If the ast represents a
+	 *          function like <code>f[x,y], Sin[x],...</code>, the
+	 *          <code>head</code> will be an instance of type ISymbol.
 	 * @param a
 	 * @return
 	 */
@@ -1272,15 +1297,19 @@ public class F {
 	}
 
 	/**
+	 * Create a new abstract syntax tree (AST).
 	 * 
 	 * @param head
+	 *          the header expression of the function. If the ast represents a
+	 *          function like <code>f[x,y], Sin[x],...</code>, the
+	 *          <code>head</code> will be an instance of type ISymbol.
 	 * @param initialCapacity
 	 * @param initNull
 	 *          initialize all elements with <code>null</code>.
 	 * @return
 	 */
 	public static IAST ast(final IExpr head, final int initialCapacity, final boolean initNull) {
-		final AST ast = AST.newInstance(head);
+		final AST ast = AST.newInstance(initialCapacity, head);
 		if (initNull) {
 			for (int i = 0; i < initialCapacity; i++) {
 				ast.add(null);
@@ -1289,8 +1318,18 @@ public class F {
 		return ast;
 	}
 
+	/**
+	 * Create a new abstract syntax tree (AST).
+	 * 
+	 * @param arr
+	 * @param head
+	 *          the header expression of the function. If the ast represents a
+	 *          function like <code>f[x,y], Sin[x],...</code>, the
+	 *          <code>head</code> will be an instance of type ISymbol.
+	 * @return
+	 */
 	public static IAST ast(final IExpr[] arr, final IExpr head) {
-		final AST ast = AST.newInstance(head);
+		final AST ast = AST.newInstance(arr.length, head);
 		for (final IExpr expr : arr) {
 			ast.add(expr);
 		}
@@ -1862,11 +1901,12 @@ public class F {
 		}
 		temp = new Symbol(symbolName);
 		fSymbolMap.put(symbolName, temp);
-		if (Character.isUpperCase(symbolName.charAt(0))) {
-			// probably a predefined function use reflection to setUp this
-			// symbol
-			SystemNamespace.DEFAULT.setEvaluator(temp);
-		}
+		// if (!skipEvaluatorSettings &&
+		// Character.isUpperCase(symbolName.charAt(0))) {
+		// // probably a predefined function use reflection to setUp this
+		// // symbol
+		// SystemNamespace.DEFAULT.setEvaluator(temp);
+		// }
 
 		return temp;
 	}

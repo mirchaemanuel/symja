@@ -17,88 +17,99 @@ import org.matheclipse.core.visit.VisitorCollectionBoolean;
  * 
  */
 public class ExprVariables {
-  public static class VariablesVisitor extends VisitorCollectionBoolean {
-    public VariablesVisitor(int hOffset, Collection<IExpr> collection) {
-      super(hOffset, collection);
-    }
+	public static class VariablesVisitor extends VisitorCollectionBoolean {
+		public VariablesVisitor(int hOffset, Collection<IExpr> collection) {
+			super(hOffset, collection);
+		}
 
-    public boolean visit(ISymbol symbol) {
-      if ((symbol.getAttributes() & ISymbol.CONSTANT) == ISymbol.CONSTANT) {
-        return false;
-      }
-      return true;
-    }
-  }
+		public boolean visit(ISymbol symbol) {
+			if ((symbol.getAttributes() & ISymbol.CONSTANT) == ISymbol.CONSTANT) {
+				return false;
+			}
+			return true;
+		}
+	}
 
-  /**
-   * Get a list of variables, which are contained in the given expression.
+	/**
+	 * Get a list of variables, which are contained in the given expression.
+	 * 
+	 * @param expression
+	 * @return
+	 */
+	// public static IAST getVariables(final IExpr expression) {
+	// final Set<IExpr> set = new TreeSet<IExpr>();
+	// expression.accept(new VariablesVisitor(1, set));
+	//
+	// final Iterator<IExpr> iter = set.iterator();
+	// final IAST list = List();
+	// while (iter.hasNext()) {
+	// list.add(iter.next());
+	// }
+	// return list;
+	// }
+
+	private final Set<IExpr> set = new TreeSet<IExpr>();
+
+	/**
    * 
-   * @param expression
-   * @return
    */
-  // public static IAST getVariables(final IExpr expression) {
-  // final Set<IExpr> set = new TreeSet<IExpr>();
-  // expression.accept(new VariablesVisitor(1, set));
-  //
-  // final Iterator<IExpr> iter = set.iterator();
-  // final IAST list = List();
-  // while (iter.hasNext()) {
-  // list.add(iter.next());
-  // }
-  // return list;
-  // }
+	public ExprVariables(final IExpr expression) {
+		super();
+		expression.accept(new VariablesVisitor(1, set));
+	}
 
-  private final Set<IExpr> set = new TreeSet<IExpr>();
+	/**
+	 * Add the symbol to the set of variables.
+	 * 
+	 * @param symbol
+	 * @return <tt>true</tt> if the underlying set did not already contain the
+	 *         symbol
+	 */
+	public boolean add(final ISymbol symbol) {
+		return set.add(symbol);
+	}
 
-  /**
-   * 
-   */
-  public ExprVariables(final IExpr expression) {
-    super();
-    expression.accept(new VariablesVisitor(1, set));
-  }
+	/**
+	 * Add the variables of the given expression
+	 * 
+	 * @param expression
+	 */
+	public void addVarList(final IExpr expression) {
+		expression.accept(new VariablesVisitor(1, set));
+	}
 
-  /**
-   * Add the variables of the given expression
-   * 
-   * @param expression
-   */
-  public void add(final IExpr expression) {
-    expression.accept(new VariablesVisitor(1, set));
-  }
+	/**
+	 * @return the varList
+	 */
+	public IAST getVarList() {
+		final Iterator<IExpr> iter = set.iterator();
+		final IAST list = List();
+		while (iter.hasNext()) {
+			list.add(iter.next());
+		}
+		return list;
+	}
 
-  /**
-   * @return the varList
-   */
-  public IAST getVarList() {
-    final Iterator<IExpr> iter = set.iterator();
-    final IAST list = List();
-    while (iter.hasNext()) {
-      list.add(iter.next());
-    }
-    return list;
-  }
+	public String[] getVarListAsString() {
+		String[] result = new String[set.size()];
+		final Iterator<IExpr> iter = set.iterator();
+		int i = 0;
+		while (iter.hasNext()) {
+			result[i++] = iter.next().toString();
+		}
+		return result;
+	}
 
-  public String[] getVarListAsString() {
-    String[] result = new String[set.size()];
-    final Iterator<IExpr> iter = set.iterator();
-    int i = 0;
-    while (iter.hasNext()) {
-      result[i++] = iter.next().toString();
-    }
-    return result;
-  }
-
-  /**
-   * Check if the expression contains the given number of variables.
-   * 
-   * @param expr
-   * @return <code>true</code> if the expr contains the given number of
-   *         variables.
-   */
-  public boolean isSize(int size) {
-    return set.size() == size;
-  }
+	/**
+	 * Check if the expression contains the given number of variables.
+	 * 
+	 * @param expr
+	 * @return <code>true</code> if the expr contains the given number of
+	 *         variables.
+	 */
+	public boolean isSize(int size) {
+		return set.size() == size;
+	}
 
 	/**
 	 * @param o

@@ -91,7 +91,7 @@ public class Together extends AbstractFunctionEvaluator {
 
     try {
       ExprVariables eVar = new ExprVariables(e1);
-      eVar.add(e2);
+      eVar.addVarList(e2);
       if (!eVar.isSize(1)) {
         // gcd only possible for univariate polynomials
         return null;

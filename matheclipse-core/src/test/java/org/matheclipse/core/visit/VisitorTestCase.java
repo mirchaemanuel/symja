@@ -18,7 +18,7 @@ public class VisitorTestCase extends TestCase {
 
 	public VisitorTestCase(String name) {
 		super(name);
-		F.initSymbols(null, null);
+		F.initSymbols(null, null, false);
 	}
 
 	/**
