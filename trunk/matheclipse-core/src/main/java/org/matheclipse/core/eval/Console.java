@@ -39,7 +39,7 @@ public class Console {
 		String inputExpression = null;
 		String outputExpression = null;
 		console.setArgs(args);
-		F.initSymbols(console.getDefaultSystemRulesFilename(), null);
+		F.initSymbols(console.getDefaultSystemRulesFilename(), null, false);
 		final File file = console.getFile();
 		if (file != null) {
 			try {

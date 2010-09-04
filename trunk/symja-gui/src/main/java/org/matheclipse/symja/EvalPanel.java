@@ -318,7 +318,7 @@ public class EvalPanel extends JPanel implements DocumentListener {
 
 		@Override
 		public void run() {
-			F.initSymbols(fDefaultSystemRulesFilename, null);
+			F.initSymbols(fDefaultSystemRulesFilename, null, false);
 			EVAL_ENGINE = new EvalEngine();
 			EVAL = new TimeConstrainedEvaluator(EVAL_ENGINE, false, 360000);
 			new CompletionLists(fWords, fReplaceWords);

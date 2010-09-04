@@ -1,7 +1,5 @@
 package org.matheclipse.core.reflection.system;
 
-import static org.matheclipse.basic.Util.checkCanceled;
-
 import org.matheclipse.core.eval.exception.WrongNumberOfArguments;
 import org.matheclipse.core.eval.interfaces.IFunctionEvaluator;
 import org.matheclipse.core.expression.AST;
@@ -31,17 +29,14 @@ public class Transpose implements IFunctionEvaluator {
 			final IAST mat = (IAST) functionList.get(1);
 			final IAST transposed = F.ast(F.List, dim[1], true);
 			for (int i = 1; i <= dim[1]; i++) {
-				checkCanceled();
 				transposed.set(i, F.ast(F.List, dim[0], true));
 			}
 
 			IAST row;
 			IAST trRow;
 			for (int i = 1; i <= dim[0]; i++) {
-				checkCanceled();
 				row = (AST) mat.get(i);
 				for (int j = 1; j <= dim[1]; j++) {
-					checkCanceled();
 					trRow = (IAST) transposed.get(j);
 					trRow.set(i, row.get(j));
 				}

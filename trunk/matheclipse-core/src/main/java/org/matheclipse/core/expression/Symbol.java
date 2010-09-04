@@ -10,6 +10,7 @@ import java.util.Stack;
 
 import org.matheclipse.basic.Config;
 import org.matheclipse.core.eval.EvalEngine;
+import org.matheclipse.core.eval.SystemNamespace;
 import org.matheclipse.core.eval.exception.RuleCreationError;
 import org.matheclipse.core.form.output.OutputFormFactory;
 import org.matheclipse.core.form.output.StringBufferWriter;
@@ -67,6 +68,14 @@ public class Symbol extends ExprImpl implements ISymbol {
 	private ArrayListMultimap<Integer, IPatternMatcher<IExpr>> fSimplePatternRules = ArrayListMultimap.create();
 
 	private List<IPatternMatcher<IExpr>> fPatternRules = null;
+
+	static class DummyEvaluator implements IEvaluator {
+		public void setUp(ISymbol symbol) {
+
+		}
+	}
+
+	private static final DummyEvaluator DUMMY_EVALUATOR = new DummyEvaluator();
 
 	/* package private */String fSymbolName;
 
@@ -200,6 +209,12 @@ public class Symbol extends ExprImpl implements ISymbol {
 	}
 
 	public IEvaluator getEvaluator() {
+		if (fEvaluator == null) {
+			fEvaluator = DUMMY_EVALUATOR;
+			if (Character.isUpperCase(fSymbolName.charAt(0))) {
+				SystemNamespace.DEFAULT.setEvaluator(this);
+			}
+		}
 		return fEvaluator;
 	}
 

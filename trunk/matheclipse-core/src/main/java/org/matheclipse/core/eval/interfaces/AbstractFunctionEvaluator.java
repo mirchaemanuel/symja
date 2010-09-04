@@ -39,6 +39,9 @@ public abstract class AbstractFunctionEvaluator implements IFunctionEvaluator {
 		if ((rules = getRules()) != null) {
 			final Parser parser = new Parser();
 			final EvalEngine engine = EvalEngine.get();
+			boolean oldPackageMode = engine.isPackageMode();
+			try {
+			engine.setPackageMode(true);
 			// if (session != null) {
 			// parser.setFactory(ExpressionFactory.get());
 			// }
@@ -46,10 +49,13 @@ public abstract class AbstractFunctionEvaluator implements IFunctionEvaluator {
 				try {
 					setUpRules(rules, parser, engine);
 				} catch (final Throwable th) {
-					th.printStackTrace();
+					th.printStackTrace(); 
 				}
 			} else {
 				setUpRules(rules, parser, engine);
+			}
+			} finally {
+				engine.setPackageMode(oldPackageMode);
 			}
 		}
 	}

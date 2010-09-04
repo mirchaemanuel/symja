@@ -1,19 +1,20 @@
 package org.matheclipse.core.reflection.system;
 
 import java.util.List;
-import java.util.SortedMap;
 
 import org.matheclipse.basic.Config;
 import org.matheclipse.core.convert.ExprVariables;
 import org.matheclipse.core.convert.JASConvert;
 import org.matheclipse.core.eval.exception.WrongArgumentType;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
+import org.matheclipse.core.eval.interfaces.INumeric;
 import org.matheclipse.core.eval.util.Options;
 import org.matheclipse.core.expression.ASTRange;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.IInteger;
+import org.matheclipse.core.interfaces.IRational;
 
 import apache.harmony.math.BigInteger;
 import edu.jas.arith.BigRational;
@@ -24,12 +25,12 @@ import edu.jas.ufd.FactorAbstract;
 import edu.jas.ufd.FactorFactory;
 
 /**
- * Factor a univariate polynomial
+ * Check if a univariate polynomial is square free
  * 
  */
-public class Factor extends AbstractFunctionEvaluator {
+public class SquareFreeQ extends AbstractFunctionEvaluator {
 
-	public Factor() {
+	public SquareFreeQ() {
 	}
 
 	@Override
@@ -38,9 +39,19 @@ public class Factor extends AbstractFunctionEvaluator {
 			return null;
 		}
 
+		if (lst.get(1) instanceof IRational) {
+			// check for integers not implemented yet
+			return null;
+		}
 		ExprVariables eVar = new ExprVariables(lst.get(1));
+		if (eVar.isSize(0)) {
+			if (lst.get(1).isAtom()) {
+				return F.False;
+			}
+			eVar.add(F.symbol("x"));
+		}
 		if (!eVar.isSize(1)) {
-			throw new WrongArgumentType(lst, lst.get(1), 1, "Factorization only implemented for univariate polynomials");
+			throw new WrongArgumentType(lst, lst.get(1), 1, "SquareFreeQ only implemented for univariate polynomials");
 		}
 		try {
 			IExpr expr = F.eval(F.ExpandAll, lst.get(1));
@@ -48,9 +59,9 @@ public class Factor extends AbstractFunctionEvaluator {
 			List<IExpr> varList = r.toList();
 
 			if (lst.size() == 3) {
-				return factorWithOption(lst, expr, varList, false);
+				return F.bool(isSquarefreeWithOption(lst, expr, varList));
 			}
-			return factor(expr, varList, false);
+			return F.bool(isSquarefree(expr, varList));
 
 		} catch (Exception e) {
 			if (Config.DEBUG) {
@@ -60,30 +71,15 @@ public class Factor extends AbstractFunctionEvaluator {
 		return null;
 	}
 
-	public static IExpr factor(IExpr expr, List<IExpr> varList, boolean factorSquareFree) {
+	public static boolean isSquarefree(IExpr expr, List<IExpr> varList) {
 		JASConvert<BigRational> jas = new JASConvert<BigRational>(varList);
 		GenPolynomial<BigRational> poly = jas.expr2Poly(expr);
 
 		FactorAbstract<BigRational> factorAbstract = FactorFactory.getImplementation(BigRational.ONE);
-		SortedMap<GenPolynomial<BigRational>, Long> map;
-		if (factorSquareFree) {
-			map = factorAbstract.squarefreeFactors(poly);// factors(poly);
-		} else {
-			map = factorAbstract.factors(poly);
-		}
-		IAST result = F.Times();
-
-		for (SortedMap.Entry<GenPolynomial<BigRational>, Long> entry : map.entrySet()) {
-			GenPolynomial<BigRational> singleFactor = entry.getKey();
-			GenPolynomial<edu.jas.arith.BigInteger> integerCoefficientPoly = (GenPolynomial<edu.jas.arith.BigInteger>) jas
-					.factorTerms(singleFactor)[2];
-			Long val = entry.getValue();
-			result.add(F.Power(jas.integerPoly2Expr(integerCoefficientPoly), F.integer(val)));
-		}
-		return result;
+		return factorAbstract.isSquarefree(poly);
 	}
 
-	public static IExpr factorWithOption(final IAST lst, IExpr expr, List<IExpr> varList, boolean factorSquareFree) {
+	public static boolean isSquarefreeWithOption(final IAST lst, IExpr expr, List<IExpr> varList) {
 		final Options options = new Options(lst.topHead(), lst, 2);
 		IExpr option = options.getOption("Modulus");
 		if (option != null && option instanceof IInteger) {
@@ -96,19 +92,7 @@ public class Factor extends AbstractFunctionEvaluator {
 				GenPolynomial<ModInteger> poly = jas.expr2Poly(expr);
 
 				FactorAbstract<ModInteger> factorAbstract = FactorFactory.getImplementation(modIntegerRing);
-				SortedMap<GenPolynomial<ModInteger>, Long> map;
-				if (factorSquareFree) {
-					map = factorAbstract.squarefreeFactors(poly);
-				} else {
-					map = factorAbstract.factors(poly);
-				}
-				IAST result = F.Times();
-				for (SortedMap.Entry<GenPolynomial<ModInteger>, Long> entry : map.entrySet()) {
-					GenPolynomial<ModInteger> singleFactor = entry.getKey();
-					Long val = entry.getValue();
-					result.add(F.Power(jas.modIntegerPoly2Expr(singleFactor), F.integer(val)));
-				}
-				return result;
+				return factorAbstract.isSquarefree(poly);
 			} catch (ArithmeticException ae) {
 				// toInt() conversion failed
 				if (Config.DEBUG) {
@@ -155,7 +139,7 @@ public class Factor extends AbstractFunctionEvaluator {
 		// return null; // no evaluation
 		// }
 		// }
-		return null; // no evaluation
+		return false; // no evaluation
 	}
 
 }

@@ -1,7 +1,5 @@
 package org.matheclipse.core.eval;
 
-import static org.matheclipse.basic.Util.checkCanceled;
-
 import org.matheclipse.basic.Alloc;
 import org.matheclipse.core.eval.interfaces.INumericComplex;
 import org.matheclipse.core.eval.interfaces.INumericComplexConstant;
@@ -48,7 +46,6 @@ public class EvalComplex {
 			// fast evaluation path
 			stack.ensureCapacity(top + ast.size() * 2);
 			for (int i = 1; i < ast.size(); i++) {
-				checkCanceled();
 				final double[] result = eval(stack, newTop, ast.get(i));
 				stack.push(result[0]);
 				stack.push(result[1]);

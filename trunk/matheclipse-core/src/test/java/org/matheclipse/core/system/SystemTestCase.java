@@ -1,5 +1,6 @@
 package org.matheclipse.core.system;
 
+import org.matheclipse.basic.Config;
 import org.matheclipse.core.eval.EvalEngine;
 import org.matheclipse.core.expression.Matrix;
 import org.matheclipse.core.expression.Vector;
@@ -279,14 +280,13 @@ public class SystemTestCase extends AbstractTestCase {
 	public void testSystem038() {
 		check("Trace[D[Sin[x],x]]", "{{Derivative[Sin],Cos[#1]&},{x&,Cos[x]},{D[Sin[x],x],Cos[x]*D[x,x],{D[x,x],1},1*Cos[x],Cos[x]}}");
 		check("D[Sin[x]^Cos[x],x]", "(-Log[Sin[x]]*Sin[x]+Cos[x]^2*Sin[x]^(-1))*Sin[x]^Cos[x]");
-		check("Trace[D[Sin[x]^Cos[x],x]]", "{D[Sin[x]^Cos[x],x],Sin[x]^Cos[x]*(Log[Sin[x]]*D[Cos[x],x]+Cos[x]*D[Sin[x],x]*Sin[x]^(\n" + 
-				"-1)),{Derivative[Sin],Cos[#1]&},{x&,Cos[x]},{D[Sin[x],x],Cos[x]*D[x,x],{D[x,x],1},\n" + 
-				"1*Cos[x],Cos[x]},{Cos[x]*D[Sin[x],x]*Sin[x]^(-1),Cos[x]*Cos[x]*Sin[x]^(-1),Cos[x]^\n" + 
-				"2*Sin[x]^(-1)},{Derivative[Cos],(-1)*Sin[#1]&},{x&,(-1)*Sin[x]},{D[Cos[x],x],(-1)*Sin[x]*D[x,x],(\n" + 
-				"-1)*Sin[x]*D[x,x],{D[x,x],1},(-1)*1*Sin[x],(-1)*Sin[x]},{Log[Sin[x]]*D[Cos[x],x],Log[Sin[x]]*(\n" + 
-				"-1)*Sin[x],(-1)*Log[Sin[x]]*Sin[x]},{Log[Sin[x]]*D[Cos[x],x]+Cos[x]*D[Sin[x],x]*Sin[x]^(\n" + 
-				"-1),-Log[Sin[x]]*Sin[x]+Cos[x]^2*Sin[x]^(-1)},(-Log[Sin[x]]*Sin[x]+Cos[x]^2*Sin[x]^(\n" + 
-				"-1))*Sin[x]^Cos[x]}");
+		check("Trace[D[Sin[x]^Cos[x],x]]", "{D[Sin[x]^Cos[x],x],Sin[x]^Cos[x]*(Log[Sin[x]]*D[Cos[x],x]+Cos[x]*D[Sin[x],x]*Sin[x]^(\n"
+				+ "-1)),{Derivative[Sin],Cos[#1]&},{x&,Cos[x]},{D[Sin[x],x],Cos[x]*D[x,x],{D[x,x],1},\n"
+				+ "1*Cos[x],Cos[x]},{Cos[x]*D[Sin[x],x]*Sin[x]^(-1),Cos[x]*Cos[x]*Sin[x]^(-1),Cos[x]^\n"
+				+ "2*Sin[x]^(-1)},{Derivative[Cos],(-1)*Sin[#1]&},{x&,(-1)*Sin[x]},{D[Cos[x],x],(-1)*Sin[x]*D[x,x],(\n"
+				+ "-1)*Sin[x]*D[x,x],{D[x,x],1},(-1)*1*Sin[x],(-1)*Sin[x]},{Log[Sin[x]]*D[Cos[x],x],Log[Sin[x]]*(\n"
+				+ "-1)*Sin[x],(-1)*Log[Sin[x]]*Sin[x]},{Log[Sin[x]]*D[Cos[x],x]+Cos[x]*D[Sin[x],x]*Sin[x]^(\n"
+				+ "-1),-Log[Sin[x]]*Sin[x]+Cos[x]^2*Sin[x]^(-1)},(-Log[Sin[x]]*Sin[x]+Cos[x]^2*Sin[x]^(\n" + "-1))*Sin[x]^Cos[x]}");
 		check("Trace[NumberQ[1/3]]", "{NumberQ[1/3],True}");
 	}
 
@@ -1003,6 +1003,7 @@ public class SystemTestCase extends AbstractTestCase {
 
 	public void testSystem171() {
 		check("Integrate[x,x]", "1/2*x^2");
+		check("Integrate[2x,x]", "x^2");
 		check("Integrate[f[x]+g[x]+h[x],x]", "Integrate[h[x],x]+Integrate[g[x],x]+Integrate[f[x],x]");
 		check("Integrate[Sin[x],x]", "(-1)*Cos[x]");
 		check("Integrate[E^(a*x),x]", "E^(a*x)*a^(-1)");
@@ -2272,25 +2273,28 @@ public class SystemTestCase extends AbstractTestCase {
 	}
 
 	public void testSystem802() {
-		EvalEngine.get().setPackageMode(true);
-		check("Package[ \n" + "  \"Polynomials\", \n" + "  (* define the public available symbols *)\n"
-				+ "  {LaguerreP, LegendreP}, \n" + "{ \n" + "  (* Laguerre polynomials \n"
-				+ "     http://en.wikipedia.org/wiki/Laguerre_polynomials *)\n" + "  LaguerreP[0,x_]:=1,\n" + "  LaguerreP[1,x_]:=1-x,\n"
-				+ "  LaguerreP[n_IntegerQ,x_]:=\n"
-				+ "      ExpandAll[(2*n-1-x)*LaguerreP[n-1,x] - (n-1)^2*LaguerreP[n-2,x]] /; NonNegative[n],\n"
-				+ "  (* Legendre polynomials \n" + "     http://en.wikipedia.org/wiki/Legendre_polynomials *)\n"
-				+ "  LegendreP[n_IntegerQ,x_]:=\n"
-				+ "      1/(2^n)*Sum[ExpandAll[Binomial[n,k]^2*(x-1)^(n-k)*(x+1)^k], {k,0,n}] /; NonNegative[n]\n" + "    \n" + "} ]", "");
-		EvalEngine.get().setPackageMode(false);
-		check("LaguerreP[0,x]", "1");
-		check("LaguerreP[1,x]", "-x+1");
-		check("LaguerreP[2,x]", "x^2-4*x+2");
-		check("LaguerreP[3,x]", "-x^3+9*x^2-18*x+6");
-		check("LaguerreP[4,x]", "x^4-16*x^3+72*x^2-96*x+24");
-		check("LegendreP[1,x]", "x");
-		check("LegendreP[4,x]", "1/16*(70*x^4-60*x^2+6)");
-		check("LegendreP[7,x]", "1/128*(3432*x^7-5544*x^5+2520*x^3-280*x)");
-		check("LegendreP[10,x]", "1/1024*(184756*x^10-437580*x^8+360360*x^6-120120*x^4+13860*x^2-252)");
+		if (!Config.SERVER_MODE) {
+			EvalEngine.get().setPackageMode(true);
+			check("Package[ \n" + "  \"Polynomials\", \n" + "  (* define the public available symbols *)\n"
+					+ "  {LaguerreP, LegendreP}, \n" + "{ \n" + "  (* Laguerre polynomials \n"
+					+ "     http://en.wikipedia.org/wiki/Laguerre_polynomials *)\n" + "  LaguerreP[0,x_]:=1,\n" + "  LaguerreP[1,x_]:=1-x,\n"
+					+ "  LaguerreP[n_IntegerQ,x_]:=\n"
+					+ "      ExpandAll[(2*n-1-x)*LaguerreP[n-1,x] - (n-1)^2*LaguerreP[n-2,x]] /; NonNegative[n],\n"
+					+ "  (* Legendre polynomials \n" + "     http://en.wikipedia.org/wiki/Legendre_polynomials *)\n"
+					+ "  LegendreP[n_IntegerQ,x_]:=\n"
+					+ "      1/(2^n)*Sum[ExpandAll[Binomial[n,k]^2*(x-1)^(n-k)*(x+1)^k], {k,0,n}] /; NonNegative[n]\n" + "    \n" + "} ]", "");
+			EvalEngine.get().setPackageMode(false);
+
+			check("LaguerreP[0,x]", "1");
+			check("LaguerreP[1,x]", "-x+1");
+			check("LaguerreP[2,x]", "x^2-4*x+2");
+			check("LaguerreP[3,x]", "-x^3+9*x^2-18*x+6");
+			check("LaguerreP[4,x]", "x^4-16*x^3+72*x^2-96*x+24");
+			check("LegendreP[1,x]", "x");
+			check("LegendreP[4,x]", "1/16*(70*x^4-60*x^2+6)");
+			check("LegendreP[7,x]", "1/128*(3432*x^7-5544*x^5+2520*x^3-280*x)");
+			check("LegendreP[10,x]", "1/1024*(184756*x^10-437580*x^8+360360*x^6-120120*x^4+13860*x^2-252)");
+		}
 	}
 
 	public void testSystem991() {
@@ -2384,6 +2388,12 @@ public class SystemTestCase extends AbstractTestCase {
 				+ "-0.06243510291861069+I*(-0.7156909967859645)}");
 		check("Roots[Expand[(x-1)^3]]", "{1}");
 		check("Roots[x^6-1]", "{1,-1,1/2*(I*3^(1/2)+1),1/2*(-I*3^(1/2)+1),1/2*(I*3^(1/2)-1),1/2*(-I*3^(1/2)-1)}");
+
+		check("Factor[x^5 - x^3 - x^2 + 1]", "(x+1)*(x^2+x+1)*(x-1)^2");
+		check("FactorSquareFree[x^5 - x^3 - x^2 + 1]", "(x^3+2*x^2+2*x+1)*(x-1)^2");
+		check("SquareFreeQ[x^5 - x^3 - x^2 + 1]", "False");
+		check("SquareFreeQ[12.0]", "False");
+
 		check("Factor[4+x^2+2*x+3*x^3]", "(x+1)*(3*x^2-2*x+4)");
 		check("Factor[ Expand[(x^3+4*x^2+3*x+2)*(x^3+4*x^2+x+2)]]", "(x^3+4*x^2+x+2)*(x^3+4*x^2+3*x+2)");
 		check("Factor[4+8*x+19*x^2+20*x^3+20*x^4+8*x^5+x^6]", "(x^3+4*x^2+x+2)*(x^3+4*x^2+3*x+2)");

@@ -257,11 +257,6 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 	 */
 	private AST(final int initialCapacity, final boolean setLength) {
 		super(initialCapacity + 1, setLength ? initialCapacity + 1 : 0);
-		// if (setLength) {
-		// for (int i = 0; i < initialCapacity; i++) {
-		// add(null);
-		// }
-		// }
 	}
 
 	/**
@@ -1036,6 +1031,12 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 	// return (IExpr) super.moveHeap();
 	// }
 
+	public static AST newInstance(final int intialCapacity, final IExpr head) {
+		AST ast = new AST(intialCapacity+1, false);
+		ast.add(head);
+		return ast;
+	}
+	
 	public static AST newInstance(final IExpr head) {
 		// AST ast;
 		// if (Config.SERVER_MODE) {

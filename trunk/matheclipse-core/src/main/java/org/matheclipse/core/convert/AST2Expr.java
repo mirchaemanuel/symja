@@ -1,7 +1,5 @@
 package org.matheclipse.core.convert;
 
-import static org.matheclipse.basic.Util.checkCanceled;
-
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
@@ -43,7 +41,6 @@ public class AST2Expr extends Converter<ASTNode, IExpr> {
       throws ConversionException {
     ast.set(0, convert((ASTNode) functionNode.get(0)));
     for (int i = 1; i < functionNode.size(); i++) {
-      checkCanceled();
       ast.add(convert((ASTNode) functionNode.get(i)));
     }
     return ast;
@@ -59,9 +56,8 @@ public class AST2Expr extends Converter<ASTNode, IExpr> {
     }
     if (node instanceof FunctionNode) {
       final FunctionNode functionNode = (FunctionNode) node;
-      final IAST ast = F.ast(convert((ASTNode) functionNode.get(0)));
+      final IAST ast = F.ast(convert((ASTNode) functionNode.get(0)),functionNode.size(),false);
       for (int i = 1; i < functionNode.size(); i++) {
-        checkCanceled();
         ast.add(convert((ASTNode) functionNode.get(i)));
       }
       IExpr head = ast.head();

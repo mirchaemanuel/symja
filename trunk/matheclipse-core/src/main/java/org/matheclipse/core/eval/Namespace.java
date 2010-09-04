@@ -1,7 +1,5 @@
 package org.matheclipse.core.eval;
 
-import static org.matheclipse.basic.Util.checkCanceled;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -52,7 +50,7 @@ public class Namespace {
 
 	/**
 	 * Search the IEvaluator class for a symbol in the given namespaces in
-	 * descending order If an IEvaluator class exists the symbol runs through the
+	 * descending order If an IEvaluator class exists, the symbol runs through the
 	 * setUp() method of the IEvaluator and is set into the symbol.
 	 * 
 	 * @param symbol
@@ -63,7 +61,6 @@ public class Namespace {
 
 		for (Map.Entry<String, Namespace> namespaceEntry : fPackageNamespaceMap.entrySet())
 		{
-			checkCanceled();
 			Class clazz;
 			try {
 			    if (namespaceEntry.getValue() == null)
@@ -108,7 +105,6 @@ public class Namespace {
     public void setEquals(final Symbol symbol) {
 		String namespace;
 		for (int i = fNamespaces.size() - 1; i >= 0; i--) {
-			checkCanceled();
 			namespace = fNamespaces.get(i) + symbol.toString();
 			Class clazz;
 			try {

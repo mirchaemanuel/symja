@@ -473,7 +473,7 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 		}
 
 		final IEvaluator module = symbol.getEvaluator();
-		if ((module != null) && (module instanceof IFunctionEvaluator)) {
+		if (module instanceof IFunctionEvaluator) {
 			// evaluate a built-in function.
 			if (fNumericMode) {
 				return ((IFunctionEvaluator) module).numericEval(ast);
@@ -738,7 +738,7 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 			return result;
 		}
 		final IEvaluator module = symbol.getEvaluator();
-		if ((module != null) && (module instanceof ISymbolEvaluator)) {
+		if (module instanceof ISymbolEvaluator) {
 			if (fNumericMode) {
 				return ((ISymbolEvaluator) module).numericEval(symbol);
 			}
