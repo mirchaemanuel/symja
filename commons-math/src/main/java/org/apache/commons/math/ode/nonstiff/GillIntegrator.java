@@ -17,6 +17,8 @@
 
 package org.apache.commons.math.ode.nonstiff;
 
+import org.apache.commons.math.util.FastMath;
+
 
 /**
  * This class implements the Gill fourth order Runge-Kutta
@@ -38,7 +40,7 @@ package org.apache.commons.math.ode.nonstiff;
  * @see ClassicalRungeKuttaIntegrator
  * @see MidpointIntegrator
  * @see ThreeEighthesIntegrator
- * @version $Revision: 810196 $ $Date: 2009-09-01 21:47:46 +0200 (Di, 01 Sep 2009) $
+ * @version $Revision: 990658 $ $Date: 2010-08-30 00:04:09 +0200 (Mo, 30 Aug 2010) $
  * @since 1.2
  */
 
@@ -52,13 +54,13 @@ public class GillIntegrator extends RungeKuttaIntegrator {
   /** Internal weights Butcher array. */
   private static final double[][] STATIC_A = {
     { 1.0 / 2.0 },
-    { (Math.sqrt(2.0) - 1.0) / 2.0, (2.0 - Math.sqrt(2.0)) / 2.0 },
-    { 0.0, -Math.sqrt(2.0) / 2.0, (2.0 + Math.sqrt(2.0)) / 2.0 }
+    { (FastMath.sqrt(2.0) - 1.0) / 2.0, (2.0 - FastMath.sqrt(2.0)) / 2.0 },
+    { 0.0, -FastMath.sqrt(2.0) / 2.0, (2.0 + FastMath.sqrt(2.0)) / 2.0 }
   };
 
   /** Propagation weights Butcher array. */
   private static final double[] STATIC_B = {
-    1.0 / 6.0, (2.0 - Math.sqrt(2.0)) / 6.0, (2.0 + Math.sqrt(2.0)) / 6.0, 1.0 / 6.0
+    1.0 / 6.0, (2.0 - FastMath.sqrt(2.0)) / 6.0, (2.0 + FastMath.sqrt(2.0)) / 6.0, 1.0 / 6.0
   };
 
   /** Simple constructor.

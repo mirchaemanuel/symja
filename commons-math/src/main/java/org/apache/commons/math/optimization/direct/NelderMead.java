@@ -20,13 +20,12 @@ package org.apache.commons.math.optimization.direct;
 import java.util.Comparator;
 
 import org.apache.commons.math.FunctionEvaluationException;
-import org.apache.commons.math.optimization.OptimizationException;
 import org.apache.commons.math.optimization.RealPointValuePair;
 
 /**
  * This class implements the Nelder-Mead direct search method.
  *
- * @version $Revision: 811685 $ $Date: 2009-09-05 19:36:48 +0200 (Sa, 05 Sep 2009) $
+ * @version $Revision: 990792 $ $Date: 2010-08-30 15:06:22 +0200 (Mo, 30 Aug 2010) $
  * @see MultiDirectional
  * @since 1.2
  */
@@ -72,9 +71,7 @@ public class NelderMead extends DirectSearchOptimizer {
     /** {@inheritDoc} */
     @Override
     protected void iterateSimplex(final Comparator<RealPointValuePair> comparator)
-        throws FunctionEvaluationException, OptimizationException {
-
-        incrementIterationsCounter();
+        throws FunctionEvaluationException {
 
         // the simplex has n+1 point if dimension is n
         final int n = simplex.length - 1;
@@ -104,7 +101,8 @@ public class NelderMead extends DirectSearchOptimizer {
         for (int j = 0; j < n; ++j) {
             xR[j] = centroid[j] + rho * (centroid[j] - xWorst[j]);
         }
-        final RealPointValuePair reflected = new RealPointValuePair(xR, evaluate(xR), false);
+        final RealPointValuePair reflected
+            = new RealPointValuePair(xR, computeObjectiveValue(xR), false);
 
         if ((comparator.compare(best, reflected) <= 0) &&
             (comparator.compare(reflected, secondBest) < 0)) {
@@ -119,7 +117,8 @@ public class NelderMead extends DirectSearchOptimizer {
             for (int j = 0; j < n; ++j) {
                 xE[j] = centroid[j] + khi * (xR[j] - centroid[j]);
             }
-            final RealPointValuePair expanded = new RealPointValuePair(xE, evaluate(xE), false);
+            final RealPointValuePair expanded
+                = new RealPointValuePair(xE, computeObjectiveValue(xE), false);
 
             if (comparator.compare(expanded, reflected) < 0) {
                 // accept the expansion point
@@ -138,7 +137,8 @@ public class NelderMead extends DirectSearchOptimizer {
                 for (int j = 0; j < n; ++j) {
                     xC[j] = centroid[j] + gamma * (xR[j] - centroid[j]);
                 }
-                final RealPointValuePair outContracted = new RealPointValuePair(xC, evaluate(xC), false);
+                final RealPointValuePair outContracted
+                    = new RealPointValuePair(xC, computeObjectiveValue(xC), false);
 
                 if (comparator.compare(outContracted, reflected) <= 0) {
                     // accept the contraction point
@@ -153,7 +153,8 @@ public class NelderMead extends DirectSearchOptimizer {
                 for (int j = 0; j < n; ++j) {
                     xC[j] = centroid[j] - gamma * (centroid[j] - xWorst[j]);
                 }
-                final RealPointValuePair inContracted = new RealPointValuePair(xC, evaluate(xC), false);
+                final RealPointValuePair inContracted
+                    = new RealPointValuePair(xC, computeObjectiveValue(xC), false);
 
                 if (comparator.compare(inContracted, worst) < 0) {
                     // accept the contraction point
@@ -173,9 +174,6 @@ public class NelderMead extends DirectSearchOptimizer {
                 simplex[i] = new RealPointValuePair(x, Double.NaN, false);
             }
             evaluateSimplex(comparator);
-
         }
-
     }
-
 }

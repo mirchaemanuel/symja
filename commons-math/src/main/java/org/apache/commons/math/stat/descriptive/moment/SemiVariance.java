@@ -18,7 +18,8 @@
 package org.apache.commons.math.stat.descriptive.moment;
 
 import java.io.Serializable;
-import org.apache.commons.math.MathRuntimeException;
+import org.apache.commons.math.exception.NullArgumentException;
+import org.apache.commons.math.exception.util.LocalizedFormats;
 import org.apache.commons.math.stat.descriptive.AbstractUnivariateStatistic;
 
 /**
@@ -46,7 +47,7 @@ import org.apache.commons.math.stat.descriptive.AbstractUnivariateStatistic;
  * more of these threads invoke property setters, external synchronization must
  * be provided to ensure correct results.</p>
  *
- * @version $Revision: 917275 $ $Date: 2010-02-28 20:43:11 +0100 (So, 28 Feb 2010) $
+ * @version $Revision: 983921 $ $Date: 2010-08-10 12:46:06 +0200 (Di, 10 Aug 2010) $
  * @since 2.1
  */
 
@@ -175,7 +176,7 @@ public class SemiVariance extends AbstractUnivariateStatistic implements Seriali
     @Override
     public double evaluate(final double[] values) {
         if (values == null) {
-            throw MathRuntimeException.createIllegalArgumentException("input values array is null");
+            throw new NullArgumentException(LocalizedFormats.INPUT_ARRAY);
          }
         return evaluate(values, 0, values.length);
     }

@@ -18,8 +18,10 @@ package org.apache.commons.math.distribution;
 
 import org.apache.commons.math.MathException;
 import org.apache.commons.math.MathRuntimeException;
+import org.apache.commons.math.exception.util.LocalizedFormats;
 import org.apache.commons.math.special.Gamma;
 import org.apache.commons.math.special.Beta;
+import org.apache.commons.math.util.FastMath;
 
 /**
  * Implements the Beta distribution.
@@ -30,7 +32,7 @@ import org.apache.commons.math.special.Beta;
  * Beta distribution</a></li>
  * </ul>
  * </p>
- * @version $Revision: 925900 $ $Date: 2010-03-21 22:10:07 +0100 (So, 21 Mrz 2010) $
+ * @version $Revision: 990658 $ $Date: 2010-08-30 00:04:09 +0200 (Mo, 30 Aug 2010) $
  * @since 2.0
  */
 public class BetaDistributionImpl
@@ -145,19 +147,19 @@ public class BetaDistributionImpl
         } else if (x == 0) {
             if (alpha < 1) {
                 throw MathRuntimeException.createIllegalArgumentException(
-                        "Cannot compute beta density at 0 when alpha = {0,number}", alpha);
+                        LocalizedFormats.CANNOT_COMPUTE_BETA_DENSITY_AT_0_FOR_SOME_ALPHA, alpha);
             }
             return 0;
         } else if (x == 1) {
             if (beta < 1) {
                 throw MathRuntimeException.createIllegalArgumentException(
-                        "Cannot compute beta density at 1 when beta = %.3g", beta);
+                        LocalizedFormats.CANNOT_COMPUTE_BETA_DENSITY_AT_1_FOR_SOME_BETA, beta);
             }
             return 0;
         } else {
-            double logX = Math.log(x);
-            double log1mX = Math.log1p(-x);
-            return Math.exp((alpha - 1) * logX + (beta - 1) * log1mX - z);
+            double logX = FastMath.log(x);
+            double log1mX = FastMath.log1p(-x);
+            return FastMath.exp((alpha - 1) * logX + (beta - 1) * log1mX - z);
         }
     }
 

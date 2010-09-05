@@ -21,6 +21,7 @@ import org.apache.commons.math.FunctionEvaluationException;
 import org.apache.commons.math.MathRuntimeException;
 import org.apache.commons.math.analysis.MultivariateRealFunction;
 import org.apache.commons.math.analysis.MultivariateVectorialFunction;
+import org.apache.commons.math.exception.util.LocalizedFormats;
 import org.apache.commons.math.linear.RealMatrix;
 
 /** This class converts {@link MultivariateVectorialFunction vectorial
@@ -50,7 +51,7 @@ import org.apache.commons.math.linear.RealMatrix;
   *
  * @see MultivariateRealFunction
  * @see MultivariateVectorialFunction
- * @version $Revision: 811685 $ $Date: 2009-09-05 19:36:48 +0200 (Sa, 05 Sep 2009) $
+ * @version $Revision: 983921 $ $Date: 2010-08-10 12:46:06 +0200 (Di, 10 Aug 2010) $
  * @since 2.0
  */
 
@@ -113,7 +114,7 @@ public class LeastSquaresConverter implements MultivariateRealFunction {
         throws IllegalArgumentException {
         if (observations.length != weights.length) {
             throw MathRuntimeException.createIllegalArgumentException(
-                    "dimension mismatch {0} != {1}",
+                    LocalizedFormats.DIMENSIONS_MISMATCH_SIMPLE,
                     observations.length, weights.length);
         }
         this.function     = function;
@@ -146,7 +147,7 @@ public class LeastSquaresConverter implements MultivariateRealFunction {
         throws IllegalArgumentException {
         if (observations.length != scale.getColumnDimension()) {
             throw MathRuntimeException.createIllegalArgumentException(
-                    "dimension mismatch {0} != {1}",
+                    LocalizedFormats.DIMENSIONS_MISMATCH_SIMPLE,
                     observations.length, scale.getColumnDimension());
         }
         this.function     = function;
@@ -161,7 +162,7 @@ public class LeastSquaresConverter implements MultivariateRealFunction {
         // compute residuals
         final double[] residuals = function.value(point);
         if (residuals.length != observations.length) {
-            throw new FunctionEvaluationException(point, "dimension mismatch {0} != {1}",
+            throw new FunctionEvaluationException(point, LocalizedFormats.DIMENSIONS_MISMATCH_SIMPLE,
                                                   residuals.length, observations.length);
         }
         for (int i = 0; i < residuals.length; ++i) {

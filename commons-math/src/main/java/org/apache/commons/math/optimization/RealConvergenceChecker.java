@@ -30,10 +30,10 @@ package org.apache.commons.math.optimization;
  * considers convergence is reached when the input point set does not change
  * much anymore, it does not use objective function value at all.</p>
  *
- * @version $Revision: 799857 $ $Date: 2009-08-01 15:07:12 +0200 (Sa, 01 Aug 2009) $
+ * @version $Revision: 990792 $ $Date: 2010-08-30 15:06:22 +0200 (Mo, 30 Aug 2010) $
  * @since 2.0
+ * @deprecated To be removed in 3.0.
  */
-
 public interface RealConvergenceChecker {
 
   /** Check if the optimization algorithm has converged considering the last points.

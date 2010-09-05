@@ -22,13 +22,15 @@ import java.io.Serializable;
 import org.apache.commons.math.MathException;
 import org.apache.commons.math.MathRuntimeException;
 import org.apache.commons.math.MaxIterationsExceededException;
+import org.apache.commons.math.exception.util.LocalizedFormats;
 import org.apache.commons.math.special.Erf;
+import org.apache.commons.math.util.FastMath;
 
 /**
  * Default implementation of
  * {@link org.apache.commons.math.distribution.NormalDistribution}.
  *
- * @version $Revision: 925812 $ $Date: 2010-03-21 16:49:31 +0100 (So, 21 Mrz 2010) $
+ * @version $Revision: 990658 $ $Date: 2010-08-30 00:04:09 +0200 (Mo, 30 Aug 2010) $
  */
 public class NormalDistributionImpl extends AbstractContinuousDistribution
         implements NormalDistribution, Serializable {
@@ -43,7 +45,7 @@ public class NormalDistributionImpl extends AbstractContinuousDistribution
     private static final long serialVersionUID = 8589540077390120676L;
 
     /** &sqrt;(2 &pi;) */
-    private static final double SQRT2PI = Math.sqrt(2 * Math.PI);
+    private static final double SQRT2PI = FastMath.sqrt(2 * FastMath.PI);
 
     /** The mean of this distribution. */
     private double mean = 0;
@@ -138,7 +140,7 @@ public class NormalDistributionImpl extends AbstractContinuousDistribution
     private void setStandardDeviationInternal(double sd) {
         if (sd <= 0.0) {
             throw MathRuntimeException.createIllegalArgumentException(
-                  "standard deviation must be positive ({0})",
+                  LocalizedFormats.NOT_POSITIVE_STANDARD_DEVIATION,
                   sd);
         }
         standardDeviation = sd;
@@ -164,7 +166,7 @@ public class NormalDistributionImpl extends AbstractContinuousDistribution
      */
     public double density(double x) {
         double x0 = x - mean;
-        return Math.exp(-x0 * x0 / (2 * standardDeviation * standardDeviation)) / (standardDeviation * SQRT2PI);
+        return FastMath.exp(-x0 * x0 / (2 * standardDeviation * standardDeviation)) / (standardDeviation * SQRT2PI);
     }
 
     /**
@@ -178,7 +180,7 @@ public class NormalDistributionImpl extends AbstractContinuousDistribution
     public double cumulativeProbability(double x) throws MathException {
         try {
             return 0.5 * (1.0 + Erf.erf((x - mean) /
-                    (standardDeviation * Math.sqrt(2.0))));
+                    (standardDeviation * FastMath.sqrt(2.0))));
         } catch (MaxIterationsExceededException ex) {
             if (x < (mean - 20 * standardDeviation)) { // JDK 1.5 blows at 38
                 return 0.0d;
@@ -226,6 +228,18 @@ public class NormalDistributionImpl extends AbstractContinuousDistribution
             return Double.POSITIVE_INFINITY;
         }
         return super.inverseCumulativeProbability(p);
+    }
+
+    /**
+     * Generates a random value sampled from this distribution.
+     *
+     * @return random value
+     * @since 2.2
+     * @throws MathException if an error occurs generating the random value
+     */
+    @Override
+    public double sample() throws MathException {
+        return randomData.nextGaussian(mean, standardDeviation);
     }
 
     /**

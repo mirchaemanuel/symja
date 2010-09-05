@@ -26,6 +26,7 @@ import org.apache.commons.math.MathRuntimeException;
 import org.apache.commons.math.random.RandomData;
 import org.apache.commons.math.random.RandomDataImpl;
 import org.apache.commons.math.random.RandomGenerator;
+import org.apache.commons.math.util.FastMath;
 
 
 /**
@@ -65,7 +66,7 @@ import org.apache.commons.math.random.RandomGenerator;
  * <td>(6, 5, 7, 8, 5, 9, 2, 2, 5)</td></tr></table></p>
  *
  * @since 2.0
- * @version $Revision: 811827 $ $Date: 2009-09-06 17:32:50 +0200 (So, 06 Sep 2009) $
+ * @version $Revision: 990658 $ $Date: 2010-08-30 00:04:09 +0200 (Mo, 30 Aug 2010) $
  */
 public class NaturalRanking implements RankingAlgorithm {
 
@@ -342,7 +343,7 @@ public class NaturalRanking implements RankingAlgorithm {
                 break;
             case RANDOM:    // Fill with random integral values in [c, c + length - 1]
                 Iterator<Integer> iterator = tiesTrace.iterator();
-                long f = Math.round(c);
+                long f = FastMath.round(c);
                 while (iterator.hasNext()) {
                     ranks[iterator.next()] =
                         randomData.nextLong(f, f + length - 1);
@@ -351,7 +352,7 @@ public class NaturalRanking implements RankingAlgorithm {
             case SEQUENTIAL:  // Fill sequentially from c to c + length - 1
                 // walk and fill
                 iterator = tiesTrace.iterator();
-                f = Math.round(c);
+                f = FastMath.round(c);
                 int i = 0;
                 while (iterator.hasNext()) {
                     ranks[iterator.next()] = f + i++;

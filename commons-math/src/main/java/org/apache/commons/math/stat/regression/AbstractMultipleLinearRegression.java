@@ -17,14 +17,17 @@
 package org.apache.commons.math.stat.regression;
 
 import org.apache.commons.math.MathRuntimeException;
+import org.apache.commons.math.exception.util.LocalizedFormats;
 import org.apache.commons.math.linear.RealMatrix;
 import org.apache.commons.math.linear.Array2DRowRealMatrix;
 import org.apache.commons.math.linear.RealVector;
 import org.apache.commons.math.linear.ArrayRealVector;
+import org.apache.commons.math.stat.descriptive.moment.Variance;
+import org.apache.commons.math.util.FastMath;
 
 /**
  * Abstract base class for implementations of MultipleLinearRegression.
- * @version $Revision: 811685 $ $Date: 2009-09-05 19:36:48 +0200 (Sa, 05 Sep 2009) $
+ * @version $Revision: 990658 $ $Date: 2010-08-30 00:04:09 +0200 (Mo, 30 Aug 2010) $
  * @since 2.0
  */
 public abstract class AbstractMultipleLinearRegression implements
@@ -88,12 +91,12 @@ public abstract class AbstractMultipleLinearRegression implements
     protected void validateSampleData(double[][] x, double[] y) {
         if ((x == null) || (y == null) || (x.length != y.length)) {
             throw MathRuntimeException.createIllegalArgumentException(
-                  "dimension mismatch {0} != {1}",
+                  LocalizedFormats.DIMENSIONS_MISMATCH_SIMPLE,
                   (x == null) ? 0 : x.length,
                   (y == null) ? 0 : y.length);
         } else if ((x.length > 0) && (x[0].length > x.length)) {
             throw MathRuntimeException.createIllegalArgumentException(
-                  "not enough data ({0} rows) for this many predictors ({1} predictors)",
+                  LocalizedFormats.NOT_ENOUGH_DATA_FOR_NUMBER_OF_PREDICTORS,
                   x.length, x[0].length);
         }
     }
@@ -109,11 +112,11 @@ public abstract class AbstractMultipleLinearRegression implements
     protected void validateCovarianceData(double[][] x, double[][] covariance) {
         if (x.length != covariance.length) {
             throw MathRuntimeException.createIllegalArgumentException(
-                 "dimension mismatch {0} != {1}", x.length, covariance.length);
+                 LocalizedFormats.DIMENSIONS_MISMATCH_SIMPLE, x.length, covariance.length);
         }
         if (covariance.length > 0 && covariance.length != covariance[0].length) {
             throw MathRuntimeException.createIllegalArgumentException(
-                  "a {0}x{1} matrix was provided instead of a square matrix",
+                  LocalizedFormats.NON_SQUARE_MATRIX,
                   covariance.length, covariance[0].length);
         }
     }
@@ -147,11 +150,11 @@ public abstract class AbstractMultipleLinearRegression implements
      */
     public double[] estimateRegressionParametersStandardErrors() {
         double[][] betaVariance = estimateRegressionParametersVariance();
-        double sigma = calculateYVariance();
+        double sigma = calculateErrorVariance();
         int length = betaVariance[0].length;
         double[] result = new double[length];
         for (int i = 0; i < length; i++) {
-            result[i] = Math.sqrt(sigma * betaVariance[i][i]);
+            result[i] = FastMath.sqrt(sigma * betaVariance[i][i]);
         }
         return result;
     }
@@ -161,6 +164,25 @@ public abstract class AbstractMultipleLinearRegression implements
      */
     public double estimateRegressandVariance() {
         return calculateYVariance();
+    }
+
+    /**
+     * Estimates the variance of the error.
+     *
+     * @return estimate of the error variance
+     */
+    public double estimateErrorVariance() {
+        return calculateErrorVariance();
+
+    }
+
+    /**
+     * Estimates the standard error of the regression.
+     *
+     * @return regression standard error
+     */
+    public double estimateRegressionStandardError() {
+        return Math.sqrt(estimateErrorVariance());
     }
 
     /**
@@ -178,12 +200,31 @@ public abstract class AbstractMultipleLinearRegression implements
      */
     protected abstract RealMatrix calculateBetaVariance();
 
+
     /**
-     * Calculates the Y variance of multiple linear regression.
+     * Calculates the variance of the y values.
      *
      * @return Y variance
      */
-    protected abstract double calculateYVariance();
+    protected double calculateYVariance() {
+        return new Variance().evaluate(Y.getData());
+    }
+
+    /**
+     * <p>Calculates the variance of the error term.</p>
+     * Uses the formula <pre>
+     * var(u) = u &middot; u / (n - k)
+     * </pre>
+     * where n and k are the row and column dimensions of the design
+     * matrix X.
+     *
+     * @return error variance estimate
+     */
+    protected double calculateErrorVariance() {
+        RealVector residuals = calculateResiduals();
+        return residuals.dotProduct(residuals) /
+               (X.getRowDimension() - X.getColumnDimension());
+    }
 
     /**
      * Calculates the residuals of multiple linear regression in matrix

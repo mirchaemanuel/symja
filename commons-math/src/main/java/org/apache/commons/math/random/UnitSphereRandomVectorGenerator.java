@@ -17,12 +17,14 @@
 
 package org.apache.commons.math.random;
 
+import org.apache.commons.math.util.FastMath;
+
 
 /**
  * Generate random vectors isotropically located on the surface of a sphere.
  *
  * @since 2.1
- * @version $Revision: 925812 $ $Date: 2010-03-21 16:49:31 +0100 (So, 21 Mrz 2010) $
+ * @version $Revision: 990658 $ $Date: 2010-08-30 00:04:09 +0200 (Mo, 30 Aug 2010) $
  */
 
 public class UnitSphereRandomVectorGenerator
@@ -70,7 +72,7 @@ public class UnitSphereRandomVectorGenerator
             }
         } while (normSq > 1);
 
-        final double f = 1 / Math.sqrt(normSq);
+        final double f = 1 / FastMath.sqrt(normSq);
         for (int i = 0; i < dimension; i++) {
             v[i] *= f;
         }

@@ -19,6 +19,7 @@ package org.apache.commons.math.stat.descriptive.moment;
 import java.io.Serializable;
 
 import org.apache.commons.math.stat.descriptive.AbstractStorelessUnivariateStatistic;
+import org.apache.commons.math.util.FastMath;
 
 /**
  * Computes the skewness of the available values.
@@ -35,7 +36,7 @@ import org.apache.commons.math.stat.descriptive.AbstractStorelessUnivariateStati
  * one of the threads invokes the <code>increment()</code> or
  * <code>clear()</code> method, it must be synchronized externally. </p>
  *
- * @version $Revision: 811833 $ $Date: 2009-09-06 18:27:50 +0200 (So, 06 Sep 2009) $
+ * @version $Revision: 990658 $ $Date: 2010-08-30 00:04:09 +0200 (Mo, 30 Aug 2010) $
  */
 public class Skewness extends AbstractStorelessUnivariateStatistic implements Serializable {
 
@@ -109,7 +110,7 @@ public class Skewness extends AbstractStorelessUnivariateStatistic implements Se
         } else {
             double n0 = moment.getN();
             return  (n0 * moment.m3) /
-            ((n0 - 1) * (n0 -2) * Math.sqrt(variance) * variance);
+            ((n0 - 1) * (n0 -2) * FastMath.sqrt(variance) * variance);
         }
     }
 
@@ -175,7 +176,7 @@ public class Skewness extends AbstractStorelessUnivariateStatistic implements Se
                 final double d = values[i] - m;
                 accum3 += d * d * d;
             }
-            accum3 /= variance * Math.sqrt(variance);
+            accum3 /= variance * FastMath.sqrt(variance);
 
             // Get N
             double n0 = length;

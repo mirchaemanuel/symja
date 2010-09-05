@@ -22,8 +22,10 @@ import java.util.List;
 import java.io.Serializable;
 
 import org.apache.commons.math.MathRuntimeException;
+import org.apache.commons.math.exception.util.LocalizedFormats;
 import org.apache.commons.math.ode.sampling.StepHandler;
 import org.apache.commons.math.ode.sampling.StepInterpolator;
+import org.apache.commons.math.util.FastMath;
 
 /**
  * This class stores all information provided by an ODE integrator
@@ -79,7 +81,7 @@ import org.apache.commons.math.ode.sampling.StepInterpolator;
  *
  * @see StepHandler
  * @see StepInterpolator
- * @version $Revision: 811827 $ $Date: 2009-09-06 17:32:50 +0200 (So, 06 Sep 2009) $
+ * @version $Revision: 990658 $ $Date: 2010-08-30 00:04:09 +0200 (Mo, 30 Aug 2010) $
  * @since 1.2
  */
 
@@ -134,13 +136,13 @@ public class ContinuousOutputModel
 
       if (getInterpolatedState().length != model.getInterpolatedState().length) {
           throw MathRuntimeException.createIllegalArgumentException(
-                "dimension mismatch {0} != {1}",
+                LocalizedFormats.DIMENSIONS_MISMATCH_SIMPLE,
                 getInterpolatedState().length, model.getInterpolatedState().length);
       }
 
       if (forward ^ model.forward) {
           throw MathRuntimeException.createIllegalArgumentException(
-                "propagation direction mismatch");
+                LocalizedFormats.PROPAGATION_DIRECTION_MISMATCH);
       }
 
       final StepInterpolator lastInterpolator = steps.get(index);
@@ -148,9 +150,9 @@ public class ContinuousOutputModel
       final double previous = lastInterpolator.getPreviousTime();
       final double step = current - previous;
       final double gap = model.getInitialTime() - current;
-      if (Math.abs(gap) > 1.0e-3 * Math.abs(step)) {
+      if (FastMath.abs(gap) > 1.0e-3 * FastMath.abs(step)) {
         throw MathRuntimeException.createIllegalArgumentException(
-              "{0} wide hole between models time ranges", Math.abs(gap));
+              LocalizedFormats.HOLE_BETWEEN_MODELS_TIME_RANGES, FastMath.abs(gap));
       }
 
     }
@@ -296,7 +298,7 @@ public class ContinuousOutputModel
         final StepInterpolator sMed = steps.get(iMed);
         final double tMed = 0.5 * (sMed.getPreviousTime() + sMed.getCurrentTime());
 
-        if ((Math.abs(tMed - tMin) < 1e-6) || (Math.abs(tMax - tMed) < 1e-6)) {
+        if ((FastMath.abs(tMed - tMin) < 1e-6) || (FastMath.abs(tMax - tMed) < 1e-6)) {
           // too close to the bounds, we estimate using a simple dichotomy
           index = iMed;
         } else {
@@ -313,12 +315,12 @@ public class ContinuousOutputModel
                                     (dt1 * dt3 * d13) * iMed +
                                     (dt1 * dt2 * d12) * iMin) /
                                    (d12 * d23 * d13);
-          index = (int) Math.rint(iLagrange);
+          index = (int) FastMath.rint(iLagrange);
         }
 
         // force the next size reduction to be at least one tenth
-        final int low  = Math.max(iMin + 1, (9 * iMin + iMax) / 10);
-        final int high = Math.min(iMax - 1, (iMin + 9 * iMax) / 10);
+        final int low  = FastMath.max(iMin + 1, (9 * iMin + iMax) / 10);
+        final int high = FastMath.min(iMax - 1, (iMin + 9 * iMax) / 10);
         if (index < low) {
           index = low;
         } else if (index > high) {

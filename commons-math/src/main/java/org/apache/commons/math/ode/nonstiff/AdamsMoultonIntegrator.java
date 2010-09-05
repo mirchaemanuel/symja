@@ -28,6 +28,7 @@ import org.apache.commons.math.ode.IntegratorException;
 import org.apache.commons.math.ode.events.CombinedEventsManager;
 import org.apache.commons.math.ode.sampling.NordsieckStepInterpolator;
 import org.apache.commons.math.ode.sampling.StepHandler;
+import org.apache.commons.math.util.FastMath;
 
 
 /**
@@ -152,10 +153,13 @@ import org.apache.commons.math.ode.sampling.StepHandler;
  * <p>The P<sup>-1</sup>u vector and the P<sup>-1</sup> A P matrix do not depend on the state,
  * they only depend on k and therefore are precomputed once for all.</p>
  *
- * @version $Revision: 927202 $ $Date: 2010-03-24 23:11:51 +0100 (Mi, 24 Mrz 2010) $
+ * @version $Revision: 990658 $ $Date: 2010-08-30 00:04:09 +0200 (Mo, 30 Aug 2010) $
  * @since 2.0
  */
 public class AdamsMoultonIntegrator extends AdamsIntegrator {
+
+    /** Integrator method name. */
+    private static final String METHOD_NAME = "Adams-Moulton";
 
     /**
      * Build an Adams-Moulton integrator with the given order and error control parameters.
@@ -173,7 +177,7 @@ public class AdamsMoultonIntegrator extends AdamsIntegrator {
                                   final double scalAbsoluteTolerance,
                                   final double scalRelativeTolerance)
         throws IllegalArgumentException {
-        super("Adams-Moulton", nSteps, nSteps + 1, minStep, maxStep,
+        super(METHOD_NAME, nSteps, nSteps + 1, minStep, maxStep,
               scalAbsoluteTolerance, scalRelativeTolerance);
     }
 
@@ -193,7 +197,7 @@ public class AdamsMoultonIntegrator extends AdamsIntegrator {
                                   final double[] vecAbsoluteTolerance,
                                   final double[] vecRelativeTolerance)
         throws IllegalArgumentException {
-        super("Adams-Moulton", nSteps, nSteps + 1, minStep, maxStep,
+        super(METHOD_NAME, nSteps, nSteps + 1, minStep, maxStep,
               vecAbsoluteTolerance, vecRelativeTolerance);
     }
 
@@ -288,7 +292,7 @@ public class AdamsMoultonIntegrator extends AdamsIntegrator {
                     interpolatorTmp.storeTime(stepEnd);
                     if (manager.evaluateStep(interpolatorTmp)) {
                         final double dt = manager.getEventTime() - stepStart;
-                        if (Math.abs(dt) <= Math.ulp(stepStart)) {
+                        if (FastMath.abs(dt) <= FastMath.ulp(stepStart)) {
                             // we cannot simply truncate the step, reject the current computation
                             // and let the loop compute another state with the truncated step.
                             // it is so small (much probably exactly 0 due to limited accuracy)
@@ -419,7 +423,7 @@ public class AdamsMoultonIntegrator extends AdamsIntegrator {
         }
 
         /**
-         * End visiting te Nordsieck vector.
+         * End visiting the Nordsieck vector.
          * <p>The correction is used to control stepsize. So its amplitude is
          * considered to be an error, which must be normalized according to
          * error control settings. If the normalized value is greater than 1,
@@ -432,15 +436,17 @@ public class AdamsMoultonIntegrator extends AdamsIntegrator {
             double error = 0;
             for (int i = 0; i < after.length; ++i) {
                 after[i] += previous[i] + scaled[i];
-                final double yScale = Math.max(Math.abs(previous[i]), Math.abs(after[i]));
-                final double tol = (vecAbsoluteTolerance == null) ?
-                                   (scalAbsoluteTolerance + scalRelativeTolerance * yScale) :
-                                   (vecAbsoluteTolerance[i] + vecRelativeTolerance[i] * yScale);
-                final double ratio  = (after[i] - before[i]) / tol;
-                error += ratio * ratio;
+                if (i < mainSetDimension) {
+                    final double yScale = FastMath.max(FastMath.abs(previous[i]), FastMath.abs(after[i]));
+                    final double tol = (vecAbsoluteTolerance == null) ?
+                                       (scalAbsoluteTolerance + scalRelativeTolerance * yScale) :
+                                       (vecAbsoluteTolerance[i] + vecRelativeTolerance[i] * yScale);
+                    final double ratio  = (after[i] - before[i]) / tol;
+                    error += ratio * ratio;
+                }
             }
 
-            return Math.sqrt(error / after.length);
+            return FastMath.sqrt(error / mainSetDimension);
 
         }
     }

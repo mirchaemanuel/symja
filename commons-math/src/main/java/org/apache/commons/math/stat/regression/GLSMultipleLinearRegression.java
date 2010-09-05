@@ -21,7 +21,6 @@ import org.apache.commons.math.linear.RealMatrix;
 import org.apache.commons.math.linear.Array2DRowRealMatrix;
 import org.apache.commons.math.linear.RealVector;
 
-
 /**
  * The GLS implementation of the multiple linear regression.
  *
@@ -38,7 +37,7 @@ import org.apache.commons.math.linear.RealVector;
  * <pre>
  * Var(b)=(X' Omega^-1 X)^-1
  * </pre>
- * @version $Revision: 811685 $ $Date: 2009-09-05 19:36:48 +0200 (Sa, 05 Sep 2009) $
+ * @version $Revision: 987897 $ $Date: 2010-08-22 15:13:35 +0200 (So, 22 Aug 2010) $
  * @since 2.0
  */
 public class GLSMultipleLinearRegression extends AbstractMultipleLinearRegression {
@@ -101,7 +100,7 @@ public class GLSMultipleLinearRegression extends AbstractMultipleLinearRegressio
     }
 
     /**
-     * Calculates the variance on the beta by GLS.
+     * Calculates the variance on the beta.
      * <pre>
      *  Var(b)=(X' Omega^-1 X)^-1
      * </pre>
@@ -114,18 +113,23 @@ public class GLSMultipleLinearRegression extends AbstractMultipleLinearRegressio
         return new LUDecompositionImpl(XTOIX).getSolver().getInverse();
     }
 
+
     /**
-     * Calculates the variance on the y by GLS.
+     * Calculates the estimated variance of the error term using the formula
      * <pre>
-     *  Var(y)=Tr(u' Omega^-1 u)/(n-k)
+     *  Var(u) = Tr(u' Omega^-1 u)/(n-k)
      * </pre>
-     * @return The Y variance
+     * where n and k are the row and column dimensions of the design
+     * matrix X.
+     *
+     * @return error variance
      */
     @Override
-    protected double calculateYVariance() {
+    protected double calculateErrorVariance() {
         RealVector residuals = calculateResiduals();
         double t = residuals.dotProduct(getOmegaInverse().operate(residuals));
         return t / (X.getRowDimension() - X.getColumnDimension());
+
     }
 
 }

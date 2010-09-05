@@ -22,14 +22,16 @@ import java.util.Collection;
 import java.util.Collections;
 
 import org.apache.commons.math.MaxEvaluationsExceededException;
+import org.apache.commons.math.exception.util.LocalizedFormats;
 import org.apache.commons.math.ode.events.CombinedEventsManager;
 import org.apache.commons.math.ode.events.EventHandler;
 import org.apache.commons.math.ode.events.EventState;
 import org.apache.commons.math.ode.sampling.StepHandler;
+import org.apache.commons.math.util.FastMath;
 
 /**
  * Base class managing common boilerplate for all integrators.
- * @version $Revision: 811827 $ $Date: 2009-09-06 17:32:50 +0200 (So, 06 Sep 2009) $
+ * @version $Revision: 990658 $ $Date: 2010-08-30 00:04:09 +0200 (Mo, 30 Aug 2010) $
  * @since 2.0
  */
 public abstract class AbstractIntegrator implements FirstOrderIntegrator {
@@ -197,22 +199,18 @@ public abstract class AbstractIntegrator implements FirstOrderIntegrator {
 
         if (ode.getDimension() != y0.length) {
             throw new IntegratorException(
-                    "dimensions mismatch: ODE problem has dimension {0}," +
-                    " initial state vector has dimension {1}",
-                    ode.getDimension(), y0.length);
+                    LocalizedFormats.DIMENSIONS_MISMATCH_SIMPLE, ode.getDimension(), y0.length);
         }
 
         if (ode.getDimension() != y.length) {
             throw new IntegratorException(
-                    "dimensions mismatch: ODE problem has dimension {0}," +
-                    " final state vector has dimension {1}",
-                    ode.getDimension(), y.length);
+                    LocalizedFormats.DIMENSIONS_MISMATCH_SIMPLE, ode.getDimension(), y.length);
         }
 
-        if (Math.abs(t - t0) <= 1.0e-12 * Math.max(Math.abs(t0), Math.abs(t))) {
+        if (FastMath.abs(t - t0) <= 1.0e-12 * FastMath.max(FastMath.abs(t0), FastMath.abs(t))) {
             throw new IntegratorException(
-                    "too small integration interval: length = {0}",
-                    Math.abs(t - t0));
+                    LocalizedFormats.TOO_SMALL_INTEGRATION_INTERVAL,
+                    FastMath.abs(t - t0));
         }
 
     }
@@ -239,7 +237,7 @@ public abstract class AbstractIntegrator implements FirstOrderIntegrator {
         }
         newManager.addEventHandler(new EndTimeChecker(endTime),
                                    Double.POSITIVE_INFINITY,
-                                   Math.ulp(Math.max(Math.abs(startTime), Math.abs(endTime))),
+                                   FastMath.ulp(FastMath.max(FastMath.abs(startTime), FastMath.abs(endTime))),
                                    100);
         return newManager;
     }

@@ -17,12 +17,14 @@
 package org.apache.commons.math.stat.descriptive;
 
 import java.io.Serializable;
+
+import org.apache.commons.math.util.FastMath;
 import org.apache.commons.math.util.MathUtils;
 
 /**
  *  Value object representing the results of a univariate statistical summary.
  *
- * @version $Revision: 811833 $ $Date: 2009-09-06 18:27:50 +0200 (So, 06 Sep 2009) $
+ * @version $Revision: 990658 $ $Date: 2010-08-30 00:04:09 +0200 (Mo, 30 Aug 2010) $
  */
 public class StatisticalSummaryValues implements Serializable,
     StatisticalSummary {
@@ -108,7 +110,7 @@ public class StatisticalSummaryValues implements Serializable,
      * @return Returns the standard deviation
      */
     public double getStandardDeviation() {
-        return Math.sqrt(variance);
+        return FastMath.sqrt(variance);
     }
 
     /**
@@ -135,12 +137,12 @@ public class StatisticalSummaryValues implements Serializable,
             return false;
         }
         StatisticalSummaryValues stat = (StatisticalSummaryValues) object;
-        return MathUtils.equals(stat.getMax(),      getMax())  &&
-               MathUtils.equals(stat.getMean(),     getMean()) &&
-               MathUtils.equals(stat.getMin(),      getMin())  &&
-               MathUtils.equals(stat.getN(),        getN())    &&
-               MathUtils.equals(stat.getSum(),      getSum())  &&
-               MathUtils.equals(stat.getVariance(), getVariance());
+        return MathUtils.equalsIncludingNaN(stat.getMax(),      getMax())  &&
+               MathUtils.equalsIncludingNaN(stat.getMean(),     getMean()) &&
+               MathUtils.equalsIncludingNaN(stat.getMin(),      getMin())  &&
+               MathUtils.equalsIncludingNaN(stat.getN(),        getN())    &&
+               MathUtils.equalsIncludingNaN(stat.getSum(),      getSum())  &&
+               MathUtils.equalsIncludingNaN(stat.getVariance(), getVariance());
     }
 
     /**

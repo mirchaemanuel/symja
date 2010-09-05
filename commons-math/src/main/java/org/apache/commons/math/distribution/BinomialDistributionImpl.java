@@ -20,12 +20,14 @@ import java.io.Serializable;
 
 import org.apache.commons.math.MathException;
 import org.apache.commons.math.MathRuntimeException;
+import org.apache.commons.math.exception.util.LocalizedFormats;
 import org.apache.commons.math.special.Beta;
+import org.apache.commons.math.util.FastMath;
 
 /**
  * The default implementation of {@link BinomialDistribution}.
  *
- * @version $Revision: 920852 $ $Date: 2010-03-09 13:53:44 +0100 (Di, 09 Mrz 2010) $
+ * @version $Revision: 990658 $ $Date: 2010-08-30 00:04:09 +0200 (Mo, 30 Aug 2010) $
  */
 public class BinomialDistributionImpl extends AbstractIntegerDistribution
         implements BinomialDistribution, Serializable {
@@ -92,7 +94,7 @@ public class BinomialDistributionImpl extends AbstractIntegerDistribution
     private void setNumberOfTrialsInternal(int trials) {
         if (trials < 0) {
             throw MathRuntimeException.createIllegalArgumentException(
-                    "number of trials must be non-negative ({0})", trials);
+                    LocalizedFormats.NEGATIVE_NUMBER_OF_TRIALS, trials);
         }
         numberOfTrials = trials;
     }
@@ -119,7 +121,7 @@ public class BinomialDistributionImpl extends AbstractIntegerDistribution
     private void setProbabilityOfSuccessInternal(double p) {
         if (p < 0.0 || p > 1.0) {
             throw MathRuntimeException.createIllegalArgumentException(
-                    "{0} out of [{1}, {2}] range", p, 0.0, 1.0);
+                    LocalizedFormats.OUT_OF_RANGE_SIMPLE, p, 0.0, 1.0);
         }
         probabilityOfSuccess = p;
     }
@@ -183,7 +185,7 @@ public class BinomialDistributionImpl extends AbstractIntegerDistribution
         if (x < 0 || x > numberOfTrials) {
             ret = 0.0;
         } else {
-            ret = Math.exp(SaddlePointExpansion.logBinomialProbability(x,
+            ret = FastMath.exp(SaddlePointExpansion.logBinomialProbability(x,
                     numberOfTrials, probabilityOfSuccess,
                     1.0 - probabilityOfSuccess));
         }

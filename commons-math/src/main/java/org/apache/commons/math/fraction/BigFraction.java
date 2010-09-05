@@ -22,13 +22,16 @@ import java.math.BigInteger;
 
 import org.apache.commons.math.FieldElement;
 import org.apache.commons.math.MathRuntimeException;
+import org.apache.commons.math.exception.util.LocalizedFormats;
+import org.apache.commons.math.exception.NullArgumentException;
 import org.apache.commons.math.util.MathUtils;
+import org.apache.commons.math.util.FastMath;
 
 /**
  * Representation of a rational number without any overflow. This class is
  * immutable.
  *
- * @version $Revision: 906251 $ $Date: 2010-02-03 22:19:54 +0100 (Mi, 03 Feb 2010) $
+ * @version $Revision: 990658 $ $Date: 2010-08-30 00:04:09 +0200 (Mo, 30 Aug 2010) $
  * @since 2.0
  */
 public class BigFraction
@@ -80,10 +83,6 @@ public class BigFraction
     /** Serializable version identifier. */
     private static final long serialVersionUID = -5630213147331578515L;
 
-    /** Message for zero denominator. */
-    private static final String FORBIDDEN_ZERO_DENOMINATOR =
-        "denominator must be different from 0";
-
     /** <code>BigInteger</code> representation of 100. */
     private static final BigInteger ONE_HUNDRED_DOUBLE = BigInteger.valueOf(100);
 
@@ -107,29 +106,22 @@ public class BigFraction
     }
 
     /**
-     * <p>
      * Create a {@link BigFraction} given the numerator and denominator as
-     * <code>BigInteger</code>. The {@link BigFraction} is reduced to lowest terms.
-     * </p>
+     * {@code BigInteger}. The {@link BigFraction} is reduced to lowest terms.
      *
-     * @param num
-     *            the numerator, must not be <code>null</code>.
-     * @param den
-     *            the denominator, must not be <code>null</code>.
-     * @throws ArithmeticException
-     *             if the denominator is <code>zero</code>.
-     * @throws NullPointerException
-     *             if the numerator or the denominator is <code>zero</code>.
+     * @param num the numerator, must not be {@code null}.
+     * @param den the denominator, must not be {@code null}..
+     * @throws ArithmeticException if the denominator is zero.
      */
     public BigFraction(BigInteger num, BigInteger den) {
         if (num == null) {
-            throw MathRuntimeException.createNullPointerException("numerator is null");
+            throw new NullArgumentException(LocalizedFormats.NUMERATOR);
         }
         if (den == null) {
-            throw MathRuntimeException.createNullPointerException("denominator is null");
+            throw new NullArgumentException(LocalizedFormats.DENOMINATOR);
         }
         if (BigInteger.ZERO.equals(den)) {
-            throw MathRuntimeException.createArithmeticException(FORBIDDEN_ZERO_DENOMINATOR);
+            throw MathRuntimeException.createArithmeticException(LocalizedFormats.ZERO_DENOMINATOR);
         }
         if (BigInteger.ZERO.equals(num)) {
             numerator   = BigInteger.ZERO;
@@ -179,10 +171,10 @@ public class BigFraction
      */
     public BigFraction(final double value) throws IllegalArgumentException {
         if (Double.isNaN(value)) {
-            throw MathRuntimeException.createIllegalArgumentException("cannot convert NaN value");
+            throw MathRuntimeException.createIllegalArgumentException(LocalizedFormats.NAN_VALUE_CONVERSION);
         }
         if (Double.isInfinite(value)) {
-            throw MathRuntimeException.createIllegalArgumentException("cannot convert infinite value");
+            throw MathRuntimeException.createIllegalArgumentException(LocalizedFormats.INFINITE_VALUE_CONVERSION);
         }
 
         // compute m and k such that value = m * 2^k
@@ -279,14 +271,14 @@ public class BigFraction
         throws FractionConversionException {
         long overflow = Integer.MAX_VALUE;
         double r0 = value;
-        long a0 = (long) Math.floor(r0);
+        long a0 = (long) FastMath.floor(r0);
         if (a0 > overflow) {
             throw new FractionConversionException(value, a0, 1l);
         }
 
         // check for (almost) integer arguments, which should not go
         // to iterations.
-        if (Math.abs(a0 - value) < epsilon) {
+        if (FastMath.abs(a0 - value) < epsilon) {
             numerator = BigInteger.valueOf(a0);
             denominator = BigInteger.ONE;
             return;
@@ -305,7 +297,7 @@ public class BigFraction
         do {
             ++n;
             final double r1 = 1.0 / (r0 - a0);
-            final long a1 = (long) Math.floor(r1);
+            final long a1 = (long) FastMath.floor(r1);
             p2 = (a1 * p1) + p0;
             q2 = (a1 * q1) + q0;
             if ((p2 > overflow) || (q2 > overflow)) {
@@ -314,7 +306,7 @@ public class BigFraction
 
             final double convergent = (double) p2 / (double) q2;
             if ((n < maxIterations) &&
-                (Math.abs(convergent - value) > epsilon) &&
+                (FastMath.abs(convergent - value) > epsilon) &&
                 (q2 < maxDenominator)) {
                 p0 = p1;
                 p1 = p2;
@@ -509,10 +501,12 @@ public class BigFraction
      * @param fraction
      *            the {@link BigFraction} to add, must not be <code>null</code>.
      * @return a {@link BigFraction} instance with the resulting values.
-     * @throws NullPointerException
-     *             if the {@link BigFraction} is <code>null</code>.
+     * @throws NullArgumentException if the {@link BigFraction} is {@code null}.
      */
     public BigFraction add(final BigFraction fraction) {
+        if (fraction == null) {
+            throw new NullArgumentException(LocalizedFormats.FRACTION);
+        }
         if (ZERO.equals(fraction)) {
             return this;
         }
@@ -612,14 +606,13 @@ public class BigFraction
      *            the <code>BigInteger</code> to divide by, must not be
      *            <code>null</code>.
      * @return a {@link BigFraction} instance with the resulting values.
-     * @throws NullPointerException
-     *             if the <code>BigInteger</code> is <code>null</code>.
+     * @throws NullArgumentException if the {@code BigInteger} is {@code null}.
      * @throws ArithmeticException
      *             if the fraction to divide by is zero.
      */
     public BigFraction divide(final BigInteger bg) {
         if (BigInteger.ZERO.equals(bg)) {
-            throw MathRuntimeException.createArithmeticException(FORBIDDEN_ZERO_DENOMINATOR);
+            throw MathRuntimeException.createArithmeticException(LocalizedFormats.ZERO_DENOMINATOR);
         }
         return new BigFraction(numerator, denominator.multiply(bg));
     }
@@ -662,17 +655,17 @@ public class BigFraction
      * reduced form.
      * </p>
      *
-     * @param fraction
-     *            the fraction to divide by, must not be <code>null</code>.
+     * @param fraction Fraction to divide by, must not be {@code null}.
      * @return a {@link BigFraction} instance with the resulting values.
-     * @throws NullPointerException
-     *             if the fraction is <code>null</code>.
-     * @throws ArithmeticException
-     *             if the fraction to divide by is zero.
+     * @throws NullArgumentException if the {@code fraction} is {@code null}.
+     * @throws ArithmeticException if the fraction to divide by is zero.
      */
     public BigFraction divide(final BigFraction fraction) {
+        if (fraction == null) {
+            throw new NullArgumentException(LocalizedFormats.FRACTION);
+        }
         if (BigInteger.ZERO.equals(fraction.numerator)) {
-            throw MathRuntimeException.createArithmeticException(FORBIDDEN_ZERO_DENOMINATOR);
+            throw MathRuntimeException.createArithmeticException(LocalizedFormats.ZERO_DENOMINATOR);
         }
 
         return multiply(fraction.reciprocal());
@@ -849,13 +842,14 @@ public class BigFraction
      * <code>BigInteger</code>, returning the result in reduced form.
      * </p>
      *
-     * @param bg
-     *            the <code>BigInteger</code> to multiply by.
-     * @return a <code>BigFraction</code> instance with the resulting values.
-     * @throws NullPointerException
-     *             if the bg is <code>null</code>.
+     * @param bg the {@code BigInteger} to multiply by.
+     * @return a {@code BigFraction} instance with the resulting values.
+     * @throws NullArgumentException if {@code bg} is {@code null}.
      */
     public BigFraction multiply(final BigInteger bg) {
+        if (bg == null) {
+            throw new NullArgumentException();
+        }
         return new BigFraction(bg.multiply(numerator), denominator);
     }
 
@@ -893,13 +887,14 @@ public class BigFraction
      * reduced form.
      * </p>
      *
-     * @param fraction
-     *            the fraction to multiply by, must not be <code>null</code>.
+     * @param fraction Fraction to multiply by, must not be {@code null}.
      * @return a {@link BigFraction} instance with the resulting values.
-     * @throws NullPointerException
-     *             if the fraction is <code>null</code>.
+     * @throws NullArgumentException if {@code fraction} is {@code null}.
      */
     public BigFraction multiply(final BigFraction fraction) {
+        if (fraction == null) {
+            throw new NullArgumentException(LocalizedFormats.FRACTION);
+        }
         if (numerator.equals(BigInteger.ZERO) ||
             fraction.numerator.equals(BigInteger.ZERO)) {
             return ZERO;
@@ -1000,8 +995,8 @@ public class BigFraction
      * @return <tt>this<sup>exponent</sup></tt>.
      */
     public double pow(final double exponent) {
-        return Math.pow(numerator.doubleValue(),   exponent) /
-               Math.pow(denominator.doubleValue(), exponent);
+        return FastMath.pow(numerator.doubleValue(),   exponent) /
+               FastMath.pow(denominator.doubleValue(), exponent);
     }
 
     /**
@@ -1034,14 +1029,14 @@ public class BigFraction
      * returning the result in reduced form.
      * </p>
      *
-     * @param bg
-     *            the {@link BigInteger} to subtract, must'nt be
-     *            <code>null</code>.
-     * @return a <code>BigFraction</code> instance with the resulting values.
-     * @throws NullPointerException
-     *             if the {@link BigInteger} is <code>null</code>.
+     * @param bg the {@link BigInteger} to subtract, cannot be {@code null}.
+     * @return a {@code BigFraction} instance with the resulting values.
+     * @throws NullArgumentException if the {@link BigInteger} is {@code null}.
      */
     public BigFraction subtract(final BigInteger bg) {
+        if (bg == null) {
+            throw new NullArgumentException();
+        }
         return new BigFraction(numerator.subtract(denominator.multiply(bg)), denominator);
     }
 
@@ -1080,14 +1075,14 @@ public class BigFraction
      * returning the result in reduced form.
      * </p>
      *
-     * @param fraction
-     *            the {@link BigFraction} to subtract, must not be
-     *            <code>null</code>.
+     * @param fraction {@link BigFraction} to subtract, must not be {@code null}.
      * @return a {@link BigFraction} instance with the resulting values
-     * @throws NullPointerException
-     *             if the fraction is <code>null</code>.
+     * @throws NullArgumentException if the {@code fraction} is {@code null}.
      */
     public BigFraction subtract(final BigFraction fraction) {
+        if (fraction == null) {
+            throw new NullArgumentException(LocalizedFormats.FRACTION);
+        }
         if (ZERO.equals(fraction)) {
             return this;
         }

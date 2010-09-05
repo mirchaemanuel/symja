@@ -19,6 +19,7 @@ package org.apache.commons.math.transform;
 import org.apache.commons.math.FunctionEvaluationException;
 import org.apache.commons.math.MathRuntimeException;
 import org.apache.commons.math.analysis.UnivariateRealFunction;
+import org.apache.commons.math.exception.util.LocalizedFormats;
 
 /**
  * Implements the <a href="http://www.archive.chipcenter.com/dsp/DSP000517F1.html">Fast Hadamard Transform</a> (FHT).
@@ -28,7 +29,7 @@ import org.apache.commons.math.analysis.UnivariateRealFunction;
  * cannot be inverted directly. Due to a scaling factor it may lead to rational results.
  * As an example, the inverse transform of integer vector (0, 1, 0, 1) is rational
  * vector (1/2, -1/2, 0, 0).</p>
- * @version $Revision: 811685 $ $Date: 2009-09-05 19:36:48 +0200 (Sa, 05 Sep 2009) $
+ * @version $Revision: 983921 $ $Date: 2010-08-10 12:46:06 +0200 (Di, 10 Aug 2010) $
  * @since 2.0
  */
 public class FastHadamardTransformer implements RealTransformer {
@@ -160,7 +161,7 @@ public class FastHadamardTransformer implements RealTransformer {
         // n has to be of the form n = 2^p !!
         if (!FastFourierTransformer.isPowerOf2(n)) {
             throw MathRuntimeException.createIllegalArgumentException(
-                    "{0} is not a power of 2",
+                    LocalizedFormats.NOT_POWER_OF_TWO,
                     n);
         }
 
@@ -211,7 +212,7 @@ public class FastHadamardTransformer implements RealTransformer {
         // n has to be of the form n = 2^p !!
         if (!FastFourierTransformer.isPowerOf2(n)) {
             throw MathRuntimeException.createIllegalArgumentException(
-                    "{0} is not a power of 2",
+                    LocalizedFormats.NOT_POWER_OF_TWO,
                     n);
         }
 

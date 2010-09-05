@@ -20,12 +20,14 @@ package org.apache.commons.math.distribution;
 import java.io.Serializable;
 
 import org.apache.commons.math.MathRuntimeException;
+import org.apache.commons.math.exception.util.LocalizedFormats;
 import org.apache.commons.math.util.MathUtils;
+import org.apache.commons.math.util.FastMath;
 
 /**
  * The default implementation of {@link HypergeometricDistribution}.
  *
- * @version $Revision: 920852 $ $Date: 2010-03-09 13:53:44 +0100 (Di, 09 Mrz 2010) $
+ * @version $Revision: 990658 $ $Date: 2010-08-30 00:04:09 +0200 (Mo, 30 Aug 2010) $
  */
 public class HypergeometricDistributionImpl extends AbstractIntegerDistribution
         implements HypergeometricDistribution, Serializable {
@@ -56,13 +58,13 @@ public class HypergeometricDistributionImpl extends AbstractIntegerDistribution
         if (numberOfSuccesses > populationSize) {
             throw MathRuntimeException
                     .createIllegalArgumentException(
-                            "number of successes ({0}) must be less than or equal to population size ({1})",
+                            LocalizedFormats.NUMBER_OF_SUCCESS_LARGER_THAN_POPULATION_SIZE,
                             numberOfSuccesses, populationSize);
         }
         if (sampleSize > populationSize) {
             throw MathRuntimeException
                     .createIllegalArgumentException(
-                            "sample size ({0}) must be less than or equal to population size ({1})",
+                            LocalizedFormats.SAMPLE_SIZE_LARGER_THAN_POPULATION_SIZE,
                             sampleSize, populationSize);
         }
 
@@ -143,7 +145,7 @@ public class HypergeometricDistributionImpl extends AbstractIntegerDistribution
      * @return the lowest domain value of the hypergeometric distribution.
      */
     private int getLowerDomain(int n, int m, int k) {
-        return Math.max(0, m - (n - k));
+        return FastMath.max(0, m - (n - k));
     }
 
     /**
@@ -182,7 +184,7 @@ public class HypergeometricDistributionImpl extends AbstractIntegerDistribution
      * @return the highest domain value of the hypergeometric distribution.
      */
     private int getUpperDomain(int m, int k) {
-        return Math.min(k, m);
+        return FastMath.min(k, m);
     }
 
     /**
@@ -207,7 +209,7 @@ public class HypergeometricDistributionImpl extends AbstractIntegerDistribution
                     populationSize - numberOfSuccesses, p, q);
             double p3 =
                 SaddlePointExpansion.logBinomialProbability(sampleSize, populationSize, p, q);
-            ret = Math.exp(p1 + p2 - p3);
+            ret = FastMath.exp(p1 + p2 - p3);
         }
 
         return ret;
@@ -224,7 +226,7 @@ public class HypergeometricDistributionImpl extends AbstractIntegerDistribution
      * @return PMF for the distribution.
      */
     private double probability(int n, int m, int k, int x) {
-        return Math.exp(MathUtils.binomialCoefficientLog(m, x) +
+        return FastMath.exp(MathUtils.binomialCoefficientLog(m, x) +
                MathUtils.binomialCoefficientLog(n - m, k - x) -
                MathUtils.binomialCoefficientLog(n, k));
     }
@@ -249,7 +251,7 @@ public class HypergeometricDistributionImpl extends AbstractIntegerDistribution
     private void setNumberOfSuccessesInternal(int num) {
         if (num < 0) {
             throw MathRuntimeException.createIllegalArgumentException(
-                    "number of successes must be non-negative ({0})", num);
+                    LocalizedFormats.NEGATIVE_NUMBER_OF_SUCCESSES, num);
         }
         numberOfSuccesses = num;
     }
@@ -274,7 +276,7 @@ public class HypergeometricDistributionImpl extends AbstractIntegerDistribution
     private void setPopulationSizeInternal(int size) {
         if (size <= 0) {
             throw MathRuntimeException.createIllegalArgumentException(
-                    "population size must be positive ({0})", size);
+                    LocalizedFormats.NOT_POSITIVE_POPULATION_SIZE, size);
         }
         populationSize = size;
     }
@@ -299,7 +301,7 @@ public class HypergeometricDistributionImpl extends AbstractIntegerDistribution
     private void setSampleSizeInternal(int size) {
         if (size < 0) {
             throw MathRuntimeException.createIllegalArgumentException(
-                    "sample size must be positive ({0})", size);
+                    LocalizedFormats.NOT_POSITIVE_SAMPLE_SIZE, size);
         }
         sampleSize = size;
     }

@@ -28,8 +28,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.math.MathRuntimeException;
+import org.apache.commons.math.exception.util.LocalizedFormats;
 import org.apache.commons.math.stat.descriptive.StatisticalSummary;
 import org.apache.commons.math.stat.descriptive.SummaryStatistics;
+import org.apache.commons.math.util.FastMath;
 
 /**
  * Implements <code>EmpiricalDistribution</code> interface.  This implementation
@@ -56,7 +58,7 @@ import org.apache.commons.math.stat.descriptive.SummaryStatistics;
  *    entry per line.</li>
  * </ul></p>
  *
- * @version $Revision: 925812 $ $Date: 2010-03-21 16:49:31 +0100 (So, 21 Mrz 2010) $
+ * @version $Revision: 990658 $ $Date: 2010-08-30 00:04:09 +0200 (Mo, 30 Aug 2010) $
  */
 public class EmpiricalDistributionImpl implements Serializable, EmpiricalDistribution {
 
@@ -138,7 +140,7 @@ public class EmpiricalDistributionImpl implements Serializable, EmpiricalDistrib
             DataAdapter da = new StreamDataAdapter(in);
             da.computeStats();
             if (sampleStats.getN() == 0) {
-                throw MathRuntimeException.createEOFException("URL {0} contains no data",
+                throw MathRuntimeException.createEOFException(LocalizedFormats.URL_CONTAINS_NO_DATA,
                                                               url);
             }
             in = new BufferedReader(new InputStreamReader(url.openStream()));
@@ -219,8 +221,7 @@ public class EmpiricalDistributionImpl implements Serializable, EmpiricalDistrib
                 return new ArrayDataAdapter(inputArray);
             } else {
                 throw MathRuntimeException.createIllegalArgumentException(
-                      "input data comes from unsupported datasource: {0}, " +
-                      "supported sources: {1}, {2}",
+                      LocalizedFormats.INPUT_DATA_FROM_UNSUPPORTED_DATASOURCE,
                       in.getClass().getName(),
                       BufferedReader.class.getName(), double[].class.getName());
             }
@@ -356,8 +357,8 @@ public class EmpiricalDistributionImpl implements Serializable, EmpiricalDistrib
      * @return the index of the bin containing the value
      */
     private int findBin(double value) {
-        return Math.min(
-                Math.max((int) Math.ceil((value- min) / delta) - 1, 0),
+        return FastMath.min(
+                FastMath.max((int) FastMath.ceil((value- min) / delta) - 1, 0),
                 binCount - 1);
         }
 
@@ -370,11 +371,11 @@ public class EmpiricalDistributionImpl implements Serializable, EmpiricalDistrib
     public double getNextValue() throws IllegalStateException {
 
         if (!loaded) {
-            throw MathRuntimeException.createIllegalStateException("distribution not loaded");
+            throw MathRuntimeException.createIllegalStateException(LocalizedFormats.DISTRIBUTION_NOT_LOADED);
         }
 
         // Start with a uniformly distributed random number in (0,1)
-        double x = Math.random();
+        double x = FastMath.random();
 
         // Use this to select the bin and generate a Gaussian within the bin
         for (int i = 0; i < binCount; i++) {
@@ -390,7 +391,7 @@ public class EmpiricalDistributionImpl implements Serializable, EmpiricalDistrib
                }
            }
         }
-        throw new MathRuntimeException("no bin selected");
+        throw new MathRuntimeException(LocalizedFormats.NO_BIN_SELECTED);
     }
 
     /**

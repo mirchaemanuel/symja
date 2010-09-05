@@ -18,7 +18,8 @@ package org.apache.commons.math.stat.descriptive.moment;
 
 import java.io.Serializable;
 
-import org.apache.commons.math.MathRuntimeException;
+import org.apache.commons.math.exception.NullArgumentException;
+import org.apache.commons.math.exception.util.LocalizedFormats;
 import org.apache.commons.math.stat.descriptive.WeightedEvaluation;
 import org.apache.commons.math.stat.descriptive.AbstractStorelessUnivariateStatistic;
 
@@ -62,7 +63,7 @@ import org.apache.commons.math.stat.descriptive.AbstractStorelessUnivariateStati
  * one of the threads invokes the <code>increment()</code> or
  * <code>clear()</code> method, it must be synchronized externally.</p>
  *
- * @version $Revision: 908626 $ $Date: 2010-02-10 19:44:42 +0100 (Mi, 10 Feb 2010) $
+ * @version $Revision: 983921 $ $Date: 2010-08-10 12:46:06 +0200 (Di, 10 Aug 2010) $
  */
 public class Variance extends AbstractStorelessUnivariateStatistic implements Serializable, WeightedEvaluation {
 
@@ -213,7 +214,7 @@ public class Variance extends AbstractStorelessUnivariateStatistic implements Se
     @Override
     public double evaluate(final double[] values) {
         if (values == null) {
-            throw MathRuntimeException.createIllegalArgumentException("input values array is null");
+            throw new NullArgumentException(LocalizedFormats.INPUT_ARRAY);
         }
         return evaluate(values, 0, values.length);
     }
@@ -588,7 +589,6 @@ public class Variance extends AbstractStorelessUnivariateStatistic implements Se
         return result;
     }
 
-
     /**
      * Copies source to dest.
      * <p>Neither source nor dest can be null.</p>
@@ -598,9 +598,12 @@ public class Variance extends AbstractStorelessUnivariateStatistic implements Se
      * @throws NullPointerException if either source or dest is null
      */
     public static void copy(Variance source, Variance dest) {
+        if (source == null ||
+            dest == null) {
+            throw new NullArgumentException();
+        }
         dest.moment = source.moment.copy();
         dest.isBiasCorrected = source.isBiasCorrected;
         dest.incMoment = source.incMoment;
     }
-
 }

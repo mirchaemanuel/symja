@@ -20,12 +20,14 @@ import java.io.Serializable;
 
 import org.apache.commons.math.MathException;
 import org.apache.commons.math.MathRuntimeException;
+import org.apache.commons.math.exception.util.LocalizedFormats;
 import org.apache.commons.math.special.Beta;
 import org.apache.commons.math.util.MathUtils;
+import org.apache.commons.math.util.FastMath;
 
 /**
  * The default implementation of {@link PascalDistribution}.
- * @version $Revision: 920852 $ $Date: 2010-03-09 13:53:44 +0100 (Di, 09 Mrz 2010) $
+ * @version $Revision: 990658 $ $Date: 2010-08-30 00:04:09 +0200 (Mo, 30 Aug 2010) $
  * @since 1.2
  */
 public class PascalDistributionImpl extends AbstractIntegerDistribution
@@ -41,7 +43,7 @@ public class PascalDistributionImpl extends AbstractIntegerDistribution
     private double probabilityOfSuccess;
 
     /**
-     * Create a binomial distribution with the given number of trials and
+     * Create a Pascal distribution with the given number of trials and
      * probability of success.
      * @param r the number of successes
      * @param p the probability of success
@@ -88,7 +90,7 @@ public class PascalDistributionImpl extends AbstractIntegerDistribution
     private void setNumberOfSuccessesInternal(int successes) {
         if (successes < 0) {
             throw MathRuntimeException.createIllegalArgumentException(
-                  "number of successes must be non-negative ({0})",
+                  LocalizedFormats.NEGATIVE_NUMBER_OF_SUCCESSES,
                   successes);
         }
         numberOfSuccesses = successes;
@@ -114,7 +116,7 @@ public class PascalDistributionImpl extends AbstractIntegerDistribution
     private void setProbabilityOfSuccessInternal(double p) {
         if (p < 0.0 || p > 1.0) {
             throw MathRuntimeException.createIllegalArgumentException(
-                  "{0} out of [{1}, {2}] range", p, 0.0, 1.0);
+                  LocalizedFormats.OUT_OF_RANGE_SIMPLE, p, 0.0, 1.0);
         }
         probabilityOfSuccess = p;
     }
@@ -175,8 +177,8 @@ public class PascalDistributionImpl extends AbstractIntegerDistribution
         } else {
             ret = MathUtils.binomialCoefficientDouble(x +
                   numberOfSuccesses - 1, numberOfSuccesses - 1) *
-                  Math.pow(probabilityOfSuccess, numberOfSuccesses) *
-                  Math.pow(1.0 - probabilityOfSuccess, x);
+                  FastMath.pow(probabilityOfSuccess, numberOfSuccesses) *
+                  FastMath.pow(1.0 - probabilityOfSuccess, x);
         }
         return ret;
     }

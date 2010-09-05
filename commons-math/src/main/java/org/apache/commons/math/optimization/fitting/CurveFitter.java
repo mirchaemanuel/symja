@@ -24,7 +24,6 @@ import org.apache.commons.math.FunctionEvaluationException;
 import org.apache.commons.math.analysis.DifferentiableMultivariateVectorialFunction;
 import org.apache.commons.math.analysis.MultivariateMatrixFunction;
 import org.apache.commons.math.optimization.DifferentiableMultivariateVectorialOptimizer;
-import org.apache.commons.math.optimization.OptimizationException;
 import org.apache.commons.math.optimization.VectorialPointValuePair;
 
 /** Fitter for parametric univariate real functions y = f(x).
@@ -37,7 +36,7 @@ import org.apache.commons.math.optimization.VectorialPointValuePair;
  * is done by finding the parameters values that minimizes the objective
  * function &sum;(y<sub>i</sub>-f(x<sub>i</sub>))<sup>2</sup>. This is
  * really a least squares problem.</p>
- * @version $Revision: 927009 $ $Date: 2010-03-24 12:14:07 +0100 (Mi, 24 Mrz 2010) $
+ * @version $Revision: 990792 $ $Date: 2010-08-30 15:06:22 +0200 (Mo, 30 Aug 2010) $
  * @since 2.0
  */
 public class CurveFitter {
@@ -120,12 +119,12 @@ public class CurveFitter {
      * @return fitted parameters
      * @exception FunctionEvaluationException if the objective function throws one during
      * the search
-     * @exception OptimizationException if the algorithm failed to converge
-     * @exception IllegalArgumentException if the start point dimension is wrong
+     * @exception ConvergenceException if the algorithm failed to converge
+     * @exception IllegalArgumentException if the start point dimension is wrong.
      */
     public double[] fit(final ParametricRealFunction f,
                         final double[] initialGuess)
-        throws FunctionEvaluationException, OptimizationException, IllegalArgumentException {
+        throws FunctionEvaluationException {
 
         // prepare least squares problem
         double[] target  = new double[observations.size()];
@@ -143,7 +142,6 @@ public class CurveFitter {
 
         // extract the coefficients
         return optimum.getPointRef();
-
     }
 
     /** Vectorial function computing function theoretical values. */

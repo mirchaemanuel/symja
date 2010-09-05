@@ -20,14 +20,16 @@ import java.io.Serializable;
 
 import org.apache.commons.math.MathException;
 import org.apache.commons.math.MathRuntimeException;
+import org.apache.commons.math.exception.util.LocalizedFormats;
 import org.apache.commons.math.special.Beta;
 import org.apache.commons.math.special.Gamma;
+import org.apache.commons.math.util.FastMath;
 
 /**
  * Default implementation of
  * {@link org.apache.commons.math.distribution.TDistribution}.
  *
- * @version $Revision: 925812 $ $Date: 2010-03-21 16:49:31 +0100 (So, 21 Mrz 2010) $
+ * @version $Revision: 990658 $ $Date: 2010-08-30 00:04:09 +0200 (Mo, 30 Aug 2010) $
  */
 public class TDistributionImpl
     extends AbstractContinuousDistribution
@@ -87,7 +89,7 @@ public class TDistributionImpl
     private void setDegreesOfFreedomInternal(double newDegreesOfFreedom) {
         if (newDegreesOfFreedom <= 0.0) {
             throw MathRuntimeException.createIllegalArgumentException(
-                  "degrees of freedom must be positive ({0})",
+                  LocalizedFormats.NOT_POSITIVE_DEGREES_OF_FREEDOM,
                   newDegreesOfFreedom);
         }
         this.degreesOfFreedom = newDegreesOfFreedom;
@@ -112,14 +114,14 @@ public class TDistributionImpl
     public double density(double x) {
         final double n = degreesOfFreedom;
         final double nPlus1Over2 = (n + 1) / 2;
-        return Math.exp(Gamma.logGamma(nPlus1Over2) - 0.5 * (Math.log(Math.PI) + Math.log(n)) -
-                Gamma.logGamma(n/2) - nPlus1Over2 * Math.log(1 + x * x /n));
+        return FastMath.exp(Gamma.logGamma(nPlus1Over2) - 0.5 * (FastMath.log(FastMath.PI) + FastMath.log(n)) -
+                Gamma.logGamma(n/2) - nPlus1Over2 * FastMath.log(1 + x * x /n));
     }
 
     /**
      * For this distribution, X, this method returns P(X &lt; <code>x</code>).
      * @param x the value at which the CDF is evaluated.
-     * @return CDF evaluted at <code>x</code>.
+     * @return CDF evaluated at <code>x</code>.
      * @throws MathException if the cumulative probability can not be
      *            computed due to convergence or other numerical errors.
      */

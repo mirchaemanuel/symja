@@ -18,11 +18,12 @@
 package org.apache.commons.math.geometry;
 
 import org.apache.commons.math.MathException;
+import org.apache.commons.math.exception.util.LocalizedFormats;
 
 /** This class represents exceptions thrown while extractiong Cardan
  * or Euler angles from a rotation.
 
- * @version $Revision: 811827 $ $Date: 2009-09-06 17:32:50 +0200 (So, 06 Sep 2009) $
+ * @version $Revision: 983921 $ $Date: 2010-08-10 12:46:06 +0200 (Di, 10 Aug 2010) $
  * @since 1.2
  */
 public class CardanEulerSingularityException
@@ -38,7 +39,7 @@ public class CardanEulerSingularityException
      * if false it is related to EulerAngles
      */
     public CardanEulerSingularityException(boolean isCardan) {
-        super(isCardan ? "Cardan angles singularity" : "Euler angles singularity");
+        super(isCardan ? LocalizedFormats.CARDAN_ANGLES_SINGULARITY : LocalizedFormats.EULER_ANGLES_SINGULARITY);
     }
 
 }

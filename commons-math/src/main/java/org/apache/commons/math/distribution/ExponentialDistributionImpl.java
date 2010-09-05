@@ -20,11 +20,13 @@ import java.io.Serializable;
 
 import org.apache.commons.math.MathException;
 import org.apache.commons.math.MathRuntimeException;
+import org.apache.commons.math.exception.util.LocalizedFormats;
+import org.apache.commons.math.util.FastMath;
 
 /**
  * The default implementation of {@link ExponentialDistribution}.
  *
- * @version $Revision: 925900 $ $Date: 2010-03-21 22:10:07 +0100 (So, 21 Mrz 2010) $
+ * @version $Revision: 990658 $ $Date: 2010-08-30 00:04:09 +0200 (Mo, 30 Aug 2010) $
  */
 public class ExponentialDistributionImpl extends AbstractContinuousDistribution
     implements ExponentialDistribution, Serializable {
@@ -83,7 +85,7 @@ public class ExponentialDistributionImpl extends AbstractContinuousDistribution
     private void setMeanInternal(double newMean) {
         if (newMean <= 0.0) {
             throw MathRuntimeException.createIllegalArgumentException(
-                  "mean must be positive ({0})", newMean);
+                  LocalizedFormats.NOT_POSITIVE_MEAN, newMean);
         }
         this.mean = newMean;
     }
@@ -119,7 +121,7 @@ public class ExponentialDistributionImpl extends AbstractContinuousDistribution
         if (x < 0) {
             return 0;
         }
-        return Math.exp(-x / mean) / mean;
+        return FastMath.exp(-x / mean) / mean;
     }
 
     /**
@@ -142,7 +144,7 @@ public class ExponentialDistributionImpl extends AbstractContinuousDistribution
         if (x <= 0.0) {
             ret = 0.0;
         } else {
-            ret = 1.0 - Math.exp(-x / mean);
+            ret = 1.0 - FastMath.exp(-x / mean);
         }
         return ret;
     }
@@ -165,14 +167,31 @@ public class ExponentialDistributionImpl extends AbstractContinuousDistribution
 
         if (p < 0.0 || p > 1.0) {
             throw MathRuntimeException.createIllegalArgumentException(
-                  "{0} out of [{1}, {2}] range", p, 0.0, 1.0);
+                  LocalizedFormats.OUT_OF_RANGE_SIMPLE, p, 0.0, 1.0);
         } else if (p == 1.0) {
             ret = Double.POSITIVE_INFINITY;
         } else {
-            ret = -mean * Math.log(1.0 - p);
+            ret = -mean * FastMath.log(1.0 - p);
         }
 
         return ret;
+    }
+
+    /**
+     * Generates a random value sampled from this distribution.
+     *
+     * <p><strong>Algorithm Description</strong>: Uses the <a
+     * href="http://www.jesus.ox.ac.uk/~clifford/a5/chap1/node5.html"> Inversion
+     * Method</a> to generate exponentially distributed random values from
+     * uniform deviates. </p>
+     *
+     * @return random value
+     * @since 2.2
+     * @throws MathException if an error occurs generating the random value
+     */
+    @Override
+    public double sample() throws MathException {
+        return randomData.nextExponential(mean);
     }
 
     /**

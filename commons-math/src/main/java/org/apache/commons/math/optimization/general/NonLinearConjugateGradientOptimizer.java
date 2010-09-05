@@ -17,15 +17,16 @@
 
 package org.apache.commons.math.optimization.general;
 
-import org.apache.commons.math.ConvergenceException;
 import org.apache.commons.math.FunctionEvaluationException;
+import org.apache.commons.math.exception.MathIllegalStateException;
+import org.apache.commons.math.exception.ConvergenceException;
 import org.apache.commons.math.analysis.UnivariateRealFunction;
 import org.apache.commons.math.analysis.solvers.BrentSolver;
 import org.apache.commons.math.analysis.solvers.UnivariateRealSolver;
+import org.apache.commons.math.exception.util.LocalizedFormats;
 import org.apache.commons.math.optimization.GoalType;
-import org.apache.commons.math.optimization.OptimizationException;
-import org.apache.commons.math.optimization.DifferentiableMultivariateRealOptimizer;
 import org.apache.commons.math.optimization.RealPointValuePair;
+import org.apache.commons.math.util.FastMath;
 
 /**
  * Non-linear conjugate gradient optimizer.
@@ -35,32 +36,29 @@ import org.apache.commons.math.optimization.RealPointValuePair;
  * optional preconditioning.
  * </p>
  *
- * @version $Revision: 811685 $ $Date: 2009-09-05 19:36:48 +0200 (Sa, 05 Sep 2009) $
+ * @version $Revision: 990792 $ $Date: 2010-08-30 15:06:22 +0200 (Mo, 30 Aug 2010) $
  * @since 2.0
  *
  */
 
 public class NonLinearConjugateGradientOptimizer
-    extends AbstractScalarDifferentiableOptimizer
-    implements DifferentiableMultivariateRealOptimizer {
-
+    extends AbstractScalarDifferentiableOptimizer {
     /** Update formula for the beta parameter. */
     private final ConjugateGradientFormula updateFormula;
-
     /** Preconditioner (may be null). */
     private Preconditioner preconditioner;
-
     /** solver to use in the line search (may be null). */
     private UnivariateRealSolver solver;
-
     /** Initial step used to bracket the optimum in line search. */
     private double initialStep;
+    /** Current point. */
+    private double[] point;
 
-    /** Simple constructor with default settings.
-     * <p>The convergence check is set to a {@link
-     * org.apache.commons.math.optimization.SimpleVectorialValueChecker}
-     * and the maximal number of iterations is set to
-     * {@link AbstractScalarDifferentiableOptimizer#DEFAULT_MAX_ITERATIONS}.
+    /**
+     * Simple constructor with default settings.
+     * The convergence check is set to a {@link
+     * org.apache.commons.math.optimization.SimpleVectorialValueChecker}.
+     *
      * @param updateFormula formula to use for updating the &beta; parameter,
      * must be one of {@link ConjugateGradientFormula#FLETCHER_REEVES} or {@link
      * ConjugateGradientFormula#POLAK_RIBIERE}
@@ -112,103 +110,104 @@ public class NonLinearConjugateGradientOptimizer
     /** {@inheritDoc} */
     @Override
     protected RealPointValuePair doOptimize()
-        throws FunctionEvaluationException, OptimizationException, IllegalArgumentException {
-        try {
+        throws FunctionEvaluationException {
+        // Initialization.
+        if (preconditioner == null) {
+            preconditioner = new IdentityPreconditioner();
+        }
+        if (solver == null) {
+            solver = new BrentSolver();
+        }
+        point = getStartPoint();
+        final GoalType goal = getGoalType();
+        final int n = point.length;
+        double[] r = computeObjectiveGradient(point);
+        if (goal == GoalType.MINIMIZE) {
+            for (int i = 0; i < n; ++i) {
+                r[i] = -r[i];
+            }
+        }
 
-            // initialization
-            if (preconditioner == null) {
-                preconditioner = new IdentityPreconditioner();
+        // Initial search direction.
+        double[] steepestDescent = preconditioner.precondition(point, r);
+        double[] searchDirection = steepestDescent.clone();
+
+        double delta = 0;
+        for (int i = 0; i < n; ++i) {
+            delta += r[i] * searchDirection[i];
+        }
+
+        RealPointValuePair current = null;
+        int iter = 0;
+        while (true) {
+            ++iter;
+
+            final double objective = computeObjectiveValue(point);
+            RealPointValuePair previous = current;
+            current = new RealPointValuePair(point, objective);
+            if (previous != null) {
+                if (getConvergenceChecker().converged(iter, previous, current)) {
+                    // We have found an optimum.
+                    return current;
+                }
             }
-            if (solver == null) {
-                solver = new BrentSolver();
+
+            double dTd = 0;
+            for (final double di : searchDirection) {
+                dTd += di * di;
             }
-            final int n = point.length;
-            double[] r = computeObjectiveGradient(point);
+
+            // Find the optimal step in the search direction.
+            final UnivariateRealFunction lsf = new LineSearchFunction(searchDirection);
+            try {
+                final double step = solver.solve(lsf, 0, findUpperBound(lsf, 0, initialStep));
+
+                // Validate new point.
+                for (int i = 0; i < point.length; ++i) {
+                    point[i] += step * searchDirection[i];
+                }
+            } catch (org.apache.commons.math.ConvergenceException e) {
+                throw new ConvergenceException(); // XXX ugly workaround.
+            }
+
+            r = computeObjectiveGradient(point);
             if (goal == GoalType.MINIMIZE) {
                 for (int i = 0; i < n; ++i) {
                     r[i] = -r[i];
                 }
             }
 
-            // initial search direction
-            double[] steepestDescent = preconditioner.precondition(point, r);
-            double[] searchDirection = steepestDescent.clone();
-
-            double delta = 0;
+            // Compute beta.
+            final double deltaOld = delta;
+            final double[] newSteepestDescent = preconditioner.precondition(point, r);
+            delta = 0;
             for (int i = 0; i < n; ++i) {
-                delta += r[i] * searchDirection[i];
+                delta += r[i] * newSteepestDescent[i];
             }
 
-            RealPointValuePair current = null;
-            while (true) {
-
-                final double objective = computeObjectiveValue(point);
-                RealPointValuePair previous = current;
-                current = new RealPointValuePair(point, objective);
-                if (previous != null) {
-                    if (checker.converged(getIterations(), previous, current)) {
-                        // we have found an optimum
-                        return current;
-                    }
+            final double beta;
+            if (updateFormula == ConjugateGradientFormula.FLETCHER_REEVES) {
+                beta = delta / deltaOld;
+            } else {
+                double deltaMid = 0;
+                for (int i = 0; i < r.length; ++i) {
+                    deltaMid += r[i] * steepestDescent[i];
                 }
+                beta = (delta - deltaMid) / deltaOld;
+            }
+            steepestDescent = newSteepestDescent;
 
-                incrementIterationsCounter();
-
-                double dTd = 0;
-                for (final double di : searchDirection) {
-                    dTd += di * di;
-                }
-
-                // find the optimal step in the search direction
-                final UnivariateRealFunction lsf = new LineSearchFunction(searchDirection);
-                final double step = solver.solve(lsf, 0, findUpperBound(lsf, 0, initialStep));
-
-                // validate new point
-                for (int i = 0; i < point.length; ++i) {
-                    point[i] += step * searchDirection[i];
-                }
-                r = computeObjectiveGradient(point);
-                if (goal == GoalType.MINIMIZE) {
-                    for (int i = 0; i < n; ++i) {
-                        r[i] = -r[i];
-                    }
-                }
-
-                // compute beta
-                final double deltaOld = delta;
-                final double[] newSteepestDescent = preconditioner.precondition(point, r);
-                delta = 0;
+            // Compute conjugate search direction.
+            if (iter % n == 0 ||
+                beta < 0) {
+                // Break conjugation: reset search direction.
+                searchDirection = steepestDescent.clone();
+            } else {
+                // Compute new conjugate search direction.
                 for (int i = 0; i < n; ++i) {
-                    delta += r[i] * newSteepestDescent[i];
+                    searchDirection[i] = steepestDescent[i] + beta * searchDirection[i];
                 }
-
-                final double beta;
-                if (updateFormula == ConjugateGradientFormula.FLETCHER_REEVES) {
-                    beta = delta / deltaOld;
-                } else {
-                    double deltaMid = 0;
-                    for (int i = 0; i < r.length; ++i) {
-                        deltaMid += r[i] * steepestDescent[i];
-                    }
-                    beta = (delta - deltaMid) / deltaOld;
-                }
-                steepestDescent = newSteepestDescent;
-
-                // compute conjugate search direction
-                if ((getIterations() % n == 0) || (beta < 0)) {
-                    // break conjugation: reset search direction
-                    searchDirection = steepestDescent.clone();
-                } else {
-                    // compute new conjugate search direction
-                    for (int i = 0; i < n; ++i) {
-                        searchDirection[i] = steepestDescent[i] + beta * searchDirection[i];
-                    }
-                }
-
             }
-
-        } catch (ConvergenceException ce) {
-            throw new OptimizationException(ce);
         }
     }
 
@@ -219,21 +218,22 @@ public class NonLinearConjugateGradientOptimizer
      * @param h initial step to try
      * @return b such that f(a) and f(b) have opposite signs
      * @exception FunctionEvaluationException if the function cannot be computed
-     * @exception OptimizationException if no bracket can be found
+     * @exception MathIllegalStateException if no bracket can be found
+     * @deprecated in 2.2 (must be replaced with "BracketFinder").
      */
     private double findUpperBound(final UnivariateRealFunction f,
                                   final double a, final double h)
-        throws FunctionEvaluationException, OptimizationException {
+        throws FunctionEvaluationException {
         final double yA = f.value(a);
         double yB = yA;
-        for (double step = h; step < Double.MAX_VALUE; step *= Math.max(2, yA / yB)) {
+        for (double step = h; step < Double.MAX_VALUE; step *= FastMath.max(2, yA / yB)) {
             final double b = a + step;
             yB = f.value(b);
             if (yA * yB <= 0) {
                 return b;
             }
         }
-        throw new OptimizationException("unable to bracket optimum in line search");
+        throw new MathIllegalStateException(LocalizedFormats.UNABLE_TO_BRACKET_OPTIMUM_IN_LINE_SEARCH);
     }
 
     /** Default identity preconditioner. */

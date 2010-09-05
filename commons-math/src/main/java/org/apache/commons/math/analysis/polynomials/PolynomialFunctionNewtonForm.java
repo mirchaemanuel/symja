@@ -19,6 +19,7 @@ package org.apache.commons.math.analysis.polynomials;
 import org.apache.commons.math.FunctionEvaluationException;
 import org.apache.commons.math.MathRuntimeException;
 import org.apache.commons.math.analysis.UnivariateRealFunction;
+import org.apache.commons.math.exception.util.LocalizedFormats;
 
 /**
  * Implements the representation of a real polynomial function in
@@ -30,7 +31,7 @@ import org.apache.commons.math.analysis.UnivariateRealFunction;
  *            a[n](x-c[0])(x-c[1])...(x-c[n-1])
  * Note that the length of a[] is one more than the length of c[]</p>
  *
- * @version $Revision: 922708 $ $Date: 2010-03-14 02:15:47 +0100 (So, 14 Mrz 2010) $
+ * @version $Revision: 983921 $ $Date: 2010-08-10 12:46:06 +0200 (Di, 10 Aug 2010) $
  * @since 1.2
  */
 public class PolynomialFunctionNewtonForm implements UnivariateRealFunction {
@@ -209,11 +210,11 @@ public class PolynomialFunctionNewtonForm implements UnivariateRealFunction {
 
         if (a.length < 1 || c.length < 1) {
             throw MathRuntimeException.createIllegalArgumentException(
-                  "empty polynomials coefficients array");
+                  LocalizedFormats.EMPTY_POLYNOMIALS_COEFFICIENTS_ARRAY);
         }
         if (a.length != c.length + 1) {
             throw MathRuntimeException.createIllegalArgumentException(
-                  "array sizes should have difference 1 ({0} != {1} + 1)",
+                  LocalizedFormats.ARRAY_SIZES_SHOULD_HAVE_DIFFERENCE_1,
                   a.length, c.length);
         }
     }

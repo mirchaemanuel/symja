@@ -20,6 +20,8 @@ import org.apache.commons.math.FunctionEvaluationException;
 import org.apache.commons.math.MathRuntimeException;
 import org.apache.commons.math.analysis.UnivariateRealFunction;
 import org.apache.commons.math.complex.Complex;
+import org.apache.commons.math.exception.util.LocalizedFormats;
+import org.apache.commons.math.util.FastMath;
 
 /**
  * Implements the <a href="http://documents.wolfram.com/v5/Add-onsLinks/
@@ -35,7 +37,7 @@ import org.apache.commons.math.complex.Complex;
  * transformation after sampling.</p>
  * <p>As of version 2.0 this no longer implements Serializable</p>
  *
- * @version $Revision: 825919 $ $Date: 2009-10-16 16:51:55 +0200 (Fr, 16 Okt 2009) $
+ * @version $Revision: 990658 $ $Date: 2010-08-30 00:04:09 +0200 (Mo, 30 Aug 2010) $
  * @since 1.2
  */
 public class FastSineTransformer implements RealTransformer {
@@ -98,7 +100,7 @@ public class FastSineTransformer implements RealTransformer {
      */
     public double[] transform2(double f[]) throws IllegalArgumentException {
 
-        double scaling_coefficient = Math.sqrt(2.0 / f.length);
+        double scaling_coefficient = FastMath.sqrt(2.0 / f.length);
         return FastFourierTransformer.scaleArray(fst(f), scaling_coefficient);
     }
 
@@ -123,7 +125,7 @@ public class FastSineTransformer implements RealTransformer {
 
         double data[] = FastFourierTransformer.sample(f, min, max, n);
         data[0] = 0.0;
-        double scaling_coefficient = Math.sqrt(2.0 / n);
+        double scaling_coefficient = FastMath.sqrt(2.0 / n);
         return FastFourierTransformer.scaleArray(fst(data), scaling_coefficient);
     }
 
@@ -217,7 +219,7 @@ public class FastSineTransformer implements RealTransformer {
         FastFourierTransformer.verifyDataSet(f);
         if (f[0] != 0.0) {
             throw MathRuntimeException.createIllegalArgumentException(
-                    "first element is not 0: {0}",
+                    LocalizedFormats.FIRST_ELEMENT_NOT_ZERO,
                     f[0]);
         }
         final int n = f.length;
@@ -231,7 +233,7 @@ public class FastSineTransformer implements RealTransformer {
         x[0] = 0.0;
         x[n >> 1] = 2.0 * f[n >> 1];
         for (int i = 1; i < (n >> 1); i++) {
-            final double a = Math.sin(i * Math.PI / n) * (f[i] + f[n-i]);
+            final double a = FastMath.sin(i * FastMath.PI / n) * (f[i] + f[n-i]);
             final double b = 0.5 * (f[i] - f[n-i]);
             x[i]     = a + b;
             x[n - i] = a - b;

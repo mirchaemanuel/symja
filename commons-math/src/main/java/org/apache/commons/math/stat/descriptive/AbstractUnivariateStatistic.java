@@ -17,6 +17,10 @@
 package org.apache.commons.math.stat.descriptive;
 
 import org.apache.commons.math.MathRuntimeException;
+import org.apache.commons.math.exception.util.LocalizedFormats;
+import org.apache.commons.math.exception.NullArgumentException;
+import org.apache.commons.math.exception.NotPositiveException;
+import org.apache.commons.math.exception.DimensionMismatchException;
 
 /**
  * Abstract base class for all implementations of the
@@ -29,7 +33,7 @@ import org.apache.commons.math.MathRuntimeException;
  * Also includes a <code>test</code> method that performs generic parameter
  * validation for the <code>evaluate</code> methods.</p>
  *
- * @version $Revision: 894705 $ $Date: 2009-12-30 21:24:54 +0100 (Mi, 30 Dez 2009) $
+ * @version $Revision: 992191 $ $Date: 2010-09-03 05:46:53 +0200 (Fr, 03 Sep 2010) $
  */
 public abstract class AbstractUnivariateStatistic
     implements UnivariateStatistic {
@@ -75,27 +79,50 @@ public abstract class AbstractUnivariateStatistic
         final double[] values,
         final int begin,
         final int length) {
+        return test(values, begin, length, false);
+    }
+
+    /**
+     * This method is used by <code>evaluate(double[], int, int)</code> methods
+     * to verify that the input parameters designate a subarray of positive length.
+     * <p>
+     * <ul>
+     * <li>returns <code>true</code> iff the parameters designate a subarray of
+     * non-negative length</li>
+     * <li>throws <code>IllegalArgumentException</code> if the array is null or
+     * or the indices are invalid</li>
+     * <li>returns <code>false</li> if the array is non-null, but
+     * <code>length</code> is 0 unless <code>allowEmpty</code> is <code>true</code>
+     * </ul></p>
+     *
+     * @param values the input array
+     * @param begin index of the first array element to include
+     * @param length the number of elements to include
+     * @param allowEmpty if <code>true</code> then zero length arrays are allowed
+     * @return true if the parameters are valid
+     * @throws IllegalArgumentException if the indices are invalid or the array is null
+     * @since 3.0
+     */
+    protected boolean test(final double[] values, final int begin, final int length, final boolean allowEmpty){
 
         if (values == null) {
-            throw MathRuntimeException.createIllegalArgumentException("input values array is null");
+            throw new NullArgumentException(LocalizedFormats.INPUT_ARRAY);
         }
 
         if (begin < 0) {
-            throw MathRuntimeException.createIllegalArgumentException(
-                  "start position cannot be negative ({0})", begin);
+            throw new NotPositiveException(LocalizedFormats.START_POSITION, begin);
         }
 
         if (length < 0) {
-            throw MathRuntimeException.createIllegalArgumentException(
-                  "length cannot be negative ({0})", length);
+            throw new NotPositiveException(LocalizedFormats.LENGTH, length);
         }
 
         if (begin + length > values.length) {
             throw MathRuntimeException.createIllegalArgumentException(
-                  "subarray ends after array end");
+                    LocalizedFormats.SUBARRAY_ENDS_AFTER_ARRAY_END);
         }
 
-        if (length == 0) {
+        if (length == 0 && !allowEmpty) {
             return false;
         }
 
@@ -137,29 +164,62 @@ public abstract class AbstractUnivariateStatistic
         final double[] weights,
         final int begin,
         final int length) {
+        return test(values, weights, begin, length, false);
+    }
+
+    /**
+     * This method is used by <code>evaluate(double[], double[], int, int)</code> methods
+     * to verify that the begin and length parameters designate a subarray of positive length
+     * and the weights are all non-negative, non-NaN, finite, and not all zero.
+     * <p>
+     * <ul>
+     * <li>returns <code>true</code> iff the parameters designate a subarray of
+     * non-negative length and the weights array contains legitimate values.</li>
+     * <li>throws <code>IllegalArgumentException</code> if any of the following are true:
+     * <ul><li>the values array is null</li>
+     *     <li>the weights array is null</li>
+     *     <li>the weights array does not have the same length as the values array</li>
+     *     <li>the weights array contains one or more infinite values</li>
+     *     <li>the weights array contains one or more NaN values</li>
+     *     <li>the weights array contains negative values</li>
+     *     <li>the start and length arguments do not determine a valid array</li></ul>
+     * </li>
+     * <li>returns <code>false</li> if the array is non-null, but
+     * <code>length</code> is 0 unless <code>allowEmpty</code> is <code>true</code>.
+     * </ul></p>
+     *
+     * @param values the input array
+     * @param weights the weights array
+     * @param begin index of the first array element to include
+     * @param length the number of elements to include
+     * @param allowEmpty if <code>true</code> than allow zero length arrays to pass
+     * @return true if the parameters are valid 
+     * @throws IllegalArgumentException if the indices are invalid or the array is null
+     * @since 3.0
+     */
+    protected boolean test(final double[] values, final double[] weights, final int begin, final int length, final boolean allowEmpty){
 
         if (weights == null) {
-            throw MathRuntimeException.createIllegalArgumentException("input weights array is null");
+            throw new NullArgumentException(LocalizedFormats.INPUT_ARRAY);
         }
 
-        if (weights.length !=  values.length) {
-            throw MathRuntimeException.createIllegalArgumentException(
-                  "Different number of weights and values");
+        if (weights.length != values.length) {
+            throw new DimensionMismatchException(weights.length, values.length);
         }
 
         boolean containsPositiveWeight = false;
         for (int i = begin; i < begin + length; i++) {
             if (Double.isNaN(weights[i])) {
                 throw MathRuntimeException.createIllegalArgumentException(
-                        "NaN weight at index {0}", i);
+                        LocalizedFormats.NAN_ELEMENT_AT_INDEX, i);
             }
             if (Double.isInfinite(weights[i])) {
                 throw MathRuntimeException.createIllegalArgumentException(
-                        "Infinite weight at index {0}", i);
+                        LocalizedFormats.INFINITE_ARRAY_ELEMENT, weights[i], i);
             }
             if (weights[i] < 0) {
                 throw MathRuntimeException.createIllegalArgumentException(
-                      "negative weight {0} at index {1} ", weights[i], i);
+                        LocalizedFormats.NEGATIVE_ELEMENT_AT_INDEX, i, weights[i]);
             }
             if (!containsPositiveWeight && weights[i] > 0.0) {
                 containsPositiveWeight = true;
@@ -168,10 +228,10 @@ public abstract class AbstractUnivariateStatistic
 
         if (!containsPositiveWeight) {
             throw MathRuntimeException.createIllegalArgumentException(
-                    "weight array must contain at least one non-zero value");
+                    LocalizedFormats.WEIGHT_AT_LEAST_ONE_NON_ZERO);
         }
 
-        return test(values, begin, length);
+        return test(values, begin, length, allowEmpty);
     }
 }
 

@@ -21,13 +21,13 @@ import org.apache.commons.math.FunctionEvaluationException;
 import org.apache.commons.math.MathRuntimeException;
 import org.apache.commons.math.analysis.polynomials.PolynomialFunction;
 import org.apache.commons.math.optimization.DifferentiableMultivariateVectorialOptimizer;
-import org.apache.commons.math.optimization.OptimizationException;
+import org.apache.commons.math.exception.ConvergenceException;
 
 /** This class implements a curve fitting specialized for polynomials.
  * <p>Polynomial fitting is a very simple case of curve fitting. The
  * estimated coefficients are the polynomial coefficients. They are
  * searched by a least square estimator.</p>
- * @version $Revision: 811685 $ $Date: 2009-09-05 19:36:48 +0200 (Sa, 05 Sep 2009) $
+ * @version $Revision: 990792 $ $Date: 2010-08-30 15:06:22 +0200 (Mo, 30 Aug 2010) $
  * @since 2.0
  */
 
@@ -60,12 +60,18 @@ public class PolynomialFitter {
         fitter.addObservedPoint(weight, x, y);
     }
 
+    /**
+     * Remove all observations.
+     */
+    public void clearObservations() {
+        fitter.clearObservations();
+    }
+
     /** Get the polynomial fitting the weighted (x, y) points.
      * @return polynomial function best fitting the observed points
-     * @exception OptimizationException if the algorithm failed to converge
+     * @exception ConvergenceException if the algorithm failed to converge
      */
-    public PolynomialFunction fit()
-        throws OptimizationException {
+    public PolynomialFunction fit() {
         try {
             return new PolynomialFunction(fitter.fit(new ParametricPolynomial(), new double[degree + 1]));
         } catch (FunctionEvaluationException fee) {
