@@ -25,12 +25,11 @@ import org.apache.commons.math.ode.FirstOrderDifferentialEquations;
  *
  * @see FirstOrderIntegratorWithJacobians
  *
- * @version $Revision: 918702 $ $Date: 2010-03-03 22:28:16 +0100 (Mi, 03 Mrz 2010) $
+ * @version $Revision: 967007 $ $Date: 2010-07-23 10:59:37 +0200 (Fr, 23 Jul 2010) $
  * @since 2.1
  */
 
-public interface ParameterizedODE
-    extends FirstOrderDifferentialEquations {
+public interface ParameterizedODE extends FirstOrderDifferentialEquations {
 
     /** Get the number of parameters.
      * @return number of parameters

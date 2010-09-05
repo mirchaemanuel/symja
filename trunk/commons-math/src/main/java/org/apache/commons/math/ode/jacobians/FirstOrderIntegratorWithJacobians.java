@@ -26,8 +26,9 @@ import java.util.Collection;
 
 import org.apache.commons.math.MathRuntimeException;
 import org.apache.commons.math.MaxEvaluationsExceededException;
+import org.apache.commons.math.exception.util.LocalizedFormats;
 import org.apache.commons.math.ode.DerivativeException;
-import org.apache.commons.math.ode.FirstOrderDifferentialEquations;
+import org.apache.commons.math.ode.ExtendedFirstOrderDifferentialEquations;
 import org.apache.commons.math.ode.FirstOrderIntegrator;
 import org.apache.commons.math.ode.IntegratorException;
 import org.apache.commons.math.ode.events.EventException;
@@ -45,7 +46,7 @@ import org.apache.commons.math.ode.sampling.StepInterpolator;
  * have dimension n &times; (1 + n + p).</p>
  * @see ParameterizedODE
  * @see ODEWithJacobians
- * @version $Revision: 927342 $ $Date: 2010-03-25 11:55:55 +0100 (Do, 25 Mrz 2010) $
+ * @version $Revision: 983921 $ $Date: 2010-08-10 12:46:06 +0200 (Di, 10 Aug 2010) $
  * @since 2.1
  */
 public class FirstOrderIntegratorWithJacobians {
@@ -284,7 +285,7 @@ public class FirstOrderIntegratorWithJacobians {
 
     /** Get the current value of the step start time t<sub>i</sub>.
      * <p>This method can be called during integration (typically by
-     * the object implementing the {@link FirstOrderDifferentialEquations
+     * the object implementing the {@link org.apache.commons.math.ode.FirstOrderDifferentialEquations
      * differential equations} problem) if the value of the current step that
      * is attempted is needed.</p>
      * <p>The result is undefined if the method is called outside of
@@ -297,7 +298,7 @@ public class FirstOrderIntegratorWithJacobians {
 
     /** Get the current signed value of the integration stepsize.
      * <p>This method can be called during integration (typically by
-     * the object implementing the {@link FirstOrderDifferentialEquations
+     * the object implementing the {@link org.apache.commons.math.ode.FirstOrderDifferentialEquations
      * differential equations} problem) if the signed value of the current stepsize
      * that is tried is needed.</p>
      * <p>The result is undefined if the method is called outside of
@@ -348,12 +349,12 @@ public class FirstOrderIntegratorWithJacobians {
         int arrayDimension = (array == null) ? 0 : Array.getLength(array);
         if (arrayDimension != expected) {
             throw MathRuntimeException.createIllegalArgumentException(
-                  "dimension mismatch {0} != {1}", arrayDimension, expected);
+                  LocalizedFormats.DIMENSIONS_MISMATCH_SIMPLE, arrayDimension, expected);
         }
     }
 
     /** Wrapper class used to map state and jacobians into compound state. */
-    private class MappingWrapper implements  FirstOrderDifferentialEquations {
+    private class MappingWrapper implements  ExtendedFirstOrderDifferentialEquations {
 
         /** Current state. */
         private final double[]   y;
@@ -385,6 +386,11 @@ public class FirstOrderIntegratorWithJacobians {
             final int n = y.length;
             final int k = dFdP[0].length;
             return n * (1 + n + k);
+        }
+
+        /** {@inheritDoc} */
+        public int getMainSetDimension() {
+            return ode.getDimension();
         }
 
         /** {@inheritDoc} */
@@ -441,8 +447,7 @@ public class FirstOrderIntegratorWithJacobians {
     }
 
     /** Wrapper class to compute jacobians by finite differences for ODE which do not compute them themselves. */
-    private class FiniteDifferencesWrapper
-        implements ODEWithJacobians {
+    private class FiniteDifferencesWrapper implements ODEWithJacobians {
 
         /** Raw ODE without jacobians computation. */
         private final ParameterizedODE ode;

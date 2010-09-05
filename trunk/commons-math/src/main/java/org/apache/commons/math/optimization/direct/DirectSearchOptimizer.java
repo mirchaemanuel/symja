@@ -22,15 +22,19 @@ import java.util.Comparator;
 
 import org.apache.commons.math.FunctionEvaluationException;
 import org.apache.commons.math.MathRuntimeException;
-import org.apache.commons.math.MaxEvaluationsExceededException;
-import org.apache.commons.math.MaxIterationsExceededException;
+import org.apache.commons.math.util.Incrementor;
 import org.apache.commons.math.analysis.MultivariateRealFunction;
+import org.apache.commons.math.exception.MaxCountExceededException;
+import org.apache.commons.math.exception.TooManyEvaluationsException;
+import org.apache.commons.math.exception.DimensionMismatchException;
+import org.apache.commons.math.exception.util.LocalizedFormats;
 import org.apache.commons.math.optimization.GoalType;
 import org.apache.commons.math.optimization.MultivariateRealOptimizer;
 import org.apache.commons.math.optimization.OptimizationException;
-import org.apache.commons.math.optimization.RealConvergenceChecker;
+import org.apache.commons.math.optimization.ConvergenceChecker;
 import org.apache.commons.math.optimization.RealPointValuePair;
 import org.apache.commons.math.optimization.SimpleScalarValueChecker;
+import org.apache.commons.math.optimization.general.AbstractScalarOptimizer;
 
 /**
  * This class implements simplex-based direct search optimization
@@ -61,12 +65,12 @@ import org.apache.commons.math.optimization.SimpleScalarValueChecker;
  * configuration from a unit hypercube. Each call to {@link
  * #optimize(MultivariateRealFunction, GoalType, double[]) optimize} will reuse
  * the current start configuration and move it such that its first vertex
- * is at the provided start point of the optimization. If the same optimizer
- * is used to solve different problems and the number of parameters change,
- * the start configuration <em>must</em> be reset or a dimension mismatch
- * will occur.</p>
+ * is at the provided start point of the optimization. If the {@code optimize}
+ * method is called to solve a different problem and the number of parameters
+ * change, the start configuration will be reset to a default one with the
+ * appropriate dimensions.</p>
  *
- * <p>If {@link #setConvergenceChecker(RealConvergenceChecker)} is not called,
+ * <p>If {@link #setConvergenceChecker(ConvergenceChecker)} is not called,
  * a default {@link SimpleScalarValueChecker} is used.</p>
  *
  * <p>Convergence is checked by providing the <em>worst</em> points of
@@ -82,52 +86,27 @@ import org.apache.commons.math.optimization.SimpleScalarValueChecker;
  * @see MultivariateRealFunction
  * @see NelderMead
  * @see MultiDirectional
- * @version $Revision: 885278 $ $Date: 2009-11-29 22:47:51 +0100 (So, 29 Nov 2009) $
+ * @version $Revision: 990792 $ $Date: 2010-08-30 15:06:22 +0200 (Mo, 30 Aug 2010) $
  * @since 1.2
  */
-public abstract class DirectSearchOptimizer implements MultivariateRealOptimizer {
-
-    /** Message for equal vertices. */
-    private static final String EQUAL_VERTICES_MESSAGE =
-        "equal vertices {0} and {1} in simplex configuration";
-
-    /** Message for dimension mismatch. */
-    private static final String DIMENSION_MISMATCH_MESSAGE =
-        "dimension mismatch {0} != {1}";
-
+public abstract class DirectSearchOptimizer
+    extends AbstractScalarOptimizer
+    implements MultivariateRealOptimizer {
     /** Simplex. */
     protected RealPointValuePair[] simplex;
-
-    /** Objective function. */
-    private MultivariateRealFunction f;
-
-    /** Convergence checker. */
-    private RealConvergenceChecker checker;
-
-    /** Maximal number of iterations allowed. */
-    private int maxIterations;
-
-    /** Number of iterations already performed. */
-    private int iterations;
-
-    /** Maximal number of evaluations allowed. */
-    private int maxEvaluations;
-
-    /** Number of evaluations already performed. */
-    private int evaluations;
-
     /** Start simplex configuration. */
     private double[][] startConfiguration;
 
-    /** Simple constructor.
+    /**
+     * Default constructor.
      */
     protected DirectSearchOptimizer() {
         setConvergenceChecker(new SimpleScalarValueChecker());
-        setMaxIterations(Integer.MAX_VALUE);
-        setMaxEvaluations(Integer.MAX_VALUE);
     }
 
-    /** Set start configuration for simplex.
+    /**
+     * Set start configuration for simplex.
+     *
      * <p>The start configuration for simplex is built from a box parallel to
      * the canonical axes of the space. The simplex is the subset of vertices
      * of a box parallel to the canonical axes. It is built as the path followed
@@ -139,9 +118,10 @@ public abstract class DirectSearchOptimizer implements MultivariateRealOptimizer
      * start simplex would be: { (1, 1, 1), (2, 1, 1), (2, 11, 1), (2, 11, 3) }.
      * The first vertex would be set to the start point at (1, 1, 1) and the
      * last vertex would be set to the diagonally opposite vertex at (2, 11, 3).</p>
-     * @param steps steps along the canonical axes representing box edges,
-     * they may be negative but not null
-     * @exception IllegalArgumentException if one step is null
+     *
+     * @param steps Steps along the canonical axes representing box edges. They
+     * may be negative but not zero.
+     * @throws IllegalArgumentException if one step is zero.
      */
     public void setStartConfiguration(final double[] steps)
         throws IllegalArgumentException {
@@ -154,21 +134,23 @@ public abstract class DirectSearchOptimizer implements MultivariateRealOptimizer
             for (int j = 0; j < i + 1; ++j) {
                 if (steps[j] == 0.0) {
                     throw MathRuntimeException.createIllegalArgumentException(
-                          EQUAL_VERTICES_MESSAGE, j, j + 1);
+                          LocalizedFormats.EQUAL_VERTICES_IN_SIMPLEX, j, j + 1);
                 }
                 System.arraycopy(steps, 0, vertexI, 0, j + 1);
             }
         }
     }
 
-    /** Set start configuration for simplex.
-     * <p>The real initial simplex will be set up by moving the reference
+    /**
+     * Set start configuration for simplex.
+     * The real initial simplex will be set up by moving the reference
      * simplex such that its first point is located at the start point of the
-     * optimization.</p>
-     * @param referenceSimplex reference simplex
-     * @exception IllegalArgumentException if the reference simplex does not
+     * optimization.
+     *
+     * @param referenceSimplex Reference simplex.
+     * @throws IllegalArgumentException if the reference simplex does not
      * contain at least one point, or if there is a dimension mismatch
-     * in the reference simplex or if one of its vertices is duplicated
+     * in the reference simplex or if one of its vertices is duplicated.
      */
     public void setStartConfiguration(final double[][] referenceSimplex)
         throws IllegalArgumentException {
@@ -178,7 +160,7 @@ public abstract class DirectSearchOptimizer implements MultivariateRealOptimizer
         final int n = referenceSimplex.length - 1;
         if (n < 0) {
             throw MathRuntimeException.createIllegalArgumentException(
-                    "simplex must contain at least one point");
+                    LocalizedFormats.SIMPLEX_NEED_ONE_POINT);
         }
         startConfiguration = new double[n][n];
         final double[] ref0 = referenceSimplex[0];
@@ -190,8 +172,7 @@ public abstract class DirectSearchOptimizer implements MultivariateRealOptimizer
 
             // safety checks
             if (refI.length != n) {
-                throw MathRuntimeException.createIllegalArgumentException(
-                      DIMENSION_MISMATCH_MESSAGE, refI.length, n);
+                throw new DimensionMismatchException(refI.length, n);
             }
             for (int j = 0; j < i; ++j) {
                 final double[] refJ = referenceSimplex[j];
@@ -204,7 +185,7 @@ public abstract class DirectSearchOptimizer implements MultivariateRealOptimizer
                 }
                 if (allEquals) {
                     throw MathRuntimeException.createIllegalArgumentException(
-                          EQUAL_VERTICES_MESSAGE, i, j);
+                          LocalizedFormats.EQUAL_VERTICES_IN_SIMPLEX, i, j);
                 }
             }
 
@@ -215,91 +196,46 @@ public abstract class DirectSearchOptimizer implements MultivariateRealOptimizer
                     confI[k] = refI[k] - ref0[k];
                 }
             }
-
         }
-
     }
 
     /** {@inheritDoc} */
-    public void setMaxIterations(int maxIterations) {
-        this.maxIterations = maxIterations;
-    }
+    protected RealPointValuePair doOptimize()
+        throws FunctionEvaluationException {
 
-    /** {@inheritDoc} */
-    public int getMaxIterations() {
-        return maxIterations;
-    }
-
-    /** {@inheritDoc} */
-    public void setMaxEvaluations(int maxEvaluations) {
-        this.maxEvaluations = maxEvaluations;
-    }
-
-    /** {@inheritDoc} */
-    public int getMaxEvaluations() {
-        return maxEvaluations;
-    }
-
-    /** {@inheritDoc} */
-    public int getIterations() {
-        return iterations;
-    }
-
-    /** {@inheritDoc} */
-    public int getEvaluations() {
-        return evaluations;
-    }
-
-    /** {@inheritDoc} */
-    public void setConvergenceChecker(RealConvergenceChecker convergenceChecker) {
-        this.checker = convergenceChecker;
-    }
-
-    /** {@inheritDoc} */
-    public RealConvergenceChecker getConvergenceChecker() {
-        return checker;
-    }
-
-    /** {@inheritDoc} */
-    public RealPointValuePair optimize(final MultivariateRealFunction function,
-                                       final GoalType goalType,
-                                       final double[] startPoint)
-        throws FunctionEvaluationException, OptimizationException,
-        IllegalArgumentException {
-
-        if (startConfiguration == null) {
-            // no initial configuration has been set up for simplex
-            // build a default one from a unit hypercube
+        final double[] startPoint = getStartPoint();
+        if ((startConfiguration == null) ||
+            (startConfiguration.length != startPoint.length)) {
+            // No initial configuration has been set up for simplex
+            // build a default one from a unit hypercube.
             final double[] unit = new double[startPoint.length];
             Arrays.fill(unit, 1.0);
             setStartConfiguration(unit);
         }
+        
+        final boolean isMinim = (getGoalType() == GoalType.MINIMIZE);
+        final Comparator<RealPointValuePair> comparator
+            = new Comparator<RealPointValuePair>() {
+            public int compare(final RealPointValuePair o1,
+                               final RealPointValuePair o2) {
+                final double v1 = o1.getValue();
+                final double v2 = o2.getValue();
+                return isMinim ? Double.compare(v1, v2) : Double.compare(v2, v1);
+            }
+        };
 
-        this.f = function;
-        final Comparator<RealPointValuePair> comparator =
-            new Comparator<RealPointValuePair>() {
-                public int compare(final RealPointValuePair o1,
-                                   final RealPointValuePair o2) {
-                    final double v1 = o1.getValue();
-                    final double v2 = o2.getValue();
-                    return (goalType == GoalType.MINIMIZE) ?
-                            Double.compare(v1, v2) : Double.compare(v2, v1);
-                }
-            };
-
-        // initialize search
-        iterations  = 0;
-        evaluations = 0;
+        // Initialize search.
         buildSimplex(startPoint);
         evaluateSimplex(comparator);
 
         RealPointValuePair[] previous = new RealPointValuePair[simplex.length];
+        int iteration = 0;
+        final ConvergenceChecker<RealPointValuePair> checker = getConvergenceChecker();
         while (true) {
-
-            if (iterations > 0) {
+            if (iteration > 0) {
                 boolean converged = true;
                 for (int i = 0; i < simplex.length; ++i) {
-                    converged &= checker.converged(iterations, previous[i], simplex[i]);
+                    converged &= checker.converged(iteration, previous[i], simplex[i]);
                 }
                 if (converged) {
                     // we have found an optimum
@@ -307,65 +243,37 @@ public abstract class DirectSearchOptimizer implements MultivariateRealOptimizer
                 }
             }
 
-            // we still need to search
+            // We still need to search.
             System.arraycopy(simplex, 0, previous, 0, simplex.length);
             iterateSimplex(comparator);
-
-        }
-
-    }
-
-    /** Increment the iterations counter by 1.
-     * @exception OptimizationException if the maximal number
-     * of iterations is exceeded
-     */
-    protected void incrementIterationsCounter()
-        throws OptimizationException {
-        if (++iterations > maxIterations) {
-            throw new OptimizationException(new MaxIterationsExceededException(maxIterations));
+            ++iteration;
         }
     }
 
-    /** Compute the next simplex of the algorithm.
-     * @param comparator comparator to use to sort simplex vertices from best to worst
-     * @exception FunctionEvaluationException if the function cannot be evaluated at
-     * some point
-     * @exception OptimizationException if the algorithm fails to converge
-     * @exception IllegalArgumentException if the start point dimension is wrong
+    /**
+     * Compute the next simplex of the algorithm.
+     *
+     * @param comparator Comparator to use to sort simplex vertices from best to worst.
+     * @throws FunctionEvaluationException if the function cannot be evaluated at
+     * some point.
+     * @throws TooManyEvaluationsException if the algorithm fails to converge.
+     * @throws DimensionMismatchException if the start point dimension is wrong.
      */
     protected abstract void iterateSimplex(final Comparator<RealPointValuePair> comparator)
-        throws FunctionEvaluationException, OptimizationException, IllegalArgumentException;
+        throws FunctionEvaluationException;
 
-    /** Evaluate the objective function on one point.
-     * <p>A side effect of this method is to count the number of
-     * function evaluations</p>
-     * @param x point on which the objective function should be evaluated
-     * @return objective function value at the given point
-     * @exception FunctionEvaluationException if no value can be computed for the
-     * parameters or if the maximal number of evaluations is exceeded
-     * @exception IllegalArgumentException if the start point dimension is wrong
+    /**
+     * Build an initial simplex.
+     *
+     * @param startPoint Start point for optimization.
+     * @throws DimensionMismatchException if the start point does not match
+     * simplex dimension.
      */
-    protected double evaluate(final double[] x)
-        throws FunctionEvaluationException, IllegalArgumentException {
-        if (++evaluations > maxEvaluations) {
-            throw new FunctionEvaluationException(new MaxEvaluationsExceededException(maxEvaluations),
-                                                  x);
-        }
-        return f.value(x);
-    }
-
-    /** Build an initial simplex.
-     * @param startPoint the start point for optimization
-     * @exception IllegalArgumentException if the start point does not match
-     * simplex dimension
-     */
-    private void buildSimplex(final double[] startPoint)
-        throws IllegalArgumentException {
+    private void buildSimplex(final double[] startPoint) {
 
         final int n = startPoint.length;
         if (n != startConfiguration.length) {
-            throw MathRuntimeException.createIllegalArgumentException(
-                  DIMENSION_MISMATCH_MESSAGE, n, startConfiguration.length);
+            throw new DimensionMismatchException(n, startConfiguration.length);
         }
 
         // set first vertex
@@ -374,41 +282,43 @@ public abstract class DirectSearchOptimizer implements MultivariateRealOptimizer
 
         // set remaining vertices
         for (int i = 0; i < n; ++i) {
-            final double[] confI   = startConfiguration[i];
+            final double[] confI = startConfiguration[i];
             final double[] vertexI = new double[n];
             for (int k = 0; k < n; ++k) {
                 vertexI[k] = startPoint[k] + confI[k];
             }
             simplex[i + 1] = new RealPointValuePair(vertexI, Double.NaN);
         }
-
     }
 
-    /** Evaluate all the non-evaluated points of the simplex.
-     * @param comparator comparator to use to sort simplex vertices from best to worst
-     * @exception FunctionEvaluationException if no value can be computed for the parameters
-     * @exception OptimizationException if the maximal number of evaluations is exceeded
+    /**
+     * Evaluate all the non-evaluated points of the simplex.
+     *
+     * @param comparator Comparator to use to sort simplex vertices from best to worst.
+     * @throws FunctionEvaluationException if no value can be computed for the parameters.
+     * @throws TooManyEvaluationsException if the maximal number of evaluations is exceeded.
      */
     protected void evaluateSimplex(final Comparator<RealPointValuePair> comparator)
-        throws FunctionEvaluationException, OptimizationException {
+        throws FunctionEvaluationException {
 
-        // evaluate the objective function at all non-evaluated simplex points
+        // Evaluate the objective function at all non-evaluated simplex points.
         for (int i = 0; i < simplex.length; ++i) {
             final RealPointValuePair vertex = simplex[i];
             final double[] point = vertex.getPointRef();
             if (Double.isNaN(vertex.getValue())) {
-                simplex[i] = new RealPointValuePair(point, evaluate(point), false);
+                simplex[i] = new RealPointValuePair(point, computeObjectiveValue(point), false);
             }
         }
 
-        // sort the simplex from best to worst
+        // Sort the simplex from best to worst.
         Arrays.sort(simplex, comparator);
-
     }
 
-    /** Replace the worst point of the simplex by a new point.
-     * @param pointValuePair point to insert
-     * @param comparator comparator to use to sort simplex vertices from best to worst
+    /**
+     * Replace the worst point of the simplex by a new point.
+     *
+     * @param pointValuePair Point to insert.
+     * @param comparator Comparator to use to sort simplex vertices from best to worst.
      */
     protected void replaceWorstPoint(RealPointValuePair pointValuePair,
                                      final Comparator<RealPointValuePair> comparator) {
@@ -416,11 +326,10 @@ public abstract class DirectSearchOptimizer implements MultivariateRealOptimizer
         for (int i = 0; i < n; ++i) {
             if (comparator.compare(simplex[i], pointValuePair) > 0) {
                 RealPointValuePair tmp = simplex[i];
-                simplex[i]         = pointValuePair;
-                pointValuePair     = tmp;
+                simplex[i] = pointValuePair;
+                pointValuePair = tmp;
             }
         }
         simplex[n] = pointValuePair;
     }
-
 }

@@ -21,6 +21,7 @@ import org.apache.commons.math.DimensionMismatchException;
 import org.apache.commons.math.linear.MatrixUtils;
 import org.apache.commons.math.linear.NotPositiveDefiniteMatrixException;
 import org.apache.commons.math.linear.RealMatrix;
+import org.apache.commons.math.util.FastMath;
 
 /**
  * A {@link RandomVectorGenerator} that generates vectors with with
@@ -55,7 +56,7 @@ import org.apache.commons.math.linear.RealMatrix;
  * of the correlated vector. This class handles this situation
  * automatically.</p>
  *
- * @version $Revision: 811827 $ $Date: 2009-09-06 17:32:50 +0200 (So, 06 Sep 2009) $
+ * @version $Revision: 990658 $ $Date: 2010-08-30 00:04:09 +0200 (Mo, 30 Aug 2010) $
  * @since 1.2
  */
 
@@ -243,7 +244,7 @@ public class CorrelatedRandomVectorGenerator
             } else {
 
                 // transform the matrix
-                double sqrt = Math.sqrt(c[ir][ir]);
+                double sqrt = FastMath.sqrt(c[ir][ir]);
                 b[rank][rank] = sqrt;
                 double inverse = 1 / sqrt;
                 for (int i = rank + 1; i < order; ++i) {

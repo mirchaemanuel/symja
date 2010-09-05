@@ -20,8 +20,10 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.text.MessageFormat;
 import java.util.Locale;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
+
+import org.apache.commons.math.exception.util.DummyLocalizable;
+import org.apache.commons.math.exception.util.Localizable;
+import org.apache.commons.math.exception.util.LocalizedFormats;
 
 
 /**
@@ -31,17 +33,17 @@ import java.util.ResourceBundle;
 * <p>
 * Adapted from <a href="http://commons.apache.org/collections/api-release/org/apache/commons/collections/FunctorException.html"/>.</p>
 *
-* @version $Revision: 822850 $ $Date: 2009-10-07 20:56:42 +0200 (Mi, 07 Okt 2009) $
+* @version $Revision: 983921 $ $Date: 2010-08-10 12:46:06 +0200 (Di, 10 Aug 2010) $
 */
 public class MathException extends Exception {
 
     /** Serializable version identifier. */
-    private static final long serialVersionUID = -9004610152740737812L;
+    private static final long serialVersionUID = 7428019509644517071L;
 
     /**
      * Pattern used to build the message.
      */
-    private final String pattern;
+    private final Localizable pattern;
 
     /**
      * Arguments used to build the message.
@@ -53,8 +55,8 @@ public class MathException extends Exception {
      * detail message.
      */
     public MathException() {
-        this.pattern   = null;
-        this.arguments = new Object[0];
+        this.pattern   = LocalizedFormats.SIMPLE_MESSAGE;
+        this.arguments = new Object[] { "" };
     }
 
     /**
@@ -63,8 +65,22 @@ public class MathException extends Exception {
      * Message formatting is delegated to {@link java.text.MessageFormat}.
      * @param pattern format specifier
      * @param arguments format arguments
+     * @deprecated as of 2.2 replaced by {@link #MathException(Localizable, Object...)}
      */
+    @Deprecated
     public MathException(String pattern, Object ... arguments) {
+      this(new DummyLocalizable(pattern), arguments);
+    }
+
+    /**
+     * Constructs a new <code>MathException</code> with specified
+     * formatted detail message.
+     * Message formatting is delegated to {@link java.text.MessageFormat}.
+     * @param pattern format specifier
+     * @param arguments format arguments
+     * @since 2.2
+     */
+    public MathException(Localizable pattern, Object ... arguments) {
       this.pattern   = pattern;
       this.arguments = (arguments == null) ? new Object[0] : arguments.clone();
     }
@@ -78,8 +94,8 @@ public class MathException extends Exception {
      */
     public MathException(Throwable rootCause) {
         super(rootCause);
-        this.pattern   = getMessage();
-        this.arguments = new Object[0];
+        this.pattern   = LocalizedFormats.SIMPLE_MESSAGE;
+        this.arguments = new Object[] { (rootCause == null) ? "" : rootCause.getMessage() };
     }
 
     /**
@@ -91,45 +107,46 @@ public class MathException extends Exception {
      * @param pattern format specifier
      * @param arguments format arguments
      * @since 1.2
+     * @deprecated as of 2.2 replaced by {@link #MathException(Throwable, Localizable, Object...)}
      */
+    @Deprecated
     public MathException(Throwable rootCause, String pattern, Object ... arguments) {
-      super(rootCause);
-      this.pattern   = pattern;
-      this.arguments = (arguments == null) ? new Object[0] : arguments.clone();
+        this(rootCause, new DummyLocalizable(pattern), arguments);
     }
 
     /**
-     * Translate a string to a given locale.
-     * @param s string to translate
-     * @param locale locale into which to translate the string
-     * @return translated string or original string
-     * for unsupported locales or unknown strings
+     * Constructs a new <code>MathException</code> with specified
+     * formatted detail message and nested <code>Throwable</code> root cause.
+     * Message formatting is delegated to {@link java.text.MessageFormat}.
+     * @param rootCause the exception or error that caused this exception
+     * to be thrown.
+     * @param pattern format specifier
+     * @param arguments format arguments
+     * @since 2.2
      */
-    private static String translate(String s, Locale locale) {
-        try {
-            ResourceBundle bundle =
-                    ResourceBundle.getBundle("org.apache.commons.math.MessagesResources", locale);
-            if (bundle.getLocale().getLanguage().equals(locale.getLanguage())) {
-                // the value of the resource is the translated string
-                return bundle.getString(s);
-            }
-
-        } catch (MissingResourceException mre) {
-            // do nothing here
-        }
-
-        // the locale is not supported or the resource is unknown
-        // don't translate and fall back to using the string as is
-        return s;
-
+    public MathException(Throwable rootCause, Localizable pattern, Object ... arguments) {
+      super(rootCause);
+      this.pattern   = pattern;
+      this.arguments = (arguments == null) ? new Object[0] : arguments.clone();
     }
 
     /** Gets the pattern used to build the message of this throwable.
      *
      * @return the pattern used to build the message of this throwable
      * @since 1.2
+     * @deprecated as of 2.2 replaced by {@link #getLocalizablePattern()}
      */
+    @Deprecated
     public String getPattern() {
+        return pattern.getSourceString();
+    }
+
+    /** Gets the localizable pattern used to build the message of this throwable.
+     *
+     * @return the localizable pattern used to build the message of this throwable
+     * @since 2.2
+     */
+    public Localizable getLocalizablePattern() {
         return pattern;
     }
 
@@ -150,7 +167,10 @@ public class MathException extends Exception {
      * @since 1.2
      */
     public String getMessage(final Locale locale) {
-        return (pattern == null) ? "" : new MessageFormat(translate(pattern, locale), locale).format(arguments);
+        if (pattern != null) {
+            return new MessageFormat(pattern.getLocalizedString(locale), locale).format(arguments);
+        }
+        return "";
     }
 
     /** {@inheritDoc} */

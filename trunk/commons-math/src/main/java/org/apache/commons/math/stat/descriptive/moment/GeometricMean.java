@@ -19,9 +19,11 @@ package org.apache.commons.math.stat.descriptive.moment;
 import java.io.Serializable;
 
 import org.apache.commons.math.MathRuntimeException;
+import org.apache.commons.math.exception.util.LocalizedFormats;
 import org.apache.commons.math.stat.descriptive.AbstractStorelessUnivariateStatistic;
 import org.apache.commons.math.stat.descriptive.StorelessUnivariateStatistic;
 import org.apache.commons.math.stat.descriptive.summary.SumOfLogs;
+import org.apache.commons.math.util.FastMath;
 
 /**
  * Returns the <a href="http://www.xycoon.com/geometric_mean.htm">
@@ -45,7 +47,7 @@ import org.apache.commons.math.stat.descriptive.summary.SumOfLogs;
  * <code>clear()</code> method, it must be synchronized externally.</p>
  *
  *
- * @version $Revision: 811827 $ $Date: 2009-09-06 17:32:50 +0200 (So, 06 Sep 2009) $
+ * @version $Revision: 990658 $ $Date: 2010-08-30 00:04:09 +0200 (Mo, 30 Aug 2010) $
  */
 public class GeometricMean extends AbstractStorelessUnivariateStatistic implements Serializable {
 
@@ -105,7 +107,7 @@ public class GeometricMean extends AbstractStorelessUnivariateStatistic implemen
     @Override
     public double getResult() {
         if (sumOfLogs.getN() > 0) {
-            return Math.exp(sumOfLogs.getResult() / sumOfLogs.getN());
+            return FastMath.exp(sumOfLogs.getResult() / sumOfLogs.getN());
         } else {
             return Double.NaN;
         }
@@ -138,7 +140,7 @@ public class GeometricMean extends AbstractStorelessUnivariateStatistic implemen
     @Override
     public double evaluate(
         final double[] values, final int begin, final int length) {
-        return Math.exp(
+        return FastMath.exp(
             sumOfLogs.evaluate(values, begin, length) / length);
     }
 
@@ -194,7 +196,7 @@ public class GeometricMean extends AbstractStorelessUnivariateStatistic implemen
     private void checkEmpty() {
         if (getN() > 0) {
             throw MathRuntimeException.createIllegalStateException(
-                    "{0} values have been added before statistic is configured",
+                    LocalizedFormats.VALUES_ADDED_BEFORE_CONFIGURING_STATISTIC,
                     getN());
         }
     }

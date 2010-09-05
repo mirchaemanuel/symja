@@ -23,6 +23,7 @@ import java.util.Comparator;
 import java.util.TreeMap;
 
 import org.apache.commons.math.MathRuntimeException;
+import org.apache.commons.math.exception.util.LocalizedFormats;
 
 /**
  * Maintains a frequency distribution.
@@ -43,7 +44,7 @@ import org.apache.commons.math.MathRuntimeException;
  * The values are ordered using the default (natural order), unless a
  * <code>Comparator</code> is supplied in the constructor.</p>
  *
- * @version $Revision: 922722 $ $Date: 2010-03-14 03:15:01 +0100 (So, 14 Mrz 2010) $
+ * @version $Revision: 983921 $ $Date: 2010-08-10 12:46:06 +0200 (Di, 10 Aug 2010) $
  */
 public class Frequency implements Serializable {
 
@@ -114,7 +115,7 @@ public class Frequency implements Serializable {
             addValue((Comparable<?>) v);
         } else {
             throw MathRuntimeException.createIllegalArgumentException(
-                  "class ({0}) does not implement Comparable",
+                  LocalizedFormats.CLASS_DOESNT_IMPLEMENT_COMPARABLE,
                   v.getClass().getName());
         }
     }
@@ -144,7 +145,7 @@ public class Frequency implements Serializable {
         } catch (ClassCastException ex) {
             //TreeMap will throw ClassCastException if v is not comparable
             throw MathRuntimeException.createIllegalArgumentException(
-                  "instance of class {0} not comparable to existing values",
+                  LocalizedFormats.INSTANCES_NOT_COMPARABLE_TO_EXISTING_VALUES,
                   v.getClass().getName());
         }
     }

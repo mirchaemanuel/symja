@@ -19,8 +19,10 @@ package org.apache.commons.math.optimization.fitting;
 
 import org.apache.commons.math.FunctionEvaluationException;
 import org.apache.commons.math.MathRuntimeException;
+import org.apache.commons.math.exception.util.LocalizedFormats;
 import org.apache.commons.math.optimization.DifferentiableMultivariateVectorialOptimizer;
 import org.apache.commons.math.optimization.OptimizationException;
+import org.apache.commons.math.util.FastMath;
 
 /** This class implements a curve fitting specialized for sinusoids.
  * <p>Harmonic fitting is a very simple case of curve fitting. The
@@ -28,7 +30,7 @@ import org.apache.commons.math.optimization.OptimizationException;
  * the phase &phi;: <code>f (t) = a cos (&omega; t + &phi;)</code>. They are
  * searched by a least square estimator initialized with a rough guess
  * based on integrals.</p>
- * @version $Revision: 786479 $ $Date: 2009-06-19 14:36:16 +0200 (Fr, 19 Jun 2009) $
+ * @version $Revision: 990658 $ $Date: 2010-08-30 00:04:09 +0200 (Mo, 30 Aug 2010) $
  * @since 2.0
  */
 public class HarmonicFitter {
@@ -82,7 +84,7 @@ public class HarmonicFitter {
             if (parameters == null) {
                 final WeightedObservedPoint[] observations = fitter.getObservations();
                 if (observations.length < 4) {
-                    throw new OptimizationException("sample contains {0} observed points, at least {1} are required",
+                    throw new OptimizationException(LocalizedFormats.INSUFFICIENT_OBSERVED_POINTS_IN_SAMPLE,
                                                     observations.length, 4);
                 }
 
@@ -113,7 +115,7 @@ public class HarmonicFitter {
             final double a     = parameters[0];
             final double omega = parameters[1];
             final double phi   = parameters[2];
-            return a * Math.cos(omega * x + phi);
+            return a * FastMath.cos(omega * x + phi);
         }
 
         /** {@inheritDoc} */
@@ -122,8 +124,8 @@ public class HarmonicFitter {
             final double omega = parameters[1];
             final double phi   = parameters[2];
             final double alpha = omega * x + phi;
-            final double cosAlpha = Math.cos(alpha);
-            final double sinAlpha = Math.sin(alpha);
+            final double cosAlpha = FastMath.cos(alpha);
+            final double sinAlpha = FastMath.sin(alpha);
             return new double[] { cosAlpha, -a * x * sinAlpha, -a * sinAlpha };
         }
 

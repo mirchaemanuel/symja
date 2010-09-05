@@ -19,6 +19,7 @@ package org.apache.commons.math.analysis.solvers;
 import org.apache.commons.math.FunctionEvaluationException;
 import org.apache.commons.math.MaxIterationsExceededException;
 import org.apache.commons.math.analysis.UnivariateRealFunction;
+import org.apache.commons.math.util.FastMath;
 
 /**
  * Implements the <a href="http://mathworld.wolfram.com/Bisection.html">
@@ -26,7 +27,7 @@ import org.apache.commons.math.analysis.UnivariateRealFunction;
  * <p>
  * The function should be continuous but not necessarily smooth.</p>
  *
- * @version $Revision: 811685 $ $Date: 2009-09-05 19:36:48 +0200 (Sa, 05 Sep 2009) $
+ * @version $Revision: 990658 $ $Date: 2010-08-30 00:04:09 +0200 (Mo, 30 Aug 2010) $
  */
 public class BisectionSolver extends UnivariateRealSolverImpl {
 
@@ -69,7 +70,7 @@ public class BisectionSolver extends UnivariateRealSolverImpl {
     /** {@inheritDoc} */
     public double solve(final UnivariateRealFunction f, double min, double max, double initial)
         throws MaxIterationsExceededException, FunctionEvaluationException {
-        return solve(min, max);
+        return solve(f, min, max);
     }
 
     /** {@inheritDoc} */
@@ -96,7 +97,7 @@ public class BisectionSolver extends UnivariateRealSolverImpl {
                 max = m;
             }
 
-            if (Math.abs(max - min) <= absoluteAccuracy) {
+            if (FastMath.abs(max - min) <= absoluteAccuracy) {
                 m = UnivariateRealSolverUtils.midpoint(min, max);
                 setResult(m, i);
                 return m;

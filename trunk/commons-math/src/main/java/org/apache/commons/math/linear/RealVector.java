@@ -42,7 +42,7 @@ import org.apache.commons.math.analysis.UnivariateRealFunction;
  *   RealVector result = v.mapAddToSelf(3.0).mapTanToSelf().mapSquareToSelf();
  * </pre>
  *
- * @version $Revision: 902214 $ $Date: 2010-01-22 19:40:28 +0100 (Fr, 22 Jan 2010) $
+ * @version $Revision: 980544 $ $Date: 2010-07-29 21:23:46 +0200 (Do, 29 Jul 2010) $
  * @since 2.0
  */
 public interface RealVector {
@@ -151,7 +151,7 @@ public interface RealVector {
     /**
      * Compute this minus v.
      * @param v vector to be subtracted
-     * @return this + v
+     * @return this - v
      * @throws IllegalArgumentException if v is not the same size as this
      */
     RealVector subtract(double[] v)

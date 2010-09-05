@@ -24,6 +24,7 @@ import org.apache.commons.math.ode.IntegratorException;
 import org.apache.commons.math.ode.events.CombinedEventsManager;
 import org.apache.commons.math.ode.sampling.NordsieckStepInterpolator;
 import org.apache.commons.math.ode.sampling.StepHandler;
+import org.apache.commons.math.util.FastMath;
 
 
 /**
@@ -135,10 +136,13 @@ import org.apache.commons.math.ode.sampling.StepHandler;
  * <p>The P<sup>-1</sup>u vector and the P<sup>-1</sup> A P matrix do not depend on the state,
  * they only depend on k and therefore are precomputed once for all.</p>
  *
- * @version $Revision: 927202 $ $Date: 2010-03-24 23:11:51 +0100 (Mi, 24 Mrz 2010) $
+ * @version $Revision: 990658 $ $Date: 2010-08-30 00:04:09 +0200 (Mo, 30 Aug 2010) $
  * @since 2.0
  */
 public class AdamsBashforthIntegrator extends AdamsIntegrator {
+
+    /** Integrator method name. */
+    private static final String METHOD_NAME = "Adams-Bashforth";
 
     /**
      * Build an Adams-Bashforth integrator with the given order and step control parameters.
@@ -156,7 +160,7 @@ public class AdamsBashforthIntegrator extends AdamsIntegrator {
                                     final double scalAbsoluteTolerance,
                                     final double scalRelativeTolerance)
         throws IllegalArgumentException {
-        super("Adams-Bashforth", nSteps, nSteps, minStep, maxStep,
+        super(METHOD_NAME, nSteps, nSteps, minStep, maxStep,
               scalAbsoluteTolerance, scalRelativeTolerance);
     }
 
@@ -176,7 +180,7 @@ public class AdamsBashforthIntegrator extends AdamsIntegrator {
                                     final double[] vecAbsoluteTolerance,
                                     final double[] vecRelativeTolerance)
         throws IllegalArgumentException {
-        super("Adams-Bashforth", nSteps, nSteps, minStep, maxStep,
+        super(METHOD_NAME, nSteps, nSteps, minStep, maxStep,
               vecAbsoluteTolerance, vecRelativeTolerance);
     }
 
@@ -235,15 +239,15 @@ public class AdamsBashforthIntegrator extends AdamsIntegrator {
 
                 // evaluate error using the last term of the Taylor expansion
                 error = 0;
-                for (int i = 0; i < y0.length; ++i) {
-                    final double yScale = Math.abs(y[i]);
+                for (int i = 0; i < mainSetDimension; ++i) {
+                    final double yScale = FastMath.abs(y[i]);
                     final double tol = (vecAbsoluteTolerance == null) ?
                                        (scalAbsoluteTolerance + scalRelativeTolerance * yScale) :
                                        (vecAbsoluteTolerance[i] + vecRelativeTolerance[i] * yScale);
                     final double ratio  = nordsieck.getEntry(lastRow, i) / tol;
                     error += ratio * ratio;
                 }
-                error = Math.sqrt(error / y0.length);
+                error = FastMath.sqrt(error / mainSetDimension);
 
                 if (error <= 1.0) {
 
@@ -270,7 +274,7 @@ public class AdamsBashforthIntegrator extends AdamsIntegrator {
                     interpolatorTmp.storeTime(stepEnd);
                     if (manager.evaluateStep(interpolatorTmp)) {
                         final double dt = manager.getEventTime() - stepStart;
-                        if (Math.abs(dt) <= Math.ulp(stepStart)) {
+                        if (FastMath.abs(dt) <= FastMath.ulp(stepStart)) {
                             // we cannot simply truncate the step, reject the current computation
                             // and let the loop compute another state with the truncated step.
                             // it is so small (much probably exactly 0 due to limited accuracy)

@@ -26,6 +26,7 @@ import org.apache.commons.math.ode.events.CombinedEventsManager;
 import org.apache.commons.math.ode.sampling.AbstractStepInterpolator;
 import org.apache.commons.math.ode.sampling.DummyStepInterpolator;
 import org.apache.commons.math.ode.sampling.StepHandler;
+import org.apache.commons.math.util.FastMath;
 
 /**
  * This class implements the common part of all fixed step Runge-Kutta
@@ -48,7 +49,7 @@ import org.apache.commons.math.ode.sampling.StepHandler;
  * @see ClassicalRungeKuttaIntegrator
  * @see GillIntegrator
  * @see MidpointIntegrator
- * @version $Revision: 927202 $ $Date: 2010-03-24 23:11:51 +0100 (Mi, 24 Mrz 2010) $
+ * @version $Revision: 990658 $ $Date: 2010-08-30 00:04:09 +0200 (Mo, 30 Aug 2010) $
  * @since 1.2
  */
 
@@ -88,7 +89,7 @@ public abstract class RungeKuttaIntegrator extends AbstractIntegrator {
     this.a          = a;
     this.b          = b;
     this.prototype  = prototype;
-    this.step       = Math.abs(step);
+    this.step       = FastMath.abs(step);
   }
 
   /** {@inheritDoc} */
@@ -171,7 +172,7 @@ public abstract class RungeKuttaIntegrator extends AbstractIntegrator {
         interpolator.storeTime(stepStart + stepSize);
         if (manager.evaluateStep(interpolator)) {
             final double dt = manager.getEventTime() - stepStart;
-            if (Math.abs(dt) <= Math.ulp(stepStart)) {
+            if (FastMath.abs(dt) <= FastMath.ulp(stepStart)) {
                 // we cannot simply truncate the step, reject the current computation
                 // and let the loop compute another state with the truncated step.
                 // it is so small (much probably exactly 0 due to limited accuracy)

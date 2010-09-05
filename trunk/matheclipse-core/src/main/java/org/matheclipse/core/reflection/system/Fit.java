@@ -1,7 +1,6 @@
 package org.matheclipse.core.reflection.system;
 
 import org.apache.commons.math.analysis.polynomials.PolynomialFunction;
-import org.apache.commons.math.optimization.OptimizationException;
 import org.apache.commons.math.optimization.fitting.PolynomialFitter;
 import org.apache.commons.math.optimization.general.LevenbergMarquardtOptimizer;
 import org.matheclipse.basic.Config;
@@ -89,11 +88,12 @@ public class Fit extends AbstractFunctionEvaluator {
       if (Config.SHOW_STACKTRACE) {
         e.printStackTrace();
       }
-    } catch (OptimizationException e) {
-      if (Config.SHOW_STACKTRACE) {
-        e.printStackTrace();
-      }
-    }
+    } 
+//    catch (MathException e) {
+//      if (Config.SHOW_STACKTRACE) {
+//        e.printStackTrace();
+//      }
+//    }
     return null;
   }
 }

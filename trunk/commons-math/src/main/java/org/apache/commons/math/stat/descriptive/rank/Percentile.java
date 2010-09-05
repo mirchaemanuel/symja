@@ -20,7 +20,9 @@ import java.io.Serializable;
 import java.util.Arrays;
 
 import org.apache.commons.math.MathRuntimeException;
+import org.apache.commons.math.exception.util.LocalizedFormats;
 import org.apache.commons.math.stat.descriptive.AbstractUnivariateStatistic;
+import org.apache.commons.math.util.FastMath;
 
 /**
  * Provides percentile computation.
@@ -63,7 +65,7 @@ import org.apache.commons.math.stat.descriptive.AbstractUnivariateStatistic;
  * one of the threads invokes the <code>increment()</code> or
  * <code>clear()</code> method, it must be synchronized externally.</p>
  *
- * @version $Revision: 811685 $ $Date: 2009-09-05 19:36:48 +0200 (Sa, 05 Sep 2009) $
+ * @version $Revision: 990658 $ $Date: 2010-08-30 00:04:09 +0200 (Mo, 30 Aug 2010) $
  */
 public class Percentile extends AbstractUnivariateStatistic implements Serializable {
 
@@ -199,7 +201,7 @@ public class Percentile extends AbstractUnivariateStatistic implements Serializa
 
         if ((p > 100) || (p <= 0)) {
             throw MathRuntimeException.createIllegalArgumentException(
-                  "out of bounds quantile value: {0}, must be in (0, 100]", p);
+                  LocalizedFormats.OUT_OF_BOUNDS_QUANTILE_VALUE, p);
         }
         if (length == 0) {
             return Double.NaN;
@@ -209,7 +211,7 @@ public class Percentile extends AbstractUnivariateStatistic implements Serializa
         }
         double n = length;
         double pos = p * (n + 1) / 100;
-        double fpos = Math.floor(pos);
+        double fpos = FastMath.floor(pos);
         int intPos = (int) fpos;
         double dif = pos - fpos;
         double[] sorted = new double[length];
@@ -248,7 +250,7 @@ public class Percentile extends AbstractUnivariateStatistic implements Serializa
     public void setQuantile(final double p) {
         if (p <= 0 || p > 100) {
             throw MathRuntimeException.createIllegalArgumentException(
-                  "out of bounds quantile value: {0}, must be in (0, 100]", p);
+                  LocalizedFormats.OUT_OF_BOUNDS_QUANTILE_VALUE, p);
         }
         quantile = p;
     }

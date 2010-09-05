@@ -22,6 +22,8 @@ import org.apache.commons.math.MathRuntimeException;
 import org.apache.commons.math.MaxIterationsExceededException;
 import org.apache.commons.math.analysis.DifferentiableUnivariateRealFunction;
 import org.apache.commons.math.analysis.UnivariateRealFunction;
+import org.apache.commons.math.exception.util.LocalizedFormats;
+import org.apache.commons.math.util.FastMath;
 
 /**
  * Implements <a href="http://mathworld.wolfram.com/NewtonsMethod.html">
@@ -29,7 +31,7 @@ import org.apache.commons.math.analysis.UnivariateRealFunction;
  * <p>
  * The function should be continuous but not necessarily smooth.</p>
  *
- * @version $Revision: 811685 $ $Date: 2009-09-05 19:36:48 +0200 (Sa, 05 Sep 2009) $
+ * @version $Revision: 990658 $ $Date: 2010-08-30 00:04:09 +0200 (Mo, 30 Aug 2010) $
  */
 public class NewtonSolver extends UnivariateRealSolverImpl {
 
@@ -118,7 +120,7 @@ public class NewtonSolver extends UnivariateRealSolverImpl {
             while (i < maximalIterationCount) {
 
                 x1 = x0 - (f.value(x0) / derivative.value(x0));
-                if (Math.abs(x1 - x0) <= absoluteAccuracy) {
+                if (FastMath.abs(x1 - x0) <= absoluteAccuracy) {
                     setResult(x1, i);
                     return x1;
                 }
@@ -129,7 +131,7 @@ public class NewtonSolver extends UnivariateRealSolverImpl {
 
             throw new MaxIterationsExceededException(maximalIterationCount);
         } catch (ClassCastException cce) {
-            throw MathRuntimeException.createIllegalArgumentException("function is not differentiable");
+            throw MathRuntimeException.createIllegalArgumentException(LocalizedFormats.FUNCTION_NOT_DIFFERENTIABLE);
         }
     }
 

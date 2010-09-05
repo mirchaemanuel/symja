@@ -19,11 +19,13 @@ package org.apache.commons.math.analysis.integration;
 import org.apache.commons.math.ConvergingAlgorithmImpl;
 import org.apache.commons.math.MathRuntimeException;
 import org.apache.commons.math.analysis.UnivariateRealFunction;
+import org.apache.commons.math.exception.util.LocalizedFormats;
+import org.apache.commons.math.exception.NullArgumentException;
 
 /**
  * Provide a default implementation for several generic functions.
  *
- * @version $Revision: 811685 $ $Date: 2009-09-05 19:36:48 +0200 (Sa, 05 Sep 2009) $
+ * @version $Revision: 983921 $ $Date: 2010-08-10 12:46:06 +0200 (Di, 10 Aug 2010) $
  * @since 1.2
  */
 public abstract class UnivariateRealIntegratorImpl
@@ -66,7 +68,7 @@ public abstract class UnivariateRealIntegratorImpl
         throws IllegalArgumentException {
         super(defaultMaximalIterationCount, 1.0e-15);
         if (f == null) {
-            throw MathRuntimeException.createIllegalArgumentException("function is null");
+            throw new NullArgumentException(LocalizedFormats.FUNCTION);
         }
 
         this.f = f;
@@ -108,7 +110,7 @@ public abstract class UnivariateRealIntegratorImpl
         if (resultComputed) {
             return result;
         } else {
-            throw MathRuntimeException.createIllegalStateException("no result available");
+            throw MathRuntimeException.createIllegalStateException(LocalizedFormats.NO_RESULT_AVAILABLE);
         }
     }
 
@@ -158,7 +160,7 @@ public abstract class UnivariateRealIntegratorImpl
         IllegalArgumentException {
         if (lower >= upper) {
             throw MathRuntimeException.createIllegalArgumentException(
-                    "endpoints do not specify an interval: [{0}, {1}]",
+                    LocalizedFormats.ENDPOINTS_NOT_AN_INTERVAL,
                     lower, upper);
         }
     }
@@ -171,7 +173,7 @@ public abstract class UnivariateRealIntegratorImpl
     protected void verifyIterationCount() throws IllegalArgumentException {
         if ((minimalIterationCount <= 0) || (maximalIterationCount <= minimalIterationCount)) {
             throw MathRuntimeException.createIllegalArgumentException(
-                    "invalid iteration limits: min={0}, max={1}",
+                    LocalizedFormats.INVALID_ITERATIONS_LIMITS,
                     minimalIterationCount, maximalIterationCount);
         }
     }

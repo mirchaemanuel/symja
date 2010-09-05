@@ -43,8 +43,7 @@ public class Console {
 		final File file = console.getFile();
 		if (file != null) {
 			try {
-				final BufferedReader f = new BufferedReader(
-						new FileReader(file));
+				final BufferedReader f = new BufferedReader(new FileReader(file));
 				final StringBuffer buff = new StringBuffer(1024);
 				String line;
 				while ((line = f.readLine()) != null) {
@@ -58,8 +57,7 @@ public class Console {
 				System.out.println("Out[" + COUNTER + "]: " + outputExpression);
 				COUNTER++;
 			} catch (final IOException ioe) {
-				final String msg = "Cannot read from the specified file. "
-						+ "Make sure the path exists and you have read permission.";
+				final String msg = "Cannot read from the specified file. " + "Make sure the path exists and you have read permission.";
 				System.out.println(msg);
 				return;
 			}
@@ -69,18 +67,13 @@ public class Console {
 			try {
 				inputExpression = console.readString(System.out, ">>> ");
 				if (inputExpression != null) {
-					if ((inputExpression.length() >= 4)
-							&& inputExpression.toLowerCase().substring(0, 4)
-									.equals("exit")) {
-						System.out
-								.println("Closing MathEclipse console... bye.");
+					if ((inputExpression.length() >= 4) && inputExpression.toLowerCase().substring(0, 4).equals("exit")) {
+						System.out.println("Closing MathEclipse console... bye.");
 						System.exit(0);
 					}
 					outputExpression = console.interpreter(inputExpression);
-					System.out.println("In [" + COUNTER + "]: "
-							+ inputExpression);
-					System.out.println("Out[" + COUNTER + "]: "
-							+ outputExpression);
+					System.out.println("In [" + COUNTER + "]: " + inputExpression);
+					System.out.println("Out[" + COUNTER + "]: " + outputExpression);
 					COUNTER++;
 				}
 			} catch (final Exception e) {
@@ -95,24 +88,17 @@ public class Console {
 	private static void printUsage() {
 		final String lineSeparator = System.getProperty("line.separator");
 		final StringBuffer msg = new StringBuffer();
-		msg.append("org.matheclipse.core.eval.Console [options]"
-				+ lineSeparator);
+		msg.append("org.matheclipse.core.eval.Console [options]" + lineSeparator);
 		msg.append(lineSeparator);
 		msg.append("Program arguments: " + lineSeparator);
-		msg.append("  -h or -help                  print this message"
-				+ lineSeparator);
+		msg.append("  -h or -help                print this message" + lineSeparator);
 		// msg.append(" -debug print debugging information" + lSep);
-		msg.append("  -f or -file <filename>       use given file as input script"
-				+ lineSeparator);
-		msg.append("  -d or -default <filename>    use given textfile for system rules"
-				+ lineSeparator);
-		msg.append("To stop the program type: " + lineSeparator);
-		msg.append("exit<RETURN>" + lineSeparator);
-		msg
-				.append("To continue an input line type '\\' at the end of the line."
-						+ lineSeparator);
-		msg
-				.append("****+****+****+****+****+****+****+****+****+****+****+****+");
+		msg.append("  -f or -file <filename>     use given file as input script" + lineSeparator);
+		msg.append("  -d or -default <filename>  use given textfile for system rules" + lineSeparator);
+		msg.append("To stop the program type: exit<RETURN>" + lineSeparator);
+		msg.append("To continue an input line type: \\<RETURN>" + lineSeparator);
+		msg.append("at the end of the line." + lineSeparator);
+		msg.append("****+****+****+****+****+****+****+****+****+****+****+****+");
 
 		System.out.println(msg.toString());
 	}
@@ -135,7 +121,7 @@ public class Console {
 	 * Sets the arguments for the <code>main</code> method
 	 * 
 	 * @param args
-	 *            the aruments of the program
+	 *          the aruments of the program
 	 */
 	private void setArgs(final String args[]) {
 		for (int i = 0; i < args.length; i++) {
@@ -151,8 +137,7 @@ public class Console {
 					fFile = new File(args[i + 1]);
 					i++;
 				} catch (final ArrayIndexOutOfBoundsException aioobe) {
-					final String msg = "You must specify a file when "
-							+ "using the -file argument";
+					final String msg = "You must specify a file when " + "using the -file argument";
 					System.out.println(msg);
 					return;
 				}
@@ -161,8 +146,7 @@ public class Console {
 					fDefaultSystemRulesFilename = args[i + 1];
 					i++;
 				} catch (final ArrayIndexOutOfBoundsException aioobe) {
-					final String msg = "You must specify a file when "
-							+ "using the -file argument";
+					final String msg = "You must specify a file when " + "using the -file argument";
 					System.out.println(msg);
 					return;
 				}
@@ -193,10 +177,15 @@ public class Console {
 			OutputFormFactory.get().convert(buf, result);
 			return buf.toString();
 		} catch (final Exception e) {
-			e.printStackTrace();
-			buf.write(e.getMessage());
+			// e.printStackTrace();
+			String msg = e.getMessage();
+			if (msg != null) {
+				buf.write("\nError: " + msg);
+			} else {
+				buf.write("\nError: " + e.getClass().getSimpleName());
+			}
+			return buf.toString();
 		}
-		return "";
 	}
 
 	/**
@@ -204,7 +193,7 @@ public class Console {
 	 * 
 	 * @param out
 	 * @param prompt
-	 *            the prompt string to display
+	 *          the prompt string to display
 	 * 
 	 */
 
@@ -217,14 +206,13 @@ public class Console {
 	 * read a string from the console. The string is terminated by a newline
 	 * 
 	 * @param out
-	 *            Description of Parameter
+	 *          Description of Parameter
 	 * @return the input string (without the newline)
 	 */
 
 	public String readString(final PrintStream out) {
 		final StringBuffer input = new StringBuffer();
-		final BufferedReader in = new BufferedReader(new InputStreamReader(
-				System.in));
+		final BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 		boolean done = false;
 
 		try {
@@ -269,9 +257,9 @@ public class Console {
 	 * read a string from the console. The string is terminated by a newline
 	 * 
 	 * @param prompt
-	 *            the prompt string to display
+	 *          the prompt string to display
 	 * @param out
-	 *            Description of Parameter
+	 *          Description of Parameter
 	 * @return the input string (without the newline)
 	 */
 

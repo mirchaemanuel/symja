@@ -20,13 +20,15 @@ import java.io.Serializable;
 
 import org.apache.commons.math.MathException;
 import org.apache.commons.math.MathRuntimeException;
+import org.apache.commons.math.exception.util.LocalizedFormats;
 import org.apache.commons.math.special.Beta;
+import org.apache.commons.math.util.FastMath;
 
 /**
  * Default implementation of
  * {@link org.apache.commons.math.distribution.FDistribution}.
  *
- * @version $Revision: 925897 $ $Date: 2010-03-21 22:06:46 +0100 (So, 21 Mrz 2010) $
+ * @version $Revision: 990658 $ $Date: 2010-08-30 00:04:09 +0200 (Mo, 30 Aug 2010) $
  */
 public class FDistributionImpl
     extends AbstractContinuousDistribution
@@ -37,10 +39,6 @@ public class FDistributionImpl
      * @since 2.1
      */
     public static final double DEFAULT_INVERSE_ABSOLUTE_ACCURACY = 1e-9;
-
-    /** Message for non positive degrees of freddom. */
-    private static final String NON_POSITIVE_DEGREES_OF_FREEDOM_MESSAGE =
-        "degrees of freedom must be positive ({0})";
 
     /** Serializable version identifier */
     private static final long serialVersionUID = -8516354193418641566L;
@@ -91,11 +89,11 @@ public class FDistributionImpl
     public double density(double x) {
         final double nhalf = numeratorDegreesOfFreedom / 2;
         final double mhalf = denominatorDegreesOfFreedom / 2;
-        final double logx = Math.log(x);
-        final double logn = Math.log(numeratorDegreesOfFreedom);
-        final double logm = Math.log(denominatorDegreesOfFreedom);
-        final double lognxm = Math.log(numeratorDegreesOfFreedom * x + denominatorDegreesOfFreedom);
-        return Math.exp(nhalf*logn + nhalf*logx - logx + mhalf*logm - nhalf*lognxm -
+        final double logx = FastMath.log(x);
+        final double logn = FastMath.log(numeratorDegreesOfFreedom);
+        final double logm = FastMath.log(denominatorDegreesOfFreedom);
+        final double lognxm = FastMath.log(numeratorDegreesOfFreedom * x + denominatorDegreesOfFreedom);
+        return FastMath.exp(nhalf*logn + nhalf*logx - logx + mhalf*logm - nhalf*lognxm -
                mhalf*lognxm - Beta.logBeta(nhalf, mhalf));
     }
 
@@ -222,7 +220,7 @@ public class FDistributionImpl
     private void setNumeratorDegreesOfFreedomInternal(double degreesOfFreedom) {
         if (degreesOfFreedom <= 0.0) {
             throw MathRuntimeException.createIllegalArgumentException(
-                  NON_POSITIVE_DEGREES_OF_FREEDOM_MESSAGE, degreesOfFreedom);
+                  LocalizedFormats.NOT_POSITIVE_DEGREES_OF_FREEDOM, degreesOfFreedom);
         }
         this.numeratorDegreesOfFreedom = degreesOfFreedom;
     }
@@ -256,7 +254,7 @@ public class FDistributionImpl
     private void setDenominatorDegreesOfFreedomInternal(double degreesOfFreedom) {
         if (degreesOfFreedom <= 0.0) {
             throw MathRuntimeException.createIllegalArgumentException(
-                  NON_POSITIVE_DEGREES_OF_FREEDOM_MESSAGE, degreesOfFreedom);
+                  LocalizedFormats.NOT_POSITIVE_DEGREES_OF_FREEDOM, degreesOfFreedom);
         }
         this.denominatorDegreesOfFreedom = degreesOfFreedom;
     }

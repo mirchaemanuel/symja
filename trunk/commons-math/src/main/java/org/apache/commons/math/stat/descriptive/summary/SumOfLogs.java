@@ -19,11 +19,12 @@ package org.apache.commons.math.stat.descriptive.summary;
 import java.io.Serializable;
 
 import org.apache.commons.math.stat.descriptive.AbstractStorelessUnivariateStatistic;
+import org.apache.commons.math.util.FastMath;
 
 /**
  * Returns the sum of the natural logs for this collection of values.
  * <p>
- * Uses {@link java.lang.Math#log(double)} to compute the logs.  Therefore,
+ * Uses {@link org.apache.commons.Math.util.FastMath#log(double)} to compute the logs.  Therefore,
  * <ul>
  * <li>If any of values are < 0, the result is <code>NaN.</code></li>
  * <li>If all values are non-negative and less than
@@ -39,7 +40,7 @@ import org.apache.commons.math.stat.descriptive.AbstractStorelessUnivariateStati
  * one of the threads invokes the <code>increment()</code> or
  * <code>clear()</code> method, it must be synchronized externally.</p>
  *
- * @version $Revision: 811685 $ $Date: 2009-09-05 19:36:48 +0200 (Sa, 05 Sep 2009) $
+ * @version $Revision: 991812 $ $Date: 2010-09-02 06:49:11 +0200 (Do, 02 Sep 2010) $
  */
 public class SumOfLogs extends AbstractStorelessUnivariateStatistic implements Serializable {
 
@@ -77,7 +78,7 @@ public class SumOfLogs extends AbstractStorelessUnivariateStatistic implements S
      */
     @Override
     public void increment(final double d) {
-        value += Math.log(d);
+        value += FastMath.log(d);
         n++;
     }
 
@@ -86,11 +87,7 @@ public class SumOfLogs extends AbstractStorelessUnivariateStatistic implements S
      */
     @Override
     public double getResult() {
-        if (n > 0) {
-            return value;
-        } else {
-            return Double.NaN;
-        }
+        return value;
     }
 
     /**
@@ -121,7 +118,7 @@ public class SumOfLogs extends AbstractStorelessUnivariateStatistic implements S
      * @param values the input array
      * @param begin index of the first array element to include
      * @param length the number of elements to include
-     * @return the sum of the natural logs of the values or Double.NaN if
+     * @return the sum of the natural logs of the values or 0 if
      * length = 0
      * @throws IllegalArgumentException if the array is null or the array index
      *  parameters are not valid
@@ -129,10 +126,10 @@ public class SumOfLogs extends AbstractStorelessUnivariateStatistic implements S
     @Override
     public double evaluate(final double[] values, final int begin, final int length) {
         double sumLog = Double.NaN;
-        if (test(values, begin, length)) {
+        if (test(values, begin, length, true)) {
             sumLog = 0.0;
             for (int i = begin; i < begin + length; i++) {
-                sumLog += Math.log(values[i]);
+                sumLog += FastMath.log(values[i]);
             }
         }
         return sumLog;

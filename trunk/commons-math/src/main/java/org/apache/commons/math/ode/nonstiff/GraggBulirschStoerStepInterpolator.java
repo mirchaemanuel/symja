@@ -24,6 +24,7 @@ import java.io.ObjectOutput;
 import org.apache.commons.math.ode.DerivativeException;
 import org.apache.commons.math.ode.sampling.AbstractStepInterpolator;
 import org.apache.commons.math.ode.sampling.StepInterpolator;
+import org.apache.commons.math.util.FastMath;
 
 /**
  * This class implements an interpolator for the Gragg-Bulirsch-Stoer
@@ -70,7 +71,7 @@ import org.apache.commons.math.ode.sampling.StepInterpolator;
  * </table>
  *
  * @see GraggBulirschStoerIntegrator
- * @version $Revision: 919479 $ $Date: 2010-03-05 17:35:56 +0100 (Fr, 05 Mrz 2010) $
+ * @version $Revision: 990658 $ $Date: 2010-08-30 00:04:09 +0200 (Mo, 30 Aug 2010) $
  * @since 1.2
  */
 
@@ -211,7 +212,7 @@ class GraggBulirschStoerStepInterpolator
         for (int i = 0; i < errfac.length; ++i) {
           final int ip5 = i + 5;
           errfac[i] = 1.0 / (ip5 * ip5);
-          final double e = 0.5 * Math.sqrt (((double) (i + 1)) / ip5);
+          final double e = 0.5 * FastMath.sqrt (((double) (i + 1)) / ip5);
           for (int j = 0; j <= i; ++j) {
             errfac[i] *= e / (j + 1);
           }
@@ -297,11 +298,11 @@ class GraggBulirschStoerStepInterpolator
   public double estimateError(final double[] scale) {
     double error = 0;
     if (currentDegree >= 5) {
-      for (int i = 0; i < currentState.length; ++i) {
+      for (int i = 0; i < scale.length; ++i) {
         final double e = polynoms[currentDegree][i] / scale[i];
         error += e * e;
       }
-      error = Math.sqrt(error / currentState.length) * errfac[currentDegree-5];
+      error = FastMath.sqrt(error / scale.length) * errfac[currentDegree - 5];
     }
     return error;
   }

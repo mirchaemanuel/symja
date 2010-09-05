@@ -21,12 +21,14 @@ import org.apache.commons.math.ConvergingAlgorithmImpl;
 import org.apache.commons.math.FunctionEvaluationException;
 import org.apache.commons.math.MathRuntimeException;
 import org.apache.commons.math.analysis.UnivariateRealFunction;
+import org.apache.commons.math.exception.util.LocalizedFormats;
+import org.apache.commons.math.exception.NullArgumentException;
 
 /**
  * Provide a default implementation for several functions useful to generic
  * solvers.
  *
- * @version $Revision: 811833 $ $Date: 2009-09-06 18:27:50 +0200 (So, 06 Sep 2009) $
+ * @version $Revision: 983921 $ $Date: 2010-08-10 12:46:06 +0200 (Di, 10 Aug 2010) $
  */
 public abstract class UnivariateRealSolverImpl
     extends ConvergingAlgorithmImpl implements UnivariateRealSolver {
@@ -73,7 +75,7 @@ public abstract class UnivariateRealSolverImpl
                                        final double defaultAbsoluteAccuracy) {
         super(defaultMaximalIterationCount, defaultAbsoluteAccuracy);
         if (f == null) {
-            throw MathRuntimeException.createIllegalArgumentException("function to solve cannot be null");
+            throw new NullArgumentException(LocalizedFormats.FUNCTION);
         }
         this.f = f;
         this.defaultFunctionValueAccuracy = 1.0e-15;
@@ -100,7 +102,7 @@ public abstract class UnivariateRealSolverImpl
      */
     protected void checkResultComputed() throws IllegalStateException {
         if (!resultComputed) {
-            throw MathRuntimeException.createIllegalStateException("no result available");
+            throw MathRuntimeException.createIllegalStateException(LocalizedFormats.NO_RESULT_AVAILABLE);
         }
     }
 
@@ -207,7 +209,7 @@ public abstract class UnivariateRealSolverImpl
     protected void verifyInterval(final double lower, final double upper) {
         if (lower >= upper) {
             throw MathRuntimeException.createIllegalArgumentException(
-                    "endpoints do not specify an interval: [{0}, {1}]",
+                    LocalizedFormats.ENDPOINTS_NOT_AN_INTERVAL,
                     lower, upper);
         }
     }
@@ -224,14 +226,14 @@ public abstract class UnivariateRealSolverImpl
     protected void verifySequence(final double lower, final double initial, final double upper) {
         if (!isSequence(lower, initial, upper)) {
             throw MathRuntimeException.createIllegalArgumentException(
-                    "invalid interval, initial value parameters:  lower={0}, initial={1}, upper={2}",
+                    LocalizedFormats.INVALID_INTERVAL_INITIAL_VALUE_PARAMETERS,
                     lower, initial, upper);
         }
     }
 
     /**
      * Verifies that the endpoints specify an interval and the function takes
-     * opposite signs at the enpoints, throws IllegalArgumentException if not
+     * opposite signs at the endpoints, throws IllegalArgumentException if not
      *
      * @param lower  lower endpoint
      * @param upper upper endpoint
@@ -247,8 +249,7 @@ public abstract class UnivariateRealSolverImpl
         verifyInterval(lower, upper);
         if (!isBracketing(lower, upper, function)) {
             throw MathRuntimeException.createIllegalArgumentException(
-                    "function values at endpoints do not have different signs.  " +
-                    "Endpoints: [{0}, {1}], Values: [{2}, {3}]",
+                    LocalizedFormats.SAME_SIGN_AT_ENDPOINTS,
                     lower, upper, function.value(lower), function.value(upper));
         }
     }

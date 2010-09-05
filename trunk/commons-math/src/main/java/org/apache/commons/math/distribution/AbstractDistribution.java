@@ -20,11 +20,12 @@ import java.io.Serializable;
 
 import org.apache.commons.math.MathException;
 import org.apache.commons.math.MathRuntimeException;
+import org.apache.commons.math.exception.util.LocalizedFormats;
 
 /**
  * Base class for probability distributions.
  *
- * @version $Revision: 811685 $ $Date: 2009-09-05 19:36:48 +0200 (Sa, 05 Sep 2009) $
+ * @version $Revision: 983921 $ $Date: 2010-08-10 12:46:06 +0200 (Di, 10 Aug 2010) $
  */
 public abstract class AbstractDistribution
     implements Distribution, Serializable {
@@ -60,7 +61,7 @@ public abstract class AbstractDistribution
         throws MathException {
         if (x0 > x1) {
             throw MathRuntimeException.createIllegalArgumentException(
-                  "lower endpoint ({0}) must be less than or equal to upper endpoint ({1})",
+                  LocalizedFormats.LOWER_ENDPOINT_ABOVE_UPPER_ENDPOINT,
                   x0, x1);
         }
         return cumulativeProbability(x1) - cumulativeProbability(x0);

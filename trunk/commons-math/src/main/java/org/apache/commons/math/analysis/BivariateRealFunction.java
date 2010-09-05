@@ -19,23 +19,22 @@ package org.apache.commons.math.analysis;
 
 import org.apache.commons.math.FunctionEvaluationException;
 
-
-
 /**
  * An interface representing a bivariate real function.
  *
  * @since 2.1
- * @version $Revision: 924453 $ $Date: 2010-03-17 21:05:20 +0100 (Mi, 17 Mrz 2010) $
+ * @version $Revision: 980981 $ $Date: 2010-07-31 00:03:04 +0200 (Sa, 31 Jul 2010) $
  */
 public interface BivariateRealFunction {
-
     /**
      * Compute the value for the function.
-     * @param x abscissa for which the function value should be computed
-     * @param y ordinate for which the function value should be computed
-     * @return the value
-     * @throws FunctionEvaluationException if the function evaluation fails
+     *
+     * @param x Abscissa for which the function value should be computed.
+     * @param y Ordinate for which the function value should be computed.
+     * @return the value.
+     * @throws FunctionEvaluationException if the function evaluation fails.
      */
-    double value(double x, double y) throws FunctionEvaluationException;
+    double value(double x, double y)
+        throws FunctionEvaluationException;
 
 }

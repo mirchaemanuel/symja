@@ -17,6 +17,7 @@
 package org.apache.commons.math.stat;
 
 import org.apache.commons.math.MathRuntimeException;
+import org.apache.commons.math.exception.util.LocalizedFormats;
 import org.apache.commons.math.stat.descriptive.UnivariateStatistic;
 import org.apache.commons.math.stat.descriptive.moment.GeometricMean;
 import org.apache.commons.math.stat.descriptive.moment.Mean;
@@ -33,7 +34,7 @@ import org.apache.commons.math.stat.descriptive.summary.SumOfSquares;
  * StatUtils provides static methods for computing statistics based on data
  * stored in double[] arrays.
  *
- * @version $Revision: 811685 $ $Date: 2009-09-05 19:36:48 +0200 (Sa, 05 Sep 2009) $
+ * @version $Revision: 983921 $ $Date: 2010-08-10 12:46:06 +0200 (Di, 10 Aug 2010) $
  */
 public final class StatUtils {
 
@@ -564,10 +565,13 @@ public final class StatUtils {
     public static double sumDifference(final double[] sample1, final double[] sample2)
         throws IllegalArgumentException {
         int n = sample1.length;
-        if ((n  != sample2.length) || (n < 1)) {
+        if (n  != sample2.length) {
             throw MathRuntimeException.createIllegalArgumentException(
-                  "input arrays must have the same positive length ({0} and {1})",
-                  n, sample2.length);
+                  LocalizedFormats.DIMENSIONS_MISMATCH_SIMPLE, n, sample2.length);
+        }
+        if (n < 1) {
+            throw MathRuntimeException.createIllegalArgumentException(
+                  LocalizedFormats.INSUFFICIENT_DIMENSION, sample2.length, 1);
         }
         double result = 0;
         for (int i = 0; i < n; i++) {
@@ -609,10 +613,13 @@ public final class StatUtils {
         double sum2 = 0d;
         double diff = 0d;
         int n = sample1.length;
-        if (n < 2 || n != sample2.length) {
+        if (n != sample2.length) {
             throw MathRuntimeException.createIllegalArgumentException(
-                  "input arrays must have the same length and at least two elements ({0} and {1})",
-                  n, sample2.length);
+                  LocalizedFormats.DIMENSIONS_MISMATCH_SIMPLE, n, sample2.length);
+        }
+        if (n < 2) {
+            throw MathRuntimeException.createIllegalArgumentException(
+                  LocalizedFormats.INSUFFICIENT_DIMENSION, n, 2);
         }
         for (int i = 0; i < n; i++) {
             diff = sample1[i] - sample2[i];

@@ -20,12 +20,14 @@ import java.io.Serializable;
 
 import org.apache.commons.math.MathException;
 import org.apache.commons.math.MathRuntimeException;
+import org.apache.commons.math.exception.util.LocalizedFormats;
 import org.apache.commons.math.special.Gamma;
+import org.apache.commons.math.util.FastMath;
 
 /**
  * The default implementation of {@link GammaDistribution}.
  *
- * @version $Revision: 925812 $ $Date: 2010-03-21 16:49:31 +0100 (So, 21 Mrz 2010) $
+ * @version $Revision: 990658 $ $Date: 2010-08-30 00:04:09 +0200 (Mo, 30 Aug 2010) $
  */
 public class GammaDistributionImpl extends AbstractContinuousDistribution
     implements GammaDistribution, Serializable  {
@@ -145,7 +147,7 @@ public class GammaDistributionImpl extends AbstractContinuousDistribution
     private void setAlphaInternal(double newAlpha) {
         if (newAlpha <= 0.0) {
             throw MathRuntimeException.createIllegalArgumentException(
-                  "alpha must be positive ({0})",
+                  LocalizedFormats.NOT_POSITIVE_ALPHA,
                   newAlpha);
         }
         this.alpha = newAlpha;
@@ -178,7 +180,7 @@ public class GammaDistributionImpl extends AbstractContinuousDistribution
     private void setBetaInternal(double newBeta) {
         if (newBeta <= 0.0) {
             throw MathRuntimeException.createIllegalArgumentException(
-                  "beta must be positive ({0})",
+                  LocalizedFormats.NOT_POSITIVE_BETA,
                   newBeta);
         }
         this.beta = newBeta;
@@ -201,7 +203,7 @@ public class GammaDistributionImpl extends AbstractContinuousDistribution
     @Override
     public double density(double x) {
         if (x < 0) return 0;
-        return Math.pow(x / beta, alpha - 1) / beta * Math.exp(-x / beta) / Math.exp(Gamma.logGamma(alpha));
+        return FastMath.pow(x / beta, alpha - 1) / beta * FastMath.exp(-x / beta) / FastMath.exp(Gamma.logGamma(alpha));
     }
 
     /**

@@ -22,6 +22,7 @@ import org.apache.commons.math.linear.QRDecomposition;
 import org.apache.commons.math.linear.QRDecompositionImpl;
 import org.apache.commons.math.linear.RealMatrix;
 import org.apache.commons.math.linear.RealVector;
+import org.apache.commons.math.stat.descriptive.moment.SecondMoment;
 
 /**
  * <p>Implements ordinary least squares (OLS) to estimate the parameters of a
@@ -49,9 +50,9 @@ import org.apache.commons.math.linear.RealVector;
  * (R<sup>T</sup>)<sup>-1</sup> R<sup>T</sup> R b = (R<sup>T</sup>)<sup>-1</sup> R<sup>T</sup> Q<sup>T</sup> y <br/>
  * R b = Q<sup>T</sup> y
  * </p>
- * Given Q and R, the last equation is solved by back-subsitution.</p>
+ * Given Q and R, the last equation is solved by back-substitution.</p>
  *
- * @version $Revision: 825925 $ $Date: 2009-10-16 17:11:47 +0200 (Fr, 16 Okt 2009) $
+ * @version $Revision: 987983 $ $Date: 2010-08-23 04:55:01 +0200 (Mo, 23 Aug 2010) $
  * @since 2.0
  */
 public class OLSMultipleLinearRegression extends AbstractMultipleLinearRegression {
@@ -122,6 +123,55 @@ public class OLSMultipleLinearRegression extends AbstractMultipleLinearRegressio
     }
 
     /**
+     * Returns the sum of squared deviations of Y from its mean.
+     *
+     * @return total sum of squares
+     */
+    public double calculateTotalSumOfSquares() {
+        return new SecondMoment().evaluate(Y.getData());
+    }
+
+    /**
+     * Returns the sum of square residuals.
+     *
+     * @return residual sum of squares
+     */
+    public double calculateResidualSumOfSquares() {
+        final RealVector residuals = calculateResiduals();
+        return residuals.dotProduct(residuals);
+    }
+
+    /**
+     * Returns the R-Squared statistic, defined by the formula <pre>
+     * R<sup>2</sup> = 1 - SSR / SSTO
+     * </pre>
+     * where SSR is the {@link #calculateResidualSumOfSquares() sum of squared residuals}
+     * and SSTO is the {@link #calculateTotalSumOfSquares() total sum of squares}
+     *
+     * @return R-square statistic
+     */
+    public double calculateRSquared() {
+        return 1 - calculateResidualSumOfSquares() / calculateTotalSumOfSquares();
+    }
+
+    /**
+     * Returns the adjusted R-squared statistic, defined by the formula <pre>
+     * R<sup>2</sup><sub>adj</sub> = 1 - [SSR (n - 1)] / [SSTO (n - p)]
+     * </pre>
+     * where SSR is the {@link #calculateResidualSumOfSquares() sum of squared residuals},
+     * SSTO is the {@link #calculateTotalSumOfSquares() total sum of squares}, n is the number
+     * of observations and p is the number of parameters estimated (including the intercept).
+     *
+     * @return adjusted R-Squared statistic
+     */
+    public double calculateAdjustedRSquared() {
+        final double n = X.getRowDimension();
+        return 1 - (calculateResidualSumOfSquares() * (n - 1)) /
+            (calculateTotalSumOfSquares() * (n - X.getColumnDimension()));
+       // return 1 - ((1 - calculateRSquare()) * (n - 1) / (n - X.getColumnDimension() - 1));
+    }
+
+    /**
      * Loads new x sample data, overriding any previous sample
      *
      * @param x the [n,k] array representing the x sample
@@ -159,21 +209,6 @@ public class OLSMultipleLinearRegression extends AbstractMultipleLinearRegressio
         RealMatrix Raug = qr.getR().getSubMatrix(0, p - 1 , 0, p - 1);
         RealMatrix Rinv = new LUDecompositionImpl(Raug).getSolver().getInverse();
         return Rinv.multiply(Rinv.transpose());
-    }
-
-
-    /**
-     * <p>Calculates the variance on the Y by OLS.
-     * </p>
-     * <p> Var(y) = Tr(u<sup>T</sup>u)/(n - k)
-     * </p>
-     * @return The Y variance
-     */
-    @Override
-    protected double calculateYVariance() {
-        RealVector residuals = calculateResiduals();
-        return residuals.dotProduct(residuals) /
-               (X.getRowDimension() - X.getColumnDimension());
     }
 
 }

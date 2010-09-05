@@ -20,13 +20,15 @@ package org.apache.commons.math.distribution;
 import java.io.Serializable;
 
 import org.apache.commons.math.MathRuntimeException;
+import org.apache.commons.math.exception.util.LocalizedFormats;
+import org.apache.commons.math.util.FastMath;
 
 /**
  * Default implementation of
  * {@link org.apache.commons.math.distribution.WeibullDistribution}.
  *
  * @since 1.1
- * @version $Revision: 925812 $ $Date: 2010-03-21 16:49:31 +0100 (So, 21 Mrz 2010) $
+ * @version $Revision: 990658 $ $Date: 2010-08-30 00:04:09 +0200 (Mo, 30 Aug 2010) $
  */
 public class WeibullDistributionImpl extends AbstractContinuousDistribution
         implements WeibullDistribution, Serializable {
@@ -85,7 +87,7 @@ public class WeibullDistributionImpl extends AbstractContinuousDistribution
         if (x <= 0.0) {
             ret = 0.0;
         } else {
-            ret = 1.0 - Math.exp(-Math.pow(x / scale, shape));
+            ret = 1.0 - FastMath.exp(-FastMath.pow(x / scale, shape));
         }
         return ret;
     }
@@ -120,16 +122,16 @@ public class WeibullDistributionImpl extends AbstractContinuousDistribution
         }
 
         final double xscale = x / scale;
-        final double xscalepow = Math.pow(xscale, shape - 1);
+        final double xscalepow = FastMath.pow(xscale, shape - 1);
 
         /*
-         * Math.pow(x / scale, shape) =
-         * Math.pow(xscale, shape) =
-         * Math.pow(xscale, shape - 1) * xscale
+         * FastMath.pow(x / scale, shape) =
+         * FastMath.pow(xscale, shape) =
+         * FastMath.pow(xscale, shape - 1) * xscale
          */
         final double xscalepowshape = xscalepow * xscale;
 
-        return (shape / scale) * xscalepow * Math.exp(-xscalepowshape);
+        return (shape / scale) * xscalepow * FastMath.exp(-xscalepowshape);
     }
 
     /**
@@ -149,13 +151,13 @@ public class WeibullDistributionImpl extends AbstractContinuousDistribution
         double ret;
         if (p < 0.0 || p > 1.0) {
             throw MathRuntimeException.createIllegalArgumentException(
-                  "{0} out of [{1}, {2}] range", p, 0.0, 1.0);
+                  LocalizedFormats.OUT_OF_RANGE_SIMPLE, p, 0.0, 1.0);
         } else if (p == 0) {
             ret = 0.0;
         } else  if (p == 1) {
             ret = Double.POSITIVE_INFINITY;
         } else {
-            ret = scale * Math.pow(-Math.log(1.0 - p), 1.0 / shape);
+            ret = scale * FastMath.pow(-FastMath.log(1.0 - p), 1.0 / shape);
         }
         return ret;
     }
@@ -176,7 +178,7 @@ public class WeibullDistributionImpl extends AbstractContinuousDistribution
     private void setShapeInternal(double alpha) {
         if (alpha <= 0.0) {
             throw MathRuntimeException.createIllegalArgumentException(
-                  "shape must be positive ({0})",
+                  LocalizedFormats.NOT_POSITIVE_SHAPE,
                   alpha);
         }
         this.shape = alpha;
@@ -198,7 +200,7 @@ public class WeibullDistributionImpl extends AbstractContinuousDistribution
     private void setScaleInternal(double beta) {
         if (beta <= 0.0) {
             throw MathRuntimeException.createIllegalArgumentException(
-                  "scale must be positive ({0})",
+                  LocalizedFormats.NOT_POSITIVE_SCALE,
                   beta);
         }
         this.scale = beta;
@@ -243,7 +245,7 @@ public class WeibullDistributionImpl extends AbstractContinuousDistribution
     @Override
     protected double getInitialDomain(double p) {
         // use median
-        return Math.pow(scale * Math.log(2.0), 1.0 / shape);
+        return FastMath.pow(scale * FastMath.log(2.0), 1.0 / shape);
     }
 
     /**

@@ -3,6 +3,7 @@ package org.matheclipse.core.eval.interfaces;
 import org.matheclipse.basic.Config;
 import org.matheclipse.core.convert.AST2Expr;
 import org.matheclipse.core.eval.EvalEngine;
+import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.ISymbol;
@@ -41,23 +42,24 @@ public abstract class AbstractFunctionEvaluator implements IFunctionEvaluator {
 			final EvalEngine engine = EvalEngine.get();
 			boolean oldPackageMode = engine.isPackageMode();
 			try {
-			engine.setPackageMode(true);
-			// if (session != null) {
-			// parser.setFactory(ExpressionFactory.get());
-			// }
-			if (Config.DEBUG) {
-				try {
+				engine.setPackageMode(true);
+				// if (session != null) {
+				// parser.setFactory(ExpressionFactory.get());
+				// }
+				if (Config.DEBUG) {
+					try {
+						setUpRules(rules, parser, engine);
+					} catch (final Throwable th) {
+						th.printStackTrace();
+					}
+				} else {
 					setUpRules(rules, parser, engine);
-				} catch (final Throwable th) {
-					th.printStackTrace(); 
 				}
-			} else {
-				setUpRules(rules, parser, engine);
-			}
 			} finally {
 				engine.setPackageMode(oldPackageMode);
 			}
 		}
+		F.SYMBOL_OBSERVER.createPredefinedSymbol(symbol.toString());
 	}
 
 	private void setUpRules(final String[] rules, final Parser parser, final EvalEngine engine) {

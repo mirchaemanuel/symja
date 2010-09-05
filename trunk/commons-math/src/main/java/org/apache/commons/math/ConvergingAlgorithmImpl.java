@@ -17,15 +17,15 @@
 
 package org.apache.commons.math;
 
-
 /**
  * Provide a default implementation for several functions useful to generic
  * converging algorithms.
  *
- * @version $Revision: 811685 $ $Date: 2009-09-05 19:36:48 +0200 (Sa, 05 Sep 2009) $
+ * @version $Revision: 990792 $ $Date: 2010-08-30 15:06:22 +0200 (Mo, 30 Aug 2010) $
  * @since 2.0
+ * @deprecated in 2.2 (to be removed in 3.0).
  */
-public abstract class ConvergingAlgorithmImpl implements ConvergingAlgorithm{
+public abstract class ConvergingAlgorithmImpl implements ConvergingAlgorithm {
 
     /** Maximum absolute error. */
     protected double absoluteAccuracy;
@@ -45,7 +45,6 @@ public abstract class ConvergingAlgorithmImpl implements ConvergingAlgorithm{
     /** Default maximum number of iterations. */
     protected int defaultMaximalIterationCount;
 
-    // Mainly for test framework.
     /** The last iteration count. */
     protected int iterationCount;
 
@@ -56,6 +55,8 @@ public abstract class ConvergingAlgorithmImpl implements ConvergingAlgorithm{
      * @param defaultMaximalIterationCount maximum number of iterations
      * @throws IllegalArgumentException if f is null or the
      * defaultAbsoluteAccuracy is not valid
+     * @deprecated in 2.2. Derived classes should use the "setter" methods
+     * in order to assign meaningful values to all the instances variables.
      */
     protected ConvergingAlgorithmImpl(final int defaultMaximalIterationCount,
                                       final double defaultAbsoluteAccuracy) {
@@ -67,6 +68,15 @@ public abstract class ConvergingAlgorithmImpl implements ConvergingAlgorithm{
         this.maximalIterationCount = defaultMaximalIterationCount;
         this.iterationCount = 0;
     }
+
+    /**
+     * Default constructor.
+     *
+     * @since 2.2
+     * @deprecated in 2.2 (to be removed as soon as the single non-default one
+     * has been removed).
+     */
+    protected ConvergingAlgorithmImpl() {}
 
     /** {@inheritDoc} */
     public int getIterationCount() {
@@ -118,4 +128,26 @@ public abstract class ConvergingAlgorithmImpl implements ConvergingAlgorithm{
         relativeAccuracy = defaultRelativeAccuracy;
     }
 
+    /**
+     * Reset the iterations counter to 0.
+     *
+     * @since 2.2
+     */
+    protected void resetIterationsCounter() {
+        iterationCount = 0;
+    }
+
+    /**
+     * Increment the iterations counter by 1.
+     *
+     * @throws MaxIterationsExceededException if the maximal number
+     * of iterations is exceeded.
+     * @since 2.2
+     */
+    protected void incrementIterationsCounter()
+        throws MaxIterationsExceededException {
+        if (++iterationCount > maximalIterationCount) {
+            throw new MaxIterationsExceededException(maximalIterationCount);
+        }
+    }
 }

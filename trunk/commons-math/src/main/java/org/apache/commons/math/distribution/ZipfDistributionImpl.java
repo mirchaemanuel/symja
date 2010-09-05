@@ -20,11 +20,13 @@ package org.apache.commons.math.distribution;
 import java.io.Serializable;
 
 import org.apache.commons.math.MathRuntimeException;
+import org.apache.commons.math.exception.util.LocalizedFormats;
+import org.apache.commons.math.util.FastMath;
 
 /**
  * Implementation for the {@link ZipfDistribution}.
  *
- * @version $Revision: 920852 $ $Date: 2010-03-09 13:53:44 +0100 (Di, 09 Mrz 2010) $
+ * @version $Revision: 990658 $ $Date: 2010-08-30 00:04:09 +0200 (Mo, 30 Aug 2010) $
  */
 public class ZipfDistributionImpl extends AbstractIntegerDistribution
     implements ZipfDistribution, Serializable {
@@ -87,8 +89,7 @@ public class ZipfDistributionImpl extends AbstractIntegerDistribution
         throws IllegalArgumentException {
         if (n <= 0) {
             throw MathRuntimeException.createIllegalArgumentException(
-                    "invalid number of elements {0} (must be positive)",
-                    n);
+                    LocalizedFormats.INSUFFICIENT_DIMENSION, n, 0);
         }
         this.numberOfElements = n;
     }
@@ -127,7 +128,7 @@ public class ZipfDistributionImpl extends AbstractIntegerDistribution
         throws IllegalArgumentException {
         if (s <= 0.0) {
             throw MathRuntimeException.createIllegalArgumentException(
-                    "invalid exponent {0} (must be positive)",
+                    LocalizedFormats.NOT_POSITIVE_EXPONENT,
                     s);
         }
         this.exponent = s;
@@ -144,7 +145,7 @@ public class ZipfDistributionImpl extends AbstractIntegerDistribution
             return 0.0;
         }
 
-        return (1.0 / Math.pow(x, exponent)) / generalizedHarmonic(numberOfElements, exponent);
+        return (1.0 / FastMath.pow(x, exponent)) / generalizedHarmonic(numberOfElements, exponent);
 
     }
 
@@ -205,7 +206,7 @@ public class ZipfDistributionImpl extends AbstractIntegerDistribution
     private double generalizedHarmonic(final int n, final double m) {
         double value = 0;
         for (int k = n; k > 0; --k) {
-            value += 1.0 / Math.pow(k, m);
+            value += 1.0 / FastMath.pow(k, m);
         }
         return value;
     }

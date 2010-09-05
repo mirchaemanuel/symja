@@ -1947,43 +1947,42 @@ public class F {
 	 * @return
 	 */
 	public static ISymbol symbol(final String symbolName) {
-		ISymbol temp = fSymbolMap.get(symbolName);
-		if (temp != null) {
-			return temp;
+		ISymbol symbol = fSymbolMap.get(symbolName);
+		if (symbol != null) {
+			return symbol;
+		}
+		EvalEngine engine = EvalEngine.get();
+		Map<String, ISymbol> variableMap = engine.getVariableMap();
+		symbol = variableMap.get(symbolName);
+		if (symbol != null) {
+			return symbol;
 		}
 		if (Config.SERVER_MODE) {
 			if (Character.isUpperCase(symbolName.charAt(0))) {
 				if (SYMBOL_OBSERVER.createPredefinedSymbol(symbolName)) {
 					// second try, because the symbol may now be added to fSymbolMap
-					ISymbol temp2 = fSymbolMap.get(symbolName);
-					if (temp2 != null) {
-						return temp2;
+					ISymbol secondTry = fSymbolMap.get(symbolName);
+					if (secondTry != null) {
+						return secondTry;
 					}
 				}
 			}
-			EvalEngine engine = EvalEngine.get();
-			Map<String, ISymbol> variableMap = engine.getVariableMap();
-			temp = variableMap.get(symbolName);
-			if (temp != null) {
-				return temp;
-			}
-			temp = new Symbol(symbolName);
-			variableMap.put(symbolName, temp);
+			symbol = new Symbol(symbolName);
+			variableMap.put(symbolName, symbol);
 			if (symbolName.charAt(0) == '$') {
-				SYMBOL_OBSERVER.createUserSymbol(temp);
+				SYMBOL_OBSERVER.createUserSymbol(symbol);
 			}
 		} else {
-			temp = new Symbol(symbolName);
-			fSymbolMap.put(symbolName, temp);
+			symbol = new Symbol(symbolName);
+			fSymbolMap.put(symbolName, symbol);
+			if (Character.isUpperCase(symbolName.charAt(0))) {
+				// probably a predefined function
+				// use reflection to setUp this symbol
+				SystemNamespace.DEFAULT.setEvaluator(symbol);
+			}
 		}
 
-		if (Character.isUpperCase(symbolName.charAt(0))) {
-			// probably a predefined function
-			// use reflection to setUp this symbol
-			SystemNamespace.DEFAULT.setEvaluator(temp);
-		}
-
-		return temp;
+		return symbol;
 	}
 
 	/**

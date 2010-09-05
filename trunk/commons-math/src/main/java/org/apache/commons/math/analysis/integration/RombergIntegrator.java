@@ -20,6 +20,8 @@ import org.apache.commons.math.FunctionEvaluationException;
 import org.apache.commons.math.MathRuntimeException;
 import org.apache.commons.math.MaxIterationsExceededException;
 import org.apache.commons.math.analysis.UnivariateRealFunction;
+import org.apache.commons.math.exception.util.LocalizedFormats;
+import org.apache.commons.math.util.FastMath;
 
 /**
  * Implements the <a href="http://mathworld.wolfram.com/RombergIntegration.html">
@@ -31,7 +33,7 @@ import org.apache.commons.math.analysis.UnivariateRealFunction;
  * rule to remove error terms less than order O(N^(-2k)). Simpson's rule
  * is a special case of k = 2.</p>
  *
- * @version $Revision: 824822 $ $Date: 2009-10-13 17:56:51 +0200 (Di, 13 Okt 2009) $
+ * @version $Revision: 990658 $ $Date: 2010-08-30 00:04:09 +0200 (Mo, 30 Aug 2010) $
  * @since 1.2
  */
 public class RombergIntegrator extends UnivariateRealIntegratorImpl {
@@ -94,8 +96,8 @@ public class RombergIntegrator extends UnivariateRealIntegratorImpl {
             }
             final double s = currentRow[i];
             if (i >= minimalIterationCount) {
-                final double delta  = Math.abs(s - olds);
-                final double rLimit = relativeAccuracy * (Math.abs(olds) + Math.abs(s)) * 0.5;
+                final double delta  = FastMath.abs(s - olds);
+                final double rLimit = relativeAccuracy * (FastMath.abs(olds) + FastMath.abs(s)) * 0.5;
                 if ((delta <= rLimit) || (delta <= absoluteAccuracy)) {
                     setResult(s, i);
                     return result;
@@ -113,7 +115,7 @@ public class RombergIntegrator extends UnivariateRealIntegratorImpl {
         // at most 32 bisection refinements due to higher order divider
         if (maximalIterationCount > 32) {
             throw MathRuntimeException.createIllegalArgumentException(
-                    "invalid iteration limits: min={0}, max={1}",
+                    LocalizedFormats.INVALID_ITERATIONS_LIMITS,
                     0, 32);
         }
     }
