@@ -4,7 +4,6 @@
 	<classpathentry exported="true" kind="con" path="org.maven.ide.eclipse.MAVEN2_CLASSPATH_CONTAINER"/>
 	<classpathentry kind="src" path="matheclipse-parser/src/main/java"/>
 	<classpathentry kind="src" path="commons-math/src/main/resources"/>
-	<classpathentry kind="src" path="surface-plotter/src/main/java"/>
 	<classpathentry kind="src" path="jas/src/main/java"/>
 	<classpathentry kind="src" path="commons-math/src/main/java"/>
 	<classpathentry kind="src" path="matheclipse-core/src/main/java"/>
