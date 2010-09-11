@@ -3,6 +3,7 @@ package org.matheclipse.core.reflection.system;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.apache.commons.math.MathRuntimeException;
 import org.apache.commons.math.optimization.GoalType;
 import org.apache.commons.math.optimization.OptimizationException;
 import org.apache.commons.math.optimization.RealPointValuePair;
@@ -10,7 +11,6 @@ import org.apache.commons.math.optimization.linear.LinearConstraint;
 import org.apache.commons.math.optimization.linear.LinearObjectiveFunction;
 import org.apache.commons.math.optimization.linear.Relationship;
 import org.apache.commons.math.optimization.linear.SimplexSolver;
-import org.matheclipse.basic.Config;
 import org.matheclipse.core.convert.Expr2Object;
 import org.matheclipse.core.eval.exception.WrongArgumentType;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
@@ -20,7 +20,10 @@ import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.ISignedNumber;
 
 /**
- * 
+ * The LinearProgramming provides an implementation of <a
+ * href="http://en.wikipedia.org/wiki/Simplex_algorithm">George Dantzig's
+ * simplex algorithm</a> for solving linear optimization problems with linear
+ * equality and inequality constraints.
  */
 public class LinearProgramming extends AbstractFunctionEvaluator {
 
@@ -81,10 +84,11 @@ public class LinearProgramming extends AbstractFunctionEvaluator {
 				double[] values = solution.getPointRef();
 				return F.List(values);
 			}
-		} catch (OptimizationException e) {
-			if (Config.SHOW_STACKTRACE) {
-				e.printStackTrace();
-			}
+		} catch (OptimizationException oe) {
+			throw MathRuntimeException.createInternalError(oe);
+			// if (Config.SHOW_STACKTRACE) {
+			// e.printStackTrace();
+			// }
 		}
 
 		return null;

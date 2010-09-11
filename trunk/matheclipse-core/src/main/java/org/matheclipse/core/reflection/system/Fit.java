@@ -32,68 +32,46 @@ import org.matheclipse.core.interfaces.ISymbol;
  */
 public class Fit extends AbstractFunctionEvaluator {
 
-  public Fit() {
-    super();
-  }
+	public Fit() {
+		super();
+	}
 
-  @Override
-  public IExpr evaluate(final IAST ast) {
-    // switch to numeric calculation
-    return numericEval(ast);
-  }
+	@Override
+	public IExpr evaluate(final IAST ast) {
+		// switch to numeric calculation
+		return numericEval(ast);
+	}
 
-  @Override
-  public IExpr numericEval(final IAST ast) {
-    try {
-      if (ast.size() == 4 && ast.get(2) instanceof IInteger
-          && ast.get(3) instanceof ISymbol) {
-        int rowSize = -1;
-        int degree = ((IInteger) ast.get(2)).toInt();
-        PolynomialFitter fitter = new PolynomialFitter(degree,
-            new LevenbergMarquardtOptimizer());
-        int[] im = ast.get(1).isMatrix();
-        if (im != null && im[1] == 2) {
-          IAST matrix = (IAST) ast.get(1);
-          IAST row;
-          for (int i = 1; i < matrix.size(); i++) {
-            row = matrix.getAST(i);
-            fitter.addObservedPoint(1.0, ((ISignedNumber) row.get(1))
-                .doubleValue(), ((ISignedNumber) row.get(2)).doubleValue());
-          }
-        } else {
-          rowSize = ast.get(1).isVector();
-          if (rowSize < 0) {
-            return null;
-          }
-          IAST vector = (IAST) ast.get(1);
-          for (int i = 1; i < vector.size(); i++) {
-            fitter.addObservedPoint(1.0, i, ((ISignedNumber) vector.get(i))
-                .doubleValue());
-          }
-        }
-        PolynomialFunction fitted;
-        fitted = fitter.fit();
-        return Convert.polynomialFunction2Expr(fitted, (ISymbol) ast
-            .get(3));
-      }
-    } catch (final ArithmeticException ae) {
-      if (Config.SHOW_STACKTRACE) {
-        ae.printStackTrace();
-      }
-    } catch (final ClassCastException e) {
-      if (Config.SHOW_STACKTRACE) {
-        e.printStackTrace();
-      }
-    } catch (final IndexOutOfBoundsException e) {
-      if (Config.SHOW_STACKTRACE) {
-        e.printStackTrace();
-      }
-    } 
-//    catch (MathException e) {
-//      if (Config.SHOW_STACKTRACE) {
-//        e.printStackTrace();
-//      }
-//    }
-    return null;
-  }
+	@Override
+	public IExpr numericEval(final IAST ast) {
+
+		if (ast.size() == 4 && ast.get(2) instanceof IInteger && ast.get(3) instanceof ISymbol) {
+			int rowSize = -1;
+			int degree = ((IInteger) ast.get(2)).toInt();
+			PolynomialFitter fitter = new PolynomialFitter(degree, new LevenbergMarquardtOptimizer());
+			int[] im = ast.get(1).isMatrix();
+			if (im != null && im[1] == 2) {
+				IAST matrix = (IAST) ast.get(1);
+				IAST row;
+				for (int i = 1; i < matrix.size(); i++) {
+					row = matrix.getAST(i);
+					fitter.addObservedPoint(1.0, ((ISignedNumber) row.get(1)).doubleValue(), ((ISignedNumber) row.get(2)).doubleValue());
+				}
+			} else {
+				rowSize = ast.get(1).isVector();
+				if (rowSize < 0) {
+					return null;
+				}
+				IAST vector = (IAST) ast.get(1);
+				for (int i = 1; i < vector.size(); i++) {
+					fitter.addObservedPoint(1.0, i, ((ISignedNumber) vector.get(i)).doubleValue());
+				}
+			}
+			PolynomialFunction fitted;
+			fitted = fitter.fit();
+			return Convert.polynomialFunction2Expr(fitted, (ISymbol) ast.get(3));
+		}
+
+		return null;
+	}
 }
