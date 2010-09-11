@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 
+import org.apache.commons.math.MathException;
+import org.apache.commons.math.MathRuntimeException;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.form.output.OutputFormFactory;
 import org.matheclipse.core.form.output.StringBufferWriter;
@@ -76,6 +78,9 @@ public class Console {
 					System.out.println("Out[" + COUNTER + "]: " + outputExpression);
 					COUNTER++;
 				}
+			} catch (final MathRuntimeException mre) {
+				Throwable me = mre.getCause();
+				System.out.println(me.getMessage());
 			} catch (final Exception e) {
 				System.out.println(e.getMessage());
 			}
@@ -176,15 +181,25 @@ public class Console {
 			result = util.evaluate(strEval);
 			OutputFormFactory.get().convert(buf, result);
 			return buf.toString();
-		} catch (final Exception e) {
-			// e.printStackTrace();
-			String msg = e.getMessage();
-			if (msg != null) {
-				buf.write("\nError: " + msg);
+		} catch (final RuntimeException re) {
+			Throwable me = re.getCause();
+			if (me instanceof MathException) {
+				printException(buf, me);
 			} else {
-				buf.write("\nError: " + e.getClass().getSimpleName());
+				printException(buf, re);
 			}
-			return buf.toString();
+		} catch (final Exception e) {
+			printException(buf, e);
+		}
+		return buf.toString();
+	}
+
+	private void printException(final StringBufferWriter buf, final Throwable e) {
+		String msg = e.getMessage();
+		if (msg != null) {
+			buf.write("\nError: " + msg);
+		} else {
+			buf.write("\nError: " + e.getClass().getSimpleName());
 		}
 	}
 
