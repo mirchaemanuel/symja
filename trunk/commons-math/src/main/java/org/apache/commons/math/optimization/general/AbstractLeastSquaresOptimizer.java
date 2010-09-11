@@ -26,7 +26,6 @@ import org.apache.commons.math.linear.InvalidMatrixException;
 import org.apache.commons.math.linear.LUDecompositionImpl;
 import org.apache.commons.math.linear.MatrixUtils;
 import org.apache.commons.math.linear.RealMatrix;
-import org.apache.commons.math.optimization.SimpleVectorialValueChecker;
 import org.apache.commons.math.optimization.ConvergenceChecker;
 import org.apache.commons.math.optimization.DifferentiableMultivariateVectorialOptimizer;
 import org.apache.commons.math.optimization.VectorialPointValuePair;
@@ -37,7 +36,7 @@ import org.apache.commons.math.util.FastMath;
  * It handles the boilerplate methods associated to thresholds settings,
  * jacobian and error estimation.
  *
- * @version $Revision: 990792 $ $Date: 2010-08-30 15:06:22 +0200 (Mo, 30 Aug 2010) $
+ * @version $Revision: 994988 $ $Date: 2010-09-08 13:22:41 +0200 (Mi, 08 Sep 2010) $
  * @since 1.2
  *
  */

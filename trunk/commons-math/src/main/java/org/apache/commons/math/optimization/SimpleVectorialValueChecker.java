@@ -18,8 +18,6 @@
 package org.apache.commons.math.optimization;
 
 import org.apache.commons.math.util.FastMath;
-import org.apache.commons.math.util.MathUtils;
-import org.apache.commons.math.exception.DimensionMismatchException;
 
 /**
  * Simple implementation of the {@link ConvergenceChecker} interface using
@@ -30,7 +28,7 @@ import org.apache.commons.math.exception.DimensionMismatchException;
  * threshold or if either the absolute difference between the objective
  * function values is smaller than another threshold for all vectors elements.
  *
- * @version $Revision: 990792 $ $Date: 2010-08-30 15:06:22 +0200 (Mo, 30 Aug 2010) $
+ * @version $Revision: 994988 $ $Date: 2010-09-08 13:22:41 +0200 (Mi, 08 Sep 2010) $
  * @since 3.0
  */
 public class SimpleVectorialValueChecker
@@ -67,24 +65,15 @@ public class SimpleVectorialValueChecker
      * not only for the best or worst ones.
      *
      * @param iteration Index of current iteration
-     * @param points Points used for checking convergence. The list must
-     * contain two elements:
-     * <ul>
-     *  <li>the previous best point,</li>
-     *  <li>the current best point.</li>
-     * </ul>
+     * @param previous Best point in the previous iteration.
+     * @param current Best point in the current iteration.
      * @return {@code true} if the algorithm has converged.
-     * @throws DimensionMismatchException if the length of the {@code points}
-     * list is not equal to 2.
      */
     public boolean converged(final int iteration,
-                             final VectorialPointValuePair ... points) {
-        if (points.length != 2) {
-            throw new DimensionMismatchException(points.length, 2);
-        }
-
-        final double[] p = points[0].getValueRef();
-        final double[] c = points[1].getValueRef();
+                             final VectorialPointValuePair previous,
+                             final VectorialPointValuePair current) {
+        final double[] p = previous.getValueRef();
+        final double[] c = current.getValueRef();
         for (int i = 0; i < p.length; ++i) {
             final double pi         = p[i];
             final double ci         = c[i];

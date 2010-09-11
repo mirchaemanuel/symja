@@ -27,6 +27,7 @@ import org.apache.commons.math.linear.QRDecompositionImpl;
 import org.apache.commons.math.linear.RealMatrix;
 import org.apache.commons.math.exception.ConvergenceException;
 import org.apache.commons.math.optimization.VectorialPointValuePair;
+import org.apache.commons.math.optimization.ConvergenceChecker;
 
 /**
  * Gauss-Newton least-squares solver.
@@ -37,7 +38,7 @@ import org.apache.commons.math.optimization.VectorialPointValuePair;
  * is faster but QR decomposition is more robust for difficult problems.
  * </p>
  *
- * @version $Revision: 990792 $ $Date: 2010-08-30 15:06:22 +0200 (Mo, 30 Aug 2010) $
+ * @version $Revision: 994988 $ $Date: 2010-09-08 13:22:41 +0200 (Mi, 08 Sep 2010) $
  * @since 2.0
  *
  */
@@ -63,6 +64,9 @@ public class GaussNewtonOptimizer extends AbstractLeastSquaresOptimizer {
     @Override
     public VectorialPointValuePair doOptimize()
         throws FunctionEvaluationException {
+
+        final ConvergenceChecker<VectorialPointValuePair> checker
+            = getConvergenceChecker();
 
         // iterate until convergence is reached
         VectorialPointValuePair current = null;
@@ -121,8 +125,10 @@ public class GaussNewtonOptimizer extends AbstractLeastSquaresOptimizer {
             }
 
             // check convergence
-            if (previous != null) {
-                converged = getConvergenceChecker().converged(iter, previous, current);
+            if (checker != null) {
+                if (previous != null) {
+                    converged = checker.converged(iter, previous, current);
+                }
             }
         }
         // we have converged

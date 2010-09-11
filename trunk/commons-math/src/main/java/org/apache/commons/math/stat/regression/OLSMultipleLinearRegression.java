@@ -52,7 +52,7 @@ import org.apache.commons.math.stat.descriptive.moment.SecondMoment;
  * </p>
  * Given Q and R, the last equation is solved by back-substitution.</p>
  *
- * @version $Revision: 987983 $ $Date: 2010-08-23 04:55:01 +0200 (Mo, 23 Aug 2010) $
+ * @version $Revision: 993574 $ $Date: 2010-09-08 03:24:51 +0200 (Mi, 08 Sep 2010) $
  * @since 2.0
  */
 public class OLSMultipleLinearRegression extends AbstractMultipleLinearRegression {
@@ -77,8 +77,7 @@ public class OLSMultipleLinearRegression extends AbstractMultipleLinearRegressio
 
     /**
      * {@inheritDoc}
-     *
-     * Computes and caches QR decomposition of the X matrix
+     * <p>This implementation computes and caches the QR decomposition of the X matrix.</p>
      */
     @Override
     public void newSampleData(double[] data, int nobs, int nvars) {
@@ -132,7 +131,7 @@ public class OLSMultipleLinearRegression extends AbstractMultipleLinearRegressio
     }
 
     /**
-     * Returns the sum of square residuals.
+     * Returns the sum of squared residuals.
      *
      * @return residual sum of squares
      */
@@ -168,22 +167,20 @@ public class OLSMultipleLinearRegression extends AbstractMultipleLinearRegressio
         final double n = X.getRowDimension();
         return 1 - (calculateResidualSumOfSquares() * (n - 1)) /
             (calculateTotalSumOfSquares() * (n - X.getColumnDimension()));
-       // return 1 - ((1 - calculateRSquare()) * (n - 1) / (n - X.getColumnDimension() - 1));
     }
 
     /**
-     * Loads new x sample data, overriding any previous sample
-     *
-     * @param x the [n,k] array representing the x sample
+     * {@inheritDoc}
+     * <p>This implementation computes and caches the QR decomposition of the X matrix once it is successfully loaded.</p>
      */
     @Override
     protected void newXSampleData(double[][] x) {
-        this.X = new Array2DRowRealMatrix(x);
+        super.newXSampleData(x);
         qr = new QRDecompositionImpl(X);
     }
 
     /**
-     * Calculates regression coefficients using OLS.
+     * Calculates the regression coefficients using OLS.
      *
      * @return beta
      */

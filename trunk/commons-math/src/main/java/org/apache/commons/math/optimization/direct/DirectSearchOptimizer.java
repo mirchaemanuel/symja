@@ -22,15 +22,10 @@ import java.util.Comparator;
 
 import org.apache.commons.math.FunctionEvaluationException;
 import org.apache.commons.math.MathRuntimeException;
-import org.apache.commons.math.util.Incrementor;
-import org.apache.commons.math.analysis.MultivariateRealFunction;
-import org.apache.commons.math.exception.MaxCountExceededException;
-import org.apache.commons.math.exception.TooManyEvaluationsException;
 import org.apache.commons.math.exception.DimensionMismatchException;
 import org.apache.commons.math.exception.util.LocalizedFormats;
 import org.apache.commons.math.optimization.GoalType;
 import org.apache.commons.math.optimization.MultivariateRealOptimizer;
-import org.apache.commons.math.optimization.OptimizationException;
 import org.apache.commons.math.optimization.ConvergenceChecker;
 import org.apache.commons.math.optimization.RealPointValuePair;
 import org.apache.commons.math.optimization.SimpleScalarValueChecker;
@@ -86,7 +81,7 @@ import org.apache.commons.math.optimization.general.AbstractScalarOptimizer;
  * @see MultivariateRealFunction
  * @see NelderMead
  * @see MultiDirectional
- * @version $Revision: 990792 $ $Date: 2010-08-30 15:06:22 +0200 (Mo, 30 Aug 2010) $
+ * @version $Revision: 994988 $ $Date: 2010-09-08 13:22:41 +0200 (Mi, 08 Sep 2010) $
  * @since 1.2
  */
 public abstract class DirectSearchOptimizer
@@ -212,8 +207,8 @@ public abstract class DirectSearchOptimizer
             Arrays.fill(unit, 1.0);
             setStartConfiguration(unit);
         }
-        
-        final boolean isMinim = (getGoalType() == GoalType.MINIMIZE);
+
+        final boolean isMinim = getGoalType() == GoalType.MINIMIZE;
         final Comparator<RealPointValuePair> comparator
             = new Comparator<RealPointValuePair>() {
             public int compare(final RealPointValuePair o1,
@@ -256,8 +251,10 @@ public abstract class DirectSearchOptimizer
      * @param comparator Comparator to use to sort simplex vertices from best to worst.
      * @throws FunctionEvaluationException if the function cannot be evaluated at
      * some point.
-     * @throws TooManyEvaluationsException if the algorithm fails to converge.
-     * @throws DimensionMismatchException if the start point dimension is wrong.
+     * @throws org.apache.commons.math.exception.TooManyEvaluationsException if
+     * the algorithm fails to converge.
+     * @throws org.apache.commons.math.exception.DimensionMismatchException if
+     * the start point dimension is wrong.
      */
     protected abstract void iterateSimplex(final Comparator<RealPointValuePair> comparator)
         throws FunctionEvaluationException;
@@ -296,7 +293,8 @@ public abstract class DirectSearchOptimizer
      *
      * @param comparator Comparator to use to sort simplex vertices from best to worst.
      * @throws FunctionEvaluationException if no value can be computed for the parameters.
-     * @throws TooManyEvaluationsException if the maximal number of evaluations is exceeded.
+     * @throws org.apache.commons.math.exception.TooManyEvaluationsException
+     * if the maximal number of evaluations is exceeded.
      */
     protected void evaluateSimplex(final Comparator<RealPointValuePair> comparator)
         throws FunctionEvaluationException {

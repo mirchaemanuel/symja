@@ -26,7 +26,7 @@ import org.apache.commons.math.optimization.RealPointValuePair;
 /**
  * This class implements the multi-directional direct search method.
  *
- * @version $Revision: 990792 $ $Date: 2010-08-30 15:06:22 +0200 (Mo, 30 Aug 2010) $
+ * @version $Revision: 994988 $ $Date: 2010-09-08 13:22:41 +0200 (Mi, 08 Sep 2010) $
  * @see NelderMead
  * @since 1.2
  */
@@ -110,14 +110,14 @@ public class MultiDirectional extends DirectSearchOptimizer {
      * @param comparator Comparator to use to sort simplex vertices from best
      * to poorest.
      * @return the best point in the transformed simplex.
-     * @exception FunctionEvaluationException if the function cannot be
+     * @throws FunctionEvaluationException if the function cannot be
      * evaluated at some point.
-     * @exception TooManyEvaluationsException if the maximal number of
-     * evaluations is exceeded.
+     * @throws org.apache.commons.math.exception.TooManyEvaluationsException
+     * if the maximal number of evaluations is exceeded.
      */
     private RealPointValuePair evaluateNewSimplex(final RealPointValuePair[] original,
-                                              final double coeff,
-                                              final Comparator<RealPointValuePair> comparator)
+                                                  final double coeff,
+                                                  final Comparator<RealPointValuePair> comparator)
         throws FunctionEvaluationException {
 
         final double[] xSmallest = original[0].getPointRef();

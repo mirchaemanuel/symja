@@ -36,7 +36,7 @@ import org.apache.commons.math.optimization.VectorialPointValuePair;
  * is done by finding the parameters values that minimizes the objective
  * function &sum;(y<sub>i</sub>-f(x<sub>i</sub>))<sup>2</sup>. This is
  * really a least squares problem.</p>
- * @version $Revision: 990792 $ $Date: 2010-08-30 15:06:22 +0200 (Mo, 30 Aug 2010) $
+ * @version $Revision: 994988 $ $Date: 2010-09-08 13:22:41 +0200 (Mi, 08 Sep 2010) $
  * @since 2.0
  */
 public class CurveFitter {
@@ -119,8 +119,10 @@ public class CurveFitter {
      * @return fitted parameters
      * @exception FunctionEvaluationException if the objective function throws one during
      * the search
-     * @exception ConvergenceException if the algorithm failed to converge
-     * @exception IllegalArgumentException if the start point dimension is wrong.
+     * @exception org.apache.commons.math.exception.ConvergenceException
+     * if the algorithm failed to converge.
+     * @exception org.apache.commons.math.exception.DimensionMismatchException
+     * if the start point dimension is wrong.
      */
     public double[] fit(final ParametricRealFunction f,
                         final double[] initialGuess)

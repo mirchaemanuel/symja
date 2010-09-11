@@ -24,7 +24,7 @@ import org.apache.commons.math.stat.descriptive.AbstractStorelessUnivariateStati
 /**
   * Returns the sum of the available values.
  * <p>
- * If there are no values in the dataset, then 0 is returned. 
+ * If there are no values in the dataset, then 0 is returned.
  * If any of the values are
  * <code>NaN</code>, then <code>NaN</code> is returned.</p>
  * <p>
@@ -33,7 +33,7 @@ import org.apache.commons.math.stat.descriptive.AbstractStorelessUnivariateStati
  * one of the threads invokes the <code>increment()</code> or
  * <code>clear()</code> method, it must be synchronized externally.</p>
  *
- * @version $Revision: 991812 $ $Date: 2010-09-02 06:49:11 +0200 (Do, 02 Sep 2010) $
+ * @version $Revision: 994988 $ $Date: 2010-09-08 13:22:41 +0200 (Mi, 08 Sep 2010) $
  */
 public class Sum extends AbstractStorelessUnivariateStatistic implements Serializable {
 

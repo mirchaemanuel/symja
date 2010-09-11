@@ -30,7 +30,7 @@ import org.apache.commons.math.optimization.RealPointValuePair;
  * differentiable functions.
  * It contains boiler-plate code for dealing with gradient evaluation.
  *
- * @version $Revision: 990792 $ $Date: 2010-08-30 15:06:22 +0200 (Mo, 30 Aug 2010) $
+ * @version $Revision: 994988 $ $Date: 2010-09-08 13:22:41 +0200 (Mi, 08 Sep 2010) $
  * @since 2.0
  */
 public abstract class AbstractScalarDifferentiableOptimizer
@@ -64,8 +64,8 @@ public abstract class AbstractScalarDifferentiableOptimizer
      * @return the gradient at the specified point.
      * @throws FunctionEvaluationException if the function gradient cannot be
      * evaluated.
-     * @throws TooManyEvaluationsException if the allowed number of evaluations
-     * is exceeded.
+     * @throws org.apache.commons.math.exception.TooManyEvaluationsException
+     * if the allowed number of evaluations is exceeded.
      */
     protected double[] computeObjectiveGradient(final double[] evaluationPoint)
         throws FunctionEvaluationException {
