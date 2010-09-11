@@ -995,6 +995,14 @@ public class F {
 		return binary(List, a0, a1);
 	}
 
+	public static IAST List(final double... numbers) {
+		INum a[] = new INum[numbers.length];
+		for (int i = 0; i < numbers.length; i++) {
+			a[i] = F.num(numbers[i]);
+		}
+		return ast(a, List);
+	}
+	
 	public static IAST List(final long... numbers) {
 		IInteger a[] = new IInteger[numbers.length];
 		for (int i = 0; i < numbers.length; i++) {
