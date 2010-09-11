@@ -2297,6 +2297,12 @@ public class SystemTestCase extends AbstractTestCase {
 		}
 	}
 
+	public void testSystem803() {
+		// see http://google-opensource.blogspot.com/2009/06/introducing-apache-commons-math.html
+		check("LinearProgramming[{-2, 1, -5}, {{1, 2, 0},{3, 2, 0},{0,1,0},{0,0,1}}, {{6,-1},{12,-1},{0,1},{1,0}}]", 
+				"{4.0,0.0,1.0}");
+	}
+
 	public void testSystem991() {
 		check("PolynomialQuotient[x^2+2*x+1,x+2]", "x");
 		check("PolynomialQuotient[x^2+x+1,2*x+1]", "1/2*x+1/4");
