@@ -19,7 +19,7 @@ package org.apache.commons.math.dfp;
 
 /** Mathematical routines for use with {@link Dfp}.
  * The constants are defined in {@link DfpField}
- * @version $Revision: 992697 $ $Date: 2010-09-05 00:59:21 +0200 (So, 05 Sep 2010) $
+ * @version $Revision: 992879 $ $Date: 2010-09-05 21:42:48 +0200 (So, 05 Sep 2010) $
  * @since 2.2
  */
 public class DfpMath {
@@ -321,7 +321,7 @@ public class DfpMath {
         int p2 = 0;
 
         // Check the arguments somewhat here
-        if (a.equals(a.getZero()) || a.lessThan(a.getZero()) || (a.equals(a) == false)) {
+        if (a.equals(a.getZero()) || a.lessThan(a.getZero()) || a.isNaN()) {
             // negative, zero or NaN
             a.getField().setIEEEFlagsBits(DfpField.FLAG_INVALID);
             return a.dotrap(DfpField.FLAG_INVALID, "ln", a, a.newInstance((byte)1, (byte) Dfp.QNAN));
@@ -524,7 +524,7 @@ public class DfpMath {
         }
 
         if (y.equals(one)) {
-            if (!x.equals(x)) {
+            if (x.isNaN()) {
                 // Test for NaNs
                 x.getField().setIEEEFlagsBits(DfpField.FLAG_INVALID);
                 return x.dotrap(DfpField.FLAG_INVALID, POW_TRAP, x, x);
@@ -532,7 +532,7 @@ public class DfpMath {
             return x;
         }
 
-        if (!x.equals(x) || !y.equals(y)) {
+        if (x.isNaN() || y.isNaN()) {
             // Test for NaNs
             x.getField().setIEEEFlagsBits(DfpField.FLAG_INVALID);
             return x.dotrap(DfpField.FLAG_INVALID, POW_TRAP, x, x.newInstance((byte)1, (byte) Dfp.QNAN));

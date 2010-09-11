@@ -30,7 +30,7 @@ import org.apache.commons.math.optimization.ConvergenceChecker;
  * Provide a default implementation for several functions useful to generic
  * optimizers.
  *
- * @version $Revision: 991164 $ $Date: 2010-08-31 14:05:00 +0200 (Di, 31 Aug 2010) $
+ * @version $Revision: 994988 $ $Date: 2010-09-08 13:22:41 +0200 (Mi, 08 Sep 2010) $
  * @since 2.0
  */
 public abstract class AbstractUnivariateRealOptimizer
@@ -138,17 +138,17 @@ public abstract class AbstractUnivariateRealOptimizer
 
     /** {@inheritDoc} */
     public UnivariateRealPointValuePair optimize(UnivariateRealFunction f,
-                                                 GoalType goal,
+                                                 GoalType goalType,
                                                  double min, double max)
         throws FunctionEvaluationException {
-        return optimize(f, goal, min, max, min + 0.5 * (max - min));
+        return optimize(f, goalType, min, max, min + 0.5 * (max - min));
     }
 
     /**
      * {@inheritDoc}
      */
-    public void setConvergenceChecker(ConvergenceChecker<UnivariateRealPointValuePair> checker) {
-        this.checker = checker;
+    public void setConvergenceChecker(ConvergenceChecker<UnivariateRealPointValuePair> c) {
+        checker = c;
     }
 
     /**

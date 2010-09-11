@@ -24,10 +24,9 @@ package org.apache.commons.math;
  * execution of the algorithms per se.
  * </p>
  * @see ConvergenceException
- * @version $Revision: 990792 $ $Date: 2010-08-30 15:06:22 +0200 (Mo, 30 Aug 2010) $
+ * @version $Revision: 994988 $ $Date: 2010-09-08 13:22:41 +0200 (Mi, 08 Sep 2010) $
  * @since 2.0
- * @deprecated in 2.2 (to be removed in 3.0). Please use
- * {@link IterativeAlgorithm} instead.
+ * @deprecated in 2.2 (to be removed in 3.0).
  */
 public interface ConvergingAlgorithm {
 

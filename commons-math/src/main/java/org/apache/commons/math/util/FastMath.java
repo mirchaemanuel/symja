@@ -18,7 +18,7 @@ package org.apache.commons.math.util;
 
 /**
  * Faster, more accurate, portable alternative to StrictMath.
- * @version $Revision: 990658 $ $Date: 2010-08-30 00:04:09 +0200 (Mo, 30 Aug 2010) $
+ * @version $Revision: 996172 $ $Date: 2010-09-11 18:57:30 +0200 (Sa, 11 Sep 2010) $
  * @since 2.2
  */
 public class FastMath {
@@ -154,6 +154,13 @@ public class FastMath {
      */
     private static final double EIGHTHES[] = {0, 0.125, 0.25, 0.375, 0.5, 0.625, 0.75, 0.875, 1.0, 1.125, 1.25, 1.375, 1.5, 1.625};
 
+    /* Table of 2^((n+2)/3) */
+    private static final double CBRTTWO[] = { 0.6299605249474366,
+                                            0.7937005259840998, 
+                                            1.0, 
+                                            1.2599210498948732, 
+                                            1.5874010519681994 };
+
     // Initialize tables
     static {
         int i;
@@ -204,36 +211,12 @@ public class FastMath {
     private FastMath() {
     }
 
-    /** Compute the arc cosine of a number.
-     * @param a number on which evaluation is done
-     * @return arc cosine of a
-     */
-    public static double acos(final double a) {
-        return Math.acos(a);
-    }
-
-    /** Compute the arc sine of a number.
-     * @param a number on which evaluation is done
-     * @return arc sine of a
-     */
-    public static double asin(final double a) {
-        return Math.asin(a);
-    }
-
     /** Compute the square root of a number.
      * @param a number on which evaluation is done
      * @return square root of a
      */
     public static double sqrt(final double a) {
         return Math.sqrt(a);
-    }
-
-    /** Compute the cubic root of a number.
-     * @param a number on which evaluation is done
-     * @return cubic root of a
-     */
-    public static double cbrt(final double a) {
-        return Math.cbrt(a);
     }
 
     /** Compute the hyperbolic cosine of a number.
@@ -441,6 +424,10 @@ public class FastMath {
             intVal = (int) -x;
 
             if (intVal > 746) {
+                if (hiPrec != null) {
+                    hiPrec[0] = 0.0;
+                    hiPrec[1] = 0.0;
+                }
                 return 0.0;
             }
 
@@ -474,6 +461,10 @@ public class FastMath {
             intVal = (int) x;
 
             if (intVal > 709) {
+                if (hiPrec != null) {
+                    hiPrec[0] = Double.POSITIVE_INFINITY;
+                    hiPrec[1] = 0.0;
+                }
                 return Double.POSITIVE_INFINITY;
             }
 
@@ -1028,11 +1019,6 @@ public class FastMath {
                 ya = aa + tmp - tmp;
                 yb = aa - ya + ab;
 
-                if (hiPrec != null) {
-                    hiPrec[0] = ya;
-                    hiPrec[1] = yb;
-                }
-
                 return ya + yb;
             }
         }
@@ -1171,6 +1157,14 @@ public class FastMath {
         double xpa = 1.0 + x;
         double xpb = -(xpa - 1.0 - x);
 
+        if (x == -1) {
+            return x/0.0;   // -Infinity
+        }
+
+        if (x > 0 && 1/x == 0) { // x = Infinity
+            return x;
+        }
+
         if (x>1e-6 || x<-1e-6) {
             double hiPrec[] = new double[2];
 
@@ -1227,22 +1221,28 @@ public class FastMath {
             return 1.0;
         }
 
-        /* Handle special case x<0 */
-        if (x < 0) {
-            if (y == (long) y) {
-                // If y is an integer
-                return ((long)y & 1) == 0 ? pow(-x, y) : -pow(-x, y);
-            } else {
-                return Double.NaN;
-            }
+        if (x != x) { // X is NaN
+            return x;
         }
+
 
         if (x == 0) {
             long bits = Double.doubleToLongBits(x);
             if ((bits & 0x8000000000000000L) != 0) {
                 // -zero
-                if (y < 0 && y == (long)y)
+                long yi = (long) y;
+
+                if (y < 0 && y == yi && (yi & 1) == 1) {
                     return Double.NEGATIVE_INFINITY;
+                }
+
+                if (y < 0 && y == yi && (yi & 1) == 1) {
+                    return -0.0;
+                }
+
+                if (y > 0 && y == yi && (yi & 1) == 1) {
+                    return -0.0;
+                }
             }
 
             if (y < 0) {
@@ -1256,6 +1256,9 @@ public class FastMath {
         }
 
         if (x == Double.POSITIVE_INFINITY) {
+            if (y != y) { // y is NaN
+                return y;
+            }
             if (y < 0.0) {
                 return 0.0;
             } else {
@@ -1264,6 +1267,9 @@ public class FastMath {
         }
 
         if (y == Double.POSITIVE_INFINITY) {
+            if (x * x == 1.0)
+              return Double.NaN;
+
             if (x * x > 1.0) {
                 return Double.POSITIVE_INFINITY;
             } else {
@@ -1271,18 +1277,71 @@ public class FastMath {
             }
         }
 
+        if (x == Double.NEGATIVE_INFINITY) {
+            if (y != y) { // y is NaN
+                return y;
+            }
+
+            if (y < 0) {
+                long yi = (long) y;
+                if (y == yi && (yi & 1) == 1) {
+                    return -0.0;
+                }
+
+                return 0.0;
+            }
+
+            if (y > 0)  {
+                long yi = (long) y;
+                if (y == yi && (yi & 1) == 1) {
+                    return Double.NEGATIVE_INFINITY;
+                }
+
+                return Double.POSITIVE_INFINITY;
+            }
+        }
+
         if (y == Double.NEGATIVE_INFINITY) {
-            if (x*x < 1.0) {
-                return Double.NEGATIVE_INFINITY;
+
+            if (x * x == 1.0) {
+                return Double.NaN;
+            }
+
+            if (x * x < 1.0) {
+                return Double.POSITIVE_INFINITY;
             } else {
                 return 0.0;
             }
         }
 
+        /* Handle special case x<0 */
+        if (x < 0) {
+            // y is an even integer in this case
+            if (y >= 4503599627370496.0 || y <= -4503599627370496.0) {
+                return pow(-x, y);
+            }
+
+            if (y == (long) y) {
+                // If y is an integer
+                return ((long)y & 1) == 0 ? pow(-x, y) : -pow(-x, y);
+            } else {
+                return Double.NaN;
+            }
+        }
+
         /* Split y into ya and yb such that y = ya+yb */
-        double tmp1 = y * 1073741824.0;
-        final double ya = y + tmp1 - tmp1;
-        final double yb = y - ya;
+        double ya;
+        double yb;
+        if (y < 8e298 && y > -8e298) {
+            double tmp1 = y * 1073741824.0;
+            ya = y + tmp1 - tmp1;
+            yb = y - ya;
+        } else {
+            double tmp1 = y * 9.31322574615478515625E-10;
+            double tmp2 = tmp1 * 9.31322574615478515625E-10;
+            ya = (tmp1 + tmp2 - tmp1) * 1073741824.0 * 1073741824.0;
+            yb = y - ya;
+        }
 
         /* Compute ln(x) */
         log(x, lns);
@@ -1290,8 +1349,8 @@ public class FastMath {
         double lnb = lns[1];
 
         /* resplit lns */
-        tmp1 = lna * 1073741824.0;
-        final double tmp2 = lna + tmp1 - tmp1;
+        double tmp1 = lna * 1073741824.0;
+        double tmp2 = lna + tmp1 - tmp1;
         lnb += lna - tmp2;
         lna = tmp2;
 
@@ -2375,8 +2434,8 @@ public class FastMath {
             double b = -(a - pi2a + xa);
             b += pi2b - xb;
 
-            xa = a;
-            xb = b;
+            xa = a + b;
+            xb = -(xa - a - b);
             quadrant ^= 1;
             negative ^= true;
         }
@@ -2412,7 +2471,6 @@ public class FastMath {
      */
     private static double atan(double xa, double xb, boolean leftPlane) {
         boolean negate = false;
-        boolean recip = false;
         int idx;
 
         if (xa < 0) {
@@ -2519,41 +2577,24 @@ public class FastMath {
 
         double result;
         double resultb;
-        if (recip) {
-            final double pi2a = 1.5707963267948966;
-            final double pi2b = 6.123233995736766E-17;
 
-            double za = pi2a - ya;
-            double zb = -(za - pi2a + ya);
-            temp = za - EIGHTHES[idx];
-            zb += -(temp - za + EIGHTHES[idx]);
-            za = temp;
+        //result = yb + eighths[idx] + ya;
+        double za = EIGHTHES[idx] + ya;
+        double zb = -(za - EIGHTHES[idx] - ya);
+        temp = za + yb;
+        zb += -(temp - za - yb);
+        za = temp;
 
-            zb += pi2b - yb;
-            ya = za;
-            yb = zb;
-
-            result = yb + ya;
-            resultb = -(result - yb - ya);
-        } else {
-            //result = yb + eighths[idx] + ya;
-            double za = EIGHTHES[idx] + ya;
-            double zb = -(za - EIGHTHES[idx] - ya);
-            temp = za + yb;
-            zb += -(temp - za - yb);
-            za = temp;
-
-            result = za + zb;
-            resultb = -(result - za - zb);
-        }
+        result = za + zb;
+        resultb = -(result - za - zb);
 
         if (leftPlane) {
             // Result is in the left plane
             final double pia = 1.5707963267948966*2.0;
             final double pib = 6.123233995736766E-17*2.0;
 
-            final double za = pia - result;
-            double zb = -(za - pia + result);
+            za = pia - result;
+            zb = -(za - pia + result);
             zb += pib - resultb;
 
             result = za + zb;
@@ -2585,7 +2626,11 @@ public class FastMath {
             double invy = 1.0/y;
 
             if (invx == 0.0) { // X is infinite
-                return 0.0;
+                if (x > 0) {
+                    return 0.0;
+                } else {
+                    return Math.PI;
+                }
             }
 
             if (result != result) { // y must be infinite
@@ -2684,6 +2729,239 @@ public class FastMath {
         double result = atan(ra, rb, x < 0);
 
         return result;
+    }
+
+    /** Compute the arc sine of a number.
+     * @param x number on which evaluation is done
+     * @return arc sine of x
+     */
+    public static double asin(double x) {
+      if (x != x) {
+          return Double.NaN;
+      }
+
+      if (x > 1.0 || x < -1.0) {
+          return Double.NaN;
+      }
+
+      if (x == 1.0) {
+          return Math.PI/2.0;
+      }
+
+      if (x == -1.0) {
+          return -Math.PI/2.0;
+      }
+
+      /* Compute asin(x) = atan(x/sqrt(1-x*x)) */
+
+      /* Split x */
+      double temp = x * 1073741824.0;
+      final double xa = x + temp - temp;
+      final double xb = x - xa;
+
+      /* Square it */
+      double ya = xa*xa;
+      double yb = xa*xb*2.0 + xb*xb;
+
+      /* Subtract from 1 */
+      ya = -ya;
+      yb = -yb;
+
+      double za = 1.0 + ya;
+      double zb = -(za - 1.0 - ya);
+
+      temp = za + yb;
+      zb += -(temp - za - yb);
+      za = temp;
+
+      /* Square root */
+      double y;
+      y = sqrt(za);
+      temp = y * 1073741824.0;
+      ya = y + temp - temp;
+      yb = y - ya;
+
+      /* Extend precision of sqrt */
+      yb += (za - ya*ya - 2*ya*yb - yb*yb) / (2.0*y);
+
+      /* Contribution of zb to sqrt */
+      double dx = zb / (2.0*y);
+
+      // Compute ratio r = x/y
+      double r = x/y;
+      temp = r * 1073741824.0;
+      double ra = r + temp - temp;
+      double rb = r - ra;
+
+      rb += (x - ra*ya - ra*yb - rb*ya - rb*yb) / y;  // Correct for rounding in division
+      rb += -x * dx / y / y;  // Add in effect additional bits of sqrt.
+
+      temp = ra + rb;
+      rb = -(temp - ra - rb);
+      ra = temp;
+
+      return atan(ra, rb, false);
+    }
+
+    /** Compute the arc cosine of a number.
+     * @param x number on which evaluation is done
+     * @return arc cosine of x
+     */
+    public static double acos(double x) {
+      if (x != x) {
+          return Double.NaN;
+      }
+
+      if (x > 1.0 || x < -1.0) {
+          return Double.NaN;
+      }
+
+      if (x == -1.0) {
+          return Math.PI;
+      }
+
+      if (x == 1.0) {
+          return 0.0;
+      }
+
+      if (x == 0) {
+          return Math.PI/2.0;
+      }
+
+      /* Compute acos(x) = atan(sqrt(1-x*x)/x) */
+
+      /* Split x */
+      double temp = x * 1073741824.0;
+      final double xa = x + temp - temp;
+      final double xb = x - xa;
+
+      /* Square it */
+      double ya = xa*xa;
+      double yb = xa*xb*2.0 + xb*xb;
+
+      /* Subtract from 1 */
+      ya = -ya;
+      yb = -yb;
+
+      double za = 1.0 + ya;
+      double zb = -(za - 1.0 - ya);
+
+      temp = za + yb;
+      zb += -(temp - za - yb);
+      za = temp;
+
+      /* Square root */
+      double y = sqrt(za);
+      temp = y * 1073741824.0;
+      ya = y + temp - temp;
+      yb = y - ya;
+
+      /* Extend precision of sqrt */
+      yb += (za - ya*ya - 2*ya*yb - yb*yb) / (2.0*y);
+
+      /* Contribution of zb to sqrt */
+      yb += zb / (2.0*y);
+      y = ya+yb;
+      yb = -(y - ya - yb);
+
+      // Compute ratio r = y/x
+      double r = y/x;
+      temp = r * 1073741824.0;
+      double ra = r + temp - temp;
+      double rb = r - ra;
+
+      rb += (y - ra*xa - ra*xb - rb*xa - rb*xb) / x;  // Correct for rounding in division
+      rb += yb / x;  // Add in effect additional bits of sqrt.
+
+      temp = ra + rb;
+      rb = -(temp - ra - rb);
+      ra = temp;
+
+      return atan(ra, rb, x<0);
+    }
+
+    /** Compute the cubic root of a number.
+     * @param a number on which evaluation is done
+     * @return cubic root of a
+     */
+    public static double cbrt(double x) {
+      /* Convert input double to bits */
+      long inbits = Double.doubleToLongBits(x);
+      int exponent = (int) ((inbits >> 52) & 0x7ff) - 1023;
+      boolean subnormal = false;
+
+      if (exponent == -1023) {
+          if (x == 0) {
+              return x;
+          }
+
+          /* Subnormal, so normalize */
+          subnormal = true;
+          x *= 1.8014398509481984E16;  // 2^54
+          inbits = Double.doubleToLongBits(x);
+          exponent = (int) ((inbits >> 52) & 0x7ff) - 1023;
+      }
+
+      if (exponent == 1024) {
+          // Nan or infinity.  Don't care which.
+          return x;
+      }
+
+      /* Divide the exponent by 3 */
+      int exp3 = exponent / 3;
+
+      /* p2 will be the nearest power of 2 to x with its exponent divided by 3 */
+      double p2 = Double.longBitsToDouble((inbits & 0x8000000000000000L) | 
+                                          (long)(((exp3 + 1023) & 0x7ff)) << 52);
+
+      /* This will be a number between 1 and 2 */
+      final double mant = Double.longBitsToDouble((inbits & 0x000fffffffffffffL) | 0x3ff0000000000000L);
+      
+      /* Estimate the cube root of mant by polynomial */
+      double est = -0.010714690733195933;
+      est = est * mant + 0.0875862700108075;
+      est = est * mant + -0.3058015757857271;
+      est = est * mant + 0.7249995199969751;
+      est = est * mant + 0.5039018405998233;
+
+      est *= CBRTTWO[exponent % 3 + 2];
+
+      // est should now be good to about 15 bits of precision.   Do 2 rounds of 
+      // Newton's method to get closer,  this should get us full double precision
+      // Scale down x for the purpose of doing newtons method.  This avoids over/under flows.
+      final double xs = x / (p2*p2*p2); 
+      est += (xs - est*est*est) / (3*est*est);
+      est += (xs - est*est*est) / (3*est*est);
+
+      // Do one round of Newton's method in extended precision to get the last bit right.
+      double temp = est * 1073741824.0;
+      double ya = est + temp - temp;
+      double yb = est - ya;
+
+      double za = ya * ya;
+      double zb = ya * yb * 2.0 + yb * yb;
+      temp = za * 1073741824.0;
+      double temp2 = za + temp - temp;
+      zb += (za - temp2);
+      za = temp2;
+
+      zb = za * yb + ya * zb + zb * yb;
+      za = za * ya;
+
+      double na = xs - za;
+      double nb = -(na - xs + za);
+      nb -= zb;
+
+      est += (na+nb)/(3*est*est);
+
+      /* Scale by a power of two, so this is exact. */
+      est *= p2;
+
+      if (subnormal) {
+          est *= 3.814697265625E-6;  // 2^-18
+      }
+
+      return est;
     }
 
     /**
@@ -2829,13 +3107,21 @@ public class FastMath {
     public static double floor(double x) {
         long y;
 
+        if (x != x) { // NaN
+            return x;
+        }
+
         if (x >= 4503599627370496.0 || x <= -4503599627370496.0) {
             return x;
         }
 
         y = (long) x;
-        if (x < 0) {
+        if (x < 0 && y != x) {
             y--;
+        }
+
+        if (y == 0) {
+            return x*y;
         }
 
         return (double) y;
@@ -2848,12 +3134,22 @@ public class FastMath {
     public static double ceil(double x) {
         double y;
 
+        if (x != x) { // NaN
+            return x;
+        }
+
         y = floor(x);
         if (y == x) {
             return y;
         }
 
-        return y + 1.0;
+        y += 1.0;
+
+        if (y == 0) {
+            return x*y;
+        }
+
+        return y;
     }
 
     /** Get the whole number that is the nearest to x, or the even one if x is exactly half way between two integers.

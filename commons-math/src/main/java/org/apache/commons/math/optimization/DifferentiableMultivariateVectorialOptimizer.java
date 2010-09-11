@@ -17,7 +17,6 @@
 
 package org.apache.commons.math.optimization;
 
-import org.apache.commons.math.FunctionEvaluationException;
 import org.apache.commons.math.analysis.DifferentiableMultivariateVectorialFunction;
 
 /**
@@ -25,7 +24,7 @@ import org.apache.commons.math.analysis.DifferentiableMultivariateVectorialFunct
  * {@link DifferentiableMultivariateVectorialFunction vectorial differentiable
  * objective functions}.
  *
- * @version $Revision: 990792 $ $Date: 2010-08-30 15:06:22 +0200 (Mo, 30 Aug 2010) $
+ * @version $Revision: 994988 $ $Date: 2010-09-08 13:22:41 +0200 (Mi, 08 Sep 2010) $
  * @since 3.0
  */
 public interface DifferentiableMultivariateVectorialOptimizer

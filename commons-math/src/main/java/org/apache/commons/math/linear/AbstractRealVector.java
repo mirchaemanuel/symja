@@ -32,7 +32,7 @@ import org.apache.commons.math.util.FastMath;
 /**
  * This class provides default basic implementations for many methods in the
  * {@link RealVector} interface.
- * @version $Revision: 990658 $ $Date: 2010-08-30 00:04:09 +0200 (Mo, 30 Aug 2010) $
+ * @version $Revision: 994988 $ $Date: 2010-09-08 13:22:41 +0200 (Mi, 08 Sep 2010) $
  * @since 2.1
  */
 public abstract class AbstractRealVector implements RealVector {
@@ -51,7 +51,7 @@ public abstract class AbstractRealVector implements RealVector {
      * Check if instance dimension is equal to some expected value.
      *
      * @param n expected dimension.
-     * @exception IllegalArgumentException if the dimension is
+     * @throws DimensionMismatchException if the dimension is
      * inconsistent with vector size
      */
     protected void checkVectorDimensions(int n)

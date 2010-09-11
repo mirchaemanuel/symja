@@ -33,7 +33,7 @@ import org.apache.commons.math.exception.util.LocalizedFormats;
 /**
 * Base class for commons-math unchecked exceptions.
 *
-* @version $Revision: 983921 $ $Date: 2010-08-10 12:46:06 +0200 (Di, 10 Aug 2010) $
+* @version $Revision: 996179 $ $Date: 2010-09-11 19:19:54 +0200 (Sa, 11 Sep 2010) $
 * @since 2.0
 */
 public class MathRuntimeException extends RuntimeException {
@@ -684,7 +684,7 @@ public class MathRuntimeException extends RuntimeException {
 
         final String argument = "https://issues.apache.org/jira/browse/MATH";
 
-        return new RuntimeException() {
+        return new RuntimeException(cause) {
 
             /** Serializable version identifier. */
             private static final long serialVersionUID = -201865440834027016L;

@@ -33,7 +33,7 @@ import org.apache.commons.math.exception.DimensionMismatchException;
  * Also includes a <code>test</code> method that performs generic parameter
  * validation for the <code>evaluate</code> methods.</p>
  *
- * @version $Revision: 992191 $ $Date: 2010-09-03 05:46:53 +0200 (Fr, 03 Sep 2010) $
+ * @version $Revision: 994988 $ $Date: 2010-09-08 13:22:41 +0200 (Mi, 08 Sep 2010) $
  */
 public abstract class AbstractUnivariateStatistic
     implements UnivariateStatistic {
@@ -188,13 +188,14 @@ public abstract class AbstractUnivariateStatistic
      * <code>length</code> is 0 unless <code>allowEmpty</code> is <code>true</code>.
      * </ul></p>
      *
-     * @param values the input array
-     * @param weights the weights array
-     * @param begin index of the first array element to include
-     * @param length the number of elements to include
-     * @param allowEmpty if <code>true</code> than allow zero length arrays to pass
-     * @return true if the parameters are valid 
-     * @throws IllegalArgumentException if the indices are invalid or the array is null
+     * @param values the input array.
+     * @param weights the weights array.
+     * @param begin index of the first array element to include.
+     * @param length the number of elements to include.
+     * @param allowEmpty if {@code true} than allow zero length arrays to pass.
+     * @return {@code true} if the parameters are valid.
+     * @throws IllegalArgumentException if the indices are invalid or the array
+     * is {@code null}.
      * @since 3.0
      */
     protected boolean test(final double[] values, final double[] weights, final int begin, final int length, final boolean allowEmpty){

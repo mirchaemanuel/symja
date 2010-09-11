@@ -17,14 +17,7 @@
 
 package org.apache.commons.math.optimization;
 
-import java.util.Arrays;
-import java.util.Comparator;
-
-import org.apache.commons.math.FunctionEvaluationException;
-import org.apache.commons.math.exception.MathIllegalStateException;
-import org.apache.commons.math.exception.ConvergenceException;
 import org.apache.commons.math.analysis.DifferentiableMultivariateRealFunction;
-import org.apache.commons.math.exception.util.LocalizedFormats;
 import org.apache.commons.math.random.RandomVectorGenerator;
 
 /**
@@ -35,7 +28,7 @@ import org.apache.commons.math.random.RandomVectorGenerator;
  * turn with different starting points in order to avoid being trapped
  * into a local extremum when looking for a global one.
  *
- * @version $Revision: 990792 $ $Date: 2010-08-30 15:06:22 +0200 (Mo, 30 Aug 2010) $
+ * @version $Revision: 994988 $ $Date: 2010-09-08 13:22:41 +0200 (Mi, 08 Sep 2010) $
  * @since 2.0
  */
 public class MultiStartDifferentiableMultivariateRealOptimizer

@@ -90,7 +90,7 @@ import org.apache.commons.math.FieldElement;
  *  detail and is really only a matter of definition.  Any side effects of
  *  this can be rendered invisible by a subclass.</p>
  * @see DfpField
- * @version $Revision: 992697 $ $Date: 2010-09-05 00:59:21 +0200 (So, 05 Sep 2010) $
+ * @version $Revision: 992864 $ $Date: 2010-09-05 21:09:44 +0200 (So, 05 Sep 2010) $
  * @since 2.2
  */
 public class Dfp implements FieldElement<Dfp> {
@@ -833,7 +833,7 @@ public class Dfp implements FieldElement<Dfp> {
      */
     @Override
     public int hashCode() {
-        return 17 + (sign << 8) + (nans << 16) + exp + mant.hashCode();
+        return 17 + (sign << 8) + (nans << 16) + exp + Arrays.hashCode(mant);
     }
 
     /** Check if instance is not equal to x.
@@ -1968,7 +1968,6 @@ public class Dfp implements FieldElement<Dfp> {
     }
 
     /** Convert an instance to a string using scientific notation.
-     * @param a instance to convert
      * @return string representation of the instance in scientific notation
      */
     protected String dfp2sci() {
@@ -2050,7 +2049,6 @@ public class Dfp implements FieldElement<Dfp> {
     }
 
     /** Convert an instance to a string using normal notation.
-     * @param a instance to convert
      * @return string representation of the instance in normal notation
      */
     protected String dfp2string() {
