@@ -16,39 +16,17 @@
 package org.matheclipse.parser.client.ast;
 
 /**
- * A node for a parsed pattern expression (i.e. <code>_</code> or
- * <code>x_</code>)
+ * A node for a parsed pattern expression (i.e. <code>___</code> or  <code>x___</code>)
  * 
  */
-public class PatternNode extends ASTNode {
-	protected final SymbolNode fSymbol;
-	protected final boolean fOptional;
-	protected final ASTNode fConstraint;
+public class Pattern3Node extends PatternNode {
 
-	public PatternNode(final SymbolNode symbol, final ASTNode constraint) {
+	public Pattern3Node(final SymbolNode symbol, final ASTNode constraint) {
 		this(symbol, constraint, false);
 	}
 
-	public PatternNode(final SymbolNode symbol, final ASTNode constraint, boolean optional) {
-		super(null);
-		fSymbol = symbol;
-		fConstraint = constraint;
-		fOptional = optional;
-	}
-
-	public ASTNode getConstraint() {
-		return fConstraint;
-	}
-
-	public SymbolNode getSymbol() {
-		return fSymbol;
-	}
-
-	/**
-	 * @return the fOptional
-	 */
-	public boolean isfOptional() {
-		return fOptional;
+	public Pattern3Node(final SymbolNode symbol, final ASTNode constraint, boolean optional) {
+		super(symbol, constraint, optional);
 	}
 
 	public String toString() {
@@ -56,7 +34,7 @@ public class PatternNode extends ASTNode {
 		if (fSymbol != null) {
 			buff.append(fSymbol.toString());
 		}
-		buff.append("_");
+		buff.append("___");
 		if (fOptional) {
 			buff.append(".");
 		}
@@ -67,8 +45,8 @@ public class PatternNode extends ASTNode {
 	}
 
 	public boolean equals(Object obj) {
-		if (obj instanceof PatternNode) {
-			PatternNode pn = (PatternNode) obj;
+		if (obj instanceof Pattern3Node) {
+			Pattern3Node pn = (Pattern3Node) obj;
 			if (fSymbol == pn.fSymbol) {
 				if (fConstraint == null || pn.fConstraint == null) {
 					return fConstraint == pn.fConstraint;
@@ -87,13 +65,6 @@ public class PatternNode extends ASTNode {
 			}
 		}
 		return false;
-	}
-
-	public int hashCode() {
-		if (fSymbol != null) {
-			fSymbol.hashCode();
-		}
-		return 0;
 	}
 
 }
