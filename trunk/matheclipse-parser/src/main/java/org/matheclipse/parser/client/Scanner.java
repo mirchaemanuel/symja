@@ -15,6 +15,7 @@
  */
 package org.matheclipse.parser.client;
 
+import java.util.HashMap;
 import java.util.List;
 
 import org.matheclipse.parser.client.ast.IParserFactory;
@@ -26,6 +27,7 @@ public class Scanner {
 	 */
 	protected String fInputString;
 
+	protected char fLastChar;
 	/**
 	 * Current input character
 	 */
@@ -158,6 +160,17 @@ public class Scanner {
 	 */
 	final static public int TT_SLOTSEQUENCE = 142;
 
+	final static public int TT_BLANK_BLANK = 143;
+
+	final static public int TT_BLANK_BLANK_BLANK = 144;
+
+	/**
+	 * Token type: pattern placeholder '_.'
+	 */
+	final static public int TT_BLANK_OPTIONAL = 145;
+
+	final static public int TT_DERIVATIVE = 146;
+
 	// ----------------optimized identifier managment------------------
 	static final String string_a = "a", string_b = "b", string_c = "c", string_d = "d", string_e = "e", string_f = "f",
 			string_g = "g", string_h = "h", string_i = "i", string_j = "j", string_k = "k", string_l = "l", string_m = "m",
@@ -172,6 +185,12 @@ public class Scanner {
 	protected int numFormat = 0;
 
 	protected IParserFactory fFactory;
+
+	private static HashMap<String, String> CHAR_MAP = new HashMap<String, String>(1024);
+
+	static {
+		CHAR_MAP.put("CenterEllipsis", "\u22EF");
+	}
 
 	/**
 	 * Initialize Scanner without a math-expression
@@ -198,18 +217,39 @@ public class Scanner {
 	}
 
 	/**
-	 * get the next Character from the input string
+	 * Verify the length of the input string and get the next character from the
+	 * input string. If the current position is greater than the input length, set
+	 * current character to SPACE and token to TT_EOF.
 	 * 
 	 */
 	private void getChar() {
 		if (fInputString.length() > fCurrentPosition) {
-			fCurrentChar = fInputString.charAt(fCurrentPosition++);
+			getNextChar();
 			return;
 		}
-
 		fCurrentPosition = fInputString.length() + 1;
 		fCurrentChar = ' ';
 		fToken = TT_EOF;
+	}
+
+	private void getNextChar() {
+		fLastChar = fCurrentChar;
+		fCurrentChar = fInputString.charAt(fCurrentPosition++);
+		if (fCurrentChar == '\\') {
+			if (fInputString.length() > fCurrentPosition) {
+				if (fInputString.charAt(fCurrentPosition) == '[') {
+					int indx = fInputString.indexOf(']', fCurrentPosition + 1);
+					if (indx > 0) {
+						String uStr = fInputString.substring(fCurrentPosition + 1, indx);
+						String uChStr = CHAR_MAP.get(uStr);
+						if (uChStr != null) {
+							fCurrentChar = uChStr.charAt(0);
+							fCurrentPosition = indx + 1;
+						}
+					}
+				}
+			}
+		}
 	}
 
 	/**
@@ -253,7 +293,8 @@ public class Scanner {
 	protected void getNextToken() throws SyntaxError {
 
 		while (fInputString.length() > fCurrentPosition) {
-			fCurrentChar = fInputString.charAt(fCurrentPosition++);
+			// fCurrentChar = fInputString.charAt(fCurrentPosition++);
+			getNextChar();
 			fToken = TT_EOF;
 
 			if (fFactory.getOperatorCharacters().indexOf(fCurrentChar) >= 0) {
@@ -269,9 +310,8 @@ public class Scanner {
 					continue; // while loop
 				}
 				if (((fCurrentChar >= 'a') && (fCurrentChar <= 'z')) || ((fCurrentChar >= 'A') && (fCurrentChar <= 'Z'))
-						|| (fCurrentChar == '$')) {
+						|| (fCurrentChar == '$') || (Character.isUnicodeIdentifierStart(fCurrentChar))) {
 					fToken = TT_IDENTIFIER;
-
 					return;
 				}
 				if ((fCurrentChar >= '0') && (fCurrentChar <= '9')) {
@@ -282,23 +322,7 @@ public class Scanner {
 				if (fCurrentChar == '(') {
 					if (fInputString.length() > fCurrentPosition) {
 						if (fInputString.charAt(fCurrentPosition) == '*') {
-							int startPosition = fCurrentPosition;
-							fCurrentPosition++;
-							// read multiline comment until end of line:
-							try {
-								while (true) {
-									if (fInputString.charAt(fCurrentPosition) == '*' && fInputString.charAt(fCurrentPosition + 1) == ')') {
-										fCurrentPosition++;
-										fCurrentPosition++;
-										break;
-									}
-									fCurrentPosition++;
-								}
-							} catch (IndexOutOfBoundsException ioobe) {
-								fCurrentPosition = startPosition;
-								throwSyntaxError("Comment doesn't end with '*)' (open multiline comment)");
-							}
-
+							getComment();
 							continue;
 						}
 					}
@@ -341,6 +365,24 @@ public class Scanner {
 					break;
 				case '_':
 					fToken = TT_BLANK;
+					if (fInputString.length() > fCurrentPosition) {
+						if (fInputString.charAt(fCurrentPosition) == '_') {
+							fCurrentPosition++;
+							if (fInputString.length() > fCurrentPosition) {
+								if (fInputString.charAt(fCurrentPosition) == '_') {
+									fCurrentPosition++;
+									fToken = TT_BLANK_BLANK_BLANK;
+									break;
+								}
+							}
+							fToken = TT_BLANK_BLANK;
+							break;
+						} else if (fInputString.charAt(fCurrentPosition) == '.') {
+							fCurrentPosition++;
+							fToken = TT_BLANK_OPTIONAL;
+							break;
+						}
+					}
 
 					break;
 				case '.':
@@ -359,6 +401,9 @@ public class Scanner {
 				case '"':
 					fToken = TT_STRING;
 
+					break;
+				case '\'':
+					fToken = TT_DERIVATIVE;
 					break;
 				case '%':
 					fToken = TT_PERCENT;
@@ -391,6 +436,32 @@ public class Scanner {
 		fCurrentPosition = fInputString.length() + 1;
 		fCurrentChar = ' ';
 		fToken = TT_EOF;
+	}
+
+	private void getComment() {
+		int startPosition = fCurrentPosition;
+		int level = 0;
+		fCurrentPosition++;
+		// read multiline comment until end of file:
+		try {
+			while (true) {
+				if (fInputString.charAt(fCurrentPosition) == '*' && fInputString.charAt(fCurrentPosition + 1) == ')') {
+					fCurrentPosition++;
+					fCurrentPosition++;
+					if (level == 0) {
+						break;
+					} else {
+						level--;
+					}
+				} else if (fInputString.charAt(fCurrentPosition) == '(' && fInputString.charAt(fCurrentPosition + 1) == '*') {
+					level++;
+				}
+				fCurrentPosition++;
+			}
+		} catch (IndexOutOfBoundsException ioobe) {
+			fCurrentPosition = startPosition;
+			throwSyntaxError("Comment doesn't end with '*)' (open multiline comment)");
+		}
 	}
 
 	protected void throwSyntaxError(final String error) throws SyntaxError {
@@ -697,7 +768,9 @@ public class Scanner {
 
 				getChar();
 			} else {
-				if ((fCurrentChar != '"') && ((fCurrentChar == '\n') || (fToken == TT_EOF))) {
+				// if ((fCurrentChar != '"') && ((fCurrentChar == '\n') || (fToken ==
+				// TT_EOF))) {
+				if ((fCurrentChar != '"') && (fToken == TT_EOF)) {
 					throwSyntaxError("string -" + ident.toString() + "- not closed.");
 				}
 

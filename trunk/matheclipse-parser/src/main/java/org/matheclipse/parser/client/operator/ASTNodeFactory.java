@@ -26,6 +26,8 @@ import org.matheclipse.parser.client.ast.FractionNode;
 import org.matheclipse.parser.client.ast.FunctionNode;
 import org.matheclipse.parser.client.ast.IParserFactory;
 import org.matheclipse.parser.client.ast.IntegerNode;
+import org.matheclipse.parser.client.ast.Pattern2Node;
+import org.matheclipse.parser.client.ast.Pattern3Node;
 import org.matheclipse.parser.client.ast.PatternNode;
 import org.matheclipse.parser.client.ast.StringNode;
 import org.matheclipse.parser.client.ast.SymbolNode;
@@ -230,6 +232,18 @@ public class ASTNodeFactory implements IParserFactory {
 
 	public PatternNode createPattern(final SymbolNode patternName, final ASTNode check) {
 		return new PatternNode(patternName, check);
+	}
+
+	public PatternNode createPattern(final SymbolNode patternName, final ASTNode check, boolean optional) {
+		return new PatternNode(patternName, check, optional);
+	}
+
+	public PatternNode createPattern2(final SymbolNode patternName, final ASTNode check) {
+		return new Pattern2Node(patternName, check);
+	}
+
+	public PatternNode createPattern3(final SymbolNode patternName, final ASTNode check) {
+		return new Pattern3Node(patternName, check);
 	}
 
 	public StringNode createString(final StringBuffer buffer) {

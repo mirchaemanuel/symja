@@ -15,6 +15,9 @@
  */
 package org.matheclipse.parser.client;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.matheclipse.parser.client.ast.ASTNode;
 import org.matheclipse.parser.client.ast.FunctionNode;
 import org.matheclipse.parser.client.ast.IConstantOperators;
@@ -41,6 +44,9 @@ public class Parser extends Scanner {
 	 * Use '('...')' as brackets for arguments
 	 */
 	private final boolean fRelaxedSyntax;
+	private final boolean fPackageMode;
+	private List<ASTNode> fNodeList = null;
+	public final static SymbolNode DERIVATIVE = new SymbolNode("Derivative");
 
 	public Parser() {
 		this(ASTNodeFactory.MMA_STYLE_FACTORY, false);
@@ -56,6 +62,10 @@ public class Parser extends Scanner {
 		this(ASTNodeFactory.MMA_STYLE_FACTORY, relaxedSyntax);
 	}
 
+	public Parser(final boolean relaxedSyntax, boolean packageMode) throws SyntaxError {
+		this(ASTNodeFactory.MMA_STYLE_FACTORY, relaxedSyntax, packageMode);
+	}
+
 	/**
 	 * 
 	 * @param factory
@@ -64,9 +74,17 @@ public class Parser extends Scanner {
 	 * @throws SyntaxError
 	 */
 	public Parser(IParserFactory factory, final boolean relaxedSyntax) throws SyntaxError {
+		this(factory, relaxedSyntax, false);
+	}
+
+	public Parser(IParserFactory factory, final boolean relaxedSyntax, boolean packageMode) throws SyntaxError {
 		super();
 		this.fRelaxedSyntax = relaxedSyntax;
 		this.fFactory = factory;
+		this.fPackageMode = packageMode;
+		if (this.fPackageMode) {
+			fNodeList = new ArrayList<ASTNode>(256);
+		}
 	}
 
 	public void setFactory(final IParserFactory factory) {
@@ -185,6 +203,9 @@ public class Parser extends Scanner {
 			final int lookahead = fToken;
 			if ((fToken == TT_LIST_OPEN) || (fToken == TT_PRECEDENCE_OPEN) || (fToken == TT_IDENTIFIER) || (fToken == TT_STRING)
 					|| (fToken == TT_DIGIT)) {
+				if (fPackageMode && fToken == TT_IDENTIFIER && fLastChar == '\n') {
+					return rhs;
+				}
 				// lazy evaluation of multiplication
 				InfixOperator timesOperator = (InfixOperator) fFactory.get("Times");
 				if (timesOperator.getPrecedence() > min_precedence) {
@@ -244,6 +265,9 @@ public class Parser extends Scanner {
 		while (true) {
 			if ((fToken == TT_LIST_OPEN) || (fToken == TT_PRECEDENCE_OPEN) || (fToken == TT_IDENTIFIER) || (fToken == TT_STRING)
 					|| (fToken == TT_DIGIT)) {
+				if (fPackageMode && fToken == TT_IDENTIFIER && fLastChar == '\n') {
+					return lhs;
+				}
 				// lazy evaluation of multiplication
 				oper = fFactory.get("Times");
 				if (oper.getPrecedence() >= min_precedence) {
@@ -254,6 +278,13 @@ public class Parser extends Scanner {
 				}
 			} else {
 				if (fToken != TT_OPERATOR) {
+					if (fToken == TT_DERIVATIVE) {
+						getNextToken();
+						lhs = fFactory.createFunction(DERIVATIVE, lhs);
+						// lhs = postfixOperator.createFunction(fFactory, lhs);
+						lhs = parseArguments(lhs);
+						continue;
+					}
 					break;
 				}
 				infixOperator = determineBinaryOperator();
@@ -309,6 +340,28 @@ public class Parser extends Scanner {
 		}
 
 		return temp;
+	}
+
+	public List<ASTNode> parseList(final String expression) throws SyntaxError {
+		initialize(expression);
+		ASTNode temp = parseOperators(parsePrimary(), 0);
+		fNodeList.add(temp);
+		while (fToken != TT_EOF) {
+			if (fToken == TT_PRECEDENCE_CLOSE) {
+				throwSyntaxError("Too many closing ')'; End-of-file not reached.");
+			}
+			if (fToken == TT_LIST_CLOSE) {
+				throwSyntaxError("Too many closing '}'; End-of-file not reached.");
+			}
+			if (fToken == TT_ARGUMENTS_CLOSE) {
+				throwSyntaxError("Too many closing ']'; End-of-file not reached.");
+			}
+			temp = parseOperators(parsePrimary(), 0);
+			fNodeList.add(temp);
+			// throwSyntaxError("End-of-file not reached.");
+		}
+
+		return fNodeList;
 	}
 
 	/**
@@ -461,12 +514,40 @@ public class Parser extends Scanner {
 			final SymbolNode symbol = getSymbol();
 
 			if (fToken == TT_BLANK) {
+				// read '_'
 				getNextToken();
 				if (fToken == TT_IDENTIFIER) {
 					final ASTNode check = getSymbol();
 					return fFactory.createPattern(symbol, check);
 				} else {
 					return fFactory.createPattern(symbol, null);
+				}
+			} else if (fToken == TT_BLANK_BLANK) {
+				// read '__'
+				getNextToken();
+				if (fToken == TT_IDENTIFIER) {
+					final ASTNode check = getSymbol();
+					return fFactory.createPattern2(symbol, check);
+				} else {
+					return fFactory.createPattern2(symbol, null);
+				}
+			} else if (fToken == TT_BLANK_BLANK_BLANK) {
+				// read '___'
+				getNextToken();
+				if (fToken == TT_IDENTIFIER) {
+					final ASTNode check = getSymbol();
+					return fFactory.createPattern3(symbol, check);
+				} else {
+					return fFactory.createPattern3(symbol, null);
+				}
+			} else if (fToken == TT_BLANK_OPTIONAL) {
+				// read '_.'
+				getNextToken();
+				if (fToken == TT_IDENTIFIER) {
+					final ASTNode check = getSymbol();
+					return fFactory.createPattern(symbol, check, true);
+				} else {
+					return fFactory.createPattern(symbol, null, true);
 				}
 			}
 
@@ -480,7 +561,35 @@ public class Parser extends Scanner {
 			} else {
 				return fFactory.createPattern(null, null);
 			}
+		} else if (fToken == TT_BLANK_BLANK) {
+			// read '__'
+			getNextToken();
+			if (fToken == TT_IDENTIFIER) {
+				final ASTNode check = getSymbol();
+				return fFactory.createPattern2(null, check);
+			} else {
+				return fFactory.createPattern2(null, null);
+			}
+		} else if (fToken == TT_BLANK_BLANK_BLANK) {
+			// read '___'
+			getNextToken();
+			if (fToken == TT_IDENTIFIER) {
+				final ASTNode check = getSymbol();
+				return fFactory.createPattern3(null, check);
+			} else {
+				return fFactory.createPattern3(null, null);
+			}
+		} else if (fToken == TT_BLANK_OPTIONAL) {
+			// read '_.'
+			getNextToken();
+			if (fToken == TT_IDENTIFIER) {
+				final ASTNode check = getSymbol();
+				return fFactory.createPattern(null, check, true);
+			} else {
+				return fFactory.createPattern(null, null, true);
+			}
 		}
+
 		if (fToken == TT_DIGIT) {
 			return getNumber(false);
 		}

@@ -129,12 +129,39 @@ public interface IParserFactory {
 	public abstract FractionNode createFraction(IntegerNode numerator, IntegerNode denominator);
 
 	/**
-	 * Create a pattern from the given symbol node
+	 * Create a pattern from the given symbol node (i.e. <code>_</code> or
+	 * <code>x_</code>)
 	 * 
 	 * @param patternName
 	 * @return Object
 	 */
 	public PatternNode createPattern(SymbolNode patternName, ASTNode check);
+
+	/**
+	 * Create a pattern from the given symbol node (i.e. <code>__</code> or
+	 * <code>x__</code>)
+	 * 
+	 * @param patternName
+	 * @return Object
+	 */
+	public PatternNode createPattern2(SymbolNode patternName, ASTNode check);
+
+	/**
+	 * Create a pattern from the given symbol node (i.e. <code>___</code> or
+	 * <code>x___</code>)
+	 * 
+	 * @param patternName
+	 * @return Object
+	 */
+	public PatternNode createPattern3(SymbolNode patternName, ASTNode check);
+
+	/**
+	 * Create a pattern from the given symbol node
+	 * 
+	 * @param patternName
+	 * @return Object
+	 */
+	public PatternNode createPattern(SymbolNode patternName, ASTNode check, boolean optional);
 
 	/**
 	 * Create a string node from the scanned double quoted string
@@ -157,8 +184,8 @@ public interface IParserFactory {
 	 * 
 	 * @param identifier
 	 *          the currently parsed identifier
-	 * @return <code>false</code> if the identifier is not valid (in this case
-	 *         the parser creates a SyntaxError exception); otherwise return
+	 * @return <code>false</code> if the identifier is not valid (in this case the
+	 *         parser creates a SyntaxError exception); otherwise return
 	 *         <code>true</code>
 	 */
 	public boolean isValidIdentifier(String identifier);
