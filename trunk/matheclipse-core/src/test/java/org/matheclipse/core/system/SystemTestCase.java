@@ -2242,6 +2242,14 @@ public class SystemTestCase extends AbstractTestCase {
 		check("TrigToExp[ArcTan[x]]", "-I*1/2*Log[I*x+1]+I*1/2*Log[-I*x+1]");
 	}
 
+	public void testSystem420() {
+		check("MatchQ[42, _IntegerQ]", "True");
+		check("MatchQ[a+b+c+d, Times[_,_]]", "False");
+		check("MatchQ[a+b+c+d, Plus[_,_]]", "True");
+		check("MatchQ[Expand[(a+b)^2], Plus[_,_]]", "True");
+		check("MatchQ[Expand[(a*b)^2], Plus[_,_]]", "False");
+		check("MatchQ[{a,b,c}, _List]", "True");
+	}
 	// public void testSystem404() {
 	// check("Plot3D[Sin[x]*Cos[y],{x,-10,10},{y,-10,10},{PlotRange->Automatic}]",
 	// "");
@@ -2298,9 +2306,12 @@ public class SystemTestCase extends AbstractTestCase {
 	}
 
 	public void testSystem803() {
-		// see http://google-opensource.blogspot.com/2009/06/introducing-apache-commons-math.html
-		check("LinearProgramming[{-2, 1, -5}, {{1, 2, 0},{3, 2, 0},{0,1,0},{0,0,1}}, {{6,-1},{12,-1},{0,1},{1,0}}]", 
-				"{4.0,0.0,1.0}");
+		// see
+		// http://google-opensource.blogspot.com/2009/06/introducing-apache-commons-math.html
+		check("LinearProgramming[{-2, 1, -5}, {{1, 2, 0},{3, 2, 0},{0,1,0},{0,0,1}}, {{6,-1},{12,-1},{0,1},{1,0}}]", "{4.0,0.0,1.0}");
+		// creates unbounded error
+		// check("LinearProgramming[{-2, 1, -5}, {{1, 2, 0},{3, 2, 0},{0,1,0}}, {{6,-1},{12,-1},{0,1}}]",
+		// "{4.0,0.0,1.0}");
 	}
 
 	public void testSystem991() {
