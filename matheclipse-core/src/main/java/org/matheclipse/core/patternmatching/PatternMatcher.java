@@ -543,13 +543,13 @@ public class PatternMatcher extends IPatternMatcher<IExpr> implements Serializab
 			fPatternSymbolsArray.add(null);
 		} else {
 			// for "named" patterns:
-			final IPattern temp = (IPattern) patternMap.get(pat.toString());
+			final IPattern temp = (IPattern) patternMap.get(pat.getSymbol().toString());
 			if (temp != null) {
 				pat.setIndex(temp.getIndex());
 			} else {
 				pat.setIndex(fPatternCounter++);
 				fPatternSymbolsArray.add(pat.getSymbol());
-				patternMap.put(pat.toString(), pat);
+				patternMap.put(pat.getSymbol().toString(), pat);
 			}
 		}
 	}
