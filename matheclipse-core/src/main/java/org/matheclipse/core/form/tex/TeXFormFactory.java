@@ -104,7 +104,7 @@ public class TeXFormFactory extends AbstractTeXFormFactory implements IConstantH
 		buf.append(f.getBigNumerator().toString());
 		buf.append("}{");
 		buf.append(f.getBigDenominator().toString());
-		buf.append("}");
+		buf.append('}');
 		if (f.isNegative() && (precedence > plusPrec)) {
 			buf.append("\\right) ");
 		}
@@ -162,7 +162,7 @@ public class TeXFormFactory extends AbstractTeXFormFactory implements IConstantH
 		if (o instanceof IAST) {
 			final IAST f = ((IAST) o);
 			final IConverter converter = reflection(f.head().toString());
-			if ((converter == null) || (converter.convert(buf, f, precedence) == false)) {
+			if ((converter == null) || (!converter.convert(buf, f, precedence))) {
 				convertAST(buf, f);
 			}
 			return;

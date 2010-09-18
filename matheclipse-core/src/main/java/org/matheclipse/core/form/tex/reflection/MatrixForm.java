@@ -48,9 +48,9 @@ public class MatrixForm extends AbstractConverter {
 				temp = (IAST) matrix.get(i);
 				for (int j = 1; j < temp.size(); j++) {
 					checkCanceled();
-					buf.append(" ");
+					buf.append(' ');
 					fFactory.convert(buf, temp.get(j), 0);
-					buf.append(" ");
+					buf.append(' ');
 				}
 				buf.append("\\\n");
 			}

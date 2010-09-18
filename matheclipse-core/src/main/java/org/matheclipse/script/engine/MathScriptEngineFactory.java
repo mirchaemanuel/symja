@@ -18,15 +18,15 @@ public class MathScriptEngineFactory implements javax.script.ScriptEngineFactory
 	public String getEngineName() {
 		return "MathEclipse Script Engine";
 	}
- 
+
 	public String getEngineVersion() {
 		return "1.0.0";
 	}
 
 	public List<String> getExtensions() {
 		final ArrayList<String> extList = new ArrayList<String>();
-		extList.add("m");    
-		extList.add("nb");  
+		extList.add("m");
+		extList.add("nb");
 		return extList;
 	}
 
@@ -68,15 +68,15 @@ public class MathScriptEngineFactory implements javax.script.ScriptEngineFactory
 	}
 
 	public Object getParameter(final String key) {
-		if (key == ScriptEngine.ENGINE) {
+		if (key.equals(ScriptEngine.ENGINE)) {
 			return getEngineName();
-		} else if (key == ScriptEngine.ENGINE_VERSION) {
+		} else if (key.equals(ScriptEngine.ENGINE_VERSION)) {
 			return getEngineVersion();
-		} else if (key == ScriptEngine.NAME) {
+		} else if (key.equals(ScriptEngine.NAME)) {
 			return getNames();
-		} else if (key == ScriptEngine.LANGUAGE) {
+		} else if (key.equals(ScriptEngine.LANGUAGE)) {
 			return getLanguageName();
-		} else if (key == ScriptEngine.LANGUAGE_VERSION) {
+		} else if (key.equals(ScriptEngine.LANGUAGE_VERSION)) {
 			return getLanguageVersion();
 		} else {
 			return null;

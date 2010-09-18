@@ -15,15 +15,15 @@ public class Power extends AbstractOperator {
 			return super.convert(buf, f, precedence);
 		}
 		precedenceOpen(buf, precedence);
-		buf.append("{");
+		buf.append('{');
 		fFactory.convert(buf, f.get(1), fPrecedence);
-		buf.append("}");
+		buf.append('}');
 		if (fOperator.compareTo("") != 0) {
 			buf.append(fOperator);
 		}
-		buf.append("{");
+		buf.append('{');
 		fFactory.convert(buf, f.get(2), fPrecedence);
-		buf.append("}");
+		buf.append('}');
 		precedenceClose(buf, precedence);
 		return true;
 	}

@@ -17,7 +17,7 @@ public class ParseRubiFiles {
 			String line;
 			while ((line = f.readLine()) != null) {
 				buff.append(line);
-				buff.append("\n");
+				buff.append('\n');
 			}
 			f.close();
 			String inputString = buff.toString();

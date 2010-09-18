@@ -34,7 +34,7 @@ import org.matheclipse.parser.client.math.MathException;
  * A java console program to run the evaluator interactivly
  */
 public class Console {
-  
+
 	private File fFile;
 
 	private boolean fComplexEvaluatorMode = false;
@@ -44,7 +44,7 @@ public class Console {
 	public static void main(final String args[]) {
 		printUsage();
 		Console console = new Console();
-	
+
 		String expr = null;
 		console.setArgs(args);
 		final File file = console.getFile();
@@ -55,7 +55,7 @@ public class Console {
 				String line;
 				while ((line = f.readLine()) != null) {
 					buff.append(line);
-					buff.append("\n");
+					buff.append('\n');
 				}
 				f.close();
 				System.out.println(console.interpreter(buff.toString()));
@@ -146,7 +146,7 @@ public class Console {
 					System.out.println(msg);
 					return;
 				}
-			} else if (arg.startsWith("-")) {
+			} else if (arg.charAt(0) == '-') {
 				// we don't have any more args to recognize!
 				final String msg = "Unknown arg: " + arg;
 				System.out.println(msg);
@@ -227,7 +227,7 @@ public class Console {
 						if (s.length() > 1) {
 							input.append(s.substring(0, s.length() - 1));
 						} else {
-							input.append(" ");
+							input.append(' ');
 						}
 					}
 				}

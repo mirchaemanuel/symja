@@ -92,7 +92,7 @@ public class MathMLDTDCheck {
         }
     }
     public static void main(String args[]) {
-        String test = new String("<math></math>");
+        String test = "<math></math>";
         new MathMLDTDCheck().test(test);
     }
 }

@@ -116,7 +116,7 @@ public class Num extends ExprImpl implements INum {
 	 * @return
 	 */
 	public static double valueOf(final String chars) {
-		return new Double(chars).doubleValue();
+		return Double.parseDouble(chars);
 	}
 
 	/**

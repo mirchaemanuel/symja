@@ -155,7 +155,7 @@ public class Console {
 					System.out.println(msg);
 					return;
 				}
-			} else if (arg.startsWith("-")) {
+			} else if (arg.charAt(0) == '-') {
 				// we don't have any more args to recognize!
 				final String msg = "Unknown arg: " + arg;
 				System.out.println(msg);

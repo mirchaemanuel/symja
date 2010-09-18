@@ -96,7 +96,7 @@ public class TimeConstrainedEvaluator extends EvalUtilities implements Runnable 
 		fEvalEngine.setStopRequested(false);
 
 		try {
-			final Thread thread = new Thread(this);// EvaluationRunnable();
+			final Thread thread = new Thread(this, "TimeConstrainedEvaluator");// EvaluationRunnable();
 			thread.start();
 			thread.join(fMilliSeconds);
 			if (thread.isAlive()) {

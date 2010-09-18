@@ -37,7 +37,7 @@ public class Product extends AbstractConverter {
           	buf.append("}^{");
             fFactory.convert(buf, list.get(3), 0);
           }
-          buf.append("}");
+          buf.append('}');
         } else {
           return false;
         }

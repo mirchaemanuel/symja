@@ -497,9 +497,9 @@ public class FractionSym extends ExprImpl implements IFraction {
 	public String fullFormString() {
 		StringBuffer buf = new StringBuffer("Rational[");
 		buf.append(fRational.getNumerator().toString().toString());
-		buf.append(",");
+		buf.append(',');
 		buf.append(fRational.getDenominator().toString().toString());
-		buf.append("]");
+		buf.append(']');
 		return buf.toString();
 	}
 

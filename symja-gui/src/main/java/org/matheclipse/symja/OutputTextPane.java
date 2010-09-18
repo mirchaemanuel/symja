@@ -190,7 +190,7 @@ public class OutputTextPane extends JTextPane {
 				startIdx = idx;
 				idx++;
 				while ((++idx < s.length()) && ((c = s.charAt(idx)) != '\n')) {
-					;
+				 
 				}
 				jOutputDoc.setCharacterAttributes(offset + startIdx, idx - startIdx, OUTPUT_COMMENT_ATTR, true);
 			}
@@ -214,7 +214,7 @@ public class OutputTextPane extends JTextPane {
 			if (c == '"') {
 				startIdx = idx;
 				while ((++idx < s.length()) && ((c = s.charAt(idx)) != '"')) {
-					;
+			 
 				}
 				jOutputDoc.setCharacterAttributes(offset + startIdx, idx - startIdx + 1, OUTPUT_STRING_ATTR, true);
 			}

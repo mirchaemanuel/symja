@@ -3452,7 +3452,7 @@ public class UnivariateFactorizationOverZ {
 
 		/* check degree */
 		halt = false;
-		while ((halt == false) & (resultDegree > 0)) {
+		while ((!halt) & (resultDegree > 0)) {
 			if (resultPolynomial[resultDegree].compareTo(BigInteger.ZERO) != 0) {
 				halt = true;
 			} else {

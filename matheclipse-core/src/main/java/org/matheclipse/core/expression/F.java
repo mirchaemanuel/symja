@@ -1258,7 +1258,7 @@ public class F {
 	 */
 	public static IAST ast(final IAST f, final IExpr head, final boolean include, final int first, final int last) {
 		AST ast = null;
-		if (include == true) {
+		if (include) {
 			ast = AST.newInstance(last - first, head);
 			// range include
 			for (int i = first; i < last; i++) {

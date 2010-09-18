@@ -291,7 +291,7 @@ public class OutputFormFactory implements IConstantHeaders {
 				for (int j = 2; j < multFun.size(); j++) {
 					temp1 = multFun.get(j);
 
-					if ((j > 2) || (flag == false)) {
+					if ((j > 2) || (!flag)) {
 						buf.write(multCh);
 					}
 

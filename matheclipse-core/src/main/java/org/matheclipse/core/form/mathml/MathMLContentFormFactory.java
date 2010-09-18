@@ -264,7 +264,7 @@ public class MathMLContentFormFactory extends AbstractMathMLFormFactory implemen
 			// }
 			// }
 			final IConverter converter = reflection(f.head().toString());
-			if ((converter == null) || (converter.convert(buf, f, precedence) == false)) {
+			if ((converter == null) || (!converter.convert(buf, f, precedence))) {
 				convertHeadList(buf, f);
 			}
 			return;

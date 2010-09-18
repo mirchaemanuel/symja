@@ -83,7 +83,6 @@ public class NIntegrate extends AbstractFunctionEvaluator implements
       integrator = new SimpsonIntegrator();
     } else if (method.equals("LegendreGauss")) {
       integrator = new LegendreGaussIntegrator(3, 64);
-      ;
     } else if (method.equals("Romberg")) {
       integrator = new RombergIntegrator();
     } else {

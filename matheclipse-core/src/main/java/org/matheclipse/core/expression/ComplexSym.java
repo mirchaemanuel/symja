@@ -306,11 +306,11 @@ public class ComplexSym extends ExprImpl implements IComplex {
 	@Override
 	public String toString() {
 		final StringBuilder tb = new StringBuilder();
-		tb.append("(");
+		tb.append('(');
 		tb.append(_real.toString());
 		tb.append(")+I*(");
 		tb.append(_imaginary.toString());
-		tb.append(")");
+		tb.append(')');
 		return tb.toString();
 		// return toText().toString();
 	}
@@ -322,22 +322,22 @@ public class ComplexSym extends ExprImpl implements IComplex {
 		} else {
 			buf.append("Rational[");
 			buf.append(_real.getNumerator().toString().toString());
-			buf.append(",");
+			buf.append(',');
 			buf.append(_real.getDenominator().toString().toString());
-			buf.append("]");
+			buf.append(']');
 		}
-		buf.append(",");
+		buf.append(',');
 
 		if (_imaginary.getDenominator().equals(BigInteger.ONE)) {
 			buf.append(_imaginary.getNumerator().toString());
 		} else {
 			buf.append("Rational[");
 			buf.append(_imaginary.getNumerator().toString().toString());
-			buf.append(",");
+			buf.append(',');
 			buf.append(_imaginary.getDenominator().toString().toString());
-			buf.append("]");
+			buf.append(']');
 		}
-		buf.append("]");
+		buf.append(']');
 		return buf.toString();
 	}
 
