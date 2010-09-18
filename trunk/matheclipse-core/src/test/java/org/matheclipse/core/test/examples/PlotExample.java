@@ -20,7 +20,7 @@ public class PlotExample {
 	public static void main(String[] args) {
 		try {
 			// initialize the engine:
-			F.initSymbols(null);
+			F.initSymbols(null, null, false);
 			Config.SWING_PLOT_FRAME = false;
 			Config.SERVER_MODE = true;
 
@@ -44,7 +44,7 @@ public class PlotExample {
 			// To simplify the following you can use a PlotFrame:
 			// PlotFrame frame = new PlotFrame(plotter, ast);
 			// frame.invokeLater();
-			JFrame frame = new JFrame();
+			JFrame frame = new JFrame(); 
 			frame.setContentPane(plotter);
 			frame.setSize(640, 400);
 			frame.setLocationRelativeTo(null);

@@ -12,7 +12,7 @@ public class Plot3DExample {
 	public static void main(String[] args) {
 		try {
 			// initialize the engine:
-			F.initSymbols(null);
+			F.initSymbols(null, null, false);
 			Config.SWING_PLOT_FRAME = false;
 			Config.SERVER_MODE = true;
 
