@@ -38,12 +38,12 @@ public class Integrate extends AbstractFunctionEvaluator implements IConstantHea
 			"Integrate[(a_+x_)^(-1), x_]:=Log[x+a] /; FreeQ[a,x]",
 			"Integrate[(x_+b_)^n_NumberQ,x_]:= (x+b)^(n+1)/(n+1) /; n!=(-1)&&FreeQ[a,x]",
 			"Integrate[(a_*x_+b_)^n_NumberQ,x_]:= (a*x+b)^(n+1)/(a*(n+1)) /; (n!=(-1))&&FreeQ[a,x]&&FreeQ[b,x]",
-			"Integrate[E_^x_, x_]:=E^x",
-			"Integrate[E_^(a_*x_), x_]:=a^(-1)*E^(a*x) /; FreeQ[a,x]",
+			// "Integrate[E_^x_, x_]:=E^x",
+			"Integrate[E_^(a_.*x_), x_]:=a^(-1)*E^(a*x) /; FreeQ[a,x]",
 			"Integrate[x_ * E_^(a_*x_), x_]:=a^(-2)*E^(a*x)*(a*x-1) /; FreeQ[a,x]",
 			"Integrate[x_ * E_^x_, x_]:=E^x*(x-1)",
-			"Integrate[x_^n_IntegerQ * E_^(a_*x_), x_]:=a^(-1)*x^n*E^(a*x)-n/a*Integrate[x^(n-1)*E^(a*x),x] /; Positive[n]&&FreeQ[a,x]",
-			"Integrate[x_^n_IntegerQ * E_^x_, x_]:=x^n*E^x-n*Integrate[x^(n-1)*E^x,x] /; Positive[n]",
+			"Integrate[x_^n_IntegerQ * E_^(a_.*x_), x_]:=a^(-1)*x^n*E^(a*x)-n/a*Integrate[x^(n-1)*E^(a*x),x] /; Positive[n]&&FreeQ[a,x]",
+			// "Integrate[x_^n_IntegerQ * E_^x_, x_]:=x^n*E^x-n*Integrate[x^(n-1)*E^x,x] /; Positive[n]",
 			"Integrate[Log[x_], x_]:=x*Log[x]-x",
 			"Integrate[Log[a_*x_], x_]:=Log[a*x]*x-x",
 			"Integrate[Sinh[x_], x_]:=Cosh[x]",
@@ -51,8 +51,9 @@ public class Integrate extends AbstractFunctionEvaluator implements IConstantHea
 			"Integrate[ArcSinh[x_], x_]:=x*ArcSinh[x]-Sqrt[x^2+1]",
 			"Integrate[ArcCosh[x_], x_]:=x*ArcCosh[x]-Sqrt[x^2-1]",
 			"Integrate[ArcTanh[x_], x_]:=x*ArcTanh[x]+1/2*Log[1-x^2]",
-			"Integrate[Sin[x_], x_]:= -Cos[x]",
-			"Integrate[Sin[a_*x_], x_]:= -Cos[a*x]/a /; FreeQ[a,x]",
+			// "Integrate[Sin[x_], x_]:= -Cos[x]",
+			// "Integrate[Sin[a_*x_], x_]:= -Cos[a*x]/a /; FreeQ[a,x]",
+			"Integrate[Sin[a_.+b_.*x_],x_Symbol] := -Cos[a+b*x]/b /; FreeQ[{a,b},x]",
 			"Integrate[Cos[x_], x_]:= Sin[x]",
 			"Integrate[Cos[a_*x_], x_]:= Sin[a*x]/a /; FreeQ[a,x]",
 			"Integrate[Sin[x_]^n_IntegerQ, x_]:= (n-1)/n*Integrate[Sin[x]^(n-2),x]-Sin[x]^(n-1)*Cos[x]/n /; Positive[n]",
@@ -169,12 +170,6 @@ public class Integrate extends AbstractFunctionEvaluator implements IConstantHea
 		return parts;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator#getRules()
-	 */
 	@Override
 	public String[] getRules() {
 		return RULES;

@@ -8,7 +8,7 @@ import org.matheclipse.core.interfaces.ISymbol;
 import org.matheclipse.core.patternmatching.PatternMatcher;
 
 /**
- * 
+ * Match an expression against a given pattern.
  * 
  */
 public class MatchQ implements IFunctionEvaluator {

@@ -30,11 +30,11 @@ public class ValueQ extends AbstractFunctionEvaluator implements
    * <code>False</code> otherwise
    */
   @Override
-  public IExpr evaluate(final IAST functionList) {
-    if (functionList.size() != 2) {
-      throw new WrongNumberOfArguments(functionList, 1, functionList.size() - 1);
+  public IExpr evaluate(final IAST ast) {
+    if (ast.size() != 2) {
+      throw new WrongNumberOfArguments(ast, 1, ast.size() - 1);
     }
-    return F.bool(apply(functionList.get(1)));
+    return F.bool(apply(ast.get(1)));
   }
 
   public boolean apply(final IExpr expr) {
