@@ -239,16 +239,18 @@ public class Pattern extends ExprImpl implements IPattern {
 	public String toString() {
 		final StringBuffer buffer = new StringBuffer();
 		if (fSymbol == null) {
-			if (fCondition == null) {
-				buffer.append("_");
-			} else {
-				buffer.append("_" + fCondition.toString());
+			buffer.append('_');
+			if (fCondition != null) {
+				buffer.append(fCondition.toString());
 			}
 		} else {
 			if (fCondition == null) {
-				buffer.append(fSymbol.toString() + "_");
+				buffer.append(fSymbol.toString());
+				buffer.append('_');
 			} else {
-				buffer.append(fSymbol.toString() + "_" + fCondition.toString());
+				buffer.append(fSymbol.toString());
+				buffer.append('_');
+				buffer.append(fCondition.toString());
 			}
 		}
 		return buffer.toString();
@@ -261,7 +263,7 @@ public class Pattern extends ExprImpl implements IPattern {
 			if (fCondition != null) {
 				buf.append(fCondition.fullFormString());
 			}
-			buf.append("]");
+			buf.append(']');
 		} else {
 			buf.append("Pattern[");
 			buf.append(fSymbol.toString());

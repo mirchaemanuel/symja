@@ -134,12 +134,12 @@ public class ExtendedGCD extends AbstractFunctionEvaluator {
 			}
 
 			gcd = dividend;
-			if (exchange == false) {
-				mValue = lastxValue;
-				nValue = lastyValue;
-			} else {
+			if (exchange) {
 				mValue = lastyValue;
 				nValue = lastxValue;
+			} else {
+				mValue = lastxValue;
+				nValue = lastyValue;
 			}
 		} else {
 			throw new ArithmeticException("ExtendedGCD contains wrong arguments");

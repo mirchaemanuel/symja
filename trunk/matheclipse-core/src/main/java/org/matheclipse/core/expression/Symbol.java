@@ -488,7 +488,7 @@ public class Symbol extends ExprImpl implements ISymbol {
 
 	@Override
 	public boolean isValue(IAST ast) {
-		if (ast.topHead() instanceof ISymbol) {
+		if (ast.head() instanceof ISymbol) {
 			IExpr result = ((ISymbol) ast.head()).evalDownRule(EvalEngine.get(), ast);
 			return result != null;
 		}

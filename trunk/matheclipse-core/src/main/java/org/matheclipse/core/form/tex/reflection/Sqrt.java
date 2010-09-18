@@ -22,7 +22,7 @@ public class Sqrt extends AbstractConverter {
     }
     buf.append("\\sqrt{");
     fFactory.convert(buf, f.get(1), 0);
-    buf.append("}");
+    buf.append('}');
     return true;  
   }
 }

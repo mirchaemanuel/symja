@@ -77,7 +77,7 @@ public class Times extends AbstractOperator {
 		// do the output:
 		if (denominator.size() > 1) {
 			if (caller == PLUS_CALL) {
-				buf.append("+");
+				buf.append('+');
 			}
 //			fFactory.tagStart(buf, "mfrac");
 			buf.append("\\frac{");
@@ -90,7 +90,7 @@ public class Times extends AbstractOperator {
 				}
 
 			} else {
-				buf.append("1");
+				buf.append('1');
 			}
 			buf.append("}{");
 			if (denominator.size() == 2) {
@@ -98,7 +98,7 @@ public class Times extends AbstractOperator {
 			} else {
 				fFactory.convert(buf, denominator, fPrecedence);
 			}
-			buf.append("}");
+			buf.append('}');
 		} else {
 			if (numerator.size() <= 2) {
 				convertMultiply(buf, f, precedence, caller);

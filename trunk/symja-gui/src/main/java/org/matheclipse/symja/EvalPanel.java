@@ -362,7 +362,7 @@ public class EvalPanel extends JPanel implements DocumentListener {
 				String line;
 				while ((line = f.readLine()) != null) {
 					buff.append(line);
-					buff.append("\n");
+					buff.append('\n');
 				}
 				f.close();
 				jInputArea.setText(buff.toString());

@@ -968,14 +968,14 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 	public String toString() {
 		final StringBuffer buf = new StringBuffer();
 		if (size() > 0 && isAST(F.List)) {
-			buf.append("{");
+			buf.append('{');
 			for (int i = 1; i < size(); i++) {
 				buf.append(get(i) == this ? "(this AST)" : String.valueOf(get(i)));
 				if (i < size() - 1) {
 					buf.append(", ");
 				}
 			}
-			buf.append("}");
+			buf.append('}');
 			return buf.toString();
 
 		} else if (isAST(F.Slot, 2) && (get(1) instanceof IInteger)) {

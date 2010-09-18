@@ -282,7 +282,7 @@ public class MathMLFormFactory extends AbstractMathMLFormFactory implements ICon
 				}
 			}
 			final IConverter converter = reflection(ast.head().toString());
-			if ((converter == null) || (converter.convert(buf, ast, precedence) == false)) {
+			if ((converter == null) || (!converter.convert(buf, ast, precedence))) {
 				convertAST(buf, ast);
 			}
 			return;
