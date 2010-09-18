@@ -394,9 +394,9 @@ public class PatternMatcher extends IPatternMatcher<IExpr> implements Serializab
 	}
 
 	protected final void init(IExpr patternExpr) {
-		final HashMap<ISymbol, IPattern> patternMap = new HashMap<ISymbol, IPattern>();
+		final HashMap<ISymbol, Integer> patternIndexMap = new HashMap<ISymbol, Integer>();
 		fPatternSymbolsArray = new ArrayList<ISymbol>(5);
-		determinePatterns(patternExpr, patternMap);
+		determinePatterns(patternExpr, patternIndexMap);
 		if (fPatternCounter != 0) {
 			fPatternValuesArray = new IExpr[fPatternCounter];
 		}
@@ -409,6 +409,7 @@ public class PatternMatcher extends IPatternMatcher<IExpr> implements Serializab
 	 * @param thatMatcher
 	 * @return
 	 */
+	@Override
 	public boolean checkPatternMatcher(final PatternMatcher thatMatcher) {
 		if (fPatternCounter == 0 || thatMatcher.fPatternCounter == 0) {
 			return true;
@@ -502,16 +503,17 @@ public class PatternMatcher extends IPatternMatcher<IExpr> implements Serializab
 	 * Increments this classes pattern counter.
 	 * 
 	 * @param lhsExprWithPattern
+	 * @param patternIndexMap
 	 */
-	private int determinePatterns(final IExpr lhsExprWithPattern, final HashMap<ISymbol, IPattern> patternMap) {
+	private int determinePatterns(final IExpr lhsExprWithPattern, final HashMap<ISymbol, Integer> patternIndexMap) {
 		if (lhsExprWithPattern instanceof IAST) {
 			final IAST ast = (IAST) lhsExprWithPattern;
 			int listEvalFlags = IAST.NO_FLAG;
-			listEvalFlags |= determinePatterns(ast.head(), patternMap);
+			listEvalFlags |= determinePatterns(ast.head(), patternIndexMap);
 			for (int i = 1; i < ast.size(); i++) {
 				if (ast.get(i) instanceof IPattern) {
 					IPattern pat = (IPattern) ast.get(i);
-					determinePatternParameters(pat, patternMap);
+					determinePatternParameters(pat, patternIndexMap);
 					if (pat.isDefault()) {
 						// the ast contains a pattern with default value (i.e. "x_.")
 						listEvalFlags |= IAST.CONTAINS_DEFAULT_PATTERN;
@@ -520,7 +522,7 @@ public class PatternMatcher extends IPatternMatcher<IExpr> implements Serializab
 						listEvalFlags |= IAST.CONTAINS_PATTERN;
 					}
 				} else {
-					listEvalFlags |= determinePatterns(ast.get(i), patternMap);
+					listEvalFlags |= determinePatterns(ast.get(i), patternIndexMap);
 				}
 			}
 			ast.setEvalFlags(listEvalFlags);
@@ -529,30 +531,37 @@ public class PatternMatcher extends IPatternMatcher<IExpr> implements Serializab
 			return listEvalFlags;
 		} else {
 			if (lhsExprWithPattern instanceof IPattern) {
-				determinePatternParameters((IPattern) lhsExprWithPattern, patternMap);
+				determinePatternParameters((IPattern) lhsExprWithPattern, patternIndexMap);
 				return IAST.CONTAINS_PATTERN;
 			}
 		}
 		return IAST.NO_FLAG;
 	}
 
-	private void determinePatternParameters(IPattern pat, final HashMap<ISymbol, IPattern> patternMap) {
-		if (pat.getSymbol() == null) {
+	/**
+	 * Set the index of <code>fPatternSymbolsArray</code> where the
+	 * <code>pattern</code> stores it's assigned value during pattern matching.
+	 * 
+	 * @param pattern
+	 * @param patternIndexMap
+	 */
+	private void determinePatternParameters(IPattern pattern, final HashMap<ISymbol, Integer> patternIndexMap) {
+		if (pattern.getSymbol() == null) {
 			// for "unnamed" patterns (i.e. "_" or "_IntegerQ")
 
 			// needs to increase fPatternCounter, otherwise a rule will be valued as a
 			// "equals rule"
-			pat.setIndex(fPatternCounter++);
+			pattern.setIndex(fPatternCounter++);
 			fPatternSymbolsArray.add(null);
 		} else {
 			// for "named" patterns (i.e. "x_" or "x_IntegerQ")
-			final IPattern temp = (IPattern) patternMap.get(pat.getSymbol());
-			if (temp != null) {
-				pat.setIndex(temp.getIndex());
+			final Integer mappedPattern = patternIndexMap.get(pattern.getSymbol());
+			if (mappedPattern != null) {
+				pattern.setIndex(mappedPattern.intValue());
 			} else {
-				pat.setIndex(fPatternCounter++);
-				fPatternSymbolsArray.add(pat.getSymbol());
-				patternMap.put(pat.getSymbol(), pat);
+				pattern.setIndex(fPatternCounter);
+				fPatternSymbolsArray.add(pattern.getSymbol());
+				patternIndexMap.put(pattern.getSymbol(), Integer.valueOf(fPatternCounter++));
 			}
 		}
 	}
