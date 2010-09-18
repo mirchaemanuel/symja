@@ -394,9 +394,9 @@ public class PatternMatcher extends IPatternMatcher<IExpr> implements Serializab
 	}
 
 	protected final void init(IExpr patternExpr) {
-		final HashMap<String, IExpr> patterns = new HashMap<String, IExpr>();
+		final HashMap<ISymbol, IPattern> patternMap = new HashMap<ISymbol, IPattern>();
 		fPatternSymbolsArray = new ArrayList<ISymbol>(5);
-		determinePatterns(patternExpr, patterns);
+		determinePatterns(patternExpr, patternMap);
 		if (fPatternCounter != 0) {
 			fPatternValuesArray = new IExpr[fPatternCounter];
 		}
@@ -503,7 +503,7 @@ public class PatternMatcher extends IPatternMatcher<IExpr> implements Serializab
 	 * 
 	 * @param lhsExprWithPattern
 	 */
-	private int determinePatterns(final IExpr lhsExprWithPattern, final HashMap<String, IExpr> patternMap) {
+	private int determinePatterns(final IExpr lhsExprWithPattern, final HashMap<ISymbol, IPattern> patternMap) {
 		if (lhsExprWithPattern instanceof IAST) {
 			final IAST ast = (IAST) lhsExprWithPattern;
 			int listEvalFlags = IAST.NO_FLAG;
@@ -536,20 +536,23 @@ public class PatternMatcher extends IPatternMatcher<IExpr> implements Serializab
 		return IAST.NO_FLAG;
 	}
 
-	private void determinePatternParameters(IPattern pat, final HashMap<String, IExpr> patternMap) {
+	private void determinePatternParameters(IPattern pat, final HashMap<ISymbol, IPattern> patternMap) {
 		if (pat.getSymbol() == null) {
-			// for "unnamed" patterns:
+			// for "unnamed" patterns (i.e. "_" or "_IntegerQ")
+
+			// needs to increase fPatternCounter, otherwise a rule will be valued as a
+			// "equals rule"
 			pat.setIndex(fPatternCounter++);
 			fPatternSymbolsArray.add(null);
 		} else {
-			// for "named" patterns:
-			final IPattern temp = (IPattern) patternMap.get(pat.getSymbol().toString());
+			// for "named" patterns (i.e. "x_" or "x_IntegerQ")
+			final IPattern temp = (IPattern) patternMap.get(pat.getSymbol());
 			if (temp != null) {
 				pat.setIndex(temp.getIndex());
 			} else {
 				pat.setIndex(fPatternCounter++);
 				fPatternSymbolsArray.add(pat.getSymbol());
-				patternMap.put(pat.getSymbol().toString(), pat);
+				patternMap.put(pat.getSymbol(), pat);
 			}
 		}
 	}

@@ -1004,6 +1004,7 @@ public class SystemTestCase extends AbstractTestCase {
 	public void testSystem171() {
 		check("Integrate[x,x]", "1/2*x^2");
 		check("Integrate[2x,x]", "x^2");
+		check("Integrate[h[x],x]", "Integrate[h[x],x]");
 		check("Integrate[f[x]+g[x]+h[x],x]", "Integrate[h[x],x]+Integrate[g[x],x]+Integrate[f[x],x]");
 		check("Integrate[Sin[x],x]", "(-1)*Cos[x]");
 		check("Integrate[Sin[10*x],x]", "(-1/10)*Cos[10*x]");
@@ -2245,6 +2246,7 @@ public class SystemTestCase extends AbstractTestCase {
 	}
 
 	public void testSystem420() {
+		// check("b_. x_","");
 		check("MatchQ[42, _IntegerQ]", "True");
 		check("MatchQ[a+b+c+d, Times[_,_]]", "False");
 		check("MatchQ[a+b+c+d, Plus[_,_]]", "True");
@@ -2257,6 +2259,7 @@ public class SystemTestCase extends AbstractTestCase {
 		check("MatchQ[linear[a+42+60*h,h], linear[a_. + b_. * x_, x_]]", "True");
 		check("MatchQ[linear[a+42+60*c,h], linear[a_. + b_. * x_, x_]]", "False");
 	}
+
 	// public void testSystem404() {
 	// check("Plot3D[Sin[x]*Cos[y],{x,-10,10},{y,-10,10},{PlotRange->Automatic}]",
 	// "");
