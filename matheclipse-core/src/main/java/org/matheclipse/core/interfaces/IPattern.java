@@ -1,5 +1,7 @@
 package org.matheclipse.core.interfaces;
 
+import org.matheclipse.core.patternmatching.PatternMatcher;
+
 /**
  * Interface for pattern objects. A pettern object cannot be shared between
  * multiple rules
@@ -19,6 +21,7 @@ public interface IPattern extends IExpr {
 	 * given rule.
 	 * 
 	 * @param index
+	 * @see PatternMatcher#determinePatternParameters()
 	 */
 	public void setIndex(int index);
 
