@@ -114,6 +114,7 @@ public class PatternMatcherAndInvoker extends PatternMatcher {
 	// }
 	// return null;
 	// }
+	@Override
 	public IExpr eval(final IExpr leftHandSide) {
 		IExpr result = null;
 		if (fPatternCounter == 0 && fLeftHandSide.equals(leftHandSide)) {

@@ -12,6 +12,7 @@ public class PatternMatcherAndEvaluator extends PatternMatcher implements Serial
 	 * 
 	 */
 	private static final long serialVersionUID = 2241135467123931061L;
+	
 	private IExpr fRightHandSide;
 	private ISymbol fSetSymbol;
 
@@ -62,6 +63,7 @@ public class PatternMatcherAndEvaluator extends PatternMatcher implements Serial
 	 * @param evalExpr
 	 * @return
 	 */
+	@Override
 	public IExpr eval(final IExpr leftHandSide) {
 		// if(fRightHandSide.isAST("Condition")) {
 		// System.out.println("2:"+fRightHandSide);
