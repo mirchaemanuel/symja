@@ -441,7 +441,7 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 	}
 
 	/**
-	 * Add a new flag to th existing flags
+	 * Add a new flag to the existing flags
 	 */
 	public void addEvalFlags(final int i) {
 		fEvalFlags |= i;
@@ -479,6 +479,18 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 
 	public boolean isList() {
 		return head().equals(F.List);
+	}
+
+	public boolean isPlus() {
+		return head().equals(F.Plus) && size() >= 2;
+	}
+
+	public boolean isPower() {
+		return head().equals(F.Power) && size() == 3;
+	}
+
+	public boolean isTimes() {
+		return head().equals(F.Times) && size() >= 2;
 	}
 
 	public boolean isTrue() {
@@ -1032,11 +1044,11 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 	// }
 
 	public static AST newInstance(final int intialCapacity, final IExpr head) {
-		AST ast = new AST(intialCapacity+1, false);
+		AST ast = new AST(intialCapacity + 1, false);
 		ast.add(head);
 		return ast;
 	}
-	
+
 	public static AST newInstance(final IExpr head) {
 		// AST ast;
 		// if (Config.SERVER_MODE) {

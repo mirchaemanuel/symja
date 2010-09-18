@@ -22,7 +22,7 @@ package org.matheclipse.parser.client.ast;
  */
 public class PatternNode extends ASTNode {
 	protected final SymbolNode fSymbol;
-	protected final boolean fOptional;
+	protected final boolean fDefault;
 	protected final ASTNode fConstraint;
 
 	public PatternNode(final SymbolNode symbol, final ASTNode constraint) {
@@ -33,7 +33,7 @@ public class PatternNode extends ASTNode {
 		super(null);
 		fSymbol = symbol;
 		fConstraint = constraint;
-		fOptional = optional;
+		fDefault = optional;
 	}
 
 	public ASTNode getConstraint() {
@@ -47,8 +47,8 @@ public class PatternNode extends ASTNode {
 	/**
 	 * @return the fOptional
 	 */
-	public boolean isfOptional() {
-		return fOptional;
+	public boolean isDefault() {
+		return fDefault;
 	}
 
 	public String toString() {
@@ -57,7 +57,7 @@ public class PatternNode extends ASTNode {
 			buff.append(fSymbol.toString());
 		}
 		buff.append("_");
-		if (fOptional) {
+		if (fDefault) {
 			buff.append(".");
 		}
 		if (fConstraint != null) {

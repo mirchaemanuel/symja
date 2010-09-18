@@ -1002,7 +1002,7 @@ public class F {
 		}
 		return ast(a, List);
 	}
-	
+
 	public static IAST List(final long... numbers) {
 		IInteger a[] = new IInteger[numbers.length];
 		for (int i = 0; i < numbers.length; i++) {
@@ -1851,6 +1851,24 @@ public class F {
 			return Pattern.valueOf(null);
 		}
 		return Pattern.valueOf((Symbol) symbol);
+	}
+
+	/**
+	 * Create a pattern for pattern-matching and term rewriting
+	 * 
+	 * @param symbol
+	 * @param check
+	 *          additional condition which should be checked in pattern-matching
+	 * @param def
+	 *          if <code>true</code>, the pattern can match to a default value
+	 *          associated with the AST's head the pattern is used in.
+	 * @return IPattern
+	 */
+	public static IPattern pattern(final ISymbol symbol, final IExpr check, final boolean def) {
+		if (symbol == null) {
+			return Pattern.valueOf(null, check, def);
+		}
+		return Pattern.valueOf((Symbol) symbol, check, def);
 	}
 
 	/**

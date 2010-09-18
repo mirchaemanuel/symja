@@ -36,6 +36,17 @@ public interface IAST extends IExpr, INestedList<IExpr> {
 	public final int CONTAINS_PATTERN = 0x0001;
 
 	/**
+	 * One of the arguments of the list contains a pattern object which can be set
+	 * to a default value.
+	 */
+	public final int CONTAINS_DEFAULT_PATTERN = 0x0002;
+
+	/**
+	 * Negative flag mask for CONTAINS_DEFAULT_PATTERN
+	 */
+	public final int CONTAINS_NO_DEFAULT_PATTERN_MASK = 0xFFFD;
+	
+	/**
 	 * This expression represents a matrix
 	 */
 	public final int IS_MATRIX = 0x0020;
@@ -96,6 +107,12 @@ public interface IAST extends IExpr, INestedList<IExpr> {
 	 */
 	public boolean isList();
 
+	public boolean isPlus();
+	
+	public boolean isPower();
+	
+	public boolean isTimes();
+	
 	/**
 	 * Apply the given head to this expression (i.e. create a list clone and
 	 * replace the old head with the given one)

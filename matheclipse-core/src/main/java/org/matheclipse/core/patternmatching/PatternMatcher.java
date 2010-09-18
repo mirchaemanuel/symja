@@ -20,6 +20,11 @@ import org.matheclipse.generic.combinatoric.KPermutationsIterable;
 public class PatternMatcher extends IPatternMatcher<IExpr> implements Serializable {
 
 	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -6708462090303928690L;
+
+	/**
 	 * Matches a flat expression
 	 */
 	public class FlatMatcher {
@@ -405,7 +410,6 @@ public class PatternMatcher extends IPatternMatcher<IExpr> implements Serializab
 	 * @return
 	 */
 	public boolean checkPatternMatcher(final PatternMatcher thatMatcher) {
-		// PatternMatcher thatMatcher = (PatternMatcher) thtMatcher;
 		if (fPatternCounter == 0 || thatMatcher.fPatternCounter == 0) {
 			return true;
 		}
@@ -497,40 +501,57 @@ public class PatternMatcher extends IPatternMatcher<IExpr> implements Serializab
 	 * 
 	 * Increments this classes pattern counter.
 	 * 
-	 * @param pExpr
+	 * @param lhsExprWithPattern
 	 */
-	private int determinePatterns(final IExpr lhsPatternExpression, final HashMap<String, IExpr> patternMap) {
-		if (lhsPatternExpression instanceof IAST) {
-			final IAST list = (IAST) lhsPatternExpression;
+	private int determinePatterns(final IExpr lhsExprWithPattern, final HashMap<String, IExpr> patternMap) {
+		if (lhsExprWithPattern instanceof IAST) {
+			final IAST ast = (IAST) lhsExprWithPattern;
 			int listEvalFlags = IAST.NO_FLAG;
-			listEvalFlags |= determinePatterns(list.head(), patternMap);
-			for (int i = 1; i < list.size(); i++) {
-
-				listEvalFlags |= determinePatterns(list.get(i), patternMap);
+			listEvalFlags |= determinePatterns(ast.head(), patternMap);
+			for (int i = 1; i < ast.size(); i++) {
+				if (ast.get(i) instanceof IPattern) {
+					IPattern pat = (IPattern) ast.get(i);
+					determinePatternParameters(pat, patternMap);
+					if (pat.isDefault()) {
+						// the ast contains a pattern with default value (i.e. "x_.")
+						listEvalFlags |= IAST.CONTAINS_DEFAULT_PATTERN;
+					} else {
+						// the ast contains a pattern without value (i.e. "x_")
+						listEvalFlags |= IAST.CONTAINS_PATTERN;
+					}
+				} else {
+					listEvalFlags |= determinePatterns(ast.get(i), patternMap);
+				}
 			}
-			list.setEvalFlags(listEvalFlags);
+			ast.setEvalFlags(listEvalFlags);
+			// disable flag "pattern with default value"
+			listEvalFlags &= IAST.CONTAINS_NO_DEFAULT_PATTERN_MASK;
 			return listEvalFlags;
 		} else {
-			if (lhsPatternExpression instanceof IPattern) {
-				if (((IPattern) lhsPatternExpression).getSymbol() == null) {
-					// for "unnamed" patterns:
-					((IPattern) lhsPatternExpression).setIndex(fPatternCounter++);
-					fPatternSymbolsArray.add(null);
-				} else {
-					// for "named" patterns:
-					final IPattern temp = (IPattern) patternMap.get(lhsPatternExpression.toString());
-					if (temp != null) {
-						((IPattern) lhsPatternExpression).setIndex(temp.getIndex());
-					} else {
-						((IPattern) lhsPatternExpression).setIndex(fPatternCounter++);
-						fPatternSymbolsArray.add(((IPattern) lhsPatternExpression).getSymbol());
-						patternMap.put(lhsPatternExpression.toString(), lhsPatternExpression);
-					}
-				}
+			if (lhsExprWithPattern instanceof IPattern) {
+				determinePatternParameters((IPattern) lhsExprWithPattern, patternMap);
 				return IAST.CONTAINS_PATTERN;
 			}
 		}
 		return IAST.NO_FLAG;
+	}
+
+	private void determinePatternParameters(IPattern pat, final HashMap<String, IExpr> patternMap) {
+		if (pat.getSymbol() == null) {
+			// for "unnamed" patterns:
+			pat.setIndex(fPatternCounter++);
+			fPatternSymbolsArray.add(null);
+		} else {
+			// for "named" patterns:
+			final IPattern temp = (IPattern) patternMap.get(pat.toString());
+			if (temp != null) {
+				pat.setIndex(temp.getIndex());
+			} else {
+				pat.setIndex(fPatternCounter++);
+				fPatternSymbolsArray.add(pat.getSymbol());
+				patternMap.put(pat.toString(), pat);
+			}
+		}
 	}
 
 	public IExpr getCondition() {
@@ -591,6 +612,16 @@ public class PatternMatcher extends IPatternMatcher<IExpr> implements Serializab
 		}
 	}
 
+	protected IExpr[] copyPattern() {
+		IExpr[] patternValuesArray = new IExpr[fPatternValuesArray.length];
+		System.arraycopy(fPatternValuesArray, 0, patternValuesArray, 0, fPatternValuesArray.length);
+		return patternValuesArray;
+	}
+
+	protected void resetPattern(IExpr[] patternValuesArray) {
+		System.arraycopy(patternValuesArray, 0, fPatternValuesArray, 0, fPatternValuesArray.length);
+	}
+
 	/**
 	 * Returns true if the given expression contains no patterns
 	 * 
@@ -622,14 +653,68 @@ public class PatternMatcher extends IPatternMatcher<IExpr> implements Serializab
 	 */
 	protected boolean matchExpr(final IExpr lhsPatternExpression, final IExpr rhsExpression) {
 		if (lhsPatternExpression instanceof IAST) {
-			return matchAST((IAST) lhsPatternExpression, rhsExpression);
-		} else {
-			if (lhsPatternExpression instanceof IPattern) {
-				return matchPattern((IPattern) lhsPatternExpression, rhsExpression);
+			IAST ast = (IAST) lhsPatternExpression;
+			IExpr[] patternValues = null;
+			if ((ast.getEvalFlags() & IAST.CONTAINS_DEFAULT_PATTERN) == IAST.CONTAINS_DEFAULT_PATTERN) {
+				patternValues = copyPattern();
 			}
+			if (!matchAST(ast, rhsExpression)) {
+				if ((ast.getEvalFlags() & IAST.CONTAINS_DEFAULT_PATTERN) == IAST.CONTAINS_DEFAULT_PATTERN) {
+					IExpr temp = null;
+					resetPattern(patternValues);
+					if (ast.isPlus()) {
+						temp = matchDefaultFlatOrderlessAST(ast, F.C0);
+					} else if (ast.isTimes()) {
+						temp = matchDefaultFlatOrderlessAST(ast, F.C1);
+					}
+					// else {
+					// temp = reduceAST(ast);
+					// }
+					if (temp != null) {
+						return matchExpr(temp, rhsExpression);
+					}
+				}
+				return false;
+			}
+			return true;
 		}
+		if (lhsPatternExpression instanceof IPattern) {
+			return matchPattern((IPattern) lhsPatternExpression, rhsExpression);
+		}
+
 		return lhsPatternExpression.equals(rhsExpression);
 	}
+
+	private IExpr matchDefaultFlatOrderlessAST(IAST ast, IExpr defValue) {
+		IAST cloned = F.ast(ast.head(), ast.size(), false);
+		for (int i = 1; i < ast.size(); i++) {
+			if (ast.get(i) instanceof IPattern && ((IPattern) ast.get(i)).isDefault()) {
+				if (!matchPattern((IPattern) ast.get(i), defValue)) {
+					return null;
+				}
+				continue;
+			}
+			cloned.add(ast.get(i));
+		}
+		int attr = ast.topHead().getAttributes();
+		if (cloned.size() == 2 && (attr & ISymbol.ONEIDENTITY) == ISymbol.ONEIDENTITY) {
+			return cloned.get(1);
+		}
+		return cloned;
+	}
+
+	// private IExpr matchDefaultAST(IAST ast) {
+	// int attr = ast.topHead().getAttributes();
+	// IAST clon = F.ast(ast.head(), ast.size(), false);
+	// for (int i = 1; i < ast.size(); i++) {
+	// if (ast.get(i) instanceof IPattern && ((IPattern) ast.get(i)).isDefault())
+	// {
+	// // TODO...
+	// }
+	// clon.add(ast.get(i));
+	// }
+	// return clon;
+	// }
 
 	private boolean matchFlatList(final ISymbol sym, final IAST lhsPatternList, final IAST lhsEvalList) {
 		if ((sym.getAttributes() & ISymbol.ORDERLESS) == ISymbol.ORDERLESS) {

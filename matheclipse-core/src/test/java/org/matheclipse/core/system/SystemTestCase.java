@@ -1006,6 +1006,8 @@ public class SystemTestCase extends AbstractTestCase {
 		check("Integrate[2x,x]", "x^2");
 		check("Integrate[f[x]+g[x]+h[x],x]", "Integrate[h[x],x]+Integrate[g[x],x]+Integrate[f[x],x]");
 		check("Integrate[Sin[x],x]", "(-1)*Cos[x]");
+		check("Integrate[Sin[10*x],x]", "(-1/10)*Cos[10*x]");
+		check("Integrate[Sin[Pi+10*x],x]", "(-1/10)*Cos[10*x+Pi]");
 		check("Integrate[E^(a*x),x]", "E^(a*x)*a^(-1)");
 		check("Integrate[x*E^(a*x),x]", "(a*x-1)*E^(a*x)*a^(-2)");
 		check("Integrate[x*E^x,x]", "(x-1)*E^x");
@@ -2249,6 +2251,11 @@ public class SystemTestCase extends AbstractTestCase {
 		check("MatchQ[Expand[(a+b)^2], Plus[_,_]]", "True");
 		check("MatchQ[Expand[(a*b)^2], Plus[_,_]]", "False");
 		check("MatchQ[{a,b,c}, _List]", "True");
+		check("MatchQ[linear[42+d,d], linear[a_. + b_. * x_, x_]]", "True");
+		check("MatchQ[linear[h,h], linear[a_. + b_. * x_, x_]]", "True");
+		check("MatchQ[linear[60*h,h], linear[a_. + b_. * x_, x_]]", "True");
+		check("MatchQ[linear[a+42+60*h,h], linear[a_. + b_. * x_, x_]]", "True");
+		check("MatchQ[linear[a+42+60*c,h], linear[a_. + b_. * x_, x_]]", "False");
 	}
 	// public void testSystem404() {
 	// check("Plot3D[Sin[x]*Cos[y],{x,-10,10},{y,-10,10},{PlotRange->Automatic}]",

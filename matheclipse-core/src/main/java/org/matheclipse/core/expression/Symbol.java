@@ -307,7 +307,7 @@ public class Symbol extends ExprImpl implements ISymbol {
 		}
 
 		pmEvaluator.setCondition(condition);
-		if (!isRuleWithPatternAsFirstArgument(leftHandSide)) {
+		if (!isComplicatedPatternRule(leftHandSide)) {
 			if (fSimplePatternRules == null) {
 				fSimplePatternRules = ArrayListMultimap.create();
 			}
@@ -343,7 +343,7 @@ public class Symbol extends ExprImpl implements ISymbol {
 
 	public PatternMatcher putDownRule(final PatternMatcherAndInvoker pmEvaluator) {
 		final IExpr leftHandSide = pmEvaluator.getLHS();
-		if (!isRuleWithPatternAsFirstArgument(leftHandSide)) {
+		if (!isComplicatedPatternRule(leftHandSide)) {
 			if (fSimplePatternRules == null) {
 				fSimplePatternRules = ArrayListMultimap.create();
 			}
@@ -366,7 +366,7 @@ public class Symbol extends ExprImpl implements ISymbol {
 		}
 	}
 
-	private boolean isRuleWithPatternAsFirstArgument(final IExpr patternExpr) {
+	private boolean isComplicatedPatternRule(final IExpr patternExpr) {
 		if (patternExpr instanceof IAST) {
 			final IAST ast = ((IAST) patternExpr);
 			if (ast.size() > 1) {
@@ -376,6 +376,11 @@ public class Symbol extends ExprImpl implements ISymbol {
 				final int attr = ast.topHead().getAttributes();
 				if ((ISymbol.ORDERLESS & attr) == ISymbol.ORDERLESS) {
 					return true;
+				}
+				for (int i = 2; i < ast.size(); i++) {
+					if (ast.get(i) instanceof IPattern && ((IPattern) ast.get(i)).isDefault()) {
+						return true;
+					}
 				}
 			}
 		} else if (patternExpr instanceof IPattern) {

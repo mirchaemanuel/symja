@@ -37,16 +37,22 @@ public class Pattern extends ExprImpl implements IPattern {
 
 	/**
 	 * 
+	 */
+	public static Pattern valueOf(final Symbol symbol, final IExpr check, final boolean def) {
+		Pattern p = new Pattern();
+		p.fSymbol = symbol;
+		p.fCondition = check;
+		p.fIndex = 0;
+		p.fDefault = def;
+		return p;
+	}
+
+	/**
+	 * 
 	 * @param numerator
 	 * @return
 	 */
 	public static Pattern valueOf(final Symbol symbol, final IExpr check) {
-		// Pattern p;
-		// if (Config.SERVER_MODE) {
-		// p = FACTORY.object();
-		// } else {
-		// p = new Pattern();
-		// }
 		Pattern p = new Pattern();
 		p.fSymbol = symbol;
 		p.fCondition = check;
@@ -55,12 +61,6 @@ public class Pattern extends ExprImpl implements IPattern {
 	}
 
 	public static Pattern valueOf(final Symbol symbol) {
-		// Pattern p;
-		// if (Config.SERVER_MODE) {
-		// p = FACTORY.object();
-		// } else {
-		// p = new Pattern();
-		// }
 		Pattern p = new Pattern();
 		p.fSymbol = symbol;
 		p.fCondition = null;
@@ -84,6 +84,11 @@ public class Pattern extends ExprImpl implements IPattern {
 	 * The associated symbol for this pattern
 	 */
 	Symbol fSymbol;
+
+	/**
+	 * Use default value, if not matching was found
+	 */
+	boolean fDefault = false;
 
 	// public PatternImpl(final SymbolImpl symbol) {
 	// this(symbol, null);
@@ -212,7 +217,6 @@ public class Pattern extends ExprImpl implements IPattern {
 	// }
 	// FACTORY.recycle(this);
 	// }
-
 
 	// public Text toText() {
 	// final TextBuilder tb = TextBuilder.newInstance();
@@ -357,6 +361,15 @@ public class Pattern extends ExprImpl implements IPattern {
 
 	public int accept(IVisitorInt visitor) {
 		return visitor.visit(this);
+	}
+
+	/**
+	 * Use default value, if not matching was found.
+	 * 
+	 * @return
+	 */
+	public boolean isDefault() {
+		return fDefault;
 	}
 
 	/**

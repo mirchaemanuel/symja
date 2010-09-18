@@ -35,7 +35,7 @@ public class Pattern3Node extends PatternNode {
 			buff.append(fSymbol.toString());
 		}
 		buff.append("___");
-		if (fOptional) {
+		if (fDefault) {
 			buff.append(".");
 		}
 		if (fConstraint != null) {
