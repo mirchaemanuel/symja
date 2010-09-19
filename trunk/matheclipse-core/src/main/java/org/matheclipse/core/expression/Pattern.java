@@ -240,6 +240,9 @@ public class Pattern extends ExprImpl implements IPattern {
 		final StringBuffer buffer = new StringBuffer();
 		if (fSymbol == null) {
 			buffer.append('_');
+			if (fDefault) {
+				buffer.append('.');
+			}
 			if (fCondition != null) {
 				buffer.append(fCondition.toString());
 			}
@@ -247,9 +250,15 @@ public class Pattern extends ExprImpl implements IPattern {
 			if (fCondition == null) {
 				buffer.append(fSymbol.toString());
 				buffer.append('_');
+				if (fDefault) {
+					buffer.append('.');
+				}
 			} else {
 				buffer.append(fSymbol.toString());
 				buffer.append('_');
+				if (fDefault) {
+					buffer.append('.');
+				}
 				buffer.append(fCondition.toString());
 			}
 		}
