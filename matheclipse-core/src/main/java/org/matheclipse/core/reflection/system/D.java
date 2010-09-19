@@ -5,7 +5,6 @@ import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.generic.BinaryBindIth1st;
 import org.matheclipse.core.generic.BinaryEval;
-import org.matheclipse.core.generic.BinaryMap;
 import org.matheclipse.core.generic.UnaryBind1st;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
@@ -18,27 +17,32 @@ import org.matheclipse.core.interfaces.ISymbol;
  * href="http://en.wikipedia.org/wiki/Derivative">Wikipedia:Derivative</a>
  */
 public class D extends AbstractFunctionEvaluator {
-	// String[] RULES = {
-	// "D[Sin[x_],y_]:= Cos[x]*D[x,y]",
-	// "D[Cos[x_],y_]:= -Sin[x]*D[x,y]",
-	// "D[Tan[x_],y_]:= 1/(Cos[x]^2)*D[x,y]",
-	// "D[Cot[x_],y_]:= (-1)/(Sin[x]^2)*D[x,y]",
-	// "D[ArcSin[x_],y_]:= (1-x^2)^(-1/2)*D[x,y]",
-	// "D[ArcCos[x_],y_]:= -(1-x^2)^(-1/2)*D[x,y]",
-	// "D[ArcTan[x_],y_]:= (1+x^2)^(-1)*D[x,y]",
-	// "D[ArcCot[x_],y_]:= -(1+x^2)^(-1)*D[x,y]",
-	// "D[Sinh[x_],y_]:= Cosh[x]*D[x,y]",
-	// "D[Cosh[x_],y_]:= -Sinh[x]*D[x,y]",
-	// "D[Tanh[x_],y_]:= (Cosh[x]^(-2))*D[x,y]",
-	// "D[Coth[x_],y_]:= -(Sinh[x]^(-2))*D[x,y]",
-	// "D[ArcSinh[x_],y_]:= (1+x^2)^(-1/2)*D[x,y]",
-	// "D[ArcCosh[x_],y_]:= (x^2-1)^(-1/2)*D[x,y]",
-	// "D[ArcTanh[x_],y_]:= (1-x^2)^(-1)*D[x,y]",
-	// "D[ArcCoth[x_],y_]:= (1-x^2)^(-1)*D[x,y]",
-	// "D[Log[x_],y_]:= x^(-1)*D[x,y]"
-	// };
 
 	public D() {
+	}
+
+	/**
+	 * Search for one of the <code>Derivative[..]</code>rules from the
+	 * <code>System.mep</code> file raed at strup time.
+	 * 
+	 * Examples for rules from the <code>System.mep</code> file:<br/>
+	 * <code>Derivative[Cos]=(-1)*Sin[#]&</code><br/>
+	 * <code>Derivative[Sin]=Cos[#]&</code><br/>
+	 * <code>Derivative[Tan]=1*Cos[#]^2^(-1)&</code><br/>
+	 * 
+	 * @param x
+	 * @param arg1
+	 * @param header
+	 * @return
+	 */
+	private IExpr getDerivativeArg1(IExpr x, final IExpr arg1, final IExpr header) {
+		IExpr der = F.evalNull(F.Derivative, header);
+		if (der != null) {
+			// we've found a derivative for a function of the form f[x_]
+			IExpr derivative = F.eval(F.$(der, arg1));
+			return F.Times(derivative, F.D(arg1, x));
+		}
+		return null;
 	}
 
 	@Override
@@ -149,21 +153,12 @@ public class D extends AbstractFunctionEvaluator {
 					return resultList;
 				}
 			} else if (listArg1.size() == 2) {
-				IExpr der = F.evalNull(F.Derivative, header);
-				if (der != null) {
-					// found a derivative for a function of the form f[x_]
-					IExpr derivative = F.eval(F.$(der, listArg1.get(1)));
-					return F.Times(derivative, F.D(listArg1.get(1), x));
-				}
+				return getDerivativeArg1(x, listArg1.get(1), header);
 			}
 
 		}
 
 		return null;
 	}
-	// @Override
-	// public String[] getRules() {
-	// return RULES;
-	// }
 
 }
