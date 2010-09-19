@@ -28,7 +28,7 @@ public class D extends AbstractFunctionEvaluator {
 	 * Examples for rules from the <code>System.mep</code> file:<br/>
 	 * <code>Derivative[Cos]=(-1)*Sin[#]&</code><br/>
 	 * <code>Derivative[Sin]=Cos[#]&</code><br/>
-	 * <code>Derivative[Tan]=1*Cos[#]^2^(-1)&</code><br/>
+	 * <code>Derivative[Tan]=Cos[#]^(-2)&</code><br/>
 	 * 
 	 * @param x
 	 * @param arg1
