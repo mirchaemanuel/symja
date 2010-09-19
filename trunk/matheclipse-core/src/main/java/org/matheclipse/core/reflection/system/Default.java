@@ -1,18 +1,10 @@
 package org.matheclipse.core.reflection.system;
 
-import java.io.IOException;
-import java.io.PrintStream;
-
-import org.matheclipse.basic.Config;
-import org.matheclipse.core.eval.EvalEngine;
 import org.matheclipse.core.eval.exception.Validate;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
-import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
-import org.matheclipse.core.interfaces.IInteger;
 import org.matheclipse.core.interfaces.ISymbol;
-import org.matheclipse.parser.client.SyntaxError;
 
 /**
  * Get the default value for a symbol (i.e. <code>1</code> is the default value
