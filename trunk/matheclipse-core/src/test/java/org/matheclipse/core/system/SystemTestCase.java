@@ -2247,6 +2247,8 @@ public class SystemTestCase extends AbstractTestCase {
 
 	public void testSystem420() {
 		// check("b_. x_","");
+		check("MatchQ[powered[h,h], powered[x_ ^ a_., x_]]", "True");
+		check("MatchQ[powered[h^3,h], powered[x_ ^ a_., x_]]", "True");
 		check("MatchQ[42, _IntegerQ]", "True");
 		check("MatchQ[a+b+c+d, Times[_,_]]", "False");
 		check("MatchQ[a+b+c+d, Plus[_,_]]", "True");

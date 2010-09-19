@@ -673,15 +673,19 @@ public class PatternMatcher extends IPatternMatcher<IExpr> implements Serializab
 			if (!matchAST(ast, rhsExpression)) {
 				if ((ast.getEvalFlags() & IAST.CONTAINS_DEFAULT_PATTERN) == IAST.CONTAINS_DEFAULT_PATTERN) {
 					IExpr temp = null;
+					ISymbol symbol = ast.topHead();
+					int attr = symbol.getAttributes();
+
 					resetPattern(patternValues);
-					if (ast.isPlus()) {
-						temp = matchDefaultFlatOrderlessAST(ast, F.C0);
-					} else if (ast.isTimes()) {
-						temp = matchDefaultFlatOrderlessAST(ast, F.C1);
-					}
-					// else {
-					// temp = reduceAST(ast);
+					// if (ast.isPlus() || ast.isTimes()) {
+					// temp = matchDefaultAST(symbol, attr, ast);
+					// } else if ((attr & ISymbol.FLATORDERLESS) == ISymbol.FLATORDERLESS)
+					// {
+					// temp = matchDefaultAST(symbol, attr, ast);
+					// } else {
+					// temp = matchDefaultAST(symbol, attr, ast);
 					// }
+					temp = matchDefaultAST(symbol, attr, ast);
 					if (temp != null) {
 						return matchExpr(temp, rhsExpression);
 					}
@@ -697,36 +701,38 @@ public class PatternMatcher extends IPatternMatcher<IExpr> implements Serializab
 		return lhsPatternExpression.equals(rhsExpression);
 	}
 
-	private IExpr matchDefaultFlatOrderlessAST(IAST ast, IExpr defValue) {
+	private IExpr matchDefaultAST(ISymbol symbol, int attr, IAST ast) {
+		IExpr commonDefaultValue = symbol.getDefaultValue();
 		IAST cloned = F.ast(ast.head(), ast.size(), false);
+		IExpr positionDefaultValue = null;
 		for (int i = 1; i < ast.size(); i++) {
 			if (ast.get(i) instanceof IPattern && ((IPattern) ast.get(i)).isDefault()) {
-				if (!matchPattern((IPattern) ast.get(i), defValue)) {
-					return null;
+				positionDefaultValue = symbol.getDefaultValue(i);
+				if (positionDefaultValue != null) {
+					if (!matchPattern((IPattern) ast.get(i), positionDefaultValue)) {
+						return null;
+					}
+					continue;
+				} else {
+					if (commonDefaultValue != null) {
+						if (!matchPattern((IPattern) ast.get(i), commonDefaultValue)) {
+							return null;
+						}
+						continue;
+					}
 				}
-				continue;
+
 			}
 			cloned.add(ast.get(i));
 		}
-		int attr = ast.topHead().getAttributes();
-		if (cloned.size() == 2 && (attr & ISymbol.ONEIDENTITY) == ISymbol.ONEIDENTITY) {
+		if (cloned.size() == 2) {
 			return cloned.get(1);
 		}
-		return cloned;
+		// if ((attr & ISymbol.ORDERLESS) == ISymbol.ORDERLESS) {
+		// EvaluationSupport.sort(cloned);
+		// }
+		return null;
 	}
-
-	// private IExpr matchDefaultAST(IAST ast) {
-	// int attr = ast.topHead().getAttributes();
-	// IAST clon = F.ast(ast.head(), ast.size(), false);
-	// for (int i = 1; i < ast.size(); i++) {
-	// if (ast.get(i) instanceof IPattern && ((IPattern) ast.get(i)).isDefault())
-	// {
-	// // TODO...
-	// }
-	// clon.add(ast.get(i));
-	// }
-	// return clon;
-	// }
 
 	private boolean matchFlatList(final ISymbol sym, final IAST lhsPatternList, final IAST lhsEvalList) {
 		if ((sym.getAttributes() & ISymbol.ORDERLESS) == ISymbol.ORDERLESS) {

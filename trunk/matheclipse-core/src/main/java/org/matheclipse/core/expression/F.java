@@ -870,8 +870,10 @@ public class F {
 			Plot = predefinedSymbol("Plot");
 			Plot3D = predefinedSymbol("Plot3D");
 			Plus = predefinedSymbol("Plus");
+			Plus.setDefaultValue(C0);
 			Positive = predefinedSymbol("Positive");
 			Power = predefinedSymbol("Power");
+			Power.setDefaultValue(2, C1);
 			Prepend = predefinedSymbol("Prepend");
 			PrimeQ = predefinedSymbol("PrimeQ");
 			Print = predefinedSymbol("Print");
@@ -892,6 +894,7 @@ public class F {
 			Tan = predefinedSymbol("Tan");
 			Tanh = predefinedSymbol("Tanh");
 			Times = predefinedSymbol("Times");
+			Times.setDefaultValue(C1);
 			Timing = predefinedSymbol("Timing");
 			Tr = predefinedSymbol("Tr");
 			Trace = predefinedSymbol("Trace");

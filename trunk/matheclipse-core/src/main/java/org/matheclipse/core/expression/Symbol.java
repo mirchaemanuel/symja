@@ -42,6 +42,8 @@ public class Symbol extends ExprImpl implements ISymbol {
 	 */
 	private static final long serialVersionUID = -6865099709235625213L;
 
+	private static final int DEFAULT_VALUE_INDEX = Integer.MIN_VALUE;
+	
 	// protected static final XmlFormat<SymbolImpl> SYMBOL_XML = new
 	// XmlFormat<SymbolImpl>(SymbolImpl.class) {
 	// @Override
@@ -68,6 +70,8 @@ public class Symbol extends ExprImpl implements ISymbol {
 	private ArrayListMultimap<Integer, IPatternMatcher<IExpr>> fSimplePatternRules = ArrayListMultimap.create();
 
 	private List<IPatternMatcher<IExpr>> fPatternRules = null;
+
+	private Map<Integer, IExpr> fDefaultValues = null;
 
 	static class DummyEvaluator implements IEvaluator {
 		public void setUp(ISymbol symbol) {
@@ -101,25 +105,30 @@ public class Symbol extends ExprImpl implements ISymbol {
 		// hash = fSymbolName.hashCode();
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public IExpr apply(IExpr... expressions) {
 		return F.ast(expressions, this);
 	}
 
+	/** {@inheritDoc} */
 	public void pushLocalVariable() {
 		pushLocalVariable(null);
 	}
 
+	/** {@inheritDoc} */
 	public void pushLocalVariable(final IExpr expression) {
 		final Stack<IExpr> localVariableStack = EvalEngine.localStackCreate(fSymbolName);
 		localVariableStack.push(expression);
 	}
 
+	/** {@inheritDoc} */
 	public void popLocalVariable() {
 		final Stack<IExpr> fLocalVariableStack = EvalEngine.localStack(fSymbolName);
 		fLocalVariableStack.pop();
 	}
 
+	/** {@inheritDoc} */
 	public void clear(EvalEngine engine) {
 		if (!engine.isPackageMode()) {
 			if (Config.SERVER_MODE && (fSymbolName.charAt(0) != '$')) {
@@ -131,11 +140,13 @@ public class Symbol extends ExprImpl implements ISymbol {
 		fPatternRules = null;
 	}
 
+	/** {@inheritDoc} */
 	public void clearAll(EvalEngine engine) {
 		clear(engine);
 		fAttributes = NOATTRIBUTE;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(final Object obj) {
 		if (this == obj) {
@@ -156,6 +167,7 @@ public class Symbol extends ExprImpl implements ISymbol {
 		return false;
 	}
 
+	/** {@inheritDoc} */
 	public IExpr evalDownRule(final IEvaluationEngine ee, final IExpr expression) {
 		Pair<ISymbol, IExpr> res;
 		if (fEqualRules != null) {
@@ -204,10 +216,12 @@ public class Symbol extends ExprImpl implements ISymbol {
 		return null;
 	}
 
+	/** {@inheritDoc} */
 	public int getAttributes() {
 		return fAttributes;
 	}
 
+	/** {@inheritDoc} */
 	public IEvaluator getEvaluator() {
 		if (fEvaluator == null) {
 			fEvaluator = DUMMY_EVALUATOR;
@@ -218,11 +232,13 @@ public class Symbol extends ExprImpl implements ISymbol {
 		return fEvaluator;
 	}
 
+	/** {@inheritDoc} */
 	public boolean hasLocalVariableStack() {
 		final Stack<IExpr> localVariableStack = EvalEngine.localStack(fSymbolName);
 		return (localVariableStack != null) && !(localVariableStack.isEmpty());
 	}
 
+	/** {@inheritDoc} */
 	public IExpr get() {
 		final Stack<IExpr> localVariableStack = EvalEngine.localStack(fSymbolName);
 		if (localVariableStack == null) {
@@ -231,17 +247,20 @@ public class Symbol extends ExprImpl implements ISymbol {
 		return localVariableStack.peek();
 	}
 
+	/** {@inheritDoc} */
 	public void set(final IExpr value) {
 		final Stack<IExpr> localVariableStack = EvalEngine.localStack(fSymbolName);
 
 		localVariableStack.set(localVariableStack.size() - 1, value);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		return fSymbolName.hashCode();
 	}
 
+	/** {@inheritDoc} */
 	public int hierarchy() {
 		return SYMBOLID;
 	}
@@ -252,20 +271,24 @@ public class Symbol extends ExprImpl implements ISymbol {
 	// return localVariableStack.isEmpty();
 	// }
 
+	/** {@inheritDoc} */
 	public boolean isString(final String str) {
 		return fSymbolName.equals(str);
 	}
 
+	/** {@inheritDoc} */
 	public IPatternMatcher<IExpr> putDownRule(ISymbol symbol, final boolean equalRule, final IExpr leftHandSide,
 			final IExpr rightHandSide) {
 		return putDownRule(symbol, equalRule, leftHandSide, rightHandSide, null, DEFAULT_RULE_PRIORITY);
 	}
 
+	/** {@inheritDoc} */
 	public IPatternMatcher<IExpr> putDownRule(ISymbol symbol, final boolean equalRule, final IExpr leftHandSide,
 			final IExpr rightHandSide, final IExpr condition) {
 		return putDownRule(symbol, equalRule, leftHandSide, rightHandSide, condition, DEFAULT_RULE_PRIORITY);
 	}
 
+	/** {@inheritDoc} */
 	public PatternMatcher putDownRule(ISymbol setSymbol, final boolean equalRule, final IExpr leftHandSide,
 			final IExpr rightHandSide, final IExpr condition, final int priority) {
 		if (Config.DEBUG) {
@@ -341,6 +364,7 @@ public class Symbol extends ExprImpl implements ISymbol {
 		return pmEvaluator;
 	}
 
+	/** {@inheritDoc} */
 	public PatternMatcher putDownRule(final PatternMatcherAndInvoker pmEvaluator) {
 		final IExpr leftHandSide = pmEvaluator.getLHS();
 		if (!isComplicatedPatternRule(leftHandSide)) {
@@ -389,6 +413,7 @@ public class Symbol extends ExprImpl implements ISymbol {
 		return false;
 	}
 
+	/** {@inheritDoc} */
 	public void setAttributes(final int attributes) {
 		fAttributes = attributes;
 		if (fSymbolName.charAt(0) == '$' && Config.SERVER_MODE) {
@@ -397,9 +422,7 @@ public class Symbol extends ExprImpl implements ISymbol {
 		}
 	}
 
-	/**
-	 * @param evaluator
-	 */
+	/** {@inheritDoc} */
 	public void setEvaluator(final IEvaluator evaluator) {
 		fEvaluator = evaluator;
 	}
@@ -471,21 +494,25 @@ public class Symbol extends ExprImpl implements ISymbol {
 		return (hierarchy() - (obj).hierarchy());
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean isAtom() {
 		return true;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean isTrue() {
 		return fSymbolName.equals("True");
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean isValue() {
 		return EvalEngine.get().evalSymbol(this) != null;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean isValue(IAST ast) {
 		if (ast.head() instanceof ISymbol) {
@@ -495,16 +522,19 @@ public class Symbol extends ExprImpl implements ISymbol {
 		return false;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean isFalse() {
 		return fSymbolName.equals("False");
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public ISymbol head() {
 		return F.SymbolHead;
 	}
 
+	/** {@inheritDoc} */
 	public String getSymbol() {
 		return fSymbolName;
 	}
@@ -587,6 +617,43 @@ public class Symbol extends ExprImpl implements ISymbol {
 		return definitionList;
 	}
 
+	/** {@inheritDoc} */
+	public IExpr getDefaultValue() {
+		// special case for a general default value
+		if (fDefaultValues == null) {
+			return null;
+		}
+		return fDefaultValues.get(DEFAULT_VALUE_INDEX);
+	}
+
+	/** {@inheritDoc} */
+	public IExpr getDefaultValue(int pos) {
+		// default value at this position
+		if (fDefaultValues == null) {
+			return null;
+		}
+		return fDefaultValues.get(Integer.valueOf(pos));
+	}
+
+	/** {@inheritDoc} */
+	public void setDefaultValue(IExpr expr) {
+		// special case for a general default value
+		if (fDefaultValues == null) {
+			fDefaultValues = new HashMap<Integer, IExpr>();
+		}
+		fDefaultValues.put(DEFAULT_VALUE_INDEX, expr);
+	}
+
+	/** {@inheritDoc} */
+	public void setDefaultValue(int pos, IExpr expr) {
+		// default value at this position
+		if (fDefaultValues == null) {
+			fDefaultValues = new HashMap<Integer, IExpr>();
+		}
+		fDefaultValues.put(Integer.valueOf(pos), expr);
+	}
+
+	/** {@inheritDoc} */
 	public String definitionToString() throws IOException {
 		StringBufferWriter buf = new StringBufferWriter();
 		buf.setIgnoreNewLine(true);
@@ -602,13 +669,7 @@ public class Symbol extends ExprImpl implements ISymbol {
 		return buf.toString();
 	}
 
-	/**
-	 * Deserialize Symbol from stream
-	 * 
-	 * @param stream
-	 * @throws IOException
-	 * @throws ClassNotFoundException
-	 */
+	/** {@inheritDoc} */
 	public void readSymbol(java.io.ObjectInputStream stream) throws IOException {
 		fSymbolName = stream.readUTF();
 		fAttributes = stream.read();
@@ -692,6 +753,7 @@ public class Symbol extends ExprImpl implements ISymbol {
 		}
 	}
 
+	/** {@inheritDoc} */
 	public void writeSymbol(java.io.ObjectOutputStream stream) throws java.io.IOException {
 		stream.writeUTF(fSymbolName);
 		stream.write(fAttributes);
