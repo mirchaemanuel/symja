@@ -22,8 +22,8 @@ public class D extends AbstractFunctionEvaluator {
 	}
 
 	/**
-	 * Search for one of the <code>Derivative[..]</code>rules from the
-	 * <code>System.mep</code> file raed at strup time.
+	 * Search for one of the <code>Derivative[..]</code> rules from the
+	 * <code>System.mep</code> file read at startup time.
 	 * 
 	 * Examples for rules from the <code>System.mep</code> file:<br/>
 	 * <code>Derivative[Cos]=(-1)*Sin[#]&</code><br/>
