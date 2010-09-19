@@ -2262,6 +2262,12 @@ public class SystemTestCase extends AbstractTestCase {
 		check("MatchQ[linear[a+42+60*c,h], linear[a_. + b_. * x_, x_]]", "False");
 	}
 
+	public void testSystem421() {
+		check("Default[Power,2]", "1");
+		check("Default[Plus]", "0");
+		check("Default[Times]", "1");
+	}
+
 	// public void testSystem404() {
 	// check("Plot3D[Sin[x]*Cos[y],{x,-10,10},{y,-10,10},{PlotRange->Automatic}]",
 	// "");

@@ -675,16 +675,7 @@ public class PatternMatcher extends IPatternMatcher<IExpr> implements Serializab
 					IExpr temp = null;
 					ISymbol symbol = ast.topHead();
 					int attr = symbol.getAttributes();
-
 					resetPattern(patternValues);
-					// if (ast.isPlus() || ast.isTimes()) {
-					// temp = matchDefaultAST(symbol, attr, ast);
-					// } else if ((attr & ISymbol.FLATORDERLESS) == ISymbol.FLATORDERLESS)
-					// {
-					// temp = matchDefaultAST(symbol, attr, ast);
-					// } else {
-					// temp = matchDefaultAST(symbol, attr, ast);
-					// }
 					temp = matchDefaultAST(symbol, attr, ast);
 					if (temp != null) {
 						return matchExpr(temp, rhsExpression);
@@ -701,6 +692,14 @@ public class PatternMatcher extends IPatternMatcher<IExpr> implements Serializab
 		return lhsPatternExpression.equals(rhsExpression);
 	}
 
+	/**
+	 * Match the <code>ast</code> with its <code>Default[]</code> values.
+	 * 
+	 * @param symbol
+	 * @param attr
+	 * @param ast
+	 * @return
+	 */
 	private IExpr matchDefaultAST(ISymbol symbol, int attr, IAST ast) {
 		IExpr commonDefaultValue = symbol.getDefaultValue();
 		IAST cloned = F.ast(ast.head(), ast.size(), false);
