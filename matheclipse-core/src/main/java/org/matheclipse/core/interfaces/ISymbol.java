@@ -260,6 +260,54 @@ public interface ISymbol extends IExpr { // Variable<IExpr>
 	public IExpr evalDownRule(IEvaluationEngine engine, IExpr expression);
 
 	/**
+	 * Get the <i>general default value</i> for this symbol (i.e. <code>1</code>
+	 * is the default value for <code>Times</code>, <code>0</code> is the default
+	 * value for <code>Plus</code>). The general default value is used in
+	 * pattern-matching for expressions like <code>a_. * b_. + c_</code>
+	 * 
+	 * @return the default value or <code>null</code> if undefined.
+	 */
+	public IExpr getDefaultValue();
+
+	/**
+	 * Get the <i>default value</i> at the arguments position for this symbol
+	 * (i.e. <code>1</code> is the default value for <code>Power</code> at
+	 * <code>position</code> <code>2</code>). The default value is used in
+	 * pattern-matching for expressions like <code>a ^ b_.</code>
+	 * 
+	 * @param position
+	 *          the position for the default value
+	 * @return the default value or <code>null</code> if undefined.
+	 */
+	public IExpr getDefaultValue(int position);
+
+	/**
+	 * Set the <i>general default value</i> for this symbol (i.e. <code>1</code>
+	 * is the default value for <code>Times</code>, <code>0</code> is the default
+	 * value for <code>Plus</code>). The general default value is used in
+	 * pattern-matching for expressions like <code>a_. * b_. + c_</code>
+	 * 
+	 * @param expr
+	 *          the general default value
+	 * @see ISymbol#getDefaultValue()
+	 */
+	public void setDefaultValue(IExpr expr);
+
+	/**
+	 * Set the <i>default value</i> at the arguments position for this symbol
+	 * (i.e. <code>1</code> is the default value for <code>Power</code> at
+	 * <code>position</code> <code>2</code>). The default value is used in
+	 * pattern-matching for expressions like <code>a ^ b_.</code>
+	 * 
+	 * @param position
+	 *          the position for the default value
+	 * @param expr
+	 *          the default value for the given position
+	 * @see ISymbol#getDefaultValue(int)
+	 */
+	public void setDefaultValue(int position, IExpr expr);
+
+	/**
 	 * Clear the associated rules for this symbol
 	 * 
 	 */
