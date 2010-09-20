@@ -257,6 +257,12 @@ public interface IExpr extends Comparable<IExpr>, // FieldElement<IExpr>,
 	 */
 	public boolean isAST(String symbol, int size);
 
+	public boolean isPlus();
+
+	public boolean isPower();
+
+	public boolean isTimes();
+
 	/**
 	 * Test if the expression is free of (sub-)expressions which match the
 	 * pattern.
@@ -308,8 +314,8 @@ public interface IExpr extends Comparable<IExpr>, // FieldElement<IExpr>,
 	public IExpr apply(IExpr... leaves);
 
 	/**
-	 * Convert the variables (i.e. ISymbol's with lower case character in the
-	 * 0-th position of their name) in this expression into Slot[] s.
+	 * Convert the variables (i.e. ISymbol's with lower case character in the 0-th
+	 * position of their name) in this expression into Slot[] s.
 	 * 
 	 * @return <code>null</code> if the expression contains a variable with a '$'
 	 *         character in the 0-th position of its name and the math engine runs

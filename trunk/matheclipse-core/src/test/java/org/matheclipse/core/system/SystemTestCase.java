@@ -2370,6 +2370,7 @@ public class SystemTestCase extends AbstractTestCase {
 	}
 
 	public void testSystem995() {
+		check("Apart[1/((1 + x) (5 + x))]", "-1/4*(x+5)^(-1)+1/4*(x+1)^(-1)");
 		check("Apart[(x)/(x^2-1)]", "1/2*(x+1)^(-1)+1/2*(x-1)^(-1)");
 		check("Apart[(x+3)/(x^2-3*x-40)]", "2/13*(x+5)^(-1)+11/13*(x-8)^(-1)");
 		check("Apart[(10*x^2+12*x+20)/(x^3-8)]", "(3*x+4)*(x^2+2*x+4)^(-1)+7*(x-2)^(-1)");

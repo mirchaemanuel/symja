@@ -121,7 +121,7 @@ public class JASConvert<C extends RingElem<C>> {
 			BigRational r = nr.divide(dr);
 			return new GenPolynomial(fPolyFactory, r);// pfac.getONE().multiply(r);
 		}
-		throw new ClassCastException();
+		throw new ClassCastException(exprPoly.toString());
 
 		// check if this expression contains any variable
 		// for (int i = 0; i < variables.size(); i++) {

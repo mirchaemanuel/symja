@@ -4,14 +4,11 @@ import static org.matheclipse.core.expression.F.Expand;
 import static org.matheclipse.core.expression.F.Plus;
 import static org.matheclipse.core.expression.F.Times;
 
-import org.matheclipse.basic.Config;
 import org.matheclipse.core.eval.EvalEngine;
-import org.matheclipse.core.eval.exception.NonNegativeIntegerExpected;
 import org.matheclipse.core.eval.exception.Validate;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.expression.IConstantHeaders;
-import org.matheclipse.core.expression.IntegerSym;
 import org.matheclipse.core.generic.UnaryBind1st;
 import org.matheclipse.core.generic.UnaryBind2nd;
 import org.matheclipse.core.interfaces.IAST;
@@ -52,8 +49,8 @@ public class Expand extends AbstractFunctionEvaluator implements IConstantHeader
 	 *          a times expression (a*b*c....)
 	 * @return
 	 */
-	public static IAST[] getFractionalParts(final IAST timesAST) {
-		IAST[] result = new IAST[2];
+	public static IExpr[] getFractionalParts(final IAST timesAST) {
+		IExpr[] result = new IExpr[2];
 
 		IAST numerator = F.Times();
 		IAST denominator = F.Times();
@@ -77,8 +74,24 @@ public class Expand extends AbstractFunctionEvaluator implements IConstantHeader
 			}
 			numerator.add(arg);
 		}
-		result[0] = numerator;
-		result[1] = denominator;
+		if (numerator.size() == 1) {
+			// no factor collected
+			result[0] = F.C1;
+		} else if (numerator.size() == 2) {
+			// OneIdentity - use 1st argument
+			result[0] = numerator.get(1);
+		} else {
+			result[0] = numerator;
+		}
+		if (denominator.size() == 1) {
+			// no factor collected
+			result[1] = F.C1;
+		} else if (denominator.size() == 2) {
+			// OneIdentity - use 1st argument
+			result[1] = denominator.get(1);
+		} else {
+			result[1] = denominator;
+		}
 		return result;
 
 	}
@@ -100,16 +113,22 @@ public class Expand extends AbstractFunctionEvaluator implements IConstantHeader
 		} else if (ast.isASTSizeGE(F.Times, 3)) {
 			// (a+b)*(c+d)...
 			// return expandTimes(ast);
-			IAST[] temp = getFractionalParts(ast);
-			if (temp[0].size() == 1) {
+			IExpr[] temp = getFractionalParts(ast);
+			if (temp[0].equals(F.C1)) {
 				return F.Power(expandTimes(ast), F.CN1);
 			}
 
-			if (temp[1].size() == 1) {
+			if (temp[1].equals(F.C1)) {
 				return expandTimes(ast);
 			}
 
-			return F.Times(expandTimes(temp[0]), F.Power(expandTimes(temp[1]), F.CN1));
+			if (temp[0].isTimes()) {
+				temp[0] = expandTimes((IAST) temp[0]);
+			}
+			if (temp[1].isTimes()) {
+				temp[1] = expandTimes((IAST) temp[1]);
+			}
+			return F.Times(temp[0], F.Power(temp[1], F.CN1));
 		} else if (ast.isASTSizeGE(F.Plus, 3)) {
 			return ast.args().map(Plus(), new UnaryBind1st(Expand(F.Null)));
 		}
