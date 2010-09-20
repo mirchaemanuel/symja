@@ -91,7 +91,7 @@ Package[
   Derivative[ArcCos]=(-1)*(1-#^2)^(-1/2)&,
   Derivative[ArcSinh]=(1+#^2)^(-1/2)&,
   Derivative[Tanh]=Cosh[#]^(-2)&,
-  Derivative[Cot]=(-1)*Sin[#]^2^(-1)&,
+  Derivative[Cot]=(-1)*Sin[#]^(-2)&,
   Derivative[Cos]=(-1)*Sin[#]&,
   Derivative[ArcSin]=(1-#^2)^(-1/2)&,
   Derivative[Sin]=Cos[#]&,
