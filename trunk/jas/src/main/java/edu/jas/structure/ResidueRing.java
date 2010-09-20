@@ -1,5 +1,5 @@
 /*
- * $Id: ResidueRing.java 3211 2010-07-05 12:54:22Z kredel $
+ * $Id: ResidueRing.java 3287 2010-08-23 21:29:53Z kredel $
  */
 
 package edu.jas.structure;
@@ -50,7 +50,7 @@ public class ResidueRing<C extends RingElem<C> >
     public ResidueRing(RingFactory<C> r, C m) {
         ring = r;
         if ( m.isZERO() ) {
-           throw new RuntimeException("modul may not be null");
+           throw new IllegalArgumentException("modul may not be null");
         }
         if ( m.isONE() ) {
            logger.warn("modul is one");
@@ -68,7 +68,7 @@ public class ResidueRing<C extends RingElem<C> >
      * @see edu.jas.structure.ElemFactory#isFinite()
      */
     public boolean isFinite() {
-        throw new RuntimeException("not implemented");
+        throw new UnsupportedOperationException("not implemented");
         //return ring.isFinite();
     }
 

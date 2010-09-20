@@ -1,5 +1,5 @@
 /*
- * $Id: ReductionSeq.java 2412 2009-02-07 12:17:54Z kredel $
+ * $Id: ReductionSeq.java 3288 2010-08-25 21:46:14Z kredel $
  */
 
 package edu.jas.gb;
@@ -51,7 +51,7 @@ public class ReductionSeq<C extends RingElem<C>> // should be FieldElem<C>>
            return Ap;
         }
         if ( ! Ap.ring.coFac.isField() ) {
-           throw new RuntimeException("coefficients not from a field");
+           throw new IllegalArgumentException("coefficients not from a field");
         }
         Map.Entry<ExpVector,C> m;
         int l;
@@ -133,7 +133,7 @@ public class ReductionSeq<C extends RingElem<C>> // should be FieldElem<C>>
             return Ap;
         }
         if ( ! Ap.ring.coFac.isField() ) {
-           throw new RuntimeException("coefficients not from a field");
+           throw new IllegalArgumentException("coefficients not from a field");
         }
         int l = Pp.size();
         GenPolynomial<C>[] P = new GenPolynomial[l];

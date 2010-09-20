@@ -1,5 +1,5 @@
 /*
- * $Id: GreatestCommonDivisorPrimitive.java 2724 2009-07-09 20:16:03Z kredel $
+ * $Id: GreatestCommonDivisorPrimitive.java 3290 2010-08-26 09:18:48Z kredel $
  */
 
 package edu.jas.ufd;
@@ -44,7 +44,7 @@ public class GreatestCommonDivisorPrimitive<C extends GcdRingElem<C>> extends
             return S;
         }
         if (P.ring.nvar > 1) {
-            throw new RuntimeException(this.getClass().getName() + " no univariate polynomial");
+            throw new IllegalArgumentException(this.getClass().getName() + " no univariate polynomial");
         }
         long e = P.degree(0);
         long f = S.degree(0);
@@ -100,7 +100,7 @@ public class GreatestCommonDivisorPrimitive<C extends GcdRingElem<C>> extends
             return S;
         }
         if (P.ring.nvar > 1) {
-            throw new RuntimeException(this.getClass().getName() + " no univariate polynomial");
+            throw new IllegalArgumentException(this.getClass().getName() + " no univariate polynomial");
         }
         long e = P.degree(0);
         long f = S.degree(0);

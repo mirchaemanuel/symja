@@ -1,5 +1,5 @@
 /*
- * $Id: GCDPrimitiveTest.java 2724 2009-07-09 20:16:03Z kredel $
+ * $Id: GCDPrimitiveTest.java 3299 2010-08-29 14:34:41Z kredel $
  */
 
 package edu.jas.ufd;
@@ -7,6 +7,8 @@ package edu.jas.ufd;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.log4j.BasicConfigurator;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -33,6 +35,7 @@ public class GCDPrimitiveTest extends TestCase {
      * main.
      */
     public static void main(String[] args) {
+        BasicConfigurator.configure();
         junit.textui.TestRunner.run(suite());
     }
 

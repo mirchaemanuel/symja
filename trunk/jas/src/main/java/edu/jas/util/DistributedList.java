@@ -1,5 +1,5 @@
 /*
- * $Id: DistributedList.java 2920 2009-12-25 16:50:47Z kredel $
+ * $Id: DistributedList.java 3279 2010-08-21 20:18:25Z kredel $
  */
 
 package edu.jas.util;
@@ -61,6 +61,7 @@ public class DistributedList /* implements List not jet */ {
      */
     public DistributedList(ChannelFactory cf,String host,int port) {
         this.cf = cf;
+        cf.init();
         try {
             channel = cf.getChannel(host,port);
         } catch (IOException e) {

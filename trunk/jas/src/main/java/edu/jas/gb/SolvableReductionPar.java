@@ -1,5 +1,5 @@
 /*
- * $Id: SolvableReductionPar.java 2921 2009-12-25 17:06:56Z kredel $
+ * $Id: SolvableReductionPar.java 3288 2010-08-25 21:46:14Z kredel $
  */
 
 package edu.jas.gb;
@@ -126,7 +126,7 @@ public class SolvableReductionPar<C extends RingElem<C>>
            leftNormalform(List<GenSolvablePolynomial<C>> row,
                           List<GenSolvablePolynomial<C>> Pp, 
                           GenSolvablePolynomial<C> Ap) {  
-        throw new RuntimeException("normalform with recording not implemented");
+        throw new UnsupportedOperationException("normalform with recording not implemented");
     }
 
 

@@ -1,5 +1,5 @@
 /*
- * $Id: GroebnerBaseSeqPairParallel.java 3182 2010-06-11 20:03:08Z kredel $
+ * $Id: GroebnerBaseSeqPairParallel.java 3288 2010-08-25 21:46:14Z kredel $
  */
 
 package edu.jas.gb;
@@ -156,6 +156,9 @@ public class GroebnerBaseSeqPairParallel<C extends RingElem<C>>
                 G.add( p );
                 if ( pairlist == null ) {
                     pairlist = new CriticalPairList<C>( modv, p.ring );
+                    if ( ! p.ring.coFac.isField() ) {
+                        throw new IllegalArgumentException("coefficients not from a field");
+                    }
                 }
                 // putOne not required
                 pairlist.put( p );
@@ -180,10 +183,7 @@ public class GroebnerBaseSeqPairParallel<C extends RingElem<C>>
         logger.debug("#parallel list = "+G.size());
         G = minimalGB(G);
         // not in this context // pool.terminate();
-        logger.info("pairlist #put = " + pairlist.putCount() 
-                    + " #rem = " + pairlist.remCount()
-                    //+ " #total = " + pairlist.pairCount()
-                    );
+        logger.info("" + pairlist); 
         return G;
     }
 

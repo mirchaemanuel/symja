@@ -1,6 +1,6 @@
 
 /*
- * $Id: GenGcdPolynomial.java 2921 2009-12-25 17:06:56Z kredel $
+ * $Id: GenGcdPolynomial.java 3292 2010-08-26 14:56:47Z kredel $
  */
 
 package edu.jas.poly;
@@ -254,8 +254,8 @@ public class GenGcdPolynomial<C extends GcdRingElem<C> >
     @Override
      public GenPolynomial<C> divide(C s) {
         if ( s == null || s.isZERO() ) {
-           throw new RuntimeException(this.getClass().getName()
-                                      + " division by zero");
+           throw new ArithmeticException(this.getClass().getName()
+                                       + " division by zero");
         }
         if ( this.isZERO() ) {
             return this;
@@ -270,12 +270,12 @@ public class GenGcdPolynomial<C extends GcdRingElem<C> >
                 C x = c1.remainder(s);
                 if ( !x.isZERO() ) {
                    System.out.println("divide x = " + x);
-                   throw new RuntimeException(this.getClass().getName()
+                   throw new ArithmeticException(this.getClass().getName()
                                 + " no exact division: " + c1 + "/" + s);
                 }
             }
             if ( c.isZERO() ) {
-               throw new RuntimeException(this.getClass().getName()
+               throw new  ArithmeticException(this.getClass().getName()
                                 + " no exact division: " + c1 + "/" + s);
             }
             pv.put( e, c ); // or m1.setValue( c )
@@ -294,14 +294,14 @@ public class GenGcdPolynomial<C extends GcdRingElem<C> >
      * @see edu.jas.poly.PolyUtil#basePseudoRemainder(edu.jas.poly.GenPolynomial,edu.jas.poly.GenPolynomial).
      */
     @Override
-     public GenPolynomial<C>[] divideAndRemainder(GenPolynomial<C> S) {
+    public GenPolynomial<C>[] quotientRemainder(GenPolynomial<C> S) {
         if ( S == null || S.isZERO() ) {
-            throw new RuntimeException(this.getClass().getName()
+            throw new ArithmeticException(this.getClass().getName()
                                        + " division by zero");
         }
         C c = S.leadingBaseCoefficient();
         if ( ! c.isUnit() ) {
-           throw new RuntimeException(this.getClass().getName()
+           throw new ArithmeticException(this.getClass().getName()
                                        + " lbcf not invertible " + c);
         }
         C ci = c.inverse();
@@ -338,6 +338,22 @@ public class GenGcdPolynomial<C extends GcdRingElem<C> >
 
 
     /**
+     * GenPolynomial division with remainder.
+     * Fails, if exact division by leading base coefficient is not possible.
+     * Meaningful only for univariate polynomials over fields, but works 
+     * in any case.
+     * @param S nonzero GenPolynomial with invertible leading coefficient.
+     * @return [ quotient , remainder ] with this = quotient * S + remainder.
+     * @see edu.jas.poly.PolyUtil#basePseudoRemainder(edu.jas.poly.GenPolynomial,edu.jas.poly.GenPolynomial).
+     * @deprecated use quotientRemainder()
+     */
+    @Deprecated 
+    public GenPolynomial<C>[] divideAndRemainder(GenPolynomial<C> S) {
+        return quotientRemainder(S);
+    }
+
+
+    /**
      * GenPolynomial division.
      * Fails, if exact division by leading base coefficient is not possible.
      * Meaningful only for univariate polynomials over fields, but works 
@@ -348,7 +364,7 @@ public class GenGcdPolynomial<C extends GcdRingElem<C> >
      */
     @Override
      public GenPolynomial<C> divide(GenPolynomial<C> S) {
-        return divideAndRemainder(S)[0];
+        return quotientRemainder(S)[0];
     }
 
 
@@ -364,12 +380,12 @@ public class GenGcdPolynomial<C extends GcdRingElem<C> >
     @Override
      public GenPolynomial<C> remainder(GenPolynomial<C> S) {
         if ( S == null || S.isZERO() ) {
-           throw new RuntimeException(this.getClass().getName()
+           throw new ArithmeticException(this.getClass().getName()
                                       + " division by zero");
         }
         C c = S.leadingBaseCoefficient();
         if ( ! c.isUnit() ) {
-           throw new RuntimeException(this.getClass().getName()
+           throw new ArithmeticException(this.getClass().getName()
                                       + " lbc not invertible " + c);
         }
         C ci = c.inverse();
@@ -409,7 +425,7 @@ public class GenGcdPolynomial<C extends GcdRingElem<C> >
             return S;
         }
         if ( ring.nvar != 1 /*|| !ring.coFac.isField()*/ ) {
-           //throw new RuntimeException(this.getClass().getName()
+           //throw new IllegalArgumentException(this.getClass().getName()
            //                       + " not univariate polynomials" + ring);
            //System.out.println("this = " + this);
            //System.out.println("S    = " + S);
@@ -448,7 +464,7 @@ public class GenGcdPolynomial<C extends GcdRingElem<C> >
             return ret;
         }
         if ( ring.nvar != 1 ) {
-           throw new RuntimeException(this.getClass().getName()
+           throw new IllegalArgumentException(this.getClass().getName()
                                       + " not univariate polynomials" + ring);
         }
         //System.out.println("this = " + this + ", S = " + S);
@@ -462,7 +478,7 @@ public class GenGcdPolynomial<C extends GcdRingElem<C> >
         GenPolynomial<C> x1;
         GenPolynomial<C> x2;
         while ( !r.isZERO() ) {
-            qr = q.divideAndRemainder(r);
+            qr = q.quotientRemainder(r);
             q = qr[0];
             x1 = c1.subtract( q.multiply(d1) );
             x2 = c2.subtract( q.multiply(d2) );

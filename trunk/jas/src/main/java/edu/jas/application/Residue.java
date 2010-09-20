@@ -1,5 +1,5 @@
 /*
- * $Id: Residue.java 3211 2010-07-05 12:54:22Z kredel $
+ * $Id: Residue.java 3287 2010-08-23 21:29:53Z kredel $
  */
 
 package edu.jas.application;
@@ -361,11 +361,11 @@ public class Residue<C extends GcdRingElem<C> >
 
     /**
      * Extended greatest common divisor.
-     * <b>Note: </b>Not implemented, throws RuntimeException.
+     * <b>Note: </b>Not implemented, throws UnsupportedOperationException.
      * @param b other element.
      * @return [ gcd(this,b), c1, c2 ] with c1*this + c2*b = gcd(this,b).
      */
     public Residue<C>[] egcd(Residue<C> b) {
-        throw new RuntimeException("egcd not implemented " + this.getClass().getName());
+        throw new UnsupportedOperationException("egcd not implemented " + this.getClass().getName());
     }
 }

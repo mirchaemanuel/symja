@@ -1,5 +1,5 @@
 /*
- * $Id: GroebnerBaseDistributedHybrid.java 3211 2010-07-05 12:54:22Z kredel $
+ * $Id: GroebnerBaseDistributedHybrid.java 3320 2010-09-12 11:01:57Z kredel $
  */
 
 package edu.jas.gb;
@@ -40,7 +40,7 @@ public class GroebnerBaseDistributedHybrid<C extends RingElem<C>> extends Groebn
     public static final Logger logger = Logger.getLogger(GroebnerBaseDistributedHybrid.class);
 
 
-    public static final boolean debug = true || logger.isDebugEnabled();
+    public final boolean debug = logger.isDebugEnabled();
 
 
     /**
@@ -194,6 +194,7 @@ public class GroebnerBaseDistributedHybrid<C extends RingElem<C>> extends Groebn
         long t = System.currentTimeMillis();
         final int DL_PORT = port + 100;
         ChannelFactory cf = new ChannelFactory(port);
+        cf.init();
         DistHashTableServer<Integer> dls = new DistHashTableServer<Integer>(DL_PORT);
         dls.init();
         logger.debug("dist-list server running");
@@ -221,7 +222,7 @@ public class GroebnerBaseDistributedHybrid<C extends RingElem<C>> extends Groebn
                 if (pairlist == null) {
                     pairlist = new OrderedPairlist<C>(modv, p.ring);
                     if ( ! p.ring.coFac.isField() ) {
-                        throw new RuntimeException("coefficients not from a field");
+                        throw new IllegalArgumentException("coefficients not from a field");
                     }
                 }
                 // theList not updated here
@@ -308,8 +309,10 @@ public class GroebnerBaseDistributedHybrid<C extends RingElem<C>> extends Groebn
     public void clientPart(String host) throws IOException {
 
         ChannelFactory cf = new ChannelFactory(port + 10); // != port for localhost
+        cf.init();
         SocketChannel channel = cf.getChannel(host, port);
         TaggedSocketChannel pairChannel = new TaggedSocketChannel(channel);
+        pairChannel.init();
 
         if (debug) {
             logger.info("clientPart pairChannel   = " + pairChannel);
@@ -439,7 +442,7 @@ class HybridReducerServer<C extends RingElem<C>> implements Runnable {
     public static final Logger logger = Logger.getLogger(HybridReducerServer.class);
 
 
-    public static final boolean debug = true || logger.isDebugEnabled();
+    public final boolean debug = logger.isDebugEnabled();
 
 
     private final Terminator finner;
@@ -508,6 +511,7 @@ class HybridReducerServer<C extends RingElem<C>> implements Runnable {
         try {
             channel = cf.getChannel();
             pairChannel = new TaggedSocketChannel(channel);
+            pairChannel.init();
         } catch (InterruptedException e) {
             logger.debug("get pair channel interrupted");
             e.printStackTrace();
@@ -652,7 +656,7 @@ class HybridReducerReceiver<C extends RingElem<C>> extends Thread {
     public static final Logger logger = Logger.getLogger(HybridReducerReceiver.class);
 
 
-    public static final boolean debug = true || logger.isDebugEnabled();
+    public final boolean debug = logger.isDebugEnabled();
 
 
     private final DistHashTable<Integer, GenPolynomial<C>> theList;
@@ -844,7 +848,7 @@ class HybridReducerClient<C extends RingElem<C>> implements Runnable {
     private static final Logger logger = Logger.getLogger(HybridReducerClient.class);
 
 
-    public static final boolean debug = true || logger.isDebugEnabled();
+    public final boolean debug = logger.isDebugEnabled();
 
 
     private final TaggedSocketChannel pairChannel;

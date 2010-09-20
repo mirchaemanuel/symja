@@ -1,5 +1,5 @@
 /*
- * $Id: BigInteger.java 3211 2010-07-05 12:54:22Z kredel $
+ * $Id: BigInteger.java 3297 2010-08-26 19:09:03Z kredel $
  */
 
 package edu.jas.arith;
@@ -8,6 +8,7 @@ import java.util.Random;
 import java.io.Reader;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import edu.jas.structure.GcdRingElem;
 import edu.jas.structure.RingFactory;
@@ -24,10 +25,10 @@ import edu.jas.util.StringUtil;
  */
 
 public final class BigInteger implements GcdRingElem<BigInteger>, 
-                                         RingFactory<BigInteger> {
+                                         RingFactory<BigInteger>, Iterable<BigInteger> {
 
     /** The data structure. 
-      */
+     */
     protected final java.math.BigInteger val;
 
 
@@ -37,13 +38,13 @@ public final class BigInteger implements GcdRingElem<BigInteger>,
     /** The constant 0.
      */
     public final static BigInteger ZERO 
-                 = new BigInteger( java.math.BigInteger.ZERO );
+        = new BigInteger( java.math.BigInteger.ZERO );
 
 
     /** The constant 1.
      */
     public final static BigInteger ONE 
-                 = new BigInteger( java.math.BigInteger.ONE );
+        = new BigInteger( java.math.BigInteger.ONE );
 
 
     /**
@@ -317,7 +318,7 @@ public final class BigInteger implements GcdRingElem<BigInteger>,
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override
-     public boolean equals(Object b) {
+    public boolean equals(Object b) {
         if ( ! ( b instanceof BigInteger ) ) {
             return false;
         }
@@ -330,7 +331,7 @@ public final class BigInteger implements GcdRingElem<BigInteger>,
      * @see java.lang.Object#hashCode()
      */
     @Override
-     public int hashCode() {
+    public int hashCode() {
         return val.hashCode();
     }
 
@@ -464,12 +465,25 @@ public final class BigInteger implements GcdRingElem<BigInteger>,
      * @param S BigInteger.
      * @return BigInteger[] { q, r } with this = q S + r and 0 &le; r &lt; |S|.
      */
-    public BigInteger[] divideAndRemainder(BigInteger S) {
+    //@Override
+    public BigInteger[] quotientRemainder(BigInteger S) {
         BigInteger[] qr = new BigInteger[2];
         java.math.BigInteger[] C = val.divideAndRemainder( S.val );
         qr[0] = new BigInteger( C[0] );
         qr[1] = new BigInteger( C[1] );
         return qr;
+    }
+
+
+    /** BigInteger compute quotient and remainder.
+     * Throws an exception, if S == 0.
+     * @param S BigInteger.
+     * @return BigInteger[] { q, r } with this = q S + r and 0 &le; r &lt; |S|.
+     * @deprecated use quotientRemainder()
+     */
+    @Deprecated 
+    public BigInteger[] divideAndRemainder(BigInteger S) {
+        return quotientRemainder(S);
     }
 
 
@@ -483,7 +497,7 @@ public final class BigInteger implements GcdRingElem<BigInteger>,
      */
     public static BigInteger[] IQR(BigInteger A, BigInteger B) {
         if ( A == null ) return null;
-        return A.divideAndRemainder(B);
+        return A.quotientRemainder(B);
     }
 
 
@@ -525,7 +539,7 @@ public final class BigInteger implements GcdRingElem<BigInteger>,
         BigInteger x1;
         BigInteger x2;
         while ( !r.isZERO() ) {
-            qr = q.divideAndRemainder(r);
+            qr = q.quotientRemainder(r);
             q = qr[0];
             x1 = c1.subtract( q.multiply(d1) );
             x2 = c2.subtract( q.multiply(d2) );
@@ -647,4 +661,98 @@ public final class BigInteger implements GcdRingElem<BigInteger>,
         return parse( StringUtil.nextString(r) );
     }
 
+
+    private boolean nonNegative = true;
+
+
+    /** Set the iteration algorithm to all elements.
+     */
+    public void setAllIterator() {
+        nonNegative = false;
+    }
+
+
+    /** Set the iteration algorithm to non-negative elements.
+     */
+    public void setNonNegativeIterator() {
+        nonNegative = true;
+    }
+
+
+    /** Get a BigInteger iterator.
+     * @return a iterator over all integers.
+     */
+    public Iterator<BigInteger> iterator() {
+        return new BigIntegerIterator(nonNegative);
+    }
+
+}
+
+
+/**
+ * Big integer iterator.
+ * @author Heinz Kredel
+ */
+class BigIntegerIterator implements Iterator<BigInteger> {
+
+
+    /**
+     * data structure.
+     */
+    java.math.BigInteger curr;
+
+
+    final boolean nonNegative;
+
+
+    /**
+     * BigInteger iterator constructor.
+     */
+    public BigIntegerIterator() {
+        this(false);
+    }
+
+
+    /**
+     * BigInteger iterator constructor.
+     * @param nn true for an iterator over non-negative longs, false for all elements iterator.
+     */
+    public BigIntegerIterator(boolean nn) {
+        curr = java.math.BigInteger.ZERO;
+        nonNegative = nn;
+    }
+
+
+    /**
+     * Test for availability of a next element.
+     * @return true if the iteration has more elements, else false.
+     */
+    public boolean hasNext() {
+        return true; 
+    }
+
+
+    /**
+     * Get next integer.
+     * @return next integer.
+     */
+    public synchronized BigInteger next() {
+        BigInteger i = new BigInteger(curr);
+        if ( nonNegative ) {
+            curr = curr.add( java.math.BigInteger.ONE );
+        } else if ( curr.signum() > 0 && ! nonNegative ) {
+            curr = curr.negate();
+        } else {
+            curr = curr.negate().add( java.math.BigInteger.ONE );
+        }
+        return i;
+    }
+
+
+    /**
+     * Remove an element if allowed.
+     */
+    public void remove() {
+        throw new UnsupportedOperationException("cannnot remove elements");
+    }
 }

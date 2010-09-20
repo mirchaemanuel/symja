@@ -1,5 +1,5 @@
 /*
- * $Id: BigRational.java 3211 2010-07-05 12:54:22Z kredel $
+ * $Id: BigRational.java 3283 2010-08-22 17:23:03Z kredel $
  */
 
 package edu.jas.arith;
@@ -9,6 +9,10 @@ import java.util.Random;
 import java.io.Reader;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Set;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Collections;
 
 import edu.jas.structure.Power;
 import edu.jas.structure.GcdRingElem;
@@ -26,7 +30,7 @@ import edu.jas.util.StringUtil;
  */
 
 public final class BigRational implements GcdRingElem<BigRational>, 
-                                          RingFactory<BigRational>, Rational {
+                                          RingFactory<BigRational>, Rational, Iterable<BigRational> {
 
     /**
      * Numerator part of the data structure.
@@ -143,7 +147,11 @@ public final class BigRational implements GcdRingElem<BigRational>,
                 den = BigInteger.ONE;
                 return;
             } else {
-                n = new BigInteger( s.substring(0,i) );
+                if ( s.charAt(0) == '-' ) { // case -0.11111
+                    n = new BigInteger( s.substring(1,i) );
+                } else {
+                    n = new BigInteger( s.substring(0,i) );
+                }
                 BigRational r = new BigRational(n);
                 d = new BigInteger( s.substring( i+1, s.length() ) );
                 int j = s.length() - i - 1;
@@ -155,7 +163,11 @@ public final class BigRational implements GcdRingElem<BigRational>,
                 BigRational f = new BigRational(d);
                 f = f.multiply(z);
                 r = r.sum(f);
-                num = r.num;
+                if ( s.charAt(0) == '-' ) {
+                    num = r.num.negate();
+                } else {
+                    num = r.num;
+                }
                 den = r.den;
             }
         } else {
@@ -463,6 +475,16 @@ public final class BigRational implements GcdRingElem<BigRational>,
     } 
 
 
+    /** Rational number reduction to lowest terms. 
+     * @param n BigInteger.
+     * @param d BigInteger.
+     * @return a/b ~ n/d, gcd(a,b) = 1, b > 0.
+     */
+    public static BigRational reduction(BigInteger n, BigInteger d) {
+        return RNRED(n,d);
+    } 
+
+
     /** Rational number absolute value. 
      * @return the absolute value of this.
      * @see edu.jas.structure.RingElem#abs()
@@ -759,7 +781,7 @@ public final class BigRational implements GcdRingElem<BigRational>,
      */
     public BigRational remainder(BigRational S) {
         if ( S.isZERO() ) {
-            throw new RuntimeException("division by zero");
+            throw new ArithmeticException("division by zero");
         }
         return ZERO;
     }
@@ -971,5 +993,265 @@ public final class BigRational implements GcdRingElem<BigRational>,
         return ret;
     }
 
+
+    private boolean nonNegative = true;
+
+
+    private boolean duplicates = true;
+
+
+    /** Set the iteration algorithm to all elements.
+     */
+    public void setAllIterator() {
+        nonNegative = false;
+    }
+
+
+    /** Set the iteration algorithm to non-negative elements.
+     */
+    public void setNonNegativeIterator() {
+        nonNegative = true;
+    }
+
+
+    /** Set the iteration algorithm to no duplicate elements.
+     */
+    public void setNoDuplicatesIterator() {
+        duplicates = false; 
+    }
+
+
+    /** Set the iteration algorithm to allow duplicate elements.
+     */
+    public void setDuplicatesIterator() {
+        duplicates = true;
+    }
+
+
+    /** Get a BigInteger iterator.
+     * @return a iterator over all rationals.
+     */
+    public Iterator<BigRational> iterator() {
+        if ( duplicates ) {
+           return new BigRationalIterator(nonNegative);
+        } else {
+           return new BigRationalUniqueIterator( new BigRationalIterator(nonNegative) );
+        }
+    }
+
+
+    /** Get a BigInteger iterator with no duplicates.
+     * @return a iterator over all rationals without duplicates.
+     */
+    public Iterator<BigRational> uniqueIterator() {
+        return new BigRationalUniqueIterator( new BigRationalIterator(nonNegative) );
+    }
+
 }
 
+
+/**
+ * Big rational iterator.
+ * Uses Cantors diagonal enumeration.
+ * @author Heinz Kredel
+ */
+class BigRationalIterator implements Iterator<BigRational> {
+
+
+    /**
+     * data structure.
+     */
+    BigRational curr;
+
+
+    edu.jas.arith.BigInteger den;
+
+
+    edu.jas.arith.BigInteger num;
+
+
+    Iterator<edu.jas.arith.BigInteger> denit;
+
+
+    Iterator<edu.jas.arith.BigInteger> numit;
+
+
+    List<edu.jas.arith.BigInteger> denlist;
+
+
+    List<edu.jas.arith.BigInteger> numlist;
+
+
+    Iterator<edu.jas.arith.BigInteger> denlistit;
+
+
+    Iterator<edu.jas.arith.BigInteger> numlistit;
+
+
+    final boolean nonNegative;
+
+
+    protected long level;
+
+
+    /**
+     * BigRational iterator constructor.
+     */
+    public BigRationalIterator() {
+        this(false);
+    }
+
+
+    /**
+     * BigRational iterator constructor.
+     * @param nn, true for indicator for a non-negative 
+     *            iterator, fall for an all iterator 
+     */
+    public BigRationalIterator(boolean nn) {
+        nonNegative = nn;
+        curr = edu.jas.arith.BigRational.ZERO;
+        level = 0;
+        den = new edu.jas.arith.BigInteger(); // ZERO
+        num = edu.jas.arith.BigInteger.ONE.clone();
+        if ( nn ) {
+            den.setNonNegativeIterator();
+        } else {
+            den.setAllIterator();
+        }
+        num.setNonNegativeIterator();
+        denit = den.iterator();
+        numit = num.iterator();
+        denlist = new ArrayList<edu.jas.arith.BigInteger>();
+        numlist = new ArrayList<edu.jas.arith.BigInteger>();
+        edu.jas.arith.BigInteger unused = denit.next(); // skip zero denominator
+        unused = numit.next();
+        denlist.add( denit.next() );
+        numlist.add( numit.next() );
+        denlistit = denlist.iterator();
+        numlistit = numlist.iterator();
+    }
+
+
+    /**
+     * Test for availability of a next element.
+     * @return true if the iteration has more elements, else false.
+     */
+    public boolean hasNext() {
+        return true; 
+    }
+
+
+    /**
+     * Get next rational.
+     * @return next rational.
+     */
+    public synchronized BigRational next() {
+        BigRational r = curr;
+        if ( denlistit.hasNext() && numlistit.hasNext() ) {
+           BigInteger d = denlistit.next().val;
+           BigInteger n = numlistit.next().val;
+           //System.out.println(d + "//" + n);
+           curr = BigRational.reduction(d,n);
+           return r;
+        }
+        level++;
+        if ( level % 2 == 1 ) {
+            Collections.reverse(denlist);
+        } else {
+            Collections.reverse(numlist);
+        }
+        denlist.add( denit.next() );
+        numlist.add( numit.next() );
+        if ( level % 2 == 0 ) {
+            Collections.reverse(denlist);
+        } else {
+            Collections.reverse(numlist);
+        }
+        //System.out.println("denlist = " + denlist);
+        //System.out.println("numlist = " + numlist);
+        denlistit = denlist.iterator();
+        numlistit = numlist.iterator();
+        BigInteger d = denlistit.next().val;
+        BigInteger n = numlistit.next().val;
+        //System.out.println(d + "//" + n);
+        curr = BigRational.reduction(d,n);
+        return r;
+    }
+
+
+    /**
+     * Remove an element if allowed.
+     */
+    public void remove() {
+        throw new UnsupportedOperationException("cannnot remove elements");
+    }
+}
+
+
+/**
+ * Big rational unique iterator.
+ * Uses Cantors diagonal enumeration, produces all distinct elements.
+ * @author Heinz Kredel
+ */
+class BigRationalUniqueIterator implements Iterator<BigRational> {
+
+
+    /**
+     * data structure.
+     */
+    final Set<BigRational> unique;
+
+
+    final Iterator<BigRational> ratit;
+
+
+    /**
+     * BigRational iterator constructor.
+     */
+    public BigRationalUniqueIterator() {
+        this( BigRational.ONE.iterator() );
+    }
+
+
+    /**
+     * BigRational iterator constructor.
+     * @param nn, true for indicator for a non-negative 
+     *            iterator, fall for an all iterator 
+     */
+    public BigRationalUniqueIterator(Iterator<BigRational> rit) {
+        ratit = rit;
+        unique = new HashSet<BigRational>();
+    }
+
+
+    /**
+     * Test for availability of a next element.
+     * @return true if the iteration has more elements, else false.
+     */
+    public synchronized boolean hasNext() {
+        return ratit.hasNext(); 
+    }
+
+
+    /**
+     * Get next rational.
+     * @return next rational.
+     */
+    public synchronized BigRational next() {
+        BigRational r = ratit.next();
+        while ( unique.contains(r) ) {
+            //System.out.println("duplicate " + r);
+            r = ratit.next();
+        }
+        unique.add(r);
+        return r;
+    }
+
+
+    /**
+     * Remove an element if allowed.
+     */
+    public void remove() {
+        throw new UnsupportedOperationException("cannnot remove elements");
+    }
+}

@@ -1,5 +1,5 @@
 /*
- * $Id: ModSolvableGroebnerBaseAbstract.java 2416 2009-02-07 13:24:32Z kredel $
+ * $Id: ModSolvableGroebnerBaseAbstract.java 3287 2010-08-23 21:29:53Z kredel $
  */
 
 package edu.jas.gbmod;
@@ -234,7 +234,7 @@ public class ModSolvableGroebnerBaseAbstract<C extends RingElem<C>>
         if ( modv == 0 ) {
            return sbb.rightGB(modv,F);
         }
-        throw new RuntimeException("modv != 0 not jet implemented");
+        throw new UnsupportedOperationException("modv != 0 not jet implemented");
         // return sbb.rightGB(modv,F);
     }
 

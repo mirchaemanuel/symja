@@ -1,5 +1,5 @@
 /*
- * $Id: SocketChannelTest.java 1663 2008-02-05 17:32:07Z kredel $
+ * $Id: SocketChannelTest.java 3279 2010-08-21 20:18:25Z kredel $
  */
 
 // from package edu.unima.ky.parallel;
@@ -47,6 +47,7 @@ public class SocketChannelTest extends TestCase {
        host = "localhost";
        port = 4711;
        cf = new ChannelFactory(port);       
+       cf.init();
        try {
         sc1 = cf.getChannel(host,port);
         sc2 = cf.getChannel();

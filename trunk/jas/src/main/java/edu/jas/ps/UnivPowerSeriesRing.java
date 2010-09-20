@@ -1,5 +1,5 @@
 /*
- * $Id: UnivPowerSeriesRing.java 3211 2010-07-05 12:54:22Z kredel $
+ * $Id: UnivPowerSeriesRing.java 3315 2010-09-05 18:26:34Z kredel $
  */
 
 package edu.jas.ps;
@@ -79,10 +79,7 @@ public class UnivPowerSeriesRing<C extends RingElem<C>> implements RingFactory<U
      * No argument constructor.
      */
     private UnivPowerSeriesRing() {
-        throw new RuntimeException("do not use no-argument constructor");
-        //coFac = null;
-        //ONE = null;
-        //ZERO = null;
+        throw new IllegalArgumentException("do not use no-argument constructor");
     }
 
 
@@ -154,7 +151,7 @@ public class UnivPowerSeriesRing<C extends RingElem<C>> implements RingFactory<U
      * @return fix point wrt map.
      */
     // Cannot be a static method because a power series ring is required.
-    public UnivPowerSeries<C> fixPoint(PowerSeriesMap<C> map) {
+    public UnivPowerSeries<C> fixPoint(UnivPowerSeriesMap<C> map) {
         UnivPowerSeries<C> ps1 = new UnivPowerSeries<C>(this);
         UnivPowerSeries<C> ps2 = map.map(ps1);
         ps1.lazyCoeffs = ps2.lazyCoeffs;
@@ -291,7 +288,7 @@ public class UnivPowerSeriesRing<C extends RingElem<C>> implements RingFactory<U
      * @return exp(x) as UnivPowerSeries<C>.
      */
     public UnivPowerSeries<C> getEXP() {
-        return fixPoint(new PowerSeriesMap<C>() {
+        return fixPoint(new UnivPowerSeriesMap<C>() {
 
 
             public UnivPowerSeries<C> map(UnivPowerSeries<C> e) {
@@ -306,7 +303,7 @@ public class UnivPowerSeriesRing<C extends RingElem<C>> implements RingFactory<U
      * @return sin(x) as UnivPowerSeries<C>.
      */
     public UnivPowerSeries<C> getSIN() {
-        return fixPoint(new PowerSeriesMap<C>() {
+        return fixPoint(new UnivPowerSeriesMap<C>() {
 
 
             public UnivPowerSeries<C> map(UnivPowerSeries<C> s) {
@@ -321,7 +318,7 @@ public class UnivPowerSeriesRing<C extends RingElem<C>> implements RingFactory<U
      * @return cos(x) as UnivPowerSeries<C>.
      */
     public UnivPowerSeries<C> getCOS() {
-        return fixPoint(new PowerSeriesMap<C>() {
+        return fixPoint(new UnivPowerSeriesMap<C>() {
 
 
             public UnivPowerSeries<C> map(UnivPowerSeries<C> c) {
@@ -336,7 +333,7 @@ public class UnivPowerSeriesRing<C extends RingElem<C>> implements RingFactory<U
      * @return tan(x) as UnivPowerSeries<C>.
      */
     public UnivPowerSeries<C> getTAN() {
-        return fixPoint(new PowerSeriesMap<C>() {
+        return fixPoint(new UnivPowerSeriesMap<C>() {
 
 
             public UnivPowerSeries<C> map(UnivPowerSeries<C> t) {
@@ -426,17 +423,16 @@ public class UnivPowerSeriesRing<C extends RingElem<C>> implements RingFactory<U
             return ONE;
         }
         if (a.ring.nvar != 1) {
-            throw new RuntimeException("only for univariate polynomials");
+            throw new IllegalArgumentException("only for univariate polynomials");
         }
         HashMap<Integer, C> cache = new HashMap<Integer, C>(a.length());
-        //Iterator<Monomial<C>> it = a.monomialIterator();
         for (Monomial<C> m : a) {
-            //while ( it.hasNext() ) {
-            //Monomial<C> m = it.next();
             long e = m.exponent().getVal(0);
             cache.put((int) e, m.coefficient());
         }
         return new UnivPowerSeries<C>(this, new Coefficients<C>(cache) {
+
+
             @Override
             public C generate(int i) {
                 // cached coefficients returned by get
@@ -530,7 +526,7 @@ public class UnivPowerSeriesRing<C extends RingElem<C>> implements RingFactory<U
      * @return power series from s.
      */
     public UnivPowerSeries<C> parse(String s) {
-        throw new RuntimeException("parse for power series not implemented");
+        throw new UnsupportedOperationException("parse for power series not implemented");
     }
 
 
@@ -540,7 +536,7 @@ public class UnivPowerSeriesRing<C extends RingElem<C>> implements RingFactory<U
      * @return next power series from r.
      */
     public UnivPowerSeries<C> parse(Reader r) {
-        throw new RuntimeException("parse for power series not implemented");
+        throw new UnsupportedOperationException("parse for power series not implemented");
     }
 
 }

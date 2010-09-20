@@ -1,33 +1,19 @@
 /*
- * $Id: PolyUfdUtilTest.java 2951 2009-12-31 13:43:03Z kredel $
+ * $Id: PolyUfdUtilTest.java 3295 2010-08-26 17:01:10Z kredel $
  */
 
 package edu.jas.ufd;
 
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.SortedMap;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import edu.jas.arith.BigInteger;
-import edu.jas.arith.Modular;
-import edu.jas.arith.ModInteger;
-import edu.jas.arith.ModIntegerRing;
 import edu.jas.kern.ComputerThreads;
-import edu.jas.poly.ExpVector;
 import edu.jas.poly.GenPolynomial;
 import edu.jas.poly.GenPolynomialRing;
-import edu.jas.poly.PolyUtil;
 import edu.jas.poly.TermOrder;
-import edu.jas.structure.Power;
-import edu.jas.structure.GcdRingElem;
-import edu.jas.util.KsubSet;
 
 
 /**

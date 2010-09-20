@@ -1,5 +1,5 @@
 /*
- * $Id: GroebnerBaseParTest.java 2921 2009-12-25 17:06:56Z kredel $
+ * $Id: GroebnerBaseParTest.java 3265 2010-08-15 10:20:39Z kredel $
  */
 
 package edu.jas.gb;
@@ -174,40 +174,40 @@ public class GroebnerBaseParTest extends TestCase {
      Gs = bbseq.GB( L );
      Gp = bbpar.GB( L );
 
-     assertTrue("Gs.containsAll(Gp)", Gs.containsAll(Gp) );
-     assertTrue("Gp.containsAll(Gs)", Gp.containsAll(Gs) );
+     assertTrue("Gs.containsAll(Gp)" + Gs + ", " + Gp, Gs.containsAll(Gp) );
+     assertTrue("Gp.containsAll(Gs)" + Gs + ", " + Gp, Gp.containsAll(Gs) );
 
      L = Gs;
      L.add(b);
      Gs = bbseq.GB( L );
      Gp = bbpar.GB( L );
 
-     assertTrue("Gs.containsAll(Gp)", Gs.containsAll(Gp) );
-     assertTrue("Gp.containsAll(Gs)", Gp.containsAll(Gs) );
+     assertTrue("Gs.containsAll(Gp)" + Gs + ", " + Gp, Gs.containsAll(Gp) );
+     assertTrue("Gp.containsAll(Gs)" + Gs + ", " + Gp, Gp.containsAll(Gs) );
 
      L = Gs;
      L.add(c);
      Gs = bbseq.GB( L );
      Gp = bbpar.GB( L );
 
-     assertTrue("Gs.containsAll(Gp)", Gs.containsAll(Gp) );
-     assertTrue("Gp.containsAll(Gs)", Gp.containsAll(Gs) );
+     assertTrue("Gs.containsAll(Gp)" + Gs + ", " + Gp, Gs.containsAll(Gp) );
+     assertTrue("Gp.containsAll(Gs)" + Gs + ", " + Gp, Gp.containsAll(Gs) );
 
      L = Gs;
      L.add(d);
      Gs = bbseq.GB( L );
      Gp = bbpar.GB( L );
 
-     assertTrue("Gs.containsAll(Gp)", Gs.containsAll(Gp) );
-     assertTrue("Gp.containsAll(Gs)", Gp.containsAll(Gs) );
+     assertTrue("Gs.containsAll(Gp)" + Gs + ", " + Gp, Gs.containsAll(Gp) );
+     assertTrue("Gp.containsAll(Gs)" + Gs + ", " + Gp, Gp.containsAll(Gs) );
 
      L = Gs;
      L.add(e);
      Gs = bbseq.GB( L );
      Gp = bbpar.GB( L );
 
-     assertTrue("Gs.containsAll(Gp)", Gs.containsAll(Gp) );
-     assertTrue("Gp.containsAll(Gs)", Gp.containsAll(Gs) );
+     assertTrue("Gs.containsAll(Gp)" + Gs + ", " + Gp, Gs.containsAll(Gp) );
+     assertTrue("Gp.containsAll(Gs)" + Gs + ", " + Gp, Gp.containsAll(Gs) );
  }
 
 

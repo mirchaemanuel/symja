@@ -1,5 +1,5 @@
 /*
- * $Id: SolvableGroebnerBaseSeqPairParallel.java 3227 2010-07-24 18:15:03Z kredel $
+ * $Id: SolvableGroebnerBaseSeqPairParallel.java 3288 2010-08-25 21:46:14Z kredel $
  */
 
 package edu.jas.gb;
@@ -146,6 +146,9 @@ public class SolvableGroebnerBaseSeqPairParallel<C extends RingElem<C>>
                G.add( p );
                if ( pairlist == null ) {
                   pairlist = new CriticalPairList<C>( modv, p.ring );
+                  if ( ! p.ring.coFac.isField() ) {
+                     throw new IllegalArgumentException("coefficients not from a field");
+                  }
                }
                // putOne not required
                pairlist.put( p );
@@ -265,7 +268,7 @@ public class SolvableGroebnerBaseSeqPairParallel<C extends RingElem<C>>
     public SolvableExtendedGB<C> 
            extLeftGB( int modv, 
                       List<GenSolvablePolynomial<C>> F ) {
-        throw new RuntimeException("parallel extLeftGB not implemented");
+        throw new UnsupportedOperationException("parallel extLeftGB not implemented");
     }
 
 
@@ -317,6 +320,9 @@ public class SolvableGroebnerBaseSeqPairParallel<C extends RingElem<C>>
                G.add( p );
                if ( pairlist == null ) {
                   pairlist = new CriticalPairList<C>( modv, p.ring );
+                  if ( ! p.ring.coFac.isField() ) {
+                     throw new IllegalArgumentException("coefficients not from a field");
+                  }
                }
                // putOne not required
                pairlist.put( p );

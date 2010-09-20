@@ -1,5 +1,5 @@
 /*
- * $Id: ModLongRing.java 3211 2010-07-05 12:54:22Z kredel $
+ * $Id: ModLongRing.java 3297 2010-08-26 19:09:03Z kredel $
  */
 
 package edu.jas.arith;
@@ -9,6 +9,7 @@ import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.Iterator;
 
 import edu.jas.structure.ModularRingFactory;
 import edu.jas.util.StringUtil;
@@ -19,7 +20,7 @@ import edu.jas.util.StringUtil;
  * @author Heinz Kredel
  */
 
-public final class ModLongRing implements ModularRingFactory<ModLong> {
+public final class ModLongRing implements ModularRingFactory<ModLong>, Iterable<ModLong> {
 
 
     /**
@@ -105,7 +106,7 @@ public final class ModLongRing implements ModularRingFactory<ModLong> {
         this(m.longValue());
         if (MAX_LONG.compareTo(m) <= 0) { // m >= max
             System.out.println("modul to large for long " + m + ",max=" + MAX_LONG);
-            throw new RuntimeException("modul to large for long " + m);
+            throw new IllegalArgumentException("modul to large for long " + m);
         }
     }
 
@@ -120,7 +121,7 @@ public final class ModLongRing implements ModularRingFactory<ModLong> {
         this(m.longValue(), isField);
         if (MAX_LONG.compareTo(m) <= 0) { // m >= max
             System.out.println("modul to large for long " + m + ",max=" + MAX_LONG);
-            throw new RuntimeException("modul to large for long " + m);
+            throw new IllegalArgumentException("modul to large for long " + m);
         }
     }
 
@@ -437,4 +438,67 @@ public final class ModLongRing implements ModularRingFactory<ModLong> {
         return new ModLong(this, s);
     }
 
+
+    /** Get a ModLong iterator.
+     * @return a iterator over all modular integers in this ring.
+     */
+    public Iterator<ModLong> iterator() {
+        return new ModLongIterator(this);
+    }
+
+}
+
+
+/**
+ * Modular integer iterator.
+ * @author Heinz Kredel
+ */
+class ModLongIterator implements Iterator<ModLong> {
+
+
+    /**
+     * data structure.
+     */
+    long curr;
+
+
+    final ModLongRing ring;
+
+
+    /**
+     * ModLong iterator constructor.
+     * @param fac modular integer factory;
+     */
+    public ModLongIterator(ModLongRing fac) {
+        curr = 0L;
+        ring = fac;
+    }
+
+
+    /**
+     * Test for availability of a next element.
+     * @return true if the iteration has more elements, else false.
+     */
+    public synchronized boolean hasNext() {
+        return curr < ring.modul; 
+    }
+
+
+    /**
+     * Get next integer.
+     * @return next integer.
+     */
+    public synchronized ModLong next() {
+        ModLong i = new ModLong(ring,curr);
+        curr++;
+        return i;
+    }
+
+
+    /**
+     * Remove an element if allowed.
+     */
+    public void remove() {
+        throw new UnsupportedOperationException("cannnot remove elements");
+    }
 }

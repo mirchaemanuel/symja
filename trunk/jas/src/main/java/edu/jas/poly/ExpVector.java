@@ -1,5 +1,5 @@
 /*
- * $Id: ExpVector.java 3212 2010-07-05 12:54:49Z kredel $
+ * $Id: ExpVector.java 3285 2010-08-22 18:52:53Z kredel $
  */
 
 package edu.jas.poly;
@@ -7,6 +7,7 @@ package edu.jas.poly;
 import java.util.Random;
 import java.util.Vector;
 //import java.io.Serializable;
+import java.util.Collection;
 
 import edu.jas.structure.AbelianGroupElem;
 import edu.jas.structure.AbelianGroupFactory;
@@ -136,13 +137,27 @@ public abstract class ExpVector implements AbelianGroupElem<ExpVector>
 
 
     /**
+     * Factory constructor for ExpVector.
+     * Sets val.
+     * @param v collection of exponents.
+     */
+    public static ExpVector create(Collection<Long> v) {
+        long[] w = new long[ v.size() ];
+        int i = 0;
+        for ( Long k : v ) {
+            w[i++] = k;
+        }
+        return create(w);
+    }
+
+
+    /**
      * Get the corresponding element factory.
      * @return factory for this Element.
      * @see edu.jas.structure.Element#factory()
      */
     public AbelianGroupFactory<ExpVector> factory() {
-        //return null;
-        throw new RuntimeException("no factory implemented for ExpVector");
+        throw new UnsupportedOperationException("no factory implemented for ExpVector");
     }
 
 
@@ -372,6 +387,40 @@ public abstract class ExpVector implements AbelianGroupElem<ExpVector>
     public String toScriptFactory() {
         // Python case
         return "ExpVector()";
+    }
+
+
+    /** Get the variable name at index.
+     * @param idx index of the variable
+     * @param vars array of names of variables
+     * @return name of variable at the given index.
+     */
+    public String indexVarName(int idx, String...vars) {
+        return vars[length()-idx-1];
+    }
+
+
+    /** Get the array index of a variable at index.
+     * @param idx index of the variable
+     * @return array index of the variable.
+     */
+    public int varIndex(int idx) {
+        return length()-idx-1;
+    }
+
+
+    /** Get the index of a variable.
+     * @param x variable name to be searched.
+     * @param vars array of names of variables
+     * @return index of x in vars.
+     */
+    public int indexVar(String x, String...vars) {
+        for ( int i = 0; i < length(); i++ ) { 
+            if ( x.equals( vars[i] ) ) { 
+                return length()-i-1;
+            }
+        }
+        return -1; // not found
     }
 
 

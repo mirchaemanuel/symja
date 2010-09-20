@@ -1,5 +1,5 @@
 /*
- * $Id: FactorAlgebraic.java 3038 2010-03-13 14:04:38Z kredel $
+ * $Id: FactorAlgebraic.java 3289 2010-08-26 08:04:56Z kredel $
  */
 
 package edu.jas.ufd;
@@ -69,7 +69,7 @@ public class FactorAlgebraic<C extends GcdRingElem<C>> extends FactorAbsolute<Al
     @Override
     public List<GenPolynomial<AlgebraicNumber<C>>> baseFactorsSquarefree(GenPolynomial<AlgebraicNumber<C>> P) {
         if (P == null) {
-            throw new RuntimeException(this.getClass().getName() + " P == null");
+            throw new IllegalArgumentException(this.getClass().getName() + " P == null");
         }
         List<GenPolynomial<AlgebraicNumber<C>>> factors = new ArrayList<GenPolynomial<AlgebraicNumber<C>>>();
         if (P.isZERO()) {
@@ -81,7 +81,7 @@ public class FactorAlgebraic<C extends GcdRingElem<C>> extends FactorAbsolute<Al
         }
         GenPolynomialRing<AlgebraicNumber<C>> pfac = P.ring; // Q(alpha)[x]
         if (pfac.nvar > 1) {
-            throw new RuntimeException("only for univariate polynomials");
+            throw new IllegalArgumentException("only for univariate polynomials");
         }
         AlgebraicNumberRing<C> afac = (AlgebraicNumberRing<C>) pfac.coFac;
 

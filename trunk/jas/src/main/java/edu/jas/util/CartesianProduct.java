@@ -1,5 +1,5 @@
 /*
- * $Id: CartesianProduct.java 3248 2010-08-07 10:25:22Z kredel $
+ * $Id: CartesianProduct.java 3297 2010-08-26 19:09:03Z kredel $
  */
 
 package edu.jas.util;
@@ -8,6 +8,7 @@ package edu.jas.util;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 
 /**
@@ -20,19 +21,28 @@ public class CartesianProduct<E> implements Iterable<List<E>> {
     /**
      * data structure.
      */
-    public final List<List<E>> comps; // List<Iterable<E>> also ok
+    public final List<Iterable<E>> comps; 
 
 
     /**
      * CartesianProduct constructor.
      * @param comps components of the cartesian product.
      */
-    public CartesianProduct(List<List<E>> comps) {
+    public CartesianProduct(List<Iterable<E>> comps) {
         if (comps == null) {
             throw new IllegalArgumentException("null components not allowed");
         }
         this.comps = comps;
     }
+
+
+//     /**
+//      * CartesianProduct constructor.
+//      * @param comps components of the cartesian product.
+//      */
+//     public CartesianProduct(List<List<E>> comps) {
+//         this( listToIterable(comps)  );
+//     }
 
 
     /**
@@ -42,6 +52,21 @@ public class CartesianProduct<E> implements Iterable<List<E>> {
     public Iterator<List<E>> iterator() {
         return new CartesianProductIterator<E>(comps);
     }
+
+
+    /**
+     * Transform list to iterables.
+     * @param comp components of the cartesian product.
+     * @return iterables taken fom lists.
+     */
+    static <E> List<Iterable<E>> listToIterable(List<List<E>> comp) {
+        List<Iterable<E>> iter = new ArrayList<Iterable<E>>( comp.size() );
+        for ( List<E> list : comp ) {
+            iter.add( list );
+        }
+        return iter;
+    }
+
 
 }
 
@@ -56,7 +81,7 @@ class CartesianProductIterator<E> implements Iterator<List<E>> {
     /**
      * data structure.
      */
-    final List<List<E>> comps;
+    final List<Iterable<E>> comps;
 
 
     final List<Iterator<E>> compit;
@@ -72,7 +97,7 @@ class CartesianProductIterator<E> implements Iterator<List<E>> {
      * CartesianProduct iterator constructor.
      * @param comps components of the cartesian product.
      */
-    public CartesianProductIterator(List<List<E>> comps) {
+    public CartesianProductIterator(List<Iterable<E>> comps) {
         if (comps == null) {
             throw new IllegalArgumentException("null comps not allowed");
         }
@@ -80,7 +105,7 @@ class CartesianProductIterator<E> implements Iterator<List<E>> {
         current = new ArrayList<E>(comps.size());
         compit = new ArrayList<Iterator<E>>(comps.size());
         empty = false;
-        for (List<E> ci : comps) {
+        for (Iterable<E> ci : comps) {
             Iterator<E> it = ci.iterator();
             if (!it.hasNext()) {
                 empty = true;
@@ -109,7 +134,7 @@ class CartesianProductIterator<E> implements Iterator<List<E>> {
      */
     public synchronized List<E> next() {
         if (empty) {
-            throw new RuntimeException("invalid call of next()");
+            throw new NoSuchElementException("invalid call of next()");
         }
         List<E> res = new ArrayList<E>(current);
         // search iterator which hasNext

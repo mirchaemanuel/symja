@@ -1,5 +1,5 @@
 /*
- * $Id: Complex.java 3211 2010-07-05 12:54:22Z kredel $
+ * $Id: Complex.java 3292 2010-08-26 14:56:47Z kredel $
  */
 
 package edu.jas.structure;
@@ -434,7 +434,7 @@ public class Complex<C extends RingElem<C>> implements StarRingElem<Complex<C>>,
         if (ring.isField()) {
             return ring.getZERO();
         } else {
-            return divideAndRemainder(S)[1];
+            return quotientRemainder(S)[1];
         }
     }
 
@@ -448,7 +448,7 @@ public class Complex<C extends RingElem<C>> implements StarRingElem<Complex<C>>,
         if (ring.isField()) {
             return this.multiply(B.inverse());
         } else {
-            return divideAndRemainder(B)[0];
+            return quotientRemainder(B)[0];
         }
     }
 
@@ -459,7 +459,7 @@ public class Complex<C extends RingElem<C>> implements StarRingElem<Complex<C>>,
      * @return Complex[] { q, r } with q = this/S and r = rem(this,S).
      */
     @SuppressWarnings("unchecked")
-    public Complex<C>[] divideAndRemainder(Complex<C> S) {
+    public Complex<C>[] quotientRemainder(Complex<C> S) {
         Complex<C>[] ret = (Complex<C>[]) new Complex[2];
         C n = S.norm().re;
         Complex<C> Sp = this.multiply(S.conjugate()); // == this*inv(S)*n
@@ -515,13 +515,24 @@ public class Complex<C extends RingElem<C>> implements StarRingElem<Complex<C>>,
             BigDecimal qid = new BigDecimal(qc.getIm());
             System.out.println("qrd  = " + qrd);
             System.out.println("qid  = " + qid);
-            throw new RuntimeException("QR norm not decreasing " + Rp + ", " + Rp.norm());
+            throw new ArithmeticException("QR norm not decreasing " + Rp + ", " + Rp.norm());
         }
         ret[0] = Sp;
         ret[1] = Rp;
         return ret;
     }
 
+
+    /**
+     * Complex number quotient and remainder.
+     * @param S Complex.
+     * @return Complex[] { q, r } with q = this/S and r = rem(this,S).
+     * @deprecated use quotientRemainder()
+     */
+    @Deprecated
+    public Complex<C>[] divideAndRemainder(Complex<C> S) {
+        return quotientRemainder(S);
+    }
 
     /**
      * Complex number greatest common divisor.
@@ -550,7 +561,7 @@ public class Complex<C extends RingElem<C>> implements StarRingElem<Complex<C>>,
             if (debug) {
                 logger.info("norm(b), a, b = " + b.norm() + ", " + a + ", " + b);
             }
-            Complex<C>[] qr = a.divideAndRemainder(b);
+            Complex<C>[] qr = a.quotientRemainder(b);
             if (qr[0].isZERO()) {
                 System.out.println("a = " + a);
             }
@@ -603,7 +614,7 @@ public class Complex<C extends RingElem<C>> implements StarRingElem<Complex<C>>,
             if (debug) {
                 logger.info("norm(r), q, r = " + r.norm() + ", " + q + ", " + r);
             }
-            qr = q.divideAndRemainder(r);
+            qr = q.quotientRemainder(r);
             q = qr[0];
             x1 = c1.subtract(q.multiply(d1));
             x2 = c2.subtract(q.multiply(d2));

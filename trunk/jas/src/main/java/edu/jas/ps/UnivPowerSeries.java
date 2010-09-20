@@ -1,5 +1,5 @@
 /*
- * $Id: UnivPowerSeries.java 3211 2010-07-05 12:54:22Z kredel $
+ * $Id: UnivPowerSeries.java 3315 2010-09-05 18:26:34Z kredel $
  */
 
 package edu.jas.ps;
@@ -15,16 +15,15 @@ import edu.jas.structure.UnaryFunctor;
  * Univariate power series implementation. Uses inner classes and lazy evaluated
  * generating function for coefficients. All ring element methods use lazy
  * evaluation except where noted otherwise. Eager evaluated methods are
- * <code>toString()</code>, <code>compareTo()</code>,
- * <code>equals()</code>, <code>evaluate()</code>, or they use the
- * <code>order()</code> method, like <code>signum()</code>,
- * <code>abs()</code>, <code>divide()</code>, <code>remainder()</code>
- * and <code>gcd()</code>.
+ * <code>toString()</code>, <code>compareTo()</code>, <code>equals()</code>,
+ * <code>evaluate()</code>, or they use the <code>order()</code> method, like
+ * <code>signum()</code>, <code>abs()</code>, <code>divide()</code>,
+ * <code>remainder()</code> and <code>gcd()</code>.
  * @param <C> ring element type
  * @author Heinz Kredel
  */
 
-public class UnivPowerSeries<C extends RingElem<C>> implements RingElem<UnivPowerSeries<C>>, PowerSeries<C> {
+public class UnivPowerSeries<C extends RingElem<C>> implements RingElem<UnivPowerSeries<C>> {
 
 
     /**
@@ -56,7 +55,7 @@ public class UnivPowerSeries<C extends RingElem<C>> implements RingElem<UnivPowe
      * Private constructor.
      */
     private UnivPowerSeries() {
-        throw new RuntimeException("do not use no-argument constructor");
+        throw new IllegalArgumentException("do not use no-argument constructor");
     }
 
 
@@ -102,7 +101,6 @@ public class UnivPowerSeries<C extends RingElem<C>> implements RingElem<UnivPowe
      */
     @Override
     public UnivPowerSeries<C> clone() {
-        //return ring.copy(this);
         return new UnivPowerSeries<C>(ring, lazyCoeffs);
     }
 
@@ -345,9 +343,8 @@ public class UnivPowerSeries<C extends RingElem<C>> implements RingElem<UnivPowe
             public C generate(int i) {
                 C c;
                 if (i > 0) {
-                    c = get((i - 1));
+                    c = get(i - 1);
                 }
-                c = null;
                 do {
                     c = coefficient(pos++);
                 } while (!sel.select(c));
@@ -381,7 +378,7 @@ public class UnivPowerSeries<C extends RingElem<C>> implements RingElem<UnivPowe
      * @return new power series.
      */
     public <C2 extends RingElem<C2>> UnivPowerSeries<C> zip(final BinaryFunctor<? super C, ? super C2, C> f,
-            final PowerSeries<C2> ps) {
+            final UnivPowerSeries<C2> ps) {
         return new UnivPowerSeries<C>(ring, new Coefficients<C>() {
 
 
@@ -442,7 +439,6 @@ public class UnivPowerSeries<C extends RingElem<C>> implements RingElem<UnivPowe
         } else {
             return this;
         }
-        // return map( new Abs<C>() );
     }
 
 
@@ -496,7 +492,7 @@ public class UnivPowerSeries<C extends RingElem<C>> implements RingElem<UnivPowe
      */
     public int setTruncate(int t) {
         if (t < 0) {
-            throw new RuntimeException("negative truncate not allowed");
+            throw new IllegalArgumentException("negative truncate not allowed");
         }
         int ot = truncate;
         truncate = t;
@@ -581,7 +577,7 @@ public class UnivPowerSeries<C extends RingElem<C>> implements RingElem<UnivPowe
     @Override
     public int hashCode() {
         int h = 0;
-        //h = ( ring.hashCode() << 27 );
+        //h = ( ring.hashCode() << 23 );
         //h += val.hashCode();
         for (int i = 0; i <= truncate; i++) {
             h += coefficient(i).hashCode();
@@ -641,8 +637,7 @@ public class UnivPowerSeries<C extends RingElem<C>> implements RingElem<UnivPowe
                 }
                 C c = null; //fac.getZERO();
                 for (int k = 0; k < i; k++) {
-                    C m = get(k); // cached value
-                    m = coefficient(i - k).multiply(m);
+                    C m = get(k).multiply(coefficient(i - k));
                     if (c == null) {
                         c = m;
                     } else {
@@ -670,7 +665,8 @@ public class UnivPowerSeries<C extends RingElem<C>> implements RingElem<UnivPowe
             return ring.getZERO();
         }
         if (!ps.coefficient(n).isUnit()) {
-            throw new RuntimeException("division by non unit coefficient " + ps.coefficient(n) + ", n = " + n);
+            throw new ArithmeticException("division by non unit coefficient " + ps.coefficient(n) + ", n = "
+                    + n);
         }
         // now m >= n
         UnivPowerSeries<C> st, sps, q, sq;
@@ -776,7 +772,7 @@ public class UnivPowerSeries<C extends RingElem<C>> implements RingElem<UnivPowe
      */
     //SuppressWarnings("unchecked")
     public UnivPowerSeries<C>[] egcd(UnivPowerSeries<C> S) {
-        throw new RuntimeException("egcd for power series not implemented");
+        throw new UnsupportedOperationException("egcd for power series not implemented");
     }
 
 }

@@ -1,6 +1,6 @@
 
 /*
- * $Id: GenSolvablePolynomialRing.java 3031 2010-03-08 23:18:01Z kredel $
+ * $Id: GenSolvablePolynomialRing.java 3285 2010-08-22 18:52:53Z kredel $
  */
 
 package edu.jas.poly;
@@ -537,7 +537,7 @@ public class GenSolvablePolynomialRing<C extends RingElem<C> >
     }
 
 
-    /**
+    /*
      * Generate list of univariate polynomials in all variables with given exponent.
      * @param modv number of module variables.
      * @param e the exponent of the variables.

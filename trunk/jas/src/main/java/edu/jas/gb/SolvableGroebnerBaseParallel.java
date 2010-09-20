@@ -1,5 +1,5 @@
 /*
- * $Id: SolvableGroebnerBaseParallel.java 3227 2010-07-24 18:15:03Z kredel $
+ * $Id: SolvableGroebnerBaseParallel.java 3297 2010-08-26 19:09:03Z kredel $
  */
 
 package edu.jas.gb;
@@ -143,7 +143,7 @@ public class SolvableGroebnerBaseParallel<C extends RingElem<C>>
                if ( pairlist == null ) {
                   pairlist = new OrderedPairlist<C>( modv, p.ring );
                   if ( ! p.ring.coFac.isField() ) {
-                     throw new RuntimeException("coefficients not from a field");
+                     throw new IllegalArgumentException("coefficients not from a field");
                   }
                }
                // putOne not required
@@ -264,7 +264,7 @@ public class SolvableGroebnerBaseParallel<C extends RingElem<C>>
     public SolvableExtendedGB<C> 
            extLeftGB( int modv, 
                       List<GenSolvablePolynomial<C>> F ) {
-        throw new RuntimeException("parallel extLeftGB not implemented");
+        throw new UnsupportedOperationException("parallel extLeftGB not implemented");
     }
 
 
@@ -317,7 +317,7 @@ public class SolvableGroebnerBaseParallel<C extends RingElem<C>>
                if ( pairlist == null ) {
                   pairlist = new OrderedPairlist<C>( modv, p.ring );
                   if ( ! p.ring.coFac.isField() ) {
-                     throw new RuntimeException("coefficients not from a field");
+                     throw new IllegalArgumentException("coefficients not from a field");
                   }
                }
                // putOne not required
@@ -426,7 +426,7 @@ class LeftSolvableReducer<C extends RingElem<C>> implements Runnable {
                  continue;
               }
               if ( debug ) {
-		  logger.debug("ht(H) = " + H.leadingExpVector());
+                  logger.debug("ht(H) = " + H.leadingExpVector());
               }
               H = (GenSolvablePolynomial<C>)H.monic();
               // System.out.println("H   = " + H);
@@ -531,7 +531,7 @@ class TwosidedSolvableReducer<C extends RingElem<C>> implements Runnable {
                  continue;
               }
               if ( debug ) {
-		  logger.debug("ht(H) = " + H.leadingExpVector());
+                  logger.debug("ht(H) = " + H.leadingExpVector());
               }
               H = (GenSolvablePolynomial<C>)H.monic();
               // System.out.println("H   = " + H);

@@ -1,5 +1,5 @@
 /*
- * $Id: ModLong.java 3211 2010-07-05 12:54:22Z kredel $
+ * $Id: ModLong.java 3283 2010-08-22 17:23:03Z kredel $
  */
 
 package edu.jas.arith;
@@ -357,7 +357,7 @@ public final class ModLong implements GcdRingElem<ModLong>, Modular {
      */
     public ModLong remainder(ModLong S) {
         if (S == null || S.isZERO()) {
-            throw new RuntimeException(this.getClass().getName() + " division by zero");
+            throw new ArithmeticException(this.getClass().getName() + " division by zero");
         }
         if (S.isONE()) {
             return ring.getZERO();

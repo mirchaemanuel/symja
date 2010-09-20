@@ -1,5 +1,5 @@
 /*
- * $Id: OrderedPairlist.java 2767 2009-08-02 14:29:15Z kredel $
+ * $Id: OrderedPairlist.java 3267 2010-08-15 11:03:00Z kredel $
  */
 
 package edu.jas.gb;
@@ -79,9 +79,11 @@ public class OrderedPairlist<C extends RingElem<C> > {
     public String toString() {
         StringBuffer s = new StringBuffer("OrderedPairlist(");
         //s.append("polys="+P.size());
-        s.append("size="+pairlist.size());
-        s.append(", #put="+putCount);
+        s.append("#put="+putCount);
         s.append(", #rem="+remCount);
+        if ( pairlist.size() != 0 ) {
+           s.append(", size="+pairlist.size());
+        }
         s.append(")");
         return s.toString();
     }

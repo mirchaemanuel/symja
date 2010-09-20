@@ -1,5 +1,5 @@
 /*
- * $Id: DistributedListServer.java 2920 2009-12-25 16:50:47Z kredel $
+ * $Id: DistributedListServer.java 3279 2010-08-21 20:18:25Z kredel $
  */
 
 package edu.jas.util;
@@ -64,6 +64,7 @@ public class DistributedListServer extends Thread {
     public DistributedListServer(ChannelFactory cf) {
         listElem = new Counter(0);
         this.cf = cf;
+        cf.init();
         servers = new ArrayList<Broadcaster>();
         theList = new TreeMap<Counter,Object>();
     }

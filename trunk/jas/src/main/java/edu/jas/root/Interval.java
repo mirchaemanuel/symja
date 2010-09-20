@@ -1,5 +1,5 @@
 /*
- * $Id: Interval.java 3034 2010-03-11 22:19:01Z kredel $
+ * $Id: Interval.java 3287 2010-08-23 21:29:53Z kredel $
  */
 
 package edu.jas.root;
@@ -140,27 +140,6 @@ public class Interval<C extends RingElem<C> & Rational > {
         BigDecimal v = l.sum(r).divide(two);
         return v;
     }
-//         if ((Object) left instanceof BigRational) {
-//             BigDecimal l = new BigDecimal(left.toRational());
-//             BigDecimal r = new BigDecimal(right.toRational());
-//             //BigDecimal l = new BigDecimal((BigRational)(Object)left);
-//             //BigDecimal r = new BigDecimal((BigRational)(Object)right);
-//             BigDecimal two = new BigDecimal(2);
-//             BigDecimal v = l.sum(r).divide(two);
-//             return v;
-//         } else if ((Object) left instanceof RealAlgebraicNumber) {
-//             //RealAlgebraicNumber x = (RealAlgebraicNumber) left;
-//             //RealAlgebraicNumber y = (RealAlgebraicNumber) right;
-//             //BigDecimal l = new BigDecimal(x.magnitude());
-//             //BigDecimal r = new BigDecimal(y.magnitude());
-//             BigDecimal l = new BigDecimal(left.toRational());
-//             BigDecimal r = new BigDecimal(right.toRational());
-//             BigDecimal two = new BigDecimal(2);
-//             BigDecimal v = l.sum(r).divide(two);
-//             return v;
-//         } else {
-//             throw new RuntimeException("toDecimal of interval types not implemented");
-//         }
 
 
     /**

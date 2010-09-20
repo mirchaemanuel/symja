@@ -1,5 +1,5 @@
 /*
- * $Id: GreatestCommonDivisorModular.java 2958 2010-01-01 17:43:39Z kredel $
+ * $Id: GreatestCommonDivisorModular.java 3320 2010-09-12 11:01:57Z kredel $
  */
 
 package edu.jas.ufd;
@@ -33,7 +33,7 @@ public class GreatestCommonDivisorModular<MOD extends GcdRingElem<MOD> & Modular
     private static final Logger logger = Logger.getLogger(GreatestCommonDivisorModular.class);
 
 
-    private final boolean debug = logger.isInfoEnabled();
+    private final boolean debug = logger.isDebugEnabled(); //logger.isInfoEnabled();
 
 
     /*
@@ -195,7 +195,7 @@ public class GreatestCommonDivisorModular<MOD extends GcdRingElem<MOD> & Modular
             if (++i >= pn) {
                 logger.error("prime list exhausted, pn = " + pn);
                 return iufd.gcd(P, S);
-                //throw new RuntimeException("prime list exhausted");
+                //throw new ArithmeticException("prime list exhausted");
             }
             // initialize coefficient factory and map normalization factor
             if ( ModLongRing.MAX_LONG.compareTo( p ) > 0 ) {
