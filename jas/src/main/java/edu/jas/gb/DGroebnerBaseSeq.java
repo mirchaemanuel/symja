@@ -1,5 +1,5 @@
 /*
- * $Id: DGroebnerBaseSeq.java 2412 2009-02-07 12:17:54Z kredel $
+ * $Id: DGroebnerBaseSeq.java 3288 2010-08-25 21:46:14Z kredel $
  */
 
 package edu.jas.gb;
@@ -110,7 +110,6 @@ public class DGroebnerBaseSeq<C extends RingElem<C>>
     public List<GenPolynomial<C>> 
              GB( int modv, 
                  List<GenPolynomial<C>> F ) {  
-        //throw new RuntimeException("not jet implemented");
         GenPolynomial<C> p;
         List<GenPolynomial<C>> G = new ArrayList<GenPolynomial<C>>();
         OrderedDPairlist<C> pairlist = null; 
@@ -214,10 +213,7 @@ public class DGroebnerBaseSeq<C extends RingElem<C>>
         }
         logger.debug("#sequential list = " + G.size());
         G = minimalGB(G);
-        logger.info("pairlist #put = " + pairlist.putCount() 
-                  + " #rem = " + pairlist.remCount()
-                    // + " #total = " + pairlist.pairCount()
-                   );
+        logger.info("" + pairlist); 
         return G;
     }
 

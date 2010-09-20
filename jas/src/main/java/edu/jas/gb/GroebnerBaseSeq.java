@@ -1,5 +1,5 @@
 /*
- * $Id: GroebnerBaseSeq.java 3223 2010-07-10 14:46:45Z kredel $
+ * $Id: GroebnerBaseSeq.java 3297 2010-08-26 19:09:03Z kredel $
  */
 
 package edu.jas.gb;
@@ -75,7 +75,7 @@ public class GroebnerBaseSeq<C extends RingElem<C>>
                if ( pairlist == null ) {
                   pairlist = new OrderedPairlist<C>( modv, p.ring );
                   if ( ! p.ring.coFac.isField() ) {
-                     throw new RuntimeException("coefficients not from a field");
+                     throw new IllegalArgumentException("coefficients not from a field");
                   }
                }
                // putOne not required
@@ -112,7 +112,7 @@ public class GroebnerBaseSeq<C extends RingElem<C>>
                  continue;
               }
               if ( debug ) {
-		  logger.debug("ht(S) = " + S.leadingExpVector() );
+                  logger.debug("ht(S) = " + S.leadingExpVector() );
               }
 
               H = red.normalform( G, S );
@@ -121,7 +121,7 @@ public class GroebnerBaseSeq<C extends RingElem<C>>
                  continue;
               }
               if ( debug ) {
-		  logger.debug("ht(H) = " + H.leadingExpVector() );
+                  logger.debug("ht(H) = " + H.leadingExpVector() );
               }
 
               H = H.monic();
@@ -140,10 +140,7 @@ public class GroebnerBaseSeq<C extends RingElem<C>>
         }
         logger.debug("#sequential list = "+G.size());
         G = minimalGB(G);
-        logger.info("pairlist #put = " + pairlist.putCount() 
-                  + " #rem = " + pairlist.remCount()
-                    // + " #total = " + pairlist.pairCount()
-                   );
+        logger.info("" + pairlist); 
         return G;
     }
 
@@ -354,10 +351,7 @@ public class GroebnerBaseSeq<C extends RingElem<C>>
         G = exgb.G;
         G2F = exgb.G2F;
         logger.debug("#sequential list = " + G.size());
-        logger.info("pairlist #put = " + pairlist.putCount() 
-                  + " #rem = " + pairlist.remCount()
-                    // + " #total = " + pairlist.pairCount()
-                   );
+        logger.info("" + pairlist); 
         // setup matrices F and F2G
         for ( GenPolynomial<C> f : F ) {
             row = new ArrayList<GenPolynomial<C>>( G.size() );

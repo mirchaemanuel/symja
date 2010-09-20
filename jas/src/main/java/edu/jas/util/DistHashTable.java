@@ -1,5 +1,5 @@
 /*
- * $Id: DistHashTable.java 3076 2010-04-15 21:00:37Z kredel $
+ * $Id: DistHashTable.java 3279 2010-08-21 20:18:25Z kredel $
  */
 
 package edu.jas.util;
@@ -69,6 +69,7 @@ public class DistHashTable<K, V> extends AbstractMap<K, V> /* implements Map<K,V
      */
     public DistHashTable(ChannelFactory cf, String host, int port) {
         this.cf = cf;
+        cf.init();
         try {
             channel = cf.getChannel(host, port);
         } catch (IOException e) {

@@ -1,5 +1,5 @@
 /*
- * $Id: DGroebnerBaseSeqTest.java 2412 2009-02-07 12:17:54Z kredel $
+ * $Id: DGroebnerBaseSeqTest.java 3267 2010-08-15 11:03:00Z kredel $
  */
 
 package edu.jas.gb;
@@ -10,6 +10,9 @@ import java.util.ArrayList;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
+
+import org.apache.log4j.Logger;
+import org.apache.log4j.BasicConfigurator;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -35,13 +38,12 @@ import edu.jas.poly.PolyUtil;
 
 public class DGroebnerBaseSeqTest extends TestCase {
 
-    //private static final Logger logger = Logger.getLogger(DGroebnerBaseSeqTest.class);
 
 /**
  * main
  */
    public static void main (String[] args) {
-       //BasicConfigurator.configure();
+       BasicConfigurator.configure();
        junit.textui.TestRunner.run( suite() );
    }
 

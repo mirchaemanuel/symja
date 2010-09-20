@@ -1,5 +1,5 @@
 /*
- * $Id: ComplexAlgebraicRing.java 3211 2010-07-05 12:54:22Z kredel $
+ * $Id: ComplexAlgebraicRing.java 3286 2010-08-22 19:08:24Z kredel $
  */
 
 package edu.jas.root;
@@ -67,7 +67,7 @@ implements RingFactory<ComplexAlgebraicNumber<C>> {
         this.root = root;
         engine = new ComplexRootsSturm<C>(m.ring.coFac);
         if (m.ring.characteristic().signum() > 0) {
-            throw new RuntimeException("characteristic not zero");
+            throw new IllegalArgumentException("characteristic not zero");
         }
         Complex<C> e = m.ring.coFac.fromInteger(10L);
         e = e.inverse();
@@ -89,7 +89,7 @@ implements RingFactory<ComplexAlgebraicNumber<C>> {
         this.root = root;
         engine = new ComplexRootsSturm<C>(m.ring.coFac);
         if (m.ring.characteristic().signum() > 0) {
-            throw new RuntimeException("characteristic not zero");
+            throw new IllegalArgumentException("characteristic not zero");
         }
         Complex<C> e = m.ring.coFac.fromInteger(10L);
         e = e.inverse();

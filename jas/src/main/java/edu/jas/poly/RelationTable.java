@@ -1,5 +1,5 @@
 /*
- * $Id: RelationTable.java 3228 2010-07-24 18:16:54Z kredel $
+ * $Id: RelationTable.java 3297 2010-08-26 19:09:03Z kredel $
  */
 
 package edu.jas.poly;
@@ -265,9 +265,9 @@ public class RelationTable<C extends RingElem<C>> implements Serializable {
             if ( p != null && p.ring.vars != null ) {
                logger.info("new relation = " + e.toString(p.ring.vars) + " .*. " + f.toString(p.ring.vars) + " = " + p);
                //logger.info("existing relations = " + toString(p.ring.vars));
-	    } else {
+            } else {
                logger.info("new relation = " + e + " .*. " + f + " = " + p);
-	    }
+            }
         }
         if ( p == null || e == null || f == null ) {
            throw new IllegalArgumentException("RelationTable update e|f|p == null");
@@ -316,19 +316,19 @@ public class RelationTable<C extends RingElem<C>> implements Serializable {
         Object o;
         int index = -1;
         synchronized(part) { // with lookup()
-	    for ( ListIterator it = part.listIterator(); it.hasNext(); ) {
-		ExpVectorPair look = (ExpVectorPair)it.next();
-		o = it.next(); // skip poly
-		if ( look.isMultiple( evp ) ) {
-		    index = it.nextIndex(); 
-		    // last index of or first index of: break
-		}
-	    }
-	    if ( index < 0 ) {
-		index = 0;
-	    }
-	    part.add( index, evp );
-	    part.add( index+1, p );
+            for ( ListIterator it = part.listIterator(); it.hasNext(); ) {
+                ExpVectorPair look = (ExpVectorPair)it.next();
+                o = it.next(); // skip poly
+                if ( look.isMultiple( evp ) ) {
+                    index = it.nextIndex(); 
+                    // last index of or first index of: break
+                }
+            }
+            if ( index < 0 ) {
+                index = 0;
+            }
+            part.add( index, evp );
+            part.add( index+1, p );
         }
         // table.put( key, part ); // required??
     }
@@ -343,12 +343,12 @@ public class RelationTable<C extends RingElem<C>> implements Serializable {
      */
     public void update(GenPolynomial<C> E, GenPolynomial<C> F, GenSolvablePolynomial<C> p) {
         if ( E.isZERO() || F.isZERO() ) {
-            throw new RuntimeException("polynomials may not be zero: " + E + ", " + F);
+            throw new IllegalArgumentException("polynomials may not be zero: " + E + ", " + F);
         }
         C ce = E.leadingBaseCoefficient();
         C cf = F.leadingBaseCoefficient();
         if ( ! ce.isONE() || ! cf.isONE() ) {
-            throw new RuntimeException("lbcf of polynomials must be one: " + ce + ", " + cf);
+            throw new IllegalArgumentException("lbcf of polynomials must be one: " + ce + ", " + cf);
         }
         ExpVector e = E.leadingExpVector();
         ExpVector f = F.leadingExpVector();
@@ -365,10 +365,10 @@ public class RelationTable<C extends RingElem<C>> implements Serializable {
      */
     public void update(GenPolynomial<C> E, GenPolynomial<C> F, GenPolynomial<C> p) {
         if ( p.isZERO() ) {
-            throw new RuntimeException("polynomial may not be zero: " + p);
+            throw new IllegalArgumentException("polynomial may not be zero: " + p);
         }
         if ( p.isONE() ) {
-            throw new RuntimeException("product of polynomials may not be one: " + p);
+            throw new IllegalArgumentException("product of polynomials may not be one: " + p);
         }
         GenSolvablePolynomial<C> sp = new GenSolvablePolynomial<C>(ring,p.val);
         update(E,F,sp);
@@ -412,19 +412,18 @@ public class RelationTable<C extends RingElem<C>> implements Serializable {
                     if ( fp.isZERO() ) {
                         fp = null;
                     }
-		    if ( false && debug ) {
-			if ( p != null && p.ring.vars != null ) {
-			    logger.info("found relation = " + e.toString(p.ring.vars) + " .*. " + f.toString(p.ring.vars) + " = " + p);
-			} else {
-			    logger.info("found relation = " + e + " .*. " + f + " = " + p);
-			}
-		    }
+                    if ( false && debug ) {
+                        if ( p != null && p.ring.vars != null ) {
+                            logger.info("found relation = " + e.toString(p.ring.vars) + " .*. " + f.toString(p.ring.vars) + " = " + p);
+                        } else {
+                            logger.info("found relation = " + e + " .*. " + f + " = " + p);
+                        }
+                    }
                     return new TableRelation<C>(ep,fp,p);
                 }
             }
         }
         // unreacheable code!
-        //return new TableRelation<C>(ep,fp,p);
         throw new RuntimeException("no entry found in relation table for " + evp);
     }
 

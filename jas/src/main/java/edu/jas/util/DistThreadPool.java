@@ -1,5 +1,5 @@
 /*
- * $Id: DistThreadPool.java 2844 2009-10-25 16:47:42Z kredel $
+ * $Id: DistThreadPool.java 3320 2010-09-12 11:01:57Z kredel $
  */
 
 package edu.jas.util;
@@ -53,7 +53,7 @@ public class DistThreadPool /*extends ThreadPool*/ {
     /**
      * Array of workers.
      */
-    protected final DistPoolThread[] workers;
+    protected DistPoolThread[] workers;
 
 
     /**
@@ -75,7 +75,7 @@ public class DistThreadPool /*extends ThreadPool*/ {
 
 
     private static final Logger logger = Logger.getLogger(DistThreadPool.class);
-    private static boolean debug = logger.isDebugEnabled();
+    private final boolean debug = logger.isDebugEnabled();
 
 
     /**
@@ -141,9 +141,8 @@ public class DistThreadPool /*extends ThreadPool*/ {
         try {
             ec = new ExecutableChannels( this.mfile );
         } catch (FileNotFoundException e) {
-            // ec = null;
             e.printStackTrace();
-            throw new RuntimeException("DistThreadPool " +e);
+            throw new IllegalArgumentException("DistThreadPool " + e);
         }
         if ( debug ) {
             logger.debug("ExecutableChannels = " + ec);
@@ -152,17 +151,27 @@ public class DistThreadPool /*extends ThreadPool*/ {
             ec.open(threads);
         } catch (IOException e) {
             e.printStackTrace();
-            throw new RuntimeException("DistThreadPool " +e);
+            throw new IllegalArgumentException("DistThreadPool " + e);
         }
         if ( debug ) {
             logger.debug("ExecutableChannels = " + ec);
         }
-        workers = new DistPoolThread[threads];
-        for (int i = 0; i < workers.length; i++) {
-            workers[i] = new DistPoolThread(this,ec,i);
-            workers[i].start();
+        workers = new DistPoolThread[0];
+    }
+
+
+    /**
+     * thread initialization and start.
+     */
+    public void init() {
+        if ( workers == null || workers.length == 0 ) {
+            workers = new DistPoolThread[threads];
+            for (int i = 0; i < workers.length; i++) {
+                workers[i] = new DistPoolThread(this,ec,i);
+                workers[i].start();
+            }
+            logger.info("size = " + threads + ", strategy = " + strategy);
         }
-        logger.info("strategy = " + strategy);
     }
 
 
@@ -170,6 +179,9 @@ public class DistThreadPool /*extends ThreadPool*/ {
      * number of worker threads.
      */
     public int getNumber() {
+        if ( workers == null || workers.length < threads ) {
+            init(); // start threads
+        }
         return workers.length; // not null
     }
 
@@ -254,6 +266,9 @@ public class DistThreadPool /*extends ThreadPool*/ {
      * @param job
      */
     public synchronized void addJob(Runnable job) {
+        if ( workers == null || workers.length < threads ) {
+            init(); // start threads
+        }
         jobstack.addLast(job);
         logger.debug("adding job" );
         if (idleworkers > 0) {
@@ -350,7 +365,7 @@ class DistPoolThread extends Thread {
     final int myId;
 
     private static final Logger logger = Logger.getLogger(DistPoolThread.class);
-    private static boolean debug = true || logger.isDebugEnabled();
+    private final boolean debug = logger.isInfoEnabled();
 
     boolean working = false;
 

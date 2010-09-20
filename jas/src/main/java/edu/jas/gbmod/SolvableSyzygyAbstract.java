@@ -1,5 +1,5 @@
 /*
- * $Id: SolvableSyzygyAbstract.java 2416 2009-02-07 13:24:32Z kredel $
+ * $Id: SolvableSyzygyAbstract.java 3287 2010-08-23 21:29:53Z kredel $
  */
 
 package edu.jas.gbmod;
@@ -129,7 +129,7 @@ public class SolvableSyzygyAbstract<C extends RingElem<C>>
 
                 h = sred.leftNormalform( row, F, s );
                 if ( ! h.isZERO() ) {
-                    throw new RuntimeException("Syzygy no leftGB");
+                    throw new ArithmeticException("Syzygy no leftGB");
                 }
                 if ( logger.isDebugEnabled() ) {
                     logger.info("row = " + row);

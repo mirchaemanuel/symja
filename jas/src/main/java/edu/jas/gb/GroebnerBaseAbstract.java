@@ -1,5 +1,5 @@
 /*
- * $Id: GroebnerBaseAbstract.java 3190 2010-06-26 20:10:33Z kredel $
+ * $Id: GroebnerBaseAbstract.java 3288 2010-08-25 21:46:14Z kredel $
  */
 
 package edu.jas.gb;
@@ -138,8 +138,8 @@ public abstract class GroebnerBaseAbstract<C extends RingElem<C>>
     public ExtendedGB<C> 
            extGB( int modv, 
                   List<GenPolynomial<C>> F ) {
-        throw new RuntimeException("extGB not implemented in " 
-                                   + this.getClass().getSimpleName());
+        throw new UnsupportedOperationException("extGB not implemented in " 
+                                              + this.getClass().getSimpleName());
     }
 
 

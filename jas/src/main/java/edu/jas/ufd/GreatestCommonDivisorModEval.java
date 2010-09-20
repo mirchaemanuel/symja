@@ -1,5 +1,5 @@
 /*
- * $Id: GreatestCommonDivisorModEval.java 2948 2009-12-30 14:02:18Z kredel $
+ * $Id: GreatestCommonDivisorModEval.java 3290 2010-08-26 09:18:48Z kredel $
  */
 
 package edu.jas.ufd;
@@ -174,7 +174,7 @@ public class GreatestCommonDivisorModEval <MOD extends GcdRingElem<MOD> & Modula
             if (++i >= en) {
                 logger.error("elements of Z_p exhausted, en = " + en);
                 return mufd.gcd(P, S);
-                //throw new RuntimeException("prime list exhausted");
+                //throw new ArithmeticException("prime list exhausted");
             }
             // map normalization factor
             MOD nf = PolyUtil.<MOD> evaluateMain(cofac, cc, d);

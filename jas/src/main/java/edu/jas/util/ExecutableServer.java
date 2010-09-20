@@ -1,5 +1,5 @@
 /*
- * $Id: ExecutableServer.java 2828 2009-09-27 12:30:52Z kredel $
+ * $Id: ExecutableServer.java 3320 2010-09-12 11:01:57Z kredel $
  */
 
 package edu.jas.util;
@@ -25,7 +25,7 @@ public class ExecutableServer extends Thread {
     private static final Logger logger = Logger.getLogger(ExecutableServer.class);
 
 
-    private static boolean debug = logger.isDebugEnabled();
+    private final boolean debug = logger.isDebugEnabled();
 
 
     /**
@@ -87,6 +87,7 @@ public class ExecutableServer extends Thread {
      */
     public ExecutableServer(ChannelFactory cf) {
         this.cf = cf;
+        cf.init();
         servers = new ArrayList<Executor>();
     }
 
@@ -231,7 +232,7 @@ class Executor extends Thread /*implements Runnable*/{
 
     private static final Logger logger = Logger.getLogger(Executor.class);
 
-    private static boolean debug = true || logger.isDebugEnabled();
+    private final boolean debug = logger.isInfoEnabled();
 
 
     protected final SocketChannel channel;

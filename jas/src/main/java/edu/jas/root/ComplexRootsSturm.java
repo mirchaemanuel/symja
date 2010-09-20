@@ -1,5 +1,5 @@
 /*
- * $Id: ComplexRootsSturm.java 3213 2010-07-05 14:17:57Z kredel $
+ * $Id: ComplexRootsSturm.java 3320 2010-09-12 11:01:57Z kredel $
  */
 
 package edu.jas.root;
@@ -33,7 +33,7 @@ public class ComplexRootsSturm<C extends RingElem<C> & Rational> extends Complex
     private static final Logger logger = Logger.getLogger(ComplexRootsSturm.class);
 
 
-    private static boolean debug = true || logger.isDebugEnabled();
+    private final boolean debug = logger.isDebugEnabled();
 
 
     /**
@@ -219,7 +219,7 @@ public class ComplexRootsSturm<C extends RingElem<C> & Rational> extends Complex
             }
             try {
                 Complex<C>[] cp = (Complex<C>[]) ArrayUtil.copyOfComplex(rect.corners, 4);
-		    // (Complex<C>[]) new Complex[4];  cp[0] = rect.corners[0];
+                    // (Complex<C>[]) new Complex[4];  cp[0] = rect.corners[0];
                     // ArrayUtil.<Complex<C>> copyOf(rect.corners, 4);
                 // cp[0] fix
                 cp[1] = new Complex<C>(cr, cp[1].getRe(), center.getIm());
@@ -232,7 +232,7 @@ public class ComplexRootsSturm<C extends RingElem<C> & Rational> extends Complex
                 roots.addAll(nwr);
 
                 cp = (Complex<C>[]) ArrayUtil.copyOfComplex(rect.corners, 4);
-		//(Complex<C>[]) ArrayUtil.<Complex<C>> copyOf(rect.corners, 4);
+                //(Complex<C>[]) ArrayUtil.<Complex<C>> copyOf(rect.corners, 4);
                 cp[0] = new Complex<C>(cr, cp[0].getRe(), center.getIm());
                 // cp[1] fix
                 cp[2] = new Complex<C>(cr, center.getRe(), cp[2].getIm());

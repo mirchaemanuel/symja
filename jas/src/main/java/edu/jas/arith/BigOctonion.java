@@ -1,5 +1,5 @@
 /*
- * $Id: BigOctonion.java 3211 2010-07-05 12:54:22Z kredel $
+ * $Id: BigOctonion.java 3283 2010-08-22 17:23:03Z kredel $
  */
 
 package edu.jas.arith;
@@ -631,7 +631,7 @@ public final class BigOctonion implements StarRingElem<BigOctonion>,
      */
     public BigOctonion remainder(BigOctonion S) {
         if ( S.isZERO() ) {
-            throw new RuntimeException("division by zero");
+            throw new ArithmeticException("division by zero");
         }
         return ZERO;
     }

@@ -1,5 +1,5 @@
 /*
- * $Id: ComplexRootsAbstract.java 3213 2010-07-05 14:17:57Z kredel $
+ * $Id: ComplexRootsAbstract.java 3320 2010-09-12 11:01:57Z kredel $
  */
 
 package edu.jas.root;
@@ -38,7 +38,7 @@ public abstract class ComplexRootsAbstract<C extends RingElem<C> & Rational> imp
     private static final Logger logger = Logger.getLogger(ComplexRootsAbstract.class);
 
 
-    private static boolean debug = true || logger.isDebugEnabled();
+    private final boolean debug = logger.isDebugEnabled();
 
 
     /**
@@ -158,7 +158,7 @@ public abstract class ComplexRootsAbstract<C extends RingElem<C> & Rational> imp
             if (w != 1) {
                 System.out.println("#root = " + w);
                 System.out.println("root = " + root);
-                throw new RuntimeException("no initial isolating rectangle " + rect);
+                throw new ArithmeticException("no initial isolating rectangle " + rect);
             }
         }
         Complex<C> eps = cr.fromInteger(1);
@@ -182,7 +182,7 @@ public abstract class ComplexRootsAbstract<C extends RingElem<C> & Rational> imp
                     }
 
                     Complex<C>[] cp = (Complex<C>[]) ArrayUtil.copyOfComplex(root.corners, 4);
-			//ArrayUtil.<Complex<C>> copyOf(root.corners, 4);
+                        //ArrayUtil.<Complex<C>> copyOf(root.corners, 4);
                     // cp[0] fix
                     cp[1] = new Complex<C>(cr, cp[1].getRe(), center.getIm());
                     cp[2] = center;
@@ -244,7 +244,7 @@ public abstract class ComplexRootsAbstract<C extends RingElem<C> & Rational> imp
                         System.out.println("#root = " + w);
                         System.out.println("root = " + root);
                     }
-                    throw new RuntimeException("no isolating rectangle " + rect);
+                    throw new ArithmeticException("no isolating rectangle " + rect);
                 }
                 work = false;
             } catch (InvalidBoundaryException e) {

@@ -1,5 +1,5 @@
 /*
- * $Id: GroebnerBaseDistributed.java 3192 2010-06-26 20:10:35Z kredel $
+ * $Id: GroebnerBaseDistributed.java 3288 2010-08-25 21:46:14Z kredel $
  */
 
 package edu.jas.gb;
@@ -137,6 +137,7 @@ public class GroebnerBaseDistributed<C extends RingElem<C>> extends GroebnerBase
 
         final int DL_PORT = port + 100;
         ChannelFactory cf = new ChannelFactory(port);
+        cf.init();
         DistHashTableServer<Integer> dls = new DistHashTableServer<Integer>(DL_PORT);
         dls.init();
         logger.debug("dist-list server running");
@@ -164,7 +165,7 @@ public class GroebnerBaseDistributed<C extends RingElem<C>> extends GroebnerBase
                 if (pairlist == null) {
                     pairlist = new OrderedPairlist<C>(modv, p.ring);
                     if ( ! p.ring.coFac.isField() ) {
-                        throw new RuntimeException("coefficients not from a field");
+                        throw new IllegalArgumentException("coefficients not from a field");
                     }
                 }
                 // theList not updated here
@@ -232,9 +233,7 @@ public class GroebnerBaseDistributed<C extends RingElem<C>> extends GroebnerBase
         theList.terminate();
         logger.info("dls.terminate()");
         dls.terminate();
-        logger.info("pairlist #put = " + pairlist.putCount() + " #rem = " + pairlist.remCount()
-        //+ " #total = " + pairlist.pairCount()
-                );
+        logger.info("" + pairlist); 
         return G;
     }
 
@@ -247,6 +246,7 @@ public class GroebnerBaseDistributed<C extends RingElem<C>> extends GroebnerBase
     public void clientPart(String host) throws IOException {
 
         ChannelFactory cf = new ChannelFactory(port + 10); // != port for localhost
+        cf.init();
         SocketChannel pairChannel = cf.getChannel(host, port);
 
         final int DL_PORT = port + 100;

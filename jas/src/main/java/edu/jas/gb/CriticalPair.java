@@ -1,5 +1,5 @@
 /*
- * $Id: CriticalPair.java 2412 2009-02-07 12:17:54Z kredel $
+ * $Id: CriticalPair.java 3288 2010-08-25 21:46:14Z kredel $
  */
 
 package edu.jas.gb;
@@ -83,7 +83,7 @@ public class CriticalPair<C extends RingElem<C> >
      */
     public void setInReduction() {
         if ( inReduction ) {
-           throw new RuntimeException("already in reduction " + this);
+           throw new IllegalStateException("already in reduction " + this);
         }
         inReduction = true;
     }
@@ -113,7 +113,7 @@ public class CriticalPair<C extends RingElem<C> >
      */
     public void setReductum(GenPolynomial<C> r) {
         if ( r == null ) {
-           throw new RuntimeException("reduction null not allowed " + this);
+           throw new IllegalArgumentException("reduction null not allowed " + this);
         }
         inReduction = false;
         reductum = r;

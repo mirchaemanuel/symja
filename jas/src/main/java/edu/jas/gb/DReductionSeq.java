@@ -1,5 +1,5 @@
 /*
- * $Id: DReductionSeq.java 2412 2009-02-07 12:17:54Z kredel $
+ * $Id: DReductionSeq.java 3288 2010-08-25 21:46:14Z kredel $
  */
 
 package edu.jas.gb;
@@ -313,7 +313,7 @@ public class DReductionSeq<C extends RingElem<C>> extends ReductionAbstract<C> i
      */
     public GenPolynomial<C> GPolynomial(List<GenPolynomial<C>> S, int i, GenPolynomial<C> Ap, int j,
             GenPolynomial<C> Bp) {
-        throw new RuntimeException("not jet implemented");
+        throw new UnsupportedOperationException("not jet implemented");
     }
 
 
@@ -406,7 +406,7 @@ public class DReductionSeq<C extends RingElem<C>> extends ReductionAbstract<C> i
         if (Ap == null || Ap.isZERO()) {
             return Ap;
         }
-        throw new RuntimeException("not jet implemented");
+        throw new UnsupportedOperationException("not jet implemented");
         /*
         int l = Pp.size();
         GenPolynomial<C>[] P = new GenPolynomial[l];

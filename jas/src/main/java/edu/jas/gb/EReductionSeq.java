@@ -1,5 +1,5 @@
 /*
- * $Id: EReductionSeq.java 2412 2009-02-07 12:17:54Z kredel $
+ * $Id: EReductionSeq.java 3288 2010-08-25 21:46:14Z kredel $
  */
 
 package edu.jas.gb;
@@ -248,7 +248,7 @@ public class EReductionSeq<C extends RingElem<C>> extends DReductionSeq<C> imple
         if (Ap == null || Ap.isZERO()) {
             return Ap;
         }
-        throw new RuntimeException("not jet implemented");
+        throw new UnsupportedOperationException("not jet implemented");
         /*
         int l = Pp.size();
         GenPolynomial<C>[] P = new GenPolynomial[l];

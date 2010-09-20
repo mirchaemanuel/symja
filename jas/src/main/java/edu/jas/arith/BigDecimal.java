@@ -1,5 +1,5 @@
 /*
- * $Id: BigDecimal.java 3211 2010-07-05 12:54:22Z kredel $
+ * $Id: BigDecimal.java 3297 2010-08-26 19:09:03Z kredel $
  */
 
 package edu.jas.arith;
@@ -392,7 +392,9 @@ public final class BigDecimal implements GcdRingElem<BigDecimal>,
     */
     //JAVA6only: @Override
     public int compareTo(BigDecimal b) {
-        //return val.compareTo( b.val );
+        if ( false ) {
+           return val.compareTo( b.val );
+        }
         java.math.BigDecimal s = val.subtract( b.val, context );
         java.math.BigDecimal u1 = val.ulp();
         java.math.BigDecimal u2 = b.val.ulp();
@@ -501,7 +503,7 @@ public final class BigDecimal implements GcdRingElem<BigDecimal>,
      * @param S BigDecimal.
      * @return BigDecimal[] { q, r } with q = this/S and r = rem(this,S).
      */
-    public BigDecimal[] divideAndRemainder(BigDecimal S) {
+    public BigDecimal[] quotientRemainder(BigDecimal S) {
         BigDecimal[] qr = new BigDecimal[2];
         java.math.BigDecimal[] C = val.divideAndRemainder( S.val, context );
         qr[0] = new BigDecimal( C[0] );
@@ -510,12 +512,23 @@ public final class BigDecimal implements GcdRingElem<BigDecimal>,
     }
 
 
+    /** BigDecimal compute quotient and remainder.
+     * @param S BigDecimal.
+     * @return BigDecimal[] { q, r } with q = this/S and r = rem(this,S).
+     * @deprecated use quotientRemainder()
+     */
+    @Deprecated 
+    public BigDecimal[] divideAndRemainder(BigDecimal S) {
+        return quotientRemainder(S);
+    }
+
+
     /** BigDecimal greatest common divisor.
      * @param S BigDecimal.
      * @return gcd(this,S).
      */
     public BigDecimal gcd(BigDecimal S) {
-     throw new RuntimeException("BigDecimal.gcd() not implemented");
+     throw new UnsupportedOperationException("BigDecimal.gcd() not implemented");
         //return new BigDecimal( val.gcd( S.val ) );
     }
 
@@ -526,7 +539,7 @@ public final class BigDecimal implements GcdRingElem<BigDecimal>,
      * @return [ gcd(this,S), a, b ] with a*this + b*S = gcd(this,S).
      */
     public BigDecimal[] egcd(BigDecimal S) {
-     throw new RuntimeException("BigDecimal.egcd() not implemented");
+     throw new UnsupportedOperationException("BigDecimal.egcd() not implemented");
     }
 
 

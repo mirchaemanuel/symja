@@ -1,5 +1,5 @@
 /*
- * $Id: GenVectorModul.java 3211 2010-07-05 12:54:22Z kredel $
+ * $Id: GenVectorModul.java 3282 2010-08-22 17:15:02Z kredel $
  */
 
 package edu.jas.vector;
@@ -208,7 +208,7 @@ public class GenVectorModul<C extends RingElem<C>> implements ModulFactory<GenVe
             return ZERO;
         }
         if (v.size() > cols) {
-            throw new RuntimeException("size v > cols " + cols + " < " + v);
+            throw new IllegalArgumentException("size v > cols " + v + " > " + cols);
         }
         List<C> r = new ArrayList<C>(cols);
         r.addAll(v);
@@ -279,7 +279,6 @@ public class GenVectorModul<C extends RingElem<C>> implements ModulFactory<GenVe
         } else {
             return c.clone();
         }
-        //return new GenVector<C>( this, c.val );//clone val
     }
 
 
@@ -312,8 +311,6 @@ public class GenVectorModul<C extends RingElem<C>> implements ModulFactory<GenVe
             vec.add(c);
         }
         return new GenVector<C>(this, vec);
-        //throw new RuntimeException("parse not jet implemented");
-        //return ZERO;
     }
 
 
@@ -323,8 +320,6 @@ public class GenVectorModul<C extends RingElem<C>> implements ModulFactory<GenVe
     public GenVector<C> parse(Reader r) {
         String s = StringUtil.nextPairedString(r, '[', ']');
         return parse(s);
-        //throw new RuntimeException("parse not jet implemented");
-        //return ZERO;
     }
 
 }

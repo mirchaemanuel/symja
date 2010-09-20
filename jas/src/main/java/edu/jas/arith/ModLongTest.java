@@ -1,5 +1,5 @@
 /*
- * $Id: ModLongTest.java 2938 2009-12-29 23:20:25Z kredel $
+ * $Id: ModLongTest.java 3273 2010-08-16 21:52:58Z kredel $
  */
 
 package edu.jas.arith;
@@ -357,6 +357,22 @@ public class ModLongTest extends TestCase {
         //System.out.println("BigInteger time = " + t);
 
         assertEquals("C == D ", C, D);
+    }
+
+
+    /**
+     * Test iterator.
+     */
+    public void testIterator() {
+        int m = 5*2;
+        zm = new ModLongRing(m);
+        ModLong j = null;
+        for ( ModLong i : zm ) {
+            //System.out.println("i = " + i);
+            j = i;
+        }
+        ModLong end = new ModLong(zm,m-1);
+        assertTrue("j == m-1 ", j.equals(end) );
     }
 
 }

@@ -1,5 +1,5 @@
 /*
- * $Id: RReductionSeq.java 2412 2009-02-07 12:17:54Z kredel $
+ * $Id: RReductionSeq.java 3288 2010-08-25 21:46:14Z kredel $
  */
 
 package edu.jas.gb;
@@ -358,7 +358,6 @@ public class RReductionSeq<C extends RegularRingElem<C>> extends ReductionAbstra
         if (Ap == null || Ap.isZERO()) {
             return Ap;
         }
-        //throw new RuntimeException("not jet implemented");
         int l;
         GenPolynomial<C>[] P;
         synchronized (Pp) {

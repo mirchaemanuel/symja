@@ -1,5 +1,5 @@
 /*
- * $Id: Condition.java 2883 2009-11-27 17:50:23Z kredel $
+ * $Id: Condition.java 3320 2010-09-12 11:01:57Z kredel $
  */
 
 package edu.jas.application;
@@ -32,7 +32,7 @@ public class Condition<C extends GcdRingElem<C>> implements Serializable {
     private static final Logger logger = Logger.getLogger(Condition.class);
 
 
-    private final boolean debug = true || logger.isDebugEnabled();
+    private final boolean debug = logger.isDebugEnabled();
 
 
     /**
@@ -63,7 +63,7 @@ public class Condition<C extends GcdRingElem<C>> implements Serializable {
     public Condition(GenPolynomialRing<C> ring) {
         this(new Ideal<C>(ring),new MultiplicativeSetSquarefree<C>(ring));
         if (ring == null) {
-            throw new RuntimeException("only for non null rings");
+            throw new IllegalArgumentException("only for non null rings");
         }
     }
 
@@ -94,7 +94,7 @@ public class Condition<C extends GcdRingElem<C>> implements Serializable {
      */
     public Condition(Ideal<C> z, MultiplicativeSet<C> nz) {
         if (z == null || nz == null) {
-            throw new RuntimeException("only for non null condition parts");
+            throw new IllegalArgumentException("only for non null condition parts");
         }
         zero = z;
         nonZero = nz;

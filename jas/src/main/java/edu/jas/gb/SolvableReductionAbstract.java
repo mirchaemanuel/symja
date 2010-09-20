@@ -1,5 +1,5 @@
 /*
- * $Id: SolvableReductionAbstract.java 2412 2009-02-07 12:17:54Z kredel $
+ * $Id: SolvableReductionAbstract.java 3288 2010-08-25 21:46:14Z kredel $
  */
 
 package edu.jas.gb;
@@ -98,12 +98,12 @@ public abstract class SolvableReductionAbstract<C extends RingElem<C>>
                         GenSolvablePolynomial<C> Ap, 
                         int j,
                         GenSolvablePolynomial<C> Bp) {  
-        if ( logger.isInfoEnabled() ) {
+        if ( debug /*logger.isInfoEnabled()*/ ) {
             if ( Bp == null || Bp.isZERO() ) {
-                throw new RuntimeException("Spol B is zero");
+                throw new ArithmeticException("Spol B is zero");
             }
             if ( Ap == null || Ap.isZERO() ) {
-                throw new RuntimeException("Spol A is zero");
+                throw new ArithmeticException("Spol A is zero");
             }
             if ( ! Ap.ring.equals( Bp.ring ) ) { 
                 logger.error("rings not equal"); 

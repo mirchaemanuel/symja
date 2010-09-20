@@ -1,5 +1,5 @@
 /*
- * $Id: ModInteger.java 3211 2010-07-05 12:54:22Z kredel $
+ * $Id: ModInteger.java 3283 2010-08-22 17:23:03Z kredel $
  */
 
 package edu.jas.arith;
@@ -391,8 +391,8 @@ public final class ModInteger implements GcdRingElem<ModInteger>, Modular {
      */
     public ModInteger remainder(ModInteger S) {
         if ( S == null || S.isZERO()) {
-           throw new RuntimeException(this.getClass().getName()
-                                      + " division by zero");
+           throw new ArithmeticException(this.getClass().getName()
+                                         + " division by zero");
         }
         if ( S.isONE()) {
            return ring.getZERO();

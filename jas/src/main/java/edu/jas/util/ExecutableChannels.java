@@ -1,5 +1,5 @@
 /*
- * $Id: ExecutableChannels.java 1772 2008-05-07 20:51:08Z kredel $
+ * $Id: ExecutableChannels.java 3279 2010-08-21 20:18:25Z kredel $
  */
 
 package edu.jas.util;
@@ -57,6 +57,7 @@ public class ExecutableChannels {
      */
     protected ExecutableChannels() {
         cf = new ChannelFactory();
+        cf.init();
     }
 
 

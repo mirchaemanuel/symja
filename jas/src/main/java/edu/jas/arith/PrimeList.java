@@ -1,5 +1,5 @@
 /*
- * $Id: PrimeList.java 3058 2010-03-27 11:05:23Z kredel $
+ * $Id: PrimeList.java 3283 2010-08-22 17:23:03Z kredel $
  */
 
 package edu.jas.arith;
@@ -294,7 +294,7 @@ public final class PrimeList implements Iterable<java.math.BigInteger> {
                 return true;
             }
             public void remove() {
-                throw new RuntimeException("remove not implemented");
+                throw new UnsupportedOperationException("remove not implemented");
             }
             public java.math.BigInteger next() {
                 index++;

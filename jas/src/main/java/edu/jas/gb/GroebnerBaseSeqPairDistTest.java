@@ -1,5 +1,5 @@
 /*
- * $Id: GroebnerBaseSeqPairDistTest.java 2921 2009-12-25 17:06:56Z kredel $
+ * $Id: GroebnerBaseSeqPairDistTest.java 3265 2010-08-15 10:20:39Z kredel $
  */
 
 package edu.jas.gb;
@@ -227,8 +227,8 @@ public GroebnerBaseSeqPairDistTest(String name) {
      Gp = bbdist.GB( L );
      stopThreads( clients );
 
-     assertTrue("Gs.containsAll(Gp)", Gs.containsAll(Gp) );
-     assertTrue("Gp.containsAll(Gs)", Gp.containsAll(Gs) );
+     assertTrue("Gs.containsAll(Gp)" + Gs + ", " + Gp, Gs.containsAll(Gp) );
+     assertTrue("Gp.containsAll(Gs)" + Gs + ", " + Gp, Gp.containsAll(Gs) );
 
      L = Gs;
      L.add(b);
@@ -236,8 +236,8 @@ public GroebnerBaseSeqPairDistTest(String name) {
      clients = startThreads();
      Gp = bbdist.GB( L );
      stopThreads( clients );
-     assertTrue("Gs.containsAll(Gp)", Gs.containsAll(Gp) );
-     assertTrue("Gp.containsAll(Gs)", Gp.containsAll(Gs) );
+     assertTrue("Gs.containsAll(Gp)" + Gs + ", " + Gp, Gs.containsAll(Gp) );
+     assertTrue("Gp.containsAll(Gs)" + Gs + ", " + Gp, Gp.containsAll(Gs) );
 
      L = Gs;
      L.add(c);
@@ -246,8 +246,8 @@ public GroebnerBaseSeqPairDistTest(String name) {
      Gp = bbdist.GB( L );
      stopThreads( clients );
 
-     assertTrue("Gs.containsAll(Gp)", Gs.containsAll(Gp) );
-     assertTrue("Gp.containsAll(Gs)", Gp.containsAll(Gs) );
+     assertTrue("Gs.containsAll(Gp)" + Gs + ", " + Gp, Gs.containsAll(Gp) );
+     assertTrue("Gp.containsAll(Gs)" + Gs + ", " + Gp, Gp.containsAll(Gs) );
 
      L = Gs;
      L.add(d);
@@ -256,8 +256,8 @@ public GroebnerBaseSeqPairDistTest(String name) {
      Gp = bbdist.GB( L );
      stopThreads( clients );
 
-     assertTrue("Gs.containsAll(Gp)", Gs.containsAll(Gp) );
-     assertTrue("Gp.containsAll(Gs)", Gp.containsAll(Gs) );
+     assertTrue("Gs.containsAll(Gp)" + Gs + ", " + Gp, Gs.containsAll(Gp) );
+     assertTrue("Gp.containsAll(Gs)" + Gs + ", " + Gp, Gp.containsAll(Gs) );
 
      L = Gs;
      L.add(e);
@@ -266,8 +266,8 @@ public GroebnerBaseSeqPairDistTest(String name) {
      Gp = bbdist.GB( L );
      stopThreads( clients );
 
-     assertTrue("Gs.containsAll(Gp)", Gs.containsAll(Gp) );
-     assertTrue("Gp.containsAll(Gs)", Gp.containsAll(Gs) );
+     assertTrue("Gs.containsAll(Gp)" + Gs + ", " + Gp, Gs.containsAll(Gp) );
+     assertTrue("Gp.containsAll(Gs)" + Gs + ", " + Gp, Gp.containsAll(Gs) );
  }
 
 

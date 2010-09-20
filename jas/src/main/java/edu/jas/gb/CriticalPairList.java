@@ -1,5 +1,5 @@
 /*
- * $Id: CriticalPairList.java 2412 2009-02-07 12:17:54Z kredel $
+ * $Id: CriticalPairList.java 3288 2010-08-25 21:46:14Z kredel $
  */
 
 package edu.jas.gb;
@@ -68,7 +68,7 @@ public class CriticalPairList<C extends RingElem<C> > {
     public CriticalPairList(int m, GenPolynomialRing<C> r) {
         ring = r;
         if ( m < 0 || ring.nvar < m ) {
-           throw new RuntimeException("moduleVars > nvars");
+           throw new IllegalArgumentException("moduleVars > nvars");
         }
         moduleVars = m;
         P = new ArrayList<GenPolynomial<C>>();
@@ -83,6 +83,23 @@ public class CriticalPairList<C extends RingElem<C> > {
            useCriterion4 = false;
         }
         reduction = new ReductionSeq<C>();
+    }
+
+
+    /**
+     * toString.
+     */
+    @Override
+    public String toString() {
+        StringBuffer s = new StringBuffer("CriticalPairlist(");
+        //s.append("polys="+P.size());
+        s.append("#put="+putCount);
+        s.append(", #rem="+remCount);
+        if ( pairlist.size() != 0 ) {
+           s.append(", size="+pairlist.size());
+        }
+        s.append(")");
+        return s.toString();
     }
 
 

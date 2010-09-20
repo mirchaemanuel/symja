@@ -1,5 +1,5 @@
 /*
- * $Id: FactorMoreTest.java 2949 2009-12-30 18:25:34Z kredel $
+ * $Id: FactorMoreTest.java 3295 2010-08-26 17:01:10Z kredel $
  */
 
 package edu.jas.ufd;
@@ -15,17 +15,12 @@ import edu.jas.application.Quotient;
 import edu.jas.application.QuotientRing;
 import edu.jas.arith.BigInteger;
 import edu.jas.arith.BigRational;
-import edu.jas.arith.Modular;
 import edu.jas.arith.ModInteger;
 import edu.jas.arith.ModIntegerRing;
 import edu.jas.kern.ComputerThreads;
-import edu.jas.poly.AlgebraicNumber;
-import edu.jas.poly.AlgebraicNumberRing;
 import edu.jas.poly.GenPolynomial;
 import edu.jas.poly.GenPolynomialRing;
 import edu.jas.poly.TermOrder;
-import edu.jas.structure.GcdRingElem;
-import edu.jas.structure.RingFactory;
 
 
 /**

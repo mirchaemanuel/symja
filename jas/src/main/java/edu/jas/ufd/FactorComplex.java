@@ -1,5 +1,5 @@
 /*
- * $Id: FactorComplex.java 2947 2009-12-30 12:48:35Z kredel $
+ * $Id: FactorComplex.java 3289 2010-08-26 08:04:56Z kredel $
  */
 
 package edu.jas.ufd;
@@ -92,7 +92,7 @@ public class FactorComplex<C extends GcdRingElem<C>> extends FactorAbsolute<Comp
     @Override
     public List<GenPolynomial<Complex<C>>> baseFactorsSquarefree(GenPolynomial<Complex<C>> P) {
         if (P == null) {
-            throw new RuntimeException(this.getClass().getName() + " P == null");
+            throw new IllegalArgumentException(this.getClass().getName() + " P == null");
         }
         List<GenPolynomial<Complex<C>>> factors = new ArrayList<GenPolynomial<Complex<C>>>();
         if (P.isZERO()) {
@@ -104,11 +104,11 @@ public class FactorComplex<C extends GcdRingElem<C>> extends FactorAbsolute<Comp
         }
         GenPolynomialRing<Complex<C>> pfac = P.ring; // CC[x]
         if (pfac.nvar > 1) {
-            throw new RuntimeException("only for univariate polynomials");
+            throw new IllegalArgumentException("only for univariate polynomials");
         }
         ComplexRing<C> cfac = (ComplexRing<C>) pfac.coFac;
         if (!afac.ring.coFac.equals(cfac.ring)) {
-            throw new RuntimeException("coefficient rings do not match");
+            throw new IllegalArgumentException("coefficient rings do not match");
         }
         Complex<C> ldcf = P.leadingBaseCoefficient();
         if (!ldcf.isONE()) {

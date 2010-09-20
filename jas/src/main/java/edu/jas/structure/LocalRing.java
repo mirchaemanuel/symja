@@ -1,5 +1,5 @@
 /*
- * $Id: LocalRing.java 3211 2010-07-05 12:54:22Z kredel $
+ * $Id: LocalRing.java 3287 2010-08-23 21:29:53Z kredel $
  */
 
 package edu.jas.structure;
@@ -49,11 +49,11 @@ public class LocalRing<C extends RingElem<C> >
     public LocalRing(RingFactory<C> r, C i) {
         ring = r;
         if ( i == null ) {
-           throw new RuntimeException("ideal may not be null");
+           throw new IllegalArgumentException("ideal may not be null");
         }
         ideal = i;
         if ( ideal.isONE() ) {
-           throw new RuntimeException("ideal may not be 1");
+           throw new IllegalArgumentException("ideal may not be 1");
         }
     }
 

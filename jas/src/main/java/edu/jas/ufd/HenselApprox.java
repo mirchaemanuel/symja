@@ -1,15 +1,15 @@
 /*
- * $Id: HenselApprox.java 2974 2010-01-04 22:19:52Z kredel $
+ * $Id: HenselApprox.java 3295 2010-08-26 17:01:10Z kredel $
  */
 
 package edu.jas.ufd;
+
 
 import java.io.Serializable;
 
 import edu.jas.arith.BigInteger;
 import edu.jas.arith.Modular;
 import edu.jas.poly.GenPolynomial;
-import edu.jas.poly.GenPolynomialRing;
 import edu.jas.structure.GcdRingElem;
 import edu.jas.structure.ModularRingFactory;
 
@@ -54,7 +54,8 @@ public class HenselApprox<MOD extends GcdRingElem<MOD> & Modular> implements Ser
      * @param Am approximated modular polynomial.
      * @param Bm approximated modular polynomial.
      */
-    public HenselApprox(GenPolynomial<BigInteger> A, GenPolynomial<BigInteger> B, GenPolynomial<MOD> Am , GenPolynomial<MOD> Bm) {
+    public HenselApprox(GenPolynomial<BigInteger> A, GenPolynomial<BigInteger> B, GenPolynomial<MOD> Am,
+            GenPolynomial<MOD> Bm) {
         this.A = A;
         this.B = B;
         this.Am = Am;
