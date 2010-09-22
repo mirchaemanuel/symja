@@ -960,6 +960,7 @@ public class SystemTestCase extends AbstractTestCase {
 	}
 
 	public void testSystem165() {
+		check("Expand[1/((x-1)(1+x))]", "(x^2-1)^(-1)");
 		check("Expand[(x+y+z)^3]", "z^3+3*y*z^2+3*x*z^2+3*y^2*z+6*x*y*z+3*x^2*z+y^3+3*x*y^2+3*x^2*y+x^3");
 		check("Expand[(a+b)*(c+d)]", "b*d+a*d+b*c+a*c");
 		check("Expand[(x+3)/((x+4)*(x+2))]", "(x+3)*(x^2+6*x+8)^(-1)");
@@ -2121,6 +2122,7 @@ public class SystemTestCase extends AbstractTestCase {
 	}
 
 	public void testSystem405() {
+		// check("Series[Sin[x],{x,0,4}]", "");
 		check("Taylor[Cos[x],{x,0,4}]", "1/24*x^4-1/2*x^2+1");
 		check("Taylor[Exp[x],{x,0,10}]", "1/3628800*x^10+1/362880*x^9+1/40320*x^8+1/5040*x^7+1/720*x^6+1/120*x^5+1/24*x^4+\n"
 				+ "1/6*x^3+1/2*x^2+x+1");
