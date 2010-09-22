@@ -54,10 +54,16 @@ public class Times extends AbstractArgMultiple implements INumeric {
 		IExpr temp = null;
 		if (ee.isNumericMode()) {
 			if (o0.equals(F.CD0)) {
+				if (o1.isAST(F.DirectedInfinity, 2)) {
+					return F.Indeterminate;
+				}
 				return F.CD0;
 			}
 
 			if (o1.equals(F.CD0)) {
+				if (o0.isAST(F.DirectedInfinity, 2)) {
+					return F.Indeterminate;
+				}
 				return F.CD0;
 			}
 
@@ -74,10 +80,16 @@ public class Times extends AbstractArgMultiple implements INumeric {
 		}
 		
 		if (o0.equals(F.C0)) {
+			if (o1.isAST(F.DirectedInfinity, 2)) {
+				return F.Indeterminate;
+			}
 			return F.C0;
 		}
 
 		if (o1.equals(F.C0)) {
+			if (o0.isAST(F.DirectedInfinity, 2)) {
+				return F.Indeterminate;
+			}
 			return F.C0;
 		}
 

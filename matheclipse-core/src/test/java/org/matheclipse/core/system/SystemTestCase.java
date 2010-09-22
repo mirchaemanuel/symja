@@ -2147,6 +2147,8 @@ public class SystemTestCase extends AbstractTestCase {
 	}
 
 	public void testSystem408() {
+		check("0*Infinity", "Indeterminate");
+		check("0*(-Infinity)", "Indeterminate");
 		check("Infinity", "Infinity");
 		check("FullForm[Infinity]", "\"DirectedInfinity[1]\"");
 		check("Infinity*Infinity", "Infinity");
