@@ -112,15 +112,18 @@ public class Expand extends AbstractFunctionEvaluator implements IConstantHeader
 			}
 		} else if (ast.isASTSizeGE(F.Times, 3)) {
 			// (a+b)*(c+d)...
-			// return expandTimes(ast);
+
 			IExpr[] temp = getFractionalParts(ast);
 			if (temp[0].equals(F.C1)) {
-				return F.Power(expandTimes(ast), F.CN1);
+				if (temp[1].isTimes()){
+					return F.Power(expandTimes((IAST) temp[1]), F.CN1);
+				}
+				return null;
 			}
 
 			if (temp[1].equals(F.C1)) {
 				return expandTimes(ast);
-			}
+			} 
 
 			if (temp[0].isTimes()) {
 				temp[0] = expandTimes((IAST) temp[0]);
@@ -175,26 +178,6 @@ public class Expand extends AbstractFunctionEvaluator implements IConstantHeader
 		}
 		return pList;
 	}
-
-	// public static IExpr expandPower(final IAST expr0, final int exponent) {
-	// int exp = exponent;
-	// if (exp == 1) {
-	// return expr0;
-	// }
-	// if (exp == 0) {
-	// return F.C0;
-	// }
-	// IExpr pow2 = expr0;
-	// IExpr result = null;
-	// while (exp >= 1) { // Iteration.
-	// if ((exp & 1) == 1) {
-	// result = (result == null) ? pow2 : expandTimesBinary(result, pow2);
-	// }
-	// pow2 = expandTimesBinary(pow2, pow2);
-	// exp >>>= 1;
-	// }
-	// return result;
-	// }
 
 	/**
 	 * Expand a polynomial power with the multinomial theorem. See <a
