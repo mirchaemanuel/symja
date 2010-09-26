@@ -1,5 +1,5 @@
 /*
- * $Id: MultiVarPowerSeriesRing.java 3326 2010-09-18 12:05:09Z kredel $
+ * $Id: MultiVarPowerSeriesRing.java 3333 2010-09-26 17:59:00Z kredel $
  */
 
 package edu.jas.ps;
@@ -744,6 +744,49 @@ public class MultiVarPowerSeriesRing<C extends RingElem<C>> implements RingFacto
      */
     public MultiVarPowerSeries<C> parse(Reader r) {
         throw new UnsupportedOperationException("parse for power series not implemented");
+    }
+
+
+    /**
+     * Taylor power series.
+     * @param f function.
+     * @param a expansion point.
+     * @return Taylor series of f.
+     */
+    public MultiVarPowerSeries<C> seriesOfTaylor(final TaylorFunction<C> f, final List<C> a) {
+        return new MultiVarPowerSeries<C>(this, new MultiVarCoefficients<C>(this) {
+
+            TaylorFunction<C> der = f;
+            // Map<ExpVextor,TaylorFunction<C>> pderCache = ...
+            final List<C> v = a;
+
+            @Override
+            public C generate(ExpVector  i) {
+                C c;
+                int s = i.signum();
+                if (s == 0) {
+                   c = der.evaluate(v);
+                   //der = der.deriviative();
+                   return c;
+                }
+//                 if (s > 0) {
+//                     int[] deps = i.dependencyOnVariables();
+//                     ExpVector e = i.subst(deps[0], i.getVal(deps[0]) - 1L);
+//                     c = get(e); // ensure deriv is updated
+//                 }
+                TaylorFunction<C> pder = der.deriviative(i);
+//                 if ( pder.isZERO() ) {
+//                     return coFac.getZERO();
+// 		}
+                c = pder.evaluate(v);
+                if ( c.isZERO() ) {
+                    return c;
+		}
+                long f = pder.getFacul();
+                c = c.divide( coFac.fromInteger(f) );
+                return c;
+            }
+        });
     }
 
 }

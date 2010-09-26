@@ -1,5 +1,5 @@
 /*
- * $Id: Factors.java 3031 2010-03-08 23:18:01Z kredel $
+ * $Id: Factors.java 3329 2010-09-19 19:02:10Z kredel $
  */
 
 package edu.jas.ufd;
@@ -259,7 +259,7 @@ public class Factors<C extends GcdRingElem<C>> implements Comparable<Factors<C>>
         if ( s != 0 ) {
             return s;
         }
-        if (arfactors == null && arfactors == null) {
+        if (arfactors == null && facs.arfactors == null) {
             return 0;
         }
         if (arfactors == null) {

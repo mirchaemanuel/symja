@@ -1,5 +1,5 @@
 /*
- * $Id: GroebnerBasePartial.java 3294 2010-08-26 16:43:41Z kredel $
+ * $Id: GroebnerBasePartial.java 3329 2010-09-19 19:02:10Z kredel $
  */
 
 package edu.jas.gb;
@@ -111,7 +111,7 @@ public class GroebnerBasePartial<C extends GcdRingElem<C>> extends GroebnerBaseA
      * @return true, if F is a partial Groebner base, else false.
      */
     public boolean isGBrec(int modv, List<GenPolynomial<GenPolynomial<C>>> F) {
-        if (F == null || F.size() == 0) {
+        if (F == null || F.isEmpty()) {
             return true;
         }
         if (true) {

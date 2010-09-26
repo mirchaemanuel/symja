@@ -1,21 +1,18 @@
 /*
- * $Id: Examples.java 1265 2007-07-29 10:22:22Z kredel $
+ * $Id: Examples.java 3330 2010-09-26 10:50:05Z kredel $
  */
 
 package edu.jas.vector;
 
-//import java.util.ArrayList;
-//import java.util.List;
 
 //import edu.jas.arith.BigRational;
 import edu.jas.arith.BigInteger;
 //import edu.jas.arith.ModInteger;
-
 import edu.jas.poly.GenPolynomial;
 import edu.jas.poly.GenPolynomialRing;
-
 import edu.jas.application.Quotient;
 import edu.jas.application.QuotientRing;
+import edu.jas.kern.ComputerThreads;
 
 
 /**
@@ -31,6 +28,7 @@ public class Examples {
    public static void main (String[] args) {
        example1();
        //example2();
+        ComputerThreads.terminate();
    }
 
 
