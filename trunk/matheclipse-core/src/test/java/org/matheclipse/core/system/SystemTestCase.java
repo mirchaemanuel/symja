@@ -2248,8 +2248,15 @@ public class SystemTestCase extends AbstractTestCase {
 		check("TrigToExp[ArcCos[x]]", "I*Log[(-x^2+1)^(1/2)+I*x]+1/2*Pi");
 		check("TrigToExp[ArcTan[x]]", "-I*1/2*Log[I*x+1]+I*1/2*Log[-I*x+1]");
 	}
-
 	public void testSystem420() {
+		check("TrigReduce[Cos[x]*Cos[y]*Sin[x]]", "1/4*Sin[-y+2*x]+1/4*Sin[y+2*x]");
+		check("TrigReduce[Sin[x]*Cos[y]]", "1/2*Sin[-y+x]+1/2*Sin[y+x]");
+		check("TrigReduce[Sin[x]*Cos[y]*x^2*y^4+42]", "1/2*x^2*y^4*Sin[-y+x]+1/2*x^2*y^4*Sin[y+x]+42");
+		check("TrigReduce[Sin[10]*Cos[11]*x^2*y^4+42]", "1/2*x^2*y^4*Sin[21]-1/2*x^2*y^4*Sin[1]+42");
+		check("TrigReduce[Sin[x]^3]", "-1/4*Sin[3*x]+3/4*Sin[x]");
+		check("TrigReduce[Cos[x]^3]", "1/4*Cos[3*x]+3/4*Cos[x]");
+	}
+	public void testSystem421() {
 		// check("b_. x_","");
 		check("MatchQ[powered[h,h], powered[x_ ^ a_., x_]]", "True");
 		check("MatchQ[powered[h^3,h], powered[x_ ^ a_., x_]]", "True");
@@ -2266,7 +2273,7 @@ public class SystemTestCase extends AbstractTestCase {
 		check("MatchQ[linear[a+42+60*c,h], linear[a_. + b_. * x_, x_]]", "False");
 	}
 
-	public void testSystem421() {
+	public void testSystem422() {
 		check("Default[Power,2]", "1");
 		check("Default[Plus]", "0");
 		check("Default[Times]", "1");

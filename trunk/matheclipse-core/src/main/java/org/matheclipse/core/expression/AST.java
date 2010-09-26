@@ -482,17 +482,65 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 	}
 
 	public boolean isPlus() {
-		return head().equals(F.Plus) && size() >= 2;
+		return size() >= 3 && head().equals(F.Plus);
 	}
 
 	public boolean isPower() {
-		return head().equals(F.Power) && size() == 3;
+		return size() == 3 && head().equals(F.Power);
 	}
 
 	public boolean isTimes() {
-		return head().equals(F.Times) && size() >= 2;
+		return size() >= 3 && head().equals(F.Times);
 	}
 
+	public boolean isSin() {
+		return size() == 2 && head().equals(F.Sin);
+	}
+
+	public boolean isCos() {
+		return size() == 2 && head().equals(F.Cos);
+	}
+
+	public boolean isTan() {
+		return size() == 2 && head().equals(F.Tan);
+	}
+
+	public boolean isArcSin() {
+		return size() == 2 && head().equals(F.ArcSin);
+	}
+
+	public boolean isArcCos() {
+		return size() == 2 && head().equals(F.ArcCos);
+	}
+
+	public boolean isArcTan() {
+		return size() == 2 && head().equals(F.ArcTan);
+	}
+
+	public boolean isSinh() {
+		return size() == 2 && head().equals(F.Sinh);
+	}
+
+	public boolean isCosh() {
+		return size() == 2 && head().equals(F.Cosh);
+	}
+
+	public boolean isTanh() {
+		return size() == 2 && head().equals(F.Tanh);
+	}
+
+	public boolean isArcSinh() {
+		return size() == 2 && head().equals(F.ArcSinh);
+	}
+
+	public boolean isArcCosh() {
+		return size() == 2 && head().equals(F.ArcCosh);
+	}
+
+	public boolean isArcTanh() {
+		return size() == 2 && head().equals(F.ArcTanh);
+	}
+	
 	public boolean isTrue() {
 		return false;
 	}

@@ -30,7 +30,7 @@ public class FactorSquareFree extends Factor {
 			throw new WrongArgumentType(lst, lst.get(1), 1, "Factorization only implemented for univariate polynomials");
 		}
 		try {
-			IExpr expr = F.eval(F.ExpandAll, lst.get(1));
+			IExpr expr = F.evalExpandAll(lst.get(1));
 			ASTRange r = new ASTRange(eVar.getVarList(), 1);
 			List<IExpr> varList = r.toList();
 

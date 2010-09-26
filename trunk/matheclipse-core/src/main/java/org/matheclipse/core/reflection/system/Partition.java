@@ -2,7 +2,6 @@ package org.matheclipse.core.reflection.system;
 
 import static org.matheclipse.basic.Util.checkCanceled;
 
-import org.matheclipse.basic.Util;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IAST;
@@ -41,7 +40,6 @@ public class Partition extends AbstractFunctionEvaluator {
 					i += v;
 					result.add(temp);
 
-					Util.checkCanceled();
 				}
 				return result;
 			}

@@ -263,6 +263,30 @@ public interface IExpr extends Comparable<IExpr>, // FieldElement<IExpr>,
 
 	public boolean isTimes();
 
+	public boolean isSin();
+
+	public boolean isCos();
+
+	public boolean isTan();
+	
+	public boolean isArcSin();
+
+	public boolean isArcCos();
+
+	public boolean isArcTan();
+	
+	public boolean isSinh();
+
+	public boolean isCosh();
+
+	public boolean isTanh();
+	
+	public boolean isArcSinh();
+
+	public boolean isArcCosh();
+
+	public boolean isArcTanh();
+	
 	/**
 	 * Test if the expression is free of (sub-)expressions which match the
 	 * pattern.

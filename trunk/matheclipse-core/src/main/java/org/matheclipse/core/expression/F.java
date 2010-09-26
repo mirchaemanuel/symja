@@ -70,6 +70,12 @@ public class F {
 
 	public static ISymbol ArcTan;
 
+	public static ISymbol ArcCosh;
+
+	public static ISymbol ArcSinh;
+
+	public static ISymbol ArcTanh;
+
 	public static ISymbol AtomQ;
 
 	public static ISymbol Binomial;
@@ -610,6 +616,11 @@ public class F {
 		return unary(Expand, a0);
 	}
 
+	public static IAST ExpandAll(final IExpr a0) {
+
+		return unary(ExpandAll, a0);
+	}
+
 	public static IAST Factor(final IExpr a0) {
 
 		return unary(Factor, a0);
@@ -798,6 +809,9 @@ public class F {
 			ArcCos = predefinedSymbol("ArcCos");
 			ArcSin = predefinedSymbol("ArcSin");
 			ArcTan = predefinedSymbol("ArcTan");
+			ArcCosh = predefinedSymbol("ArcCosh");
+			ArcSinh = predefinedSymbol("ArcSinh");
+			ArcTanh = predefinedSymbol("ArcTanh");
 			AtomQ = predefinedSymbol("AtomQ");
 			Binomial = predefinedSymbol("Binomial");
 			Break = predefinedSymbol("Break");
@@ -2199,8 +2213,8 @@ public class F {
 	}
 
 	/**
-	 * Evaluate an object. If no evaluation was possible this method returns the
-	 * given argument.
+	 * Evaluate an expression. If no evaluation was possible this method returns
+	 * the given argument.
 	 * 
 	 * @param a
 	 *          the expression which should be evaluated
@@ -2209,6 +2223,19 @@ public class F {
 	 */
 	public static IExpr eval(IExpr a) {
 		return EvalEngine.eval(a);
+	}
+
+	/**
+	 * Apply <code>ExpandAll[]</code> to the given expression and evaluate it. If
+	 * no evaluation was possible this method returns the given argument.
+	 * 
+	 * @param a
+	 *          the expression which should be evaluated
+	 * @return the evaluated expression
+	 * @see EvalEngine#eval(IExpr)
+	 */
+	public static IExpr evalExpandAll(IExpr a) {
+		return EvalEngine.eval(ExpandAll(a));
 	}
 
 	public static IExpr cast(Object obj) {

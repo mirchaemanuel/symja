@@ -29,82 +29,75 @@ import edu.jas.ufd.SquarefreeFactory;
  */
 public class Apart extends AbstractFunctionEvaluator {
 
-  public Apart() {
-  }
+	public Apart() {
+	}
 
-  @Override
-  public IExpr evaluate(final IAST lst) {
-    if (lst.size() != 2) {
-      return null;
-    }
-    ExprVariables eVar = new ExprVariables(lst.get(1));
-    if (!eVar.isSize(1)) {
-      // partial fraction only possible for univariate polynomials
-      return null;
-    }
-    IAST variableList = eVar.getVarList();
-    try {
-      final IExpr header = lst.get(1).head();
-      if (header == F.Times || header == F.Power) {
-        IExpr[] parts = Integrate.getFractionalParts2(lst.get(1));
-        if (parts != null) {
+	@Override
+	public IExpr evaluate(final IAST lst) {
+		if (lst.size() != 2) {
+			return null;
+		}
+		ExprVariables eVar = new ExprVariables(lst.get(1));
+		if (!eVar.isSize(1)) {
+			// partial fraction only possible for univariate polynomials
+			return null;
+		}
+		IAST variableList = eVar.getVarList();
+		try {
+			final IExpr header = lst.get(1).head();
+			if (header == F.Times || header == F.Power) {
+				IExpr[] parts = Integrate.getFractionalParts2(lst.get(1));
+				if (parts != null) {
 
-          IExpr exprNumerator = F.eval(F.ExpandAll, parts[0]);
-          IExpr exprDenominator = F.eval(F.ExpandAll, parts[1]);
-          ASTRange r = new ASTRange(variableList, 1);
-          List<IExpr> varList = r.toList();
+					IExpr exprNumerator = F.evalExpandAll(parts[0]);
+					IExpr exprDenominator = F.evalExpandAll(parts[1]);
+					ASTRange r = new ASTRange(variableList, 1);
+					List<IExpr> varList = r.toList();
 
-          String[] varListStr = new String[1];
-          varListStr[0] = variableList.get(1).toString();
-          JASConvert<BigRational> jas = new JASConvert<BigRational>(varList);
-          GenPolynomial<BigRational> numerator = jas.expr2Poly(exprNumerator);
-          GenPolynomial<BigRational> denominator = jas
-              .expr2Poly(exprDenominator);
+					String[] varListStr = new String[1];
+					varListStr[0] = variableList.get(1).toString();
+					JASConvert<BigRational> jas = new JASConvert<BigRational>(varList);
+					GenPolynomial<BigRational> numerator = jas.expr2Poly(exprNumerator);
+					GenPolynomial<BigRational> denominator = jas.expr2Poly(exprDenominator);
 
-          // get factors
-          FactorAbstract<BigRational> factorAbstract = FactorFactory
-              .getImplementation(BigRational.ZERO);
-          SortedMap<GenPolynomial<BigRational>, Long> sfactors = factorAbstract
-              .baseFactors(denominator);
+					// get factors
+					FactorAbstract<BigRational> factorAbstract = FactorFactory.getImplementation(BigRational.ZERO);
+					SortedMap<GenPolynomial<BigRational>, Long> sfactors = factorAbstract.baseFactors(denominator);
 
-          List<GenPolynomial<BigRational>> D = new ArrayList<GenPolynomial<BigRational>>(
-              sfactors.keySet());
+					List<GenPolynomial<BigRational>> D = new ArrayList<GenPolynomial<BigRational>>(sfactors.keySet());
 
-          SquarefreeAbstract<BigRational> sqf = SquarefreeFactory
-              .getImplementation(BigRational.ZERO);
-          List<List<GenPolynomial<BigRational>>> Ai = sqf.basePartialFraction(
-              numerator, sfactors);
-          // returns [ [Ai0, Ai1,..., Aie_i], i=0,...,k ] with A/prod(D) =
-          // A0 + sum( sum ( Aij/di^j ) ) with deg(Aij) < deg(di).
+					SquarefreeAbstract<BigRational> sqf = SquarefreeFactory.getImplementation(BigRational.ZERO);
+					List<List<GenPolynomial<BigRational>>> Ai = sqf.basePartialFraction(numerator, sfactors);
+					// returns [ [Ai0, Ai1,..., Aie_i], i=0,...,k ] with A/prod(D) =
+					// A0 + sum( sum ( Aij/di^j ) ) with deg(Aij) < deg(di).
 
-          if (Ai.size() > 0) {
-            IAST result = F.Plus();
-            result.add(jas.poly2Expr(Ai.get(0).get(0), null));
-            for (int i = 1; i < Ai.size(); i++) {
-              List<GenPolynomial<BigRational>> list = Ai.get(i);
-              long j = 0L;
-              for (GenPolynomial<BigRational> genPolynomial : list) {
-                if (!genPolynomial.isZERO()) {
-                  result.add(F.Times(jas.poly2Expr(genPolynomial, null), F
-                      .Power(jas.poly2Expr(D.get(i - 1), null), F.integer(j
-                          * (-1L)))));
-                }
-                j++;
-              }
+					if (Ai.size() > 0) {
+						IAST result = F.Plus();
+						result.add(jas.poly2Expr(Ai.get(0).get(0), null));
+						for (int i = 1; i < Ai.size(); i++) {
+							List<GenPolynomial<BigRational>> list = Ai.get(i);
+							long j = 0L;
+							for (GenPolynomial<BigRational> genPolynomial : list) {
+								if (!genPolynomial.isZERO()) {
+									result.add(F.Times(jas.poly2Expr(genPolynomial, null), F.Power(jas.poly2Expr(D.get(i - 1), null), F.integer(j
+											* (-1L)))));
+								}
+								j++;
+							}
 
-            }
-            return result;
-          }
-        }
-      } else {
-        return lst.get(1);
-      }
-    } catch (Exception e) {
-      if (Config.SHOW_STACKTRACE) {
-        e.printStackTrace();
-      }
-    }
-    return null;
-  }
+						}
+						return result;
+					}
+				}
+			} else {
+				return lst.get(1);
+			}
+		} catch (Exception e) {
+			if (Config.SHOW_STACKTRACE) {
+				e.printStackTrace();
+			}
+		}
+		return null;
+	}
 
 }

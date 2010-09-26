@@ -53,7 +53,7 @@ public class RootIntervals extends AbstractFunctionEvaluator {
         // factor only possible for univariate polynomials
         return null;
       }
-      IExpr expr = F.eval(F.ExpandAll, lst.get(1));
+      IExpr expr = F.evalExpandAll(lst.get(1));
       ASTRange r = new ASTRange(eVar.getVarList(), 1);
       List<IExpr> varList = r.toList();
 

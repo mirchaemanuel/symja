@@ -39,7 +39,7 @@ public class PolynomialLCM extends AbstractFunctionEvaluator {
 			return null;
 		}
 		ASTRange r = new ASTRange(eVar.getVarList(), 1);
-		IExpr expr = F.eval(F.ExpandAll, lst.get(1));
+		IExpr expr = F.evalExpandAll(lst.get(1));
 		if (lst.size() > 3) {
 			final Options options = new Options(lst.topHead(), lst, lst.size() - 1);
 			IExpr option = options.getOption("Modulus");
@@ -60,7 +60,7 @@ public class PolynomialLCM extends AbstractFunctionEvaluator {
 							// gcd only possible for univariate polynomials
 							return null;
 						}
-						expr = F.eval(F.ExpandAll, lst.get(i));
+						expr = F.evalExpandAll(lst.get(i));
 						temp = jas.expr2Poly(expr);
 						gcd = poly.gcd(temp);
 						lcm = poly.multiply(temp).divide(gcd);
@@ -88,7 +88,7 @@ public class PolynomialLCM extends AbstractFunctionEvaluator {
 					// gcd only possible for univariate polynomials
 					return null;
 				}
-				expr = F.eval(F.ExpandAll, lst.get(i));
+				expr = F.evalExpandAll(lst.get(i));
 				temp = jas.expr2Poly(expr);
 				gcd = poly.gcd(temp);
 				lcm = poly.multiply(temp).divide(gcd);

@@ -15,34 +15,66 @@ public abstract class AbstractVisitor<T> implements IVisitor<T> {
 		super();
 	}
 
+	/**
+	 * 
+	 * @return <code>null</code>, if no evaluation is possible
+	 */
 	public T visit(IInteger element) {
 		return null;
 	}
 
+	/**
+	 * 
+	 * @return <code>null</code>, if no evaluation is possible
+	 */
 	public T visit(IFraction element) {
 		return null;
 	}
 
+	/**
+	 * 
+	 * @return <code>null</code>, if no evaluation is possible
+	 */
 	public T visit(IComplex element) {
 		return null;
 	}
 
+	/**
+	 * 
+	 * @return <code>null</code>, if no evaluation is possible
+	 */
 	public T visit(INum element) {
 		return null;
 	}
 
+	/**
+	 * 
+	 * @return <code>null</code>, if no evaluation is possible
+	 */
 	public T visit(IComplexNum element) {
 		return null;
 	}
 
+	/**
+	 * 
+	 * @return <code>null</code>, if no evaluation is possible
+	 */
 	public T visit(ISymbol element) {
 		return null;
 	}
 
+	/**
+	 * 
+	 * @return <code>null</code>, if no evaluation is possible
+	 */
 	public T visit(IPattern element) {
 		return null;
 	}
 
+	/**
+	 * 
+	 * @return <code>null</code>, if no evaluation is possible
+	 */
 	public T visit(IStringX element) {
 		return null;
 	}

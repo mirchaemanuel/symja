@@ -51,7 +51,7 @@ public class GroebnerBasis extends AbstractFunctionEvaluator {
               polys.size() - 1);
           JASConvert<BigRational> jas = new JASConvert<BigRational>(varList);
           for (int i = 1; i < polys.size(); i++) {
-            IExpr expr = F.eval(F.ExpandAll, polys.get(i));
+            IExpr expr = F.evalExpandAll(polys.get(i));
             GenPolynomial<BigRational> poly = jas.expr2Poly(expr);
             polyList.add(poly);
           }

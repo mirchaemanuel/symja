@@ -5,7 +5,6 @@ import static org.matheclipse.core.expression.F.Times;
 
 import org.matheclipse.core.eval.EvalEngine;
 import org.matheclipse.core.eval.interfaces.AbstractArgMultiple;
-import org.matheclipse.core.eval.interfaces.HashRule;
 import org.matheclipse.core.eval.interfaces.INumeric;
 import org.matheclipse.core.expression.AST;
 import org.matheclipse.core.expression.F;
@@ -19,15 +18,14 @@ import org.matheclipse.core.interfaces.INum;
 import org.matheclipse.core.interfaces.INumber;
 import org.matheclipse.core.interfaces.ISignedNumber;
 import org.matheclipse.core.interfaces.ISymbol;
-
-import com.google.common.collect.ArrayListMultimap;
+import org.matheclipse.core.patternmatching.HashedOrderlessMatcher;
 
 public class Plus extends AbstractArgMultiple implements INumeric {
 
-	private static ArrayListMultimap<Integer, HashRule> RULE_MAP = ArrayListMultimap.create();
+	private static HashedOrderlessMatcher ORDERLESS_MATCHER = new HashedOrderlessMatcher();
 
-	public ArrayListMultimap<Integer, HashRule> getHashRuleMap() {
-		return RULE_MAP;
+	public HashedOrderlessMatcher getHashRuleMap() {
+		return ORDERLESS_MATCHER;
 	}
 
 	public Plus() {
@@ -181,7 +179,7 @@ public class Plus extends AbstractArgMultiple implements INumeric {
 	@Override
 	public void setUp(final ISymbol symbol) {
 		symbol.setAttributes(ISymbol.ONEIDENTITY | ISymbol.ORDERLESS | ISymbol.FLAT | ISymbol.LISTABLE | ISymbol.NUMERICFUNCTION);
-		setUpHashRule("Sin[x_]^2", "Cos[x_]^2", "1");
+		ORDERLESS_MATCHER.setUpHashRule("Sin[x_]^2", "Cos[x_]^2", "1", false);
 	}
 
 	public double evalReal(final double[] stack, final int top, final int size) {

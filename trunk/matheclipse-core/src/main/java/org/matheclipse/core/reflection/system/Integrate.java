@@ -100,7 +100,7 @@ public class Integrate extends AbstractFunctionEvaluator implements IConstantHea
 				return list.args().map(F.Plus(), new UnaryBind1st(F.Integrate(F.Null, lst.get(2))));
 			}
 			if (header == F.Times || header == F.Power) {
-				IExpr arg = F.eval(F.ExpandAll, list);// ExpandAll.expandAll(list);
+				IExpr arg = F.evalExpandAll(list);
 				if (lst.get(2) instanceof ISymbol) {
 					IExpr[] parts = getFractionalParts2(arg);
 					if (parts != null) {

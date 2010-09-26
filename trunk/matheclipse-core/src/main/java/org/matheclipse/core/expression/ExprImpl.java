@@ -180,6 +180,54 @@ public abstract class ExprImpl implements IExpr {
 		return false;
 	}
 
+	public boolean isSin() {
+		return false;
+	}
+
+	public boolean isCos() {
+		return false;
+	}
+
+	public boolean isTan() {
+		return false;
+	}
+
+	public boolean isArcSin() {
+		return false;
+	}
+
+	public boolean isArcCos() {
+		return false;
+	}
+
+	public boolean isArcTan() {
+		return false;
+	}
+
+	public boolean isSinh() {
+		return false;
+	}
+
+	public boolean isCosh() {
+		return false;
+	}
+
+	public boolean isTanh() {
+		return false;
+	}
+
+	public boolean isArcSinh() {
+		return false;
+	}
+
+	public boolean isArcCosh() {
+		return false;
+	}
+
+	public boolean isArcTanh() {
+		return false;
+	}
+
 	public boolean isFree(final IExpr pattern) {
 		final PatternMatcher matcher = new PatternMatcher(pattern);
 		return !AST.COPY.some(this, matcher, 1);

@@ -25,6 +25,7 @@ import org.matheclipse.core.interfaces.ISymbol;
 import org.matheclipse.core.patternmatching.PatternMatcher;
 import org.matheclipse.core.patternmatching.PatternMatcherAndEvaluator;
 import org.matheclipse.core.patternmatching.PatternMatcherAndInvoker;
+import org.matheclipse.core.patternmatching.RulesData;
 import org.matheclipse.core.visit.IVisitor;
 import org.matheclipse.core.visit.IVisitorBoolean;
 import org.matheclipse.core.visit.IVisitorInt;
@@ -40,10 +41,14 @@ public class Symbol extends ExprImpl implements ISymbol {
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -6865099709235625213L;
+	private static final long serialVersionUID = 7416359407349683408L;
+
+	/**
+	 * 
+	 */
 
 	private static final int DEFAULT_VALUE_INDEX = Integer.MIN_VALUE;
-	
+
 	// protected static final XmlFormat<SymbolImpl> SYMBOL_XML = new
 	// XmlFormat<SymbolImpl>(SymbolImpl.class) {
 	// @Override
@@ -63,13 +68,12 @@ public class Symbol extends ExprImpl implements ISymbol {
 
 	private int fAttributes = NOATTRIBUTE;
 
-	private Map<IExpr, Pair<ISymbol, IExpr>> fEqualRules = null;
-
 	private transient IEvaluator fEvaluator;
 
-	private ArrayListMultimap<Integer, IPatternMatcher<IExpr>> fSimplePatternRules = ArrayListMultimap.create();
-
-	private List<IPatternMatcher<IExpr>> fPatternRules = null;
+	/**
+	 * The pattern matching rules associated with this symbol.
+	 */
+	private RulesData fRulesData = new RulesData();
 
 	private Map<Integer, IExpr> fDefaultValues = null;
 
@@ -135,9 +139,7 @@ public class Symbol extends ExprImpl implements ISymbol {
 				throw new RuleCreationError(null);
 			}
 		}
-		fEqualRules = null;
-		fSimplePatternRules = null;
-		fPatternRules = null;
+		fRulesData.clear();
 	}
 
 	/** {@inheritDoc} */
@@ -169,51 +171,7 @@ public class Symbol extends ExprImpl implements ISymbol {
 
 	/** {@inheritDoc} */
 	public IExpr evalDownRule(final IEvaluationEngine ee, final IExpr expression) {
-		Pair<ISymbol, IExpr> res;
-		if (fEqualRules != null) {
-			res = fEqualRules.get(expression);
-			if (res != null) {
-				// if (expression instanceof ISymbol) {
-				// System.out.println(expression + " = " + res.getSecond());
-				// }
-				return res.getSecond();
-			}
-		}
-
-		IExpr result;
-		IPatternMatcher<IExpr> pmEvaluator;
-		if ((fSimplePatternRules != null) && (expression instanceof IAST)) {
-			final Integer hash = Integer.valueOf(((IAST) expression).patternHashCode());
-			final List<IPatternMatcher<IExpr>> list = fSimplePatternRules.get(hash);
-			if (list != null) {
-				for (int i = 0; i < list.size(); i++) {
-					if (Config.SERVER_MODE) {
-						pmEvaluator = (IPatternMatcher<IExpr>) list.get(i).clone();
-					} else {
-						pmEvaluator = list.get(i);
-					}
-					result = pmEvaluator.eval(expression);
-					if (result != null) {
-						return result;
-					}
-				}
-			}
-		}
-
-		if (fPatternRules != null) {
-			for (int i = 0; i < fPatternRules.size(); i++) {
-				if (Config.SERVER_MODE) {
-					pmEvaluator = (IPatternMatcher<IExpr>) fPatternRules.get(i).clone();
-				} else {
-					pmEvaluator = fPatternRules.get(i);
-				}
-				result = pmEvaluator.eval(expression);
-				if (result != null) {
-					return result;
-				}
-			}
-		}
-		return null;
+		return fRulesData.evalDownRule(ee, expression);
 	}
 
 	/** {@inheritDoc} */
@@ -291,11 +249,6 @@ public class Symbol extends ExprImpl implements ISymbol {
 	/** {@inheritDoc} */
 	public PatternMatcher putDownRule(ISymbol setSymbol, final boolean equalRule, final IExpr leftHandSide,
 			final IExpr rightHandSide, final IExpr condition, final int priority) {
-		if (Config.DEBUG) {
-			if (rightHandSide.isAST("Condition")) {
-				throw new RuntimeException("Condition  not allowed in right-hand-side");
-			}
-		}
 		EvalEngine engine = EvalEngine.get();
 		if (!engine.isPackageMode()) {
 			if (Config.SERVER_MODE && (fSymbolName.charAt(0) != '$')) {
@@ -304,113 +257,12 @@ public class Symbol extends ExprImpl implements ISymbol {
 
 			engine.addModifiedVariable(this);
 		}
-
-		if (equalRule) {
-			if (fEqualRules == null) {
-				fEqualRules = new HashMap<IExpr, Pair<ISymbol, IExpr>>();
-			}
-			fEqualRules.put(leftHandSide, new Pair<ISymbol, IExpr>(setSymbol, rightHandSide));
-			if (condition != null) {
-				throw new RuleCreationError(leftHandSide, rightHandSide, condition);
-			}
-			return null;
-		}
-
-		final PatternMatcherAndEvaluator pmEvaluator = new PatternMatcherAndEvaluator(setSymbol, leftHandSide, rightHandSide);
-
-		if (pmEvaluator.isRuleWithoutPatterns()) {
-			if (fEqualRules == null) {
-				fEqualRules = new HashMap<IExpr, Pair<ISymbol, IExpr>>();
-			}
-			fEqualRules.put(leftHandSide, new Pair<ISymbol, IExpr>(setSymbol, rightHandSide));
-			if (condition != null) {
-				throw new RuleCreationError(leftHandSide, rightHandSide, condition);
-			}
-			return null;
-		}
-
-		pmEvaluator.setCondition(condition);
-		if (!isComplicatedPatternRule(leftHandSide)) {
-			if (fSimplePatternRules == null) {
-				fSimplePatternRules = ArrayListMultimap.create();
-			}
-			return addSimplePatternRule(leftHandSide, pmEvaluator);
-
-		} else {
-
-			if (fPatternRules == null) {
-				fPatternRules = new ArrayList<IPatternMatcher<IExpr>>();
-			}
-
-			for (int i = 0; i < fPatternRules.size(); i++) {
-				if (pmEvaluator.equals(fPatternRules.get(i))) {
-					fPatternRules.set(i, pmEvaluator);
-
-					return pmEvaluator;
-				}
-			}
-			fPatternRules.add(pmEvaluator);
-			return pmEvaluator;
-		}
-
-	}
-
-	private PatternMatcher addSimplePatternRule(final IExpr leftHandSide, final PatternMatcher pmEvaluator) {
-		final Integer hash = Integer.valueOf(((IAST) leftHandSide).patternHashCode());
-		if (fSimplePatternRules.containsEntry(hash, pmEvaluator)) {
-			fSimplePatternRules.remove(hash, pmEvaluator);
-		}
-		fSimplePatternRules.put(hash, pmEvaluator);
-		return pmEvaluator;
+		return fRulesData.putDownRule(setSymbol, equalRule, leftHandSide, rightHandSide, condition, priority);
 	}
 
 	/** {@inheritDoc} */
 	public PatternMatcher putDownRule(final PatternMatcherAndInvoker pmEvaluator) {
-		final IExpr leftHandSide = pmEvaluator.getLHS();
-		if (!isComplicatedPatternRule(leftHandSide)) {
-			if (fSimplePatternRules == null) {
-				fSimplePatternRules = ArrayListMultimap.create();
-			}
-			return addSimplePatternRule(leftHandSide, pmEvaluator);
-
-		} else {
-
-			if (fPatternRules == null) {
-				fPatternRules = new ArrayList<IPatternMatcher<IExpr>>();
-			}
-
-			for (int i = 0; i < fPatternRules.size(); i++) {
-				if (pmEvaluator.equals(fPatternRules.get(i))) {
-					fPatternRules.set(i, pmEvaluator);
-					return pmEvaluator;
-				}
-			}
-			fPatternRules.add(pmEvaluator);
-			return pmEvaluator;
-		}
-	}
-
-	private boolean isComplicatedPatternRule(final IExpr patternExpr) {
-		if (patternExpr instanceof IAST) {
-			final IAST ast = ((IAST) patternExpr);
-			if (ast.size() > 1) {
-				if ((ast.get(1) instanceof IPattern)) {
-					return true;
-				}
-				final int attr = ast.topHead().getAttributes();
-				if ((ISymbol.ORDERLESS & attr) == ISymbol.ORDERLESS) {
-					return true;
-				}
-				for (int i = 2; i < ast.size(); i++) {
-					if (ast.get(i) instanceof IPattern && ((IPattern) ast.get(i)).isDefault()) {
-						return true;
-					}
-				}
-			}
-		} else if (patternExpr instanceof IPattern) {
-			return true;
-		}
-		return false;
+		return fRulesData.putDownRule(pmEvaluator);
 	}
 
 	/** {@inheritDoc} */
@@ -425,25 +277,6 @@ public class Symbol extends ExprImpl implements ISymbol {
 	/** {@inheritDoc} */
 	public void setEvaluator(final IEvaluator evaluator) {
 		fEvaluator = evaluator;
-	}
-
-	// public String toString() {
-	// return fSymbolName;
-	// }
-
-	/**
-	 * @return Returns the equalRules.
-	 */
-	public Map<IExpr, Pair<ISymbol, IExpr>> getEqualRules() {
-		return fEqualRules;
-	}
-
-	/**
-	 * @param equalRules
-	 *          The equalRules to set.
-	 */
-	public void setEqualRules(final Map<IExpr, Pair<ISymbol, IExpr>> equalRules) {
-		fEqualRules = equalRules;
 	}
 
 	/**
@@ -551,70 +384,7 @@ public class Symbol extends ExprImpl implements ISymbol {
 	}
 
 	public List<IAST> definition() {
-		ArrayList<IAST> definitionList = new ArrayList<IAST>();
-		Iterator<IExpr> iter;
-		IExpr key;
-		Pair<ISymbol, IExpr> pair;
-		IExpr condition;
-		ISymbol setSymbol;
-		IAST ast;
-		PatternMatcherAndEvaluator pmEvaluator;
-		if (fEqualRules != null && fEqualRules.size() > 0) {
-			iter = fEqualRules.keySet().iterator();
-			while (iter.hasNext()) {
-				key = iter.next();
-				pair = fEqualRules.get(key);
-				setSymbol = pair.getFirst();
-				ast = F.ast(setSymbol);
-				ast.add(key);
-				ast.add(pair.getSecond());
-				definitionList.add(ast);
-			}
-		}
-		if (fSimplePatternRules != null && fSimplePatternRules.size() > 0) {
-			Iterator<IPatternMatcher<IExpr>> listIter = fSimplePatternRules.values().iterator();
-			IPatternMatcher<IExpr> elem;
-			while (listIter.hasNext()) {
-				elem = listIter.next();
-				if (elem instanceof PatternMatcherAndEvaluator) {
-					pmEvaluator = (PatternMatcherAndEvaluator) elem;
-					setSymbol = pmEvaluator.getSetSymbol();
-
-					ast = F.ast(setSymbol);
-					ast.add(pmEvaluator.getLHS());
-					condition = pmEvaluator.getCondition();
-					if (condition != null) {
-						ast.add(F.Condition(pmEvaluator.getRHS(), condition));
-					} else {
-						ast.add(pmEvaluator.getRHS());
-					}
-					definitionList.add(ast);
-				}
-				// if (elem instanceof PatternMatcherAndInvoker) {
-				// don't show internal methods associated with a pattern
-				// }
-			}
-		}
-		if (fPatternRules != null && fPatternRules.size() > 0) {
-			for (int i = 0; i < fPatternRules.size(); i++) {
-				if (fPatternRules.get(i) instanceof PatternMatcherAndEvaluator) {
-					pmEvaluator = (PatternMatcherAndEvaluator) fPatternRules.get(i);
-					setSymbol = pmEvaluator.getSetSymbol();
-					ast = F.ast(setSymbol);
-					ast.add(pmEvaluator.getLHS());
-					condition = pmEvaluator.getCondition();
-					if (condition != null) {
-						ast.add(F.Condition(pmEvaluator.getRHS(), condition));
-					} else {
-						ast.add(pmEvaluator.getRHS());
-					}
-					definitionList.add(ast);
-				}
-			}
-
-		}
-
-		return definitionList;
+		return fRulesData.definition();
 	}
 
 	/** {@inheritDoc} */
@@ -673,152 +443,14 @@ public class Symbol extends ExprImpl implements ISymbol {
 	public void readSymbol(java.io.ObjectInputStream stream) throws IOException {
 		fSymbolName = stream.readUTF();
 		fAttributes = stream.read();
-
-		String astString;
-		IExpr key;
-		IExpr value;
-		EvalEngine engine = EvalEngine.get();
-		ISymbol setSymbol;
-		int len = stream.read();
-		if (len > 0) {
-			fEqualRules = new HashMap<IExpr, Pair<ISymbol, IExpr>>();
-			for (int i = 0; i < len; i++) {
-				astString = stream.readUTF();
-				setSymbol = F.symbol(astString);
-
-				astString = stream.readUTF();
-				key = engine.parse(astString);
-				astString = stream.readUTF();
-				value = engine.parse(astString);
-				fEqualRules.put(key, new Pair<ISymbol, IExpr>(setSymbol, value));
-			}
-		}
-
-		len = stream.read();
-		IExpr lhs;
-		IExpr rhs;
-		IExpr condition;
-		int listLength;
-		int condLength;
-		PatternMatcherAndEvaluator pmEvaluator;
-		if (len > 0) {
-			fSimplePatternRules = ArrayListMultimap.create();
-			for (int i = 0; i < len; i++) {
-				astString = stream.readUTF();
-				setSymbol = F.symbol(astString);
-
-				astString = stream.readUTF();
-				lhs = engine.parse(astString);
-				astString = stream.readUTF();
-				rhs = engine.parse(astString);
-				pmEvaluator = new PatternMatcherAndEvaluator(setSymbol, lhs, rhs);
-
-				condLength = stream.read();
-				if (condLength == 0) {
-					condition = null;
-				} else {
-					astString = stream.readUTF();
-					condition = engine.parse(astString);
-					pmEvaluator.setCondition(condition);
-				}
-				addSimplePatternRule(lhs, pmEvaluator);
-			}
-
-		}
-
-		len = stream.read();
-		if (len > 0) {
-			fPatternRules = new ArrayList<IPatternMatcher<IExpr>>();
-			listLength = stream.read();
-			for (int j = 0; j < listLength; j++) {
-				astString = stream.readUTF();
-				setSymbol = F.symbol(astString);
-
-				astString = stream.readUTF();
-				lhs = engine.parse(astString);
-				astString = stream.readUTF();
-				rhs = engine.parse(astString);
-				pmEvaluator = new PatternMatcherAndEvaluator(setSymbol, lhs, rhs);
-
-				condLength = stream.read();
-				if (condLength == 0) {
-					condition = null;
-				} else {
-					astString = stream.readUTF();
-					condition = engine.parse(astString);
-					pmEvaluator.setCondition(condition);
-				}
-				addSimplePatternRule(lhs, pmEvaluator);
-			}
-		}
+		fRulesData.readSymbol(stream);
 	}
 
 	/** {@inheritDoc} */
 	public void writeSymbol(java.io.ObjectOutputStream stream) throws java.io.IOException {
 		stream.writeUTF(fSymbolName);
 		stream.write(fAttributes);
-		Iterator<IExpr> iter;
-		IExpr key;
-		IExpr condition;
-		Pair<ISymbol, IExpr> pair;
-		ISymbol setSymbol;
-		PatternMatcherAndEvaluator pmEvaluator;
-		if (fEqualRules == null || fEqualRules.size() == 0) {
-			stream.write(0);
-		} else {
-			stream.write(fEqualRules.size());
-			iter = fEqualRules.keySet().iterator();
-			while (iter.hasNext()) {
-				key = iter.next();
-				pair = fEqualRules.get(key);
-				stream.writeUTF(pair.getFirst().toString());
-				stream.writeUTF(key.fullFormString());
-				stream.writeUTF(pair.getSecond().fullFormString());
-			}
-		}
-		if (fSimplePatternRules == null || fSimplePatternRules.size() == 0) {
-			stream.write(0);
-		} else {
-			stream.write(fSimplePatternRules.size());
-			Iterator<IPatternMatcher<IExpr>> listIter = fSimplePatternRules.values().iterator();
-			IPatternMatcher<IExpr> elem;
-			while (listIter.hasNext()) {
-				elem = listIter.next();
-				pmEvaluator = (PatternMatcherAndEvaluator) elem;
-				setSymbol = pmEvaluator.getSetSymbol();
-				stream.writeUTF(setSymbol.toString());
-				stream.writeUTF(pmEvaluator.getLHS().fullFormString());
-				stream.writeUTF(pmEvaluator.getRHS().fullFormString());
-				condition = pmEvaluator.getCondition();
-				if (condition == null) {
-					stream.write(0);
-				} else {
-					stream.write(1);
-					stream.writeUTF(condition.fullFormString());
-				}
-			}
-		}
-		if (fPatternRules == null || fPatternRules.size() == 0) {
-			stream.write(0);
-		} else {
-			stream.write(fPatternRules.size());
-
-			for (int i = 0; i < fPatternRules.size(); i++) {
-				pmEvaluator = (PatternMatcherAndEvaluator) fPatternRules.get(i);
-				setSymbol = pmEvaluator.getSetSymbol();
-				stream.writeUTF(setSymbol.toString());
-				stream.writeUTF(pmEvaluator.getLHS().fullFormString());
-				stream.writeUTF(pmEvaluator.getRHS().fullFormString());
-				condition = pmEvaluator.getCondition();
-				if (condition == null) {
-					stream.write(0);
-				} else {
-					stream.write(1);
-					stream.writeUTF(condition.fullFormString());
-				}
-			}
-
-		}
+		fRulesData.writeSymbol(stream);
 	}
 
 	public <T> T accept(IVisitor<T> visitor) {

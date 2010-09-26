@@ -61,11 +61,11 @@ public class Together extends AbstractFunctionEvaluator {
         }
         i++;
       }
-      IExpr exprNumerator = F.eval(F.ExpandAll, numer);
+      IExpr exprNumerator = F.evalExpandAll(numer);
       if (denom.size() == 1) {
         return exprNumerator;
       }
-      IExpr exprDenominator = F.eval(F.ExpandAll, denom);
+      IExpr exprDenominator = F.evalExpandAll(denom);
       if (!exprDenominator.equals(F.C1)) {
         IExpr[] result = normalize(exprNumerator, exprDenominator);
         if (result != null) {
