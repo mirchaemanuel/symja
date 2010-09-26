@@ -417,11 +417,13 @@ public class PatternMatcher extends IPatternMatcher<IExpr> implements Serializab
 		for (int i = 0; i < fPatternSymbolsArray.size(); i++) {
 			for (int j = 0; j < thatMatcher.fPatternSymbolsArray.size(); j++) {
 				if (fPatternSymbolsArray.get(i).equals(thatMatcher.fPatternSymbolsArray.get(j))) {
-					return fPatternValuesArray[i].equals(thatMatcher.fPatternValuesArray[j]);
+					if (! fPatternValuesArray[i].equals(thatMatcher.fPatternValuesArray[j]) ){
+						return false;
+					}
 				}
 			}
 		}
-		return false;
+		return true;
 	}
 
 	public boolean checkCondition() {

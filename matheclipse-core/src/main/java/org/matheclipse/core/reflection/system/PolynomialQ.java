@@ -42,19 +42,9 @@ public class PolynomialQ extends AbstractFunctionEvaluator implements BiPredicat
 
 	}
 
-	// public static boolean isPolynomial(IExpr polnomialExpr, final IAST list) {
-	// try {
-	// polnomialExpr = F.eval(F.ExpandAll, polnomialExpr);
-	// return polynomialQ(polnomialExpr, list);
-	// } catch (final Exception e) {
-	// // exception will be thrown if the expression is not a polynomial
-	// }
-	// return false;
-	// }
-
 	public static boolean polynomialQ(final IExpr polnomialExpr, final IAST variables) {
 		try {
-			IExpr expr = F.eval(F.ExpandAll, polnomialExpr);
+			IExpr expr = F.evalExpandAll(polnomialExpr);
 			ASTRange r = new ASTRange(variables,1);
 			JASConvert<BigRational> jas = new JASConvert<BigRational>(r.toList());
 			return jas.expr2Poly(expr)!=null;
@@ -62,63 +52,6 @@ public class PolynomialQ extends AbstractFunctionEvaluator implements BiPredicat
 			// exception will be thrown if the expression is not a polynomial
 		}
 		return false;
-		// if (exprPoly instanceof IAST) {
-		// final IAST ast = (IAST) exprPoly;
-		// if (ast.isASTSizeGE(F.Plus, 2)) {
-		// IExpr expr = ast.get(1);
-		// if(!polynomialQ(expr, variables)) {
-		// return false;
-		// }
-		// for (int i = 2; i < ast.size(); i++) {
-		// checkCanceled();
-		// expr = ast.get(i);
-		// if(!polynomialQ(expr, variables)) {
-		// return false;
-		// }
-		// }
-		// return true;
-		// } else if (ast.isASTSizeGE(F.Times, 2)) {
-		// IExpr expr = ast.get(1);
-		// if(!polynomialQ(expr, variables)) {
-		// return false;
-		// }
-		// for (int i = 2; i < ast.size(); i++) {
-		// checkCanceled();
-		// expr = ast.get(i);
-		// if(!polynomialQ(expr, variables)) {
-		// return false;
-		// }
-		// }
-		// return true;
-		// } else if (ast.isAST(F.Power, 3)) {
-		// final IExpr expr = ast.get(1);
-		// for (int i = 0; i < variables.size(); i++) {
-		// checkCanceled();
-		// if (variables.get(i).equals(expr)) {
-		// return true;
-		// }
-		// }
-		// return true;
-		// }
-		// } else if (exprPoly instanceof ISymbol) {
-		// for (int i = 0; i < variables.size(); i++) {
-		// checkCanceled();
-		// if (variables.get(i).equals(exprPoly)) {
-		// return true;
-		// }
-		// }
-		// }
-		//
-		// // check if this expression contains any variable
-		// for (int i = 0; i < variables.size(); i++) {
-		// checkCanceled();
-		// if (!exprPoly.isFree(variables.get(i))) {
-		// return false;
-		// }
-		// }
-		//
-		// return true;
-
 	}
 
 	@Override

@@ -1,6 +1,5 @@
 package org.matheclipse.core.reflection.system;
 
-import static org.matheclipse.basic.Util.checkCanceled;
 
 import org.matheclipse.basic.Util;
 import org.matheclipse.core.eval.interfaces.AbstractTrigArg1;
@@ -42,9 +41,7 @@ public class Factorial2 extends AbstractTrigArg1 {
 			}
 			for (BigInteger i = start; i.compareTo(biggi) >= 0; i = i
 					.plus(BigInteger.valueOf(-2))) {
-				checkCanceled();
 				result = result.times(i);
-				Util.checkCanceled();
 			}
 		} else {
 			if (biggi.isOdd()) {
@@ -54,9 +51,7 @@ public class Factorial2 extends AbstractTrigArg1 {
 			}
 			for (BigInteger i = start; i.compareTo(biggi) <= 0; i = i
 					.plus(BigInteger.valueOf(2))) {
-				checkCanceled();
 				result = result.times(i);
-				Util.checkCanceled();
 			}
 		}
 

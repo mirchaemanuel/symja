@@ -36,8 +36,8 @@ public class PolynomialExtendedGCD extends AbstractFunctionEvaluator {
 			return null;
 		}
 		ISymbol x = (ISymbol) lst.get(3);
-		IExpr expr1 = F.eval(F.ExpandAll, lst.get(1));
-		IExpr expr2 = F.eval(F.ExpandAll, lst.get(2));
+		IExpr expr1 = F.evalExpandAll(lst.get(1));
+		IExpr expr2 = F.evalExpandAll(lst.get(2));
 		ExprVariables eVar = new ExprVariables(expr1);
 		if (!eVar.isSize(1) || !eVar.contains(x)) {
 			// egcd only possible for univariate polynomials

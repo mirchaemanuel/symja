@@ -1,7 +1,6 @@
 package org.matheclipse.core.eval.interfaces;
 
 import org.matheclipse.core.eval.exception.Validate;
-import org.matheclipse.core.eval.exception.WrongNumberOfArguments;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IComplex;
