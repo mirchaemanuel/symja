@@ -100,7 +100,7 @@ public class AbstractArgMultiple extends AbstractArg2 {
 		if (hashRuleMap == null) {
 			return null;
 		}
-		return hashRuleMap.evaluate2(ast);
+		return hashRuleMap.evaluate(ast);
 	}
 
 }

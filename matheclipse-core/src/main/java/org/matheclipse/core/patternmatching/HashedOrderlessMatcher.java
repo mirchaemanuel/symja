@@ -21,16 +21,18 @@ import com.google.common.collect.ArrayListMultimap;
  */
 public class HashedOrderlessMatcher {
 	ArrayListMultimap<Integer, HashedPatternRules> hashRuleMap;
+	private final boolean fDefaultHashCode;
 
-	public HashedOrderlessMatcher() {
+	public HashedOrderlessMatcher(boolean defaultHashCode) {
+		this.fDefaultHashCode = defaultHashCode;
 		this.hashRuleMap = ArrayListMultimap.create();
 	}
 
 	public void setUpHashRule(final String lhs1Str, final String lhs2Str, final String rhsStr) throws SyntaxError {
-		setUpHashRule(lhs1Str, lhs2Str, rhsStr, true);
+		setUpHashRule(lhs1Str, lhs2Str, rhsStr, null);
 	}
 
-	public void setUpHashRule(final String lhs1Str, final String lhs2Str, final String rhsStr, boolean defaultHashCode)
+	public void setUpHashRule(final String lhs1Str, final String lhs2Str, final String rhsStr, final String conditionStr)
 			throws SyntaxError {
 		final Parser parser = new Parser();
 		ASTNode parsedAST = parser.parse(lhs1Str);
@@ -39,11 +41,16 @@ public class HashedOrderlessMatcher {
 		final IExpr lhs2 = AST2Expr.CONST.convert(parsedAST);
 		parsedAST = parser.parse(rhsStr);
 		final IExpr rhs = AST2Expr.CONST.convert(parsedAST);
-		setUpHashRule(lhs1, lhs2, rhs, defaultHashCode);
+		IExpr condition = null;
+		if (conditionStr != null) {
+			parsedAST = parser.parse(conditionStr);
+			condition = AST2Expr.CONST.convert(parsedAST);
+		}
+		setUpHashRule(lhs1, lhs2, rhs, condition);
 	}
 
-	private void setUpHashRule(final IExpr lhs1, final IExpr lhs2, final IExpr rhs, boolean defaultHashCode) {
-		HashedPatternRules hashRule = new HashedPatternRules(lhs1, lhs2, rhs, defaultHashCode);
+	private void setUpHashRule(final IExpr lhs1, final IExpr lhs2, final IExpr rhs, final IExpr condition) {
+		HashedPatternRules hashRule = new HashedPatternRules(lhs1, lhs2, rhs, condition, fDefaultHashCode);
 		hashRuleMap.put(hashRule.getHash1(), hashRule);
 	}
 
@@ -55,28 +62,18 @@ public class HashedOrderlessMatcher {
 	 * @return
 	 * @see HashedPatternRules
 	 */
-	public IAST evaluate1(final IAST orderlessAST) {
+	public IAST evaluate(final IAST orderlessAST) {
 		int[] hashValues = new int[(orderlessAST.size() - 1)];
-		for (int i = 0; i < hashValues.length; i++) {
-			hashValues[i] = orderlessAST.get(i + 1).head().hashCode();
-		}
-		return evaluateHashedValues(orderlessAST, hashValues);
-	}
-
-	/**
-	 * Evaluate an <code>Orderless</code> AST with the defined
-	 * <code>HashedPatternRules</code>.
-	 * 
-	 * @param orderlessAST
-	 * @return
-	 * @see HashedPatternRules
-	 */
-	public IAST evaluate2(final IAST orderlessAST) {
-		int[] hashValues = new int[(orderlessAST.size() - 1)];
-		HashValueVisitor v = new HashValueVisitor();
-		for (int i = 0; i < hashValues.length; i++) {
-			hashValues[i] = orderlessAST.get(i + 1).accept(v);
-			v.setUp();
+		if (fDefaultHashCode) {
+			for (int i = 0; i < hashValues.length; i++) {
+				hashValues[i] = orderlessAST.get(i + 1).head().hashCode();
+			}
+		} else {
+			HashValueVisitor v = new HashValueVisitor();
+			for (int i = 0; i < hashValues.length; i++) {
+				hashValues[i] = orderlessAST.get(i + 1).accept(v);
+				v.setUp();
+			}
 		}
 		return evaluateHashedValues(orderlessAST, hashValues);
 	}

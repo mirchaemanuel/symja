@@ -19,6 +19,7 @@ public class HashedPatternRules {
 	private RulesData fRulesData = null;
 	private final IExpr fLHSPattern1;
 	private final IExpr fLHSPattern2;
+	private final IExpr fCondition;
 	private final IExpr fRHS;
 
 	/**
@@ -29,12 +30,15 @@ public class HashedPatternRules {
 	 *          second left-hand-side pattern
 	 * @param rhsResult
 	 *          the right-hand-side result
+	 * @param condition
+	 *          a condition test
 	 * @param defaultHashCode
 	 *          TODO
 	 */
-	public HashedPatternRules(IExpr lhsPattern1, IExpr lhsPattern2, IExpr rhsResult, boolean defaultHashCode) {
+	public HashedPatternRules(IExpr lhsPattern1, IExpr lhsPattern2, IExpr rhsResult, IExpr condition, boolean defaultHashCode) {
 		fLHSPattern1 = lhsPattern1;
 		fLHSPattern2 = lhsPattern2;
+		fCondition = condition;
 		fRHS = rhsResult;
 		if (defaultHashCode) {
 			hash1 = lhsPattern1.head().hashCode();
@@ -87,6 +91,11 @@ public class HashedPatternRules {
 				return false;
 		} else if (!fLHSPattern2.equals(other.fLHSPattern2))
 			return false;
+		if (fCondition == null) {
+			if (other.fCondition != null)
+				return false;
+		} else if (!fCondition.equals(other.fCondition))
+			return false;
 		if (fRHS == null) {
 			if (other.fRHS != null)
 				return false;
@@ -118,7 +127,7 @@ public class HashedPatternRules {
 	public RulesData getRulesData() {
 		if (fRulesData == null) {
 			fRulesData = new RulesData();
-			fRulesData.putDownRule(F.SetDelayed, false, F.List(fLHSPattern1, fLHSPattern2), fRHS, null, 0);
+			fRulesData.putDownRule(F.SetDelayed, false, F.List(fLHSPattern1, fLHSPattern2), fRHS, fCondition, 0);
 		}
 		return fRulesData;
 	}

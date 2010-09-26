@@ -49,7 +49,9 @@ public class SystemTestCase extends AbstractTestCase {
 
 		check("a+Sin[x]^2+Cos[x]^2+2/3", "a+5/3");
 		check("a+Sin[x]^2+Cos[y]^2+2/3", "Sin[x]^2+Cos[y]^2+a+2/3");
-
+		check("a+ArcSin[x]+ArcCos[x]+2/3", "a+1/2*Pi+2/3");
+		check("a+ArcTan[17]+ArcTan[1/17]+2/3", "a+1/2*Pi+2/3");
+		check("a+ArcTan[-2]+ArcTan[-1/2]+2/3", "a-1/2*Pi+2/3");
 	}
 
 	public void testSystem000a() {
@@ -2248,6 +2250,7 @@ public class SystemTestCase extends AbstractTestCase {
 		check("TrigToExp[ArcCos[x]]", "I*Log[(-x^2+1)^(1/2)+I*x]+1/2*Pi");
 		check("TrigToExp[ArcTan[x]]", "-I*1/2*Log[I*x+1]+I*1/2*Log[-I*x+1]");
 	}
+
 	public void testSystem420() {
 		check("TrigReduce[Cos[x]*Cos[y]*Sin[x]]", "1/4*Sin[-y+2*x]+1/4*Sin[y+2*x]");
 		check("TrigReduce[Sin[x]*Cos[y]]", "1/2*Sin[-y+x]+1/2*Sin[y+x]");
@@ -2256,6 +2259,7 @@ public class SystemTestCase extends AbstractTestCase {
 		check("TrigReduce[Sin[x]^3]", "-1/4*Sin[3*x]+3/4*Sin[x]");
 		check("TrigReduce[Cos[x]^3]", "1/4*Cos[3*x]+3/4*Cos[x]");
 	}
+
 	public void testSystem421() {
 		// check("b_. x_","");
 		check("MatchQ[powered[h,h], powered[x_ ^ a_., x_]]", "True");
