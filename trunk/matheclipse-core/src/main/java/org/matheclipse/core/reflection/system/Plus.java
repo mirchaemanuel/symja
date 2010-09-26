@@ -22,7 +22,7 @@ import org.matheclipse.core.patternmatching.HashedOrderlessMatcher;
 
 public class Plus extends AbstractArgMultiple implements INumeric {
 
-	private static HashedOrderlessMatcher ORDERLESS_MATCHER = new HashedOrderlessMatcher();
+	private static HashedOrderlessMatcher ORDERLESS_MATCHER = new HashedOrderlessMatcher(true);
 
 	public HashedOrderlessMatcher getHashRuleMap() {
 		return ORDERLESS_MATCHER;
@@ -179,7 +179,11 @@ public class Plus extends AbstractArgMultiple implements INumeric {
 	@Override
 	public void setUp(final ISymbol symbol) {
 		symbol.setAttributes(ISymbol.ONEIDENTITY | ISymbol.ORDERLESS | ISymbol.FLAT | ISymbol.LISTABLE | ISymbol.NUMERICFUNCTION);
-		ORDERLESS_MATCHER.setUpHashRule("Sin[x_]^2", "Cos[x_]^2", "1", false);
+		ORDERLESS_MATCHER.setUpHashRule("Sin[x_]^2", "Cos[x_]^2", "1");
+		ORDERLESS_MATCHER.setUpHashRule("ArcSin[x_]", "ArcCos[x_]", "Pi/2");
+		ORDERLESS_MATCHER.setUpHashRule("ArcTan[x_]", "ArcCot[x_]", "Pi/2");
+		ORDERLESS_MATCHER.setUpHashRule("ArcTan[x_]", "ArcTan[y_]", "Pi/2", "Positive[x]&&(y==1/x)");
+		ORDERLESS_MATCHER.setUpHashRule("-ArcTan[x_]", "-ArcTan[y_]", "-Pi/2", "Positive[x]&&(y==1/x)");
 	}
 
 	public double evalReal(final double[] stack, final int top, final int size) {

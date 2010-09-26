@@ -18,7 +18,7 @@ import org.matheclipse.core.visit.VisitorExpr;
  * identities</a>
  */
 public class TrigReduce implements IFunctionEvaluator {
-	private static HashedOrderlessMatcher ORDERLESS_MATCHER = new HashedOrderlessMatcher();
+	private static HashedOrderlessMatcher ORDERLESS_MATCHER = new HashedOrderlessMatcher(true);
 
 	public TrigReduce() {
 	}
@@ -31,7 +31,7 @@ public class TrigReduce implements IFunctionEvaluator {
 		@Override
 		public IExpr visit(IAST ast) {
 			if (ast.isTimes()) {
-				IAST result = ORDERLESS_MATCHER.evaluate1(ast);
+				IAST result = ORDERLESS_MATCHER.evaluate(ast);
 				if (result != null) {
 					return result;
 				}
