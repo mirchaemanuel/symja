@@ -2124,7 +2124,7 @@ public class SystemTestCase extends AbstractTestCase {
 	}
 
 	public void testSystem405() {
-		// check("Series[Sin[x],{x,0,4}]", "");
+		// check("Series[Exp[x],{x,0,4}]", "");
 		check("Taylor[Cos[x],{x,0,4}]", "1/24*x^4-1/2*x^2+1");
 		check("Taylor[Exp[x],{x,0,10}]", "1/3628800*x^10+1/362880*x^9+1/40320*x^8+1/5040*x^7+1/720*x^6+1/120*x^5+1/24*x^4+\n"
 				+ "1/6*x^3+1/2*x^2+x+1");
@@ -2233,6 +2233,8 @@ public class SystemTestCase extends AbstractTestCase {
 	}
 
 	public void testSystem418() {
+		check("Limit[Sin[Pi*x]/(Pi*x),x->0]", "1");
+		check("Limit[1+Sin[x]/x,x->Infinity]", "Limit[x^(-1)*Sin[x],x->Infinity]+1");
 		check("Limit[Pi^42,x->42]", "Pi^42");
 		check("Limit[x,x->42]", "42");
 		check("Limit[a+b+2*x,x->42]", "b+a+84");
@@ -2240,6 +2242,9 @@ public class SystemTestCase extends AbstractTestCase {
 		check("Limit[a+b+2*x,x->-Infinity]", "-Infinity+b+a");
 		check("Limit[-x,x->Infinity]", "-Infinity");
 		check("Limit[x-x,x->Infinity]", "0");
+		check("Limit[(x^2-3*x+2)/(x-1),x->1]", "-1");
+		check("Limit[Sin[2*n]/Sin[3*n],n->0]", "2/3");
+		check("Limit[(2*Sin[x]-Sin[2*x])/(x-Sin[x]),x->0]", "6");
 	}
 
 	public void testSystem419() {

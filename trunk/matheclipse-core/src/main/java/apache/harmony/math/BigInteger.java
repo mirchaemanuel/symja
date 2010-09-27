@@ -1096,7 +1096,7 @@ public class BigInteger implements Comparable<BigInteger>, Serializable {
 	}
 
 	/** Tests if {@code this.abs()} is equals to {@code ONE} */
-	boolean isOne() {
+	public boolean isOne() {
 		return ((_size == 1) && (_words[0] == 1));
 	}
 

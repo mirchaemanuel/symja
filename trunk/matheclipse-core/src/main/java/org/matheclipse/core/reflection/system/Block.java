@@ -1,7 +1,5 @@
 package org.matheclipse.core.reflection.system;
 
-import static org.matheclipse.basic.Util.checkCanceled;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,7 +28,6 @@ public class Block extends AbstractFunctionEvaluator {
 				// remember which local variables we use:
 
 				for (int i = 1; i < lst.size(); i++) {
-					checkCanceled();
 					if (lst.get(i) instanceof ISymbol) {
 						variables.add(lst.get(i));
 						((Symbol) lst.get(i)).pushLocalVariable();
@@ -46,17 +43,10 @@ public class Block extends AbstractFunctionEvaluator {
 					}
 				}
 
-				// check for wrong local variable definitions:
-
-				// if (variables.size() != lst.size()) {
-				//
-				// }
-
 				result = engine.evaluate(ast.get(2));
 			} finally {
 				// pop all local variables from local variable stack
 				for (int i = 0; i < variables.size(); i++) {
-					checkCanceled();
 					((Symbol) variables.get(i)).popLocalVariable();
 				}
 			}
