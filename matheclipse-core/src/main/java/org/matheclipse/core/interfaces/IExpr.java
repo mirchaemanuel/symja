@@ -288,6 +288,18 @@ public interface IExpr extends Comparable<IExpr>, // FieldElement<IExpr>,
 	public boolean isArcTanh();
 	
 	/**
+	 * Test if this expression equals <code>1</code> in symbolic or numeric mode.
+	 * 
+	 */
+	public boolean isOne();
+	
+	/**
+	 * Test if this expression equals <code>0</code> in symbolic or numeric mode.
+	 * 
+	 */
+	public boolean isZero();
+	
+	/**
 	 * Test if the expression is free of (sub-)expressions which match the
 	 * pattern.
 	 * 

@@ -324,13 +324,17 @@ public class IntegerSym extends ExprImpl implements IInteger {
 		return fInteger.isPositive();
 	}
 
-	/**
-	 * @return
-	 */
+	
+	@Override
 	public boolean isZero() {
 		return fInteger.isZero();
 	}
 
+	@Override
+	public boolean isOne() {
+		return fInteger.isOne();
+	}
+	
 	public int intValue() {
 		return (int) fInteger.longValue();
 	}
@@ -432,7 +436,7 @@ public class IntegerSym extends ExprImpl implements IInteger {
 			return that.negate();
 		}
 		if (that instanceof FractionSym) {
-			return FractionSym.valueOf(fInteger).minus((FractionSym) that);
+			return FractionSym.valueOf(fInteger).minus(that);
 		}
 		return Num.valueOf(fInteger.doubleValue() - that.doubleValue());
 	}
@@ -967,6 +971,7 @@ public class IntegerSym extends ExprImpl implements IInteger {
 		return fInteger.doubleValue() < obj.doubleValue();
 	}
 
+	@Override
 	public ISymbol head() {
 		return F.IntegerHead;
 	}
@@ -986,6 +991,7 @@ public class IntegerSym extends ExprImpl implements IInteger {
 		return fInteger.toString();
 	}
 
+	@Override
 	public String internalFormString() {
 		int value = fInteger.toInt();
 		switch (value) {

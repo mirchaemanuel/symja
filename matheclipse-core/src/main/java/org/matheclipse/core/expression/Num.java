@@ -373,8 +373,16 @@ public class Num extends ExprImpl implements INum {
 		return temp;
 	}
 
+	@Override
 	public boolean isZero() {
-		return fDouble == 0.0;
+		return F.isZero(fDouble);
+		// return fDouble == 0.0;
+	}
+
+	@Override
+	public boolean isOne() {
+		return F.isZero(fDouble - 1.0);
+		// return fDouble == 1.0;
 	}
 
 	public int sign() {
@@ -413,6 +421,7 @@ public class Num extends ExprImpl implements INum {
 		return fDouble > that.doubleValue();
 	}
 
+	@Override
 	public ISymbol head() {
 		return F.RealHead;
 	}

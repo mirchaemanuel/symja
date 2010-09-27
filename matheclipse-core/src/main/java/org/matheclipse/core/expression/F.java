@@ -2238,6 +2238,26 @@ public class F {
 		return EvalEngine.eval(ExpandAll(a));
 	}
 
+	/**
+	 * Evaluate an expression for a local variable.
+	 * 
+	 * 
+	 * @param expr
+	 *          the expression which should be evaluated for the given symbol
+	 * @param symbol
+	 *          the symbol which should be evaluated as a local variable
+	 * @param localValue
+	 *          the value
+	 */
+	public static IExpr evalBlock(IExpr expr, ISymbol symbol, IExpr localValue) {
+		try {
+			symbol.pushLocalVariable(localValue);
+			return F.eval(expr);
+		} finally {
+			symbol.popLocalVariable();
+		}
+	}
+
 	public static IExpr cast(Object obj) {
 		return Object2Expr.CONST.convert(obj);
 	}

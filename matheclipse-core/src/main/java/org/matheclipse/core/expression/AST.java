@@ -540,7 +540,15 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 	public boolean isArcTanh() {
 		return size() == 2 && head().equals(F.ArcTanh);
 	}
-	
+
+	public boolean isOne() {
+		return false;
+	}
+
+	public boolean isZero() {
+		return false;
+	}
+
 	public boolean isTrue() {
 		return false;
 	}

@@ -228,6 +228,14 @@ public abstract class ExprImpl implements IExpr {
 		return false;
 	}
 
+	public boolean isOne() {
+		return false;
+	}
+
+	public boolean isZero() {
+		return false;
+	}
+
 	public boolean isFree(final IExpr pattern) {
 		final PatternMatcher matcher = new PatternMatcher(pattern);
 		return !AST.COPY.some(this, matcher, 1);
