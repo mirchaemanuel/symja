@@ -1005,6 +1005,9 @@ public class SystemTestCase extends AbstractTestCase {
 	}
 
 	public void testSystem171() {
+//		check("Integrate[(x^2+1)Log[x],x]", "");
+		check("Integrate[Sin[x]^3,x]","-1/3*Cos[x]*Sin[x]^2-2/3*Cos[x]");
+		check("Integrate[Cos[2x]^3,x]", "1/6*Cos[2*x]^2*Sin[2*x]+1/3*Sin[2*x]");
 		check("Integrate[x,x]", "1/2*x^2");
 		check("Integrate[2x,x]", "x^2");
 		check("Integrate[h[x],x]", "Integrate[h[x],x]");
@@ -2267,6 +2270,7 @@ public class SystemTestCase extends AbstractTestCase {
 
 	public void testSystem421() {
 		// check("b_. x_","");
+		check("MatchQ[Sin[x]^3, Sin[a_.*x_]^n_IntegerQ]","True");
 		check("MatchQ[powered[h,h], powered[x_ ^ a_., x_]]", "True");
 		check("MatchQ[powered[h^3,h], powered[x_ ^ a_., x_]]", "True");
 		check("MatchQ[42, _IntegerQ]", "True");

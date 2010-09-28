@@ -12,6 +12,7 @@ import org.matheclipse.core.expression.ASTRange;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
+import org.matheclipse.core.interfaces.ISignedNumber;
 
 import edu.jas.arith.BigRational;
 import edu.jas.poly.GenPolynomial;
@@ -46,7 +47,7 @@ public class Apart extends AbstractFunctionEvaluator {
 		try {
 			final IExpr header = lst.get(1).head();
 			if (header == F.Times || header == F.Power) {
-				IExpr[] parts = Integrate.getFractionalParts2(lst.get(1));
+				IExpr[] parts = Apart.getFractionalParts(lst.get(1));
 				if (parts != null) {
 
 					IExpr exprNumerator = F.evalExpandAll(parts[0]);
@@ -98,6 +99,95 @@ public class Apart extends AbstractFunctionEvaluator {
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * Split the expression into numerator and denominator parts, by separating
+	 * positive and negative powers.
+	 * 
+	 * @param arg
+	 * @return the numerator and denominator expression
+	 */
+	public static IExpr[] getFractionalParts(final IExpr arg) {
+		IExpr[] parts = null;
+		if (arg.isTimes()) {
+			parts = Apart.getFractionalPartsTimes((IAST) arg);
+		} else if (arg.isPower()) {
+			IAST temp = (IAST) arg;
+			if (temp.get(2) instanceof ISignedNumber) {
+				parts = new IExpr[2];
+				if (temp.get(2).equals(F.CN1)) {
+					parts[0] = F.C1;
+					parts[1] = temp.get(1);
+				} else if (((ISignedNumber) temp.get(2)).isNegative()) {
+					parts[0] = F.C1;
+					parts[1] = F.Power(temp.get(1), ((ISignedNumber) temp.get(2)).negate());
+				} else {
+					parts[0] = arg;
+					parts[1] = F.C1;
+				}
+			}
+		} else {
+			parts = new IExpr[2];
+			parts[0] = arg;
+			parts[1] = F.C1;
+		}
+		return parts;
+	}
+
+	/**
+	 * Return the numerator and denominator for the given <code>Times[...]</code>
+	 * AST, by separating positive and negative powers.
+	 * 
+	 * @param timesAST
+	 *          a times expression (a*b*c....)
+	 * @return the numerator and denominator expression
+	 */
+	public static IExpr[] getFractionalPartsTimes(final IAST timesAST) {
+		IExpr[] result = new IExpr[2];
+
+		IAST numerator = F.Times();
+		IAST denominator = F.Times();
+		final IAST ast = (IAST) timesAST;
+		IExpr arg;
+		IAST temp;
+		for (int i = 1; i < ast.size(); i++) {
+			arg = ast.get(i);
+			if (arg.isAST(F.Power, 3)) {
+				temp = (IAST) arg;
+				if (temp.get(2) instanceof ISignedNumber) {
+					if (temp.get(2).equals(F.CN1)) {
+						denominator.add(temp.get(1));
+						continue;
+					}
+					if (((ISignedNumber) temp.get(2)).isNegative()) {
+						denominator.add(F.Power(temp.get(1), ((ISignedNumber) temp.get(2)).negate()));
+						continue;
+					}
+				}
+			}
+			numerator.add(arg);
+		}
+		if (numerator.size() == 1) {
+			// no factor collected
+			result[0] = F.C1;
+		} else if (numerator.size() == 2) {
+			// OneIdentity - use 1st argument
+			result[0] = numerator.get(1);
+		} else {
+			result[0] = numerator;
+		}
+		if (denominator.size() == 1) {
+			// no factor collected
+			result[1] = F.C1;
+		} else if (denominator.size() == 2) {
+			// OneIdentity - use 1st argument
+			result[1] = denominator.get(1);
+		} else {
+			result[1] = denominator;
+		}
+		return result;
+
 	}
 
 }

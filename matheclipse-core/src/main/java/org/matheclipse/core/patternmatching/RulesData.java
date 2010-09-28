@@ -41,7 +41,7 @@ public class RulesData {
 		fPatternRules = null;
 	}
 
-	public IExpr evalDownRule( final IExpr expression) {
+	public IExpr evalDownRule(final IExpr expression) {
 		return evalDownRule(EvalEngine.get(), expression);
 	}
 
@@ -117,6 +117,9 @@ public class RulesData {
 			return null;
 		}
 
+		// if (condition!=null && condition.isAST(F.And,3)) {
+		// System.out.println("condition");
+		// }
 		pmEvaluator.setCondition(condition);
 		if (!isComplicatedPatternRule(leftHandSide)) {
 

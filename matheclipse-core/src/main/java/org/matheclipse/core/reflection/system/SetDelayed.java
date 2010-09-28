@@ -58,7 +58,7 @@ public class SetDelayed implements IFunctionEvaluator, ICreatePatternMatcher {
 				lhsSymbol.set(rightHandSide);
 				return result;
 			} else {
-				condition = condition == null ? null : condition;// .copy();
+				// condition = condition == null ? null : condition;// .copy();
 				result[0] = lhsSymbol.putDownRule(F.SetDelayed, true, leftHandSide, rightHandSide, condition);
 				return result;
 			}
@@ -67,7 +67,7 @@ public class SetDelayed implements IFunctionEvaluator, ICreatePatternMatcher {
 		if (leftHandSide instanceof IAST) {
 			final ISymbol lhsSymbol = ((IAST) leftHandSide).topHead();
 			// leftHandSide = leftHandSide.copy();
-			condition = condition == null ? null : condition;// .copy();
+			// condition = condition == null ? null : condition;// .copy();
 			result[0] = lhsSymbol.putDownRule(F.SetDelayed, false, leftHandSide, rightHandSide, condition);
 			return result;
 		}
