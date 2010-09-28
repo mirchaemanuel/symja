@@ -417,7 +417,7 @@ public class PatternMatcher extends IPatternMatcher<IExpr> implements Serializab
 		for (int i = 0; i < fPatternSymbolsArray.size(); i++) {
 			for (int j = 0; j < thatMatcher.fPatternSymbolsArray.size(); j++) {
 				if (fPatternSymbolsArray.get(i).equals(thatMatcher.fPatternSymbolsArray.get(j))) {
-					if (! fPatternValuesArray[i].equals(thatMatcher.fPatternValuesArray[j]) ){
+					if (!fPatternValuesArray[i].equals(thatMatcher.fPatternValuesArray[j])) {
 						return false;
 					}
 				}
@@ -850,13 +850,16 @@ public class PatternMatcher extends IPatternMatcher<IExpr> implements Serializab
 		if (fPatternCounter == 0) {
 			return fLeftHandSide.equals(pm.fLeftHandSide);
 		}
-		if ((fCondition != null) && (pm.fCondition != null)) {
-			return fCondition.equals(pm.fCondition);
+		if (equivalent(fLeftHandSide, pm.fLeftHandSide)) {
+			if ((fCondition != null) && (pm.fCondition != null)) {
+				return fCondition.equals(pm.fCondition);
+			}
+			if ((fCondition != null) || (pm.fCondition != null)) {
+				return false;
+			}
+			return true;
 		}
-		if ((fCondition != null) || (pm.fCondition != null)) {
-			return false;
-		}
-		return equivalent(fLeftHandSide, pm.fLeftHandSide);
+		return false;
 	}
 
 	@Override

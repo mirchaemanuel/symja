@@ -14,17 +14,17 @@ public class Positive implements IFunctionEvaluator {
 	public Positive() {
 	}
 
-	public IExpr evaluate(final IAST functionList) {
-		if (functionList.size() != 2) {
-			throw new WrongNumberOfArguments(functionList, 1, functionList.size() - 1);
+	public IExpr evaluate(final IAST ast) {
+		if (ast.size() != 2) {
+			throw new WrongNumberOfArguments(ast, 1, ast.size() - 1);
 		}
-		if (functionList.get(1) instanceof ISignedNumber) {
-			if (((ISignedNumber) functionList.get(1)).isPositive()) {
+		if (ast.get(1) instanceof ISignedNumber) {
+			if (((ISignedNumber) ast.get(1)).isPositive()) {
 				return F.True;
 			}
 			return F.False;
 		}
-		if (functionList.get(1) instanceof INumber) {
+		if (ast.get(1) instanceof INumber) {
 			return F.False;
 		}
 		return null;
