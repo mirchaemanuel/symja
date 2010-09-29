@@ -24,6 +24,7 @@ public class MathMLPresentationTestCase extends TestCase {
    * Test mathml function
    */
   public void testMathMLPresentation() {
+  	check("Abs[-x]", "<mrow><mo>&LeftBracketingBar;</mo><mrow><mo>-</mo><mi>x</mi></mrow><mo>&RightBracketingBar;</mo></mrow>");
     check(
         "a*b*c*d",
         "<mrow><mi>a</mi><mo>&#x2062;</mo><mi>b</mi><mo>&#x2062;</mo><mi>c</mi><mo>&#x2062;</mo><mi>d</mi></mrow>");

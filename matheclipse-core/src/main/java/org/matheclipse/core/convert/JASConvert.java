@@ -13,6 +13,8 @@ import org.matheclipse.core.interfaces.IFraction;
 import org.matheclipse.core.interfaces.IInteger;
 import org.matheclipse.core.interfaces.ISymbol;
 
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+
 import edu.jas.application.Quotient;
 import edu.jas.arith.BigRational;
 import edu.jas.arith.ModInteger;
@@ -228,8 +230,9 @@ public class JASConvert<C extends RingElem<C>> {
 	 *          the JAS LogIntegral
 	 * @return
 	 */
+
 	public IAST logIntegral2Expr(LogIntegral<BigRational> logIntegral) {
-		IAST times = F.Times();
+		IAST plus = F.Plus();
 
 		List<BigRational> cfactors = logIntegral.cfactors;
 
@@ -240,42 +243,47 @@ public class JASConvert<C extends RingElem<C>> {
 		List<GenPolynomial<AlgebraicNumber<BigRational>>> adenom = logIntegral.adenom;
 
 		if (cfactors.size() > 0) {
-			IAST sum = F.Plus();
 			for (int i = 0; i < cfactors.size(); i++) {
 				BigRational cp = cfactors.get(i);
 				GenPolynomial<BigRational> p = cdenom.get(i);
-				sum.add(F.Times(F.fraction(cp.numerator(), cp.denominator()), F.Log(poly2Expr(p, null))));
+				plus.add(F.Times(F.fraction(cp.numerator(), cp.denominator()), F.Log(poly2Expr(p, null))));
 			}
-			times.add(sum);
 		}
+
 		// TODO implement this conversion for AlgebraicNumbers...
 		if (afactors.size() > 0) {
 			for (int i = 0; i < afactors.size(); i++) {
 
 				AlgebraicNumber<BigRational> ap = afactors.get(i);
-
-				IExpr variable = F.symbol(ap.toString());
 				AlgebraicNumberRing<BigRational> ar = ap.factory();
-				AlgebraicNumber<BigRational> arGen = ar.getGenerator();
-				// sb.append(" ## over " + ap.factory() + "\n");
 				GenPolynomial<AlgebraicNumber<BigRational>> p = adenom.get(i);
 				if (p.degree(0) < ar.modul.degree(0) && ar.modul.degree(0) > 2) {
+
+				}
+				GenPolynomial<BigRational> v = ap.getVal();
+				IAST times = F.Times();
+
+				AlgebraicNumber<BigRational> arGen = ar.getGenerator();
+				// sb.append(" ## over " + ap.factory() + "\n");
+
+				if (p.degree(0) < ar.modul.degree(0) && ar.modul.degree(0) > 2) {
 					IAST rootOf = F.function(F.RootOf);
-					rootOf.add(poly2Expr(ar.modul, variable));
-					rootOf.add(variable);
+					rootOf.add(poly2Expr(ar.modul, null));
+					// rootOf.add(variable);
 					// sb.append("sum_(" + ar.getGenerator() + " in ");
 					// sb.append("rootOf(" + ar.modul + ") ) ");
 					times.add(rootOf);
+
+					throw new UnsupportedOperationException("JASConvert#logIntegral2Expr()");
 				}
 
-				times.add(variable);
-				times.add(F.Log(polyAlgebraicNumber2Expr(p, variable)));
-				// sb.append("(" + ap.toString() + ")");
-				// sb.append(" log( " + p.toString() + ")");
+				times.add(poly2Expr(v, null));
+				times.add(F.Log(polyAlgebraicNumber2Expr(p)));
+				plus.add(times);
 			}
 
 		}
-		return times;
+		return plus;
 	}
 
 	public IAST modIntegerPoly2Expr(final GenPolynomial<ModInteger> poly) throws ArithmeticException, ClassCastException {
@@ -327,8 +335,8 @@ public class JASConvert<C extends RingElem<C>> {
 		return result;
 	}
 
-	public IAST polyAlgebraicNumber2Expr(final GenPolynomial<AlgebraicNumber<BigRational>> poly, IExpr variable)
-			throws ArithmeticException, ClassCastException {
+	public IAST polyAlgebraicNumber2Expr(final GenPolynomial<AlgebraicNumber<BigRational>> poly) throws ArithmeticException,
+			ClassCastException {
 		if (poly.length() == 0) {
 			return F.Plus(F.C0);
 		}
@@ -337,52 +345,30 @@ public class JASConvert<C extends RingElem<C>> {
 		if (val.size() == 0) {
 			return F.Plus(F.C0);
 		} else {
-			// s.append( "( " );
-			boolean first = true;
 			IAST result = F.Plus();
-
 			String symbolName = poly.factory().getVars()[0];
 			IExpr sym = F.symbol(symbolName);
 			for (Map.Entry<ExpVector, AlgebraicNumber<BigRational>> m : val.entrySet()) {
 				AlgebraicNumber<BigRational> c = m.getValue();
-				if (first) {
-					first = false;
-				} else {
-					if (c.signum() < 0) {
-						// s.append( " - " );
-						c = c.negate();
-					} else {
-						// s.append( " + " );
-					}
-				}
+
+				IAST times = F.Times();
 				ExpVector e = m.getKey();
 				if (!c.isONE() || e.isZERO()) {
-					// if ( c instanceof GenPolynomial || c instanceof AlgebraicNumber ) {
-					// s.append( "{ " );
-					// }
-					// s.append(c.toString());
-					result.add(algebraicNumber2Expr(c, variable));
-					// if ( c instanceof GenPolynomial || c instanceof AlgebraicNumber ) {
-					// s.append( " }" );
-					// }
-					// s.append(" ");
+					times.add(algebraicNumber2Expr(c, sym));
 				}
-				if (e != null && variable != null) {
-					// s.append(e.toString(v));
-
+				if (e != null && sym != null) {
 					long lExp = e.getVal(0);
 					if (lExp != 0) {
-						result.add(F.Power(sym, F.integer(lExp)));
+						times.add(F.Power(sym, F.integer(lExp)));
 					} else {
-						result.add(F.Power(sym, F.integer(lExp)));
+						times.add(F.Power(sym, F.integer(lExp)));
 					}
-
-					// } else {
-					// s.append(e);
+				}
+				if (times.size() > 1) {
+					result.add(times);
 				}
 
 			}
-			// s.append(" )");
 			return result;
 		}
 
@@ -406,7 +392,7 @@ public class JASConvert<C extends RingElem<C>> {
 		List<Quotient<BigRational>> rational = integral.rational;
 		List<LogIntegral<BigRational>> logarithm = integral.logarithm;
 
-		StringBuffer sb = new StringBuffer();
+		// StringBuffer sb = new StringBuffer();
 		// sb.append("integral( " + quot.toString() + " )" );
 		// sb.append(" =\n");
 		// boolean first = true;

@@ -16,6 +16,7 @@ import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.INumber;
 import org.matheclipse.core.interfaces.ISymbol;
 
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import edu.jas.application.Quotient;
 import edu.jas.application.QuotientRing;
 import edu.jas.arith.BigRational;
@@ -116,10 +117,15 @@ public class Integrate extends AbstractFunctionEvaluator implements IConstantHea
 								Quotient<BigRational> q = new Quotient<BigRational>(qfac, numerator, denominator);
 								ElementaryIntegration<BigRational> eIntegrator = new ElementaryIntegration<BigRational>(BigRational.ZERO);
 								QuotIntegral<BigRational> integral = eIntegrator.integrate(q);
-								if (Config.SHOW_STACKTRACE) {
-									// System.out.println("Result: " + integral);
-								}
+								// if (Config.SHOW_STACKTRACE) {
+								// System.out.println("Result: " + integral);
+								// }
 								return jas.quotIntegral2Expr(integral);
+							} catch (UnsupportedOperationException uoe) {
+								// JASConvert#logIntegral2Expr() method throws this exception
+								if (Config.DEBUG) {
+									System.out.println("Integrate: UnsupportedOperationException in JASConvert");
+								}
 							} catch (RuntimeException re) {
 								// in case the expression couldn't be converted to JAS format
 								if (Config.DEBUG) {

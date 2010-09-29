@@ -179,13 +179,24 @@ public class ParserTestCase extends TestCase {
 			assertEquals("", e.getMessage());
 		}
 	}
-	 
+	
 	public void testParser14() {
 		try { 
 			Parser p = new Parser();
 			ASTNode obj = p.parse("-a-b*c!!+d");
 			assertEquals(obj.dependsOn("d"),true);
 			assertEquals(obj.dependsOn("x"),false);
+		} catch (Exception e) {
+			e.printStackTrace();
+			assertEquals("", e.getMessage());
+		}
+	}
+	
+	public void testParser15() {
+		try { 
+			Parser p = new Parser();
+			ASTNode obj = p.parse("Integrate[Sin[a_.*x_]^n_IntegerQ, x_Symbol]:= -Sin[a*x]^(n-1)*Cos[a*x]/(n*a)+(n-1)/n*Integrate[Sin[a*x]^(n-2),x]/;Positive[n]&&FreeQ[a,x]");
+			assertEquals(obj.toString(),"SetDelayed[Integrate[Power[Sin[Times[a_., x_]], n_IntegerQ], x_Symbol], Condition[Plus[Times[Times[-1, Power[Sin[Times[a, x]], Plus[n, Times[-1, 1]]]], Times[Cos[Times[a, x]], Power[Times[n, a], -1]]], Times[Times[Plus[n, Times[-1, 1]], Power[n, -1]], Integrate[Power[Sin[Times[a, x]], Plus[n, Times[-1, 2]]], x]]], And[Positive[n], FreeQ[a, x]]]]");
 		} catch (Exception e) {
 			e.printStackTrace();
 			assertEquals("", e.getMessage());

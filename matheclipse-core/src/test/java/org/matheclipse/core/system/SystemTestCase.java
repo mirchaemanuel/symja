@@ -1005,8 +1005,10 @@ public class SystemTestCase extends AbstractTestCase {
 	}
 
 	public void testSystem171() {
-//		check("Integrate[(x^2+1)Log[x],x]", "");
-		check("Integrate[Sin[x]^3,x]","-1/3*Cos[x]*Sin[x]^2-2/3*Cos[x]");
+		// check("Integrate[(x^2+1)Log[x],x]", "");
+		 check("Integrate[1/(x^5+x-7),x]", "Integrate[(x^5+x-7)^(-1),x]");
+		check("Integrate[2*x^2/(x^3+1),x]", "2*(1/3*Log[x^2-x+1]+1/3*Log[x+1])");
+		check("Integrate[Sin[x]^3,x]", "-1/3*Cos[x]*Sin[x]^2-2/3*Cos[x]");
 		check("Integrate[Cos[2x]^3,x]", "1/6*Cos[2*x]^2*Sin[2*x]+1/3*Sin[2*x]");
 		check("Integrate[x,x]", "1/2*x^2");
 		check("Integrate[2x,x]", "x^2");
@@ -1021,8 +1023,6 @@ public class SystemTestCase extends AbstractTestCase {
 		check("Integrate[x^2*E^x,x]", "E^x*x^2-2*(x-1)*E^x");
 		check("Integrate[x^2*E^(a*x),x]", "E^(a*x)*a^(-1)*x^2-2*(a*x-1)*E^(a*x)*a^(-3)");
 		check("Integrate[x^3*E^(a*x),x]", "E^(a*x)*a^(-1)*x^3-3*(E^(a*x)*a^(-1)*x^2-2*(a*x-1)*E^(a*x)*a^(-3))*a^(-1)");
-
-		// check("Integrate[1/(x^5+x-7),x]", "");
 		check("(-1.0)/48", "-0.020833333333333332");
 		check("NIntegrate[(x-1)*(x-0.5)*x*(x+0.5)*(x+1),{x,0,1}]", "-0.020833327124516472");
 		check("NIntegrate[(x-1)*(x-0.5)*x*(x+0.5)*(x+1),{x,0,1},Simpson]", "-0.0208333320915699");
@@ -2270,7 +2270,7 @@ public class SystemTestCase extends AbstractTestCase {
 
 	public void testSystem421() {
 		// check("b_. x_","");
-		check("MatchQ[Sin[x]^3, Sin[a_.*x_]^n_IntegerQ]","True");
+		check("MatchQ[Sin[x]^3, Sin[a_.*x_]^n_IntegerQ]", "True");
 		check("MatchQ[powered[h,h], powered[x_ ^ a_., x_]]", "True");
 		check("MatchQ[powered[h^3,h], powered[x_ ^ a_., x_]]", "True");
 		check("MatchQ[42, _IntegerQ]", "True");
