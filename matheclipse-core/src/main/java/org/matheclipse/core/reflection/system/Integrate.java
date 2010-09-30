@@ -1,5 +1,7 @@
 package org.matheclipse.core.reflection.system;
 
+import static org.matheclipse.core.expression.F.Integrate;
+import static org.matheclipse.core.expression.F.List;
 import static org.matheclipse.core.expression.F.Power;
 import static org.matheclipse.core.expression.F.Times;
 
@@ -7,6 +9,8 @@ import java.util.ArrayList;
 
 import org.matheclipse.basic.Config;
 import org.matheclipse.core.convert.JASConvert;
+import org.matheclipse.core.eval.EvalEngine;
+import org.matheclipse.core.eval.exception.RecursionLimitExceeded;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.expression.IConstantHeaders;
@@ -14,9 +18,9 @@ import org.matheclipse.core.generic.UnaryBind1st;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.INumber;
+import org.matheclipse.core.interfaces.ISignedNumber;
 import org.matheclipse.core.interfaces.ISymbol;
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import edu.jas.application.Quotient;
 import edu.jas.application.QuotientRing;
 import edu.jas.arith.BigRational;
@@ -94,6 +98,12 @@ public class Integrate extends AbstractFunctionEvaluator implements IConstantHea
 			return Times(F.C1D2, Power(ast.get(1), F.C2));
 		}
 		if (ast.get(1) instanceof IAST) {
+			IExpr arg = F.evalExpandAll(ast.get(1));
+			if (!ast.get(1).equals(arg)) {
+				IAST clon = (IAST) ast.clone();
+				clon.set(1, arg);
+				return clon;
+			}
 			final IAST arg1 = (IAST) ast.get(1);
 			final IExpr header = arg1.head();
 			if (arg1.size() >= 3) {
@@ -101,15 +111,15 @@ public class Integrate extends AbstractFunctionEvaluator implements IConstantHea
 					// Integrate[a_+b_+...,x_] -> Integrate[a,x]+Integrate[b,x]+...
 					return arg1.args().map(F.Plus(), new UnaryBind1st(F.Integrate(F.Null, ast.get(2))));
 				} else if (header == F.Times || header == F.Power) {
-					IExpr arg = F.evalExpandAll(arg1);
 					if (ast.get(2) instanceof ISymbol) {
-						IExpr[] parts = Apart.getFractionalParts(arg);
+						ISymbol symbol = (ISymbol) ast.get(2);
+						IExpr[] parts = Apart.getFractionalParts(arg1);
 						if (parts != null) {
 							try {
 								ArrayList<IExpr> varList = new ArrayList<IExpr>();
-								varList.add(ast.get(2));
+								varList.add(symbol);
 								String[] varListStr = new String[1];
-								varListStr[0] = ast.get(2).toString();
+								varListStr[0] = symbol.toString();
 								JASConvert<BigRational> jas = new JASConvert<BigRational>(varList);
 								GenPolynomial<BigRational> numerator = jas.expr2Poly(parts[0]);
 								GenPolynomial<BigRational> denominator = jas.expr2Poly(parts[1]);
@@ -132,6 +142,12 @@ public class Integrate extends AbstractFunctionEvaluator implements IConstantHea
 									re.printStackTrace();
 								}
 							}
+							if (arg1.isTimes()) {
+								IExpr result = integratePolynomialByParts(arg1, symbol);
+								if (result != null) {
+									return result;
+								}
+							}
 						}
 					}
 				}
@@ -140,6 +156,86 @@ public class Integrate extends AbstractFunctionEvaluator implements IConstantHea
 		}
 
 		return null;
+	}
+
+	private IExpr integratePolynomialByParts(final IAST arg1, ISymbol symbol) {
+		IAST fTimes = F.Times();
+		IAST gTimes = F.Times();
+		collectPolynomialTerms(arg1, symbol, fTimes, gTimes);
+		IExpr f = fTimes;
+		IExpr g = gTimes;
+		if (fTimes.size() == 1) {
+			return null;
+		} else if (fTimes.size() == 2) {
+			// OneIdentity
+			f = fTimes.get(1);
+		}
+		if (gTimes.size() == 1) {
+			return null;
+		} else if (gTimes.size() == 2) {
+			// OneIdentity
+			g = gTimes.get(1);
+		}
+		return integrateByParts(f, g, symbol);
+	}
+
+	/**
+	 * See <a href="http://en.wikipedia.org/wiki/Integration_by_parts">Wikipedia-
+	 * Integration by parts</a>
+	 * 
+	 * @param f
+	 * @param g
+	 * @param symbol
+	 * @return
+	 */
+	private static IExpr integrateByParts(IExpr f, IExpr g, ISymbol symbol) {
+		EvalEngine engine = EvalEngine.get();
+		int limit = engine.getRecursionLimit();
+		try {
+			if (limit <= 0) {
+				// set recursion limit
+				engine.setRecursionLimit(128);
+			}
+			IExpr fIntegrated = F.eval(F.Integrate(f, symbol));
+			if (!FreeQ.freeQ(fIntegrated, Integrate)) {
+				return null;
+			}
+			IExpr gDerived = F.eval(F.D(g, symbol));
+			return F.eval(F.Plus(F.Times(fIntegrated, g), F.Times(F.CN1, F.Integrate(F.Times(fIntegrated, gDerived), symbol))));
+		} catch (RecursionLimitExceeded rle) {
+			engine.setRecursionLimit(limit);
+		} finally {
+			engine.setRecursionLimit(limit);
+		}
+		return null;
+	}
+
+	/**
+	 * Collect all found polynomial terms into <code>fTimes</code> and the rest
+	 * into <code>gTimes</code>.
+	 * 
+	 * @param timesAST
+	 *          an AST representing a <code>Times[...]</code> expression.
+	 * @param symbol
+	 * @param fTimes
+	 * @param gTimes
+	 */
+	private static void collectPolynomialTerms(final IAST timesAST, ISymbol symbol, IAST fTimes, IAST gTimes) {
+		IExpr temp;
+		for (int i = 1; i < timesAST.size(); i++) {
+			temp = timesAST.get(i);
+			if (FreeQ.freeQ(temp, symbol)) {
+				fTimes.add(temp);
+				continue;
+			} else if (temp.equals(symbol)) {
+				fTimes.add(temp);
+				continue;
+			} else if (PolynomialQ.polynomialQ(temp, List(symbol))) {
+				fTimes.add(temp);
+				continue;
+			}
+			gTimes.add(temp);
+		}
 	}
 
 	@Override

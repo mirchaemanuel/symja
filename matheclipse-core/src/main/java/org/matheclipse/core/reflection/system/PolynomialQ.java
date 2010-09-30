@@ -13,6 +13,7 @@ import org.matheclipse.core.interfaces.ISymbol;
 import org.matheclipse.generic.interfaces.BiPredicate;
 
 import edu.jas.arith.BigRational;
+import edu.jas.poly.GenPolynomial;
 
 /**
  * Returns <code>True</code>, if the given expression is a polynoomial object
@@ -24,8 +25,8 @@ public class PolynomialQ extends AbstractFunctionEvaluator implements BiPredicat
 	}
 
 	/**
-	 * Returns <code>True</code> if the given expression is a polynoomial
-	 * object; <code>False</code> otherwise
+	 * Returns <code>True</code> if the given expression is a polynoomial object;
+	 * <code>False</code> otherwise
 	 */
 	@Override
 	public IExpr evaluate(final IAST ast) {
@@ -45,9 +46,10 @@ public class PolynomialQ extends AbstractFunctionEvaluator implements BiPredicat
 	public static boolean polynomialQ(final IExpr polnomialExpr, final IAST variables) {
 		try {
 			IExpr expr = F.evalExpandAll(polnomialExpr);
-			ASTRange r = new ASTRange(variables,1);
+			ASTRange r = new ASTRange(variables, 1);
 			JASConvert<BigRational> jas = new JASConvert<BigRational>(r.toList());
-			return jas.expr2Poly(expr)!=null;
+			// GenPolynomial<BigRational> poly = jas.expr2Poly(expr);
+			return jas.expr2Poly(expr) != null;
 		} catch (final Exception e) {
 			// exception will be thrown if the expression is not a polynomial
 		}

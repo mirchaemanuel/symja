@@ -137,13 +137,15 @@ public class Limit extends AbstractFunctionEvaluator implements IConstantHeaders
 			return limit(expr, sym, lim, rule);
 		}
 		try {
-			if (limit < 0) {
+			if (limit <= 0) {
 				// set recursion limit for using l'Hospitales rule
 				engine.setRecursionLimit(128);
 			}
 			IExpr expr = F.eval(F.Times(F.D(numerator, sym), F.Power(F.D(denominator, sym), F.CN1)));
 			return limit(expr, sym, lim, rule);
 		} catch (RecursionLimitExceeded rle) {
+			engine.setRecursionLimit(limit);
+		} finally {
 			engine.setRecursionLimit(limit);
 		}
 		return null;
