@@ -1005,8 +1005,10 @@ public class SystemTestCase extends AbstractTestCase {
 	}
 
 	public void testSystem171() {
-		// check("Integrate[(x^2+1)Log[x],x]", "");
-		 check("Integrate[1/(x^5+x-7),x]", "Integrate[(x^5+x-7)^(-1),x]");
+		check("Integrate[E^x*(2-x^2),x]", "2*E^x-(E^x*x^2-2*(x-1)*E^x)");
+		check("Integrate[(x^2+1)Log[x],x]", "1/3*Log[x]*x^3-1/9*x^3+x*Log[x]-x");
+		check("Integrate[x*Log[x],x]", "1/2*Log[x]*x^2-1/4*x^2");
+		check("Integrate[1/(x^5+x-7),x]", "Integrate[(x^5+x-7)^(-1),x]");
 		check("Integrate[2*x^2/(x^3+1),x]", "2*(1/3*Log[x^2-x+1]+1/3*Log[x+1])");
 		check("Integrate[Sin[x]^3,x]", "-1/3*Cos[x]*Sin[x]^2-2/3*Cos[x]");
 		check("Integrate[Cos[2x]^3,x]", "1/6*Cos[2*x]^2*Sin[2*x]+1/3*Sin[2*x]");
