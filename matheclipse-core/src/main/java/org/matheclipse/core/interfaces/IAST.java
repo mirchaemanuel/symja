@@ -3,6 +3,7 @@ package org.matheclipse.core.interfaces;
 import org.matheclipse.core.eval.exception.WrongArgumentType;
 import org.matheclipse.core.expression.ASTRange;
 import org.matheclipse.core.generic.util.INestedList;
+import org.matheclipse.core.reflection.system.Apart;
 import org.matheclipse.generic.interfaces.BiFunction;
 
 //import org.matheclipse.generic.INestedList;
@@ -45,7 +46,7 @@ public interface IAST extends IExpr, INestedList<IExpr> {
 	 * Negative flag mask for CONTAINS_DEFAULT_PATTERN
 	 */
 	public final int CONTAINS_NO_DEFAULT_PATTERN_MASK = 0xFFFD;
-	
+
 	/**
 	 * This expression represents a matrix
 	 */
@@ -55,6 +56,13 @@ public interface IAST extends IExpr, INestedList<IExpr> {
 	 * This expression represents a vector
 	 */
 	public final int IS_VECTOR = 0x0040;
+
+	/**
+	 * This expression represents an already decomposed partial fraction
+	 * 
+	 * @see Apart
+	 */
+	public final int IS_DECOMPOSED_PARTIAL_FRACTION = 0x0080;
 
 	/**
 	 * Get the evaluation flags for this list
@@ -108,11 +116,11 @@ public interface IAST extends IExpr, INestedList<IExpr> {
 	public boolean isList();
 
 	public boolean isPlus();
-	
+
 	public boolean isPower();
-	
+
 	public boolean isTimes();
-	
+
 	/**
 	 * Apply the given head to this expression (i.e. create a list clone and
 	 * replace the old head with the given one)

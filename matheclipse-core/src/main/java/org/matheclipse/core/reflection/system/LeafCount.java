@@ -3,7 +3,10 @@ package org.matheclipse.core.reflection.system;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IAST;
+import org.matheclipse.core.interfaces.IComplex;
+import org.matheclipse.core.interfaces.IComplexNum;
 import org.matheclipse.core.interfaces.IExpr;
+import org.matheclipse.core.interfaces.IFraction;
 import org.matheclipse.core.visit.AbstractVisitorInt;
 
 public class LeafCount extends AbstractFunctionEvaluator {
@@ -22,6 +25,21 @@ public class LeafCount extends AbstractFunctionEvaluator {
 			fHeadOffset = hOffset;
 		}
 
+		@Override
+		public int visit(IFraction element) {
+			return 3;
+		}
+
+		@Override
+		public int visit(IComplex element) {
+			return 3;
+		}
+
+		@Override
+		public int visit(IComplexNum element) {
+			return 3;
+		}
+
 		public int visit(IAST list) {
 			int sum = 0;
 			for (int i = fHeadOffset; i < list.size(); i++) {
@@ -30,7 +48,7 @@ public class LeafCount extends AbstractFunctionEvaluator {
 			return sum;
 		}
 	}
-	
+
 	public LeafCount() {
 	}
 
@@ -40,12 +58,17 @@ public class LeafCount extends AbstractFunctionEvaluator {
 			return null;
 		}
 		IExpr expr = functionList.get(1);
+		int leafCount = leafCount(expr);
+		return F.integer(leafCount);
+	}
+
+	public static int leafCount(IExpr expr) {
 		int leafCount = 0;
 		if (expr instanceof IAST) {
-			leafCount= expr.accept(new LeafCountVisitor(0));
+			leafCount = expr.accept(new LeafCountVisitor(0));
 		} else {
-			leafCount = expr.isAtom()?1:0;
+			leafCount = expr.isAtom() ? 1 : 0;
 		}
-		return F.integer(leafCount); 
+		return leafCount;
 	}
 }

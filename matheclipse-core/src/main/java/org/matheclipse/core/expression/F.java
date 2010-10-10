@@ -27,7 +27,6 @@ import org.matheclipse.core.interfaces.ISignedNumber;
 import org.matheclipse.core.interfaces.IStringX;
 import org.matheclipse.core.interfaces.ISymbol;
 import org.matheclipse.core.patternmatching.PatternMatcher;
-import org.matheclipse.core.reflection.system.*;
 import org.matheclipse.core.reflection.system.Package;
 
 import apache.harmony.math.BigInteger;
@@ -61,6 +60,8 @@ public class F {
 	public static ISymbol And;
 
 	public static ISymbol Append;
+
+	public static ISymbol Apart;
 
 	public static ISymbol Apply;
 
@@ -273,6 +274,8 @@ public class F {
 	public static ISymbol Times;
 
 	public static ISymbol Timing;
+
+	public static ISymbol Together;
 
 	/**
 	 * Trace of a matrix
@@ -517,7 +520,7 @@ public class F {
 		return unary(Abs, a0);
 	}
 
-	public static IAST ACos(final IExpr a0) {
+	public static IAST ArcCos(final IExpr a0) {
 
 		return unary(ArcCos, a0);
 	}
@@ -527,16 +530,21 @@ public class F {
 		return unary(Append, a0);
 	}
 
+	public static IAST Apart(final IExpr a0) {
+
+		return unary(Apart, a0);
+	}
+
 	public static IAST Apply(final IExpr a0, final IExpr a1) {
 		return binary(Apply, a0, a1);
 	}
 
-	public static IAST ASin(final IExpr a0) {
+	public static IAST ArcSin(final IExpr a0) {
 
 		return unary(ArcSin, a0);
 	}
 
-	public static IAST ATan(final IExpr a0) {
+	public static IAST ArcTan(final IExpr a0) {
 
 		return unary(ArcTan, a0);
 	}
@@ -805,6 +813,7 @@ public class F {
 			Abs = predefinedSymbol("Abs");
 			And = predefinedSymbol("And");
 			Append = predefinedSymbol("Append");
+			Apart = predefinedSymbol("Apart");
 			Apply = predefinedSymbol("Apply");
 			ArcCos = predefinedSymbol("ArcCos");
 			ArcSin = predefinedSymbol("ArcSin");
@@ -910,6 +919,7 @@ public class F {
 			Times = predefinedSymbol("Times");
 			Times.setDefaultValue(C1);
 			Timing = predefinedSymbol("Timing");
+			Together = predefinedSymbol("Together");
 			Tr = predefinedSymbol("Tr");
 			Trace = predefinedSymbol("Trace");
 			Transpose = predefinedSymbol("Transpose");
@@ -1253,6 +1263,10 @@ public class F {
 		return ast(a, Times);
 	}
 
+	public static IAST Together(final IExpr a0) {
+		return unary(Together, a0);
+	}
+	
 	public static IAST Tr(final IExpr a0) {
 		return unary(Tr, a0);
 	}

@@ -138,8 +138,8 @@ public class VisitorExpr extends AbstractVisitor<IExpr> {
 
 	/**
 	 * 
-	 * @return <code>null</code>, if no evaluation is possible or the cloned
-	 *         <code>IAST</code> with evaluated subexpressions exchanged.
+	 * @return the cloned <code>IAST</code> with changed evaluated subexpressions,
+	 *         or <code>null</code>, if no evaluation is possible
 	 */
 	protected IExpr visitAST(IAST ast) {
 		IExpr temp;

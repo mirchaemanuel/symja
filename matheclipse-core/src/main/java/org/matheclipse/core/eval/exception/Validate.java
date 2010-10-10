@@ -2,6 +2,7 @@ package org.matheclipse.core.eval.exception;
 
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IInteger;
+import org.matheclipse.core.interfaces.ISymbol;
 
 /**
  * Simple static methods to be called at the start of your own methods to verify
@@ -47,8 +48,8 @@ public final class Validate {
 	}
 
 	/**
-	 * Check the argument, if it's a Java {@code int} value in the range
-	 * [{@code startValue}, Integer.MAX_VALUE]
+	 * Check the argument, if it's a Java {@code int} value in the range [{@code
+	 * startValue}, Integer.MAX_VALUE]
 	 * 
 	 * @throws WrongArgumentType
 	 *           if {@code size} unequals the list size
@@ -80,6 +81,13 @@ public final class Validate {
 	 */
 	public static int checkIntType(IAST list, int pos) {
 		return checkIntType(list, pos, 0);
+	}
+
+	public static ISymbol checkSymbolType(IAST list, int pos) {
+		if (list.get(pos) instanceof ISymbol) {
+			return (ISymbol) list.get(pos);
+		}
+		throw new WrongArgumentType(list, list.get(pos), pos, "Symbol expected!");
 	}
 
 	private Validate() {
