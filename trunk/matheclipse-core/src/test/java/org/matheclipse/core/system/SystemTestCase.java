@@ -1005,10 +1005,33 @@ public class SystemTestCase extends AbstractTestCase {
 	}
 
 	public void testSystem171() {
+		
+		check("Simplify[1/2*(2*x+2)]","x+1");
+		check("Simplify[1/2*(2*x+2)*(1/2)^(1/2)]","(x+1)*(1/2)^(1/2)");
+		check("Simplify[Integrate[(8*x+1)/(x^2+x+1)^2,x]]", "(-2*x-5)*(x^2+x+1)^(-1)-4*ArcTan[(2*x+1)*3^(-1/2)]*3^(-1/2)");
+		
+		
+		check("Apart[1/(x^3+1)]", "(-1/3*x+2/3)*(x^2-x+1)^(-1)+1/3*(x+1)^(-1)");
+		check("Integrate[1/(x^5+x-7),x]", "Integrate[(x^5+x-7)^(-1),x]");
+		check("Integrate[1/(x-2),x]", "Log[x-2]");
+		check("Integrate[(x-2)^(-2),x]", "(-1)*(x-2)^(-1)");
+		check("Integrate[(x-2)^(-3),x]", "(-1/2)*(x-2)^(-2)");
+		check("Integrate[(x^2+2*x+3)^(-1),x]", "ArcTan[1/2*(2*x+2)*(1/2)^(1/2)]*(1/2)^(1/2)");
+		check("Integrate[1/(x^2+1),x]", "ArcTan[x]");
+		check("Integrate[(2*x+5)/(x^2-2*x+5),x]", "7/2*ArcTan[1/4*(2*x-2)]+Log[x^2-2*x+5]");
+		check("Integrate[(8*x+1)/(x^2+2*x+1),x]", "7*(x+1)^(-1)+8*Log[x+1]");
+		
+		check("Simplify[Integrate[1/3*(2-x)*(x^2-x+1)^(-1),x]]", "ArcTan[(2*x-1)*3^(-1/2)]*3^(-1/2)-1/6*Log[x^2-x+1]");
+
+		check("Integrate[1/(x^3+1),x]", "ArcTan[(2*x-1)*3^(-1/2)]*3^(-1/2)-1/6*Log[x^2-x+1]+1/3*Log[x+1]");
+		check("Integrate[1/3*(2-x)*(x^2-x+1)^(-1)+1/3*(x+1)^(-1),x]",
+				"ArcTan[(2*x-1)*3^(-1/2)]*3^(-1/2)-1/6*Log[x^2-x+1]+1/3*Log[x+1]");
 		check("Integrate[E^x*(2-x^2),x]", "2*E^x-(E^x*x^2-2*(x-1)*E^x)");
 		check("Integrate[(x^2+1)Log[x],x]", "1/3*Log[x]*x^3-1/9*x^3+x*Log[x]-x");
 		check("Integrate[x*Log[x],x]", "1/2*Log[x]*x^2-1/4*x^2");
-		check("Integrate[1/(x^5+x-7),x]", "Integrate[(x^5+x-7)^(-1),x]");
+
+		check("Apart[2*x^2/(x^3+1)]", "(4/3*x-2/3)*(x^2-x+1)^(-1)+2/3*(x+1)^(-1)");
+
 		check("Integrate[2*x^2/(x^3+1),x]", "2*(1/3*Log[x^2-x+1]+1/3*Log[x+1])");
 		check("Integrate[Sin[x]^3,x]", "-1/3*Cos[x]*Sin[x]^2-2/3*Cos[x]");
 		check("Integrate[Cos[2x]^3,x]", "1/6*Cos[2*x]^2*Sin[2*x]+1/3*Sin[2*x]");
@@ -1033,10 +1056,24 @@ public class SystemTestCase extends AbstractTestCase {
 	}
 
 	public void testSystem172() {
+		check("Simplify[Integrate[(x^7 - 24*x^4 - 4*x^2 + 8*x - 8)/(x^8 + 6*x^6 + 12*x^4 + 8*x^2),x]]",
+		"(-x+3)*(x^2+2)^(-1)+6*x*(x^2+2)^(-2)+x^(-1)+Log[x]");
+		
+		check("Integrate[10/(x-3)^4,x]", "(-10/3)*(x-3)^(-3)");
+
 		check("Integrate[(-1+x)*(1+x)*(1+x^2)*(1+x^4)*(1+x^8),x]", "1/17*x^17-x");
 		check("Integrate[(10 x^2 - 63 x + 29)/(x^3 - 11 x^2 + 40 x -48),x]", "63*(x-4)^(-1)-70*Log[x-3]+80*Log[x-4]");
-		check("Integrate[(x^7 - 24*x^4 - 4*x^2 + 8*x - 8)/(x^8 + 6*x^6 + 12*x^4 + 8*x^2),x]",
-				"6*x*(x^4+4*x^2+4)^(-1)+(-x+3)*(x^2+2)^(-1)+x^(-1)+Log[x]");
+
+		check("Apart[(x^7 - 24*x^4 - 4*x^2 + 8*x - 8)/(x^8 + 6*x^6 + 12*x^4 + 8*x^2)]",
+				"(x^2+2)^(-1)+(-6*x-22)*(x^2+2)^(-2)+48*(x^2+2)^(-3)+x^(-1)-x^(-2)");
+		check("Integrate[(x^2+2)^(-1),x]", "ArcTan[x*(1/2)^(1/2)]*(1/2)^(1/2)");
+		check("Integrate[(-6*x-22)*(x^2+2)^(-2),x]", "3*(x^2+2)^(-1)-22*(1/4*x*(x^2+2)^(-1)+1/4*ArcTan[x*(1/2)^(1/2)]*(1/2)^(1/2))");
+		check("Integrate[48*(x^2+2)^(-3),x]", "48*(1/8*x*(x^2+2)^(-2)+3/8*(1/4*x*(x^2+2)^(-1)+1/4*ArcTan[x*(1/2)^(1/2)]*(1/2)^(\n"
+				+ "1/2)))");
+		check("Integrate[-x^(-2),x]", "x^(-1)");
+		check("Integrate[x^(-1),x]", "Log[x]");
+
+		
 	}
 
 	public void testSystem173() {
@@ -2021,6 +2058,18 @@ public class SystemTestCase extends AbstractTestCase {
 		check("$a=1+I;JavaForm[$a]", "\"complex(1L,1L,1L,1L)\"");
 		check("JavaForm[1/3+I]", "\"complex(1L,3L,1L,1L)\"");
 		check("JavaForm[ff[x_*y_]]", "\"$(ff,Times(x_,y_))\"");
+		check("JavaForm[Log[b*x+c]/b]", "\"Times(Log(Plus(c,Times(b,x))),Power(b,CN1))\"");
+
+		check("JavaForm[B*Log[p*x+q]/p]", "\"Times(B,Log(Plus(q,Times(p,x))),Power(p,CN1))\"");
+		check(
+				"JavaForm[B*((2*a*x+b)/((k-1)*(4*a*c-b^2)*(a*x^2+b*x+c)^(k-1))+ (4*k*a-6*a)/((k-1)*(4*a*c-b^2))*Integrate[(a*x^2+b*x+c)^(-k+1),x])]",
+				"\"Times(B,Plus(Times(Integrate(Power(Plus(c,Times(b,x),Times(a,Power(x,C2))),Plus(C1,Times(CN1,k))),x),Plus(Times(integer(-6L),a),Times(C4,a,k)),Power(Plus(CN1,k),CN1),Power(Plus(Times(CN1,Power(b,C2)),Times(C4,a,c)),CN1)),Times(Plus(b,Times(C2,a,x)),Power(Plus(CN1,k),CN1),Power(Plus(Times(CN1,Power(b,C2)),Times(C4,a,c)),CN1),Power(Power(Plus(c,Times(b,x),Times(a,Power(x,C2))),Plus(CN1,k)),CN1))))\"");
+		check(
+				"JavaForm[(-A)/(2*a*(k-1)*(a*x^2+b*x+c)^(k-1))+(B-A*b/(2*a))*Integrate[(a*x^2+b*x+c)^(-k),x]]",
+				"\"Plus(Times(Integrate(Power(Plus(c,Times(b,x),Times(a,Power(x,C2))),Times(CN1,k)),x),Plus(B,Times(CN1D2,A,Power(a,CN1),b))),Times(CN1D2,A,Power(a,CN1),Power(Plus(CN1,k),CN1),Power(Power(Plus(c,Times(b,x),Times(a,Power(x,C2))),Plus(CN1,k)),CN1)))\"");
+		check(
+				"JavaForm[A/2*Log[x^2+p*x+q]+(2*B-A*p)/(4*q-p^2)^(1/2)*ArcTan[(2*x+p)/(4*q-p^2)^(1/2)]]",
+				"\"Plus(Times(C1D2,A,Log(Plus(q,Times(p,x),Power(x,C2)))),Times(ArcTan(Times(Plus(p,Times(C2,x)),Power(Plus(Times(CN1,Power(p,C2)),Times(C4,q)),CN1D2))),Plus(Times(C2,B),Times(CN1,A,p)),Power(Plus(Times(CN1,Power(p,C2)),Times(C4,q)),CN1D2)))\"");
 	}
 
 	public void testSystem388() {
@@ -2099,6 +2148,7 @@ public class SystemTestCase extends AbstractTestCase {
 		check("Together[x+3/4*x^(-3)]", "1/4*(4*x^4+3)*x^(-3)");
 		check("Together[(x^2-2)^3/(x^2-2)+(x^2-2)^2/(x^2-2)]", "x^4-3*x^2+2");
 		check("Together[a/b+c/d]", "(a*d+b*c)*b^(-1)*d^(-1)");
+		check("Together[(-x+3)*(x^2+2)^(-1)+6*x*(x^2+2)^(-2)+x^(-1)]","(3*x^3+8*x^2+6*x+4)*(x^5+4*x^3+4*x)^(-1)");
 	}
 
 	public void testSystem399() {
@@ -2286,6 +2336,7 @@ public class SystemTestCase extends AbstractTestCase {
 		check("MatchQ[linear[60*h,h], linear[a_. + b_. * x_, x_]]", "True");
 		check("MatchQ[linear[a+42+60*h,h], linear[a_. + b_. * x_, x_]]", "True");
 		check("MatchQ[linear[a+42+60*c,h], linear[a_. + b_. * x_, x_]]", "False");
+		check("PossibleZeroQ[Pi-Pi]", "True");
 	}
 
 	public void testSystem422() {
@@ -2356,6 +2407,12 @@ public class SystemTestCase extends AbstractTestCase {
 		// creates unbounded error
 		// check("LinearProgramming[{-2, 1, -5}, {{1, 2, 0},{3, 2, 0},{0,1,0}}, {{6,-1},{12,-1},{0,1}}]",
 		// "{4.0,0.0,1.0}");
+	}
+
+	public void testSystem804() {
+		check("Simplify[D[Integrate[1/(x^2 + 2), x], x]]", "(x^2+2)^(-1)");
+		// TODO optimize this
+		check("Simplify[D[Integrate[1/(x^3 + 1), x], x]]", "(x^3+1)^(-1)");
 	}
 
 	public void testSystem991() {
