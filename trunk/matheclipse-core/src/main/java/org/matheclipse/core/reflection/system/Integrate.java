@@ -1,32 +1,47 @@
 package org.matheclipse.core.reflection.system;
 
+import static org.matheclipse.core.expression.F.ArcTan;
+import static org.matheclipse.core.expression.F.C1D2;
+import static org.matheclipse.core.expression.F.C1;
+import static org.matheclipse.core.expression.F.C2;
+import static org.matheclipse.core.expression.F.C4;
+import static org.matheclipse.core.expression.F.CN1;
+import static org.matheclipse.core.expression.F.CN1D2;
 import static org.matheclipse.core.expression.F.Integrate;
 import static org.matheclipse.core.expression.F.List;
+import static org.matheclipse.core.expression.F.Log;
+import static org.matheclipse.core.expression.F.Plus;
 import static org.matheclipse.core.expression.F.Power;
 import static org.matheclipse.core.expression.F.Times;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.SortedMap;
 
 import org.matheclipse.basic.Config;
 import org.matheclipse.core.convert.JASConvert;
 import org.matheclipse.core.eval.EvalEngine;
 import org.matheclipse.core.eval.exception.RecursionLimitExceeded;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
+import org.matheclipse.core.expression.ASTRange;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.expression.IConstantHeaders;
 import org.matheclipse.core.generic.UnaryBind1st;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
+import org.matheclipse.core.interfaces.IFraction;
+import org.matheclipse.core.interfaces.IInteger;
 import org.matheclipse.core.interfaces.INumber;
-import org.matheclipse.core.interfaces.ISignedNumber;
 import org.matheclipse.core.interfaces.ISymbol;
 
-import edu.jas.application.Quotient;
-import edu.jas.application.QuotientRing;
 import edu.jas.arith.BigRational;
-import edu.jas.integrate.ElementaryIntegration;
-import edu.jas.integrate.QuotIntegral;
+import edu.jas.poly.ExpVector;
 import edu.jas.poly.GenPolynomial;
+import edu.jas.poly.Monomial;
+import edu.jas.ufd.FactorAbstract;
+import edu.jas.ufd.FactorFactory;
+import edu.jas.ufd.SquarefreeAbstract;
+import edu.jas.ufd.SquarefreeFactory;
 
 /**
  * Integration of a function. See <a
@@ -38,7 +53,7 @@ public class Integrate extends AbstractFunctionEvaluator implements IConstantHea
 			"Integrate[y_,x_Symbol]:=y*x /; FreeQ[y,x]",
 			"Integrate[x_,x_Symbol]:= x^2/2",
 			"Integrate[x_^n_NumberQ, x_Symbol]:=x^(n+1)/(n+1) /; n!=(-1)",
-			"Integrate[x_^(-1), x_Symbol]:=Log[x]",
+			// "Integrate[x_^(-1), x_Symbol]:=Log[x]",
 			"Integrate[(a_+x_)^(-1), x_Symbol]:=Log[x+a] /; FreeQ[a,x]",
 			// "Integrate[(x_+b_)^n_NumberQ,x_Symbol]:= (x+b)^(n+1)/(n+1) /; n!=(-1)&&FreeQ[a,x]",
 			"Integrate[(a_.*x_+b_)^n_NumberQ,x_Symbol]:= (a*x+b)^(n+1)/(a*(n+1)) /; (n!=(-1))&&FreeQ[{a,b},x]",
@@ -111,36 +126,16 @@ public class Integrate extends AbstractFunctionEvaluator implements IConstantHea
 					// Integrate[a_+b_+...,x_] -> Integrate[a,x]+Integrate[b,x]+...
 					return arg1.args().map(F.Plus(), new UnaryBind1st(F.Integrate(F.Null, ast.get(2))));
 				} else if (header == F.Times || header == F.Power) {
-					if (ast.get(2) instanceof ISymbol) {
+					if (!arg1.isEvalFlagOn(IAST.IS_DECOMPOSED_PARTIAL_FRACTION) && ast.get(2) instanceof ISymbol) {
 						ISymbol symbol = (ISymbol) ast.get(2);
 						IExpr[] parts = Apart.getFractionalParts(arg1);
 						if (parts != null) {
-							try {
-								ArrayList<IExpr> varList = new ArrayList<IExpr>();
-								varList.add(symbol);
-								String[] varListStr = new String[1];
-								varListStr[0] = symbol.toString();
-								JASConvert<BigRational> jas = new JASConvert<BigRational>(varList);
-								GenPolynomial<BigRational> numerator = jas.expr2Poly(parts[0]);
-								GenPolynomial<BigRational> denominator = jas.expr2Poly(parts[1]);
-								QuotientRing<BigRational> qfac = new QuotientRing<BigRational>(jas.getPolynomialRingFactory());
-								Quotient<BigRational> q = new Quotient<BigRational>(qfac, numerator, denominator);
-								ElementaryIntegration<BigRational> eIntegrator = new ElementaryIntegration<BigRational>(BigRational.ZERO);
-								QuotIntegral<BigRational> integral = eIntegrator.integrate(q);
-								// if (Config.SHOW_STACKTRACE) {
-								// System.out.println("Result: " + integral);
-								// }
-								return jas.quotIntegral2Expr(integral);
-							} catch (UnsupportedOperationException uoe) {
-								// JASConvert#logIntegral2Expr() method throws this exception
-								if (Config.DEBUG) {
-									System.out.println("Integrate: UnsupportedOperationException in JASConvert");
+							IAST apartPlus = integrateByPartialFractions(parts, symbol);
+							if (apartPlus != null && apartPlus.size() > 1) {
+								if (apartPlus.size() == 2) {
+									return apartPlus.get(1);
 								}
-							} catch (RuntimeException re) {
-								// in case the expression couldn't be converted to JAS format
-								if (Config.DEBUG) {
-									re.printStackTrace();
-								}
+								return apartPlus;
 							}
 							if (arg1.isTimes()) {
 								IExpr result = integratePolynomialByParts(arg1, symbol);
@@ -148,6 +143,38 @@ public class Integrate extends AbstractFunctionEvaluator implements IConstantHea
 									return result;
 								}
 							}
+							// try {
+							// ArrayList<IExpr> varList = new ArrayList<IExpr>();
+							// varList.add(symbol);
+							// String[] varListStr = new String[1];
+							// varListStr[0] = symbol.toString();
+							// JASConvert<BigRational> jas = new
+							// JASConvert<BigRational>(varList);
+							// GenPolynomial<BigRational> numerator = jas.expr2Poly(parts[0]);
+							// GenPolynomial<BigRational> denominator =
+							// jas.expr2Poly(parts[1]);
+							// QuotientRing<BigRational> qfac = new
+							// QuotientRing<BigRational>(jas.getPolynomialRingFactory());
+							// Quotient<BigRational> q = new Quotient<BigRational>(qfac,
+							// numerator, denominator);
+							// ElementaryIntegration<BigRational> eIntegrator = new
+							// ElementaryIntegration<BigRational>(BigRational.ZERO);
+							// QuotIntegral<BigRational> integral = eIntegrator.integrate(q);
+							// // if (Config.SHOW_STACKTRACE) {
+							// // System.out.println("Result: " + integral);
+							// // }
+							// return jas.quotIntegral2Expr(integral);
+							// } catch (UnsupportedOperationException uoe) {
+							// // JASConvert#logIntegral2Expr() method throws this exception
+							// if (Config.DEBUG) {
+							// System.out.println("Integrate: UnsupportedOperationException in JASConvert");
+							// }
+							// } catch (RuntimeException re) {
+							// // in case the expression couldn't be converted to JAS format
+							// if (Config.DEBUG) {
+							// re.printStackTrace();
+							// }
+							// }
 						}
 					}
 				}
@@ -158,7 +185,183 @@ public class Integrate extends AbstractFunctionEvaluator implements IConstantHea
 		return null;
 	}
 
-	private IExpr integratePolynomialByParts(final IAST arg1, ISymbol symbol) {
+	/**
+	 * Check if the polynomial has maximum degree 2 in 1 variable and return the
+	 * coefficients.
+	 * 
+	 * @param poly
+	 * @return <code>null</code> if the polynomials degree > 2 and number of
+	 *         variables <> 1
+	 */
+	public static boolean isQuadratic(GenPolynomial<BigRational> poly, BigRational[] result) {
+		if (poly.degree() <= 2 && poly.numberOfVariables() == 1) {
+			result[0] = BigRational.ZERO;
+			result[1] = BigRational.ZERO;
+			result[2] = BigRational.ZERO;
+			for (Monomial<BigRational> monomial : poly) {
+				BigRational coeff = (BigRational) monomial.coefficient();
+				ExpVector exp = monomial.exponent();
+				for (int i = 0; i < exp.length(); i++) {
+					result[(int) exp.getVal(i)] = coeff;
+				}
+			}
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Returns an AST with head <code>Plus</code>, which contains the partial
+	 * fraction decomposition of the numerator and denominator parts.
+	 * 
+	 * @param parts
+	 * @param variableList
+	 * @return <code>null</code> if the partial fraction decomposition wasn't
+	 *         constructed
+	 */
+	private static IAST integrateByPartialFractions(IExpr[] parts, ISymbol x) {
+		try {
+			IAST variableList = F.List(x);
+			IExpr exprNumerator = F.evalExpandAll(parts[0]);
+			IExpr exprDenominator = F.evalExpandAll(parts[1]);
+			ASTRange r = new ASTRange(variableList, 1);
+			List<IExpr> varList = r.toList();
+
+			String[] varListStr = new String[1];
+			varListStr[0] = variableList.get(1).toString();
+			JASConvert<BigRational> jas = new JASConvert<BigRational>(varList);
+			GenPolynomial<BigRational> numerator = jas.expr2Poly(exprNumerator);
+			GenPolynomial<BigRational> denominator = jas.expr2Poly(exprDenominator);
+
+			// get factors
+			FactorAbstract<BigRational> factorAbstract = FactorFactory.getImplementation(BigRational.ZERO);
+			SortedMap<GenPolynomial<BigRational>, Long> sfactors = factorAbstract.baseFactors(denominator);
+
+			List<GenPolynomial<BigRational>> D = new ArrayList<GenPolynomial<BigRational>>(sfactors.keySet());
+
+			SquarefreeAbstract<BigRational> sqf = SquarefreeFactory.getImplementation(BigRational.ZERO);
+			List<List<GenPolynomial<BigRational>>> Ai = sqf.basePartialFraction(numerator, sfactors);
+			// returns [ [Ai0, Ai1,..., Aie_i], i=0,...,k ] with A/prod(D) =
+			// A0 + sum( sum ( Aij/di^j ) ) with deg(Aij) < deg(di).
+
+			if (Ai.size() > 0) {
+				BigRational[] numer = new BigRational[3];
+				BigRational[] denom = new BigRational[3];
+				IAST result = F.Plus();
+				IExpr temp;
+				if (!Ai.get(0).get(0).isZERO()) {
+					temp = F.eval(jas.poly2Expr(Ai.get(0).get(0)));
+					if (temp instanceof IAST) {
+						((IAST) temp).addEvalFlags(IAST.IS_DECOMPOSED_PARTIAL_FRACTION);
+					}
+					result.add(F.Integrate(temp, x));
+				}
+				for (int i = 1; i < Ai.size(); i++) {
+					List<GenPolynomial<BigRational>> list = Ai.get(i);
+					long j = 0L;
+					for (GenPolynomial<BigRational> genPolynomial : list) {
+						if (!genPolynomial.isZERO()) {
+							boolean isDegreeLE2 = D.get(i - 1).degree() <= 2;
+							if (isDegreeLE2 && j == 1L) {
+								if (genPolynomial.isONE()) {
+									isQuadratic(D.get(i - 1), denom);
+									IFraction a = F.fraction(denom[2].numerator(), denom[2].denominator());
+									IFraction b = F.fraction(denom[1].numerator(), denom[1].denominator());
+									IFraction c = F.fraction(denom[0].numerator(), denom[0].denominator());
+									if (a.isZero()) {
+										// JavaForm[Log[b*x+c]/b]
+										result.add(Times(Log(Plus(c, Times(b, x))), Power(b, CN1)));
+									} else {
+										// compute b^2-4*a*c from (a*x^2+b*x+c)
+										BigRational cmp = denom[1].multiply(denom[1]).subtract(
+												BigRational.valueOf(4L).multiply(denom[2]).multiply(denom[0]));
+										int cmpTo = cmp.compareTo(BigRational.ZERO);
+										// (2*a*x+b)
+										IExpr ax2Plusb = F.Plus(F.Times(F.C2, a, x), b);
+										if (cmpTo == 0) {
+											// (-2) / (2*a*x+b)
+											result.add(F.Times(F.integer(-2L), F.Power(ax2Plusb, F.CN1)));
+										} else if (cmpTo > 0) {
+											// (b^2-4ac)^(1/2)
+											temp = F.eval(F.Power(F.Subtract(F.Sqr(b), F.Times(F.C4, a, c)), F.C1D2));
+											result.add(F.Times(F.Power(temp, F.CN1), F.Log(F.Times(F.Subtract(ax2Plusb, temp), Power(F.Plus(ax2Plusb,
+													temp), F.CN1)))));
+										} else {
+											// (4ac-b^2)^(1/2)
+											temp = F.eval(F.Power(F.Subtract(F.Times(F.C4, a, c), F.Sqr(b)), F.CN1D2));
+											result.add(F.Times(F.C2, temp, F.ArcTan(Times(ax2Plusb, temp))));
+										}
+									}
+								} else {
+									isQuadratic(genPolynomial, numer);
+									IFraction A = F.fraction(numer[1].numerator(), numer[1].denominator());
+									IFraction B = F.fraction(numer[0].numerator(), numer[0].denominator());
+									isQuadratic(D.get(i - 1), denom);
+									IFraction a = F.fraction(denom[2].numerator(), denom[2].denominator());
+									IFraction p = F.fraction(denom[1].numerator(), denom[1].denominator());
+									IFraction q = F.fraction(denom[0].numerator(), denom[0].denominator());
+									if (A.isZero()) {
+										// JavaForm[B*Log[p*x+q]/p]
+										temp = F.eval(Times(B, Log(Plus(q, Times(p, x))), Power(p, CN1)));
+									} else {
+										// JavaForm[A/2*Log[x^2+p*x+q]+(2*B-A*p)/(4*q-p^2)^(1/2)*ArcTan[(2*x+p)/(4*q-p^2)^(1/2)]]
+										temp = F.eval(Plus(Times(C1D2, A, Log(Plus(q, Times(p, x), Power(x, C2)))), Times(ArcTan(Times(Plus(p, Times(
+												C2, x)), Power(Plus(Times(CN1, Power(p, C2)), Times(C4, q)), CN1D2))),
+												Plus(Times(C2, B), Times(CN1, A, p)), Power(Plus(Times(CN1, Power(p, C2)), Times(C4, q)), CN1D2))));
+									}
+									result.add(temp);
+								}
+							} else if (isDegreeLE2 && j > 1L) {
+								isQuadratic(genPolynomial, numer);
+								IFraction A = F.fraction(numer[1].numerator(), numer[1].denominator());
+								IFraction B = F.fraction(numer[0].numerator(), numer[0].denominator());
+								isQuadratic(D.get(i - 1), denom);
+								IFraction a = F.fraction(denom[2].numerator(), denom[2].denominator());
+								IFraction b = F.fraction(denom[1].numerator(), denom[1].denominator());
+								IFraction c = F.fraction(denom[0].numerator(), denom[0].denominator());
+								IInteger k = F.integer(j);
+								if (A.isZero()) {
+									// JavaForm[B*((2*a*x+b)/((k-1)*(4*a*c-b^2)*(a*x^2+b*x+c)^(k-1))+
+									// (4*k*a-6*a)/((k-1)*(4*a*c-b^2))*Integrate[(a*x^2+b*x+c)^(-k+1),x])]
+									temp = Times(B, Plus(Times(Integrate(
+											Power(Plus(c, Times(b, x), Times(a, Power(x, C2))), Plus(C1, Times(CN1, k))), x), Plus(Times(F.integer(-6L),
+											a), Times(C4, a, k)), Power(Plus(CN1, k), CN1), Power(Plus(Times(CN1, Power(b, C2)), Times(C4, a, c)), CN1)),
+											Times(Plus(b, Times(C2, a, x)), Power(Plus(CN1, k), CN1), Power(Plus(Times(CN1, Power(b, C2)),
+													Times(C4, a, c)), CN1), Power(Power(Plus(c, Times(b, x), Times(a, Power(x, C2))), Plus(CN1, k)), CN1))));
+								} else {
+									// JavaForm[(-A)/(2*a*(k-1)*(a*x^2+b*x+c)^(k-1))+(B-A*b/(2*a))*Integrate[(a*x^2+b*x+c)^(-k),x]]
+									temp = Plus(Times(Integrate(Power(Plus(c, Times(b, x), Times(a, Power(x, C2))), Times(CN1, k)), x), Plus(B,
+											Times(CN1D2, A, Power(a, CN1), b))), Times(CN1D2, A, Power(a, CN1), Power(Plus(CN1, k), CN1), Power(Power(
+											Plus(c, Times(b, x), Times(a, Power(x, C2))), Plus(CN1, k)), CN1)));
+								}
+								result.add(temp);
+							} else {
+								temp = F.eval(F.Times(jas.poly2Expr(genPolynomial), F.Power(jas.poly2Expr(D.get(i - 1)), F.integer(j * (-1L)))));
+								if (!temp.equals(F.C0)) {
+									if (temp instanceof IAST) {
+										((IAST) temp).addEvalFlags(IAST.IS_DECOMPOSED_PARTIAL_FRACTION);
+									}
+									result.add(F.Integrate(temp, x));
+								}
+							}
+						}
+						j++;
+					}
+
+				}
+				return result;
+			}
+		} catch (ClassCastException cce) {
+			// expressions couldn't be converted to JAS polynomials
+		} catch (Exception e) {
+			if (Config.SHOW_STACKTRACE) {
+				e.printStackTrace();
+			}
+		}
+		return null;
+	}
+
+	private static IExpr integratePolynomialByParts(final IAST arg1, ISymbol symbol) {
 		IAST fTimes = F.Times();
 		IAST gTimes = F.Times();
 		collectPolynomialTerms(arg1, symbol, fTimes, gTimes);
@@ -197,7 +400,7 @@ public class Integrate extends AbstractFunctionEvaluator implements IConstantHea
 				engine.setRecursionLimit(128);
 			}
 			IExpr fIntegrated = F.eval(F.Integrate(f, symbol));
-			if (!FreeQ.freeQ(fIntegrated, Integrate)) {
+			if (!org.matheclipse.core.reflection.system.FreeQ.freeQ(fIntegrated, Integrate)) {
 				return null;
 			}
 			IExpr gDerived = F.eval(F.D(g, symbol));
@@ -224,7 +427,7 @@ public class Integrate extends AbstractFunctionEvaluator implements IConstantHea
 		IExpr temp;
 		for (int i = 1; i < timesAST.size(); i++) {
 			temp = timesAST.get(i);
-			if (FreeQ.freeQ(temp, symbol)) {
+			if (org.matheclipse.core.reflection.system.FreeQ.freeQ(temp, symbol)) {
 				fTimes.add(temp);
 				continue;
 			} else if (temp.equals(symbol)) {

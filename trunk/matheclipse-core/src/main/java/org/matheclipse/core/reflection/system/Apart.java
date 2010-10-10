@@ -44,55 +44,92 @@ public class Apart extends AbstractFunctionEvaluator {
 			return null;
 		}
 		IAST variableList = eVar.getVarList();
-		try {
-			final IExpr header = lst.get(1).head();
-			if (header == F.Times || header == F.Power) {
-				IExpr[] parts = Apart.getFractionalParts(lst.get(1));
-				if (parts != null) {
 
-					IExpr exprNumerator = F.evalExpandAll(parts[0]);
-					IExpr exprDenominator = F.evalExpandAll(parts[1]);
-					ASTRange r = new ASTRange(variableList, 1);
-					List<IExpr> varList = r.toList();
-
-					String[] varListStr = new String[1];
-					varListStr[0] = variableList.get(1).toString();
-					JASConvert<BigRational> jas = new JASConvert<BigRational>(varList);
-					GenPolynomial<BigRational> numerator = jas.expr2Poly(exprNumerator);
-					GenPolynomial<BigRational> denominator = jas.expr2Poly(exprDenominator);
-
-					// get factors
-					FactorAbstract<BigRational> factorAbstract = FactorFactory.getImplementation(BigRational.ZERO);
-					SortedMap<GenPolynomial<BigRational>, Long> sfactors = factorAbstract.baseFactors(denominator);
-
-					List<GenPolynomial<BigRational>> D = new ArrayList<GenPolynomial<BigRational>>(sfactors.keySet());
-
-					SquarefreeAbstract<BigRational> sqf = SquarefreeFactory.getImplementation(BigRational.ZERO);
-					List<List<GenPolynomial<BigRational>>> Ai = sqf.basePartialFraction(numerator, sfactors);
-					// returns [ [Ai0, Ai1,..., Aie_i], i=0,...,k ] with A/prod(D) =
-					// A0 + sum( sum ( Aij/di^j ) ) with deg(Aij) < deg(di).
-
-					if (Ai.size() > 0) {
-						IAST result = F.Plus();
-						result.add(jas.poly2Expr(Ai.get(0).get(0), null));
-						for (int i = 1; i < Ai.size(); i++) {
-							List<GenPolynomial<BigRational>> list = Ai.get(i);
-							long j = 0L;
-							for (GenPolynomial<BigRational> genPolynomial : list) {
-								if (!genPolynomial.isZERO()) {
-									result.add(F.Times(jas.poly2Expr(genPolynomial, null), F.Power(jas.poly2Expr(D.get(i - 1), null), F.integer(j
-											* (-1L)))));
-								}
-								j++;
-							}
-
-						}
-						return result;
+		final IExpr header = lst.get(1).head();
+		if (header == F.Times || header == F.Power) {
+			IExpr[] parts = Apart.getFractionalParts(lst.get(1));
+			if (parts != null) {
+				IAST plusResult = apart(parts, variableList);
+				if (plusResult != null) {
+					if (plusResult.size() == 2) {
+						// OneIdentity
+						return plusResult.get(1);
 					}
+					return plusResult;
 				}
-			} else {
-				return lst.get(1);
 			}
+		} else {
+			return lst.get(1);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Returns an AST with head <code>Plus</code>, which contains the partial
+	 * fraction decomposition of the numerator and denominator parts.
+	 * 
+	 * @param parts
+	 * @param variableList
+	 * @return <code>null</code> if the partial fraction decomposition wasn't
+	 *         constructed
+	 */
+	public static IAST apart(IExpr[] parts, IAST variableList) {
+		try {
+			IExpr exprNumerator = F.evalExpandAll(parts[0]);
+			IExpr exprDenominator = F.evalExpandAll(parts[1]);
+			ASTRange r = new ASTRange(variableList, 1);
+			List<IExpr> varList = r.toList();
+
+			String[] varListStr = new String[1];
+			varListStr[0] = variableList.get(1).toString();
+			JASConvert<BigRational> jas = new JASConvert<BigRational>(varList);
+			GenPolynomial<BigRational> numerator = jas.expr2Poly(exprNumerator);
+			GenPolynomial<BigRational> denominator = jas.expr2Poly(exprDenominator);
+
+			// get factors
+			FactorAbstract<BigRational> factorAbstract = FactorFactory.getImplementation(BigRational.ZERO);
+			SortedMap<GenPolynomial<BigRational>, Long> sfactors = factorAbstract.baseFactors(denominator);
+
+			List<GenPolynomial<BigRational>> D = new ArrayList<GenPolynomial<BigRational>>(sfactors.keySet());
+
+			SquarefreeAbstract<BigRational> sqf = SquarefreeFactory.getImplementation(BigRational.ZERO);
+			List<List<GenPolynomial<BigRational>>> Ai = sqf.basePartialFraction(numerator, sfactors);
+			// returns [ [Ai0, Ai1,..., Aie_i], i=0,...,k ] with A/prod(D) =
+			// A0 + sum( sum ( Aij/di^j ) ) with deg(Aij) < deg(di).
+
+			if (Ai.size() > 0) {
+				IAST result = F.Plus();
+				IExpr temp;
+				if (!Ai.get(0).get(0).isZERO()) {
+					temp = F.eval(jas.poly2Expr(Ai.get(0).get(0), null));
+					if (temp instanceof IAST) {
+						((IAST) temp).addEvalFlags(IAST.IS_DECOMPOSED_PARTIAL_FRACTION);
+					}
+					result.add(temp);
+				}
+				for (int i = 1; i < Ai.size(); i++) {
+					List<GenPolynomial<BigRational>> list = Ai.get(i);
+					long j = 0L;
+					for (GenPolynomial<BigRational> genPolynomial : list) {
+						if (!genPolynomial.isZERO()) {
+							temp = F.eval(F.Times(jas.poly2Expr(genPolynomial, null), F.Power(jas.poly2Expr(D.get(i - 1), null), F.integer(j
+									* (-1L)))));
+							if (!temp.equals(F.C0)) {
+								if (temp instanceof IAST) {
+									((IAST) temp).addEvalFlags(IAST.IS_DECOMPOSED_PARTIAL_FRACTION);
+								}
+								result.add(temp);
+							}
+						}
+						j++;
+					}
+
+				}
+				return result;
+			}
+		} catch (ClassCastException cce) {
+			// expression couldn't be converted into a JAS expression
 		} catch (Exception e) {
 			if (Config.SHOW_STACKTRACE) {
 				e.printStackTrace();

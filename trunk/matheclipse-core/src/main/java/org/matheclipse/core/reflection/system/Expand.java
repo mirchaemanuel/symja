@@ -14,6 +14,7 @@ import org.matheclipse.core.generic.UnaryBind2nd;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.IInteger;
+import org.matheclipse.core.interfaces.INumber;
 import org.matheclipse.generic.combinatoric.KPermutationsIterable;
 import org.matheclipse.generic.combinatoric.NumberPartitionsIterable;
 
@@ -30,8 +31,8 @@ public class Expand extends AbstractFunctionEvaluator implements IConstantHeader
 		}
 
 		if (ast.get(1) instanceof IAST) {
-			final IAST list = (IAST) ast.get(1);
-			IExpr temp = expand(list);
+			final IAST arg1 = (IAST) ast.get(1);
+			IExpr temp = expand(arg1);
 			if (temp != null) {
 				return temp;
 			}
@@ -41,7 +42,7 @@ public class Expand extends AbstractFunctionEvaluator implements IConstantHeader
 	}
 
 	public static IExpr expand(final IAST ast) {
-		if (ast.isAST(F.Power, 3)) {
+		if (ast.isPower()) {
 			// (a+b)^exp
 			if ((ast.get(1) instanceof IAST) && (ast.get(2) instanceof IInteger)) {
 				IExpr header = ((IAST) ast.get(1)).head();
@@ -59,7 +60,7 @@ public class Expand extends AbstractFunctionEvaluator implements IConstantHeader
 
 			IExpr[] temp = Apart.getFractionalPartsTimes(ast);
 			if (temp[0].equals(F.C1)) {
-				if (temp[1].isTimes()){
+				if (temp[1].isTimes()) {
 					return F.Power(expandTimes((IAST) temp[1]), F.CN1);
 				}
 				return null;
@@ -67,7 +68,7 @@ public class Expand extends AbstractFunctionEvaluator implements IConstantHeader
 
 			if (temp[1].equals(F.C1)) {
 				return expandTimes(ast);
-			} 
+			}
 
 			if (temp[0].isTimes()) {
 				temp[0] = expandTimes((IAST) temp[0]);
@@ -91,6 +92,9 @@ public class Expand extends AbstractFunctionEvaluator implements IConstantHeader
 	}
 
 	public static IExpr expandTimesBinary(final IExpr expr0, final IExpr expr1) {
+		if (expr0.isNumber() && expr1.isPlus()) {
+			return EvalEngine.eval(expandTimesPlus((INumber)expr0, (IAST)expr1));
+		}
 		final IAST ast0 = assurePlus(expr0);
 		final IAST ast1 = assurePlus(expr1);
 		return EvalEngine.eval(expandTimesPlus(ast0, ast1));
@@ -98,13 +102,8 @@ public class Expand extends AbstractFunctionEvaluator implements IConstantHeader
 
 	private static IAST assurePlus(final IExpr expr) {
 		IAST astPlus = null;
-		if (expr instanceof IAST) {
-			final IAST ast = (IAST) expr;
-			final IExpr header = ast.head();
-			if (header == F.Plus) {
-				astPlus = ast;
-				return astPlus;
-			}
+		if (expr.isPlus()) {
+			return (IAST)expr;
 		}
 		// if expr is not of the form Plus[...], generate Plus[expr]
 		if (astPlus == null) {
@@ -120,6 +119,15 @@ public class Expand extends AbstractFunctionEvaluator implements IConstantHeader
 		for (int i = 1; i < expr0.size(); i++) {
 			expr1.args().map(pList, new UnaryBind2nd(Times(expr0.get(i), F.Null)));
 		}
+		return pList;
+	}
+
+	public static IAST expandTimesPlus(final INumber expr1, final IAST ast) {
+		// (a+b)*(c+d) -> a*c+a*d+b*c+b*d
+		final IAST pList = Plus();
+		for (int i = 1; i < ast.size(); i++) {
+			pList.add(F.Times(expr1, ast.get(i)));
+		} 
 		return pList;
 	}
 

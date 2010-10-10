@@ -33,22 +33,22 @@ public class Factor extends AbstractFunctionEvaluator {
 	}
 
 	@Override
-	public IExpr evaluate(final IAST lst) {
-		if (lst.size() != 2 && lst.size() != 3) {
+	public IExpr evaluate(final IAST ast) {
+		if (ast.size() != 2 && ast.size() != 3) {
 			return null;
 		}
 
-		ExprVariables eVar = new ExprVariables(lst.get(1));
+		ExprVariables eVar = new ExprVariables(ast.get(1));
 		if (!eVar.isSize(1)) {
-			throw new WrongArgumentType(lst, lst.get(1), 1, "Factorization only implemented for univariate polynomials");
+			throw new WrongArgumentType(ast, ast.get(1), 1, "Factorization only implemented for univariate polynomials");
 		}
 		try {
-			IExpr expr = F.evalExpandAll(lst.get(1));
+			IExpr expr = F.evalExpandAll(ast.get(1));
 			ASTRange r = new ASTRange(eVar.getVarList(), 1);
 			List<IExpr> varList = r.toList();
 
-			if (lst.size() == 3) {
-				return factorWithOption(lst, expr, varList, false);
+			if (ast.size() == 3) {
+				return factorWithOption(ast, expr, varList, false);
 			}
 			return factor(expr, varList, false);
 

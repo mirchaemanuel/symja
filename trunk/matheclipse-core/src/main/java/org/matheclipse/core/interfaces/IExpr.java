@@ -46,7 +46,7 @@ public interface IExpr extends Comparable<IExpr>, // FieldElement<IExpr>,
 	IExpr times(IExpr that);
 
 	/**
-	 * Returns the multiplicative inverse of this object. It it the object such as
+	 * Returns the multiplicative inverse of this object. It is the object such as
 	 * <code>this.times(this.inverse()) == ONE </code>, with <code>ONE</code>
 	 * being the multiplicative identity.
 	 * 

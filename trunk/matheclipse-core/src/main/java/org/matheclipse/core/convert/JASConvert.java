@@ -32,6 +32,13 @@ import edu.jas.poly.TermOrder;
 import edu.jas.structure.RingElem;
 import edu.jas.structure.RingFactory;
 
+/**
+ * Convert <a href="http://krum.rz.uni-mannheim.de/jas/">JAS</a> objects from
+ * and to MathEclipse objects
+ * 
+ * 
+ * @param <C>
+ */
 public class JASConvert<C extends RingElem<C>> {
 	private final RingFactory<C> fRingFactory;
 	private final TermOrder fTermOrder;
@@ -63,7 +70,8 @@ public class JASConvert<C extends RingElem<C>> {
 	}
 
 	/**
-	 * Convert the given expression into a JAS polynomial
+	 * Convert the given expression into a <a
+	 * href="http://krum.rz.uni-mannheim.de/jas/">JAS</a> polynomial
 	 * 
 	 * @param exprPoly
 	 * @return
@@ -124,17 +132,6 @@ public class JASConvert<C extends RingElem<C>> {
 			return new GenPolynomial(fPolyFactory, r);// pfac.getONE().multiply(r);
 		}
 		throw new ClassCastException(exprPoly.toString());
-
-		// check if this expression contains any variable
-		// for (int i = 0; i < variables.size(); i++) {
-		// checkCanceled();
-		// if (!exprPoly.isFree(exprPoly, variables.get(i))) {
-		// throw new ClassCastException();
-		// }
-		// }
-		// // TODO convert constant exprPoly to a?
-		// return a;
-
 	}
 
 	/**
@@ -308,6 +305,31 @@ public class JASConvert<C extends RingElem<C>> {
 		return result;
 	}
 
+	/**
+	 * Converts a <a href="http://krum.rz.uni-mannheim.de/jas/">JAS</a> polynomial
+	 * to a MathEclipse AST with head <code>Plus</code>
+	 * 
+	 * @param poly
+	 *          a JAS polynomial
+	 * @return
+	 * @throws ArithmeticException
+	 * @throws ClassCastException
+	 */
+	public IAST poly2Expr(final GenPolynomial<BigRational> poly) throws ArithmeticException, ClassCastException {
+		return poly2Expr(poly, null);
+	}
+
+	/**
+	 * Converts a <a href="http://krum.rz.uni-mannheim.de/jas/">JAS</a> polynomial
+	 * to a MathEclipse AST with head <code>Plus</code>
+	 * 
+	 * @param poly
+	 *          a JAS polynomial
+	 * @param variable
+	 * @return
+	 * @throws ArithmeticException
+	 * @throws ClassCastException
+	 */
 	public IAST poly2Expr(final GenPolynomial<BigRational> poly, IExpr variable) throws ArithmeticException, ClassCastException {
 		if (poly.length() == 0) {
 			return F.Plus(F.C0);

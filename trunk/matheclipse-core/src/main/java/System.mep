@@ -103,6 +103,7 @@ Package[
   Derivative[Cosh]=(-1)*Sinh[#]&,
 
   Log[E]=1,
+  Log[0]=(-Infinity),
   
   (* rules for Power[] *)
   E^(I*Pi)=(-1),
