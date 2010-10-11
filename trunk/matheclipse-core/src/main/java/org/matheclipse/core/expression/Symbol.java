@@ -379,6 +379,14 @@ public class Symbol extends ExprImpl implements ISymbol {
 	}
 
 	@Override
+	public String internalFormString(boolean callSymbolFactory) {
+		if (callSymbolFactory) {
+			return "symbol(\"" + fSymbolName + "\")";
+		}
+		return fSymbolName; 
+	}
+
+	@Override
 	public String toString() {
 		return fSymbolName;
 	}

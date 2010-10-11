@@ -285,7 +285,7 @@ public abstract class ExprImpl implements IExpr {
 		return toString();
 	}
 
-	public String internalFormString() {
+	public String internalFormString(boolean callSymbolFactory) {
 		return toString();
 	}
 

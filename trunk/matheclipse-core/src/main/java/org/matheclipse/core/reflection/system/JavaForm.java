@@ -19,7 +19,7 @@ public class JavaForm implements IFunctionEvaluator {
 		if (ast.size() != 2) {
 			return null;
 		}
-		return F.stringx(new StringBuffer(ast.get(1).internalFormString()));
+		return F.stringx(new StringBuffer(ast.get(1).internalFormString(false)));
 	}
 
 	public IExpr numericEval(final IAST functionList) {

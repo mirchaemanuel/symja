@@ -91,7 +91,7 @@ public class Simplify extends AbstractFunctionEvaluator {
 			try {
 				temp = F.evalExpandAll(test);
 				count = LeafCount.leafCount(temp);
-				if (count <= minCounter) {
+				if (count < minCounter) {
 					minCounter = count;
 					result = temp;
 				}

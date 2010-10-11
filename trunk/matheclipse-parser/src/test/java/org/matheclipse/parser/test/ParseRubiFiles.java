@@ -5,6 +5,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.util.List;
 
+import org.matheclipse.basic.Config;
+import org.matheclipse.core.expression.F;
 import org.matheclipse.parser.client.Parser;
 import org.matheclipse.parser.client.ast.ASTNode;
 

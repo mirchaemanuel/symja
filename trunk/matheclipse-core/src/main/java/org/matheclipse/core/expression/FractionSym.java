@@ -453,7 +453,7 @@ public class FractionSym extends ExprImpl implements IFraction {
 		return super.times(that);
 	}
 
-	public String internalFormString() {
+	public String internalFormString(boolean callSymbolFactory) {
 		int numerator = fRational.getNumerator().intValue();
 		int denominator = fRational.getDenominator().intValue();
 		if (numerator == 1) {
