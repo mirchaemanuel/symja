@@ -13,6 +13,11 @@ import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.parser.client.Parser;
 import org.matheclipse.parser.client.ast.ASTNode;
 
+/**
+ * Convert the Rubi files from <a href="http://www.apmaths.uwo.ca/~arich/">Rubi
+ * - Indefinite Integration Reduction Rules</a>
+ * 
+ */
 public class ConvertRubiFiles {
 	public static List<ASTNode> parseFileToList(String fileName) {
 		try {
@@ -37,26 +42,35 @@ public class ConvertRubiFiles {
 		return null;
 	}
 
-	public static void convert(ASTNode node) {
+	public static String convert(ASTNode node) {
 		try {
 			// convert ASTNode to an IExpr node
+			final StringBuffer buffer = new StringBuffer();
+			
+
 			IExpr expr = AST2Expr.CONST.convert(node);
 			if (expr.isAST(F.SetDelayed, 3)) {
 				IAST ast = (IAST) expr;
-				System.out.println(ast.get(1).internalFormString(true));
-				System.out.println(ast.get(2).internalFormString(true));
+				buffer.append(ast.get(1).internalFormString(true));
+				buffer.append(",\n");
+				buffer.append(ast.get(2).internalFormString(true));
+				buffer.append(",\n");
 			} else if (expr.isAST(F.If, 4)) {
 				IAST ast = (IAST) expr;
 				expr = ast.get(3);
 				if (expr.isAST(F.SetDelayed, 3)) {
 					ast = (IAST) expr;
-					System.out.println(ast.get(1).internalFormString(true));
-					System.out.println(ast.get(2).internalFormString(true));
+					buffer.append(ast.get(1).internalFormString(true));
+					buffer.append(",\n");
+					buffer.append(ast.get(2).internalFormString(true));
+					buffer.append(",\n");
 				}
 			}
+			return buffer.toString();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		return "";
 	}
 
 	public static void main(String[] args) {
@@ -84,11 +98,15 @@ public class ConvertRubiFiles {
 
 			List<ASTNode> list = parseFileToList(fileNames[i]);
 			if (list != null) {
+				System.out.println("private static IExpr[] RULES = {");
 				for (ASTNode astNode : list) {
-					System.out.println("---");
-//					System.out.println(astNode);
-					convert(astNode);
+					// System.out.println("---");
+					// System.out.println(astNode);
+					String str = convert(astNode);
+					System.out.print(str);
 				}
+				System.out.println("};");
+				
 				System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>");
 				System.out.println(">>>>> Number of entries: " + list.size());
 				System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>");
