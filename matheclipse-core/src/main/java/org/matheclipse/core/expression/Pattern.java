@@ -236,6 +236,40 @@ public class Pattern extends ExprImpl implements IPattern {
 	// return tb.toText();
 	// }
 	@Override
+	public String internalFormString(boolean callSymbolFactory) {
+		if (callSymbolFactory) {
+			final StringBuffer buffer = new StringBuffer();
+			buffer.append("pattern(");
+			if (fSymbol == null) {
+				buffer.append("null");
+				if (fCondition != null) {
+					buffer.append("," + fCondition.internalFormString(callSymbolFactory));
+				}
+				if (fDefault) {
+					if (fCondition == null) {
+						buffer.append(",null");
+					}
+					buffer.append(",true");
+				}
+			} else {
+				buffer.append("\""+fSymbol.toString()+"\"");
+				if (fCondition != null) {
+					buffer.append("," + fCondition.internalFormString(callSymbolFactory));
+				}
+				if (fDefault) {
+					if (fCondition == null) {
+						buffer.append(",null");
+					}
+					buffer.append(",true");
+				}
+			}
+			buffer.append(")");
+			return buffer.toString();
+		}
+		return toString();
+	}
+
+	@Override
 	public String toString() {
 		final StringBuffer buffer = new StringBuffer();
 		if (fSymbol == null) {

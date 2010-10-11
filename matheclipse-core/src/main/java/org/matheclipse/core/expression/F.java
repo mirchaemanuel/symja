@@ -855,6 +855,7 @@ public class F {
 			// GroebnerBasis = predefinedSymbol("GroebnerBasis", new GroebnerBasis());
 			Head = predefinedSymbol("Head");
 			Hold = predefinedSymbol("Hold");
+			If = predefinedSymbol("If");
 			IntegerQ = predefinedSymbol("IntegerQ");
 			Integrate = predefinedSymbol("Integrate");
 			Inverse = predefinedSymbol("Inverse");
@@ -1266,7 +1267,7 @@ public class F {
 	public static IAST Together(final IExpr a0) {
 		return unary(Together, a0);
 	}
-	
+
 	public static IAST Tr(final IExpr a0) {
 		return unary(Tr, a0);
 	}
@@ -1943,6 +1944,23 @@ public class F {
 			return Pattern.valueOf(null, check);
 		}
 		return Pattern.valueOf((Symbol) symbol(symbolName), check);
+	}
+
+	/**
+	 * Create a pattern for pattern-matching and term rewriting
+	 * 
+	 * @param symbolName
+	 * @param check
+	 *          additional condition which should be checked in pattern-matching
+	 * @param def
+	 *          use a default value for this pattern if necessary
+	 * @return IPattern
+	 */
+	public static IPattern pattern(final String symbolName, final IExpr check, boolean def) {
+		if (symbolName == null) {
+			return Pattern.valueOf(null, check, def);
+		}
+		return Pattern.valueOf((Symbol) symbol(symbolName), check, def);
 	}
 
 	/**

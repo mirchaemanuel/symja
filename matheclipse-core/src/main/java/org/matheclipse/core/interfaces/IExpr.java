@@ -313,8 +313,9 @@ public interface IExpr extends Comparable<IExpr>, // FieldElement<IExpr>,
 
 	/**
 	 * Return the internal Java form of this expression
+	 * @param callSymbolFactory TODO
 	 */
-	public String internalFormString();
+	public String internalFormString(boolean callSymbolFactory);
 
 	/**
 	 * @returnthe head of the expression, which must not be null.

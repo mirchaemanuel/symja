@@ -989,7 +989,7 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 		return text.toString();
 	}
 
-	public String internalFormString() {
+	public String internalFormString(boolean callSymbolFactory) {
 		final String sep = ",";
 		final IExpr temp = head();
 		StringBuffer text = new StringBuffer(size() * 10);
@@ -998,7 +998,7 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 			if (!Character.isUpperCase(sym.toString().charAt(0))) {
 				text.append("$(");
 				for (int i = 0; i < size(); i++) {
-					text.append(get(i).internalFormString());
+					text.append(get(i).internalFormString(callSymbolFactory));
 					if (i < size() - 1) {
 						text.append(sep);
 					}
@@ -1008,10 +1008,10 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 			}
 		}
 
-		text.append(temp.internalFormString());
+		text.append(temp.internalFormString(false));
 		text.append('(');
 		for (int i = 1; i < size(); i++) {
-			text.append(get(i).internalFormString());
+			text.append(get(i).internalFormString(callSymbolFactory));
 			if (i < size() - 1) {
 				text.append(sep);
 			}

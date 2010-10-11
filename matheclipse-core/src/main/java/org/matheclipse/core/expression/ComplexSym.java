@@ -341,7 +341,7 @@ public class ComplexSym extends ExprImpl implements IComplex {
 		return buf.toString();
 	}
 
-	public String internalFormString() {
+	public String internalFormString(boolean callSymbolFactory) {
 		int real_numerator = _real.getNumerator().toInt();
 		int real_denominator = _real.getDenominator().toInt();
 		int imag_numerator = _imaginary.getNumerator().toInt();

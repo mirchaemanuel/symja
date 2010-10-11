@@ -992,7 +992,7 @@ public class IntegerSym extends ExprImpl implements IInteger {
 	}
 
 	@Override
-	public String internalFormString() {
+	public String internalFormString(boolean callSymbolFactory) {
 		int value = fInteger.toInt();
 		switch (value) {
 		case -1:
