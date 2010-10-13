@@ -102,13 +102,13 @@ public class Power extends AbstractArg2 implements INumeric {
 				// 0^0
 				// TODO add a real log message
 				// throw new DivisionByZero("0^0");
-				ee.getOutPrintStream().println("Infinte expression 0^0");
+				ee.getOutPrintStream().println("Infinite expression 0^0");
 				return F.Indeterminate;
 			}
 
 			if ((o1 instanceof ISignedNumber) && ((ISignedNumber) o1).isNegative()) {
 				// throw new DivisionByZero("");
-				ee.getOutPrintStream().println("Infinte expression 1/0");
+				ee.getOutPrintStream().println("Infinite expression 1/0");
 				return F.Indeterminate;
 			}
 

@@ -8,7 +8,6 @@ import org.matheclipse.core.expression.IConstantHeaders;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.IInteger;
-import org.matheclipse.core.interfaces.INumber;
 import org.matheclipse.core.interfaces.ISymbol;
 
 /**
@@ -16,6 +15,12 @@ import org.matheclipse.core.interfaces.ISymbol;
  * href="http://en.wikipedia.org/wiki/List_of_limits">List of Limits</a>
  */
 public class Limit extends AbstractFunctionEvaluator implements IConstantHeaders {
+	String[] RULES = { 
+			"Limit[x_^(-1), x_Symbol->Infinity]=0",
+			"Limit[x_^(-1), x_Symbol->DirectedInfinity[-1]]=0", 
+			"Limit[(1+x_^(-1))^x_, x_Symbol->Infinity]=E",
+			"Limit[(1-x_^(-1))^x_, x_Symbol->Infinity]=E^(-1)", 
+			};
 
 	public Limit() {
 	}
@@ -77,7 +82,12 @@ public class Limit extends AbstractFunctionEvaluator implements IConstantHeaders
 					if (temp.equals(F.Indeterminate) || temp.isAST(F.Limit)) {
 						return null;
 					}
-					return F.Power(temp, n);
+					if (n.isPositive()) {
+						return F.Power(temp, n);
+					} else if (n.isNegative() && n.isEven()) {
+						return F.Power(temp, n);
+					}
+
 				}
 			}
 
@@ -86,6 +96,15 @@ public class Limit extends AbstractFunctionEvaluator implements IConstantHeaders
 		return null;
 	}
 
+	/**
+	 * 
+	 * @param numerator
+	 * @param denominator
+	 * @param sym
+	 * @param lim
+	 * @param rule
+	 * @return <code>null</code> if no limit found
+	 */
 	private static IExpr timesLimit(final IExpr numerator, final IExpr denominator, ISymbol sym, IExpr lim, IAST rule) {
 		IExpr numValue;
 		IExpr denValue;
@@ -154,6 +173,11 @@ public class Limit extends AbstractFunctionEvaluator implements IConstantHeaders
 			engine.setRecursionLimit(limit);
 		}
 		return null;
+	}
+
+	@Override
+	public String[] getRules() {
+		return RULES;
 	}
 
 }
