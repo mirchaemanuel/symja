@@ -548,6 +548,11 @@ public class F {
 
 		return unary(ArcTan, a0);
 	}
+	
+	public static IAST ArcTan(final IExpr a0, final IExpr a1) {
+
+		return binary(ArcTan, a0, a1);
+	}
 
 	public static IAST CNInfinity() {
 		return binary(Times, CN1, Infinity);

@@ -15,7 +15,8 @@ public class Condition implements IFunctionEvaluator {
 		if (functionList.size() != 3) {
 			throw new WrongNumberOfArguments(functionList, 2, functionList.size() - 1);
 		}
-		throw new RuntimeException("Condition is only allowed in Set, SetDelayed expressions");
+//		throw new RuntimeException("Condition is only allowed in Set, SetDelayed expressions");
+		return null;
 	}
 
 	public IExpr numericEval(final IAST functionList) {

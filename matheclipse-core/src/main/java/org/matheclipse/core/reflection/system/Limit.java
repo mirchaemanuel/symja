@@ -8,6 +8,7 @@ import org.matheclipse.core.expression.IConstantHeaders;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.IInteger;
+import org.matheclipse.core.interfaces.INumber;
 import org.matheclipse.core.interfaces.ISymbol;
 
 /**
@@ -68,11 +69,15 @@ public class Limit extends AbstractFunctionEvaluator implements IConstantHeaders
 				IExpr numerator = parts[0];
 				IExpr denominator = parts[1];
 				return timesLimit(numerator, denominator, sym, lim, rule);
-			} else if (arg1.isAST(F.Power, 3) && arg1.get(2) instanceof IInteger) {
-				// Limit[a_^n_,sym->lim] -> Limit[a,sym->lim]^n
-				IInteger n = (IInteger) arg1.get(2);
-				if (n.isPositive()) {
-					return F.Power(F.Limit(arg1.get(1), rule), n);
+			} else if (arg1.isAST(F.Power, 3)) {
+				if (arg1.get(2) instanceof IInteger) {
+					// Limit[a_^n_,sym->lim] -> Limit[a,sym->lim]^n
+					IInteger n = (IInteger) arg1.get(2);
+					IExpr temp = F.eval(F.Limit(arg1.get(1), rule));
+					if (temp.equals(F.Indeterminate) || temp.isAST(F.Limit)) {
+						return null;
+					}
+					return F.Power(temp, n);
 				}
 			}
 
