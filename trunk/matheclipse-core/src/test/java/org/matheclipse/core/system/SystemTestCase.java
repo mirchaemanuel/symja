@@ -2299,7 +2299,10 @@ public class SystemTestCase extends AbstractTestCase {
 		check("Limit[Sin[2*n]/Sin[3*n],n->0]", "2/3");
 		check("Limit[(2*Sin[x]-Sin[2*x])/(x-Sin[x]),x->0]", "6");
 
+		check("Limit[x^10,x->Infinity]", "Infinity");
+		check("Limit[x^11,x->-Infinity]", "-Infinity");
 		check("Limit[1/x,x->Infinity]", "0");
+		check("Limit[x^(-3),x->Infinity]", "0");
 		check("Limit[1/x,x->-Infinity]", "0");
 		check("Limit[(1+1/x)^x,x->Infinity]", "E");
 		check("Limit[(1-1/x)^x,x->Infinity]", "E^(-1)");

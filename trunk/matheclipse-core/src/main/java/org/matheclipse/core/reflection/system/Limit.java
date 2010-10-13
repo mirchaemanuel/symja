@@ -15,13 +15,13 @@ import org.matheclipse.core.interfaces.ISymbol;
  * href="http://en.wikipedia.org/wiki/List_of_limits">List of Limits</a>
  */
 public class Limit extends AbstractFunctionEvaluator implements IConstantHeaders {
-	String[] RULES = { 
-			"Limit[x_^(-1), x_Symbol->Infinity]=0",
-			"Limit[x_^(-1), x_Symbol->DirectedInfinity[-1]]=0", 
+	private String[] RULES = { 
+			"Limit[x_^n_IntegerQ, x_Symbol->Infinity]=0/; Negative[n]",
+			"Limit[x_^n_IntegerQ, x_Symbol->DirectedInfinity[-1]]=0/; Negative[n]", 
 			"Limit[(1+x_^(-1))^x_, x_Symbol->Infinity]=E",
 			"Limit[(1-x_^(-1))^x_, x_Symbol->Infinity]=E^(-1)", 
 			};
-
+	
 	public Limit() {
 	}
 
