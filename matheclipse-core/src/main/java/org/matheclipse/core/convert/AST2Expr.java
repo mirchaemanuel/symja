@@ -87,6 +87,9 @@ public class AST2Expr extends Converter<ASTNode, IExpr> {
 			if (node.getString().equals("I")) {
 				// special - convert on input
 				return F.CI;
+			} else if (node.getString().equals("Infinity")) {
+				// special - convert on input
+				return F.CInfinity;
 			}
 			return F.symbol(node.getString());
 		}

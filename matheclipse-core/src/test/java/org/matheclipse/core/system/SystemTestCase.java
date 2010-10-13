@@ -1005,12 +1005,11 @@ public class SystemTestCase extends AbstractTestCase {
 	}
 
 	public void testSystem171() {
-		
-		check("Simplify[1/2*(2*x+2)]","x+1");
-		check("Simplify[1/2*(2*x+2)*(1/2)^(1/2)]","(x+1)*(1/2)^(1/2)");
+
+		check("Simplify[1/2*(2*x+2)]", "x+1");
+		check("Simplify[1/2*(2*x+2)*(1/2)^(1/2)]", "(x+1)*(1/2)^(1/2)");
 		check("Simplify[Integrate[(8*x+1)/(x^2+x+1)^2,x]]", "(-2*x-5)*(x^2+x+1)^(-1)-4*ArcTan[(2*x+1)*3^(-1/2)]*3^(-1/2)");
-		
-		
+
 		check("Apart[1/(x^3+1)]", "(-1/3*x+2/3)*(x^2-x+1)^(-1)+1/3*(x+1)^(-1)");
 		check("Integrate[1/(x^5+x-7),x]", "Integrate[(x^5+x-7)^(-1),x]");
 		check("Integrate[1/(x-2),x]", "Log[x-2]");
@@ -1020,12 +1019,11 @@ public class SystemTestCase extends AbstractTestCase {
 		check("Integrate[1/(x^2+1),x]", "ArcTan[x]");
 		check("Integrate[(2*x+5)/(x^2-2*x+5),x]", "7/2*ArcTan[1/4*(2*x-2)]+Log[x^2-2*x+5]");
 		check("Integrate[(8*x+1)/(x^2+2*x+1),x]", "7*(x+1)^(-1)+8*Log[x+1]");
-		
+
 		check("Simplify[Integrate[1/3*(2-x)*(x^2-x+1)^(-1),x]]", "ArcTan[(2*x-1)*3^(-1/2)]*3^(-1/2)-1/6*Log[x^2-x+1]");
 
 		check("Integrate[1/(x^3+1),x]", "ArcTan[(2*x-1)*3^(-1/2)]*3^(-1/2)-1/6*Log[x^2-x+1]+1/3*Log[x+1]");
-		check("Integrate[1/3*(2-x)*(x^2-x+1)^(-1)+1/3*(x+1)^(-1),x]",
-				"ArcTan[(2*x-1)*3^(-1/2)]*3^(-1/2)-1/6*Log[x^2-x+1]+1/3*Log[x+1]");
+		check("Integrate[1/3*(2-x)*(x^2-x+1)^(-1)+1/3*(x+1)^(-1),x]", "ArcTan[(2*x-1)*3^(-1/2)]*3^(-1/2)-1/6*Log[x^2-x+1]+1/3*Log[x+1]");
 		check("Integrate[E^x*(2-x^2),x]", "2*E^x-(E^x*x^2-2*(x-1)*E^x)");
 		check("Integrate[(x^2+1)Log[x],x]", "1/3*Log[x]*x^3-1/9*x^3+x*Log[x]-x");
 		check("Integrate[x*Log[x],x]", "1/2*Log[x]*x^2-1/4*x^2");
@@ -1057,8 +1055,8 @@ public class SystemTestCase extends AbstractTestCase {
 
 	public void testSystem172() {
 		check("Simplify[Integrate[(x^7 - 24*x^4 - 4*x^2 + 8*x - 8)/(x^8 + 6*x^6 + 12*x^4 + 8*x^2),x]]",
-		"(-x+3)*(x^2+2)^(-1)+6*x*(x^2+2)^(-2)+x^(-1)+Log[x]");
-		
+				"(-x+3)*(x^2+2)^(-1)+6*x*(x^2+2)^(-2)+x^(-1)+Log[x]");
+
 		check("Integrate[10/(x-3)^4,x]", "(-10/3)*(x-3)^(-3)");
 
 		check("Integrate[(-1+x)*(1+x)*(1+x^2)*(1+x^4)*(1+x^8),x]", "1/17*x^17-x");
@@ -1073,7 +1071,6 @@ public class SystemTestCase extends AbstractTestCase {
 		check("Integrate[-x^(-2),x]", "x^(-1)");
 		check("Integrate[x^(-1),x]", "Log[x]");
 
-		
 	}
 
 	public void testSystem173() {
@@ -2148,7 +2145,7 @@ public class SystemTestCase extends AbstractTestCase {
 		check("Together[x+3/4*x^(-3)]", "1/4*(4*x^4+3)*x^(-3)");
 		check("Together[(x^2-2)^3/(x^2-2)+(x^2-2)^2/(x^2-2)]", "x^4-3*x^2+2");
 		check("Together[a/b+c/d]", "(a*d+b*c)*b^(-1)*d^(-1)");
-		check("Together[(-x+3)*(x^2+2)^(-1)+6*x*(x^2+2)^(-2)+x^(-1)]","(3*x^3+8*x^2+6*x+4)*(x^5+4*x^3+4*x)^(-1)");
+		check("Together[(-x+3)*(x^2+2)^(-1)+6*x*(x^2+2)^(-2)+x^(-1)]", "(3*x^3+8*x^2+6*x+4)*(x^5+4*x^3+4*x)^(-1)");
 	}
 
 	public void testSystem399() {
@@ -2206,6 +2203,7 @@ public class SystemTestCase extends AbstractTestCase {
 	public void testSystem408() {
 		check("0*Infinity", "Indeterminate");
 		check("0*(-Infinity)", "Indeterminate");
+		check("Infinity^(-1)", "0");
 		check("Infinity", "Infinity");
 		check("FullForm[Infinity]", "\"DirectedInfinity[1]\"");
 		check("Infinity*Infinity", "Infinity");
@@ -2300,6 +2298,16 @@ public class SystemTestCase extends AbstractTestCase {
 		check("Limit[(x^2-3*x+2)/(x-1),x->1]", "-1");
 		check("Limit[Sin[2*n]/Sin[3*n],n->0]", "2/3");
 		check("Limit[(2*Sin[x]-Sin[2*x])/(x-Sin[x]),x->0]", "6");
+
+		check("Limit[1/x,x->Infinity]", "0");
+		check("Limit[1/x,x->-Infinity]", "0");
+		check("Limit[(1+1/x)^x,x->Infinity]", "E");
+		check("Limit[(1-1/x)^x,x->Infinity]", "E^(-1)");
+		
+		check("Limit[1/x,x->0]", "Limit[x^(-1),x->0]");
+		check("Limit[Sin[x]/x,x->0]", "1");
+		check("Limit[(1-Cos[x])/x,x->0]", "0");
+		check("Limit[(1-Cos[x])/x^2,x->0]", "1/2");
 	}
 
 	public void testSystem419() {
