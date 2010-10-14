@@ -2287,7 +2287,7 @@ public class SystemTestCase extends AbstractTestCase {
 
 	public void testSystem418() {
 		check("Limit[Sin[Pi*x]/(Pi*x),x->0]", "1");
-		check("Limit[1+Sin[x]/x,x->Infinity]", "Limit[x^(-1)*Sin[x],x->Infinity]+1");
+		check("Limit[1+Sin[x]/x,x->Infinity]", "1");
 		check("Limit[Pi^42,x->42]", "Pi^42");
 		check("Limit[x,x->42]", "42");
 		check("Limit[a+b+2*x,x->42]", "b+a+84");
@@ -2302,6 +2302,7 @@ public class SystemTestCase extends AbstractTestCase {
 		check("Limit[x^10,x->Infinity]", "Infinity");
 		check("Limit[x^11,x->-Infinity]", "-Infinity");
 		check("Limit[1/x,x->Infinity]", "0");
+		check("Limit[6/x,x->Infinity]", "0");
 		check("Limit[x^(-3),x->Infinity]", "0");
 		check("Limit[1/x,x->-Infinity]", "0");
 		check("Limit[(1+1/x)^x,x->Infinity]", "E");
