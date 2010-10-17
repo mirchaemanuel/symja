@@ -5,11 +5,18 @@ import java.util.Map;
 
 import org.matheclipse.basic.Config;
 import org.matheclipse.core.interfaces.IAST;
+import org.matheclipse.core.interfaces.IComplex;
 import org.matheclipse.core.interfaces.IExpr;
+import org.matheclipse.core.interfaces.IFraction;
 import org.matheclipse.core.interfaces.IInteger;
 import org.matheclipse.core.interfaces.INumber;
+import org.matheclipse.core.interfaces.ISignedNumber;
 import org.matheclipse.core.interfaces.ISymbol;
 import org.matheclipse.core.patternmatching.PatternMatcher;
+import org.matheclipse.core.visit.VisitorReplaceAll;
+
+import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 
 import apache.harmony.math.BigInteger;
 
@@ -148,6 +155,10 @@ public abstract class ExprImpl implements IExpr {
 		return -1;
 	}
 
+	public boolean isAST() {
+		return false;
+	}
+
 	public boolean isAST(final IExpr header) {
 		return false;
 	}
@@ -241,6 +252,30 @@ public abstract class ExprImpl implements IExpr {
 		return !AST.COPY.some(this, matcher, 1);
 	}
 
+	public boolean isFree(Predicate<IExpr> predicate) {
+		return !AST.COPY.some(this, predicate, 1);
+	}
+
+	public boolean isSymbol() {
+		return this instanceof ISymbol;
+	}
+
+	public boolean isComplex() {
+		return this instanceof IComplex;
+	}
+
+	public boolean isFraction() {
+		return this instanceof IFraction;
+	}
+
+	public boolean isInteger() {
+		return this instanceof IInteger;
+	}
+
+	public boolean isSignedNumber() {
+		return this instanceof ISignedNumber;
+	}
+
 	public boolean isNumber() {
 		return this instanceof INumber;
 	}
@@ -289,10 +324,16 @@ public abstract class ExprImpl implements IExpr {
 		return toString();
 	}
 
+	/** 
+	 * {@inheritDoc}
+	 */
 	public List<IExpr> leaves() {
 		return null;
 	}
 
+	/** 
+	 * {@inheritDoc}
+	 */
 	public IExpr apply(List<? extends IExpr> leaves) {
 		final IAST ast = F.ast(head());
 		for (int i = 0; i < leaves.size(); i++) {
@@ -300,7 +341,10 @@ public abstract class ExprImpl implements IExpr {
 		}
 		return ast;
 	}
-
+	
+	/** 
+	 * {@inheritDoc}
+	 */
 	public IExpr apply(IExpr... leaves) {
 		final IAST ast = F.ast(head());
 		for (int i = 0; i < leaves.length; i++) {
@@ -309,4 +353,17 @@ public abstract class ExprImpl implements IExpr {
 		return ast;
 	}
 
+	/** 
+	 * {@inheritDoc}
+	 */
+	public IExpr replaceAll(final IAST astRules) {
+		return this.accept(new VisitorReplaceAll(astRules));
+	}
+
+	/** 
+	 * {@inheritDoc}
+	 */
+	public IExpr replaceAll(final Function<IExpr, IExpr> function) {
+		return this.accept(new VisitorReplaceAll(function));
+	}
 }

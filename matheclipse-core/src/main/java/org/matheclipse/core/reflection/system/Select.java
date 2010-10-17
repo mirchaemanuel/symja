@@ -1,9 +1,8 @@
 package org.matheclipse.core.reflection.system;
 
-import org.matheclipse.core.eval.exception.NonNegativeIntegerExpected;
 import org.matheclipse.core.eval.exception.Validate;
 import org.matheclipse.core.eval.interfaces.IFunctionEvaluator;
-import org.matheclipse.core.generic.IsUnaryTrue;
+import org.matheclipse.core.generic.Predicates;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.IInteger;
@@ -25,16 +24,11 @@ public class Select implements IFunctionEvaluator {
 	}
 
 	public static IAST select(final IAST list, final IExpr head) {
-		final IsUnaryTrue<IExpr> matcher = new IsUnaryTrue<IExpr>(head);
-		return list.args().select((IAST) list.copyHead(), matcher);
+		return list.args().select((IAST) list.copyHead(), Predicates.isTrue(head));
 	}
 
 	public static IAST select(final IAST list, final IExpr head, final int resultLimit) {
-		final IsUnaryTrue<IExpr> matcher = new IsUnaryTrue<IExpr>(head);
-		// final IAST resultList = (IAST)list.copyHead();
-		// Finding.select(list, resultList, 1, list.size(), matcher, resultLimit);
-		// return resultList;
-		return list.args().select((IAST) list.copyHead(), matcher, resultLimit);
+		return list.args().select((IAST) list.copyHead(), Predicates.isTrue(head), resultLimit);
 	}
 
 	public IExpr numericEval(final IAST functionList) {

@@ -10,7 +10,7 @@ import org.matheclipse.core.eval.exception.DivisionByZero;
 import org.matheclipse.core.eval.interfaces.AbstractArg2;
 import org.matheclipse.core.eval.interfaces.INumeric;
 import org.matheclipse.core.expression.F;
-import org.matheclipse.core.generic.UnaryBind1st;
+import org.matheclipse.core.generic.Functors;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IComplex;
 import org.matheclipse.core.interfaces.IComplexNum;
@@ -178,7 +178,7 @@ public class Power extends AbstractArg2 implements INumeric {
 		if (o0.isAST(F.Times)) {
 			if (o1 instanceof IInteger) {
 				// (a * b * c)^n => a^n * b^n * c^n
-				return ((IAST) o0).args().map(Times(), new UnaryBind1st(Power(F.Null, o1)));
+				return ((IAST) o0).map(Functors.replace1st(Power(F.Null, o1)));
 			}
 			if (o1 instanceof INumber) {
 				final IAST f0 = (IAST) o0;

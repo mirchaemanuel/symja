@@ -9,6 +9,10 @@ import org.matheclipse.core.generic.util.INestedListElement;
 import org.matheclipse.core.visit.IVisitor;
 import org.matheclipse.core.visit.IVisitorBoolean;
 import org.matheclipse.core.visit.IVisitorInt;
+import org.matheclipse.core.visit.VisitorReplaceAll;
+
+import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 
 /**
  * 
@@ -165,6 +169,36 @@ public interface IExpr extends Comparable<IExpr>, // FieldElement<IExpr>,
 	public boolean isAtom();
 
 	/**
+	 * Test if this expression is a symbol
+	 * 
+	 */
+	public boolean isSymbol();
+
+	/**
+	 * Test if this expression is a complex number
+	 * 
+	 */
+	public boolean isComplex();
+
+	/**
+	 * Test if this expression is a fractional number
+	 * 
+	 */
+	public boolean isFraction();
+
+	/**
+	 * Test if this expression is a integer number
+	 * 
+	 */
+	public boolean isInteger();
+
+	/**
+	 * Test if this expression is a signed number
+	 * 
+	 */
+	public boolean isSignedNumber();
+
+	/**
 	 * Test if this expression is a number
 	 * 
 	 */
@@ -220,6 +254,12 @@ public interface IExpr extends Comparable<IExpr>, // FieldElement<IExpr>,
 	public int isVector();
 
 	/**
+	 * Test if this expression is an AST (i.e. no atomic expression)
+	 * 
+	 */
+	public boolean isAST();
+
+	/**
 	 * Test if this expression is an AST (i.e. no atomic expression) with the
 	 * given head expression
 	 * 
@@ -268,37 +308,37 @@ public interface IExpr extends Comparable<IExpr>, // FieldElement<IExpr>,
 	public boolean isCos();
 
 	public boolean isTan();
-	
+
 	public boolean isArcSin();
 
 	public boolean isArcCos();
 
 	public boolean isArcTan();
-	
+
 	public boolean isSinh();
 
 	public boolean isCosh();
 
 	public boolean isTanh();
-	
+
 	public boolean isArcSinh();
 
 	public boolean isArcCosh();
 
 	public boolean isArcTanh();
-	
+
 	/**
 	 * Test if this expression equals <code>1</code> in symbolic or numeric mode.
 	 * 
 	 */
 	public boolean isOne();
-	
+
 	/**
 	 * Test if this expression equals <code>0</code> in symbolic or numeric mode.
 	 * 
 	 */
 	public boolean isZero();
-	
+
 	/**
 	 * Test if the expression is free of (sub-)expressions which match the
 	 * pattern.
@@ -307,13 +347,22 @@ public interface IExpr extends Comparable<IExpr>, // FieldElement<IExpr>,
 	public boolean isFree(IExpr pattern);
 
 	/**
+	 * Test if the expression is free of (sub-)expressions which match the given
+	 * predicate.
+	 * 
+	 */
+	public boolean isFree(Predicate<IExpr> predicate);
+
+	/**
 	 * Return the FullForm of this expression
 	 */
 	public String fullFormString();
 
 	/**
 	 * Return the internal Java form of this expression
-	 * @param callSymbolFactory TODO
+	 * 
+	 * @param callSymbolFactory
+	 *          TODO
 	 */
 	public String internalFormString(boolean callSymbolFactory);
 
@@ -349,6 +398,31 @@ public interface IExpr extends Comparable<IExpr>, // FieldElement<IExpr>,
 	 *         as leaves().
 	 */
 	public IExpr apply(IExpr... leaves);
+
+	/**
+	 * Replace all (sub-) expressions with the given rule set. If no substitution
+	 * matches, the method returns <code>null</code>.
+	 * 
+	 * @param astRules
+	 *          rules of the form <code>x-&gt;y</code> or
+	 *          <code>{a-&gt;b, c-&gt;d}</code>; the left-hand-side of the rule
+	 *          can contain pattern objects.
+	 * @return <code>null</code> if no substitution of a (sub-)expression was
+	 *         possible.
+	 */
+	public IExpr replaceAll(final IAST astRules);
+
+	/**
+	 * Replace all (sub-) expressions with the given unary function. If no
+	 * substitution matches, the method returns <code>null</code>.
+	 * 
+	 * @param function
+	 *          if the unary functions <code>apply()</code> method returns
+	 *          <code>null</code> the expression isn't substituted.
+	 * @return <code>null</code> if no substitution of a (sub-)expression was
+	 *         possible.
+	 */
+	public IExpr replaceAll(final Function<IExpr, IExpr> function);
 
 	/**
 	 * Convert the variables (i.e. ISymbol's with lower case character in the 0-th

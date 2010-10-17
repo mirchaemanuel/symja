@@ -5,12 +5,13 @@ import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
 
+import com.google.common.base.Function;
+
 /**
  * Collect the arguments in a new constructed internal AST.
  * 
  */
-public class UnaryCollect extends UnaryFunctorImpl<IExpr> {
-	protected final EvalEngine fEngine;
+public class UnaryCollect implements Function<IExpr, IExpr> {
 
 	protected IAST fAST;
 
@@ -22,7 +23,6 @@ public class UnaryCollect extends UnaryFunctorImpl<IExpr> {
 	 *          the AST's head expresion
 	 */
 	public UnaryCollect(final IExpr head) {
-		fEngine = EvalEngine.get();
 		fAST = F.ast(head, 1, false);
 	}
 

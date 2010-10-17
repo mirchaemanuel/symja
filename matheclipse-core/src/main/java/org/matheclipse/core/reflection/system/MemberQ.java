@@ -1,7 +1,5 @@
 package org.matheclipse.core.reflection.system;
 
-import static org.matheclipse.basic.Util.checkCanceled;
-
 import org.matheclipse.core.eval.interfaces.IFunctionEvaluator;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IAST;
@@ -22,7 +20,6 @@ public class MemberQ implements IFunctionEvaluator {
       final IAST ast = (IAST) functionList.get(1);
       final PatternMatcher matcher = new PatternMatcher(functionList.get(2));
       for (int i = 1; i < ast.size(); i++) {
-        checkCanceled();
 				if (matcher.apply(ast.get(i))) {
           return F.True;
         }
