@@ -24,7 +24,11 @@ import org.matheclipse.core.patternmatching.PatternMatcher;
 import org.matheclipse.core.visit.IVisitor;
 import org.matheclipse.core.visit.IVisitorBoolean;
 import org.matheclipse.core.visit.IVisitorInt;
+import org.matheclipse.core.visit.VisitorReplaceAll;
 import org.matheclipse.generic.interfaces.BiFunction;
+
+import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 
 import apache.harmony.math.BigInteger;
 
@@ -623,6 +627,26 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 		return -1;
 	}
 
+	public boolean isFraction() {
+		return false;
+	}
+
+	public boolean isSymbol() {
+		return false;
+	}
+
+	public boolean isComplex() {
+		return false;
+	}
+
+	public boolean isInteger() {
+		return false;
+	}
+
+	public boolean isSignedNumber() {
+		return false;
+	}
+
 	public boolean isNumber() {
 		return false;
 	}
@@ -661,14 +685,14 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 		return ast;
 	}
 
-	public IAST map(final IExpr head) {
+	public IAST map(final Function<IExpr, IExpr> function) {
 		final AST f = (AST) clone();
-		final AST lst = newInstance(null);
-		lst.setHeader(head);
-		lst.add(null);
+		IExpr temp;
 		for (int i = 1; i < size(); i++) {
-			lst.set(1, get(i));
-			f.set(i, (IExpr) lst.clone());
+			temp = function.apply(get(i));
+			if (temp != null) {
+				f.set(i, temp);
+			}
 		}
 		return f;
 	}
@@ -680,29 +704,75 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 		return resultAST;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	public IExpr replaceAll(final IAST astRules) {
+		return this.accept(new VisitorReplaceAll(astRules));
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public IExpr replaceAll(final Function<IExpr, IExpr> function) {
+		return this.accept(new VisitorReplaceAll(function));
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public boolean isAST() {
+		return true;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
 	public boolean isAST(final IExpr header) {
 		return get(0).equals(header);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public boolean isAST(final IExpr header, final int size) {
 		return (size() == size) && get(0).equals(header);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public boolean isASTSizeGE(final IExpr header, final int size) {
 		return (size() >= size) && get(0).equals(header);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public boolean isAST(final String symbol) {
 		return get(0).toString().equals(symbol);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public boolean isAST(final String symbol, final int size) {
 		return (size() == size) && get(0).toString().equals(symbol);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public boolean isFree(final IExpr pattern) {
 		final PatternMatcher matcher = new PatternMatcher(pattern);
 		return !AST.COPY.some((IExpr) this, matcher, 1);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public boolean isFree(Predicate<IExpr> predicate) {
+		return !AST.COPY.some((IExpr) this, predicate, 1);
 	}
 
 	/**

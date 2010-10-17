@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.matheclipse.core.eval.EvalEngine;
-import org.matheclipse.core.generic.IsUnaryTrue;
+import org.matheclipse.core.generic.Predicates;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.IPattern;
 import org.matheclipse.core.interfaces.ISymbol;
@@ -12,6 +12,8 @@ import org.matheclipse.core.patternmatching.PatternMatcher;
 import org.matheclipse.core.visit.IVisitor;
 import org.matheclipse.core.visit.IVisitorBoolean;
 import org.matheclipse.core.visit.IVisitorInt;
+
+import com.google.common.base.Predicate;
 
 /**
  * A concrete pattern implementation
@@ -379,7 +381,7 @@ public class Pattern extends ExprImpl implements IPattern {
 		try {
 			traceMode = engine.isTraceMode();
 			engine.setTraceMode(false);
-			final IsUnaryTrue<IExpr> matcher = new IsUnaryTrue<IExpr>(engine, fCondition);
+			final Predicate<IExpr> matcher = Predicates.isTrue(engine, fCondition);
 			if (matcher.apply(expr)) {
 				return true;
 			}

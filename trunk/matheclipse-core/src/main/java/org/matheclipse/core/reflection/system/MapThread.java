@@ -4,16 +4,17 @@ import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
 import org.matheclipse.core.expression.AST;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.generic.LevelSpecification;
-import org.matheclipse.core.generic.UnaryFunctorImpl;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.generic.nested.LevelSpec;
+
+import com.google.common.base.Function;
 
 /**
  */
 public class MapThread extends AbstractFunctionEvaluator {
 
-  class UnaryMapThread extends UnaryFunctorImpl<IExpr> {
+  private static class UnaryMapThread implements Function<IExpr, IExpr> {
     final IExpr fConstant;
 
     public UnaryMapThread(final IExpr constant) {

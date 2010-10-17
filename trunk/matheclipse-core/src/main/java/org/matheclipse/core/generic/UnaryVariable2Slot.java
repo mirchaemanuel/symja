@@ -10,7 +10,9 @@ import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.ISymbol;
 
-public class UnaryVariable2Slot extends UnaryFunctorImpl<IExpr> {
+import com.google.common.base.Function;
+
+public class UnaryVariable2Slot implements Function<IExpr, IExpr> {
 	final private Map<IExpr, IExpr> fMap;
 
 	final private List<IExpr> fVariableList;
@@ -26,7 +28,7 @@ public class UnaryVariable2Slot extends UnaryFunctorImpl<IExpr> {
 	/**
 	 * For every given argument return the associated unique slot from the
 	 * internal Map
-	 *
+	 * 
 	 */
 	public IExpr apply(final IExpr firstArg) {
 		if (firstArg instanceof ISymbol) {

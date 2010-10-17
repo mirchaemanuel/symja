@@ -5,7 +5,7 @@ import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.generic.BinaryBindIth1st;
 import org.matheclipse.core.generic.BinaryEval;
-import org.matheclipse.core.generic.UnaryBind1st;
+import org.matheclipse.core.generic.Functors;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.IInteger;
@@ -59,7 +59,7 @@ public class D extends AbstractFunctionEvaluator {
 
 		if (fx.isList()) {
 			// thread over first list
-			return ((IAST) fx).args().map(F.List(), new UnaryBind1st(ast));
+			return ((IAST) fx).args().map(F.List(), Functors.replace1st(ast));
 		}
 
 		IExpr x = ast.get(2);
@@ -89,7 +89,7 @@ public class D extends AbstractFunctionEvaluator {
 
 		}
 
-		if (!(x.isList()) && FreeQ.freeQ(fx, x)) {
+		if (!(x.isList()) && fx.isFree(x)) {
 			return F.C0;
 		}
 		if (fx instanceof INumber) {
@@ -110,7 +110,7 @@ public class D extends AbstractFunctionEvaluator {
 			final IExpr header = listArg1.head();
 			if (header == F.Plus) {
 				// D[a_+b_+c_,x_] -> D[a,x]+D[b,x]+D[c,x]
-				return listArg1.args().map(F.Plus(), new UnaryBind1st(F.D(F.Null, ast.get(2))));
+				return listArg1.map(Functors.replace1st(F.D(F.Null, ast.get(2))));
 			} else if (header == F.Times) {
 				return listArg1.args().map(F.Plus(), new BinaryBindIth1st(listArg1, F.D(F.Null, ast.get(2))));
 			} else if ((header == F.Power) && (listArg1.size() == 3)) {

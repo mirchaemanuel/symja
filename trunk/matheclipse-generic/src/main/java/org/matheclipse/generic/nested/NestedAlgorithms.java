@@ -17,14 +17,18 @@ import com.google.common.base.Predicate;
  * The derived instances have to define the clone and copy semantics.
  */
 public abstract class NestedAlgorithms<T, L extends List<T>> implements INestedList<T, L> {
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.matheclipse.generic.nested.INestedList#cast(java.lang.Object)
 	 */
 	final public L cast(Object obj) {
 		return (L) obj;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.matheclipse.generic.nested.INestedList#castList(L)
 	 */
 	final public T castList(L list) {
@@ -314,8 +318,6 @@ public abstract class NestedAlgorithms<T, L extends List<T>> implements INestedL
 
 		return isEvaled;
 	}
-
-	
 
 	/**
 	 * Add all expressions according to the level specification <code>level</code>
@@ -690,6 +692,60 @@ public abstract class NestedAlgorithms<T, L extends List<T>> implements INestedL
 			for (int i = 1; i < nestedList.size(); i++) {
 
 				temp = replaceAll(nestedList.get(i), ruleMap, headOffset);
+				if (temp != null) {
+					if (result == null) {
+						result = clone(nestedList);
+					}
+					result.set(i, temp);
+				}
+			}
+			return castList(result);
+		}
+		return null;
+	}
+
+	/**
+	 * Replace all elements that return a non <code>null</code> value from the
+	 * <code>function.apply()</code> method, If no replacement is found return
+	 * <code>null</code>.
+	 * 
+	 * @param <T>
+	 * @param expr
+	 * @param function
+	 * @return
+	 */
+	public <K> T replaceAll(final T expr, final Function<T, T> function) {
+		return replaceAll(expr, function, 0);
+	}
+
+	/**
+	 * Replace all elements that return a non <code>null</code> value from the
+	 * <code>function.apply()</code> method, If no replacement is found return
+	 * <code>null</code>.
+	 * 
+	 * @param <T>
+	 * @param expr
+	 * @param function
+	 * @return
+	 */
+	public <K> T replaceAll(final T expr, final Function<T, T> function, final int headOffset) {
+		final T value = function.apply(expr);
+		if (value != null) {
+			return value;
+		}
+		L nestedList;
+		if (isInstance(expr)) {
+			nestedList = cast(expr);
+			L result = null;
+			final T head = nestedList.get(0);
+			T temp = replaceAll(head, function, headOffset);
+			if (temp != null) {
+				result = clone(nestedList);
+				result.set(0, temp);
+			}
+			for (int i = 1; i < nestedList.size(); i++) {
+
+				temp = replaceAll(nestedList.get(i), function, headOffset);
 				if (temp != null) {
 					if (result == null) {
 						result = clone(nestedList);

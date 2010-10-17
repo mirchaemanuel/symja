@@ -53,6 +53,9 @@ public class WrongArgumentType extends MathException {
 			return "The function: " + fExpr.toString() + " has wrong argument " + fArg.toString() + " at position:"
 					+ Integer.toString(fPosition);
 		} else {
+			if (fPosition < 0) {
+				return "The function: " + fExpr.toString() + " has wrong type:\n" + fMessage;
+			}
 			return "The function: " + fExpr.toString() + " has wrong argument " + fArg.toString() + " at position:"
 					+ Integer.toString(fPosition) + ":\n" + fMessage;
 		}

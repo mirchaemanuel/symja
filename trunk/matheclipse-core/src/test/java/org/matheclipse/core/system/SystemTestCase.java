@@ -1152,7 +1152,7 @@ public class SystemTestCase extends AbstractTestCase {
 
 	public void testSystem192() {
 		check("$blck=Block[{$i=0}, $i=$i+1; Return[$i]]", "1");
-
+		check("$blck=Module[{$i=0}, $i=$i+1; Return[$i]]", "1");
 	}
 
 	public void testSystem193() {
@@ -1665,7 +1665,7 @@ public class SystemTestCase extends AbstractTestCase {
 	public void testSystem306() {
 		check("u[v[w,x,y] /. { x->y, w->y}]", "u[v[y,y,y]]");
 		check("{x,x,x} /. x->y+1", "{y+1,y+1,y+1}");
-		// check("{a+b,x,c+d+e} /. x_+y_->{x,y}", "");
+		check("{a+b,x,c+d+e} /. x_+y_->{x,y}", "{{a,b},x,{c,e+d}}");
 	}
 
 	public void testSystem307() {
@@ -2307,7 +2307,7 @@ public class SystemTestCase extends AbstractTestCase {
 		check("Limit[1/x,x->-Infinity]", "0");
 		check("Limit[(1+1/x)^x,x->Infinity]", "E");
 		check("Limit[(1-1/x)^x,x->Infinity]", "E^(-1)");
-		
+
 		check("Limit[1/x,x->0]", "Limit[x^(-1),x->0]");
 		check("Limit[Sin[x]/x,x->0]", "1");
 		check("Limit[(1-Cos[x])/x,x->0]", "0");

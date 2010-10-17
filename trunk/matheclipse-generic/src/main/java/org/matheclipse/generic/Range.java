@@ -7,7 +7,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.matheclipse.core.generic.UnaryFunctorImpl;
 import org.matheclipse.generic.interfaces.Aggregator;
 import org.matheclipse.generic.interfaces.BiFunction;
 import org.matheclipse.generic.interfaces.BiPredicate;
@@ -663,7 +662,7 @@ public class Range<E, L extends List<E>> implements Iterable<E> {
 	 * the list, which don't match the predicate.
 	 * 
 	 * @see Range#select(List, Predicate)
-	 * @see Range#replaceAll(List, UnaryFunctorImpl)
+	 * @see Range#replaceAll(List, Function)
 	 */
 	public L removeAll(L list, Predicate<E> predicate) {
 		for (int i = fStart; i < fEnd; i++) {
@@ -747,7 +746,7 @@ public class Range<E, L extends List<E>> implements Iterable<E> {
 	 * the list, which match the predicate.
 	 * 
 	 * @see Range#removeAll(List, Predicate)
-	 * @see Range#replaceAll(List, UnaryFunctorImpl)
+	 * @see Range#replaceAll(List, Function)
 	 */
 	public L select(L list, Predicate<E> predicate) {
 		for (int i = fStart; i < fEnd; i++) {
@@ -791,7 +790,7 @@ public class Range<E, L extends List<E>> implements Iterable<E> {
 	 * the list, which match the predicate.
 	 * 
 	 * @see Range#removeAll(List, Predicate)
-	 * @see Range#replaceAll(List, UnaryFunctorImpl)
+	 * @see Range#replaceAll(List, Function)
 	 */
 	public L select(L list, Predicate<E> predicate, int maxMatches) {
 		int count = 0;

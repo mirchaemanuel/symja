@@ -6,6 +6,8 @@ import org.matheclipse.core.generic.util.INestedList;
 import org.matheclipse.core.reflection.system.Apart;
 import org.matheclipse.generic.interfaces.BiFunction;
 
+import com.google.common.base.Function;
+
 //import org.matheclipse.generic.INestedList;
 
 /**
@@ -149,12 +151,14 @@ public interface IAST extends IExpr, INestedList<IExpr> {
 	public IAST apply(IExpr head, int start, int end);
 
 	/**
-	 * Apply the given head to all elements of the list
+	 * Maps the elements of this IAST with the unary functor. If the function
+	 * returns <code>null</code> the original element is used. If the function
+	 * returns <code>null</code> for every argument this AST is returned.
 	 * 
 	 * @param head
 	 * @return
 	 */
-	public IAST map(IExpr head);
+	public IAST map(final Function<IExpr, IExpr> function);
 
 	/**
 	 * Maps the elements of this IAST with the elements of the

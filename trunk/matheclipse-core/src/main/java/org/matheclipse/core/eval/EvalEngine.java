@@ -95,6 +95,17 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 
 	protected boolean fPackageMode = false;
 
+	transient int fModuleCounter = 0;
+
+	/**
+	 * Increment the module counter by 1 and return the result.
+	 * 
+	 * @return the module counter
+	 */
+	public int incModuleCounter() {
+		return ++fModuleCounter;
+	}
+
 	synchronized public static int getNextAnonymousCounter() {
 		return ++fAnonymousCounter;
 	}

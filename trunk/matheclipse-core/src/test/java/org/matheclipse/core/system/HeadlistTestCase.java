@@ -21,8 +21,8 @@ public class HeadlistTestCase  extends TestCase {
 		lst.add(new Symbol("b"));
 		assertEquals(lst.toString(), "f[2, a, b]");
 
-		IAST lstMap = lst.map(new Symbol("g"));
-		assertEquals(lstMap.toString(), "f[g[2], g[a], g[b]]");
+//		IAST lstMap = lst.map(new Symbol("g"));
+//		assertEquals(lstMap.toString(), "f[g[2], g[a], g[b]]");
 
 
 		IAST lstApply = lst.apply(new Symbol("Times"));

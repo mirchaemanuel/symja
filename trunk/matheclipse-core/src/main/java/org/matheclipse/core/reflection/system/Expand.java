@@ -9,8 +9,7 @@ import org.matheclipse.core.eval.exception.Validate;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.expression.IConstantHeaders;
-import org.matheclipse.core.generic.UnaryBind1st;
-import org.matheclipse.core.generic.UnaryBind2nd;
+import org.matheclipse.core.generic.Functors;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.IInteger;
@@ -78,7 +77,7 @@ public class Expand extends AbstractFunctionEvaluator implements IConstantHeader
 			}
 			return F.Times(temp[0], F.Power(temp[1], F.CN1));
 		} else if (ast.isASTSizeGE(F.Plus, 3)) {
-			return ast.args().map(Plus(), new UnaryBind1st(Expand(F.Null)));
+			return ast.map(Functors.replace1st(Expand(F.Null)));
 		}
 		return null;
 	}
@@ -117,7 +116,7 @@ public class Expand extends AbstractFunctionEvaluator implements IConstantHeader
 		// (a+b)*(c+d) -> a*c+a*d+b*c+b*d
 		final IAST pList = Plus();
 		for (int i = 1; i < expr0.size(); i++) {
-			expr1.args().map(pList, new UnaryBind2nd(Times(expr0.get(i), F.Null)));
+			expr1.args().map(pList, Functors.replace2nd(Times(expr0.get(i), F.Null)));
 		}
 		return pList;
 	}

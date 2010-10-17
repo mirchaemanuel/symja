@@ -13,29 +13,28 @@ import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.INum;
 import org.matheclipse.core.interfaces.ISymbol;
 
+import com.google.common.base.Function;
+
 /**
  * Unary numerical function for functions like Plot
  * 
  * @see org.matheclipse.core.reflection.system.Plot
  */
-public class UnaryNumerical extends UnaryFunctorImpl<IExpr> implements
-		DifferentiableUnivariateRealFunction {
+public class UnaryNumerical implements Function<IExpr, IExpr>, DifferentiableUnivariateRealFunction {
 	IExpr fFunction;
 
 	ISymbol fVariable;
 
 	transient EvalEngine fEngine;
 
-	public UnaryNumerical(final IExpr fn, final ISymbol v,
-			final EvalEngine engine) {
+	public UnaryNumerical(final IExpr fn, final ISymbol v, final EvalEngine engine) {
 		fVariable = v;
 		fFunction = fn;
 		fEngine = engine;
 	}
 
 	public IExpr apply(final IExpr firstArg) {
-		return F.evaln((IExpr) AST.COPY.substitute(fFunction, fVariable,
-				firstArg, 1));
+		return F.evaln((IExpr) AST.COPY.substitute(fFunction, fVariable, firstArg, 1));
 	}
 
 	public double value(double x) {
@@ -68,8 +67,7 @@ public class UnaryNumerical extends UnaryFunctorImpl<IExpr> implements
 		if (temp instanceof INum) {
 			return ComplexNum.valueOf((INum) temp);
 		}
-		throw new ArithmeticException(
-				"Expected numerical complex value object!");
+		throw new ArithmeticException("Expected numerical complex value object!");
 	}
 
 	public INum value(final INum z) {

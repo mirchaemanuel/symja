@@ -26,7 +26,7 @@ import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
 import org.matheclipse.core.expression.ASTRange;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.expression.IConstantHeaders;
-import org.matheclipse.core.generic.UnaryBind1st;
+import org.matheclipse.core.generic.Functors;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.IFraction;
@@ -124,7 +124,7 @@ public class Integrate extends AbstractFunctionEvaluator implements IConstantHea
 			if (arg1.size() >= 3) {
 				if (header == F.Plus) {
 					// Integrate[a_+b_+...,x_] -> Integrate[a,x]+Integrate[b,x]+...
-					return arg1.args().map(F.Plus(), new UnaryBind1st(F.Integrate(F.Null, ast.get(2))));
+					return arg1.map(Functors.replace1st(F.Integrate(F.Null, ast.get(2))));
 				} else if (header == F.Times || header == F.Power) {
 					if (!arg1.isEvalFlagOn(IAST.IS_DECOMPOSED_PARTIAL_FRACTION) && ast.get(2) instanceof ISymbol) {
 						ISymbol symbol = (ISymbol) ast.get(2);
@@ -400,7 +400,7 @@ public class Integrate extends AbstractFunctionEvaluator implements IConstantHea
 				engine.setRecursionLimit(128);
 			}
 			IExpr fIntegrated = F.eval(F.Integrate(f, symbol));
-			if (!org.matheclipse.core.reflection.system.FreeQ.freeQ(fIntegrated, Integrate)) {
+			if (!fIntegrated.isFree(Integrate)) {
 				return null;
 			}
 			IExpr gDerived = F.eval(F.D(g, symbol));
@@ -427,7 +427,7 @@ public class Integrate extends AbstractFunctionEvaluator implements IConstantHea
 		IExpr temp;
 		for (int i = 1; i < timesAST.size(); i++) {
 			temp = timesAST.get(i);
-			if (org.matheclipse.core.reflection.system.FreeQ.freeQ(temp, symbol)) {
+			if (temp.isFree(symbol)) {
 				fTimes.add(temp);
 				continue;
 			} else if (temp.equals(symbol)) {
