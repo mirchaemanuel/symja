@@ -70,7 +70,7 @@ public class Limit extends AbstractFunctionEvaluator implements IConstantHeaders
 				// Limit[a,sym->lim]+Limit[b,sym->lim]+Limit[c,sym->lim]
 				return mapLimit(arg1, rule);
 			} else if (header == F.Times) {
-				IExpr[] parts = Apart.getFractionalPartsTimes(arg1);
+				IExpr[] parts = Apart.getFractionalPartsTimes(arg1, false);
 				IExpr numerator = parts[0];
 				IExpr denominator = parts[1];
 				IExpr temp = timesLimit(numerator, denominator, sym, lim, rule);

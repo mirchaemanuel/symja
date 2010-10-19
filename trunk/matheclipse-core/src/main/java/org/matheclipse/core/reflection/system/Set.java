@@ -16,7 +16,7 @@ public class Set implements IFunctionEvaluator, ICreatePatternMatcher {
 	}
 
 	public IExpr evaluate(final IAST functionList) {
-		// try {
+
 		if (functionList.size() == 3) {
 			final IExpr leftHandSide = functionList.get(1);
 			final IExpr rightHandSide = functionList.get(2);
@@ -28,18 +28,14 @@ public class Set implements IFunctionEvaluator, ICreatePatternMatcher {
 			}
 			return (IExpr) result[1];
 		}
-		// } catch (final RuleCreationError err) {
-		// // TODO print message to engine's fError stream
-		// err.printStackTrace();
-		// }
+
 		return F.Null;
 	}
 
 	public Object[] createPatternMatcher(IExpr leftHandSide, IExpr rightHandSide, IExpr condition) throws RuleCreationError {
 		final Object[] result = new Object[2];
 		final EvalEngine engine = EvalEngine.get();
-		// HeapContext.enter();
-		// try {
+
 		try {
 			if (leftHandSide instanceof IAST) {
 				final IExpr temp = engine.evalSetAttributes((IAST) leftHandSide);
@@ -57,21 +53,14 @@ public class Set implements IFunctionEvaluator, ICreatePatternMatcher {
 		}
 
 		result[0] = null; // IPatternMatcher
-		// rightHandSide = rightHandSide.copy();
 		result[1] = rightHandSide;
 		if (leftHandSide instanceof ISymbol) {
 			final ISymbol lhsSymbol = (ISymbol) leftHandSide;
 
-			if (lhsSymbol.hasLocalVariableStack()) {// &&
-				// !lhsSymbol.isLocalVariableStackEmpty())
-				// {
+			if (lhsSymbol.hasLocalVariableStack()) {
 				lhsSymbol.set(rightHandSide);
 				return result;
 			} else {
-				// leftHandSide = leftHandSide.saveHeap();
-				// rightHandSide = rightHandSide.saveHeap();
-				// condition = condition==null?null:condition.saveHeap();
-				condition = condition == null ? null : condition;// .copy();
 				result[0] = lhsSymbol.putDownRule(F.Set, true, leftHandSide, rightHandSide, condition);
 				return result;
 			}
@@ -79,17 +68,10 @@ public class Set implements IFunctionEvaluator, ICreatePatternMatcher {
 
 		if (leftHandSide instanceof IAST) {
 			final ISymbol lhsSymbol = ((IAST) leftHandSide).topHead();
-			// leftHandSide = leftHandSide.saveHeap();
-			// rightHandSide = rightHandSide.saveHeap();
-			// condition = condition==null?null:condition.saveHeap();
-			// leftHandSide = leftHandSide.copy();
-			condition = condition == null ? null : condition;// .copy();
 			result[0] = lhsSymbol.putDownRule(F.Set, false, leftHandSide, rightHandSide, condition);
 			return result;
 		}
-		// } finally {
-		// HeapContext.exit();
-		// }
+
 		throw new RuleCreationError(leftHandSide);
 	}
 

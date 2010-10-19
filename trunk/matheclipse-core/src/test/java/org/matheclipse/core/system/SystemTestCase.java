@@ -1005,7 +1005,6 @@ public class SystemTestCase extends AbstractTestCase {
 	}
 
 	public void testSystem171() {
-
 		check("Simplify[1/2*(2*x+2)]", "x+1");
 		check("Simplify[1/2*(2*x+2)*(1/2)^(1/2)]", "(x+1)*(1/2)^(1/2)");
 		check("Simplify[Integrate[(8*x+1)/(x^2+x+1)^2,x]]", "(-2*x-5)*(x^2+x+1)^(-1)-4*ArcTan[(2*x+1)*3^(-1/2)]*3^(-1/2)");
@@ -1020,9 +1019,8 @@ public class SystemTestCase extends AbstractTestCase {
 		check("Integrate[(2*x+5)/(x^2-2*x+5),x]", "7/2*ArcTan[1/4*(2*x-2)]+Log[x^2-2*x+5]");
 		check("Integrate[(8*x+1)/(x^2+2*x+1),x]", "7*(x+1)^(-1)+8*Log[x+1]");
 
-		check("Simplify[Integrate[1/3*(2-x)*(x^2-x+1)^(-1),x]]", "ArcTan[(2*x-1)*3^(-1/2)]*3^(-1/2)-1/6*Log[x^2-x+1]");
-
 		check("Integrate[1/(x^3+1),x]", "ArcTan[(2*x-1)*3^(-1/2)]*3^(-1/2)-1/6*Log[x^2-x+1]+1/3*Log[x+1]");
+		check("Simplify[Integrate[1/3*(2-x)*(x^2-x+1)^(-1),x]]", "ArcTan[(2*x-1)*3^(-1/2)]*3^(-1/2)-1/6*Log[x^2-x+1]");
 		check("Integrate[1/3*(2-x)*(x^2-x+1)^(-1)+1/3*(x+1)^(-1),x]", "ArcTan[(2*x-1)*3^(-1/2)]*3^(-1/2)-1/6*Log[x^2-x+1]+1/3*Log[x+1]");
 		check("Integrate[E^x*(2-x^2),x]", "2*E^x-(E^x*x^2-2*(x-1)*E^x)");
 		check("Integrate[(x^2+1)Log[x],x]", "1/3*Log[x]*x^3-1/9*x^3+x*Log[x]-x");
@@ -1055,7 +1053,9 @@ public class SystemTestCase extends AbstractTestCase {
 
 	public void testSystem172() {
 		check("Simplify[Integrate[(x^7 - 24*x^4 - 4*x^2 + 8*x - 8)/(x^8 + 6*x^6 + 12*x^4 + 8*x^2),x]]",
-				"(-x+3)*(x^2+2)^(-1)+6*x*(x^2+2)^(-2)+x^(-1)+Log[x]");
+				"(x+2)*(3*x^2+2*x+2)*x^(-1)*(x^2+2)^(-2)+Log[x]");
+		check("Simplify[Integrate[(x^7-24*x^4-4*x^2+8*x-8)*x^(-2)*(x^2+2)^(-3),x]]", "(x+2)*(3*x^2+2*x+2)*x^(-1)*(x^2+2)^(-2)+Log[x]");
+		check("Simplify[D[(x+2)*(3*x^2+2*x+2)*x^(-1)*(x^2+2)^(-2)+Log[x],x]]", "(x^7-24*x^4-4*x^2+8*x-8)*x^(-2)*(x^2+2)^(-3)");
 
 		check("Integrate[10/(x-3)^4,x]", "(-10/3)*(x-3)^(-3)");
 
@@ -2142,6 +2142,9 @@ public class SystemTestCase extends AbstractTestCase {
 		check("Denominator[3/4*x^(-3)]", "4*x^3");
 		check("Numerator[x+3/4*x^(-3)]", "x+3/4*x^(-3)");
 		check("Denominator[x+3/4*x^(-3)]", "1");
+		check("Numerator[(x - 1)*(x - 2)/(x - 3)^2]", "(x-2)*(x-1)");
+		check("Numerator[1/3*(3*a-1/2*b)]", "-1/2*b+3*a");
+		check("Denominator[1/3*(3*a-1/2*b)]", "3");
 		check("Together[x+3/4*x^(-3)]", "1/4*(4*x^4+3)*x^(-3)");
 		check("Together[(x^2-2)^3/(x^2-2)+(x^2-2)^2/(x^2-2)]", "x^4-3*x^2+2");
 		check("Together[a/b+c/d]", "(a*d+b*c)*b^(-1)*d^(-1)");
@@ -2165,6 +2168,7 @@ public class SystemTestCase extends AbstractTestCase {
 				+ "125970*x^12-167960*x^11+184756*x^10-167960*x^9+125970*x^8-77520*x^7+38760*x^6\n"
 				+ "-15504*x^5+4845*x^4-1140*x^3+190*x^2-20*x+1");
 		check("ExpandAll[3+x*(4+x*(Sin[5+(33+x^2)*x^4]))]", "x^2*Sin[x^6+33*x^4+5]+4*x+3");
+		check("ExpandAll[1/3*(3*a-1/2*b)]", "-1/6*b+a");
 	}
 
 	public void testSystem403() {
@@ -2504,6 +2508,11 @@ public class SystemTestCase extends AbstractTestCase {
 
 	public void testSystem999() {
 		// check("Factor[1+x^2,GaussianIntegers->True]", "");
+
+		check("Factor[3*x^2+6]", "3*(x^2+2)");
+		check("Factor[3/4*x^2+9/16]", "3/16*(4*x^2+3)");
+		check("Factor[3/4*x^2+9/16+7]", "1/16*(12*x^2+121)");
+		check("Factor[3/4*x^2+9/16*x+7]", "1/16*(12*x^2+9*x+112)");
 
 		check("Roots[x^2 + 5*x + 10]", "{1/2*(I*15^(1/2)-5),1/2*(-I*15^(1/2)-5)}");
 		check("Roots[4+x^2+2*x+3*x^3]", "{-1,1/6*(I*2*11^(1/2)+2),1/6*(-I*2*11^(1/2)+2)}");

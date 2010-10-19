@@ -62,23 +62,24 @@ public class Factor extends AbstractFunctionEvaluator {
 
 	public static IExpr factor(IExpr expr, List<IExpr> varList, boolean factorSquareFree) {
 		JASConvert<BigRational> jas = new JASConvert<BigRational>(varList);
-		GenPolynomial<BigRational> poly = jas.expr2Poly(expr);
-
-		FactorAbstract<BigRational> factorAbstract = FactorFactory.getImplementation(BigRational.ONE);
-		SortedMap<GenPolynomial<BigRational>, Long> map;
+		GenPolynomial<BigRational> polyRat = jas.expr2Poly(expr);
+		Object[] objects = jas.factorTerms(polyRat);
+		java.math.BigInteger gcd = (java.math.BigInteger) objects[0];
+		java.math.BigInteger lcm = (java.math.BigInteger) objects[1];
+		GenPolynomial<edu.jas.arith.BigInteger> poly = (GenPolynomial<edu.jas.arith.BigInteger>) objects[2];
+		FactorAbstract<edu.jas.arith.BigInteger> factorAbstract = FactorFactory.getImplementation(edu.jas.arith.BigInteger.ONE);
+		SortedMap<GenPolynomial<edu.jas.arith.BigInteger>, Long> map;
 		if (factorSquareFree) {
 			map = factorAbstract.squarefreeFactors(poly);// factors(poly);
 		} else {
 			map = factorAbstract.factors(poly);
 		}
 		IAST result = F.Times();
-
-		for (SortedMap.Entry<GenPolynomial<BigRational>, Long> entry : map.entrySet()) {
-			GenPolynomial<BigRational> singleFactor = entry.getKey();
-			GenPolynomial<edu.jas.arith.BigInteger> integerCoefficientPoly = (GenPolynomial<edu.jas.arith.BigInteger>) jas
-					.factorTerms(singleFactor)[2];
-			Long val = entry.getValue();
-			result.add(F.Power(jas.integerPoly2Expr(integerCoefficientPoly), F.integer(val)));
+		if (!gcd.equals(java.math.BigInteger.ONE) || !lcm.equals(java.math.BigInteger.ONE)) {
+			result.add(F.fraction(gcd, lcm));
+		}
+		for (SortedMap.Entry<GenPolynomial<edu.jas.arith.BigInteger>, Long> entry : map.entrySet()) {
+			result.add(F.Power(jas.integerPoly2Expr(entry.getKey()), F.integer(entry.getValue())));
 		}
 		return result;
 	}

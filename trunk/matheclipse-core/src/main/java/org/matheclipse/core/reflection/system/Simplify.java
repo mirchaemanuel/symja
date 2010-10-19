@@ -132,17 +132,16 @@ public class Simplify extends AbstractFunctionEvaluator {
 					//
 				}
 
-				// try {
-				// // TODO Factor doesn't return constants in Times[] expressions
-				// temp = F.eval(F.Factor(expr));
-				// count = LeafCount.leafCount(temp);
-				// if (count < minCounter) {
-				// minCounter = count;
-				// result = temp;
-				// }
-				// } catch (WrongArgumentType wat) {
-				// //
-				// }
+				try {
+					temp = F.eval(F.Factor(expr));
+					count = LeafCount.leafCount(temp);
+					if (count < minCounter) {
+						minCounter = count;
+						result = temp;
+					}
+				} catch (WrongArgumentType wat) {
+					//
+				}
 
 				try {
 					temp = F.eval(F.Apart(expr));

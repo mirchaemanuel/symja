@@ -57,7 +57,7 @@ public class Expand extends AbstractFunctionEvaluator implements IConstantHeader
 		} else if (ast.isTimes()) {
 			// (a+b)*(c+d)...
 
-			IExpr[] temp = Apart.getFractionalPartsTimes(ast);
+			IExpr[] temp = Apart.getFractionalPartsTimes(ast, false);
 			if (temp[0].equals(F.C1)) {
 				if (temp[1].isTimes()) {
 					return F.Power(expandTimes((IAST) temp[1]), F.CN1);

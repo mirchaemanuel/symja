@@ -548,7 +548,7 @@ public class F {
 
 		return unary(ArcTan, a0);
 	}
-	
+
 	public static IAST ArcTan(final IExpr a0, final IExpr a1) {
 
 		return binary(ArcTan, a0, a1);
@@ -2295,6 +2295,45 @@ public class F {
 		}
 	}
 
+	/**
+	 * Evaluate the given expression and test if the result equals the symbol
+	 * <code>True</code>.
+	 * 
+	 * @param expr
+	 * @return
+	 */
+	public static boolean evalTrue(IExpr expr) {
+		return EvalEngine.get().evaluate(expr).equals(F.True);
+	}
+
+	/**
+	 * Converts a given object into a MathEclipse IExpr expression
+	 * 
+	 * <pre>
+	 * Java Object     -&gt; MathEclipse object
+	 * -------------------------------------
+	 * null object          Null symbol
+	 * IExpr                IExpr type
+	 * Boolean              True or False symbol
+	 * BigInteger           Integer value  
+	 * java.math.BigInteger Integer value  
+	 * BigDecimal           Double with doubleValue() value
+	 * Double               Double with doubleValue() value
+	 * Float                Double with doubleValue() value
+	 * Number               Integer with longValue() value
+	 * java.util.List       0-th element of the list gives the head of the function 
+	 *                      1..nth element of the list give the arguments of the function
+	 * Object[]             a list of converted objects  
+	 * int[]                a list of Integer values
+	 * double[]             a list of Double values
+	 * double[][]           a matrix (i.e. nested lists) of Double values
+	 * boolean[]            a list of True or False symbols
+	 * 
+	 * </pre>
+	 * 
+	 * @param obj
+	 * @return
+	 */
 	public static IExpr cast(Object obj) {
 		return Object2Expr.CONST.convert(obj);
 	}
@@ -2302,10 +2341,10 @@ public class F {
 	public static boolean equals(IExpr a, IExpr b) {
 		IExpr tempA = a;
 		IExpr tempB = b;
-		if (a instanceof AST) {
+		if (a.isAST()) {
 			tempA = eval(a);
 		}
-		if (b instanceof AST) {
+		if (b.isAST()) {
 			tempB = eval(b);
 		}
 		return tempA.equals(tempB);
@@ -2314,7 +2353,7 @@ public class F {
 	public static boolean equals(IExpr a, java.math.BigInteger i) {
 		IExpr tempA = a;
 		IExpr tempB = integer(i);
-		if (a instanceof AST) {
+		if (a.isAST()) {
 			tempA = eval(a);
 		}
 		return tempA.equals(tempB);
