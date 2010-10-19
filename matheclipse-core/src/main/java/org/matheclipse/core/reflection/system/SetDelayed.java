@@ -16,7 +16,6 @@ public class SetDelayed implements IFunctionEvaluator, ICreatePatternMatcher {
 	}
 
 	public IExpr evaluate(final IAST functionList) {
-		// try {
 		if (functionList.size() == 3) {
 			final IExpr leftHandSide = functionList.get(1);
 			final IExpr rightHandSide = functionList.get(2);
@@ -27,18 +26,14 @@ public class SetDelayed implements IFunctionEvaluator, ICreatePatternMatcher {
 			}
 			return F.Null;
 		}
-		// } catch (final RuleCreationError err) {
-		// // TODO print message to engine's fError stream
-		// err.printStackTrace();
-		// }
+
 		return F.Null;
 	}
 
 	public Object[] createPatternMatcher(IExpr leftHandSide, IExpr rightHandSide, IExpr condition) throws RuleCreationError {
 		final Object[] result = new Object[2];
 		final EvalEngine engine = EvalEngine.get();
-		// HeapContext.enter();
-		// try {
+
 		try {
 			if (leftHandSide instanceof IAST) {
 				final IAST temp = engine.evalSetAttributes((IAST) leftHandSide);
@@ -49,8 +44,7 @@ public class SetDelayed implements IFunctionEvaluator, ICreatePatternMatcher {
 		} catch (final ReturnException e) {
 		}
 
-		result[0] = null; // IPatternMatcher
-		// rightHandSide = rightHandSide.copy();
+		result[0] = null;
 		result[1] = rightHandSide;
 		if (leftHandSide instanceof ISymbol) {
 			final ISymbol lhsSymbol = (ISymbol) leftHandSide;
@@ -58,7 +52,6 @@ public class SetDelayed implements IFunctionEvaluator, ICreatePatternMatcher {
 				lhsSymbol.set(rightHandSide);
 				return result;
 			} else {
-				// condition = condition == null ? null : condition;// .copy();
 				result[0] = lhsSymbol.putDownRule(F.SetDelayed, true, leftHandSide, rightHandSide, condition);
 				return result;
 			}
@@ -66,14 +59,11 @@ public class SetDelayed implements IFunctionEvaluator, ICreatePatternMatcher {
 
 		if (leftHandSide instanceof IAST) {
 			final ISymbol lhsSymbol = ((IAST) leftHandSide).topHead();
-			// leftHandSide = leftHandSide.copy();
-			// condition = condition == null ? null : condition;// .copy();
+
 			result[0] = lhsSymbol.putDownRule(F.SetDelayed, false, leftHandSide, rightHandSide, condition);
 			return result;
 		}
-		// } finally {
-		// HeapContext.exit();
-		// }
+
 		throw new RuleCreationError(leftHandSide);
 	}
 

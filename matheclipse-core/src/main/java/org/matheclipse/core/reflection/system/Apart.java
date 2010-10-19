@@ -12,6 +12,8 @@ import org.matheclipse.core.expression.ASTRange;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
+import org.matheclipse.core.interfaces.IInteger;
+import org.matheclipse.core.interfaces.IRational;
 import org.matheclipse.core.interfaces.ISignedNumber;
 
 import edu.jas.arith.BigRational;
@@ -148,7 +150,7 @@ public class Apart extends AbstractFunctionEvaluator {
 	public static IExpr[] getFractionalParts(final IExpr arg) {
 		IExpr[] parts = null;
 		if (arg.isTimes()) {
-			parts = Apart.getFractionalPartsTimes((IAST) arg);
+			parts = Apart.getFractionalPartsTimes((IAST) arg, true);
 		} else if (arg.isPower()) {
 			IAST temp = (IAST) arg;
 			if (temp.get(2) instanceof ISignedNumber) {
@@ -178,9 +180,10 @@ public class Apart extends AbstractFunctionEvaluator {
 	 * 
 	 * @param timesAST
 	 *          a times expression (a*b*c....)
+	 * @param splitFractionalNumbers TODO
 	 * @return the numerator and denominator expression
 	 */
-	public static IExpr[] getFractionalPartsTimes(final IAST timesAST) {
+	public static IExpr[] getFractionalPartsTimes(final IAST timesAST, boolean splitFractionalNumbers) {
 		IExpr[] result = new IExpr[2];
 
 		IAST numerator = F.Times();
@@ -202,6 +205,16 @@ public class Apart extends AbstractFunctionEvaluator {
 						continue;
 					}
 				}
+			} else if (splitFractionalNumbers && arg instanceof IRational) {
+				IInteger numer = ((IRational) arg).getNumerator();
+				if (!numer.equals(F.C1)) {
+					numerator.add(numer);
+				}
+				IInteger denom = ((IRational) arg).getDenominator();
+				if (!denom.equals(F.C1)) {
+					denominator.add(denom);
+				}
+				continue;
 			}
 			numerator.add(arg);
 		}

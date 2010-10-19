@@ -1,7 +1,5 @@
 package org.matheclipse.core.list.algorithms;
 
-import static org.matheclipse.basic.Util.checkCanceled;
-
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -10,6 +8,7 @@ import java.util.Map;
 import org.matheclipse.core.expression.AST;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.generic.ExprComparator;
+import org.matheclipse.core.generic.Functors;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
 
@@ -82,11 +81,9 @@ public class EvaluationSupport {
 		final IAST res0 = F.ast(F.List, listLength, true);
 
 		for (int j = headOffset; j < listLength + headOffset; j++) {
-			checkCanceled();
 			final IAST res1 = F.ast(list.head(), list.size() - headOffset, true);
 
 			for (int i = headOffset; i < list.size(); i++) {
-				checkCanceled();
 				if ((list.get(i) instanceof IAST) && (((IAST) list.get(i)).head().equals(F.List))) {
 					final IAST arg = (IAST) list.get(i);
 					res1.set(i, arg.get(j));
@@ -113,12 +110,11 @@ public class EvaluationSupport {
 	 */
 	public static <T extends IExpr> IExpr substituteLocalVariables(final IExpr expression, final ArrayList<T> symbolList,
 			final IExpr[] valueList) {
-		final Map<IExpr, IExpr> ruleMap = new HashMap<IExpr, IExpr>();
+		final Map<IExpr, IExpr> rulesMap = new HashMap<IExpr, IExpr>();
 		for (int i = 0; i < symbolList.size(); i++) {
-			checkCanceled();
-			ruleMap.put(symbolList.get(i), valueList[i]);
+			rulesMap.put(symbolList.get(i), valueList[i]);
 		}
-		final IExpr result = (IExpr) AST.COPY.replaceAll(expression, ruleMap, 1);
+		final IExpr result = expression.replaceAll(Functors.rules(rulesMap));
 		return (result == null) ? expression : result;
 	}
 }

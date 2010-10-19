@@ -1,7 +1,5 @@
 package org.matheclipse.core.reflection.system;
 
-import static org.matheclipse.basic.Util.checkCanceled;
-
 import org.matheclipse.core.eval.EvalEngine;
 import org.matheclipse.core.eval.exception.BreakException;
 import org.matheclipse.core.eval.exception.ContinueException;
@@ -17,13 +15,12 @@ public class While implements IFunctionEvaluator {
 		super();
 	}
 
-	public IExpr evaluate(final IAST functionList) {
+	public IExpr evaluate(final IAST ast) {
 		final EvalEngine engine = EvalEngine.get();
-		if (functionList.size() == 3) {
-			while (engine.evaluate(functionList.get(1)).equals(F.True)) {
-				checkCanceled();
+		if (ast.size() == 3) {
+			while (engine.evaluate(ast.get(1)).equals(F.True)) {
 				try {
-					engine.evaluate(functionList.get(2));
+					engine.evaluate(ast.get(2));
 				} catch (final BreakException e) {
 					return F.Null;
 				} catch (final ContinueException e) {
@@ -34,8 +31,8 @@ public class While implements IFunctionEvaluator {
 		return F.Null;
 	}
 
-	public IExpr numericEval(final IAST functionList) {
-		return evaluate(functionList);
+	public IExpr numericEval(final IAST ast) {
+		return evaluate(ast);
 	}
 
 	public void setUp(final ISymbol symbol) {
