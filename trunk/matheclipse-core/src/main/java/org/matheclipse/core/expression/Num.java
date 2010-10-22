@@ -185,6 +185,9 @@ public class Num extends ExprImpl implements INum {
 
 	@Override
 	public boolean equals(final Object arg0) {
+		if (this == arg0) {
+			return true;
+		}
 		if (arg0 instanceof Num) {
 			return fDouble == ((Num) arg0).fDouble;
 		}

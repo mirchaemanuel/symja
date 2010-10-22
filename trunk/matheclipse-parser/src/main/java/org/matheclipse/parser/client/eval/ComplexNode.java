@@ -50,6 +50,9 @@ public class ComplexNode extends ASTNode {
 	}
 
 	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
 		if (obj instanceof ComplexNode) {
 			return value == ((ComplexNode) obj).value;
 		}

@@ -112,7 +112,7 @@ public class OpenIntToExprHashMap implements Serializable {
 	 *          field to which the elements belong
 	 */
 	public OpenIntToExprHashMap() {
-		this(DEFAULT_EXPECTED_SIZE, (IExpr) F.C0);// field.getZero());
+		this(DEFAULT_EXPECTED_SIZE, F.C0);// field.getZero());
 	}
 
 	/**
@@ -136,7 +136,7 @@ public class OpenIntToExprHashMap implements Serializable {
 	 *          expected number of elements in the map
 	 */
 	public OpenIntToExprHashMap(final int expectedSize) {
-		this(expectedSize, (IExpr) F.C0); // field.getZero());
+		this(expectedSize, F.C0); // field.getZero());
 	}
 
 	/**

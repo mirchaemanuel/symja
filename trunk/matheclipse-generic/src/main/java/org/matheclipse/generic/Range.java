@@ -829,8 +829,7 @@ public class Range<E, L extends List<E>> implements Iterable<E> {
 		final E[] a = (E[]) fList.toArray();
 		Arrays.sort(a, fStart, fEnd, comparator);
 		for (int j = fStart; j < fEnd; j++) {
-
-			fList.set(j, (E) a[j]);
+			fList.set(j, a[j]);
 		}
 		return fList;
 	}

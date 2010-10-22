@@ -3,7 +3,7 @@ package org.matheclipse.core.expression;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
 
-public class ASTDelegate {
+public abstract class ASTDelegate {
 
 	protected IAST fAst;
 
@@ -51,10 +51,6 @@ public class ASTDelegate {
 
 	public int size() {
 		return fAst.size();
-	}
-
-	public int hashCode() {
-		return fAst.hashCode();
 	}
 
 	public String toFullForm() {

@@ -13,16 +13,16 @@ public class Sort extends AbstractFunctionEvaluator {
 	}
 
 	@Override
-	public IExpr evaluate(final IAST functionList) {
-		if ((functionList.size() >= 2) && (functionList.size() <= 3) && (functionList.get(1) instanceof IAST)) {
-			final IAST shallowCopy = (IAST) ((IAST) functionList.get(1)).clone();
+	public IExpr evaluate(final IAST ast) {
+		if ((ast.size() >= 2) && (ast.size() <= 3) && (ast.get(1) instanceof IAST)) {
+			final IAST shallowCopy = ((IAST) ast.get(1)).clone();
 			if (shallowCopy.size() <= 2) {
 				return shallowCopy;
 			}
-			if (functionList.size() == 2) {
+			if (ast.size() == 2) {
 				EvaluationSupport.sort(shallowCopy);
-			} else if (functionList.get(2) instanceof ISymbol) {
-				EvaluationSupport.sort(shallowCopy, new IsBinaryFalse<IExpr>(functionList.get(2)));
+			} else if (ast.get(2) instanceof ISymbol) {
+				EvaluationSupport.sort(shallowCopy, new IsBinaryFalse<IExpr>(ast.get(2)));
 			}
 			return shallowCopy;
 		}

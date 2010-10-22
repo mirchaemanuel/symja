@@ -101,23 +101,26 @@ public class Pattern extends ExprImpl implements IPattern {
 
 	@Override
 	public boolean equals(final Object obj) {
-		if (!(obj instanceof Pattern)) {
-			return false;
+		if (this == obj) {
+			return true;
 		}
-		Pattern pattern = (Pattern) obj;
-		if (fSymbol == null) {
-			if ((fCondition != null) && (pattern.fCondition != null)) {
-				return (pattern.fSymbol == null) && fCondition.equals(pattern.fCondition);
+		if (obj instanceof Pattern) {
+			Pattern pattern = (Pattern) obj;
+			if (fSymbol == null) {
+				if ((fCondition != null) && (pattern.fCondition != null)) {
+					return (pattern.fSymbol == null) && fCondition.equals(pattern.fCondition);
+				}
+				return (pattern.fSymbol == null) && (fCondition == pattern.fCondition);
 			}
-			return (pattern.fSymbol == null) && (fCondition == pattern.fCondition);
+			if (pattern.fSymbol == null) {
+				return false;
+			}
+			if ((fCondition != null) && (pattern.fCondition != null)) {
+				return fSymbol.equals(pattern.fSymbol) && fCondition.equals(pattern.fCondition);
+			}
+			return fSymbol.equals(pattern.fSymbol) && (fCondition == pattern.fCondition);
 		}
-		if (pattern.fSymbol == null) {
-			return false;
-		}
-		if ((fCondition != null) && (pattern.fCondition != null)) {
-			return fSymbol.equals(pattern.fSymbol) && fCondition.equals(pattern.fCondition);
-		}
-		return fSymbol.equals(pattern.fSymbol) && (fCondition == pattern.fCondition);
+		return false;
 	}
 
 	public IExpr getCondition() {
@@ -254,7 +257,7 @@ public class Pattern extends ExprImpl implements IPattern {
 					buffer.append(",true");
 				}
 			} else {
-				buffer.append("\""+fSymbol.toString()+"\"");
+				buffer.append("\"" + fSymbol.toString() + "\"");
 				if (fCondition != null) {
 					buffer.append("," + fCondition.internalFormString(callSymbolFactory));
 				}

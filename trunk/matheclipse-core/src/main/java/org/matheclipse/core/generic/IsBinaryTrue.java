@@ -35,7 +35,7 @@ public class IsBinaryTrue<E extends IExpr> implements  BiPredicate<E>, Comparato
 	 * 
 	 */
 	public boolean apply(final IExpr firstArg, final IExpr secondArg) {
-		final IAST ast = (IAST) fAST.clone();
+		final IAST ast = fAST.clone();
 		ast.add(firstArg);
 		ast.add(secondArg);
 		if (fEngine.evaluate(ast).equals(F.True)) {
@@ -45,7 +45,7 @@ public class IsBinaryTrue<E extends IExpr> implements  BiPredicate<E>, Comparato
 	}
 
 	public int compare(final IExpr firstArg, final IExpr secondArg) {
-		final IAST ast = (IAST) fAST.clone();
+		final IAST ast = fAST.clone();
 		ast.add(firstArg);
 		ast.add(secondArg);
 		IExpr temp = fEngine.evaluate(ast);

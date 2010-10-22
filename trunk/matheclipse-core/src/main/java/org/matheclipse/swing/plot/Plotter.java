@@ -247,7 +247,7 @@ public class Plotter extends AbstractPlotter2D {
 		if (cache.isEmpty()) {
 			return new Plotter();
 		} else {
-			final Plotter p = (Plotter) cache.get(0);
+			final Plotter p = cache.get(0);
 			cache.remove(p);
 			return p;
 		}

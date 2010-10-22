@@ -14,15 +14,15 @@ public class Vector extends ASTDelegate {
 	}
 
 	public Vector(int[] values) {
-		super(); 
-		fAst =  createAST(values);
+		super();
+		fAst = createAST(values);
 	}
 
 	public Vector plus(final Vector that) {
 		if (that.size() != fAst.size()) {
 			throw new DimensionException("Vector#plus([" + fAst.size() + "],[" + that.size() + "])");
 		}
-		AST resultAST = createAST(fAst.size()-1);
+		AST resultAST = createAST(fAst.size() - 1);
 		fAst.map(resultAST, that.fAst, new BinaryMap(F.Plus()));
 		return new Vector(resultAST);
 	}
@@ -45,4 +45,18 @@ public class Vector extends ASTDelegate {
 		return null;
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj instanceof Vector) {
+			return fAst.equals(((Vector) obj).fAst);
+		}
+		return false;
+	}
+	
+	@Override
+	public int hashCode() {
+		return fAst.hashCode() * 61;
+	}
 }

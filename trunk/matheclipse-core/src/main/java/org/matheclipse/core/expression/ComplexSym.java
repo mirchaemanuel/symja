@@ -159,10 +159,13 @@ public class ComplexSym extends ExprImpl implements IComplex {
 
 	@Override
 	public boolean equals(final Object obj) {
-		if (!(obj instanceof ComplexSym)) {
-			return false;
+		if (this == obj) {
+			return true;
 		}
-		return _real.equals(((ComplexSym) obj)._real) && _imaginary.equals(((ComplexSym) obj)._imaginary);
+		if (obj instanceof ComplexSym) {
+			return _real.equals(((ComplexSym) obj)._real) && _imaginary.equals(((ComplexSym) obj)._imaginary);
+		}
+		return false;
 	}
 
 	/**

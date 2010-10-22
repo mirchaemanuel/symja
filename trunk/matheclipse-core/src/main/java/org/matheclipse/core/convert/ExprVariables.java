@@ -13,10 +13,11 @@ import org.matheclipse.core.interfaces.ISymbol;
 import org.matheclipse.core.visit.VisitorCollectionBoolean;
 
 /**
- * Check the number of variables for expressions.
+ * Determine the variable symbols from a MathEclipse expression.
  * 
  */
 public class ExprVariables {
+	
 	public static class VariablesVisitor extends VisitorCollectionBoolean {
 		public VariablesVisitor(int hOffset, Collection<IExpr> collection) {
 			super(hOffset, collection);
@@ -29,24 +30,6 @@ public class ExprVariables {
 			return true;
 		}
 	}
-
-	/**
-	 * Get a list of variables, which are contained in the given expression.
-	 * 
-	 * @param expression
-	 * @return
-	 */
-	// public static IAST getVariables(final IExpr expression) {
-	// final Set<IExpr> set = new TreeSet<IExpr>();
-	// expression.accept(new VariablesVisitor(1, set));
-	//
-	// final Iterator<IExpr> iter = set.iterator();
-	// final IAST list = List();
-	// while (iter.hasNext()) {
-	// list.add(iter.next());
-	// }
-	// return list;
-	// }
 
 	private final Set<IExpr> set = new TreeSet<IExpr>();
 
@@ -79,6 +62,24 @@ public class ExprVariables {
 	}
 
 	/**
+	 * @param o
+	 * @return
+	 * @see java.util.Set#contains(java.lang.Object)
+	 */
+	public boolean contains(IExpr o) {
+		return set.contains(o);
+	}
+
+	/**
+	 * @param c
+	 * @return
+	 * @see java.util.Set#containsAll(java.util.Collection)
+	 */
+	public boolean containsAll(Collection<? extends IExpr> c) {
+		return set.containsAll(c);
+	}
+
+	/**
 	 * @return the varList
 	 */
 	public IAST getVarList() {
@@ -101,6 +102,14 @@ public class ExprVariables {
 	}
 
 	/**
+	 * @return
+	 * @see java.util.Set#isEmpty()
+	 */
+	public boolean isEmpty() {
+		return set.isEmpty();
+	}
+
+	/**
 	 * Check if the expression contains the given number of variables.
 	 * 
 	 * @param expr
@@ -112,38 +121,11 @@ public class ExprVariables {
 	}
 
 	/**
-	 * @param o
-	 * @return
-	 * @see java.util.Set#contains(java.lang.Object)
-	 */
-	public boolean contains(IExpr o) {
-		return set.contains(o);
-	}
-
-	/**
-	 * @param c
-	 * @return
-	 * @see java.util.Set#containsAll(java.util.Collection)
-	 */
-	public boolean containsAll(Collection<? extends IExpr> c) {
-		return set.containsAll(c);
-	}
-
-	/**
-	 * @return
-	 * @see java.util.Set#isEmpty()
-	 */
-	public boolean isEmpty() {
-		return set.isEmpty();
-	}
-
-	/**
-	 * @param <T>
 	 * @param a
 	 * @return
 	 * @see java.util.Set#toArray(T[])
 	 */
-	public <IExpr> IExpr[] toArray(IExpr[] a) {
+	public IExpr[] toArray(IExpr[] a) {
 		return set.toArray(a);
 	}
 }

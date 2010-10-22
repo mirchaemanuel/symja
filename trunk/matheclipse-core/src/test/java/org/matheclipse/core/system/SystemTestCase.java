@@ -2431,6 +2431,12 @@ public class SystemTestCase extends AbstractTestCase {
 		check("Simplify[D[Integrate[1/(x^3 + 1), x], x]]", "(x^3+1)^(-1)");
 	}
 
+	public void testSystem805() {
+		check("Solve[x^2==0,{x,y,z}]", "{x->0}");
+		check("Solve[x^2==0,x]", "{x->0}");
+		check("Solve[x^2==4,x]", "{x->2,x->-2}");
+	}
+
 	public void testSystem991() {
 		check("PolynomialQuotient[x^2+2*x+1,x+2]", "x");
 		check("PolynomialQuotient[x^2+x+1,2*x+1]", "1/2*x+1/4");

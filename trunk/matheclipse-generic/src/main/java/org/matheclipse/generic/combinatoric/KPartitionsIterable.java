@@ -62,14 +62,13 @@ public class KPartitionsIterable implements Iterator<int[]>, Iterable<int[]> {
 	 * @return <code>null</code> if no further index array could be generated
 	 */
 	private final int[] nextBeforehand() {
-		int i;
 		if (fPartitionsIndex[0] < 0) {
-			for (i = 0; i < fNumberOfParts; ++i) {
+			for (int i = 0; i < fNumberOfParts; ++i) {
 				fPartitionsIndex[i] = i;
 			}
 			return fPartitionsIndex;
 		} else {
-			i = 0;
+			int i = 0;
 			for (i = fNumberOfParts - 1; (i >= 0) && (fPartitionsIndex[i] >= fLength - fNumberOfParts + i); --i) {
 			}
 			if (i <= 0) {

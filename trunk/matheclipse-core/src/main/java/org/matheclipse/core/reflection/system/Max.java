@@ -5,7 +5,6 @@ import org.matheclipse.core.expression.AST;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
-import org.matheclipse.core.interfaces.INumber;
 
 public class Max extends AbstractFunctionEvaluator {
 	public Max() {
@@ -33,7 +32,7 @@ public class Max extends AbstractFunctionEvaluator {
 				} else {
 					if (comp == 0) {
 						// undetermined
-						if (max1 instanceof INumber) {
+						if (max1.isNumber()) {
 							f.add(max2);
 						} else {
 							f.add(max1);

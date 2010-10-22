@@ -34,7 +34,7 @@ public class Range implements IFunctionEvaluator {
 
         final TableGenerator<IExpr, IAST> generator = new TableGenerator<IExpr, IAST>(
             iterList, resultList, new UnaryRangeFunction(), AST.COPY);
-        return (IExpr) generator.table();
+        return generator.table();
       }
     } catch (final ClassCastException e) {
       // the iterators are generated only from IASTs

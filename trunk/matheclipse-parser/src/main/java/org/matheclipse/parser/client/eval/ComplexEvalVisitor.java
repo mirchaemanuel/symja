@@ -58,7 +58,7 @@ public class ComplexEvalVisitor extends AbstractASTVisitor<Complex, ComplexVaria
 			Complex result = null;
 			int end = function.size();
 			for (int i = 1; i < end; i++) {
-				result = engine.evaluateNode((ASTNode) function.getNode(i));
+				result = engine.evaluateNode(function.getNode(i));
 				if (DEBUG) {
 					System.out.println(result);
 				}
@@ -78,7 +78,7 @@ public class ComplexEvalVisitor extends AbstractASTVisitor<Complex, ComplexVaria
 						+ function.toString());
 			}
 			String variableName = ((SymbolNode) function.getNode(1)).getString();
-			Complex result = engine.evaluateNode((ASTNode) function.getNode(2));
+			Complex result = engine.evaluateNode(function.getNode(2));
 			ComplexVariable dv = engine.getVariable(variableName);
 			if (dv == null) {
 				dv = new ComplexVariable(result);
@@ -98,7 +98,7 @@ public class ComplexEvalVisitor extends AbstractASTVisitor<Complex, ComplexVaria
 		public Complex evaluate(IEvaluator<Complex, ComplexVariable>  engine, FunctionNode function) {
 			Complex result = new Complex(0.0, 0.0);
 			for (int i = 1; i < function.size(); i++) {
-				result = result.add(engine.evaluateNode((ASTNode) function.getNode(i)));
+				result = result.add(engine.evaluateNode(function.getNode(i)));
 			}
 			return result;
 		}
@@ -112,7 +112,7 @@ public class ComplexEvalVisitor extends AbstractASTVisitor<Complex, ComplexVaria
 		public Complex evaluate(IEvaluator<Complex, ComplexVariable>  engine, FunctionNode function) {
 			Complex result = new Complex(1.0, 0.0);
 			for (int i = 1; i < function.size(); i++) {
-				result = result.multiply(engine.evaluateNode((ASTNode) function.getNode(i)));
+				result = result.multiply(engine.evaluateNode(function.getNode(i)));
 			}
 			return result;
 		}
@@ -259,7 +259,7 @@ public class ComplexEvalVisitor extends AbstractASTVisitor<Complex, ComplexVaria
 	}
 
 	public Complex visit(ComplexNode node) {
-		return ((ComplexNode) node).complexValue();
+		return node.complexValue();
 	}
 
 	public Complex visit(DoubleNode node) {
@@ -300,12 +300,12 @@ public class ComplexEvalVisitor extends AbstractASTVisitor<Complex, ComplexVaria
 					}
 				} else if (functionNode.size() == 2) {
 					if (obj instanceof IComplex1Function) {
-						return ((IComplex1Function) obj).evaluate(evaluateNode((ASTNode) functionNode.getNode(1)));
+						return ((IComplex1Function) obj).evaluate(evaluateNode(functionNode.getNode(1)));
 					}
 				} else if (functionNode.size() == 3) {
 					if (obj instanceof IComplex2Function) {
-						return ((IComplex2Function) obj).evaluate(evaluateNode((ASTNode) functionNode.getNode(1)),
-								evaluateNode((ASTNode) functionNode.getNode(2)));
+						return ((IComplex2Function) obj).evaluate(evaluateNode(functionNode.getNode(1)),
+								evaluateNode(functionNode.getNode(2)));
 					}
 				} 
 			}
@@ -327,11 +327,11 @@ public class ComplexEvalVisitor extends AbstractASTVisitor<Complex, ComplexVaria
 	}
 
 	public Complex visit(SymbolNode node) {
-		ComplexVariable v = (ComplexVariable) fVariableMap.get(node.toString());
+		ComplexVariable v = fVariableMap.get(node.toString());
 		if (v != null) {
 			return v.getValue();
 		}
-		Complex c = (Complex) SYMBOL_MAP.get(node.toString());
+		Complex c = SYMBOL_MAP.get(node.toString());
 		if (c != null) {
 			return c;
 		}
@@ -347,7 +347,7 @@ public class ComplexEvalVisitor extends AbstractASTVisitor<Complex, ComplexVaria
 			if (v != null) {
 				return v.getValue();
 			}
-			Boolean boole = (Boolean) SYMBOL_BOOLEAN_MAP.get(node.toString());
+			Boolean boole = SYMBOL_BOOLEAN_MAP.get(node.toString());
 			if (boole != null) {
 				return boole.booleanValue();
 			}
@@ -362,16 +362,16 @@ public class ComplexEvalVisitor extends AbstractASTVisitor<Complex, ComplexVaria
 			if (functionNode.size() == 2) {
 				Object obj = FUNCTION_BOOLEAN_MAP.get(symbol);
 				if (obj instanceof IBooleanBoolean1Function) {
-					return ((IBooleanBoolean1Function) obj).evaluate(evaluateNodeLogical((ASTNode) functionNode.getNode(1)));
+					return ((IBooleanBoolean1Function) obj).evaluate(evaluateNodeLogical(functionNode.getNode(1)));
 				}
 			} else if (functionNode.size() == 3) {
 				Object obj = FUNCTION_BOOLEAN_MAP.get(symbol);
 				if (obj instanceof IBooleanComplex2Function) {
-					return ((IBooleanComplex2Function) obj).evaluate(evaluateNode((ASTNode) functionNode.getNode(1)),
-							evaluateNode((ASTNode) functionNode.getNode(2)));
+					return ((IBooleanComplex2Function) obj).evaluate(evaluateNode(functionNode.getNode(1)),
+							evaluateNode(functionNode.getNode(2)));
 				} else if (obj instanceof IBooleanBoolean2Function) {
-					return ((IBooleanBoolean2Function) obj).evaluate(evaluateNodeLogical((ASTNode) functionNode.getNode(1)),
-							evaluateNodeLogical((ASTNode) functionNode.getNode(2)));
+					return ((IBooleanBoolean2Function) obj).evaluate(evaluateNodeLogical(functionNode.getNode(1)),
+							evaluateNodeLogical(functionNode.getNode(2)));
 				}
 				// } else {
 				// Object obj = FUNCTION_BOOLEAN_MAP.get(symbol);
@@ -468,7 +468,7 @@ public class ComplexEvalVisitor extends AbstractASTVisitor<Complex, ComplexVaria
 					}
 					functionNode.set(i, optNode);
 				} else if (node instanceof SymbolNode) {
-					Complex c = (Complex) SYMBOL_MAP.get(node.toString());
+					Complex c = SYMBOL_MAP.get(node.toString());
 					if (c != null) {
 						functionNode.set(i, new ComplexNode(c));
 					} else {

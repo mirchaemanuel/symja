@@ -17,7 +17,7 @@ public class ASTCopy extends NestedAlgorithms<IExpr, IAST> {
 	}
 
 	public IAST clone(IAST list) {
-		return (IAST) list.clone();
+		return list.clone();
 	}
 
 	/**
@@ -25,7 +25,7 @@ public class ASTCopy extends NestedAlgorithms<IExpr, IAST> {
 	 * element of the list (i.e. the element with index 0).
 	 */
 	public IAST newInstance(IAST list) {
-		return (IAST) list.copyHead();
+		return list.copyHead();
 	}
 
 	public boolean isInstance(Object object) {

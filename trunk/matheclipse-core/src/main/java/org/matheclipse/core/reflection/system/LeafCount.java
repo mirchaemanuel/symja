@@ -1,5 +1,6 @@
 package org.matheclipse.core.reflection.system;
 
+import org.matheclipse.core.eval.exception.Validate;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IAST;
@@ -53,13 +54,9 @@ public class LeafCount extends AbstractFunctionEvaluator {
 	}
 
 	@Override
-	public IExpr evaluate(final IAST functionList) {
-		if (functionList.size() != 2) {
-			return null;
-		}
-		IExpr expr = functionList.get(1);
-		int leafCount = leafCount(expr);
-		return F.integer(leafCount);
+	public IExpr evaluate(final IAST ast) {
+		Validate.checkSize(ast, 2);
+		return F.integer(leafCount(ast.get(1)));
 	}
 
 	public static int leafCount(IExpr expr) {

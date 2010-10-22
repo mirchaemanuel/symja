@@ -83,9 +83,12 @@ public class FunctionNode extends ASTNode implements java.util.List<ASTNode> {
 		fNodesList.ensureCapacity(minCapacity);
 	}
 
-	public boolean equals(final Object o) {
-		if (o instanceof FunctionNode) {
-			return fNodesList.equals(((FunctionNode) o).fNodesList);
+	public boolean equals(final Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj instanceof FunctionNode) {
+			return fNodesList.equals(((FunctionNode) obj).fNodesList);
 		}
 		return false;
 	}
@@ -95,7 +98,7 @@ public class FunctionNode extends ASTNode implements java.util.List<ASTNode> {
 	}
 
 	public ASTNode getNode(final int index) {
-		return (ASTNode) fNodesList.get(index);
+		return fNodesList.get(index);
 	}
 
 	public int hashCode() {
@@ -167,22 +170,22 @@ public class FunctionNode extends ASTNode implements java.util.List<ASTNode> {
 	}
 
 	public String toString() {
-		ASTNode temp = (ASTNode) fNodesList.get(0);
+		ASTNode temp = fNodesList.get(0);
 		final StringBuffer buf = new StringBuffer();
 		if (temp == null) {
 			buf.append("<null-tag>");
 		} else {
 			buf.append(temp.toString());
 		}
-		buf.append("[");
+		buf.append('[');
 		for (int i = 1; i < size(); i++) {
-			temp = (ASTNode) get(i);
+			temp = get(i);
 			buf.append(temp == this ? "(this ListNode)" : String.valueOf(temp));
 			if (i < size() - 1) {
 				buf.append(", ");
 			}
 		}
-		buf.append("]");
+		buf.append(']');
 		return buf.toString();
 	}
 
@@ -192,7 +195,7 @@ public class FunctionNode extends ASTNode implements java.util.List<ASTNode> {
 
 	public boolean dependsOn(String variableName) {
 		for (int i = 1; i < size(); i++) {
-			if (((ASTNode) get(i)).dependsOn(variableName)) {
+			if (get(i).dependsOn(variableName)) {
 				return true;
 			}
 		}

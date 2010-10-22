@@ -116,8 +116,8 @@ public class Pair<A, B> implements Comparable<Pair>, Serializable {
 	 *         adding together the hash codes of the objects contained in the
 	 *         tuple, multiplying by <code>31</code> each time. A
 	 *         <code>null</code> value is considered to have* a hash code of
-	 *         <code>0</code>. Thus, if this pair contains two
-	 *         <code>null</code> values, this method returns <code>0</code>.
+	 *         <code>0</code>. Thus, if this pair contains two <code>null</code>
+	 *         values, this method returns <code>0</code>.
 	 */
 	public int hashCode() {
 		int hc = 0;
@@ -134,27 +134,23 @@ public class Pair<A, B> implements Comparable<Pair>, Serializable {
 	/**
 	 * Determines if the given object is equal to this object, by comparing the
 	 * two objects of each tuple using their respective
-	 * <code>equals(Object)</code> methods. Corresponding <code>null</code>
-	 * values are also considered equal.
+	 * <code>equals(Object)</code> methods. Corresponding <code>null</code> values
+	 * are also considered equal.
 	 * 
-	 * @param p_object
+	 * @param obj
 	 *          the object against which to compare this tuple.
 	 * @return <code>true</code> if the pairs contain the same values;
 	 *         <code>false</code> otherwise.
 	 */
-	public boolean equals(Object p_object) {
-		if (this == p_object) {
+	public boolean equals(Object obj) {
+		if (this == obj) {
 			return true;
 		}
-		if (p_object == null) {
-			return false;
+		if (obj instanceof Pair) {
+			Pair other = (Pair) obj;
+			return m_first.equals(other.getFirst()) && m_second.equals(other.getSecond());
 		}
-		if (this.getClass() != p_object.getClass()) {
-			return false;
-		}
-		Pair other = (Pair) p_object;
-
-		return m_first.equals(other.getFirst()) && m_second.equals(other.getSecond());
+		return false;
 	}
 
 	/**
@@ -183,9 +179,9 @@ public class Pair<A, B> implements Comparable<Pair>, Serializable {
 
 	/**
 	 * Returns a list of the String representations of the objects of the tuple.
-	 * Subclasses override this method to specify additional objects. The {@link
-	 * #toString()} method uses this to construct the String representation of the
-	 * tuple.
+	 * Subclasses override this method to specify additional objects. The
+	 * {@link #toString()} method uses this to construct the String representation
+	 * of the tuple.
 	 * 
 	 * @return a list of the String representations of the objects of the tuple.
 	 */

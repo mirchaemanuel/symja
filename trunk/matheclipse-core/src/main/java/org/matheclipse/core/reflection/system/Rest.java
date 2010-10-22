@@ -18,7 +18,7 @@ public class Rest extends AbstractFunctionEvaluator {
 		if ((functionList.size()!=2) || !(functionList.get(1) instanceof IAST)) {
 			return null;
 		}
-		final IAST sublist = (IAST) ((IAST)functionList.get(1)).clone();
+		final IAST sublist = ((IAST)functionList.get(1)).clone();
 
 		if (sublist.size() > 1) {
 			sublist.remove(1);

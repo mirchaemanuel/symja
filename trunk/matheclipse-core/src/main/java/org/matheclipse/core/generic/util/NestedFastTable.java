@@ -10,25 +10,26 @@ import java.util.NoSuchElementException;
 
 /**
  * Resizable-array implementation (a wrapper for
- * <code>java.util.ArrayList</code>).<br/> Adds a special
- * <code>head</code> object to the FastTable implementation
+ * <code>java.util.ArrayList</code>).<br/>
+ * Adds a special <code>head</code> object to the FastTable implementation
  * 
- */ 
+ */
 public class NestedFastTable<E extends INestedListElement> extends ArrayList<E> implements INestedList<E> {
 	/**
 	 * Holds the factory for this NestedList.
 	 */
-//	private static final ObjectFactory<NestedFastTable> FACTORY = new ObjectFactory<NestedFastTable>() {
-//		@Override
-//		public NestedFastTable create() {
-//			return new NestedFastTable(5, 0);
-//		}
-//
-//		@Override
-//		public void cleanup(NestedFastTable obj) {
-//			obj.reset();
-//		}
-//	};
+	// private static final ObjectFactory<NestedFastTable> FACTORY = new
+	// ObjectFactory<NestedFastTable>() {
+	// @Override
+	// public NestedFastTable create() {
+	// return new NestedFastTable(5, 0);
+	// }
+	//
+	// @Override
+	// public void cleanup(NestedFastTable obj) {
+	// obj.reset();
+	// }
+	// };
 
 	private static final long serialVersionUID = -8300867641898160542L;
 
@@ -37,7 +38,8 @@ public class NestedFastTable<E extends INestedListElement> extends ArrayList<E> 
 	protected int fHash = 0;
 
 	/**
-	 * Creates a table of specified initial capacity and adds <code>setLength</code> <code>null</code> elements 
+	 * Creates a table of specified initial capacity and adds
+	 * <code>setLength</code> <code>null</code> elements
 	 * 
 	 * @param initialCapacity
 	 * @param setLength
@@ -112,30 +114,29 @@ public class NestedFastTable<E extends INestedListElement> extends ArrayList<E> 
 	}
 
 	@Override
-	public boolean equals(Object o) {
-		if (o == this) {
+	public boolean equals(Object obj) {
+		if (obj == this) {
 			return true;
 		}
-		if (!(o instanceof NestedFastTable)) {
-			return false;
-		}
-		if (hashCode() != o.hashCode()) {
-			return false;
-		}
-		if (size() != ((NestedFastTable) o).size()) {
-			return false;
-		}
-		final NestedFastTable list = ((NestedFastTable) o);
-		if (!head().equals(list.head())) {
-			return false;
-		}
-		for (int i = 1; i < size(); i++) {
-			checkCanceled();
-			if (!get(i).equals(list.get(i))) {
+		if (obj instanceof NestedFastTable) {
+			if (hashCode() != obj.hashCode()) {
 				return false;
 			}
+			if (size() != ((NestedFastTable) obj).size()) {
+				return false;
+			}
+			return super.equals(obj);
+			// if (!head().equals(list.head())) {
+			// return false;
+			// }
+			// for (int i = 1; i < size(); i++) {
+			// if (!get(i).equals(list.get(i))) {
+			// return false;
+			// }
+			// }
+			// return true;
 		}
-		return true;
+		return false;
 	}
 
 	// public int hashCode() {
@@ -181,7 +182,6 @@ public class NestedFastTable<E extends INestedListElement> extends ArrayList<E> 
 	 * Recalculate the internal cached hash value; this might be necessary if the
 	 * order of the elements was rearranged in a special operation (for example in
 	 * a "sort operation")
-	 * 
 	 */
 	// public void rehashCode() {
 	// if (size() >= 1) {
@@ -200,7 +200,7 @@ public class NestedFastTable<E extends INestedListElement> extends ArrayList<E> 
 	@Override
 	public Object clone() {
 		final NestedFastTable<E> v = (NestedFastTable<E>) super.clone();// FACTORY.object();
-		v.addAll(this);
+		v.fHash = 0;
 		return v;
 	}
 
@@ -215,19 +215,6 @@ public class NestedFastTable<E extends INestedListElement> extends ArrayList<E> 
 	// return false;
 	// }
 
-	// @Override
-	// public Object clone() {
-	// final NestedList<E> v = (NestedList<E>) super.clone();
-	// v.fHash = 0;
-	// return v;
-	// }
-
-//	public INestedRealtimeList<E> copyHead() {
-//		final NestedFastTable<E> list = new NestedFastTable<E>(size());
-//		list.set(0, get(0));
-//		return list;
-//	}
-
 	public final E head() {
 		return get(0);
 	}
@@ -235,54 +222,6 @@ public class NestedFastTable<E extends INestedListElement> extends ArrayList<E> 
 	public final void setHeader(final E head) {
 		set(0, head);
 	}
-
-	/**
-	 * Returns a String representation of this NestedList.
-	 * 
-	 * @return the string of this NestedList
-	 */
-	// @Override
-	// public String toString() {
-	// final E temp = getHeader();
-	// final StringBuffer buf = new StringBuffer();
-	// if (temp == null) {
-	// buf.append("<null-tag>");
-	// } else {
-	// buf.append(temp.toString());
-	// }
-	// buf.append("[");
-	// for (int i = 1; i < size(); i++) {
-	// final E o = get(i);
-	// buf.append(o == this ? "(this NestedList)" : String.valueOf(o));
-	// if (i < size() - 1) {
-	// buf.append(", ");
-	// }
-	// }
-	// buf.append("]");
-	// return buf.toString();
-	// }
-	
-//	@Override
-//	public Text toText() {
-//		final Text sep = Text.valueOf(", ");
-//		final E temp = getHeader();
-//		Text text;
-//		if (temp == null) {
-//			text = Text.valueOf("<null-tag>");
-//		} else {
-//			text = temp.toText();
-//		}
-//		text = text.concat(Text.valueOf('['));
-//		for (int i = 1; i < size(); i++) {
-//			checkCanceled();
-//			final E o = get(i);
-//			text = text.concat(o == this ? Text.valueOf("(this NestedList)") : o.toText());
-//			if (i < size() - 1) {
-//				text = text.concat(sep);
-//			}
-//		}
-//		return text.concat(Text.valueOf(']'));
-//	}
 
 	@Override
 	public String toString() {
@@ -309,16 +248,17 @@ public class NestedFastTable<E extends INestedListElement> extends ArrayList<E> 
 
 	protected static final class FastTableIterator implements ListIterator {
 
-//		private static final ObjectFactory<FastTableIterator> FACTORY = new ObjectFactory<FastTableIterator>() {
-//			protected FastTableIterator create() {
-//				return new FastTableIterator();
-//			}
-//
-//			protected void cleanup(FastTableIterator obj) {
-//				FastTableIterator i = (FastTableIterator) obj;
-//				i._table = null;
-//			}
-//		};
+		// private static final ObjectFactory<FastTableIterator> FACTORY = new
+		// ObjectFactory<FastTableIterator>() {
+		// protected FastTableIterator create() {
+		// return new FastTableIterator();
+		// }
+		//
+		// protected void cleanup(FastTableIterator obj) {
+		// FastTableIterator i = (FastTableIterator) obj;
+		// i._table = null;
+		// }
+		// };
 
 		private ArrayList _table;
 
@@ -394,7 +334,8 @@ public class NestedFastTable<E extends INestedListElement> extends ArrayList<E> 
 	 */
 	@Override
 	public Iterator<E> iterator() {
-		FastTableIterator i = new FastTableIterator();//(FastTableIterator) FastTableIterator.FACTORY.object();
+		FastTableIterator i = new FastTableIterator();// (FastTableIterator)
+		// FastTableIterator.FACTORY.object();
 		i._table = this;
 		i._start = 1;
 		i._end = this.size();
@@ -413,10 +354,10 @@ public class NestedFastTable<E extends INestedListElement> extends ArrayList<E> 
 		return super.iterator();
 	}
 
-//	@Override
-//	public void reset() {
-//		super.reset();
-//		fHash = 0;
-//	}
+	// @Override
+	// public void reset() {
+	// super.reset();
+	// fHash = 0;
+	// }
 
 }

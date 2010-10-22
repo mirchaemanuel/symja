@@ -1,9 +1,5 @@
 package org.matheclipse.core.expression;
 
-import static org.matheclipse.basic.Util.checkCanceled;
-
-import org.matheclipse.basic.Config;
-import org.matheclipse.core.eval.exception.PoolMemoryExceededException;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.IFraction;
 import org.matheclipse.core.interfaces.IInteger;
@@ -242,6 +238,9 @@ public class FractionSym extends ExprImpl implements IFraction {
 
 	@Override
 	public boolean equals(final Object obj) {
+		if (this == obj) {
+			return true;
+		}
 		if (obj instanceof FractionSym) {
 			return fRational.equals(((FractionSym) obj).fRational);
 		}
@@ -391,18 +390,16 @@ public class FractionSym extends ExprImpl implements IFraction {
 	 * @throws IllegalArgumentException
 	 *           if <code>exp &lt;= 0</code>
 	 */
-	@SuppressWarnings("unchecked")
 	public IFraction pow(int exp) {
 		if (exp <= 0)
 			throw new IllegalArgumentException("exp: " + exp + " should be a positive number");
-		IFraction pow2 = (FractionSym) this;
+		IFraction powSqr = this;
 		IFraction result = null;
 		while (exp >= 1) { // Iteration.
-			checkCanceled();
 			if ((exp & 1) == 1) {
-				result = (result == null) ? pow2 : result.multiply(pow2);
+				result = (result == null) ? powSqr : result.multiply(powSqr);
 			}
-			pow2 = pow2.multiply(pow2);
+			powSqr = powSqr.multiply(powSqr);
 			exp >>>= 1;
 		}
 		return result;

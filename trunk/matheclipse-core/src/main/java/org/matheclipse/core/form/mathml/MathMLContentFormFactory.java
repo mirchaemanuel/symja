@@ -322,7 +322,7 @@ public class MathMLContentFormFactory extends AbstractMathMLFormFactory implemen
 	}
 
 	public IConverter reflection(final String headString) {
-		final IConverter converter = (IConverter) operTab.get(headString);
+		final IConverter converter = operTab.get(headString);
 		if (converter != null) {
 			return converter;
 		}

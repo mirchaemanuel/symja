@@ -1,5 +1,6 @@
 package org.matheclipse.core.reflection.system;
 
+import org.matheclipse.core.eval.exception.Validate;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
 import org.matheclipse.core.expression.AST;
 import org.matheclipse.core.expression.F;
@@ -14,14 +15,11 @@ public class Outer extends AbstractFunctionEvaluator {
 	}
 
 	@Override
-	public IExpr evaluate(final IAST functionList) {
-		if (functionList.size() != 4) {
-			return null;
-		}
-		if (functionList.get(1) instanceof ISymbol && functionList.get(2) instanceof IAST && functionList.get(3) instanceof IAST) {
-			Generating<IExpr, IAST> gen = new Generating<IExpr, IAST>(F.List(), F.ast(functionList.get(1)), 1, AST.COPY);
-
-			return (IExpr) gen.outer((IAST) functionList.get(2), (IAST) functionList.get(3));
+	public IExpr evaluate(final IAST ast) {
+		Validate.checkSize(ast, 4);
+		if (ast.get(1).isSymbol() && ast.get(2).isAST() && ast.get(3).isAST()) {
+			Generating<IExpr, IAST> gen = new Generating<IExpr, IAST>(F.List(), F.ast(ast.get(1)), 1, AST.COPY);
+			return gen.outer((IAST) ast.get(2), (IAST) ast.get(3));
 		}
 		return null;
 	}

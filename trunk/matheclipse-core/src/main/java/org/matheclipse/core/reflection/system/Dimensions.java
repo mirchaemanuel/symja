@@ -28,11 +28,9 @@ public class Dimensions extends AbstractFunctionEvaluator {
 			getLevel1(list, header, dims);
 			checkLevel(list, header, dims, 1);
 			for (int i = 0; i < dims.size(); i++) {
-				res.add(F.integer(((Integer) dims.get(i)).intValue()));
+				res.add(F.integer(dims.get(i).intValue()));
 			}
 			return res;
-			// getDimensions(factory, list, res, header);
-
 		}
 
 		return F.List();

@@ -247,10 +247,13 @@ public class StringX extends ExprImpl implements IStringX {
 	 */
 	@Override
 	public boolean equals(final Object obj) {
-		if (!(obj instanceof StringX)) {
-			return false;
+		if (this == obj) {
+			return true;
 		}
-		return fString.equals(((StringX) obj).fString);
+		if (obj instanceof StringX) {
+			return fString.equals(((StringX) obj).fString);
+		}
+		return false;
 	}
 
 	/**

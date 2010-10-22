@@ -22,9 +22,9 @@ public class Abs extends AbstractConverter {
 		if (f.size() != 2) {
 			return false;
 		}
-		buf.append("|");
+		buf.append('|');
 		fFactory.convert(buf, f.get(1), 0);
-		buf.append("|");
+		buf.append('|');
 		return true;
 	}
 }

@@ -246,7 +246,7 @@ public class ParametricPlotter extends AbstractPlotter2D {
 		int t, 
 		DoubleEvaluator engine) {
 	//System.out.println("Plotting point #" + t + " of function #" + func);
-	double tVal = (double)tMin + (double)(tRange * t) / (double)thisResolution;
+	double tVal = tMin + (tRange * t) / (double)thisResolution;
 	engine.defineVariable("t", new DoubleVariable(tVal));
         xPoints[func][t] = engine.evaluate(xExpression);
         yPoints[func][t] = engine.evaluate(yExpression);

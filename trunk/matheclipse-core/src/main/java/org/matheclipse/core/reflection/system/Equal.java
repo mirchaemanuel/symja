@@ -20,7 +20,7 @@ public class Equal extends AbstractFunctionEvaluator {
 		if (lst.size() > 1) {
 			int b = 0;
 			boolean evaled = false;
-			IAST result = (IAST) lst.clone();
+			IAST result = lst.clone();
 			int i = 2;
 			while (i < result.size()) {
 				checkCanceled();

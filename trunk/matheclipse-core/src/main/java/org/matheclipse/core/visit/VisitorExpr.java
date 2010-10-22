@@ -149,7 +149,7 @@ public class VisitorExpr extends AbstractVisitor<IExpr> {
 			temp = ast.get(i).accept(this);
 			if (temp != null) {
 				// something was evaluated - return a new IAST:
-				result = (IAST) ast.clone();
+				result = ast.clone();
 				for (int j = 1; j < i; j++) {
 					result.set(j, ast.get(j));
 				}

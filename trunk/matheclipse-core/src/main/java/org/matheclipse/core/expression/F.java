@@ -1,5 +1,8 @@
 package org.matheclipse.core.expression;
 
+import static org.matheclipse.core.expression.F.symbol;
+import static org.matheclipse.core.expression.F.unary;
+
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.InputStream;
@@ -1181,6 +1184,10 @@ public class F {
 		return binary(ReplaceAll, a0, a1);
 	}
 
+	public static IAST Roots(final IExpr a0) {
+		return unary(symbol("Roots"), a0);
+	}
+	
 	public static IAST Rule(final IExpr a0, final IExpr a1) {
 
 		return binary(Rule, a0, a1);

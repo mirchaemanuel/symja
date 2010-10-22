@@ -38,15 +38,15 @@ public class FindRoot extends AbstractFunctionEvaluator implements
   }
 
   @Override
-  public IExpr evaluate(final IAST lst) {
-    if ((lst.size() == 3 || lst.size() == 4)) {
+  public IExpr evaluate(final IAST ast) {
+    if ((ast.size() == 3 || ast.size() == 4)) {
       String method = "Newton";
-      if (lst.size() == 4 && lst.get(3) instanceof ISymbol) {
-        method = lst.get(3).toString();
+      if (ast.size() == 4 && ast.get(3) instanceof ISymbol) {
+        method = ast.get(3).toString();
       }
-      if ((lst.get(2).isList())) {
-        IAST list = (IAST) lst.get(2);
-        IExpr function = lst.get(1);
+      if ((ast.get(2).isList())) {
+        IAST list = (IAST) ast.get(2);
+        IExpr function = ast.get(1);
         if (list.size() == 4 && list.get(1) instanceof ISymbol
             && list.get(2) instanceof ISignedNumber
             && list.get(3) instanceof ISignedNumber) {

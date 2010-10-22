@@ -840,24 +840,26 @@ public class PatternMatcher extends IPatternMatcher<IExpr> implements Serializab
 
 	@Override
 	public boolean equals(final Object obj) {
-		if (!(obj instanceof PatternMatcher)) {
-			return false;
+		if (this == obj) {
+			return true;
 		}
-		final PatternMatcher pm = (PatternMatcher) obj;
-		if (fPatternCounter != pm.fPatternCounter) {
-			return false;
-		}
-		if (fPatternCounter == 0) {
-			return fLeftHandSide.equals(pm.fLeftHandSide);
-		}
-		if (equivalent(fLeftHandSide, pm.fLeftHandSide)) {
-			if ((fCondition != null) && (pm.fCondition != null)) {
-				return fCondition.equals(pm.fCondition);
-			}
-			if ((fCondition != null) || (pm.fCondition != null)) {
+		if (obj instanceof PatternMatcher) {
+			final PatternMatcher pm = (PatternMatcher) obj;
+			if (fPatternCounter != pm.fPatternCounter) {
 				return false;
 			}
-			return true;
+			if (fPatternCounter == 0) {
+				return fLeftHandSide.equals(pm.fLeftHandSide);
+			}
+			if (equivalent(fLeftHandSide, pm.fLeftHandSide)) {
+				if ((fCondition != null) && (pm.fCondition != null)) {
+					return fCondition.equals(pm.fCondition);
+				}
+				if ((fCondition != null) || (pm.fCondition != null)) {
+					return false;
+				}
+				return true;
+			}
 		}
 		return false;
 	}

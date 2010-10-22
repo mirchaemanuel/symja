@@ -15,142 +15,142 @@ import edu.jas.structure.RingFactory;
  *          JAS ring element type
  */
 public class CMField<C extends RingElem<C>> implements Field<CMFieldElement<C>> {
-  
-  public final RingFactory<C> fac;
 
-  /**
-   * @param f
-   */
-  public CMField(ElemFactory<C> f) {
-    this((RingFactory<C>) f);
-  }
+	public final RingFactory<C> fac;
 
-  /**
-   * @param f
-   */
-  public CMField(RingFactory<C> f) {
-    fac = f;
-  }
+	/**
+	 * @param f
+	 */
+	public CMField(ElemFactory<C> f) {
+		this((RingFactory<C>) f);
+	}
 
-  /**
-   * @see java.lang.Object#equals(java.lang.Object)
-   */
-  @SuppressWarnings("unchecked")
-  @Override
-  public boolean equals(Object obj) {
-    // System.out.println("factory equals, this = " + this + ", obj = " + obj);
-    if (!(obj instanceof Field)) {
-      return false;
-    }
-    Field other = (Field) obj;
-    if (!(other instanceof Field)) {
-      return false;
-    }
-    CMField<C> fother = (CMField<C>) other;
-    RingFactory<C> ofac = fother.fac;
-    // System.out.println("factory equals, this = " + fac.getClass() +
-    // ", obj = " + ofac.getClass());
-    if (!fac.getClass().getName().equals(ofac.getClass().getName())) {
-      return false;
-    }
-    RingFactory<C> ofac1 = null;
-    try {
-      ofac1 = (RingFactory<C>) ((RingElem<C>) ofac).factory();
-    } catch (ClassCastException e) {
-    }
-    if ( /* fac */ofac.equals(ofac1)) { // case BigInteger etc
-      return true;
-    }
-    // System.out.println("factory equals, this = " + ofac + ", obj = " +
-    // ofac1);
-    // if (fac.characteristic().equals(ffac.characteristic())) {
-    // return true;
-    // }
-    return fac.equals(ofac);
-  }
+	/**
+	 * @param f
+	 */
+	public CMField(RingFactory<C> f) {
+		fac = f;
+	}
 
-  public CMFieldElement<C> get(int i) {
-    return new CMFieldElement<C>(fac.fromInteger(i));
-  }
+	/**
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public boolean equals(Object obj) {
+		// System.out.println("factory equals, this = " + this + ", obj = " + obj);
+		if (!(obj instanceof Field)) {
+			return false;
+		}
 
-  public CMFieldElement<C> get(long i) {
-    return new CMFieldElement<C>(fac.fromInteger(i));
-  }
+		if (obj instanceof CMField) {
+			CMField<C> other = (CMField<C>) obj;
+			RingFactory<C> ofac = other.fac;
+			// System.out.println("factory equals, this = " + fac.getClass() +
+			// ", obj = " + ofac.getClass());
+			if (!fac.getClass().getName().equals(ofac.getClass().getName())) {
+				return false;
+			}
+			RingFactory<C> ofac1 = null;
+			try {
+				ofac1 = (RingFactory<C>) ((RingElem<C>) ofac).factory();
+			} catch (ClassCastException e) {
+			}
+			if ( /* fac */ofac.equals(ofac1)) { // case BigInteger etc
+				return true;
+			}
+			// System.out.println("factory equals, this = " + ofac + ", obj = " +
+			// ofac1);
+			// if (fac.characteristic().equals(ffac.characteristic())) {
+			// return true;
+			// }
+			return fac.equals(ofac);
+		}
+		return false;
+	}
 
-  public CMFieldElement<C> get(Object o) {
-    if (o == null) {
-      return null;
-    }
-    String s = o.toString();
-    return new CMFieldElement<C>(fac.parse(s));
-  }
+	public CMFieldElement<C> get(int i) {
+		return new CMFieldElement<C>(fac.fromInteger(i));
+	}
 
-  @SuppressWarnings("unchecked")
-  public CMFieldElement<C>[] getArray(int size) {
-    CMFieldElement<C>[] arr = new CMFieldElement[size];
-    for (int i = 0; i < arr.length; i++) {
-      arr[i] = getZero();
-    }
-    return arr;
-  }
+	public CMFieldElement<C> get(long i) {
+		return new CMFieldElement<C>(fac.fromInteger(i));
+	}
 
-  @SuppressWarnings("unchecked")
-  public CMFieldElement<C>[][] getArray(int rows, int columns) {
-    CMFieldElement<C>[][] arr = new CMFieldElement[rows][columns];
-    for (int i = 0; i < arr.length; i++) {
-      arr[i] = getArray(columns);
-    }
-    return arr;
-  }
+	public CMFieldElement<C> get(Object o) {
+		if (o == null) {
+			return null;
+		}
+		String s = o.toString();
+		return new CMFieldElement<C>(fac.parse(s));
+	}
 
-  @Override
-  public CMFieldElement<C> getOne() {
-    return new CMFieldElement<C>(fac.getONE());
-  }
+	@SuppressWarnings("unchecked")
+	public CMFieldElement<C>[] getArray(int size) {
+		CMFieldElement<C>[] arr = new CMFieldElement[size];
+		for (int i = 0; i < arr.length; i++) {
+			arr[i] = getZero();
+		}
+		return arr;
+	}
 
-  @Override
-  public CMFieldElement<C> getZero() {
-    return new CMFieldElement<C>(fac.getZERO());
-  }
+	@SuppressWarnings("unchecked")
+	public CMFieldElement<C>[][] getArray(int rows, int columns) {
+		CMFieldElement<C>[][] arr = new CMFieldElement[rows][columns];
+		for (int i = 0; i < arr.length; i++) {
+			arr[i] = getArray(columns);
+		}
+		return arr;
+	}
 
-  /**
-   * @see java.lang.Object#hashCode()
-   */
-  @SuppressWarnings("unchecked")
-  @Override
-  public int hashCode() {
-    RingFactory<C> fac1 = null;
-    try {
-      fac1 = (RingFactory<C>) ((RingElem<C>) fac).factory();
-    } catch (ClassCastException e) {
-    }
-    if (fac.equals(fac1)) { // case BigInteger etc
-      // int h = fac.getClass().getSimpleName().hashCode();
-      // h = h * 37 + fac.characteristic().hashCode();
-      return fac.getClass().getName().hashCode();
-    }
-    return fac.hashCode();
-  }
+	@Override
+	public CMFieldElement<C> getOne() {
+		return new CMFieldElement<C>(fac.getONE());
+	}
 
-  /**
-   * Get the string representation.
-   * 
-   * @see java.lang.Object#toString()
-   */
-  @SuppressWarnings("unchecked")
-  @Override
-  public String toString() {
-    StringBuffer s = new StringBuffer();
-    String f = null;
-    try {
-      f = ((Element<C>) fac).toScriptFactory();
-    } catch (Exception ignored) {
-      f = fac.toScript();
-    }
-    if (f != null) {
-      s.append(f);
-    }
-    return s.toString();
-  }
+	@Override
+	public CMFieldElement<C> getZero() {
+		return new CMFieldElement<C>(fac.getZERO());
+	}
+
+	/**
+	 * @see java.lang.Object#hashCode()
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public int hashCode() {
+		RingFactory<C> fac1 = null;
+		try {
+			fac1 = (RingFactory<C>) ((RingElem<C>) fac).factory();
+		} catch (ClassCastException e) {
+		}
+		if (fac.equals(fac1)) { // case BigInteger etc
+			// int h = fac.getClass().getSimpleName().hashCode();
+			// h = h * 37 + fac.characteristic().hashCode();
+			return fac.getClass().getName().hashCode();
+		}
+		return fac.hashCode();
+	}
+
+	/**
+	 * Get the string representation.
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public String toString() {
+		StringBuffer s = new StringBuffer();
+		String f = null;
+		try {
+			f = ((Element<C>) fac).toScriptFactory();
+		} catch (Exception ignored) {
+			f = fac.toScript();
+		}
+		if (f != null) {
+			s.append(f);
+		}
+		return s.toString();
+	}
 
 }

@@ -101,7 +101,7 @@ public class Limit extends AbstractFunctionEvaluator implements IConstantHeaders
 	}
 
 	private static IExpr mapLimit(final IAST expr, IAST rule) {
-		final IAST resultList = (IAST) expr.clone();
+		final IAST resultList = expr.clone();
 		for (int i = 1; i < resultList.size(); i++) {
 			resultList.set(i, F.Limit(resultList.get(i), rule));
 		}

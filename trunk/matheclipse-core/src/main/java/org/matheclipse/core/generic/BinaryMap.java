@@ -11,7 +11,7 @@ public class BinaryMap extends BinaryFunctorImpl<IExpr> {
 	}
 
 	public IExpr apply(final IExpr firstArg, final IExpr secondArg) {
-		final IAST ast = (IAST) fConstant.clone();
+		final IAST ast = fConstant.clone();
 		ast.add(firstArg);
 		ast.add(secondArg);
 		return ast;

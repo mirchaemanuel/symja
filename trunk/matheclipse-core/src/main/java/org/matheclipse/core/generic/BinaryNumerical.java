@@ -28,8 +28,8 @@ public class BinaryNumerical extends BinaryFunctorImpl<IExpr> {
 	}
 
 	public IExpr apply(final IExpr firstArg, final IExpr secondArg) {
-		final IExpr temp = (IExpr) AST.COPY.substitute(fun, variable1, firstArg, 1);
-		return F.evaln((IExpr) AST.COPY.substitute(temp, variable2, secondArg, 1));
+		final IExpr temp = AST.COPY.substitute(fun, variable1, firstArg, 1);
+		return F.evaln(AST.COPY.substitute(temp, variable2, secondArg, 1));
 	}
 
 	public double value(double x, double y) {

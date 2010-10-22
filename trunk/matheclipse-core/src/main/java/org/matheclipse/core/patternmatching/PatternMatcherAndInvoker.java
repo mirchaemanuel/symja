@@ -25,16 +25,16 @@ public class PatternMatcherAndInvoker extends PatternMatcher {
 
 	@Override
 	public Object clone() {
-//		try {
-			PatternMatcherAndInvoker v = (PatternMatcherAndInvoker) super.clone();
-			v.fMethod = fMethod;
-			v.fTypes = fTypes;
-			v.fInstance = fInstance;
-			return v;
-//		} catch (CloneNotSupportedException e) {
-//			// this shouldn't happen, since we are Cloneable
-//			throw new InternalError();
-//		}
+		// try {
+		PatternMatcherAndInvoker v = (PatternMatcherAndInvoker) super.clone();
+		v.fMethod = fMethod;
+		v.fTypes = fTypes;
+		v.fInstance = fInstance;
+		return v;
+		// } catch (CloneNotSupportedException e) {
+		// // this shouldn't happen, since we are Cloneable
+		// throw new InternalError();
+		// }
 	}
 
 	/**
@@ -174,10 +174,19 @@ public class PatternMatcherAndInvoker extends PatternMatcher {
 
 	@Override
 	public boolean equals(final Object obj) {
-		if (!(obj instanceof PatternMatcherAndInvoker)) {
-			return false;
+		if (this == obj) {
+			return true;
 		}
-		// don't compare fInstance, fMethod, fTypes here
-		return super.equals(obj);
+		if (obj instanceof PatternMatcherAndInvoker) {
+			// don't compare fInstance, fMethod, fTypes here
+			return super.equals(obj);
+		}
+
+		return false;
+	}
+	
+	@Override
+	public int hashCode() {
+		return super.hashCode()*47;
 	}
 }

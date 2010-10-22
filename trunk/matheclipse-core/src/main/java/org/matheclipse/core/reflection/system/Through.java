@@ -29,7 +29,7 @@ public class Through extends AbstractFunctionEvaluator {
 				IAST result = F.ast(l2.head());
 				for (int i = 1; i < l2.size(); i++) {
 					if (l1.get(i) instanceof ISymbol || l2.get(i) instanceof IAST) {
-						clonedList = (IAST) l1.clone();
+						clonedList = l1.clone();
 						clonedList.setHeader(l2.get(i));
 						result.add(clonedList);
 					} else {

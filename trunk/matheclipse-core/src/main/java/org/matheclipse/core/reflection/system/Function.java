@@ -29,7 +29,7 @@ public class Function implements IFunctionEvaluator {
 						symbolSlots = F.ast(null);
 						symbolSlots.add(function.get(1));
 					}
-					final IExpr result = (IExpr) AST.COPY.replaceAll(function.get(2), symbolSlots, functionList, 1);
+					final IExpr result = AST.COPY.replaceAll(function.get(2), symbolSlots, functionList, 1);
 					return (result == null) ? function.get(2) : result;
 				}
 			} catch (final IndexOutOfBoundsException e) {
@@ -45,7 +45,7 @@ public class Function implements IFunctionEvaluator {
 			checkCanceled();
 			intSlots.add(Slot(i));
 		}
-		final IExpr result = (IExpr) AST.COPY.replaceAll(expr, intSlots, list, 1);
+		final IExpr result = AST.COPY.replaceAll(expr, intSlots, list, 1);
 		return (result == null) ? expr : result;
 	}
 

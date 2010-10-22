@@ -11,13 +11,13 @@ public class Length extends AbstractFunctionEvaluator {
 	}
 
 	@Override
-	public IExpr evaluate(final IAST functionList) {
-		if (functionList.size() != 2) {
+	public IExpr evaluate(final IAST ast) {
+		if (ast.size() != 2) {
 			return null;
 		}
 		int result = 0;
-		if (functionList.get(1) instanceof IAST) {
-			result = ((IAST) functionList.get(1)).size()-1;
+		if (ast.get(1) instanceof IAST) {
+			result = ((IAST) ast.get(1)).size()-1;
 		}
 		return F.integer(result);
 	}

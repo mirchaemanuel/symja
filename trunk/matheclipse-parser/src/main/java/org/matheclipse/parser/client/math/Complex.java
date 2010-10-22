@@ -265,31 +265,25 @@ public class Complex implements Serializable {
 	 * 
 	 */
 	public boolean equals(Object other) {
-		boolean ret;
-
 		if (this == other) {
-			ret = true;
+			return true;
 		} else if (other == null) {
-			ret = false;
-		} else {
-			try {
-				Complex rhs = (Complex) other;
-				if (rhs.isNaN()) {
-					ret = this.isNaN();
-				} else {
-					ret = (real == rhs.getReal()) && (imaginary == rhs.getImaginary());
-					// ret = (Double.doubleToRawLongBits(real) ==
-					// Double.doubleToRawLongBits(rhs.getReal())) &&
-					// (Double.doubleToRawLongBits(imaginary) ==
-					// Double.doubleToRawLongBits(rhs.getImaginary()));
-				}
-			} catch (ClassCastException ex) {
-				// ignore exception
-				ret = false;
+			return false;
+		} else if (other instanceof Complex) {
+			boolean ret;
+			Complex rhs = (Complex) other;
+			if (rhs.isNaN()) {
+				ret = this.isNaN();
+			} else {
+				ret = (real == rhs.getReal()) && (imaginary == rhs.getImaginary());
+				// ret = (Double.doubleToRawLongBits(real) ==
+				// Double.doubleToRawLongBits(rhs.getReal())) &&
+				// (Double.doubleToRawLongBits(imaginary) ==
+				// Double.doubleToRawLongBits(rhs.getImaginary()));
 			}
+			return ret;
 		}
-
-		return ret;
+		return false;
 	}
 
 	/**

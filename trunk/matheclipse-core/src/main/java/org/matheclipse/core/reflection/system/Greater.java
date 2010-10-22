@@ -24,7 +24,7 @@ public class Greater extends AbstractFunctionEvaluator implements
 			}
 			int b = 0;
 			boolean evaled = false;
-			IAST result = (IAST) lst.clone();
+			IAST result = lst.clone();
 			int[] cResult = new int[lst.size()];
 			cResult[0] = 1;
 			for (int i = 1; i < lst.size() - 1; i++) {

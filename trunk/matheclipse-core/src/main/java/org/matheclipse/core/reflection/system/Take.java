@@ -19,8 +19,7 @@ public class Take extends AbstractFunctionEvaluator {
 				final Sequence[] sequ = Sequence.createSequences(ast, 2);
 				final IAST arg1 = (IAST) ast.get(1);
 				if (sequ != null) {
-					// IAST resultList = arg1.copyHead();
-					return (IAST) AST.COPY.take(arg1, 0, sequ);
+					return AST.COPY.take(arg1, 0, sequ);
 				}
 			}
 		} catch (final Exception e) {

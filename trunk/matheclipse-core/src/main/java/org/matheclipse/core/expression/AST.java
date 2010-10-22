@@ -21,6 +21,7 @@ import org.matheclipse.core.interfaces.ISignedNumber;
 import org.matheclipse.core.interfaces.IStringX;
 import org.matheclipse.core.interfaces.ISymbol;
 import org.matheclipse.core.patternmatching.PatternMatcher;
+import org.matheclipse.core.patternmatching.PatternMatcherAndEvaluator;
 import org.matheclipse.core.visit.IVisitor;
 import org.matheclipse.core.visit.IVisitorBoolean;
 import org.matheclipse.core.visit.IVisitorInt;
@@ -57,41 +58,6 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 	 */
 	private static final long serialVersionUID = 4295200630292148027L;
 
-	//
-	// protected static final XmlFormat<AST> LIST_XML = new XmlFormat<AST>(
-	// AST.class) {
-	// @Override
-	// public void format(AST c, XmlElement xml) {
-	// FastList<IExpr> list = xml.getContent();
-	// if (c.getHeader() instanceof ISymbol) {
-	// xml.setAttribute("head", c.getHeader().toString());
-	// } else {
-	// list.add(c.getHeader());
-	// }
-	// for (int i = 1; i < c.size(); i++) {
-	// list.add(c.get(i));
-	// }
-	//
-	// }
-	//
-	// @Override
-	// public AST parse(XmlElement xml) {
-	// AST c = (AST) xml.object();
-	// String headName = xml.getAttribute("head", "");
-	// FastList<IExpr> list = xml.getContent();
-	// int start = 0;
-	// if (headName == null) {
-	// c.setHeader(list.get(start++));
-	// } else {
-	// c.setHeader(ExprFactory.get().createSymbol(headName));
-	// }
-	// for (int i = start; i < list.size(); i++) {
-	// c.add(list.get(i));
-	// }
-	// return c;
-	// }
-	// };
-
 	/**
 	 * Flags for controlling evaluation and left-hand-side pattern-matching
 	 * expressions
@@ -99,7 +65,7 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 	 */
 	transient private int fEvalFlags = 0;
 
-	transient protected int fHashValue = 0;
+	transient protected int fPatternMatchingHashValue = 0;
 
 	/**
 	 * Holds the factory for this AST.
@@ -335,9 +301,10 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 	 * @return a clone of this <tt>AST</tt> instance.
 	 */
 	@Override
-	public Object clone() {
-		AST ast = new AST(5, false);
-		ast.addAll(this);
+	public IAST clone() {
+		AST ast = (AST) super.clone();
+		ast.fEvalFlags = 0;
+		ast.fPatternMatchingHashValue = 0;
 		return ast;
 	}
 
@@ -652,7 +619,7 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 	}
 
 	public IAST apply(final IExpr head) {
-		final AST ast = (AST) clone();
+		final IAST ast = clone();
 		ast.setHeader(head);
 		return ast;
 	}
@@ -686,7 +653,7 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 	}
 
 	public IAST map(final Function<IExpr, IExpr> function) {
-		final AST f = (AST) clone();
+		final IAST f = clone();
 		IExpr temp;
 		for (int i = 1; i < size(); i++) {
 			temp = function.apply(get(i));
@@ -881,6 +848,17 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 	}
 
 	@Override
+	public boolean equals(final Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj instanceof AST) {
+			return super.equals(obj);
+		}
+		return false;
+	}
+	
+	@Override
 	public int hashCode() {
 		if (fHash == 0) {
 			if (size() > 1) {
@@ -921,38 +899,38 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 	 * 
 	 */
 	final public int patternHashCode() {
-		if (fHashValue == 0) {
+		if (fPatternMatchingHashValue == 0) {
 			if (size() > 1) {
 				final int attr = topHead().getAttributes() & ISymbol.FLATORDERLESS;
 				if (attr != ISymbol.NOATTRIBUTE) {
 					if (attr == ISymbol.FLATORDERLESS) {
-						fHashValue = (17 * get(0).hashCode());
+						fPatternMatchingHashValue = (17 * get(0).hashCode());
 					} else if (attr == ISymbol.FLAT) {
 						if (get(1) instanceof IAST) {
-							fHashValue = (31 * get(0).hashCode() + ((IAST) get(1)).get(0).hashCode());
+							fPatternMatchingHashValue = (31 * get(0).hashCode() + ((IAST) get(1)).get(0).hashCode());
 						} else {
-							fHashValue = (37 * get(0).hashCode() + get(1).hashCode());
+							fPatternMatchingHashValue = (37 * get(0).hashCode() + get(1).hashCode());
 						}
 					} else { // attr == ISymbol.ORDERLESS
-						fHashValue = (17 * get(0).hashCode() + size());
+						fPatternMatchingHashValue = (17 * get(0).hashCode() + size());
 					}
 				} else {
 					if (get(1) instanceof IAST) {
-						fHashValue = (31 * get(0).hashCode() + ((IAST) get(1)).get(0).hashCode() + size());
+						fPatternMatchingHashValue = (31 * get(0).hashCode() + ((IAST) get(1)).get(0).hashCode() + size());
 					} else {
-						fHashValue = (37 * get(0).hashCode() + get(1).hashCode() + size());
+						fPatternMatchingHashValue = (37 * get(0).hashCode() + get(1).hashCode() + size());
 					}
 				}
 			} else {
 				if (size() == 1) {
-					fHashValue = (17 * get(0).hashCode());
+					fPatternMatchingHashValue = (17 * get(0).hashCode());
 				} else {
 					// this case shouldn't happen
-					fHashValue = 41;
+					fPatternMatchingHashValue = 41;
 				}
 			}
 		}
-		return fHashValue;
+		return fPatternMatchingHashValue;
 	}
 
 	public boolean isAtom() {
@@ -970,78 +948,6 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 	public IExpr variables2Slots(final Map<IExpr, IExpr> map, final List<IExpr> variableList) {
 		return AST.COPY.replaceAll(this, new IsUnaryVariableOrPattern<IExpr>(), new UnaryVariable2Slot(map, variableList));
 	}
-
-	// @Override
-	// public String toString() {
-	// if (isAST(AbstractExpressionFactory.List)) {
-	// final StringBuffer buf = new StringBuffer();
-	// buf.append("{");
-	// for (int i = 1; i < size(); i++) {
-	// final IExpr o = get(i);
-	// buf.append(o == this ? "(this AST)" : String.valueOf(o));
-	// if (i < size() - 1) {
-	// buf.append(", ");
-	// }
-	// }
-	// buf.append("}");
-	// return buf.toString();
-	//
-	// } else if (isAST(AbstractExpressionFactory.Slot, 2)
-	// && (get(1) instanceof IInteger)) {
-	// try {
-	// final int slot = ((IInteger) get(1)).toInt();
-	// if (slot <= 0) {
-	// return super.toString();
-	// }
-	// if (slot == 1) {
-	// return "#";
-	// }
-	// return "#" + slot;
-	// } catch (final ArithmeticException e) {
-	// // fall through
-	// }
-	// return super.toString();
-	//
-	// } else {
-	// return super.toString();
-	// }
-	// }
-
-	// @Override
-	// public Text toText() {
-	// final TextBuilder buf = TextBuilder.newInstance();
-	// if (isAST(F.List)) {
-	// buf.append("{");
-	// for (int i = 1; i < size(); i++) {
-	// checkCanceled();
-	// final IExpr o = get(i);
-	// buf.append(o == this ? "(this AST)" : String.valueOf(o));
-	// if (i < size() - 1) {
-	// buf.append(", ");
-	// }
-	// }
-	// buf.append("}");
-	// return buf.toText();
-	//
-	// } else if (isAST(F.Slot, 2) && (get(1) instanceof IInteger)) {
-	// try {
-	// final int slot = ((IInteger) get(1)).toInt();
-	// if (slot <= 0) {
-	// return super.toText();
-	// }
-	// if (slot == 1) {
-	// return Text.valueOf('#');
-	// }
-	// return Text.valueOf("#" + slot);
-	// } catch (final ArithmeticException e) {
-	// // fall through
-	// }
-	// return super.toText();
-	//
-	// } else {
-	// return super.toText();
-	// }
-	// }
 
 	public String fullFormString() {
 		final String sep = ", ";

@@ -89,7 +89,7 @@ public class DoubleEvaluator {
       double result = Double.NaN;
       int end = function.size();
       for (int i = 1; i < end; i++) {
-        result = engine.evaluateNode((ASTNode) function.getNode(i));
+        result = engine.evaluateNode(function.getNode(i));
         if (DEBUG) {
           System.out.println(result);
         }
@@ -111,7 +111,7 @@ public class DoubleEvaluator {
                 + function.toString());
       }
       String variableName = ((SymbolNode) function.getNode(1)).getString();
-      double result = engine.evaluateNode((ASTNode) function.getNode(2));
+      double result = engine.evaluateNode(function.getNode(2));
       IDoubleValue dv = engine.getVariable(variableName);
       if (dv == null) {
         dv = new DoubleVariable(result);
@@ -133,7 +133,7 @@ public class DoubleEvaluator {
       double temp;
       int end = function.size();
       for (int i = 1; i < end; i++) {
-        temp = Math.max(result, engine.evaluateNode((ASTNode) function
+        temp = Math.max(result, engine.evaluateNode(function
             .getNode(i)));
         if (temp > result) {
           result = temp;
@@ -153,7 +153,7 @@ public class DoubleEvaluator {
       double temp;
       int end = function.size();
       for (int i = 1; i < end; i++) {
-        temp = Math.min(result, engine.evaluateNode((ASTNode) function
+        temp = Math.min(result, engine.evaluateNode(function
             .getNode(i)));
         if (temp < result) {
           result = temp;
@@ -171,7 +171,7 @@ public class DoubleEvaluator {
     public double evaluate(DoubleEvaluator engine, FunctionNode function) {
       double result = 0.0;
       for (int i = 1; i < function.size(); i++) {
-        result += engine.evaluateNode((ASTNode) function.getNode(i));
+        result += engine.evaluateNode(function.getNode(i));
       }
       return result;
     }
@@ -185,7 +185,7 @@ public class DoubleEvaluator {
     public double evaluate(DoubleEvaluator engine, FunctionNode function) {
       double result = 1.0;
       for (int i = 1; i < function.size(); i++) {
-        result *= engine.evaluateNode((ASTNode) function.getNode(i));
+        result *= engine.evaluateNode(function.getNode(i));
       }
       return result;
     }
@@ -450,11 +450,11 @@ public class DoubleEvaluator {
       return evaluateFunction((FunctionNode) node);
     }
     if (node instanceof SymbolNode) {
-      IDoubleValue v = (IDoubleValue) fVariableMap.get(node.toString());
+      IDoubleValue v = fVariableMap.get(node.toString());
       if (v != null) {
         return v.getValue();
       }
-      Double dbl = (Double) SYMBOL_DOUBLE_MAP.get(node.toString());
+      Double dbl = SYMBOL_DOUBLE_MAP.get(node.toString());
       if (dbl != null) {
         return dbl.doubleValue();
       }
@@ -509,8 +509,8 @@ public class DoubleEvaluator {
         } else if (functionNode.size() == 3) {
           if (obj instanceof IDouble2Function) {
             return ((IDouble2Function) obj).evaluate(
-                evaluateNode((ASTNode) functionNode.getNode(1)),
-                evaluateNode((ASTNode) functionNode.getNode(2)));
+                evaluateNode(functionNode.getNode(1)),
+                evaluateNode(functionNode.getNode(2)));
           }
         }
         if (fCallbackFunction != null) {
@@ -536,7 +536,7 @@ public class DoubleEvaluator {
       if (v != null) {
         return v.getValue();
       }
-      Boolean boole = (Boolean) SYMBOL_BOOLEAN_MAP.get(node.toString());
+      Boolean boole = SYMBOL_BOOLEAN_MAP.get(node.toString());
       if (boole != null) {
         return boole.booleanValue();
       }
@@ -555,18 +555,18 @@ public class DoubleEvaluator {
         Object obj = FUNCTION_BOOLEAN_MAP.get(symbol);
         if (obj instanceof IBooleanBoolean1Function) {
           return ((IBooleanBoolean1Function) obj)
-              .evaluate(evaluateNodeLogical((ASTNode) functionNode.getNode(1)));
+              .evaluate(evaluateNodeLogical(functionNode.getNode(1)));
         }
       } else if (functionNode.size() == 3) {
         Object obj = FUNCTION_BOOLEAN_MAP.get(symbol);
         if (obj instanceof IBooleanDouble2Function) {
           return ((IBooleanDouble2Function) obj).evaluate(
-              evaluateNode((ASTNode) functionNode.getNode(1)),
-              evaluateNode((ASTNode) functionNode.getNode(2)));
+              evaluateNode(functionNode.getNode(1)),
+              evaluateNode(functionNode.getNode(2)));
         } else if (obj instanceof IBooleanBoolean2Function) {
           return ((IBooleanBoolean2Function) obj).evaluate(
-              evaluateNodeLogical((ASTNode) functionNode.getNode(1)),
-              evaluateNodeLogical((ASTNode) functionNode.getNode(2)));
+              evaluateNodeLogical(functionNode.getNode(1)),
+              evaluateNodeLogical(functionNode.getNode(2)));
         }
         // } else {
         // Object obj = FUNCTION_BOOLEAN_MAP.get(symbol);
@@ -606,7 +606,7 @@ public class DoubleEvaluator {
           }
           functionNode.set(i, optNode);
         } else if (node instanceof SymbolNode) {
-          Double dbl = (Double) SYMBOL_DOUBLE_MAP.get(node.toString());
+          Double dbl = SYMBOL_DOUBLE_MAP.get(node.toString());
           if (dbl != null) {
             functionNode.set(i, new DoubleNode(dbl.doubleValue()));
           } else {

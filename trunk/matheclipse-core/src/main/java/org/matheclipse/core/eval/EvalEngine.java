@@ -424,7 +424,7 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 
 		if ((result = evalLoop(ast.head())) != null) {
 			// first evaluate the header !
-			IAST resultList = (IAST) ast.clone();
+			IAST resultList = ast.clone();
 			resultList.setHeader(result);
 			return resultList;
 		}
@@ -509,7 +509,7 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 				// the HoldFirst attribute isn't set here
 				if ((evaledExpr = evalLoop(ast.get(1))) != null) {
 					if (resultList == null) {
-						resultList = (IAST) ast.clone();
+						resultList = ast.clone();
 					}
 					resultList.set(1, evaledExpr);
 				}
@@ -519,7 +519,7 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 				for (int i = 2; i < ast.size(); i++) {
 					if ((evaledExpr = evalLoop(ast.get(i))) != null) {
 						if (resultList == null) {
-							resultList = (IAST) ast.clone();
+							resultList = ast.clone();
 						}
 						resultList.set(i, evaledExpr);
 					}
@@ -552,7 +552,7 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 			}
 		}
 		if ((ISymbol.HOLDALL & attr) != ISymbol.HOLDALL) {
-			resultList = (IAST) ast.clone();
+			resultList = ast.clone();
 			if ((ISymbol.HOLDFIRST & attr) == ISymbol.NOATTRIBUTE) {
 				// the HoldFirst attribute isn't set here
 				if (ast.size() > 1 && ast.get(1) instanceof IAST) {
@@ -1028,6 +1028,7 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 		return fVariableMap;
 	}
 
+	@Override
 	public String toString() {
 		StringBuffer buf = new StringBuffer();
 		if (fVariableMap != null) {

@@ -56,9 +56,9 @@ public class PatternNode extends ASTNode {
 		if (fSymbol != null) {
 			buff.append(fSymbol.toString());
 		}
-		buff.append("_");
+		buff.append('_');
 		if (fDefault) {
-			buff.append(".");
+			buff.append('.');
 		}
 		if (fConstraint != null) {
 			buff.append(fConstraint.toString());
@@ -67,6 +67,9 @@ public class PatternNode extends ASTNode {
 	}
 
 	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
 		if (obj instanceof PatternNode) {
 			PatternNode pn = (PatternNode) obj;
 			if (fSymbol == pn.fSymbol) {
@@ -91,9 +94,9 @@ public class PatternNode extends ASTNode {
 
 	public int hashCode() {
 		if (fSymbol != null) {
-			fSymbol.hashCode();
+			return fSymbol.hashCode();
 		}
-		return 0;
+		return 11;
 	}
 
 }
