@@ -36,7 +36,7 @@ public class Pattern2Node extends PatternNode {
 		}
 		buff.append("__");
 		if (fDefault) {
-			buff.append(".");
+			buff.append('.');
 		}
 		if (fConstraint != null) {
 			buff.append(fConstraint.toString());
@@ -45,6 +45,9 @@ public class Pattern2Node extends PatternNode {
 	}
 
 	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
 		if (obj instanceof Pattern2Node) {
 			Pattern2Node pn = (Pattern2Node) obj;
 			if (fSymbol == pn.fSymbol) {
@@ -67,4 +70,10 @@ public class Pattern2Node extends PatternNode {
 		return false;
 	}
 
+	public int hashCode() {
+		if (fSymbol != null) {
+			return fSymbol.hashCode()*41;
+		}
+		return 19;
+	}
 }

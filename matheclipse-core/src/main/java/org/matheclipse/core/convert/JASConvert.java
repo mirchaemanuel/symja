@@ -174,7 +174,7 @@ public class JASConvert<C extends RingElem<C>> {
 		}
 		IAST result = F.Plus();
 		for (Monomial<edu.jas.arith.BigInteger> monomial : poly) {
-			edu.jas.arith.BigInteger coeff = (edu.jas.arith.BigInteger) monomial.coefficient();
+			edu.jas.arith.BigInteger coeff = monomial.coefficient();
 			ExpVector exp = monomial.exponent();
 			IInteger coeffValue = F.integer(coeff.getVal());
 			IAST monomTimes = F.Times(coeffValue);
@@ -289,7 +289,7 @@ public class JASConvert<C extends RingElem<C>> {
 		}
 		IAST result = F.Plus();
 		for (Monomial<ModInteger> monomial : poly) {
-			ModInteger coeff = (ModInteger) monomial.coefficient();
+			ModInteger coeff = monomial.coefficient();
 			ExpVector exp = monomial.exponent();
 			IInteger coeffValue = F.integer(coeff.getVal());
 			IAST monomTimes = F.Times(coeffValue);
@@ -338,7 +338,7 @@ public class JASConvert<C extends RingElem<C>> {
 		boolean getVar = variable == null;
 		IAST result = F.Plus();
 		for (Monomial<BigRational> monomial : poly) {
-			BigRational coeff = (BigRational) monomial.coefficient();
+			BigRational coeff = monomial.coefficient();
 			ExpVector exp = monomial.exponent();
 			IFraction coeffValue = F.fraction(coeff.numerator(), coeff.denominator());
 			IAST monomTimes = F.Times(coeffValue);
@@ -445,7 +445,7 @@ public class JASConvert<C extends RingElem<C>> {
 		}
 		IAST result = F.Plus();
 		for (Monomial<BigRational> monomial : poly) {
-			BigRational coeff = (BigRational) monomial.coefficient();
+			BigRational coeff = monomial.coefficient();
 			ExpVector exp = monomial.exponent();
 			IFraction coeffValue = F.fraction(coeff.numerator(), coeff.denominator());
 			IAST monomTimes = F.Times(coeffValue);

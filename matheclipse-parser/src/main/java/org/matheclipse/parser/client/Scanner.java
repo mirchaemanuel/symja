@@ -755,11 +755,11 @@ public class Scanner {
 
 					break;
 				case 'n':
-					ident.append("\n");
+					ident.append('\n');
 
 					break;
 				case 't':
-					ident.append("\t");
+					ident.append('\t');
 
 					break;
 				default:

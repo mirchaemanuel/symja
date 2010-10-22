@@ -107,7 +107,7 @@ public class Array implements IFunctionEvaluator {
 					final IAST list = F.ast(ast.get(1));
 					final TableGenerator<IExpr, IAST> generator = new TableGenerator<IExpr, IAST>(iterList, resultList,
 							new MultipleArrayFunction(engine, list), AST.COPY);
-					return (IExpr) generator.table();
+					return generator.table();
 				}
 
 			}

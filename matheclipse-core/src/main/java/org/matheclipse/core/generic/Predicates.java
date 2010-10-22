@@ -53,7 +53,7 @@ public class Predicates {
 		 * 
 		 */
 		public boolean apply(final IExpr arg) {
-			final IAST ast = (IAST) fAST.clone();
+			final IAST ast = fAST.clone();
 			ast.add(arg); 
 			if (fEngine.evaluate(ast).equals(F.True)) {
 				return true;

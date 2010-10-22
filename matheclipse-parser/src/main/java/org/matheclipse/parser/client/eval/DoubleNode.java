@@ -39,6 +39,9 @@ public class DoubleNode extends ASTNode {
 	}
 
 	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
 		if (obj instanceof DoubleNode) {
 			return value == ((DoubleNode) obj).value;
 		}

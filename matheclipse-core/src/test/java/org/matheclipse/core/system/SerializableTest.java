@@ -21,7 +21,7 @@ public class SerializableTest extends SpecialTestCase {
 		EvalEngine engine = EvalEngine.get();
 		engine.setSessionID("SerializableTest");
 		engine.setRecursionLimit(256);
-		ISymbol sym = (Symbol) F.Sin;
+		ISymbol sym = F.Sin;
 		FileOutputStream out = new FileOutputStream("c:\\temp\\testsym.ser");
 		ObjectOutputStream oos = new ObjectOutputStream(out);
 		sym.writeSymbol(oos);

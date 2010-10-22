@@ -16,7 +16,7 @@ public class UnsameQ extends AbstractFunctionEvaluator {
 	@Override
 	public IExpr evaluate(final IAST lst) {
 		if (lst.size() > 1) {
-			IAST result = (IAST) lst.clone();
+			IAST result = lst.clone();
 			int i = 2;
 			int j;
 			while (i < result.size()) {

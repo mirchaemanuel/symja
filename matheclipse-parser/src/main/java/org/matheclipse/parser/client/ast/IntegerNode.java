@@ -64,6 +64,9 @@ public class IntegerNode extends NumberNode {
 	}
 
 	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
 		if (obj instanceof IntegerNode) {
 			if (fStringValue == null) {
 				return toString().equals(obj.toString());

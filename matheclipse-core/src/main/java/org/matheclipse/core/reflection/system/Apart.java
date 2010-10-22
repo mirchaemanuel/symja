@@ -7,6 +7,7 @@ import java.util.SortedMap;
 import org.matheclipse.basic.Config;
 import org.matheclipse.core.convert.ExprVariables;
 import org.matheclipse.core.convert.JASConvert;
+import org.matheclipse.core.eval.exception.Validate;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
 import org.matheclipse.core.expression.ASTRange;
 import org.matheclipse.core.expression.F;
@@ -36,20 +37,18 @@ public class Apart extends AbstractFunctionEvaluator {
 	}
 
 	@Override
-	public IExpr evaluate(final IAST lst) {
-		if (lst.size() != 2) {
-			return null;
-		}
-		ExprVariables eVar = new ExprVariables(lst.get(1));
+	public IExpr evaluate(final IAST ast) {
+		Validate.checkSize(ast, 2);
+		ExprVariables eVar = new ExprVariables(ast.get(1));
 		if (!eVar.isSize(1)) {
 			// partial fraction only possible for univariate polynomials
 			return null;
 		}
 		IAST variableList = eVar.getVarList();
 
-		final IExpr header = lst.get(1).head();
+		final IExpr header = ast.get(1).head();
 		if (header == F.Times || header == F.Power) {
-			IExpr[] parts = Apart.getFractionalParts(lst.get(1));
+			IExpr[] parts = Apart.getFractionalParts(ast.get(1));
 			if (parts != null) {
 				IAST plusResult = apart(parts, variableList);
 				if (plusResult != null) {
@@ -61,7 +60,7 @@ public class Apart extends AbstractFunctionEvaluator {
 				}
 			}
 		} else {
-			return lst.get(1);
+			return ast.get(1);
 		}
 
 		return null;
@@ -183,12 +182,11 @@ public class Apart extends AbstractFunctionEvaluator {
 	 * @param splitFractionalNumbers TODO
 	 * @return the numerator and denominator expression
 	 */
-	public static IExpr[] getFractionalPartsTimes(final IAST timesAST, boolean splitFractionalNumbers) {
+	public static IExpr[] getFractionalPartsTimes(final IAST ast, boolean splitFractionalNumbers) {
 		IExpr[] result = new IExpr[2];
 
 		IAST numerator = F.Times();
 		IAST denominator = F.Times();
-		final IAST ast = (IAST) timesAST;
 		IExpr arg;
 		IAST temp;
 		for (int i = 1; i < ast.size(); i++) {

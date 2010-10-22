@@ -38,20 +38,19 @@ public class MapThread extends AbstractFunctionEvaluator {
   }
 
   @Override
-  public IExpr evaluate(final IAST functionList) {
-    if ((functionList.size() != 3) && (functionList.size() != 4)) {
+  public IExpr evaluate(final IAST ast) {
+    if ((ast.size() != 3) && (ast.size() != 4)) {
       return null;
     }
     LevelSpec level = null;
-    if (functionList.size() == 4) {
-      level = new LevelSpecification(functionList.get(3));
+    if (ast.size() == 4) {
+      level = new LevelSpecification(ast.get(3));
     } else {
       level = new LevelSpec(0);
     }
-//    final IAST ast = F.ast(functionList.get(1));
-    final IExpr result = (IExpr) AST.COPY.map(functionList.get(2),
-        new UnaryMapThread(functionList.get(1)), level, 1);
-    return result == null ? functionList.get(2) : result;
+    final IExpr result = AST.COPY.map(ast.get(2),
+        new UnaryMapThread(ast.get(1)), level, 1);
+    return result == null ? ast.get(2) : result;
   }
 
 }

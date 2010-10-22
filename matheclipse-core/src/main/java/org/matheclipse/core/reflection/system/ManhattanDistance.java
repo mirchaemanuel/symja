@@ -17,12 +17,12 @@ public class ManhattanDistance implements IFunctionEvaluator {
 	public ManhattanDistance() {
 	}
 
-	public IExpr evaluate(final IAST functionList) {
-		if (functionList.size() != 3) {
-			throw new WrongNumberOfArguments(functionList, 2, functionList.size() - 1);
+	public IExpr evaluate(final IAST ast) {
+		if (ast.size() != 3) {
+			throw new WrongNumberOfArguments(ast, 2, ast.size() - 1);
 		}
-		IExpr arg1 = functionList.get(1);
-		IExpr arg2 = functionList.get(2);
+		IExpr arg1 = ast.get(1);
+		IExpr arg2 = ast.get(2);
 
 		int dim1 = arg1.isVector();
 		if (dim1 > (-1)) {

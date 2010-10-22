@@ -34,7 +34,7 @@ public class UnaryNumerical implements Function<IExpr, IExpr>, DifferentiableUni
 	}
 
 	public IExpr apply(final IExpr firstArg) {
-		return F.evaln((IExpr) AST.COPY.substitute(fFunction, fVariable, firstArg, 1));
+		return F.evaln(AST.COPY.substitute(fFunction, fVariable, firstArg, 1));
 	}
 
 	public double value(double x) {

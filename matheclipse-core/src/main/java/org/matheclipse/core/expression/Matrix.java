@@ -13,7 +13,6 @@ public class Matrix extends ASTDelegate {
 		fColumns = columns;
 	}
 
-
 	public Matrix(int rows, int columns) {
 		super();
 		fColumns = columns;
@@ -58,19 +57,35 @@ public class Matrix extends ASTDelegate {
 		return matrix;
 	}
 
-	public Matrix plus(final Matrix that) {
-		if ((that.getRows() != getRows()) || (that.getColumns() != fColumns)) {
-			throw new DimensionException("Matrix#plus([" + getRows() + "," + fColumns + "],[" + that.getRows() + "," + that.getColumns()
-					+ "])");
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj instanceof Matrix) {
+			Matrix other = (Matrix) obj;
+			if (fColumns != other.fColumns)
+				return false;
+			return fAst.equals(other.fAst);
 		}
-		AST resultAST = createAST(fAst.size() - 1);
-		AST tempAST;
-		for (int i = 1; i < fAst.size(); i++) {
-			tempAST = createAST(getColumns());
-			((IAST) fAst.get(i)).map(tempAST, (IAST) that.fAst.get(i), new BinaryMap(F.Plus()));
-			resultAST.add(tempAST);
-		}
-		return new Matrix(resultAST, getColumns());
+		return false;
+	}
+
+	public IExpr getAt(final int row, final int column) {
+		return ((IAST) fAst.get(row)).get(column);
+	}
+
+	/**
+	 * Get the number of columns in this matrix
+	 * 
+	 * @return
+	 */
+	public int getColumns() {
+		return fColumns;
+	}
+
+	@Override
+	public int hashCode() {
+		return fAst.hashCode() * 59;
 	}
 
 	public Matrix minus(final Matrix that) {
@@ -89,20 +104,22 @@ public class Matrix extends ASTDelegate {
 		return null;
 	}
 
+	public Matrix plus(final Matrix that) {
+		if ((that.getRows() != getRows()) || (that.getColumns() != fColumns)) {
+			throw new DimensionException("Matrix#plus([" + getRows() + "," + fColumns + "],[" + that.getRows() + "," + that.getColumns()
+					+ "])");
+		}
+		AST resultAST = createAST(fAst.size() - 1);
+		AST tempAST;
+		for (int i = 1; i < fAst.size(); i++) {
+			tempAST = createAST(getColumns());
+			((IAST) fAst.get(i)).map(tempAST, (IAST) that.fAst.get(i), new BinaryMap(F.Plus()));
+			resultAST.add(tempAST);
+		}
+		return new Matrix(resultAST, getColumns());
+	}
+
 	public Matrix power(final Integer n) {
 		return null;
-	}
-
-	/**
-	 * Get the number of columns in this matrix
-	 * 
-	 * @return
-	 */
-	public int getColumns() {
-		return fColumns;
-	}
-
-	public IExpr getAt(final int row, final int column) {
-		return ((IAST) fAst.get(row)).get(column);
 	}
 }

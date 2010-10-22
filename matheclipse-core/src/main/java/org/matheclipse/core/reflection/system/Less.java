@@ -1,16 +1,16 @@
 package org.matheclipse.core.reflection.system;
 
 import org.matheclipse.core.interfaces.IExpr;
-import org.matheclipse.core.interfaces.ISignedNumber;
 
 public class Less extends Greater {
 	public final static Less CONST = new Less();
+
 	public Less() {
 	}
 
 	@Override
 	public int compare(final IExpr o0, final IExpr o1) {
-		if ((o0 instanceof ISignedNumber) && (o1 instanceof ISignedNumber)) {
+		if (o0.isSignedNumber() && o1.isSignedNumber()) {
 			if (o0.isLTOrdered(o1)) {
 				return 1;
 			}

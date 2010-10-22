@@ -74,7 +74,7 @@ public class Options {
 	}
 
 	public IAST replaceAll(final IAST options) {
-		IAST result = (IAST) options.clone();
+		IAST result = options.clone();
 		if (fCurrentOptionsList != null) {
 			result = (IAST) F.eval(ReplaceAll(result, fCurrentOptionsList));
 		}

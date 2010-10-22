@@ -115,7 +115,7 @@ public class Integrate extends AbstractFunctionEvaluator implements IConstantHea
 		if (ast.get(1) instanceof IAST) {
 			IExpr arg = F.evalExpandAll(ast.get(1));
 			if (!ast.get(1).equals(arg)) {
-				IAST clon = (IAST) ast.clone();
+				IAST clon = ast.clone();
 				clon.set(1, arg);
 				return clon;
 			}
@@ -199,7 +199,7 @@ public class Integrate extends AbstractFunctionEvaluator implements IConstantHea
 			result[1] = BigRational.ZERO;
 			result[2] = BigRational.ZERO;
 			for (Monomial<BigRational> monomial : poly) {
-				BigRational coeff = (BigRational) monomial.coefficient();
+				BigRational coeff = monomial.coefficient();
 				ExpVector exp = monomial.exponent();
 				for (int i = 0; i < exp.length(); i++) {
 					result[(int) exp.getVal(i)] = coeff;

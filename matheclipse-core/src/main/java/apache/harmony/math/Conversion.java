@@ -17,7 +17,6 @@
 
 package apache.harmony.math;
 
-import static org.matheclipse.basic.Util.*;
 
 import org.matheclipse.basic.Config;
 import org.matheclipse.basic.ObjectMemoryExceededException;
@@ -106,7 +105,6 @@ class Conversion {
 
 		for (int substrStart = startChar; substrStart < endChar; substrStart = substrEnd, substrEnd = substrStart
 				+ charsPerInt) {
-			checkCanceled();
 			int bigRadixDigit = Integer.parseInt(val.substring(substrStart,
 					substrEnd), radix);
 			newDigit = Multiplication.multiplyByInt(digits, digitIndex,
@@ -160,24 +158,20 @@ class Conversion {
 			// get the maximal power of radix that fits in int
 			int bigRadix = bigRadices[radix - 2];
 			while (true) {
-				checkCanceled();
 				// divide the array of digits by bigRadix and convert remainders
 				// to characters collecting them in the char array
 				resDigit = Division.divideArrayByInt(temp, temp, tempLen,
 						bigRadix);
 				int previous = currentChar;
 				do {
-					checkCanceled();
 					result[--currentChar] = Character.forDigit(
 							resDigit % radix, radix);
 				} while (((resDigit /= radix) != 0) && (currentChar != 0));
 				int delta = charsPerInt - previous + currentChar;
 				for (i = 0; i < delta && currentChar > 0; i++) {
-					checkCanceled();
 					result[--currentChar] = '0';
 				}
 				for (i = tempLen - 1; (i > 0) && (temp[i] == 0); i--) {
-					checkCanceled();
 					;
 				}
 				tempLen = i + 1;
@@ -188,16 +182,13 @@ class Conversion {
 		} else {
 			// radix == 16
 			for (int i = 0; i < numberLength; i++) {
-				checkCanceled();
 				for (int j = 0; (j < 8) && (currentChar > 0); j++) {
-					checkCanceled();
 					resDigit = digits[i] >> (j << 2) & 0xf;
 					result[--currentChar] = Character.forDigit(resDigit, 16);
 				}
 			}
 		}
 		while (result[currentChar] == '0') {
-			checkCanceled();
 			currentChar++;
 		}
 		if (sign == -1) {
@@ -264,7 +255,6 @@ class Conversion {
 			if (highDigit < 0) {
 				long v = highDigit & 0xFFFFFFFFL;
 				do {
-					checkCanceled();
 					long prev = v;
 					v /= 10;
 					result[--currentChar] = (char) (0x0030 + ((int) (prev - v * 10)));
@@ -272,7 +262,6 @@ class Conversion {
 			} else {
 				int v = highDigit;
 				do {
-					checkCanceled();
 					int prev = v;
 					v /= 10;
 					result[--currentChar] = (char) (0x0030 + (prev - v * 10));
@@ -283,13 +272,11 @@ class Conversion {
 			int tempLen = numberLength;
 			System.arraycopy(digits, 0, temp, 0, tempLen);
 			BIG_LOOP: while (true) {
-				checkCanceled();
 				// divide the array of digits by bigRadix and convert
 				// remainders
 				// to characters collecting them in the char array
 				long result11 = 0;
 				for (int i1 = tempLen - 1; i1 >= 0; i1--) {
-					checkCanceled();
 					long temp1 = (result11 << 32) + (temp[i1] & 0xFFFFFFFFL);
 					long res = divideLongByBillion(temp1);
 					temp[i1] = (int) res;
@@ -298,17 +285,14 @@ class Conversion {
 				int resDigit = (int) result11;
 				int previous = currentChar;
 				do {
-					checkCanceled();
 					result[--currentChar] = (char) (0x0030 + (resDigit % 10));
 				} while (((resDigit /= 10) != 0) && (currentChar != 0));
 				int delta = 9 - previous + currentChar;
 				for (int i = 0; (i < delta) && (currentChar > 0); i++) {
-					checkCanceled();
 					result[--currentChar] = '0';
 				}
 				int j = tempLen - 1;
 				for (; temp[j] == 0; j--) {
-					checkCanceled();
 					if (j == 0) { // means temp[0] == 0
 						break BIG_LOOP;
 					}
@@ -316,7 +300,6 @@ class Conversion {
 				tempLen = j + 1;
 			}
 			while (result[currentChar] == '0') {
-				checkCanceled();
 				currentChar++;
 			}
 		}
@@ -334,7 +317,6 @@ class Conversion {
 				// special case 1
 				int insertPoint = currentChar + exponent;
 				for (int j = resLengthInChars - 1; j >= insertPoint; j--) {
-					checkCanceled();
 					result[j + 1] = result[j];
 				}
 				result[++insertPoint] = '.';
@@ -346,7 +328,6 @@ class Conversion {
 			}
 			// special case 2
 			for (int j = 2; j < -exponent + 1; j++) {
-				checkCanceled();
 				result[--currentChar] = '0';
 			}
 			result[--currentChar] = '.';
@@ -428,7 +409,6 @@ class Conversion {
 		currentChar = resLengthInChars;
 		long v = value;
 		do {
-			checkCanceled();
 			long prev = v;
 			v /= 10;
 			result[--currentChar] = (char) (0x0030 + (prev - v * 10));
@@ -448,7 +428,6 @@ class Conversion {
 				// special case 1
 				int insertPoint = currentChar + (int) exponent;
 				for (int j = resLengthInChars - 1; j >= insertPoint; j--) {
-					checkCanceled();
 					result[j + 1] = result[j];
 				}
 				result[++insertPoint] = '.';
@@ -460,7 +439,6 @@ class Conversion {
 			}
 			// special case 2
 			for (int j = 2; j < -exponent + 1; j++) {
-				checkCanceled();
 				result[--currentChar] = '0';
 			}
 			result[--currentChar] = '.';

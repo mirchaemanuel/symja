@@ -16,12 +16,13 @@ import com.google.common.base.Function;
  * 
  * The IAST represents one node of the tree and contains
  * <ul>
- * <li>the operator of the tree (i.e. the "header"-symbol: Sin, Cos,
+ * <li>the operator of the tree (i.e. the &quot;header&quot;-symbol: Sin, Cos,
  * Inverse,...)</li>
  * <li>the arguments of the function</li>
  * </ul>
  * the arguments of the function are represented as a list (the i-th argument is
- * the i-th element in the list) an argument in the IAST is either
+ * the i-th element in the list; the 0-element is the &quot;header&quot;-symbol)
+ * an argument in the IAST is either
  * <ul>
  * <li>an IAST or</li>
  * <li>an atomic IExpr</li>
@@ -67,7 +68,7 @@ public interface IAST extends IExpr, INestedList<IExpr> {
 	public final int IS_DECOMPOSED_PARTIAL_FRACTION = 0x0080;
 
 	/**
-	 * Get the evaluation flags for this list
+	 * Get the evaluation flags for this list.
 	 * 
 	 * @return
 	 */
@@ -76,35 +77,35 @@ public interface IAST extends IExpr, INestedList<IExpr> {
 	/**
 	 * Returns the header. If the header itself is an ISymbol it will return the
 	 * symbol object. If the header itself is an IAST it will recursively call
-	 * headSymbol(). If the head is of type INumbers The head will return one of
-	 * these headers: "DoubleComplex", "Double", "Integer", "Fraction", "Complex"
-	 * All other objects return <code>null</code>
+	 * headSymbol(). If the head is of type INumbers, the head will return one of
+	 * these headers: "DoubleComplex", "Double", "Integer", "Fraction", "Complex".
+	 * All other objects return <code>null</code>.
 	 */
 	public ISymbol topHead();
 
 	/**
-	 * Are the evaluation flags disabled for this list ?
+	 * Are the given evaluation flags disabled for this list ?
 	 * 
 	 * @return
 	 */
 	public boolean isEvalFlagOff(int i);
 
 	/**
-	 * Are the evaluation flags enabled for this list ?
+	 * Are the given evaluation flags enabled for this list ?
 	 * 
 	 * @return
 	 */
 	public boolean isEvalFlagOn(int i);
 
 	/**
-	 * Set the flags for this list
+	 * Set the evaluation flags for this list.
 	 * 
 	 * @param i
 	 */
 	public void setEvalFlags(int i);
 
 	/**
-	 * Add a flag to the existing onest
+	 * Add an evaluation flag to the existing ones.
 	 * 
 	 * @param i
 	 */
@@ -176,17 +177,12 @@ public interface IAST extends IExpr, INestedList<IExpr> {
 	public void setHeader(IExpr expr);
 
 	/**
-	 * @deprecated use <tt>get(index + 1)</tt> instead
-	 */
-	// @Deprecated
-	// public int argsSize();
-	/**
 	 * Returns a shallow copy of this <code>INestedList</code> instance. (The
 	 * elements themselves are not copied.)
 	 * 
 	 * @return a clone of this <code>IAST</code> instance.
 	 */
-	public Object clone();
+	public IAST clone();
 
 	/**
 	 * Create a copy of this <code>IAST</code>, which only contains the head

@@ -142,7 +142,7 @@ public class Package implements IFunctionEvaluator {
 	 * @return
 	 */
 	private static IAST convertSymbolsInList(IAST ast, HashMap<ISymbol, ISymbol> convertedSymbols) {
-		IAST result = (IAST) ast.clone();
+		IAST result = ast.clone();
 		for (int i = 0; i < result.size(); i++) {
 			IExpr expr = result.get(i);
 			if (expr instanceof IAST) {

@@ -1,13 +1,12 @@
 package org.matheclipse.generic.util;
 
-
-
 /**
  * 
  * 
  */
 public class IntegerElement implements IElement, Comparable<IntegerElement> {
 	/* package private */final Integer fValue;
+
 	public IntegerElement() {
 		this(0);
 	}
@@ -33,10 +32,13 @@ public class IntegerElement implements IElement, Comparable<IntegerElement> {
 	}
 
 	public boolean equals(Object obj) {
-		if (!(obj instanceof IntegerElement)) {
-			return false;
+		if (this == obj) {
+			return true;
 		}
-		return fValue.equals(((IntegerElement) obj).fValue);
+		if (obj instanceof IntegerElement) {
+			return fValue.equals(((IntegerElement) obj).fValue);
+		}
+		return false;
 	}
 
 	public float floatValue() {

@@ -43,7 +43,7 @@ public class ExpandAll extends AbstractFunctionEvaluator implements IConstantHea
 		if (j>=ast.size()){
 			return null;
 		}
-		IAST result = (IAST) ast.clone();
+		IAST result = ast.clone();
 		for (int i = j; i < ast.size(); i++) {
 			temp = expandAll(ast.get(i));
 			if (temp != null) {

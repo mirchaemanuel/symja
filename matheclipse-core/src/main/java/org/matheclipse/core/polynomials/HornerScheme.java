@@ -46,7 +46,7 @@ public class HornerScheme {
 			ISignedNumber start = F.CD0;
 			for (Iterator<ISignedNumber> iter = map.keySet().iterator(); iter
 					.hasNext();) {
-				ISignedNumber exponent = (ISignedNumber) iter.next();
+				ISignedNumber exponent = iter.next();
 				IExpr coefficient = getCoefficient(exponent);
 				if (exponent.isLessThan(F.CD1)) {
 					if (exponent.compareTo(F.CD0) == 0) {
@@ -82,7 +82,7 @@ public class HornerScheme {
 			ISignedNumber start = F.C0;
 			for (Iterator<ISignedNumber> iter = map.keySet().iterator(); iter
 					.hasNext();) {
-				ISignedNumber exponent = (ISignedNumber) iter.next();
+				ISignedNumber exponent = iter.next();
 				IExpr coefficient = getCoefficient(exponent);
 				if (exponent.isLessThan(F.C1)) {
 					if (exponent.compareTo(F.C0) == 0) {
@@ -148,10 +148,9 @@ public class HornerScheme {
 					}
 				}
 			} else if (term.isAST(F.Power, 3)) {
-				IAST pow = (IAST) term;
-				if (pow.get(1).equals(sym)
-						&& pow.get(2) instanceof ISignedNumber) {
-					addToMap((ISignedNumber) pow.get(2), F.C1);
+				if (term.get(1).equals(sym)
+						&& term.get(2) instanceof ISignedNumber) {
+					addToMap((ISignedNumber) term.get(2), F.C1);
 					return;
 				}
 			}
@@ -185,10 +184,9 @@ public class HornerScheme {
 					}
 				}
 			} else if (term.isAST(F.Power, 3)) {
-				IAST pow = (IAST) term;
-				if (pow.get(1).equals(sym)
-						&& pow.get(2) instanceof ISignedNumber) {
-					addToMap((ISignedNumber) pow.get(2), F.CD1);
+				if (term.get(1).equals(sym)
+						&& term.get(2) instanceof ISignedNumber) {
+					addToMap((ISignedNumber) term.get(2), F.CD1);
 					return;
 				}
 			}

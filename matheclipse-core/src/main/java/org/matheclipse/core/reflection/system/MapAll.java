@@ -16,14 +16,14 @@ public class MapAll extends AbstractFunctionEvaluator {
 	}
 
 	@Override
-	public IExpr evaluate(final IAST functionList) {
-		if (functionList.size() != 3) {
+	public IExpr evaluate(final IAST ast) {
+		if (ast.size() != 3) {
 			return null;
 		}
 		final LevelSpec level = new LevelSpec(0, Integer.MAX_VALUE);
-		final IAST ast = F.ast(functionList.get(1));
-		final IExpr result = (IExpr) AST.COPY.map(functionList.get(2), Functors.append(ast), level, 1);
-		return result == null ? functionList.get(2) : result;
+		final IAST arg1AST = F.ast(ast.get(1));
+		final IExpr result = AST.COPY.map(ast.get(2), Functors.append(arg1AST), level, 1);
+		return result == null ? ast.get(2) : result;
 	}
 
 }

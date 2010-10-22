@@ -28,7 +28,7 @@ public class Apply extends AbstractFunctionEvaluator {
 
 		try {
 			if (!ast.get(2).isAtom()) {
-				final IExpr result = (IExpr) AST.COPY.apply(ast.get(2), Functors.constant(ast.get(1)), level, 1);
+				final IExpr result = AST.COPY.apply(ast.get(2), Functors.constant(ast.get(1)), level, 1);
 				return result == null ? ast.get(2) : result;
 			} else if (ast.size() == 3) {
 				IAST fun = F.ast(ast.get(1));

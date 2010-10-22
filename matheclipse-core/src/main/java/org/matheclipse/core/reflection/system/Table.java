@@ -40,7 +40,7 @@ public class Table implements IFunctionEvaluator {
 
 				final TableGenerator<IExpr, IAST> generator = new TableGenerator<IExpr, IAST>(iterList, resultList, new UnaryArrayFunction(
 						engine, ast.get(1)), AST.COPY, defaultValue);
-				return (IExpr) generator.table();
+				return generator.table();
 			}
 		} catch (final ClassCastException e) {
 			// the iterators are generated only from IASTs

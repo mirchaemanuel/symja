@@ -19,7 +19,7 @@ public class Drop extends AbstractFunctionEvaluator {
 				final Sequence sequ = Sequence.createSequence(ast.get(2));
 				final IAST arg1 = (IAST) ast.get(1);
 				if (sequ != null) {
-					final IAST resultList = (IAST)arg1.clone();
+					final IAST resultList = arg1.clone();
 					Algorithms.drop(resultList, sequ);
 					return resultList;
 				}

@@ -83,7 +83,7 @@ public class Plotter extends AbstractPlotter2D {
     engine.setCallbackFunction(CoreCallbackFunction.CONST);
     ListIterator<String> i = functions.listIterator();
     while (i.hasNext()) {
-      String s = (String) i.next();
+      String s = i.next();
       // System.out.println(s);
       populateFunction(s, i.previousIndex(), engine);
     }
@@ -133,7 +133,7 @@ public class Plotter extends AbstractPlotter2D {
    */
   protected void populatePoint(int func, String expression, int x,
       DoubleEvaluator engine) {
-    double xVal = (double) xMin + (double) (xRange * x)
+    double xVal = xMin + (xRange * x)
         / (double) thisResolution;
     engine.defineVariable("x", new DoubleVariable(xVal));
     point[func][x] = engine.evaluate(expression);
@@ -198,7 +198,7 @@ public class Plotter extends AbstractPlotter2D {
     if (cache.isEmpty()) {
       return new Plotter();
     } else {
-      Plotter p = (Plotter) cache.get(0);
+      Plotter p = cache.get(0);
       cache.remove(p);
       return p;
     }

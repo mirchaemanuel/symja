@@ -15,7 +15,6 @@
  */
 package org.matheclipse.parser.client.operator;
 
-
 public abstract class Operator {
 	protected String fFunctionName;
 
@@ -30,6 +29,9 @@ public abstract class Operator {
 	}
 
 	public boolean equals(final Object obj) {
+		if (this == obj) {
+			return true;
+		}
 		if (obj instanceof Operator) {
 			return fFunctionName.equals(((Operator) obj).fFunctionName);
 		}
@@ -65,7 +67,7 @@ public abstract class Operator {
 	}
 
 	public String toString() {
-		return "["+fFunctionName + "," + fOperatorString + "," + fPrecedence+"]";
+		return "[" + fFunctionName + "," + fOperatorString + "," + fPrecedence + "]";
 	}
 
 }

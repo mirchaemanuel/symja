@@ -70,38 +70,38 @@ public class HashedPatternRules {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		HashedPatternRules other = (HashedPatternRules) obj;
-		if (hash1 != other.hash1)
-			return false;
-		if (hash2 != other.hash2)
-			return false;
-		if (fLHSPattern1 == null) {
-			if (other.fLHSPattern1 != null)
+		}
+		if (obj instanceof HashedPatternRules) {
+			HashedPatternRules other = (HashedPatternRules) obj;
+			if (hash1 != other.hash1)
 				return false;
-		} else if (!fLHSPattern1.equals(other.fLHSPattern1))
-			return false;
-		if (fLHSPattern2 == null) {
-			if (other.fLHSPattern2 != null)
+			if (hash2 != other.hash2)
 				return false;
-		} else if (!fLHSPattern2.equals(other.fLHSPattern2))
-			return false;
-		if (fCondition == null) {
-			if (other.fCondition != null)
+			if (fLHSPattern1 == null) {
+				if (other.fLHSPattern1 != null)
+					return false;
+			} else if (!fLHSPattern1.equals(other.fLHSPattern1))
 				return false;
-		} else if (!fCondition.equals(other.fCondition))
-			return false;
-		if (fRHS == null) {
-			if (other.fRHS != null)
+			if (fLHSPattern2 == null) {
+				if (other.fLHSPattern2 != null)
+					return false;
+			} else if (!fLHSPattern2.equals(other.fLHSPattern2))
 				return false;
-		} else if (!fRHS.equals(other.fRHS))
-			return false;
-		return true;
+			if (fCondition == null) {
+				if (other.fCondition != null)
+					return false;
+			} else if (!fCondition.equals(other.fCondition))
+				return false;
+			if (fRHS == null) {
+				if (other.fRHS != null)
+					return false;
+			} else if (!fRHS.equals(other.fRHS))
+				return false;
+			return true;
+		}
+		return false;
 	}
 
 	/**

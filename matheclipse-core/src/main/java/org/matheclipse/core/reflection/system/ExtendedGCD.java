@@ -1,6 +1,7 @@
 package org.matheclipse.core.reflection.system;
 
 import org.matheclipse.basic.Config;
+import org.matheclipse.core.eval.exception.Validate;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IAST;
@@ -33,7 +34,7 @@ public class ExtendedGCD extends AbstractFunctionEvaluator {
 			return null;
 		}
 		for (int i = 1; i < functionList.size(); i++) {
-			if (!(functionList.get(i) instanceof IInteger)) {
+			if (!functionList.get(i).isInteger()) {
 				return null;
 			}
 			if (!((IInteger) functionList.get(i)).isPositive()) {

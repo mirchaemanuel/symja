@@ -30,10 +30,10 @@ public abstract class ASTNode {
 	/**
 	 * Returns the parsed string of this node.
 	 * 
-	 * @return <code>null</code> if there's another representation in the
-	 *         derived class
+	 * @return <code>null</code> if there's another representation in the derived
+	 *         class
 	 */
-	public String getString() { 
+	public String getString() {
 		return fStringValue;
 	}
 
@@ -45,11 +45,14 @@ public abstract class ASTNode {
 		return false;
 	}
 
-//	public ASTNode derivative(String variableName) {
-//		return new IntegerNode("0");
-//	}
+	// public ASTNode derivative(String variableName) {
+	// return new IntegerNode("0");
+	// }
 
 	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
 		if (obj instanceof ASTNode) {
 			return fStringValue.equals(((ASTNode) obj).fStringValue);
 		}

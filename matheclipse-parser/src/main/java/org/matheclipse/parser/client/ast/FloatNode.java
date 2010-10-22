@@ -27,9 +27,16 @@ public class FloatNode extends NumberNode {
 	}
 
 	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
 		if (obj instanceof FloatNode) {
 			return fStringValue.equals(((FloatNode) obj).fStringValue) && sign == ((FloatNode) obj).sign;
 		}
 		return false;
+	}
+	
+	public int hashCode() {
+		return super.hashCode()*43;
 	}
 }

@@ -149,7 +149,7 @@ public class ASTNodeFactory implements IParserFactory {
 	}
 
 	public Operator get(final String identifier) {
-		return (Operator) fOperatorMap.get(identifier);
+		return fOperatorMap.get(identifier);
 	}
 
 	/**

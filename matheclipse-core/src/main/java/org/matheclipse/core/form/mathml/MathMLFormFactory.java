@@ -209,9 +209,9 @@ public class MathMLFormFactory extends AbstractMathMLFormFactory implements ICon
 		} else {
 			if (convertedSymbol.equals(True)) {
 				tagStart(buf, "mi");
-				buf.append("&");
+				buf.append('&');
 				buf.append(sym.toString());
-				buf.append(";");
+				buf.append(';');
 				tagEnd(buf, "mi");
 			} else {
 				if (convertedSymbol instanceof Operator) {
@@ -243,7 +243,7 @@ public class MathMLFormFactory extends AbstractMathMLFormFactory implements ICon
 			final Object ho = CONSTANT_SYMBOLS.get(((ISymbol) obj).toString());
 			tagStart(buf, "mi");
 			if ((ho != null) && ho.equals(True)) {
-				buf.append("&");
+				buf.append('&');
 			}
 			buf.append(((ISymbol) obj).toString());
 			tagEnd(buf, "mi");

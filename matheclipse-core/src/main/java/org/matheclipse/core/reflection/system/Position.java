@@ -32,7 +32,7 @@ public class Position extends AbstractFunctionEvaluator {
 		final PatternMatcher matcher = new PatternMatcher(pattern);
 		final PositionConverter pos = new PositionConverter();
 
-		final IAST cloneList = (IAST) list.copyHead();
+		final IAST cloneList = list.copyHead();
 		final IAST resultList = List();
 		AST.COPY.position(list, cloneList, resultList, level, matcher, pos, 1);
 		return resultList;

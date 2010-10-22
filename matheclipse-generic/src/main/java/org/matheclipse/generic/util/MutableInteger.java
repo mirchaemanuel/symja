@@ -52,6 +52,9 @@ public class MutableInteger {
 	 *         otherwise.
 	 */
 	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
 		if (obj instanceof MutableInteger) {
 			return fValue == ((MutableInteger) obj).intValue();
 		}

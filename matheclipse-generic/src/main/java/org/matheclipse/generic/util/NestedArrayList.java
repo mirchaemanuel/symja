@@ -51,16 +51,21 @@ public class NestedArrayList<E extends IElement> extends ArrayList<E> implements
 	}
 
 	@Override
-	public boolean equals(Object o) {
-		if (o == this) {
+	public boolean equals(Object obj) {
+		if (obj == this) {
 			return true;
 		}
-		if (!(o instanceof NestedArrayList)) {
-			return false;
+		if (obj instanceof NestedArrayList) {
+			return super.equals(obj);
 		}
-		return super.equals(o);
+		return false;
 	}
 
+	@Override
+	public int hashCode() {
+		return super.hashCode()*97;
+	}
+	
 	public NestedArrayList<E> copyHead() {
 		final NestedArrayList<E> list = new NestedArrayList<E>(size());
 		list.set(0, get(0));

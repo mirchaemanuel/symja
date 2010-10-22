@@ -18,7 +18,7 @@ public class MultipleArrayFunction implements IArrayFunction<IExpr> {
 	}
 
 	public IExpr evaluate(final Object[] index) {
-		final IAST ast = (IAST) fHeadAST.clone();
+		final IAST ast = fHeadAST.clone();
 		for (int i = 0; i < index.length; i++) {
 			checkCanceled();
 			ast.add((IExpr) index[i]);

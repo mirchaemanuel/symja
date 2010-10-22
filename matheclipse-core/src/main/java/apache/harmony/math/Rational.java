@@ -424,14 +424,12 @@ public final class Rational implements Serializable {// extends Number<Rational>
 		if (dividendBitLength > divisorBitLength) {
 			// Normalizes the divisor to 63 bits.
 			int shift = divisorBitLength - 63;
-			;
 			long divisor = fDenominator.shiftRight(shift).longValue();
 			BigInteger dividend = fNumerator.shiftRight(shift);
 			return dividend.doubleValue() / divisor;
 		} else {
 			// Normalizes the dividend to 63 bits.
 			int shift = dividendBitLength - 63;
-			;
 			long dividend = fNumerator.shiftRight(shift).longValue();
 			BigInteger divisor = fDenominator.shiftRight(shift);
 			return dividend / divisor.doubleValue();

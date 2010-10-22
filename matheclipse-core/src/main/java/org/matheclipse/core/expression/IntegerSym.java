@@ -144,10 +144,13 @@ public class IntegerSym extends ExprImpl implements IInteger {
 
 	@Override
 	public boolean equals(final Object obj) {
-		if (!(obj instanceof IntegerSym)) {
-			return false;
+		if (this == obj) {
+			return true;
 		}
-		return fInteger.equals(((IntegerSym) obj).fInteger);
+		if (obj instanceof IntegerSym) {
+			return fInteger.equals(((IntegerSym) obj).fInteger);
+		}
+		return false;
 	}
 
 	/**

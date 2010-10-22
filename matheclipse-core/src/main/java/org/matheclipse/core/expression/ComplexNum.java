@@ -176,6 +176,9 @@ public class ComplexNum extends ExprImpl implements IComplexNum {
 	// }
 	@Override
 	public boolean equals(final Object obj) {
+		if (this == obj) {
+			return true;
+		}
 		if (obj instanceof ComplexNum) {
 			return fComplex.equals(((ComplexNum) obj).fComplex);
 		}

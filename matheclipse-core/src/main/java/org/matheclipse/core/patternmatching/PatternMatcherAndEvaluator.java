@@ -12,7 +12,7 @@ public class PatternMatcherAndEvaluator extends PatternMatcher implements Serial
 	 * 
 	 */
 	private static final long serialVersionUID = 2241135467123931061L;
-	
+
 	private IExpr fRightHandSide;
 	private ISymbol fSetSymbol;
 
@@ -35,26 +35,34 @@ public class PatternMatcherAndEvaluator extends PatternMatcher implements Serial
 
 	@Override
 	public Object clone() {
-//		try {
-			PatternMatcherAndEvaluator v = (PatternMatcherAndEvaluator) super.clone();
-			v.fRightHandSide = fRightHandSide;
-			v.fSetSymbol = fSetSymbol;
-			return v;
-//		} catch (CloneNotSupportedException e) {
-//			// this shouldn't happen, since we are Cloneable
-//			throw new InternalError();
-//		}
+		// try {
+		PatternMatcherAndEvaluator v = (PatternMatcherAndEvaluator) super.clone();
+		v.fRightHandSide = fRightHandSide;
+		v.fSetSymbol = fSetSymbol;
+		return v;
+		// } catch (CloneNotSupportedException e) {
+		// // this shouldn't happen, since we are Cloneable
+		// throw new InternalError();
+		// }
 	}
 
 	@Override
 	public boolean equals(final Object obj) {
-		if (!(obj instanceof PatternMatcherAndEvaluator)) {
-			return false;
+		if (this == obj) {
+			return true;
 		}
-		// don't compare fSetSymbol and fRightHandSide here
-		return super.equals(obj);
+		if (obj instanceof PatternMatcherAndEvaluator) {
+			// don't compare fSetSymbol and fRightHandSide here
+			return super.equals(obj);
+		}
+		return false;
 	}
 
+	@Override
+	public int hashCode() {
+		return super.hashCode()*53;
+	}
+	
 	/**
 	 * Match the (left-hand-side) pattern with the given expression. If true
 	 * evaluate the right-hand-side for the determined values of the patterns

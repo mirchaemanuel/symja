@@ -9,7 +9,6 @@ import org.matheclipse.core.eval.exception.Validate;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
 import org.matheclipse.core.expression.ExprField;
 import org.matheclipse.core.expression.ExprFieldElement;
-import org.matheclipse.core.expression.IntegerSym;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
 
@@ -20,21 +19,21 @@ public class MatrixPower extends AbstractFunctionEvaluator {
 	}
 
 	@Override
-	public IExpr evaluate(final IAST lst) {
-		if (lst.size() != 3) {
+	public IExpr evaluate(final IAST ast) {
+		if (ast.size() != 3) {
 			return null;
 		}
 		FieldMatrix<ExprFieldElement> matrix;
 		FieldMatrix<ExprFieldElement> resultMatrix;
 		try {
-			matrix = Convert.list2Matrix((IAST) lst.get(1));
-			final int p = Validate.checkIntType(lst, 2, Integer.MIN_VALUE);
+			matrix = Convert.list2Matrix((IAST) ast.get(1));
+			final int p = Validate.checkIntType(ast, 2, Integer.MIN_VALUE);
 			if (p < 0) {
 				return null;
 			}
 			if (p == 1) {
-				((IAST)lst.get(1)).addEvalFlags(IAST.IS_MATRIX);
-				return lst.get(1);
+				((IAST)ast.get(1)).addEvalFlags(IAST.IS_MATRIX);
+				return ast.get(1);
 			}
 			if (p == 0) {
 				resultMatrix = new BlockFieldMatrix<ExprFieldElement>(ExprField.CONST, matrix.getRowDimension(), matrix.getColumnDimension());
@@ -62,7 +61,7 @@ public class MatrixPower extends AbstractFunctionEvaluator {
 			if (Config.SHOW_STACKTRACE) {
 				e.printStackTrace();
 			}
-			throw new NonNegativeIntegerExpected(lst, 2);
+			throw new NonNegativeIntegerExpected(ast, 2);
 		} catch (final IndexOutOfBoundsException e) {
 			if (Config.SHOW_STACKTRACE) {
 				e.printStackTrace();

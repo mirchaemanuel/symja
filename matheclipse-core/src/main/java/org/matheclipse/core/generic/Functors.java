@@ -33,7 +33,7 @@ public class Functors {
 
 		@Override
 		public IExpr apply(final IExpr arg) {
-			final IAST ast = (IAST) fAST.clone();
+			final IAST ast = fAST.clone();
 			ast.add(arg);
 			return ast;
 		}
@@ -74,7 +74,7 @@ public class Functors {
 
 		@Override
 		public IExpr apply(final IExpr arg) {
-			final IAST ast = (IAST) fConstant.clone();
+			final IAST ast = fConstant.clone();
 			ast.set(fPosition, arg);
 			return ast;
 		}

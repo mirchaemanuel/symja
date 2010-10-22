@@ -30,7 +30,7 @@ public class BinaryEval extends BinaryFunctorImpl<IExpr> {
 	 *
 	 */
 	public IExpr apply(final IExpr firstArg, final IExpr secondArg) {
-		final IAST ast = (IAST) fAST.clone();
+		final IAST ast = fAST.clone();
 		ast.add(firstArg);
 		ast.add(secondArg); 
 		return fEngine.evaluate(ast);

@@ -1,5 +1,6 @@
 package org.matheclipse.core.eval.exception;
 
+import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IInteger;
 import org.matheclipse.core.interfaces.ISymbol;
@@ -11,40 +12,14 @@ import org.matheclipse.core.interfaces.ISymbol;
  */
 public final class Validate {
 	/**
+	 * Check the argument, if it's a Java {@code int} value in the range [0,
+	 * Integer.MAX_VALUE]
 	 * 
-	 * @throws WrongNumberOfArguments
-	 *           if {@code size} is not in the range {@code from} to {@code
-	 *           Integer.MAX_VALUE}
-	 */
-	public static IAST checkRange(IAST list, int from) {
-		return checkRange(list, from, Integer.MAX_VALUE);
-	}
-
-	/**
-	 * 
-	 * @throws WrongNumberOfArguments
-	 *           if {@code size} is not in the range {@code from} to {@code to}
-	 */
-	public static IAST checkRange(IAST list, int from, int to) {
-		if (list.size() < from) {
-			throw new WrongNumberOfArguments(list, from, list.size() - 1);
-		}
-		if (list.size() > to) {
-			throw new WrongNumberOfArguments(list, to, list.size() - 1);
-		}
-		return list;
-	}
-
-	/**
-	 * 
-	 * @throws WrongNumberOfArguments
+	 * @throws WrongArgumentType
 	 *           if {@code size} unequals the list size
 	 */
-	public static IAST checkSize(IAST list, int size) {
-		if (list.size() != size) {
-			throw new WrongNumberOfArguments(list, size - 1, list.size() - 1);
-		}
-		return list;
+	public static int checkIntType(IAST ast, int pos) {
+		return checkIntType(ast, pos, 0);
 	}
 
 	/**
@@ -54,40 +29,96 @@ public final class Validate {
 	 * @throws WrongArgumentType
 	 *           if {@code size} unequals the list size
 	 */
-	public static int checkIntType(IAST list, int pos, int startValue) {
-		if (list.get(pos) instanceof IInteger) {
+	public static int checkIntType(IAST ast, int pos, int startValue) {
+		if (ast.get(pos).isInteger()) {
 			try {
-				int result = ((IInteger) list.get(pos)).toInt();
+				int result = ((IInteger) ast.get(pos)).toInt();
 				if (startValue > result) {
-					throw new WrongArgumentType(list, list.get(pos), pos, "Trying to convert the argument into the integer range: "
+					throw new WrongArgumentType(ast, ast.get(pos), pos, "Trying to convert the argument into the integer range: "
 							+ startValue + " - " + Integer.MAX_VALUE);
 				}
 				return result;
 			} catch (ArithmeticException ae) {
-				throw new WrongArgumentType(list, list.get(pos), pos, "Trying to convert the argument into the integer range: "
-						+ startValue + " - " + Integer.MAX_VALUE);
+				throw new WrongArgumentType(ast, ast.get(pos), pos, "Trying to convert the argument into the integer range: " + startValue
+						+ " - " + Integer.MAX_VALUE);
 			}
 		}
-		throw new WrongArgumentType(list, list.get(pos), pos, "Trying to convert the argument into the integer range: " + startValue
+		throw new WrongArgumentType(ast, ast.get(pos), pos, "Trying to convert the argument into the integer range: " + startValue
 				+ " - " + Integer.MAX_VALUE);
 	}
 
 	/**
-	 * Check the argument, if it's a Java {@code int} value in the range [0,
-	 * Integer.MAX_VALUE]
 	 * 
-	 * @throws WrongArgumentType
-	 *           if {@code size} unequals the list size
+	 * @throws WrongNumberOfArguments
+	 *           if {@code size} is not in the range {@code from} to {@code
+	 *           Integer.MAX_VALUE}
 	 */
-	public static int checkIntType(IAST list, int pos) {
-		return checkIntType(list, pos, 0);
+	public static IAST checkRange(IAST ast, int from) {
+		return checkRange(ast, from, Integer.MAX_VALUE);
 	}
 
-	public static ISymbol checkSymbolType(IAST list, int pos) {
-		if (list.get(pos) instanceof ISymbol) {
-			return (ISymbol) list.get(pos);
+	/**
+	 * 
+	 * @throws WrongNumberOfArguments
+	 *           if {@code size} is not in the range {@code from} to {@code to}
+	 */
+	public static IAST checkRange(IAST ast, int from, int to) {
+		if (ast.size() < from) {
+			throw new WrongNumberOfArguments(ast, from, ast.size() - 1);
 		}
-		throw new WrongArgumentType(list, list.get(pos), pos, "Symbol expected!");
+		if (ast.size() > to) {
+			throw new WrongNumberOfArguments(ast, to, ast.size() - 1);
+		}
+		return ast;
+	}
+
+	/**
+	 * 
+	 * @throws WrongNumberOfArguments
+	 *           if {@code size} unequals the list size
+	 */
+	public static IAST checkSize(IAST ast, int size) {
+		if (ast.size() != size) {
+			throw new WrongNumberOfArguments(ast, size - 1, ast.size() - 1);
+		}
+		return ast;
+	}
+
+	/**
+	 * Check if the argument at the given position is a single symbol or a list of
+	 * symbols.
+	 * 
+	 * @param position
+	 *          the position which has to be a symbol or list.
+	 * @throws WrongArgumentType
+	 *           if it's not a symbol.
+	 */
+	public static IAST checkSymbolOrSymbolList(IAST ast, int position) {
+		IAST vars = null;
+		if (ast.get(position).isList()) {
+			vars = (IAST) ast.get(position);
+			for (int i = 1; i < vars.size(); i++) {
+				Validate.checkSymbolType(vars, i);
+			}
+		} else {
+			vars = F.List(Validate.checkSymbolType(ast, position));
+		}
+		return vars;
+	}
+
+	/**
+	 * Check if the argument at the given position is a symbol.
+	 * 
+	 * @param position
+	 *          the position which has to be a symbol.
+	 * @throws WrongArgumentType
+	 *           if it's not a symbol.
+	 */
+	public static ISymbol checkSymbolType(IAST ast, int position) {
+		if (ast.get(position).isSymbol()) {
+			return (ISymbol) ast.get(position);
+		}
+		throw new WrongArgumentType(ast, ast.get(position), position, "Symbol expected!");
 	}
 
 	private Validate() {

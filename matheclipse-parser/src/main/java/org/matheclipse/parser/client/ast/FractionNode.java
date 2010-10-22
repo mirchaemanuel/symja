@@ -41,12 +41,12 @@ public class FractionNode extends NumberNode {
 	public String toString() {
 		final StringBuffer buff = new StringBuffer();
 		if (sign) {
-			buff.append("-");
+			buff.append('-');
 		}
 		if (fNumerator != null) {
 			buff.append(fNumerator.toString());
 		}
-		buff.append("/");
+		buff.append('/');
 		if (fDenominator != null) {
 			buff.append(fDenominator.toString());
 		}
@@ -63,6 +63,9 @@ public class FractionNode extends NumberNode {
 	}
 
 	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
 		if (obj instanceof FractionNode) {
 			return fNumerator.equals(((FractionNode) obj).fNumerator) && fDenominator.equals(((FractionNode) obj).fDenominator)
 					&& sign == ((FractionNode) obj).sign;
