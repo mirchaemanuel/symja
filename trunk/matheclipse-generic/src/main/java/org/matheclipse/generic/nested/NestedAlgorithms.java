@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import org.matheclipse.core.generic.util.INestedListElement;
 import org.matheclipse.generic.ListSizeSequence;
 import org.matheclipse.generic.interfaces.IPositionConverter;
 
@@ -16,21 +17,20 @@ import com.google.common.base.Predicate;
  * 
  * The derived instances have to define the clone and copy semantics.
  */
-public abstract class NestedAlgorithms<T, L extends List<T>> implements INestedList<T, L> {
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.matheclipse.generic.nested.INestedList#cast(java.lang.Object)
+public abstract class NestedAlgorithms<T extends INestedListElement, L extends List<T> & INestedListElement> implements
+		INestedList<T, L> {
+	/**
+	 * {@inheritDoc}
 	 */
-	final public L cast(Object obj) {
+	@SuppressWarnings("unchecked")
+	final public L cast(T obj) {
 		return (L) obj;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.matheclipse.generic.nested.INestedList#castList(L)
+	/**
+	 * {@inheritDoc}
 	 */
+	@SuppressWarnings("unchecked")
 	final public T castList(L list) {
 		return (T) list;
 	}
@@ -166,7 +166,7 @@ public abstract class NestedAlgorithms<T, L extends List<T>> implements INestedL
 	 *          value from the given position objects in <code>positions</code>.
 	 * @param headOffsez
 	 */
-	public Object extract(final L list, final List<? extends T> positions, final IPositionConverter<? super T> positionConverter) {
+	public T extract(final L list, final List<? extends T> positions, final IPositionConverter<? super T> positionConverter) {
 		return extract(list, positions, positionConverter, 0);
 	}
 
@@ -181,12 +181,12 @@ public abstract class NestedAlgorithms<T, L extends List<T>> implements INestedL
 	 *          value from the given position objects in <code>positions</code>.
 	 * @param headOffsez
 	 */
-	public Object extract(final L list, final List<? extends T> positions, final IPositionConverter<? super T> positionConverter,
+	public T extract(final L list, final List<? extends T> positions, final IPositionConverter<? super T> positionConverter,
 			int headOffset) {
 		int p = 0;
 		L temp = list;
 		int posSize = positions.size() - 1;
-		Object expr = list;
+		T expr = castList(list);
 		for (int i = headOffset; i <= posSize; i++) {
 			p = positionConverter.toInt(positions.get(i));
 			if (temp == null || temp.size() <= p) {

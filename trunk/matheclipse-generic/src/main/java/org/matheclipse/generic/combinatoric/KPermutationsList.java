@@ -3,6 +3,7 @@ package org.matheclipse.generic.combinatoric;
 import java.util.Iterator;
 import java.util.List;
 
+import org.matheclipse.core.generic.util.INestedListElement;
 import org.matheclipse.generic.nested.INestedList;
 
 /**
@@ -10,7 +11,7 @@ import org.matheclipse.generic.nested.INestedList;
  *
  * See <a href="http://en.wikipedia.org/wiki/Permutation">Permutation</a>
  */
-public class KPermutationsList<T, L extends List<T>> implements Iterator<L>, Iterable<L> {
+public class KPermutationsList<T extends INestedListElement, L extends List<T> & INestedListElement> implements Iterator<L>, Iterable<L> {
 
 	final private L fList;
 	final private L fResultList;

@@ -3,6 +3,7 @@ package org.matheclipse.generic.combinatoric;
 import java.util.Iterator;
 import java.util.List;
 
+import org.matheclipse.core.generic.util.INestedListElement;
 import org.matheclipse.generic.nested.INestedList;
 
 /**
@@ -13,7 +14,7 @@ import org.matheclipse.generic.nested.INestedList;
  * Partition of a set</a>
  * 
  */
-public class KPartitionsList<T, L extends List<T>> implements Iterator<L>, Iterable<L> {
+public class KPartitionsList<T extends INestedListElement, L extends List<T> & INestedListElement> implements Iterator<L>, Iterable<L> {
 
 	final private L fList;
 	final private L fResultList;

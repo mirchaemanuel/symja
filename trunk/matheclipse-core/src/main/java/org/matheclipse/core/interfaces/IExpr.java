@@ -19,7 +19,7 @@ import com.google.common.base.Predicate;
  * (I)nterface for a mathematical (Expr)ession
  * 
  */
-public interface IExpr extends Comparable<IExpr>, // FieldElement<IExpr>,
+public interface IExpr extends Comparable<IExpr>,  
 		INestedListElement, Serializable {
 
 	public final static int DOUBLEID = 2;

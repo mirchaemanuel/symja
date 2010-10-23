@@ -2,13 +2,14 @@ package org.matheclipse.generic.nested;
 
 import java.util.List;
 
+import org.matheclipse.core.generic.util.INestedListElement;
 import org.matheclipse.generic.interfaces.IArrayFunction;
 import org.matheclipse.generic.interfaces.IIterator;
 
 /**
  * Table structure generator (i.e. lists, vectors, matrices, tensors)
  */
-public class TableGenerator<T, L extends List<T>> {
+public class TableGenerator<T extends INestedListElement, L extends List<T> & INestedListElement> {
 
 	final List<? extends IIterator<T>> fIterList;
 

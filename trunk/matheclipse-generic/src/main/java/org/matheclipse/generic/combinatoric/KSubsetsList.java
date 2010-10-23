@@ -3,6 +3,7 @@ package org.matheclipse.generic.combinatoric;
 import java.util.Iterator;
 import java.util.List;
 
+import org.matheclipse.core.generic.util.INestedListElement;
 import org.matheclipse.generic.nested.INestedList;
 
 /**
@@ -10,7 +11,7 @@ import org.matheclipse.generic.nested.INestedList;
  * 
  * See <a href="http://en.wikipedia.org/wiki/Combination">Combination</a>
  */
-public class KSubsetsList<T, L extends List<T>> implements Iterator<L>, Iterable<L> {
+public class KSubsetsList<T extends INestedListElement, L extends List<T> & INestedListElement> implements Iterator<L>, Iterable<L> {
 
 	final private L fList;
 	final private L fResultList;
@@ -33,7 +34,7 @@ public class KSubsetsList<T, L extends List<T>> implements Iterator<L>, Iterable
 		fOffset = offset;
 	}
 
-	public static <T, L extends List<T>> KSubsetsList<T, L> createKSubsets(final L list, final int k, L resultList,
+	public static <T extends INestedListElement, L extends List<T> & INestedListElement> KSubsetsList<T, L> createKSubsets(final L list, final int k, L resultList,
 			INestedList<T, L> copier, final int offset) {
 		return new KSubsetsList<T, L>(new KSubsetsIterable(list.size() - offset, k), list, k, resultList, copier, offset);
 	}
