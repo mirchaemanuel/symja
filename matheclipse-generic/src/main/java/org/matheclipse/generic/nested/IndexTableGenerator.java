@@ -2,12 +2,13 @@ package org.matheclipse.generic.nested;
 
 import java.util.List;
 
+import org.matheclipse.core.generic.util.INestedListElement;
 import org.matheclipse.generic.interfaces.IIndexFunction;
 
 /**
  * Table structure generator (i.e. lists, vectors, matrices, tensors)
  */
-public class IndexTableGenerator<T, L extends List<T>> {
+public class IndexTableGenerator<T extends INestedListElement, L extends List<T> & INestedListElement> {
 	final int[] fIndexArray;
 
 	final L fPrototypeList;

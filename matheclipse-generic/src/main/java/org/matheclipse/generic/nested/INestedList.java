@@ -2,13 +2,15 @@ package org.matheclipse.generic.nested;
 
 import java.util.List;
 
+import org.matheclipse.core.generic.util.INestedListElement;
+
 /**
  * Interface for nested lists. I.e. for lists which contain objects of interface
  * type <code>java.util.List<T></code> and <code>T</code>.
  * 
  * The derived instances have to define the clone and copy semantics.
  */
-public interface INestedList<T, L extends List<T>> {
+public interface INestedList<T extends INestedListElement, L extends List<T> & INestedListElement> {
 
 	/**
 	 * Cast the <code>object</code> to the list type <code>L</code>.
@@ -16,7 +18,7 @@ public interface INestedList<T, L extends List<T>> {
 	 * @param object
 	 * @return
 	 */
-	public abstract L cast(Object obj);
+	public abstract L cast(T obj);
 
 	/**
 	 * Cast the <code>list</code> to type <code>T</code>.
@@ -39,7 +41,7 @@ public interface INestedList<T, L extends List<T>> {
 	 * @param obj
 	 * @return
 	 */
-	public abstract boolean isInstance(Object object);
+	public abstract boolean isInstance(T object);
 
 	/**
 	 * Create a new empty copy of the <code>list</code>. <br/>

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.matheclipse.core.generic.util.INestedListElement;
 import org.matheclipse.generic.nested.INestedList;
 
 /**
@@ -16,7 +17,7 @@ import org.matheclipse.generic.nested.INestedList;
  * @author Heinz Kredel
  * @author Axel Kramer (Modifications for MathEclipse)
  */
-public class CartesianProductList<T, L extends List<T>> implements Iterable<L> {
+public class CartesianProductList<T extends INestedListElement, L extends List<T> & INestedListElement> implements Iterable<L> {
 
 	/**
 	 * data structure.
@@ -58,7 +59,7 @@ public class CartesianProductList<T, L extends List<T>> implements Iterable<L> {
  * 
  * @author Heinz Kredel
  */
-class CartesianProductIterator<T, L extends List<T>> implements Iterator<L> {
+class CartesianProductIterator<T extends INestedListElement, L extends List<T> & INestedListElement> implements Iterator<L> {
 
 	/**
 	 * data structure.

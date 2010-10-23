@@ -28,29 +28,8 @@ public class ASTCopy extends NestedAlgorithms<IExpr, IAST> {
 		return list.copyHead();
 	}
 
-	public boolean isInstance(Object object) {
+	public boolean isInstance(IExpr object) {
 		return fType.isInstance(object);
 	}
 
-//	public IAST evaluate(IAST list) {
-//		if (list.getHeader() instanceof ISymbol) {
-//			ISymbol symbol = (ISymbol) list.getHeader();
-//			if ((symbol.getAttributes() & ISymbol.FLAT) == ISymbol.FLAT) {
-//
-//				IExpr result = EvalEngine.get().evalLoop(list);
-//				if (result != null) {
-//					if (result instanceof IAST) {
-//						IAST resultAST = (IAST) result;
-//						if (symbol.equals(resultAST.getHeader())) {
-//							return resultAST;
-//						}
-//					}
-//					IAST ast = F.ast(symbol);
-//					ast.add(result);
-//					return ast;
-//				}
-//			}
-//		}
-//		return null;
-//	}
 }

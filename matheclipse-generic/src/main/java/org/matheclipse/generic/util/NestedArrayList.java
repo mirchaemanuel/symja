@@ -51,6 +51,7 @@ public class NestedArrayList<E extends IElement> extends ArrayList<E> implements
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	public boolean equals(Object obj) {
 		if (obj == this) {
 			return true;
