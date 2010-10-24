@@ -23,25 +23,33 @@ public class Expand extends AbstractFunctionEvaluator implements IConstantHeader
 		int m;
 		int n;
 		int[] parts;
-		IAST plusAST;
+		IAST precalculatedPowerASTs;
 
 		public NumberPartititon(IAST plusAST, int n, IAST expandedResult) {
-			this.plusAST = plusAST;
 			this.expandedResult = expandedResult;
 			this.n = n;
 			this.m = plusAST.size() - 1;
 			this.parts = new int[m];
+			// precalculate all Power[] ASTs:
+			this.precalculatedPowerASTs = F.List();
+			for (IExpr expr : plusAST) {
+				precalculatedPowerASTs.add(F.Power(expr, F.Null));
+			}
 		}
 
 		private void addFactor(int[] j) {
 			final KPermutationsIterable perm = new KPermutationsIterable(j, m, m);
 			IInteger multinomial = F.integer(Multinomial.multinomial(j, n));
+			final IAST times = Times();
+			IAST temp;
 			for (int[] indices : perm) {
-				final IAST timesAST = Times();
+				final IAST timesAST = times.clone();
 				timesAST.add(multinomial);
 				for (int k = 0; k < m; k++) {
 					if (indices[k] != 0) {
-						timesAST.add(F.Power(plusAST.get(k + 1), indices[k]));
+						temp = precalculatedPowerASTs.getAST(k + 1).clone();
+						temp.set(2, F.integer(indices[k]));
+						timesAST.add(temp);
 					}
 				}
 				expandedResult.add(timesAST);
