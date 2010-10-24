@@ -970,6 +970,7 @@ public class SystemTestCase extends AbstractTestCase {
 
 	public void testSystem166() {
 		check("Expand[(a+b)^2]", "b^2+2*a*b+a^2");
+		check("Expand[(a+b+c+d)^2]", "d^2+2*c*d+2*b*d+2*a*d+c^2+2*b*c+2*a*c+b^2+2*a*b+a^2");
 	}
 
 	public void testSystem167() {

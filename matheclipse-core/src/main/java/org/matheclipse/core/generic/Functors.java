@@ -86,7 +86,7 @@ public class Functors {
 
 		/**
 		 * 
-		 * @param ast
+		 * @param plusAST
 		 *          the complete AST which should be cloned in the {@code apply}
 		 *          method
 		 * @param position
@@ -110,7 +110,7 @@ public class Functors {
 
 		/**
 		 * 
-		 * @param ast
+		 * @param plusAST
 		 *          the complete AST which should be cloned in the {@code apply}
 		 *          method
 		 * @param position

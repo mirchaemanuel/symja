@@ -15,29 +15,74 @@ import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.IInteger;
 import org.matheclipse.core.interfaces.INumber;
 import org.matheclipse.generic.combinatoric.KPermutationsIterable;
-import org.matheclipse.generic.combinatoric.NumberPartitionsIterable;
 
 public class Expand extends AbstractFunctionEvaluator implements IConstantHeaders {
 
-	public Expand() {
-		super();
-	}
+	private static class NumberPartititon {
+		IAST expandedResult;
+		int m;
+		int n;
+		int[] parts;
+		IAST plusAST;
 
-	@Override
-	public IExpr evaluate(final IAST ast) {
-		if (ast.size() != 2) {
-			return null;
+		public NumberPartititon(IAST plusAST, int n, IAST expandedResult) {
+			this.plusAST = plusAST;
+			this.expandedResult = expandedResult;
+			this.n = n;
+			this.m = plusAST.size() - 1;
+			this.parts = new int[m];
 		}
 
-		if (ast.get(1) instanceof IAST) {
-			final IAST arg1 = (IAST) ast.get(1);
-			IExpr temp = expand(arg1);
-			if (temp != null) {
-				return temp;
+		private void addFactor(int[] j) {
+			final KPermutationsIterable perm = new KPermutationsIterable(j, m, m);
+			IInteger multinomial = F.integer(Multinomial.multinomial(j, n));
+			for (int[] indices : perm) {
+				final IAST timesAST = Times();
+				timesAST.add(multinomial);
+				for (int k = 0; k < m; k++) {
+					if (indices[k] != 0) {
+						timesAST.add(F.Power(plusAST.get(k + 1), indices[k]));
+					}
+				}
+				expandedResult.add(timesAST);
 			}
 		}
 
-		return ast.get(1);
+		public void partition() {
+			partition(n, n, 0);
+		}
+
+		private void partition(int n, int max, int currentIndex) {
+			if (n == 0) {
+				addFactor(parts);
+				return;
+			}
+			if (currentIndex >= m) {
+				return;
+			}
+			int old;
+			old = parts[currentIndex];
+			int min = Math.min(max, n);
+
+			for (int i = min; i >= 1; i--) {
+				parts[currentIndex] = i;
+				partition(n - i, i, currentIndex + 1);
+			}
+			parts[currentIndex] = old;
+		}
+	}
+
+	private static IAST assurePlus(final IExpr expr) {
+		IAST astPlus = null;
+		if (expr.isPlus()) {
+			return (IAST) expr;
+		}
+		// if expr is not of the form Plus[...], generate Plus[expr]
+		if (astPlus == null) {
+			astPlus = Plus();
+			astPlus.add(expr);
+		}
+		return astPlus;
 	}
 
 	public static IExpr expand(final IAST ast) {
@@ -82,6 +127,29 @@ public class Expand extends AbstractFunctionEvaluator implements IConstantHeader
 		return null;
 	}
 
+	/**
+	 * Expand a polynomial power with the multinomial theorem. See <a
+	 * href="http://en.wikipedia.org/wiki/Multinomial_theorem">Wikipedia -
+	 * Multinomial theorem</a>
+	 * 
+	 * @param plusAST
+	 * @param n
+	 * @return
+	 */
+	public static IExpr expandPower(final IAST plusAST, final int n) {
+		if (n == 1) {
+			return plusAST;
+		}
+		if (n == 0) {
+			return F.C0;
+		}
+
+		final IAST expandedResult = Plus();
+		NumberPartititon part = new NumberPartititon(plusAST, n, expandedResult);
+		part.partition();
+		return expandedResult;
+	}
+
 	private static IExpr expandTimes(final IAST timesAST) {
 		IExpr result = timesAST.get(1);
 		for (int i = 2; i < timesAST.size(); i++) {
@@ -92,24 +160,11 @@ public class Expand extends AbstractFunctionEvaluator implements IConstantHeader
 
 	public static IExpr expandTimesBinary(final IExpr expr0, final IExpr expr1) {
 		if (expr0.isNumber() && expr1.isPlus()) {
-			return EvalEngine.eval(expandTimesPlus((INumber)expr0, (IAST)expr1));
+			return EvalEngine.eval(expandTimesPlus((INumber) expr0, (IAST) expr1));
 		}
 		final IAST ast0 = assurePlus(expr0);
 		final IAST ast1 = assurePlus(expr1);
 		return EvalEngine.eval(expandTimesPlus(ast0, ast1));
-	}
-
-	private static IAST assurePlus(final IExpr expr) {
-		IAST astPlus = null;
-		if (expr.isPlus()) {
-			return (IAST)expr;
-		}
-		// if expr is not of the form Plus[...], generate Plus[expr]
-		if (astPlus == null) {
-			astPlus = Plus();
-			astPlus.add(expr);
-		}
-		return astPlus;
 	}
 
 	public static IAST expandTimesPlus(final IAST expr0, final IAST expr1) {
@@ -126,48 +181,28 @@ public class Expand extends AbstractFunctionEvaluator implements IConstantHeader
 		final IAST pList = Plus();
 		for (int i = 1; i < ast.size(); i++) {
 			pList.add(F.Times(expr1, ast.get(i)));
-		} 
+		}
 		return pList;
 	}
 
-	/**
-	 * Expand a polynomial power with the multinomial theorem. See <a
-	 * href="http://en.wikipedia.org/wiki/Multinomial_theorem">Wikipedia -
-	 * Multinomial theorem</a>
-	 * 
-	 * @param expr0
-	 * @param n
-	 * @return
-	 */
-	public static IExpr expandPower(final IAST expr0, final int n) {
-		if (n == 1) {
-			return expr0;
-		}
-		if (n == 0) {
-			return F.C0;
+	public Expand() {
+		super();
+	}
+
+	@Override
+	public IExpr evaluate(final IAST ast) {
+		if (ast.size() != 2) {
+			return null;
 		}
 
-		int m = expr0.size() - 1;
-		final NumberPartitionsIterable comb = new NumberPartitionsIterable(n, m);
-		IInteger multinomial;
-		final IAST result = Plus();
-		for (int j[] : comb) {
-			if (m < n && j[m] != 0) {
-				continue;
-			}
-			final KPermutationsIterable perm = new KPermutationsIterable(j, m, m);
-			multinomial = F.integer(Multinomial.multinomial(j, n));
-			for (int[] indices : perm) {
-				final IAST tList = Times();
-				tList.add(multinomial);
-				for (int k = 0; k < m; k++) {
-					if (indices[k] != 0) {
-						tList.add(F.Power(expr0.get(k + 1), indices[k]));
-					}
-				}
-				result.add(tList);
+		if (ast.get(1) instanceof IAST) {
+			final IAST arg1 = (IAST) ast.get(1);
+			IExpr temp = expand(arg1);
+			if (temp != null) {
+				return temp;
 			}
 		}
-		return result;
+
+		return ast.get(1);
 	}
 }
