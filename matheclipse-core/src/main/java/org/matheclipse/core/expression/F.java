@@ -1012,6 +1012,10 @@ public class F {
 		return function(Line);
 	}
 
+	public static IAST LinearSolve(final IExpr a0, final IExpr a1) {
+		return binary(symbol("LinearSolve"), a0, a1);
+	}
+	
 	public static IAST Limit(final IExpr a0, final IExpr a1) {
 
 		return binary(Limit, a0, a1);
@@ -1107,7 +1111,7 @@ public class F {
 
 	public static IAST Negate(final IExpr a) {
 
-		return binary(Times, C1, a);
+		return binary(Times, CN1, a);
 	}
 
 	//
