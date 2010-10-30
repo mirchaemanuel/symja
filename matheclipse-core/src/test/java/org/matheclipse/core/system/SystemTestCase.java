@@ -2430,12 +2430,18 @@ public class SystemTestCase extends AbstractTestCase {
 		check("Simplify[D[Integrate[1/(x^2 + 2), x], x]]", "(x^2+2)^(-1)");
 		// TODO optimize this
 		check("Simplify[D[Integrate[1/(x^3 + 1), x], x]]", "(x^3+1)^(-1)");
+		// check("Apart[(1+(1/x))/(1+(2/x))]","");
+		// check("FullForm[(1+(1/x))/(1+(2/x))]","");
+		// check("Simplify[(1+(1/x))/(1+(2/x))]","");
 	}
 
 	public void testSystem805() {
-		check("Solve[x^2==0,{x,y,z}]", "{x->0}");
-		check("Solve[x^2==0,x]", "{x->0}");
-		check("Solve[x^2==4,x]", "{x->2,x->-2}");
+		check("Solve[{x+2*y==10,3*x+y==20},{x,y}]", "{{x->6,y->2}}");
+
+		check("Solve[x^2==0,{x,y,z}]", "{{x->0}}");
+		check("Solve[x^2==0,x]", "{{x->0}}");
+		check("Solve[x^2==4,x]", "{{x->2},{x->-2}}");
+		check("Solve[{x^2==4,x+y==10},{x,y}]", "{{x->2,{y->8}},{x->-2,{y->12}}}");
 	}
 
 	public void testSystem991() {

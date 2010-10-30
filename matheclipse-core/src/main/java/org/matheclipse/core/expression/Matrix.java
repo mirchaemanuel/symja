@@ -8,7 +8,7 @@ import org.matheclipse.core.interfaces.IExpr;
 public class Matrix extends ASTDelegate {
 	private final int fColumns;
 
-	public Matrix(AST ast, int columns) {
+	public Matrix(IAST ast, int columns) {
 		super(ast);
 		fColumns = columns;
 	}
@@ -74,6 +74,18 @@ public class Matrix extends ASTDelegate {
 		return ((IAST) fAst.get(row)).get(column);
 	}
 
+	/**
+	 * Set the value at <code>row, column</code> position.
+	 * 
+	 * @param row
+	 * @param column
+	 * @param value
+	 * @return
+	 */
+	public IExpr setAt(final int row, final int column, final IExpr value) {
+		return ((IAST) fAst.get(row)).set(column, value);
+	}
+	
 	/**
 	 * Get the number of columns in this matrix
 	 * 

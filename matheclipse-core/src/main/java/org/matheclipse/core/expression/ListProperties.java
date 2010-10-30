@@ -5,7 +5,7 @@
 package org.matheclipse.core.expression;
 
 /**
- *
+ * @deprecated
  */
 public class ListProperties {
 	final public static int EVAL_FLAGS = 0;

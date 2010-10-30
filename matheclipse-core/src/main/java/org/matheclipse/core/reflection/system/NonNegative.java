@@ -1,6 +1,6 @@
 package org.matheclipse.core.reflection.system;
 
-import org.matheclipse.core.eval.exception.WrongNumberOfArguments;
+import org.matheclipse.core.eval.exception.Validate;
 import org.matheclipse.core.eval.interfaces.IFunctionEvaluator;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IAST;
@@ -14,17 +14,15 @@ public class NonNegative implements IFunctionEvaluator {
 	public NonNegative() {
 	}
 
-	public IExpr evaluate(final IAST functionList) {
-		if (functionList.size() != 2) {
-			throw new WrongNumberOfArguments(functionList, 1, functionList.size() - 1);
-		}
-		if (functionList.get(1) instanceof ISignedNumber) {
-			if (!((ISignedNumber) functionList.get(1)).isNegative()) {
+	public IExpr evaluate(final IAST ast) {
+		Validate.checkSize(ast, 2);
+		if (ast.get(1) instanceof ISignedNumber) {
+			if (!((ISignedNumber) ast.get(1)).isNegative()) {
 				return F.True;
 			}
 			return F.False;
 		}
-		if (functionList.get(1) instanceof INumber) {
+		if (ast.get(1) instanceof INumber) {
 			return F.False;
 		}
 		return null;

@@ -201,12 +201,12 @@ public class Range<E, L extends List<E>> implements Iterable<E> {
 		return result;
 	}
 
-	public boolean contains(Object o) {
+	public boolean contains(E o) {
 		return indexOf(o) >= 0;
 	}
 
-	public boolean containsAll(Collection<?> c) {
-		Iterator<?> e = c.iterator();
+	public boolean containsAll(Collection<? extends E> c) {
+		Iterator<? extends E> e = c.iterator();
 		while (e.hasNext())
 			if (!contains(e.next()))
 				return false;
@@ -424,7 +424,7 @@ public class Range<E, L extends List<E>> implements Iterable<E> {
 	 * @param match
 	 * @return
 	 */
-	public int indexOf(Object match) {
+	public int indexOf(E match) {
 		return indexOf(match, fStart);
 	}
 
@@ -434,7 +434,7 @@ public class Range<E, L extends List<E>> implements Iterable<E> {
 	 * @param match
 	 * @return
 	 */
-	public int indexOf(Object match, int start) {
+	public int indexOf(E match, int start) {
 		if (match == null) {
 			for (int i = start; i < fEnd; i++) {
 
@@ -591,7 +591,7 @@ public class Range<E, L extends List<E>> implements Iterable<E> {
 		}
 		return list;
 	}
-	
+
 	/**
 	 * Append the mapped ranges elements directly to the given <code>list</code>
 	 * 
@@ -825,6 +825,7 @@ public class Range<E, L extends List<E>> implements Iterable<E> {
 	 * internal referenced list) ,according to the order induced by the specified
 	 * comparator.
 	 */
+	@SuppressWarnings("unchecked")
 	public L sort(Comparator<E> comparator) {
 		final E[] a = (E[]) fList.toArray();
 		Arrays.sort(a, fStart, fEnd, comparator);
