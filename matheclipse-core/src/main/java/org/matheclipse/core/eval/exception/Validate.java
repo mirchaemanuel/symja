@@ -121,6 +121,14 @@ public final class Validate {
 		throw new WrongArgumentType(ast, ast.get(position), position, "Symbol expected!");
 	}
 
+	public static IAST checkASTType(IAST ast, int position) {
+		if (ast.get(position).isAST()) {
+			return (IAST) ast.get(position);
+		}
+		throw new WrongArgumentType(ast, ast.get(position), position, "Function(AST) expected!");
+	}
+
+	
 	private Validate() {
 	}
 
