@@ -1,6 +1,6 @@
 package org.matheclipse.core.reflection.system;
 
-import org.matheclipse.core.eval.exception.WrongNumberOfArguments;
+import org.matheclipse.core.eval.exception.Validate;
 import org.matheclipse.core.eval.interfaces.IFunctionEvaluator;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IAST;
@@ -15,9 +15,7 @@ public class Positive implements IFunctionEvaluator {
 	}
 
 	public IExpr evaluate(final IAST ast) {
-		if (ast.size() != 2) {
-			throw new WrongNumberOfArguments(ast, 1, ast.size() - 1);
-		}
+		Validate.checkSize(ast, 2);
 		if (ast.get(1) instanceof ISignedNumber) {
 			if (((ISignedNumber) ast.get(1)).isPositive()) {
 				return F.True;

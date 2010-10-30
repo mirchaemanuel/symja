@@ -56,8 +56,7 @@ public abstract class AbstractMatrix1Expr extends AbstractFunctionEvaluator {
 			}
 		}
 
-		// fall back to symbolic mode
-		return evaluate(function);
+		return null;
 	}
 
 	public abstract ExprFieldElement matrixEval(FieldMatrix<ExprFieldElement> matrix);

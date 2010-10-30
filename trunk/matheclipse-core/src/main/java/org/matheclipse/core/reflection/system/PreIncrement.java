@@ -8,7 +8,7 @@ import org.matheclipse.core.interfaces.ISymbol;
 public class PreIncrement extends PreDecrement {
 
 	@Override
-	public IExpr execute(final IExpr first, final EvalEngine engine) {
+	protected IExpr execute(final IExpr first, final EvalEngine engine) {
 		return engine.evaluate(F.Plus(first, F.C1));
 	}
 
