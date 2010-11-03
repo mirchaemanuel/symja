@@ -1,12 +1,11 @@
 /*
- * $Id: TaylorFunction.java 3332 2010-09-26 16:43:23Z kredel $
+ * $Id: TaylorFunction.java 3342 2010-10-06 19:55:37Z kredel $
  */
 
 package edu.jas.ps;
 
 
 import java.util.List;
-
 
 import edu.jas.poly.ExpVector;
 import edu.jas.structure.RingElem;
@@ -22,10 +21,17 @@ public interface TaylorFunction<C extends RingElem<C>> {
 
 
     /**
-     * Get the faculty coefficient.
-     * @return faculty coefficient.
+     * Get the factorial coefficient.
+     * @return factorial coefficient.
      */
     public long getFacul();
+
+
+    /**
+     * Test if this is zero.
+     * @return true if this is 0, else false.
+     */
+    public boolean isZERO();
 
 
     /**
@@ -33,14 +39,6 @@ public interface TaylorFunction<C extends RingElem<C>> {
      * @return deriviative of this.
      */
     public TaylorFunction<C> deriviative();
-
-
-    /**
-     * Partial deriviative.
-     * @param r index of the variable.
-     * @return partial deriviative of this with respect to variable r.
-     */
-    public TaylorFunction<C> deriviative(int r);
 
 
     /**
@@ -57,15 +55,6 @@ public interface TaylorFunction<C extends RingElem<C>> {
      * @return this(a).
      */
     public C evaluate(C a);
-
-
-    /**
-     * Evaluate at a given variable.
-     * @param a element.
-     * @param r index of the variable.
-     * @return this_r(a).
-     */
-    public TaylorFunction<C> evaluate(C a, int r);
 
 
     /**

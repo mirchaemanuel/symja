@@ -1,8 +1,8 @@
 /*
- * $Id: Quotient.java 3295 2010-08-26 17:01:10Z kredel $
+ * $Id: Quotient.java 3356 2010-10-23 16:41:01Z kredel $
  */
 
-package edu.jas.application;
+package edu.jas.ufd;
 
 
 import org.apache.log4j.Logger;

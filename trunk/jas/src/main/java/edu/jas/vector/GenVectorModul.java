@@ -1,5 +1,5 @@
 /*
- * $Id: GenVectorModul.java 3282 2010-08-22 17:15:02Z kredel $
+ * $Id: GenVectorModul.java 3354 2010-10-23 15:51:37Z kredel $
  */
 
 package edu.jas.vector;
@@ -16,11 +16,11 @@ import java.math.BigInteger;
 
 import org.apache.log4j.Logger;
 
+import edu.jas.kern.StringUtil;
 import edu.jas.structure.RingElem;
 import edu.jas.structure.RingFactory;
 import edu.jas.structure.ModulFactory;
 
-import edu.jas.util.StringUtil;
 
 
 /**

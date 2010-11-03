@@ -1,5 +1,5 @@
 /*
- * $Id: ModIntegerRing.java 3274 2010-08-16 22:28:14Z kredel $
+ * $Id: ModIntegerRing.java 3355 2010-10-23 16:01:52Z kredel $
  */
 
 package edu.jas.arith;
@@ -11,11 +11,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 //import edu.jas.structure.GcdRingElem;
+import edu.jas.kern.StringUtil;
 import edu.jas.structure.RingFactory;
-import edu.jas.structure.ModularRingFactory;
-//import edu.jas.kern.PrettyPrint;
 
-import edu.jas.util.StringUtil;
 
 
 /**

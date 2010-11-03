@@ -1,5 +1,5 @@
 /*
- * $Id: UnivPowerSeriesTest.java 3332 2010-09-26 16:43:23Z kredel $
+ * $Id: UnivPowerSeriesTest.java 3338 2010-10-02 14:48:15Z kredel $
  */
 
 package edu.jas.ps;
@@ -238,13 +238,49 @@ public class UnivPowerSeriesTest extends TestCase {
 
 
     /**
+     * Test evaluation.
+     * 
+     */
+    public void testEvaluation() {
+        a = fac.random(kl, q);
+        b = fac.random(kl, q);
+        BigRational fv = new BigRational(0);
+        BigRational v = fv.random(kl);
+
+        BigRational av = a.evaluate(v);
+        BigRational bv = b.evaluate(v);
+
+        c = a.sum(b);
+        BigRational cv = c.evaluate(v);
+        BigRational dv = av.sum(bv);
+        assertEquals("a(v)+b(v) = (a+b)(v) ", cv, dv);
+
+        c = fac.getZERO();
+        cv = c.evaluate(v);
+        dv = fv.getZERO();
+        assertEquals("0(v) = 0 ", cv, dv);
+
+        c = fac.getONE();
+        cv = c.evaluate(v);
+        dv = fv.getONE();
+        assertEquals("1(v) = 1 ", cv, dv);
+
+        // not true: 
+        //c = a.multiply(b);
+        //cv = c.evaluate(v);
+        //dv = av.multiply(bv);
+        //assertEquals("a(v)*b(v) = (a*b)(v) ", cv, dv);
+    }
+
+
+    /**
      * Test Taylor series.
      * 
      */
     public void testTaylor() {
         BigRational br = new BigRational(0);
         GenPolynomialRing<BigRational> pr = fac.polyRing();
-        System.out.println("pr  = " + pr);
+        //System.out.println("pr  = " + pr);
 
         GenPolynomial<BigRational> p = pr.random(kl,3,3,q+q);
         System.out.println("p   = " + p);
@@ -252,12 +288,12 @@ public class UnivPowerSeriesTest extends TestCase {
         TaylorFunction<BigRational> F = new PolynomialTaylorFunction<BigRational>(p);
 
         UnivPowerSeriesRing<BigRational> psr = new UnivPowerSeriesRing<BigRational>(pr);
-        System.out.println("psr = " + psr.toScript());
+        //System.out.println("psr = " + psr.toScript());
 
         UnivPowerSeries<BigRational> ps = fac.seriesOfTaylor(F,br);
-        System.out.println("ps  = " + ps);
+        //System.out.println("ps  = " + ps);
         UnivPowerSeries<BigRational> pps = fac.fromPolynomial(p);
-        System.out.println("pps = " + pps);
+        //System.out.println("pps = " + pps);
         assertEquals("taylor(p) == p", ps, pps);
 
         for ( GenPolynomial<BigRational> g : pr.generators() ) {

@@ -1,5 +1,5 @@
 /*
- * $Id: PolyUfdUtil.java 3295 2010-08-26 17:01:10Z kredel $
+ * $Id: PolyUfdUtil.java 3356 2010-10-23 16:41:01Z kredel $
  */
 
 package edu.jas.ufd;
@@ -12,8 +12,6 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
-import edu.jas.application.Quotient;
-import edu.jas.application.QuotientRing;
 import edu.jas.arith.BigInteger;
 import edu.jas.poly.AlgebraicNumber;
 import edu.jas.poly.AlgebraicNumberRing;

@@ -1,9 +1,9 @@
 
 /*
- * $Id: ProductTest.java 2703 2009-07-04 14:25:46Z kredel $
+ * $Id: ProductTest.java 3368 2010-10-24 13:53:32Z kredel $
  */
 
-package edu.jas.structure;
+package edu.jas.arith;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,10 +15,7 @@ import junit.framework.TestSuite;
 import org.apache.log4j.BasicConfigurator;
 //import org.apache.log4j.Logger;
 
-import edu.jas.arith.BigRational;
-import edu.jas.arith.BigInteger;
-import edu.jas.arith.ModInteger;
-import edu.jas.arith.ModIntegerRing;
+import edu.jas.structure.RingFactory;
 
 
 /**

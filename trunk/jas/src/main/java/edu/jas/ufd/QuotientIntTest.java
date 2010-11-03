@@ -1,9 +1,9 @@
 
 /*
- * $Id: QuotientRatTest.java 2989 2010-01-31 11:06:39Z kredel $
+ * $Id: QuotientIntTest.java 3356 2010-10-23 16:41:01Z kredel $
  */
 
-package edu.jas.application;
+package edu.jas.ufd;
 
 
 import junit.framework.Test;
@@ -13,21 +13,22 @@ import junit.framework.TestSuite;
 import org.apache.log4j.BasicConfigurator;
 //import org.apache.log4j.Logger;
 
-import edu.jas.arith.BigRational;
-
-import edu.jas.poly.GenPolynomialRing;
-import edu.jas.poly.TermOrder;
+//import edu.jas.arith.BigRational;
+import edu.jas.arith.BigInteger;
 
 import edu.jas.kern.PrettyPrint;
 import edu.jas.kern.ComputerThreads;
 
+import edu.jas.poly.GenPolynomialRing;
+import edu.jas.poly.TermOrder;
+
 
 /**
- * Quotient over BigRational GenPolynomial tests with JUnit. 
+ * Quotient over BigInteger GenPolynomial tests with JUnit. 
  * @author Heinz Kredel.
  */
 
-public class QuotientRatTest extends TestCase {
+public class QuotientIntTest extends TestCase {
 
 /**
  * main.
@@ -38,10 +39,10 @@ public class QuotientRatTest extends TestCase {
    }
 
 /**
- * Constructs a <CODE>QuotientRatTest</CODE> object.
+ * Constructs a <CODE>QuotientIntTest</CODE> object.
  * @param name String.
  */
-   public QuotientRatTest(String name) {
+   public QuotientIntTest(String name) {
           super(name);
    }
 
@@ -49,46 +50,39 @@ public class QuotientRatTest extends TestCase {
  * suite.
  */ 
  public static Test suite() {
-     TestSuite suite= new TestSuite(QuotientRatTest.class);
+     TestSuite suite= new TestSuite(QuotientIntTest.class);
      return suite;
    }
 
    //private final static int bitlen = 100;
 
-   QuotientRing<BigRational> zFac;
-   QuotientRing<BigRational> efac;
-   GenPolynomialRing<BigRational> mfac;
+   QuotientRing<BigInteger> efac;
+   GenPolynomialRing<BigInteger> mfac;
 
-   Quotient< BigRational > a;
-   Quotient< BigRational > b;
-   Quotient< BigRational > c;
-   Quotient< BigRational > d;
-   Quotient< BigRational > e;
-   Quotient< BigRational > az;
-   Quotient< BigRational > bz;
-   Quotient< BigRational > cz;
-   Quotient< BigRational > dz;
-   Quotient< BigRational > ez;
+   Quotient< BigInteger > a;
+   Quotient< BigInteger > b;
+   Quotient< BigInteger > c;
+   Quotient< BigInteger > d;
+   Quotient< BigInteger > e;
 
    int rl = 3; 
    int kl = 5;
-   int ll = 3; //6;
+   int ll = 4; //6;
    int el = 2;
    float q = 0.4f;
 
    protected void setUp() {
        a = b = c = d = e = null;
+       BigInteger cfac = new BigInteger(1);
        TermOrder to = new TermOrder( TermOrder.INVLEX );
-       mfac = new GenPolynomialRing<BigRational>( new BigRational(1), rl, to );
-       efac = new QuotientRing<BigRational>( mfac );
-       zFac = new QuotientRing<BigRational>( mfac, false );
+       mfac = new GenPolynomialRing<BigInteger>( cfac, rl, to );
+       efac = new QuotientRing<BigInteger>( mfac );
    }
 
    protected void tearDown() {
        a = b = c = d = e = null;
        //efac.terminate();
        efac = null;
-       zFac = null;
        ComputerThreads.terminate();
    }
 
@@ -124,7 +118,7 @@ public class QuotientRatTest extends TestCase {
          a = efac.random(kl*(i+1), ll+2+2*i, el, q );
          //System.out.println("a = " + a);
          if ( a.isZERO() || a.isONE() ) {
-            continue;
+             continue;
          }
          assertTrue("length( a"+i+" ) <> 0", a.num.length() >= 0);
          assertTrue(" not isZERO( a"+i+" )", !a.isZERO() );
@@ -146,26 +140,18 @@ public class QuotientRatTest extends TestCase {
 
      c = a.sum(b);
      d = c.subtract(b);
-     //System.out.println("c = " + c);
-     //System.out.println("d = " + d);
-     d = d.monic();
-     //System.out.println("d = " + d);
      assertEquals("a+b-b = a",a,d);
 
      c = a.sum(b);
      d = b.sum(a);
      //System.out.println("c = " + c);
      //System.out.println("d = " + d);
+
      assertEquals("a+b = b+a",c,d);
 
-     //System.out.println("monic(d) = " + d.monic());
-
      c = efac.random(kl,ll,el,q);
-     //System.out.println("c = " + c);
      d = c.sum( a.sum(b) );
      e = c.sum( a ).sum(b);
-     //System.out.println("d = " + d);
-     //System.out.println("e = " + e);
      assertEquals("c+(a+b) = (c+a)+b",d,e);
 
 
@@ -176,6 +162,7 @@ public class QuotientRatTest extends TestCase {
      c = efac.getZERO().sum( a );
      d = efac.getZERO().subtract( a.negate() );
      assertEquals("0+a = 0+(-a)",c,d);
+
  }
 
 
@@ -193,8 +180,10 @@ public class QuotientRatTest extends TestCase {
 
      c = b.multiply(a);
      d = a.multiply(b);
-     //assertTrue("not isZERO( c )", !c.isZERO() );
-     //assertTrue("not isZERO( d )", !d.isZERO() );
+     if ( !a.isZERO() && !b.isZERO() ) {
+         assertTrue("not isZERO( c )", !c.isZERO() );
+         assertTrue("not isZERO( d )", !d.isZERO() );
+     }
 
      //System.out.println("a = " + a);
      //System.out.println("b = " + b);
@@ -229,74 +218,6 @@ public class QuotientRatTest extends TestCase {
         //System.out.println("d = " + d);
         assertTrue("a*1/a = 1",d.isONE()); 
      }
- }
-
-
-/**
- * Test addition with syzygy gcd and euclids gcd.
- * 
- */
- public void xtestAdditionGcd() {
-
-     long te, tz;
-
-     a = efac.random(kl,ll,el,q);
-     b = efac.random(kl,ll,el,q);
-     //System.out.println("a = " + a);
-     //System.out.println("b = " + b);
-
-     az = new Quotient<BigRational>(zFac,a.num,a.den,true);
-     bz = new Quotient<BigRational>(zFac,b.num,b.den,true);
-
-     te = System.currentTimeMillis();
-     c = a.sum(b);
-     d = c.subtract(b);
-     d = d.monic();
-     te = System.currentTimeMillis() - te;
-     assertEquals("a+b-b = a",a,d);
-
-     tz = System.currentTimeMillis();
-     cz = az.sum(bz);
-     dz = cz.subtract(bz);
-     dz = dz.monic();
-     tz = System.currentTimeMillis() - tz;
-     assertEquals("a+b-b = a",az,dz);
-
-     System.out.println("te = " + te);
-     System.out.println("tz = " + tz);
-
-     c = a.sum(b);
-     d = b.sum(a);
-     //System.out.println("c = " + c);
-     //System.out.println("d = " + d);
-     assertEquals("a+b = b+a",c,d);
-
-     c = efac.random(kl,ll,el,q);
-     cz = new Quotient<BigRational>(zFac,c.num,c.den,true);
-
-
-     te = System.currentTimeMillis();
-     d = c.sum( a.sum(b) );
-     e = c.sum( a ).sum(b);
-     te = System.currentTimeMillis() - te;
-     assertEquals("c+(a+b) = (c+a)+b",d,e);
-
-     tz = System.currentTimeMillis();
-     dz = cz.sum( az.sum(bz) );
-     ez = cz.sum( az ).sum(bz);
-     tz = System.currentTimeMillis() - tz;
-     assertEquals("c+(a+b) = (c+a)+b",dz,ez);
-
-     System.out.println("te = " + te);
-     System.out.println("tz = " + tz);
-
-     c = a.sum( efac.getZERO() );
-     d = a.subtract( efac.getZERO() );
-     assertEquals("a+0 = a-0",c,d);
-
-     c = efac.getZERO().sum( a );
-     d = efac.getZERO().subtract( a.negate() );
-     assertEquals("0+a = 0+(-a)",c,d);
  }
 
 

@@ -1,5 +1,5 @@
 /*
- * $Id: GBProxyTest.java 3295 2010-08-26 17:01:10Z kredel $
+ * $Id: GBProxyTest.java 3368 2010-10-24 13:53:32Z kredel $
  */
 
 package edu.jas.gb;
@@ -39,7 +39,7 @@ public class GBProxyTest extends TestCase {
      * main
      */
     public static void main(String[] args) {
-        BasicConfigurator.configure();
+        //BasicConfigurator.configure();
         junit.textui.TestRunner.run(suite());
         ComputerThreads.terminate();
     }

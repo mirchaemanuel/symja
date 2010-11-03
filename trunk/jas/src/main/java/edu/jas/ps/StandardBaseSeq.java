@@ -1,5 +1,5 @@
 /*
- * $Id: StandardBaseSeq.java 3327 2010-09-18 12:16:19Z kredel $
+ * $Id: StandardBaseSeq.java 3349 2010-10-15 20:54:27Z kredel $
  */
 
 package edu.jas.ps;
@@ -12,18 +12,19 @@ import java.util.ListIterator;
 import org.apache.log4j.Logger;
 
 import edu.jas.structure.RingElem;
+import edu.jas.poly.ExpVector;
 
 
 /**
  * Standard Base sequential algorithm. Implements Standard bases and GB test.
- * <b>Note: </b> Currently the term order is fixed to the order defined by 
- * the iterator over exponent vectors <code>ExpVectorIterator</code>.
+ * <b>Note: </b> Currently the term order is fixed to the order defined by the
+ * iterator over exponent vectors <code>ExpVectorIterator</code>.
  * @param <C> coefficient type
  * @author Heinz Kredel
  */
 
 public class StandardBaseSeq<C extends RingElem<C>>
-/*extends StandardBaseAbstract<C>*/{
+    /*todo: extends StandardBaseAbstract<C>*/{
 
 
     private static final Logger logger = Logger.getLogger(StandardBaseSeq.class);
@@ -120,16 +121,16 @@ public class StandardBaseSeq<C extends RingElem<C>>
      * @return STD(F) a Standard base of F.
      */
     public List<MultiVarPowerSeries<C>> STD(int modv, List<MultiVarPowerSeries<C>> F) {
-        MultiVarPowerSeries<C> p;
+        MultiVarPowerSeries<C> p = null;
         List<MultiVarPowerSeries<C>> G = new ArrayList<MultiVarPowerSeries<C>>();
         OrderedPairlist<C> pairlist = null;
         int l = F.size();
         ListIterator<MultiVarPowerSeries<C>> it = F.listIterator();
         while (it.hasNext()) {
             p = it.next();
-            if (p.truncate() > 0) {
+            if (!p.isZERO()) {
                 //p = p.monic();
-                if (p.isONE()) {
+                if (p.isUnit()) {
                     G.clear();
                     G.add(p);
                     return G; // since no threads are activated
@@ -170,37 +171,43 @@ public class StandardBaseSeq<C extends RingElem<C>>
             }
 
             S = red.SPolynomial(pi, pj);
+            //S.setTruncate(p.ring.truncate()); // ??
             if (S.isZERO()) {
                 pair.setZero();
                 continue;
             }
             if (logger.isInfoEnabled()) {
-                logger.info("ht(S) = " + S.orderExpVector().toString(S.ring.vars));
+                ExpVector es = S.orderExpVector();
+                logger.info("ht(S) = " + es.toString(S.ring.vars) + ", " + es); // + ", S = " + S);
             }
 
+            //long t = System.currentTimeMillis();
             H = red.normalform(G, S);
             if (H.isZERO()) {
                 pair.setZero();
                 continue;
             }
+            //t = System.currentTimeMillis() - t;
+            //System.out.println("time = " + t);
             if (logger.isInfoEnabled()) {
-                logger.info("ht(H) = " + H.orderExpVector().toString(S.ring.vars));
+                ExpVector eh = H.orderExpVector();
+                logger.info("ht(H) = " + eh.toString(S.ring.vars) + ", " + eh); // + ", coeff(HT(H)) = " + H.coefficient(eh));
             }
 
             //H = H.monic();
-            if (H.isONE()) {
+            if (H.isUnit()) {
                 G.clear();
                 G.add(H);
                 return G; // since no threads are activated
             }
-            if (logger.isInfoEnabled()) {
+            if (logger.isDebugEnabled()) {
                 logger.info("H = " + H);
             }
-            if (!H.isZERO()) {
+            //if (!H.isZERO()) {
                 l++;
                 G.add(H);
                 pairlist.put(H);
-            }
+            //}
         }
         logger.debug("#sequential list = " + G.size());
         G = minimalSTD(G);
@@ -211,8 +218,8 @@ public class StandardBaseSeq<C extends RingElem<C>>
 
     /**
      * Minimal ordered Standard basis.
-     * @param Gp a Groebner base.
-     * @return a minimal Groebner base of Gp, not auto reduced.
+     * @param Gp a Standard base.
+     * @return a minimal Standard base of Gp, not auto reduced.
      */
     public List<MultiVarPowerSeries<C>> minimalSTD(List<MultiVarPowerSeries<C>> Gp) {
         if (Gp == null || Gp.size() <= 1) {

@@ -1,5 +1,5 @@
 /*
- * $Id: GenPolynomialTokenizer.java 3296 2010-08-26 17:30:55Z kredel $
+ * $Id: GenPolynomialTokenizer.java 3356 2010-10-23 16:41:01Z kredel $
  */
 
 package edu.jas.poly;
@@ -13,11 +13,10 @@ import java.io.StreamTokenizer;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Scanner;
 
 import org.apache.log4j.Logger;
 
-import edu.jas.application.Quotient;
-import edu.jas.application.QuotientRing;
 import edu.jas.arith.BigComplex;
 import edu.jas.arith.BigDecimal;
 import edu.jas.arith.BigInteger;
@@ -28,6 +27,8 @@ import edu.jas.arith.ModIntegerRing;
 import edu.jas.structure.Power;
 import edu.jas.structure.RingElem;
 import edu.jas.structure.RingFactory;
+import edu.jas.ufd.Quotient;
+import edu.jas.ufd.QuotientRing;
 import edu.jas.vector.ModuleList;
 import edu.jas.vector.OrderedModuleList;
 
@@ -1454,6 +1455,44 @@ public class GenPolynomialTokenizer {
                 logger.debug("comma: ");
             tt = tok.nextToken();
         }
+    }
+
+
+    /**
+     * Parse variable list from String.
+     * @param s String. Syntax: (n1,...,nk) or (n1 ... nk), brackest are also
+     *            optional.
+     * @return array of variable names found in s.
+     */
+    public static String[] variableList(String s) {
+        String[] vl = null;
+        if (s == null) {
+            return vl;
+        }
+        String st = s.trim();
+        if (st.length() == 0) {
+            return new String[0];
+        }
+        if (st.charAt(0) == '(') {
+            st = st.substring(1);
+        }
+        if (st.charAt(st.length() - 1) == ')') {
+            st = st.substring(0, st.length() - 1);
+        }
+        st = st.replaceAll(",", " ");
+        List<String> sl = new ArrayList<String>();
+        Scanner sc = new Scanner(st);
+        while (sc.hasNext()) {
+            String sn = sc.next();
+            sl.add(sn);
+        }
+        vl = new String[sl.size()];
+        int i = 0;
+        for (String si : sl) {
+            vl[i] = si;
+            i++;
+        }
+        return vl;
     }
 
 }

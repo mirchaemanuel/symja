@@ -1,8 +1,8 @@
 /*
- * $Id: ComplexRing.java 3295 2010-08-26 17:01:10Z kredel $
+ * $Id: ComplexRing.java 3364 2010-10-24 12:56:06Z kredel $
  */
 
-package edu.jas.structure;
+package edu.jas.poly;
 
 
 import java.io.Reader;
@@ -13,7 +13,11 @@ import java.util.Random;
 
 import org.apache.log4j.Logger;
 
-import edu.jas.util.StringUtil;
+import edu.jas.kern.StringUtil;
+import edu.jas.structure.ElemFactory;
+import edu.jas.structure.Element;
+import edu.jas.structure.RingElem;
+import edu.jas.structure.RingFactory;
 
 
 /**
@@ -28,6 +32,7 @@ public class ComplexRing<C extends RingElem<C>> implements RingFactory<Complex<C
     private final static Random random = new Random();
 
 
+    @SuppressWarnings("unused")
     private static final Logger logger = Logger.getLogger(ComplexRing.class);
 
 
@@ -213,9 +218,8 @@ public class ComplexRing<C extends RingElem<C>> implements RingFactory<Complex<C
         }
         if (!ring.equals(a.ring)) {
             return false;
-        } else {
-            return true;
         }
+        return true;
     }
 
 

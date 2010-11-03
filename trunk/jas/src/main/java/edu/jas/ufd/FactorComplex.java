@@ -1,5 +1,5 @@
 /*
- * $Id: FactorComplex.java 3289 2010-08-26 08:04:56Z kredel $
+ * $Id: FactorComplex.java 3364 2010-10-24 12:56:06Z kredel $
  */
 
 package edu.jas.ufd;
@@ -12,13 +12,13 @@ import org.apache.log4j.Logger;
 
 import edu.jas.poly.AlgebraicNumber;
 import edu.jas.poly.AlgebraicNumberRing;
+import edu.jas.poly.Complex;
+import edu.jas.poly.ComplexRing;
 import edu.jas.poly.GenPolynomial;
 import edu.jas.poly.GenPolynomialRing;
 import edu.jas.poly.TermOrder;
 import edu.jas.poly.PolyUtil;
 import edu.jas.structure.GcdRingElem;
-import edu.jas.structure.Complex;
-import edu.jas.structure.ComplexRing;
 import edu.jas.structure.RingFactory;
 
 

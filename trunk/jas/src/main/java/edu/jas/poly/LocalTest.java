@@ -1,9 +1,9 @@
 
 /*
- * $Id: LocalTest.java 1285 2007-07-29 16:37:16Z kredel $
+ * $Id: LocalTest.java 3367 2010-10-24 13:05:02Z kredel $
  */
 
-package edu.jas.structure;
+package edu.jas.poly;
 
 
 import junit.framework.Test;
@@ -16,8 +16,6 @@ import org.apache.log4j.BasicConfigurator;
 import edu.jas.arith.BigRational;
 import edu.jas.arith.BigInteger;
 
-import edu.jas.poly.GenPolynomial;
-import edu.jas.poly.GenPolynomialRing;
 
 
 /**
@@ -235,9 +233,11 @@ public class LocalTest extends TestCase {
  public void testIntMultiplication() {
 
      a = fac.random(kl);
-     assertTrue("not isZERO( a )", !a.isZERO() );
-
      b = fac.random(kl);
+     if ( a.isZERO() || b.isZERO() ) {
+         return;
+     }
+     assertTrue("not isZERO( a )", !a.isZERO() );
      assertTrue("not isZERO( b )", !b.isZERO() );
 
      c = b.multiply(a);
@@ -282,9 +282,12 @@ public class LocalTest extends TestCase {
  public void testPolyMultiplication() {
 
      ap = mfac.random(kl);
-     assertTrue("not isZERO( a )", !ap.isZERO() );
-
      bp = mfac.random(kl);
+     if ( ap.isZERO() || bp.isZERO() ) {
+         return;
+     }
+
+     assertTrue("not isZERO( a )", !ap.isZERO() );
      assertTrue("not isZERO( b )", !bp.isZERO() );
 
      cp = bp.multiply(ap);

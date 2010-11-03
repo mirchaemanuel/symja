@@ -1,5 +1,5 @@
 /*
- * $Id: BigQuaternion.java 3283 2010-08-22 17:23:03Z kredel $
+ * $Id: BigQuaternion.java 3354 2010-10-23 15:51:37Z kredel $
  */
 
 package edu.jas.arith;
@@ -13,11 +13,11 @@ import java.util.ArrayList;
 import org.apache.log4j.Logger;
 
 //import edu.jas.structure.RingElem;
+import edu.jas.kern.StringUtil;
 import edu.jas.structure.GcdRingElem;
 import edu.jas.structure.StarRingElem;
 import edu.jas.structure.RingFactory;
 
-import edu.jas.util.StringUtil;
 
 
 /**

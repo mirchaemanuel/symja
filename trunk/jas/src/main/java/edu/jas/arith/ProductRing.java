@@ -1,8 +1,8 @@
 /*
- * $Id: ProductRing.java 3287 2010-08-23 21:29:53Z kredel $
+ * $Id: ProductRing.java 3368 2010-10-24 13:53:32Z kredel $
  */
 
-package edu.jas.structure;
+package edu.jas.arith;
 
 import java.io.Reader;
 import java.io.StringReader;
@@ -15,6 +15,7 @@ import java.util.ArrayList;
 
 import org.apache.log4j.Logger;
 
+import edu.jas.structure.ElemFactory;
 import edu.jas.structure.RingElem;
 import edu.jas.structure.RingFactory;
 

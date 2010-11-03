@@ -1,9 +1,9 @@
 
 /*
- * $Id: QuotIntPolynomialTest.java 2704 2009-07-04 14:26:29Z kredel $
+ * $Id: QuotIntPolynomialTest.java 3356 2010-10-23 16:41:01Z kredel $
  */
 
-package edu.jas.application;
+package edu.jas.ufd;
 
 
 import junit.framework.Test;

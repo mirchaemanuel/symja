@@ -1,35 +1,36 @@
 /*
- * $Id: ResidueRing.java 3287 2010-08-23 21:29:53Z kredel $
+ * $Id: LocalRing.java 3367 2010-10-24 13:05:02Z kredel $
  */
 
-package edu.jas.structure;
+package edu.jas.poly;
 
 import java.util.Random;
+import java.io.Reader;
 import java.util.List;
 import java.util.ArrayList;
-import java.io.Reader;
 
 import org.apache.log4j.Logger;
 
+import edu.jas.structure.ElemFactory;
 import edu.jas.structure.RingElem;
 import edu.jas.structure.RingFactory;
 
 
 /**
- * Residue ring factory based on RingElem and RingFactory module.
+ * Local ring factory based on RingElem principal ideal.
  * Objects of this class are immutable.
  * @author Heinz Kredel
  */
-public class ResidueRing<C extends RingElem<C> > 
-             implements RingFactory< Residue<C> >  {
+public class LocalRing<C extends RingElem<C> > 
+             implements RingFactory< Local<C> >  {
 
-    private static final Logger logger = Logger.getLogger(ResidueRing.class);
-    //private boolean debug = logger.isDebugEnabled();
+     private static final Logger logger = Logger.getLogger(LocalRing.class);
+     //private boolean debug = logger.isDebugEnabled();
 
 
-    /** Ring element for reduction. 
+    /** Ideal generator for localization. 
      */
-    protected final C modul;
+    protected final C ideal;
 
 
     /** Ring factory. 
@@ -42,23 +43,19 @@ public class ResidueRing<C extends RingElem<C> >
     protected int isField = -1; // initially unknown
 
 
-    /** The constructor creates a ResidueRing object 
-     * from an ring factory and a modul. 
-     * @param r ring factory.
-     * @param m modul.
+    /** The constructor creates a LocalRing object 
+     * from a RingFactory and a RingElem. 
+     * @param i localization ideal generator.
      */
-    public ResidueRing(RingFactory<C> r, C m) {
+    public LocalRing(RingFactory<C> r, C i) {
         ring = r;
-        if ( m.isZERO() ) {
-           throw new IllegalArgumentException("modul may not be null");
+        if ( i == null ) {
+           throw new IllegalArgumentException("ideal may not be null");
         }
-        if ( m.isONE() ) {
-           logger.warn("modul is one");
+        ideal = i;
+        if ( ideal.isONE() ) {
+           throw new IllegalArgumentException("ideal may not be 1");
         }
-        if ( m.signum() < 0 ) {
-           m = m.negate();
-        }
-        modul = m; 
     }
 
 
@@ -68,37 +65,32 @@ public class ResidueRing<C extends RingElem<C> >
      * @see edu.jas.structure.ElemFactory#isFinite()
      */
     public boolean isFinite() {
-        throw new UnsupportedOperationException("not implemented");
-        //return ring.isFinite();
+        return ring.isFinite();
     }
 
 
-    /** Copy Residue element c.
+    /** Copy Local element c.
      * @param c
      * @return a copy of c.
      */
-    public Residue<C> copy(Residue<C> c) {
-        return new Residue<C>( c.ring, c.val );
+    public Local<C> copy(Local<C> c) {
+        return new Local<C>( c.ring, c.num, c.den, true );
     }
 
 
     /** Get the zero element.
-     * @return 0 as Residue.
+     * @return 0 as Local.
      */
-    public Residue<C> getZERO() {
-        return new Residue<C>( this, ring.getZERO() );
+    public Local<C> getZERO() {
+        return new Local<C>( this, ring.getZERO() );
     }
 
 
     /**  Get the one element.
-     * @return 1 as Residue.
+     * @return 1 as Local.
      */
-    public Residue<C> getONE() {
-        Residue<C> one = new Residue<C>( this, ring.getONE() );
-        if ( one.isZERO() ) {
-           logger.warn("one is zero, so all residues are 0");
-        }
-        return one;
+    public Local<C> getONE() {
+        return new Local<C>( this, ring.getONE() );
     }
 
 
@@ -106,11 +98,13 @@ public class ResidueRing<C extends RingElem<C> >
      * @return list of generators for the algebraic structure.
      * @see edu.jas.structure.ElemFactory#generators()
      */
-    public List<Residue<C>> generators() {
+    public List<Local<C>> generators() {
         List<? extends C> rgens = ring.generators();
-        List<Residue<C>> gens = new ArrayList<Residue<C> >( rgens.size() );
+        List<Local<C>> gens = new ArrayList<Local<C>>( rgens.size()-1 );
         for ( C c: rgens ) {
-             gens.add( new Residue<C>(this,c) );
+            if ( !c.isONE() ) {
+                gens.add( new Local<C>(this,c) );
+            }
         }
         return gens;
     }
@@ -145,7 +139,7 @@ public class ResidueRing<C extends RingElem<C> >
         if ( isField == 0 ) { 
            return false;
         }
-        // ideal is prime ?
+        // ??
         return false;
     }
 
@@ -159,21 +153,21 @@ public class ResidueRing<C extends RingElem<C> >
     }
 
 
-    /** Get a Residue element from a BigInteger value.
+    /** Get a Local element from a BigInteger value.
      * @param a BigInteger.
-     * @return a Residue.
+     * @return a Local.
      */
-    public Residue<C> fromInteger(java.math.BigInteger a) {
-        return new Residue<C>( this, ring.fromInteger(a) );
+    public Local<C> fromInteger(java.math.BigInteger a) {
+        return new Local<C>( this, ring.fromInteger(a) );
     }
 
 
-    /** Get a Residue element from a long value.
+    /** Get a Local element from a long value.
      * @param a long.
-     * @return a Residue.
+     * @return a Local.
      */
-    public Residue<C> fromInteger(long a) {
-        return new Residue<C>( this, ring.fromInteger(a) );
+    public Local<C> fromInteger(long a) {
+        return new Local<C>( this, ring.fromInteger(a) );
     }
     
 
@@ -181,9 +175,9 @@ public class ResidueRing<C extends RingElem<C> >
      * @see java.lang.Object#toString()
      */
     @Override
-     public String toString() {
-        return "Residue[ " 
-                + modul.toString() + " ]";
+    public String toString() {
+        return "Local[ " 
+                + ideal.toString() + " ]";
     }
 
 
@@ -194,7 +188,7 @@ public class ResidueRing<C extends RingElem<C> >
     //JAVA6only: @Override
     public String toScript() {
         // Python case
-        return "ResidueRing(" + modul.toScript() + ")";
+        return "LocalRing(" + ideal.toScript() + ")";
     }
 
 
@@ -204,12 +198,12 @@ public class ResidueRing<C extends RingElem<C> >
     @Override
     @SuppressWarnings("unchecked") // not jet working
     public boolean equals(Object b) {
-        if ( ! ( b instanceof ResidueRing ) ) {
+        if ( ! ( b instanceof LocalRing ) ) {
            return false;
         }
-        ResidueRing<C> a = null;
+        LocalRing<C> a = null;
         try {
-            a = (ResidueRing<C>) b;
+            a = (LocalRing<C>) b;
         } catch (ClassCastException e) {
         }
         if ( a == null ) {
@@ -218,62 +212,74 @@ public class ResidueRing<C extends RingElem<C> >
         if ( ! ring.equals( a.ring ) ) {
             return false;
         }
-        return modul.equals( a.modul );
+        return ideal.equals( a.ideal );
     }
 
 
-    /** Hash code for this residue ring.
+    /** Hash code for this local ring.
      * @see java.lang.Object#hashCode()
      */
     @Override
     public int hashCode() { 
        int h;
        h = ring.hashCode();
-       h = 37 * h + modul.hashCode();
+       h = 37 * h + ideal.hashCode();
        return h;
     }
 
 
-    /** Residue random.
+    /** Local random.
      * @param n such that 0 &le; v &le; (2<sup>n</sup>-1).
      * @return a random residue element.
      */
-    public Residue<C> random(int n) {
-      C x = ring.random( n );
-      // x = x.sum( ring.getONE() );
-      return new Residue<C>( this, x );
+    public Local<C> random(int n) {
+      C r = ring.random( n );
+      C s = ring.random( n );
+      s = s.remainder( ideal );
+      while ( s.isZERO() ) {
+          logger.debug("zero was in ideal");
+          s = ring.random( n );
+          s = s.remainder( ideal );
+      }
+      return new Local<C>( this, r, s, false );
     }
 
 
-    /** Residue random.
+    /** Local random.
      * @param n such that 0 &le; v &le; (2<sup>n</sup>-1).
      * @param rnd is a source for random bits.
      * @return a random residue element.
      */
-    public Residue<C> random(int n, Random rnd) {
-      C x = ring.random( n, rnd );
-      // x = x.sum( ring.getONE() );
-      return new Residue<C>( this, x);
+    public Local<C> random(int n, Random rnd) {
+      C r = ring.random( n, rnd );
+      C s = ring.random( n, rnd );
+      s = s.remainder( ideal );
+      while ( s.isZERO() ) {
+          logger.debug("zero was in ideal");
+          s = ring.random( n, rnd );
+          s = s.remainder( ideal );
+      }
+      return new Local<C>( this, r, s, false );
     }
 
 
-    /** Parse Residue from String.
+    /** Parse Local from String.
      * @param s String.
-     * @return Residue from s.
+     * @return Local from s.
      */
-    public Residue<C> parse(String s) {
+    public Local<C> parse(String s) {
         C x = ring.parse( s );
-        return new Residue<C>( this, x );
+        return new Local<C>( this, x );
     }
 
 
-    /** Parse Residue from Reader.
+    /** Parse Local from Reader.
      * @param r Reader.
-     * @return next Residue from r.
+     * @return next Local from r.
      */
-    public Residue<C> parse(Reader r) {
+    public Local<C> parse(Reader r) {
         C x = ring.parse( r );
-        return new Residue<C>( this, x );
+        return new Local<C>( this, x );
     }
 
 }

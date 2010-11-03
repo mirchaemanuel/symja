@@ -1,5 +1,5 @@
 /*
- * $Id: FactorGenericTest.java 3295 2010-08-26 17:01:10Z kredel $
+ * $Id: FactorGenericTest.java 3356 2010-10-23 16:41:01Z kredel $
  */
 
 package edu.jas.ufd;
@@ -11,8 +11,6 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import edu.jas.application.Quotient;
-import edu.jas.application.QuotientRing;
 import edu.jas.arith.BigRational;
 import edu.jas.kern.ComputerThreads;
 import edu.jas.poly.AlgebraicNumber;

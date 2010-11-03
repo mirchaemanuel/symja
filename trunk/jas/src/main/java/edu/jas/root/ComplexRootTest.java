@@ -1,5 +1,5 @@
 /*
- * $Id: ComplexRootTest.java 3296 2010-08-26 17:30:55Z kredel $
+ * $Id: ComplexRootTest.java 3364 2010-10-24 12:56:06Z kredel $
  */
 
 package edu.jas.root;
@@ -16,12 +16,12 @@ import junit.framework.TestSuite;
 import edu.jas.arith.BigDecimal;
 import edu.jas.arith.BigRational;
 import edu.jas.kern.ComputerThreads;
+import edu.jas.poly.Complex;
+import edu.jas.poly.ComplexRing;
 import edu.jas.poly.GenPolynomial;
 import edu.jas.poly.GenPolynomialRing;
 import edu.jas.poly.PolyUtil;
 import edu.jas.poly.TermOrder;
-import edu.jas.structure.Complex;
-import edu.jas.structure.ComplexRing;
 import edu.jas.structure.Power;
 import edu.jas.ufd.Squarefree;
 import edu.jas.ufd.SquarefreeFactory;

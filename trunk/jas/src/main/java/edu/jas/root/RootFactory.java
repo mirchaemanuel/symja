@@ -1,5 +1,5 @@
 /*
- * $Id: RootFactory.java 3295 2010-08-26 17:01:10Z kredel $
+ * $Id: RootFactory.java 3364 2010-10-24 12:56:06Z kredel $
  */
 
 package edu.jas.root;
@@ -10,8 +10,8 @@ import java.util.List;
 import java.util.Set;
 
 import edu.jas.arith.Rational;
+import edu.jas.poly.Complex;
 import edu.jas.poly.GenPolynomial;
-import edu.jas.structure.Complex;
 import edu.jas.structure.GcdRingElem;
 import edu.jas.ufd.FactorAbstract;
 import edu.jas.ufd.FactorFactory;

@@ -1,9 +1,9 @@
 
 /*
- * $Id: QuotientTest.java 1259 2007-07-29 10:18:54Z kredel $
+ * $Id: QuotientTest.java 3365 2010-10-24 12:59:34Z kredel $
  */
 
-package edu.jas.structure;
+package edu.jas.poly;
 
 
 import junit.framework.Test;
@@ -18,8 +18,6 @@ import edu.jas.arith.BigInteger;
 
 //import edu.jas.structure.RingElem;
 
-import edu.jas.poly.GenPolynomial;
-import edu.jas.poly.GenPolynomialRing;
 
 
 /**

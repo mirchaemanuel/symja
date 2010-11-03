@@ -17,8 +17,8 @@ import edu.jas.root.ComplexRootsAbstract;
 import edu.jas.root.ComplexRootsSturm;
 import edu.jas.root.InvalidBoundaryException;
 import edu.jas.root.Rectangle;
-import edu.jas.structure.Complex;
-import edu.jas.structure.ComplexRing;
+import edu.jas.poly.Complex;
+import edu.jas.poly.ComplexRing;
 import edu.jas.ufd.Squarefree;
 import edu.jas.ufd.SquarefreeFactory;
 

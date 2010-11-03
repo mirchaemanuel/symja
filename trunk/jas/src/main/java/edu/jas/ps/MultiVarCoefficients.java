@@ -1,5 +1,5 @@
 /*
- * $Id: MultiVarCoefficients.java 3321 2010-09-12 19:19:58Z kredel $
+ * $Id: MultiVarCoefficients.java 3339 2010-10-02 16:41:45Z kredel $
  */
 
 package edu.jas.ps;
@@ -62,6 +62,16 @@ public abstract class MultiVarCoefficients<C extends RingElem<C>> {
 
 
     /**
+     * Public constructor with some pre-filled caches.
+     * @param pf multivariate power series ring factory.
+     * @param hc pre-filled homogeneous check bit-set.
+     */
+    public MultiVarCoefficients(MultiVarPowerSeriesRing<C> pf, BitSet hc) {
+        this(pf.polyRing(), new HashMap<Long, GenPolynomial<C>>(), new HashSet<ExpVector>(), hc);
+    }
+
+
+    /**
      * Public constructor.
      * @param pf polynomial ring factory.
      */
@@ -95,11 +105,20 @@ public abstract class MultiVarCoefficients<C extends RingElem<C>> {
     /**
      * Public constructor with pre-filled caches.
      * @param pf polynomial ring factory.
+     * @param hc pre-filled homogeneous check bit-set.
+     */
+    public MultiVarCoefficients(GenPolynomialRing<C> pf, BitSet hc) {
+        this(pf, new HashMap<Long, GenPolynomial<C>>(), new HashSet<ExpVector>(), hc);
+    }
+
+
+    /**
+     * Public constructor with pre-filled caches.
+     * @param pf polynomial ring factory.
      * @param cache pre-filled coefficient cache.
      * @param hc pre-filled homogeneous check bit-set.
      */
-    public MultiVarCoefficients(GenPolynomialRing<C> pf, HashMap<Long, GenPolynomial<C>> cache,
-                                BitSet hc) {
+    public MultiVarCoefficients(GenPolynomialRing<C> pf, HashMap<Long, GenPolynomial<C>> cache, BitSet hc) {
         this(pf, cache, new HashSet<ExpVector>(), hc);
     }
 
@@ -112,7 +131,7 @@ public abstract class MultiVarCoefficients<C extends RingElem<C>> {
      * @param hc pre-filled homogeneous check bit-set.
      */
     public MultiVarCoefficients(GenPolynomialRing<C> pf, HashMap<Long, GenPolynomial<C>> cache,
-                                HashSet<ExpVector> zeros, BitSet hc) {
+            HashSet<ExpVector> zeros, BitSet hc) {
         pfac = pf;
         coeffCache = cache;
         zeroCache = zeros;
@@ -126,12 +145,12 @@ public abstract class MultiVarCoefficients<C extends RingElem<C>> {
      * @return coefficient at index.
      */
     public C get(ExpVector index) {
-        if (index.signum() < 0) { // better assert
-            throw new IllegalArgumentException("negative signum not allowed " + index);
-        }
-        if (coeffCache == null) {
-            return generate(index);
-        }
+        //if (index.signum() < 0) { // better assert
+        //    throw new IllegalArgumentException("negative signum not allowed " + index);
+        //}
+        //if (coeffCache == null) { // not possible
+        //    return generate(index);
+        //}
         long tdeg = index.totalDeg();
         GenPolynomial<C> p = coeffCache.get(tdeg);
         if (p == null) {
@@ -140,6 +159,9 @@ public abstract class MultiVarCoefficients<C extends RingElem<C>> {
         }
         C c = p.coefficient(index);
         if (!c.isZERO()) {
+            return c;
+        }
+        if (homCheck.get((int) tdeg)) { // rely on p
             return c;
         }
         if (zeroCache.contains(index)) {
@@ -168,29 +190,31 @@ public abstract class MultiVarCoefficients<C extends RingElem<C>> {
         if (p == null) {
             p = pfac.getZERO().clone();
             coeffCache.put(tdeg, p);
-        } else { // trust contents?
-            if (homCheck.get((int) tdeg)) {
-                return p;
-            }
+        } 
+        // trust contents?
+        if (homCheck.get((int) tdeg)) {
+            return p;
         }
         // check correct contents or generate coefficients
         ExpVectorIterable eiter = new ExpVectorIterable(pfac.nvar, tdeg);
         for (ExpVector e : eiter) {
             if (zeroCache.contains(e)) {
+                if ( !zeroCache.remove(e) ) { // clean-up unused
+                    System.out.println("not removed e = " + e); // cannot happen
+                }
                 continue;
             }
             if (!p.coefficient(e).isZERO()) {
                 continue;
             }
             C g = generate(e);
-            if (g.isZERO()) {
-                zeroCache.add(e);
-            } else {
+            if (!g.isZERO()) {
                 p.doPutToMap(e, g);
             }
         }
         homCheck.set((int) tdeg);
         //System.out.println("homCheck = " + homCheck);
+        //System.out.println("coeffCache = " + coeffCache.keySet());
         return p;
     }
 
