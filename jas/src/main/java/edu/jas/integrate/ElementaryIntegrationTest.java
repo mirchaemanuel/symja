@@ -1,5 +1,5 @@
 /*
- * $Id: ElementaryIntegrationTest.java 2886 2009-11-27 23:10:38Z kredel $
+ * $Id: ElementaryIntegrationTest.java 3356 2010-10-23 16:41:01Z kredel $
  */
 
 package edu.jas.integrate;
@@ -17,8 +17,8 @@ import edu.jas.poly.GenPolynomial;
 import edu.jas.poly.GenPolynomialRing;
 import edu.jas.poly.TermOrder;
 import edu.jas.poly.PolyUtil;
-import edu.jas.application.Quotient;
-import edu.jas.application.QuotientRing;
+import edu.jas.ufd.Quotient;
+import edu.jas.ufd.QuotientRing;
 
 import edu.jas.kern.ComputerThreads;
 

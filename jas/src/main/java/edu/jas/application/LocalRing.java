@@ -1,5 +1,5 @@
 /*
- * $Id: LocalRing.java 3287 2010-08-23 21:29:53Z kredel $
+ * $Id: LocalRing.java 3358 2010-10-23 19:27:53Z kredel $
  */
 
 package edu.jas.application;
@@ -64,6 +64,10 @@ public class LocalRing<C extends GcdRingElem<C> >
         ideal = i.GB(); // cheap if isGB
         if ( ideal.isONE() ) {
            throw new IllegalArgumentException("ideal may not be 1");
+        }
+        if ( !ideal.isMaximal() ) {
+            //throw new IllegalArgumentException("ideal must be maximal");
+            logger.warn("ideal not maximal");
         }
         ring = ideal.list.ring;
         //engine = GCDFactory.<C>getImplementation( ring.coFac );

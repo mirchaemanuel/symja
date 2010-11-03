@@ -1,5 +1,5 @@
 /*
- * $Id: Ideal.java 3294 2010-08-26 16:43:41Z kredel $
+ * $Id: Ideal.java 3360 2010-10-24 12:40:26Z kredel $
  */
 
 package edu.jas.application;
@@ -42,6 +42,8 @@ import edu.jas.ufd.FactorFactory;
 import edu.jas.ufd.GCDFactory;
 import edu.jas.ufd.GreatestCommonDivisor;
 import edu.jas.ufd.PolyUfdUtil;
+import edu.jas.ufd.Quotient;
+import edu.jas.ufd.QuotientRing;
 import edu.jas.ufd.SquarefreeAbstract;
 import edu.jas.ufd.SquarefreeFactory;
 
@@ -1268,30 +1270,25 @@ public class Ideal<C extends GcdRingElem<C>> implements Comparable<Ideal<C>>, Se
         if (this.isONE()) {
             return -1;
         }
-        if (this.list.ring.nvar <= 0) {
-            return -1;
+        return bb.commonZeroTest(getList());
+    }
+
+
+    /**
+     * Test if this ideal is maximal.
+     * @return true, if this is maximal and not one, else false.
+     */
+    public boolean isMaximal() {
+        if ( commonZeroTest() != 0 ) {
+            return false;
         }
-        //int uht = 0;
-        Set<Integer> v = new HashSet<Integer>(); // for non reduced GBs
-        // List<GenPolynomial<C>> Z = this.list.list;
-        for (GenPolynomial<C> p : getList()) {
-            ExpVector e = p.leadingExpVector();
-            if (e == null) {
-                continue;
-            }
-            int[] u = e.dependencyOnVariables();
-            if (u == null) {
-                continue;
-            }
-            if (u.length == 1) {
-                //uht++;
-                v.add(u[0]);
+        for (Long d : univariateDegrees()) {
+            if (d > 1L) {
+                // todo: test if irreducible
+                return false;
             }
         }
-        if (this.list.ring.nvar == v.size()) {
-            return 0;
-        }
-        return 1;
+        return true;
     }
 
 
@@ -1855,6 +1852,79 @@ public class Ideal<C extends GcdRingElem<C>> implements Comparable<Ideal<C>>, Se
         if (ofac.tord.getEvord() != TermOrder.INVLEX) {
             throw new IllegalArgumentException("invalid term order for normalPosition " + ofac.tord);
         }
+        if ( ofac.characteristic().signum() == 0 ) {
+            return normalPositionForChar0(i,j,og);
+        }
+        return normalPositionForCharP(i,j,og);
+    }
+
+
+    /**
+     * Compute normal position for variables i and j, characteristic zero.
+     * @param i first variable index
+     * @param j second variable index
+     * @param og other generators for the ideal
+     * @return this + (z - x_j - t x_i) in the ring C[z, x_1, ..., x_r]
+     */
+    IdealWithUniv<C> normalPositionForChar0(int i, int j, List<GenPolynomial<C>> og) {
+        // extend variables by one
+        GenPolynomialRing<C> ofac = list.ring;
+        GenPolynomialRing<C> nfac = ofac.extendLower(1);
+        List<GenPolynomial<C>> elist = new ArrayList<GenPolynomial<C>>(list.list.size() + 1);
+        for (GenPolynomial<C> p : getList()) {
+            GenPolynomial<C> q = p.extendLower(nfac, 0, 0L);
+            //System.out.println("q = "  + q);
+            elist.add(q);
+        }
+        List<GenPolynomial<C>> ogen = new ArrayList<GenPolynomial<C>>();
+        if (og != null && og.size() > 0) {
+            for (GenPolynomial<C> p : og) {
+                GenPolynomial<C> q = p.extendLower(nfac, 0, 0L);
+                //System.out.println("q = "  + q);
+                ogen.add(q);
+            }
+        }
+        Ideal<C> I = new Ideal<C>(nfac, elist, true);
+        //System.out.println("I = "  + I);
+        int ip = list.ring.nvar - 1 - i;
+        int jp = list.ring.nvar - 1 - j;
+        GenPolynomial<C> xi = nfac.univariate(ip);
+        GenPolynomial<C> xj = nfac.univariate(jp);
+        GenPolynomial<C> z = nfac.univariate(nfac.nvar - 1);
+        // compute GBs until value of t is OK
+        Ideal<C> Ip;
+        GenPolynomial<C> zp;
+        int t = 0;
+        do {
+            t--;
+            // zp = z - ( xj - xi * t )
+            zp = z.subtract(xj.subtract(xi.multiply( nfac.fromInteger(t) )));
+            zp = zp.monic();
+            Ip = I.sum(zp);
+            //System.out.println("Ip = " + Ip);
+            if (-t % 5 == 0) {
+                logger.info("normal position, t = " + t);
+            }
+        } while (!Ip.isNormalPositionFor(i + 1, j + 1));
+        if (debug) {
+            logger.info("normal position = " + Ip);
+        }
+        ogen.add(zp);
+        IdealWithUniv<C> Ips = new IdealWithUniv<C>(Ip, null, ogen);
+        return Ips;
+    }
+
+
+    /**
+     * Compute normal position for variables i and j, positive characteristic.
+     * @param i first variable index
+     * @param j second variable index
+     * @param og other generators for the ideal
+     * @return this + (z - x_j - t x_i) in the ring C[z, x_1, ..., x_r]
+     */
+    IdealWithUniv<C> normalPositionForCharP(int i, int j, List<GenPolynomial<C>> og) {
+        // extend variables by one
+        GenPolynomialRing<C> ofac = list.ring;
         GenPolynomialRing<C> nfac = ofac.extendLower(1);
         List<GenPolynomial<C>> elist = new ArrayList<GenPolynomial<C>>(list.list.size() + 1);
         for (GenPolynomial<C> p : getList()) {

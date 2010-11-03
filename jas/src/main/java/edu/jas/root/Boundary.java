@@ -1,16 +1,16 @@
 /*
- * $Id: Boundary.java 2975 2010-01-05 10:21:17Z kredel $
+ * $Id: Boundary.java 3364 2010-10-24 12:56:06Z kredel $
  */
 
 package edu.jas.root;
 
 
 import edu.jas.arith.Rational;
+import edu.jas.poly.Complex;
+import edu.jas.poly.ComplexRing;
 import edu.jas.poly.GenPolynomial;
 import edu.jas.poly.GenPolynomialRing;
 import edu.jas.poly.PolyUtil;
-import edu.jas.structure.Complex;
-import edu.jas.structure.ComplexRing;
 import edu.jas.structure.RingElem;
 import edu.jas.structure.RingFactory;
 import edu.jas.ufd.GCDFactory;

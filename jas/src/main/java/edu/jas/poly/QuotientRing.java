@@ -1,8 +1,8 @@
 /*
- * $Id: QuotientRing.java 3211 2010-07-05 12:54:22Z kredel $
+ * $Id: QuotientRing.java 3365 2010-10-24 12:59:34Z kredel $
  */
 
-package edu.jas.structure;
+package edu.jas.poly;
 
 import java.util.Random;
 import java.util.List;
@@ -11,6 +11,7 @@ import java.io.Reader;
 
 import org.apache.log4j.Logger;
 
+import edu.jas.structure.ElemFactory;
 import edu.jas.structure.RingElem;
 import edu.jas.structure.RingFactory;
 //import edu.jas.structure.GcdRingElem;

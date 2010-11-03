@@ -1,5 +1,5 @@
 /*
- * $Id: GreatestCommonDivisorModular.java 3320 2010-09-12 11:01:57Z kredel $
+ * $Id: GreatestCommonDivisorModular.java 3355 2010-10-23 16:01:52Z kredel $
  */
 
 package edu.jas.ufd;
@@ -8,11 +8,11 @@ package edu.jas.ufd;
 import org.apache.log4j.Logger;
 
 import edu.jas.structure.GcdRingElem;
-import edu.jas.structure.ModularRingFactory;
 import edu.jas.arith.BigInteger;
 import edu.jas.arith.Modular;
 import edu.jas.arith.ModLongRing;
 import edu.jas.arith.ModIntegerRing;
+import edu.jas.arith.ModularRingFactory;
 import edu.jas.arith.PrimeList;
 import edu.jas.poly.ExpVector;
 import edu.jas.poly.GenPolynomial;

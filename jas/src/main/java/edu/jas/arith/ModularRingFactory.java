@@ -1,12 +1,12 @@
 /*
- * $Id: ModularRingFactory.java 2934 2009-12-29 14:34:30Z kredel $
+ * $Id: ModularRingFactory.java 3355 2010-10-23 16:01:52Z kredel $
  */
 
-package edu.jas.structure;
+package edu.jas.arith;
 
 
-import edu.jas.arith.Modular;
-import edu.jas.arith.BigInteger;
+import edu.jas.structure.RingElem;
+import edu.jas.structure.RingFactory;
 
 
 /**

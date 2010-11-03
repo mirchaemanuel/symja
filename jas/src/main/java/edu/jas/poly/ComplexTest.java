@@ -1,9 +1,9 @@
 
 /*
- * $Id: ComplexTest.java 2614 2009-05-02 09:24:49Z kredel $
+ * $Id: ComplexTest.java 3364 2010-10-24 12:56:06Z kredel $
  */
 
-package edu.jas.structure;
+package edu.jas.poly;
 
 //import java.util.ArrayList;
 //import java.util.List;
@@ -20,8 +20,6 @@ import edu.jas.arith.BigInteger;
 
 //import edu.jas.structure.RingElem;
 
-import edu.jas.poly.GenPolynomial;
-import edu.jas.poly.GenPolynomialRing;
 
 
 /**

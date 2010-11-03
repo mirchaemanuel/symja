@@ -1,5 +1,5 @@
 /*
- * $Id: SquarefreeInfiniteFieldCharP.java 3290 2010-08-26 09:18:48Z kredel $
+ * $Id: SquarefreeInfiniteFieldCharP.java 3356 2010-10-23 16:41:01Z kredel $
  */
 
 package edu.jas.ufd;
@@ -10,8 +10,6 @@ import java.util.TreeMap;
 
 import org.apache.log4j.Logger;
 
-import edu.jas.application.Quotient;
-import edu.jas.application.QuotientRing;
 import edu.jas.poly.ExpVector;
 import edu.jas.poly.GenPolynomial;
 import edu.jas.poly.GenPolynomialRing;

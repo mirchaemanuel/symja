@@ -1,5 +1,5 @@
 /*
- * $Id: ModLongRing.java 3297 2010-08-26 19:09:03Z kredel $
+ * $Id: ModLongRing.java 3355 2010-10-23 16:01:52Z kredel $
  */
 
 package edu.jas.arith;
@@ -11,8 +11,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Iterator;
 
-import edu.jas.structure.ModularRingFactory;
-import edu.jas.util.StringUtil;
+import edu.jas.kern.StringUtil;
 
 
 /**

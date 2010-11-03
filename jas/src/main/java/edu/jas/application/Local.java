@@ -1,5 +1,5 @@
 /*
- * $Id: Local.java 3287 2010-08-23 21:29:53Z kredel $
+ * $Id: Local.java 3358 2010-10-23 19:27:53Z kredel $
  */
 
 package edu.jas.application;
@@ -242,11 +242,14 @@ public class Local<C extends GcdRingElem<C> >
     @Override
      public String toString() {
         if ( PrettyPrint.isTrue() ) {
-           return num.toString( ring.ring.getVars() ) 
-                  + "///" + den.toString( ring.ring.getVars() );
+            String s = "{ " + num.toString( ring.ring.getVars() );
+            if ( den.isONE() ) {
+                return s + " }";
+            }
+            return s + "| " + den.toString( ring.ring.getVars() ) + " }";
         } else {
            return "Local[ " + num.toString() 
-                    + " / " + den.toString() + " ]";
+                    + " | " + den.toString() + " ]";
         }
     }
 

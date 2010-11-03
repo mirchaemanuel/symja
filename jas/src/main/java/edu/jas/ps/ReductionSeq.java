@@ -1,5 +1,5 @@
 /*
- * $Id: ReductionSeq.java 3321 2010-09-12 19:19:58Z kredel $
+ * $Id: ReductionSeq.java 3345 2010-10-15 19:50:36Z kredel $
  */
 
 package edu.jas.ps;
@@ -19,13 +19,13 @@ import edu.jas.structure.RingElem;
 
 /**
  * Multivariate power series reduction sequential use algorithm. Implements Mora
- * normalform.
+ * normal-form algorithm.
  * @param <C> coefficient type
  * @author Heinz Kredel
  */
 
 public class ReductionSeq<C extends RingElem<C>> // should be FieldElem<C>>
-/*extends ReductionAbstract<C>*/{
+    /*todo: extends ReductionAbstract<C>*/{
 
 
     private static final Logger logger = Logger.getLogger(ReductionSeq.class);
@@ -59,7 +59,7 @@ public class ReductionSeq<C extends RingElem<C>> // should be FieldElem<C>>
 
 
     /**
-     * Module criterium.
+     * Module criterion.
      * @param modv number of module variables.
      * @param ei ExpVector.
      * @param ej ExpVector.
@@ -77,7 +77,7 @@ public class ReductionSeq<C extends RingElem<C>> // should be FieldElem<C>>
 
 
     /**
-     * GB criterium 4. Use only for commutative power series rings.
+     * GB criterion 4. Use only for commutative power series rings.
      * @param A power series.
      * @param B power series.
      * @param e = lcm(ht(A),ht(B))
@@ -110,13 +110,13 @@ public class ReductionSeq<C extends RingElem<C>> // should be FieldElem<C>>
      * @return spol(A,B) the S-power-series of A and B.
      */
     public MultiVarPowerSeries<C> SPolynomial(MultiVarPowerSeries<C> A, MultiVarPowerSeries<C> B) {
-        if (B == null /*|| B.isZERO()*/) {
+        if (B == null || B.isZERO()) {
             if (A == null) {
                 return B;
             }
             return A.ring.getZERO();
         }
-        if (A == null /*|| A.isZERO()*/) {
+        if (A == null || A.isZERO()) {
             return B.ring.getZERO();
         }
         if (debug) {
@@ -145,96 +145,91 @@ public class ReductionSeq<C extends RingElem<C>> // should be FieldElem<C>>
 
 
     /**
-     * Top normalform with Mora's algorithm.
+     * Top normal-form with Mora's algorithm.
      * @param Ap power series.
      * @param Pp power series list.
      * @return top-nf(Ap) with respect to Pp.
      */
-    //@SuppressWarnings("unchecked") 
     public MultiVarPowerSeries<C> normalform(List<MultiVarPowerSeries<C>> Pp, MultiVarPowerSeries<C> Ap) {
         if (Pp == null || Pp.isEmpty()) {
             return Ap;
         }
-        if (Ap == null) {
+        if (Ap == null || Ap.isZERO()) {
             return Ap;
         }
         if (!Ap.ring.coFac.isField()) {
             throw new IllegalArgumentException("coefficients not from a field");
         }
-        int l;
-        MultiVarPowerSeries<C>[] P;
+        List<MultiVarPowerSeries<C>> P = new ArrayList<MultiVarPowerSeries<C>>(Pp.size());
         synchronized (Pp) {
-            l = Pp.size();
-            P = new MultiVarPowerSeries[l];
-            for (int i = 0; i < Pp.size(); i++) {
-                P[i] = Pp.get(i);
-            }
+            P.addAll(Pp);
         }
-        ArrayList<ExpVector> htl = new ArrayList<ExpVector>(l);
-        ArrayList<C> lbc = new ArrayList<C>(l);
-        ArrayList<MultiVarPowerSeries<C>> p = new ArrayList<MultiVarPowerSeries<C>>(l);
-        ArrayList<Long> ecart = new ArrayList<Long>(l);
+        ArrayList<ExpVector> htl = new ArrayList<ExpVector>(P.size());
+        ArrayList<C> lbc = new ArrayList<C>(P.size());
+        ArrayList<MultiVarPowerSeries<C>> p = new ArrayList<MultiVarPowerSeries<C>>(P.size());
+        ArrayList<Long> ecart = new ArrayList<Long>(P.size());
         Map.Entry<ExpVector, C> m;
-        int i;
         int j = 0;
-        for (i = 0; i < l; i++) {
-            m = P[i].orderMonomial();
+        for (int i = 0; i < P.size(); i++) {
+            m = P.get(i).orderMonomial();
             //System.out.println("m_i = " + m);
             if (m != null) {
-                p.add(P[i]);
+                p.add(P.get(i));
                 //System.out.println("e = " + m.getKey().toString(Ap.ring.vars));
                 htl.add(m.getKey());
                 lbc.add(m.getValue());
-                ecart.add(P[i].ecart());
+                ecart.add(P.get(i).ecart());
                 j++;
             }
         }
-        l = j;
-        MultiVarPowerSeries<C> R = Ap.ring.getZERO();
-        //System.out.println("R = " + R);
+        int ll = j;
         MultiVarPowerSeries<C> S = Ap;
+        //S.setTruncate(Ap.ring.truncate()); // ??
         m = S.orderMonomial();
         while (true) {
             //System.out.println("m = " + m);
             //System.out.println("S = " + S);
             if (m == null) {
-                R = R.sum(S);
-                return R;
+                return S;
             }
             if (S.isZERO()) {
-                return R;
+                return S;
             }
             ExpVector e = m.getKey();
             if (debug) {
                 logger.debug("e = " + e.toString(Ap.ring.vars));
             }
-            if (e.totalDeg() > S.truncate()) {
-                throw new RuntimeException("not convergent, deg = " + e.totalDeg() + " > " + S.truncate());
-            }
             // search ps with ht(ps) | ht(S)
             List<Integer> li = new ArrayList<Integer>();
-            for (i = 0; i < l; i++) {
+            int i;
+            for (i = 0; i < htl.size(); i++) {
                 if (e.multipleOf(htl.get(i))) {
                     //System.out.println("m = " + m);
                     li.add(i);
                 }
             }
-            if (li.size() == 0) {
-                R = R.sum(S);
-                return R;
+            if (li.isEmpty()) {
+                return S;
             }
             //System.out.println("li = " + li);
             // select ps with smallest ecart
             long mi = Long.MAX_VALUE;
+            //String es = "";
             for (int k = 0; k < li.size(); k++) {
                 int ki = li.get(k);
                 long x = ecart.get(ki); //p.get( ki ).ecart();
-                if (x < mi) { // first or last?
+                //es = es + x + " ";
+                if (x < mi) { // first < or last <= ?
                     mi = x;
                     i = ki;
                 }
             }
+            //System.out.println("li = " + li + ", ecarts = " + es);
             //System.out.println("i = " + i + ", p_i = " + p.get(i));
+            //if ( i <= ll ) {
+            //} else {
+            //    System.out.println("i = " + i + ", ll = " + ll);
+            //}
             long si = S.ecart();
             if (mi > si) {
                 //System.out.println("ecart_i = " + mi + ", ecart_S = " + si + ", S+ = " + S);
@@ -242,7 +237,6 @@ public class ReductionSeq<C extends RingElem<C>> // should be FieldElem<C>>
                 htl.add(m.getKey());
                 lbc.add(m.getValue());
                 ecart.add(si);
-                l++;
             }
             e = e.subtract(htl.get(i));
             C a = m.getValue().divide(lbc.get(i));
@@ -254,7 +248,7 @@ public class ReductionSeq<C extends RingElem<C>> // should be FieldElem<C>>
 
 
     /**
-     * Total reduced normalform with Mora's algorithm.
+     * Total reduced normal-form with Mora's algorithm.
      * @param A power series.
      * @param P power series list.
      * @return total-nf(A) with respect to P.
@@ -266,33 +260,39 @@ public class ReductionSeq<C extends RingElem<C>> // should be FieldElem<C>>
         if (A == null) {
             return A;
         }
-        MultiVarPowerSeries<C> R = normalform(P,A);
-        if ( R.isZERO() ) {
+        MultiVarPowerSeries<C> R = normalform(P, A);
+        if (R.isZERO()) {
             return R;
         }
         MultiVarCoefficients<C> Rc = new MultiVarCoefficients<C>(A.ring) {
+
+
             @Override
             public C generate(ExpVector i) { // will not be used
                 return pfac.coFac.getZERO();
             }
         };
         GenPolynomialRing<C> pfac = A.lazyCoeffs.pfac;
-        while ( !R.isZERO() ) {
-              Map.Entry<ExpVector, C> m = R.orderMonomial();
-              R = R.reductum();
-              ExpVector e = m.getKey();
-              long t = e.totalDeg();
-              GenPolynomial<C> p = Rc.coeffCache.get(t);
-              if ( p == null ) {
-                  p = pfac.getZERO();
-              }
-              p = p.sum(m.getValue(),e);
-              Rc.coeffCache.put(t,p); 
-              // zeros need never update
+        while (!R.isZERO()) {
+            Map.Entry<ExpVector, C> m = R.orderMonomial();
+            if ( m == null ) {
+                break;
+            }
+            R = R.reductum();
+            ExpVector e = m.getKey();
+            long t = e.totalDeg();
+            GenPolynomial<C> p = Rc.coeffCache.get(t);
+            if (p == null) {
+                p = pfac.getZERO();
+            }
+            p = p.sum(m.getValue(), e);
+            Rc.coeffCache.put(t, p);
+            // zeros need never update
 
-              R = normalform(P,R);
+            R = normalform(P, R);
         }
         R = R.sum(Rc);
+        //System.out.println("R+Rc = " + R);
         return R;
     }
 
@@ -306,13 +306,28 @@ public class ReductionSeq<C extends RingElem<C>> // should be FieldElem<C>>
         if (P == null || P.isEmpty()) {
             return P;
         }
+        //StandardBaseSeq<C> std = new StandardBaseSeq<C>();
         List<MultiVarPowerSeries<C>> R = new ArrayList<MultiVarPowerSeries<C>>(P.size());
         List<MultiVarPowerSeries<C>> S = new ArrayList<MultiVarPowerSeries<C>>(P);
-        for ( MultiVarPowerSeries<C> a : P ) {
-            S.remove(a);
-            MultiVarPowerSeries<C> b = totalNormalform(S,a);
-            S.add(a);
-            R.add(b);
+        for (MultiVarPowerSeries<C> a : P) {
+            //S.remove(a);
+            //if ( !std.isSTD(S) ) {
+            //    System.out.println("a = " + a);
+            //}
+            Map.Entry<ExpVector, C> m = a.orderMonomial();
+            if ( m == null ) {
+                //S.add(a);
+                continue;
+            }
+            MultiVarPowerSeries<C> r = a.reductum();
+
+            MultiVarPowerSeries<C> b = normalform(S, r);
+            // need also unit of reduction: u r --> b
+            // b = b.multiply(u);
+            b = b.sum(m);
+            if ( !b.isZERO() ) {
+                R.add(b);
+            }
         }
         return R;
     }
@@ -332,8 +347,15 @@ public class ReductionSeq<C extends RingElem<C>> // should be FieldElem<C>>
             return false;
         }
         ExpVector e = A.orderExpVector();
+        if (e == null) {
+            return false;
+        }
         for (MultiVarPowerSeries<C> p : P) {
-            if (e.multipleOf(p.orderExpVector())) {
+            ExpVector ep = p.orderExpVector();
+            if (e == null) {
+                continue;
+            }
+            if (e.multipleOf(ep)) {
                 return true;
             }
         }
@@ -342,7 +364,7 @@ public class ReductionSeq<C extends RingElem<C>> // should be FieldElem<C>>
 
 
     /**
-     * Ideal containment. Test if each b in B is contained in ideal S. 
+     * Ideal containment. Test if each b in B is contained in ideal S.
      * @param S standard base.
      * @param B list of power series
      * @return true, if each b in B is contained in ideal(S), else false

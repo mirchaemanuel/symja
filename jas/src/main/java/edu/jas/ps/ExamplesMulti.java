@@ -1,5 +1,5 @@
 /*
- * $Id: ExamplesMulti.java 3330 2010-09-26 10:50:05Z kredel $
+ * $Id: ExamplesMulti.java 3345 2010-10-15 19:50:36Z kredel $
  */
 
 package edu.jas.ps;
@@ -25,17 +25,19 @@ public class ExamplesMulti {
 
     public static void main(String[] args) {
         BasicConfigurator.configure();
-        //example1();
-        //example2();
-        //example3();
-        //example4();
-        //example5();
-        //example6();
-        //example7();
-        //example8();
-        //example9();
-        example10();
-        //example11();
+        if ( args.length > 0 ) {
+            example1();
+            example2();
+            example3();
+            example4();
+            example5();
+            example6();
+            example7();
+            example8();
+            example9();
+            example10();
+        }
+        example11();
     }
 
 
@@ -214,7 +216,7 @@ public class ExamplesMulti {
         System.out.println("c = " + c);
 
         MultiVarPowerSeriesRing<BigRational> fac = new MultiVarPowerSeriesRing<BigRational>(pfac);
-        fac.setTruncate(11);
+        //fac.setTruncate(11);
         System.out.println("fac = " + fac.toScript());
 
         MultiVarPowerSeries<BigRational> ap = fac.fromPolynomial(a);
@@ -248,7 +250,7 @@ public class ExamplesMulti {
     public static void example7() {
         BigRational br = new BigRational(1);
         String[] vars = new String[] { "x", "y" };
-        GenPolynomialRing<BigRational> pfac = new GenPolynomialRing<BigRational>(br,vars);
+        GenPolynomialRing<BigRational> pfac = new GenPolynomialRing<BigRational>(br, vars);
         System.out.println("pfac = " + pfac.toScript());
 
         GenPolynomial<BigRational> a = pfac.parse("x^10 + x^9 y^2");
@@ -271,8 +273,8 @@ public class ExamplesMulti {
 
         StandardBaseSeq<BigRational> tm = new StandardBaseSeq<BigRational>();
         List<MultiVarPowerSeries<BigRational>> S = tm.STD(L);
-        for ( MultiVarPowerSeries<BigRational> ps : S ) {
-             System.out.println("ps = " + ps);
+        for (MultiVarPowerSeries<BigRational> ps : S) {
+            System.out.println("ps = " + ps);
         }
         System.out.println("\nS = " + S);
 
@@ -280,7 +282,7 @@ public class ExamplesMulti {
         System.out.println("\nisSTD = " + s);
 
         ReductionSeq<BigRational> red = new ReductionSeq<BigRational>();
-        s = red.contains(S,L);
+        s = red.contains(S, L);
         System.out.println("\nS contains L = " + s);
     }
 
@@ -328,7 +330,7 @@ public class ExamplesMulti {
     }
 
 
-   public static void example9() {
+    public static void example9() {
         BigRational br = new BigRational(1);
         String[] vars = new String[] { "x", "y", "z" };
         GenPolynomialRing<BigRational> pfac = new GenPolynomialRing<BigRational>(br, vars);
@@ -373,7 +375,7 @@ public class ExamplesMulti {
     }
 
 
-   public static void example10() {
+    public static void example10() {
         BigRational br = new BigRational(1);
         String[] vars = new String[] { "x", "y", "z" };
         GenPolynomialRing<BigRational> pfac = new GenPolynomialRing<BigRational>(br, vars);
@@ -430,7 +432,7 @@ public class ExamplesMulti {
     }
 
 
-   public static void example11() {
+    public static void example11() {
         BigRational br = new BigRational(1);
         String[] vars = new String[] { "x", "y", "z" };
         GenPolynomialRing<BigRational> pfac = new GenPolynomialRing<BigRational>(br, vars);
@@ -444,7 +446,7 @@ public class ExamplesMulti {
         System.out.println("c = " + c);
 
         MultiVarPowerSeriesRing<BigRational> fac = new MultiVarPowerSeriesRing<BigRational>(pfac);
-        fac.setTruncate(9);
+        //fac.setTruncate(9);
         System.out.println("fac = " + fac.toScript());
 
         MultiVarPowerSeries<BigRational> ap = fac.fromPolynomial(a);
@@ -474,11 +476,35 @@ public class ExamplesMulti {
         System.out.println("S contains L = " + s);
 
         List<MultiVarPowerSeries<BigRational>> R = red.totalNormalform(S);
-        System.out.println("R = " + R);
+        for (MultiVarPowerSeries<BigRational> ps : R) {
+            System.out.println("ps = " + ps);
+        }
+        System.out.println("\nR = " + R);
+        s = tm.isSTD(R);
+        System.out.println("\nisSTD = " + s);
+
         s = red.contains(R, L);
         System.out.println("R contains L = " + s);
         s = red.contains(R, S);
         System.out.println("R contains S = " + s);
+        s = red.contains(S,R);
+        System.out.println("S contains R = " + s);
+        s = red.contains(S,L);
+        System.out.println("S contains L = " + s);
+
+        List<MultiVarPowerSeries<BigRational>> Rs = tm.STD(R);
+        for (MultiVarPowerSeries<BigRational> ps : Rs) {
+            System.out.println("ps = " + ps);
+        }
+        System.out.println("\nRs = " + Rs);
+        s = tm.isSTD(Rs);
+        System.out.println("\nisSTD = " + s);
+
+        s = red.contains(Rs, R);
+        System.out.println("Rs contains R = " + s);
+
+        s = red.contains(Rs, S);
+        System.out.println("Rs contains S = " + s);
     }
 
 }

@@ -1,17 +1,25 @@
 /*
- * $Id: Examples.java 3295 2010-08-26 17:01:10Z kredel $
+ * $Id: Examples.java 3368 2010-10-24 13:53:32Z kredel $
  */
 
 package edu.jas.application;
 
 
+import java.io.IOException;
+import java.io.Reader;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.BasicConfigurator;
 
+import edu.jas.arith.BigDecimal;
 import edu.jas.arith.BigInteger;
 import edu.jas.arith.BigRational;
+import edu.jas.arith.ModInteger;
+import edu.jas.arith.ModIntegerRing;
+import edu.jas.arith.Product;
+import edu.jas.arith.ProductRing;
 import edu.jas.gb.GBFactory;
 import edu.jas.gb.GroebnerBase;
 import edu.jas.gb.RGroebnerBasePseudoSeq;
@@ -19,12 +27,14 @@ import edu.jas.gb.RReductionSeq;
 import edu.jas.kern.ComputerThreads;
 import edu.jas.poly.GenPolynomial;
 import edu.jas.poly.GenPolynomialRing;
-import edu.jas.structure.Product;
-import edu.jas.structure.ProductRing;
+import edu.jas.poly.GenPolynomialTokenizer;
+import edu.jas.poly.PolynomialList;
+import edu.jas.poly.TermOrder;
 
 
 /**
  * Examples for application usage.
+ * @author Christoph Zengler.
  * @author Heinz Kredel.
  */
 
@@ -36,11 +46,15 @@ public class Examples {
      */
     public static void main(String[] args) {
         BasicConfigurator.configure();
-        //example1();
-        //example2();
-        //example3();
-        //example4();
+        if (args.length > 0) {
+            example1();
+            example2();
+            example3();
+            example4();
+        }
         example5();
+        example6();
+        ComputerThreads.terminate();
     }
 
 
@@ -76,7 +90,7 @@ public class Examples {
     static GenPolynomial<BigInteger> cyclicPoly(GenPolynomialRing<BigInteger> ring, int n, int i) {
 
         List<? extends GenPolynomial<BigInteger>> X = /*(List<GenPolynomial<BigInteger>>)*/ring
-                .univariateList();
+                        .univariateList();
 
         GenPolynomial<BigInteger> p = ring.getZERO();
         for (int j = 1; j <= n; j++) {
@@ -149,7 +163,7 @@ public class Examples {
         //System.out.println("Lp = " + Lp);
 
         GroebnerBase<Product<Residue<BigRational>>> bb = new RGroebnerBasePseudoSeq<Product<Residue<BigRational>>>(
-                pr);
+                        pr);
 
         System.out.println("isGB(L) = " + bb.isGB(L));
 
@@ -158,9 +172,6 @@ public class Examples {
         G = bb.GB(L);
         System.out.println("G = " + G);
         System.out.println("isGB(G) = " + bb.isGB(G));
-
-        ComputerThreads.terminate();
-
     }
 
 
@@ -222,8 +233,6 @@ public class Examples {
         G = bb.GB(L);
         System.out.println("G = " + G);
         System.out.println("isGB(G) = " + bb.isGB(G));
-
-        ComputerThreads.terminate();
     }
 
 
@@ -282,8 +291,6 @@ public class Examples {
         L = bb.GB(L);
         System.out.println("CGB( L )   = " + L);
         System.out.println("isCGB( L ) = " + bb.isGB(L));
-
-        ComputerThreads.terminate();
     }
 
 
@@ -343,11 +350,177 @@ public class Examples {
 
         if (bLr.size() > 0) {
             GroebnerBase<Product<Residue<BigRational>>> rbb = new RGroebnerBasePseudoSeq<Product<Residue<BigRational>>>(
-                    bLr.get(0).ring.coFac);
+                            bLr.get(0).ring.coFac);
             System.out.println("isRegularGB(Lr) = " + rbb.isGB(bLr));
         }
+    }
 
-        ComputerThreads.terminate();
+
+    /**
+     * Example GBase and real root.
+     */
+    @SuppressWarnings("unchecked")
+    public static void example6() {
+        BigRational coeff = new BigRational();
+        GroebnerBase<BigRational> gb = GBFactory.getImplementation(coeff);
+
+        String exam = "(x,y,z) L " + "( " + "( x^2 - 2 ), ( y^2 - 3 ), ( z^2 + x * y )" + ") ";
+        Reader source = new StringReader(exam);
+        GenPolynomialTokenizer parser = new GenPolynomialTokenizer(source);
+        PolynomialList<BigRational> F = null;
+
+        try {
+            F = (PolynomialList<BigRational>) parser.nextPolynomialSet();
+        } catch (ClassCastException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        System.out.println("F = " + F);
+
+        List<GenPolynomial<BigRational>> G = gb.GB(F.list);
+
+        PolynomialList<BigRational> Gp = new PolynomialList<BigRational>(F.ring, G);
+        System.out.println("G = " + Gp);
+
+        // compute real roots of the ideal
+        Ideal<BigRational> I = new Ideal<BigRational>(Gp);
+        List<IdealWithRealAlgebraicRoots<BigRational, BigRational>> Ir = PolyUtilApp
+                        .<BigRational, BigRational> realAlgebraicRoots(I);
+        for (IdealWithRealAlgebraicRoots<BigRational, BigRational> R : Ir) {
+            R.doDecimalApproximation();
+            for (List<BigDecimal> Dr : R.decimalApproximation()) {
+                System.out.println(Dr.toString());
+            }
+            System.out.println();
+        }
+    }
+
+
+    /**
+     * example7. Coefficients in Boolean residue class ring.
+     * 
+     */
+    public static void example7() {
+        String[] vars = { "v3", "v2", "v1" };
+
+        ModIntegerRing z2 = new ModIntegerRing(2);
+        GenPolynomialRing<ModInteger> z2p = new GenPolynomialRing<ModInteger>(z2, vars.length, new TermOrder(
+                TermOrder.INVLEX), vars);
+        List<GenPolynomial<ModInteger>> fieldPolynomials = new ArrayList<GenPolynomial<ModInteger>>();
+
+        //add v1^2 + v1, v2^2 + v2, v3^2 + v3 to fieldPolynomials
+        for (int i = 0; i < vars.length; i++) {
+            GenPolynomial<ModInteger> var = z2p.univariate(i);
+            fieldPolynomials.add(var.multiply(var).sum(var));
+        }
+
+
+        Ideal<ModInteger> fieldPolys = new Ideal<ModInteger>(z2p, fieldPolynomials);
+        ResidueRing<ModInteger> ring = new ResidueRing<ModInteger>(fieldPolys);
+        String[] mvars = { "mv3", "mv2", "mv1" };
+        GenPolynomialRing<Residue<ModInteger>> ringp = new GenPolynomialRing<Residue<ModInteger>>(ring,
+                mvars.length, mvars);
+
+        List<GenPolynomial<Residue<ModInteger>>> polynomials = new ArrayList<GenPolynomial<Residue<ModInteger>>>();
+
+        GenPolynomial<Residue<ModInteger>> v1 = ringp.univariate(0);
+        GenPolynomial<Residue<ModInteger>> v2 = ringp.univariate(1);
+        GenPolynomial<Residue<ModInteger>> v3 = ringp.univariate(2);
+        GenPolynomial<Residue<ModInteger>> notV1 = v1.sum(ringp.ONE);
+        GenPolynomial<Residue<ModInteger>> notV2 = v2.sum(ringp.ONE);
+        GenPolynomial<Residue<ModInteger>> notV3 = v3.sum(ringp.ONE);
+
+        //v1*v2
+        GenPolynomial<Residue<ModInteger>> p1 = v1.multiply(v2);
+
+        //v1*v2 + v1 + v2 + 1
+        GenPolynomial<Residue<ModInteger>> p2 = notV1.multiply(notV2);
+
+        //v1*v3 + v1 + v3 + 1
+        GenPolynomial<Residue<ModInteger>> p3 = notV1.multiply(notV3);
+
+        polynomials.add(p1);
+        polynomials.add(p2);
+        polynomials.add(p3);
+
+        //GroebnerBase<Residue<ModInteger>> gb = new GroebnerBasePseudoSeq<Residue<ModInteger>>(ring);
+        GroebnerBase<Residue<ModInteger>> gb = GBFactory.getImplementation(ring);
+        List<GenPolynomial<Residue<ModInteger>>> G = gb.GB(polynomials);
+
+        System.out.println(G);
+    }
+
+
+    /**
+     * example8. Coefficients in Boolean residue class ring with cuppling of
+     * variables.
+     * 
+     */
+    public static void example8() {
+        String[] vars = { "v3", "v2", "v1" };
+
+        ModIntegerRing z2 = new ModIntegerRing(2);
+        GenPolynomialRing<ModInteger> z2p = new GenPolynomialRing<ModInteger>(z2, vars.length, new TermOrder(
+                TermOrder.INVLEX), vars);
+        List<GenPolynomial<ModInteger>> fieldPolynomials = new ArrayList<GenPolynomial<ModInteger>>();
+
+        //add v1^2 + v1, v2^2 + v2, v3^2 + v3 to fieldPolynomials
+        for (int i = 0; i < vars.length; i++) {
+            GenPolynomial<ModInteger> var = z2p.univariate(i);
+            fieldPolynomials.add(var.multiply(var).sum(var));
+        }
+
+
+        Ideal<ModInteger> fieldPolys = new Ideal<ModInteger>(z2p, fieldPolynomials);
+        ResidueRing<ModInteger> ring = new ResidueRing<ModInteger>(fieldPolys);
+        String[] mvars = { "mv3", "mv2", "mv1" };
+        GenPolynomialRing<Residue<ModInteger>> ringp = new GenPolynomialRing<Residue<ModInteger>>(ring,
+                mvars.length, mvars);
+
+        List<GenPolynomial<Residue<ModInteger>>> polynomials = new ArrayList<GenPolynomial<Residue<ModInteger>>>();
+
+        GenPolynomial<Residue<ModInteger>> v1 = ringp.univariate(0);
+        GenPolynomial<Residue<ModInteger>> v2 = ringp.univariate(1);
+        GenPolynomial<Residue<ModInteger>> v3 = ringp.univariate(2);
+        GenPolynomial<Residue<ModInteger>> notV1 = v1.sum(ringp.ONE);
+        GenPolynomial<Residue<ModInteger>> notV2 = v2.sum(ringp.ONE);
+        GenPolynomial<Residue<ModInteger>> notV3 = v3.sum(ringp.ONE);
+
+        //v1*v2
+        GenPolynomial<Residue<ModInteger>> p1 = v1.multiply(v2);
+
+        //v1*v2 + v1 + v2 + 1
+        GenPolynomial<Residue<ModInteger>> p2 = notV1.multiply(notV2);
+
+        //v1*v3 + v1 + v3 + 1
+        GenPolynomial<Residue<ModInteger>> p3 = notV1.multiply(notV3);
+
+        polynomials.add(p1);
+        polynomials.add(p2);
+        polynomials.add(p3);
+
+        List<Residue<ModInteger>> gens = ring.generators();
+        System.out.println("gens = " + gens);
+        GenPolynomial<Residue<ModInteger>> mv3v3 = v3.subtract(gens.get(1));
+        GenPolynomial<Residue<ModInteger>> mv2v2 = v2.subtract(gens.get(2));
+        GenPolynomial<Residue<ModInteger>> mv1v1 = v1.subtract(gens.get(3));
+
+        System.out.println("mv3v3 = " + mv3v3);
+        System.out.println("mv2v2 = " + mv2v2);
+        System.out.println("mv1v1 = " + mv1v1);
+
+        polynomials.add(mv3v3);
+        polynomials.add(mv2v2);
+        polynomials.add(mv1v1);
+
+        //GroebnerBase<Residue<ModInteger>> gb = new GroebnerBasePseudoSeq<Residue<ModInteger>>(ring);
+        GroebnerBase<Residue<ModInteger>> gb = GBFactory.getImplementation(ring);
+
+        List<GenPolynomial<Residue<ModInteger>>> G = gb.GB(polynomials);
+
+        System.out.println(G);
+
     }
 
 }

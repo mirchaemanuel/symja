@@ -13,9 +13,6 @@ import org.matheclipse.core.interfaces.IFraction;
 import org.matheclipse.core.interfaces.IInteger;
 import org.matheclipse.core.interfaces.ISymbol;
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
-import edu.jas.application.Quotient;
 import edu.jas.arith.BigRational;
 import edu.jas.arith.ModInteger;
 import edu.jas.integrate.Integral;
@@ -31,6 +28,7 @@ import edu.jas.poly.PolyUtil;
 import edu.jas.poly.TermOrder;
 import edu.jas.structure.RingElem;
 import edu.jas.structure.RingFactory;
+import edu.jas.ufd.Quotient;
 
 /**
  * Convert <a href="http://krum.rz.uni-mannheim.de/jas/">JAS</a> objects from
@@ -461,7 +459,7 @@ public class JASConvert<C extends RingElem<C>> {
 		return result;
 	}
 
-	public static IComplex jas2Complex(edu.jas.structure.Complex<BigRational> c) {
+	public static IComplex jas2Complex(edu.jas.poly.Complex<BigRational> c) {
 		IFraction re = F.fraction(c.getRe().numerator(), c.getRe().denominator());
 		IFraction im = F.fraction(c.getIm().numerator(), c.getIm().denominator());
 		return F.complex(re, im);

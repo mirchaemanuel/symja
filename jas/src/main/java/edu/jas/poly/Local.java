@@ -1,11 +1,12 @@
 /*
- * $Id: Local.java 3287 2010-08-23 21:29:53Z kredel $
+ * $Id: Local.java 3367 2010-10-24 13:05:02Z kredel $
  */
 
-package edu.jas.structure;
+package edu.jas.poly;
 
 import org.apache.log4j.Logger;
 
+import edu.jas.structure.Element;
 import edu.jas.structure.RingElem;
 import edu.jas.structure.RingFactory;
 import edu.jas.structure.GcdRingElem;

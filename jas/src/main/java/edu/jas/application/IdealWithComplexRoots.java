@@ -1,5 +1,5 @@
 /*
- * $Id: IdealWithComplexRoots.java 3111 2010-05-05 21:05:56Z kredel $
+ * $Id: IdealWithComplexRoots.java 3364 2010-10-24 12:56:06Z kredel $
  */
 
 package edu.jas.application;
@@ -9,8 +9,8 @@ import java.io.Serializable;
 import java.util.List;
 
 import edu.jas.arith.BigDecimal;
+import edu.jas.poly.Complex;
 import edu.jas.poly.GenPolynomial;
-import edu.jas.structure.Complex;
 import edu.jas.structure.GcdRingElem;
 
 

@@ -1,5 +1,5 @@
 /*
- * $Id: ComplexRoots.java 2975 2010-01-05 10:21:17Z kredel $
+ * $Id: ComplexRoots.java 3364 2010-10-24 12:56:06Z kredel $
  */
 
 package edu.jas.root;
@@ -9,8 +9,8 @@ import java.util.List;
 
 import edu.jas.arith.Rational;
 import edu.jas.arith.BigRational;
+import edu.jas.poly.Complex;
 import edu.jas.poly.GenPolynomial;
-import edu.jas.structure.Complex;
 import edu.jas.structure.RingElem;
 
 

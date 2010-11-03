@@ -1,5 +1,5 @@
 /*
- * $Id: FactorModular.java 3295 2010-08-26 17:01:10Z kredel $
+ * $Id: FactorModular.java 3355 2010-10-23 16:01:52Z kredel $
  */
 
 package edu.jas.ufd;
@@ -17,11 +17,11 @@ import org.apache.log4j.Logger;
 import edu.jas.arith.BigInteger;
 import edu.jas.arith.ModLongRing;
 import edu.jas.arith.Modular;
+import edu.jas.arith.ModularRingFactory;
 import edu.jas.poly.GenPolynomial;
 import edu.jas.poly.GenPolynomialRing;
 import edu.jas.poly.PolyUtil;
 import edu.jas.structure.GcdRingElem;
-import edu.jas.structure.ModularRingFactory;
 import edu.jas.structure.Power;
 import edu.jas.structure.RingFactory;
 

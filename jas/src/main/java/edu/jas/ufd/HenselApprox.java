@@ -1,5 +1,5 @@
 /*
- * $Id: HenselApprox.java 3295 2010-08-26 17:01:10Z kredel $
+ * $Id: HenselApprox.java 3355 2010-10-23 16:01:52Z kredel $
  */
 
 package edu.jas.ufd;
@@ -9,9 +9,9 @@ import java.io.Serializable;
 
 import edu.jas.arith.BigInteger;
 import edu.jas.arith.Modular;
+import edu.jas.arith.ModularRingFactory;
 import edu.jas.poly.GenPolynomial;
 import edu.jas.structure.GcdRingElem;
-import edu.jas.structure.ModularRingFactory;
 
 
 /**

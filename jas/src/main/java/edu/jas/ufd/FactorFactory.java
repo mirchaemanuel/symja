@@ -1,5 +1,5 @@
 /*
- * $Id: FactorFactory.java 3295 2010-08-26 17:01:10Z kredel $
+ * $Id: FactorFactory.java 3364 2010-10-24 12:56:06Z kredel $
  */
 
 package edu.jas.ufd;
@@ -7,8 +7,6 @@ package edu.jas.ufd;
 
 import org.apache.log4j.Logger;
 
-import edu.jas.application.Quotient;
-import edu.jas.application.QuotientRing;
 import edu.jas.arith.BigInteger;
 import edu.jas.arith.BigRational;
 import edu.jas.arith.ModInteger;
@@ -17,9 +15,9 @@ import edu.jas.arith.ModLong;
 import edu.jas.arith.ModLongRing;
 import edu.jas.poly.AlgebraicNumber;
 import edu.jas.poly.AlgebraicNumberRing;
+import edu.jas.poly.Complex;
+import edu.jas.poly.ComplexRing;
 import edu.jas.poly.GenPolynomialRing;
-import edu.jas.structure.Complex;
-import edu.jas.structure.ComplexRing;
 import edu.jas.structure.GcdRingElem;
 import edu.jas.structure.RingFactory;
 

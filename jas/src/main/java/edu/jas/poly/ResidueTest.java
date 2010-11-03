@@ -1,9 +1,9 @@
 
 /*
- * $Id: ResidueTest.java 1737 2008-03-10 21:42:36Z kredel $
+ * $Id: ResidueTest.java 3366 2010-10-24 13:02:14Z kredel $
  */
 
-package edu.jas.structure;
+package edu.jas.poly;
 
 //import java.util.ArrayList;
 //import java.util.List;
@@ -20,8 +20,6 @@ import edu.jas.arith.BigInteger;
 
 //import edu.jas.structure.RingElem;
 
-import edu.jas.poly.GenPolynomial;
-import edu.jas.poly.GenPolynomialRing;
 
 
 /**

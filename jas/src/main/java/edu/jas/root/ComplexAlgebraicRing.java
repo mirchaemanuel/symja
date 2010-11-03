@@ -1,5 +1,5 @@
 /*
- * $Id: ComplexAlgebraicRing.java 3286 2010-08-22 19:08:24Z kredel $
+ * $Id: ComplexAlgebraicRing.java 3364 2010-10-24 12:56:06Z kredel $
  */
 
 package edu.jas.root;
@@ -12,8 +12,8 @@ import java.util.Random;
 
 import edu.jas.arith.Rational;
 import edu.jas.poly.AlgebraicNumberRing;
+import edu.jas.poly.Complex;
 import edu.jas.poly.GenPolynomial;
-import edu.jas.structure.Complex;
 import edu.jas.structure.GcdRingElem;
 import edu.jas.structure.Power;
 import edu.jas.structure.RingFactory;

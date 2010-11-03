@@ -1,5 +1,5 @@
 /*
- * $Id: HenselUtil.java 3320 2010-09-12 11:01:57Z kredel $
+ * $Id: HenselUtil.java 3355 2010-10-23 16:01:52Z kredel $
  */
 
 package edu.jas.ufd;
@@ -15,13 +15,13 @@ import edu.jas.arith.ModInteger;
 import edu.jas.arith.ModIntegerRing;
 import edu.jas.arith.ModLongRing;
 import edu.jas.arith.Modular;
+import edu.jas.arith.ModularRingFactory;
 import edu.jas.poly.ExpVector;
 import edu.jas.poly.GenPolynomial;
 import edu.jas.poly.GenPolynomialRing;
 import edu.jas.poly.Monomial;
 import edu.jas.poly.PolyUtil;
 import edu.jas.structure.GcdRingElem;
-import edu.jas.structure.ModularRingFactory;
 import edu.jas.structure.RingFactory;
 
 

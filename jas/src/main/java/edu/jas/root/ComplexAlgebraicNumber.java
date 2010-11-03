@@ -1,16 +1,16 @@
 /*
- * $Id: ComplexAlgebraicNumber.java 3211 2010-07-05 12:54:22Z kredel $
+ * $Id: ComplexAlgebraicNumber.java 3364 2010-10-24 12:56:06Z kredel $
  */
 
 package edu.jas.root;
 
 
-//import edu.jas.structure.RingElem;
+// import edu.jas.structure.RingElem;
 import edu.jas.arith.Rational;
 import edu.jas.kern.PrettyPrint;
 import edu.jas.poly.AlgebraicNumber;
+import edu.jas.poly.Complex;
 import edu.jas.poly.GenPolynomial;
-import edu.jas.structure.Complex;
 import edu.jas.structure.GcdRingElem;
 import edu.jas.structure.NotInvertibleException;
 
@@ -21,7 +21,7 @@ import edu.jas.structure.NotInvertibleException;
  * @author Heinz Kredel
  */
 
-public class ComplexAlgebraicNumber<C extends GcdRingElem<C>& Rational>
+public class ComplexAlgebraicNumber<C extends GcdRingElem<C> & Rational>
 /*extends AlgebraicNumber<C>*/
 implements GcdRingElem<ComplexAlgebraicNumber<C>> {
 
@@ -130,9 +130,8 @@ implements GcdRingElem<ComplexAlgebraicNumber<C>> {
     public String toString() {
         if (PrettyPrint.isTrue()) {
             return "{ " + number.toString() + " }";
-        } else {
-            return "Complex" + number.toString();
         }
+        return "Complex" + number.toString();
     }
 
 
@@ -236,9 +235,8 @@ implements GcdRingElem<ComplexAlgebraicNumber<C>> {
     public ComplexAlgebraicNumber<C> abs() {
         if (this.signum() < 0) {
             return new ComplexAlgebraicNumber<C>(ring, number.negate());
-        } else {
-            return this;
         }
+        return this;
     }
 
 

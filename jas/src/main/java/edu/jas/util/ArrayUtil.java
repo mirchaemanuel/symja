@@ -1,5 +1,5 @@
 /*
- * $Id: ArrayUtil.java 3213 2010-07-05 14:17:57Z kredel $
+ * $Id: ArrayUtil.java 3364 2010-10-24 12:56:06Z kredel $
  */
 
 package edu.jas.util;
@@ -7,7 +7,7 @@ package edu.jas.util;
 
 //import org.apache.log4j.Logger;
 
-import edu.jas.structure.Complex;
+import edu.jas.poly.Complex;
 
 
 /**

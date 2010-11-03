@@ -1,5 +1,5 @@
 /*
- * $Id: ComplexAlgebraicTest.java 2925 2009-12-25 17:50:01Z kredel $
+ * $Id: ComplexAlgebraicTest.java 3364 2010-10-24 12:56:06Z kredel $
  */
 
 package edu.jas.root;
@@ -12,10 +12,10 @@ import junit.framework.TestSuite;
 import org.apache.log4j.BasicConfigurator;
 
 import edu.jas.arith.BigRational;
+import edu.jas.poly.Complex;
+import edu.jas.poly.ComplexRing;
 import edu.jas.poly.GenPolynomial;
 import edu.jas.poly.GenPolynomialRing;
-import edu.jas.structure.Complex;
-import edu.jas.structure.ComplexRing;
 import edu.jas.structure.NotInvertibleException;
 
 

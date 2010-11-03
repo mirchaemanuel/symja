@@ -1,5 +1,5 @@
 /*
- * $Id: SquarefreeQuotModTest.java 2933 2009-12-29 13:13:34Z kredel $
+ * $Id: SquarefreeQuotModTest.java 3356 2010-10-23 16:41:01Z kredel $
  */
 
 package edu.jas.ufd;
@@ -11,8 +11,6 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import edu.jas.application.Quotient;
-import edu.jas.application.QuotientRing;
 import edu.jas.arith.ModInteger;
 import edu.jas.arith.ModIntegerRing;
 import edu.jas.kern.ComputerThreads;

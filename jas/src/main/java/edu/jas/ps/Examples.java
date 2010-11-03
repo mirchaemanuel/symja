@@ -1,5 +1,5 @@
 /*
- * $Id: Examples.java 3306 2010-08-31 18:20:15Z kredel $
+ * $Id: Examples.java 3352 2010-10-23 12:01:39Z kredel $
  */
 
 package edu.jas.ps;
@@ -36,7 +36,9 @@ public class Examples {
         example3();
         example5();
         example7();
-        //example12();
+        if ( args.length > 0 ) {
+            example12();
+        }
         example13();
     }
 
@@ -48,7 +50,7 @@ public class Examples {
 
             @Override
             public BigInteger generate(int i) {
-                return new BigInteger(i);
+                return new BigInteger(start + i);
             }
         });
     }
@@ -87,10 +89,9 @@ public class Examples {
             if (c.remainder(two).isONE()) {
                 //System.out.println(" odd");
                 return true;
-            } else {
-                //System.out.println(" even");
-                return false;
             }
+            //System.out.println(" even");
+            return false;
         }
     }
 
@@ -156,8 +157,10 @@ public class Examples {
         UnivPowerSeries<BigInteger> integers;
         integers = pfac.fixPoint(new UnivPowerSeriesMap<BigInteger>() {
 
+
             public UnivPowerSeries<BigInteger> map(UnivPowerSeries<BigInteger> ps) {
                 return ps.map(new UnaryFunctor<BigInteger, BigInteger>() {
+
 
                     public BigInteger eval(BigInteger s) {
                         return s.sum(new BigInteger(1));
@@ -176,6 +179,7 @@ public class Examples {
         UnivPowerSeriesRing<BigInteger> pfac = new UnivPowerSeriesRing<BigInteger>(z);
         UnivPowerSeries<BigInteger> fibs;
         fibs = pfac.fixPoint(new UnivPowerSeriesMap<BigInteger>() {
+
 
             public UnivPowerSeries<BigInteger> map(UnivPowerSeries<BigInteger> ps) {
                 return ps.zip(new Sum<BigInteger>(), ps.prepend(one)).prepend(z);
@@ -210,19 +214,20 @@ public class Examples {
         UnivPowerSeries<BigInteger> ONE = new UnivPowerSeries<BigInteger>(pfac,
                 new Coefficients<BigInteger>() {
 
+
                     @Override
                     public BigInteger generate(int i) {
                         if (i == 0) {
                             return fac.getONE();
-                        } else {
-                            return fac.getZERO();
                         }
+                        return fac.getZERO();
                     }
                 }//, null
         );
         System.out.println("ONE  = " + ONE);
         UnivPowerSeries<BigInteger> ZERO = new UnivPowerSeries<BigInteger>(pfac,
                 new Coefficients<BigInteger>() {
+
 
                     @Override
                     public BigInteger generate(int i) {
@@ -257,7 +262,7 @@ public class Examples {
 
 
     public static void example11() {
-        final BigInteger fac = new BigInteger();
+        //final BigInteger fac = new BigInteger();
         UnivPowerSeries<BigInteger> integers = integersFrom(0);
         System.out.println("      integers = " + integers);
         UnivPowerSeries<BigInteger> int2 = integers.multiply(new BigInteger(2));
@@ -271,8 +276,8 @@ public class Examples {
 
 
     public static void example5() {
-        final BigInteger fac = new BigInteger();
-        UnivPowerSeriesRing<BigInteger> pfac = new UnivPowerSeriesRing<BigInteger>(fac);
+        //final BigInteger fac = new BigInteger();
+        //UnivPowerSeriesRing<BigInteger> pfac = new UnivPowerSeriesRing<BigInteger>(fac);
         UnivPowerSeries<BigInteger> integers = integersFrom(0);
         System.out.println("      integers = " + integers);
         UnivPowerSeries<BigInteger> ints2 = integers.multiply(integers);
@@ -306,12 +311,14 @@ public class Examples {
         final UnivPowerSeriesRing<BigRational> pfac = new UnivPowerSeriesRing<BigRational>(fac, 11, "y");
         UnivPowerSeries<BigRational> exp = pfac.fixPoint(new UnivPowerSeriesMap<BigRational>() {
 
+
             public UnivPowerSeries<BigRational> map(UnivPowerSeries<BigRational> e) {
                 return e.integrate(fac.getONE());
             }
         });
         System.out.println("exp = " + exp);
         UnivPowerSeries<BigRational> tan = pfac.fixPoint(new UnivPowerSeriesMap<BigRational>() {
+
 
             public UnivPowerSeries<BigRational> map(UnivPowerSeries<BigRational> t) {
                 return t.multiply(t).sum(pfac.getONE()).integrate(fac.getZERO());
@@ -320,6 +327,7 @@ public class Examples {
         System.out.println("tan = " + tan);
         UnivPowerSeries<BigRational> sin = new UnivPowerSeries<BigRational>(pfac,
                 new Coefficients<BigRational>() {
+
 
                     @Override
                     public BigRational generate(int i) {
@@ -338,6 +346,7 @@ public class Examples {
         System.out.println("sin = " + sin);
         UnivPowerSeries<BigRational> sin1 = pfac.fixPoint(new UnivPowerSeriesMap<BigRational>() {
 
+
             public UnivPowerSeries<BigRational> map(UnivPowerSeries<BigRational> e) {
                 return e.negate().integrate(fac.getONE()).integrate(fac.getZERO());
             }
@@ -346,6 +355,7 @@ public class Examples {
 
         UnivPowerSeries<BigRational> cos = new UnivPowerSeries<BigRational>(pfac,
                 new Coefficients<BigRational>() {
+
 
                     @Override
                     public BigRational generate(int i) {
@@ -364,20 +374,22 @@ public class Examples {
         System.out.println("cos = " + cos);
         UnivPowerSeries<BigRational> cos1 = pfac.fixPoint(new UnivPowerSeriesMap<BigRational>() {
 
+
             public UnivPowerSeries<BigRational> map(UnivPowerSeries<BigRational> e) {
                 return e.negate().integrate(fac.getZERO()).integrate(fac.getONE());
             }
         });
         System.out.println("cos1 = " + cos1);
 
-        UnivPowerSeries<BigRational> cos2 = pfac.solveODE( sin1.negate(), fac.getONE() );
+        UnivPowerSeries<BigRational> cos2 = pfac.solveODE(sin1.negate(), fac.getONE());
         System.out.println("cos2 = " + cos2);
 
-        UnivPowerSeries<BigRational> sin2 = pfac.solveODE( cos1, fac.getZERO() );
+        UnivPowerSeries<BigRational> sin2 = pfac.solveODE(cos1, fac.getZERO());
         System.out.println("sin2 = " + sin2);
 
         UnivPowerSeries<BigRational> sinh = new UnivPowerSeries<BigRational>(pfac,
                 new Coefficients<BigRational>() {
+
 
                     @Override
                     public BigRational generate(int i) {
@@ -396,6 +408,7 @@ public class Examples {
         System.out.println("sinh = " + sinh);
         UnivPowerSeries<BigRational> cosh = new UnivPowerSeries<BigRational>(pfac,
                 new Coefficients<BigRational>() {
+
 
                     @Override
                     public BigRational generate(int i) {
@@ -426,13 +439,15 @@ public class Examples {
         final UnivPowerSeriesRing<BigComplex> pfac = new UnivPowerSeriesRing<BigComplex>(fac);
         UnivPowerSeries<BigComplex> exp = pfac.fixPoint(new UnivPowerSeriesMap<BigComplex>() {
 
+
             public UnivPowerSeries<BigComplex> map(UnivPowerSeries<BigComplex> e) {
                 return e.integrate(I);
             }
         });
-        //System.out.println("exp = " + exp);
+        System.out.println("exp = " + exp);
 
         UnivPowerSeries<BigComplex> sin = pfac.fixPoint(new UnivPowerSeriesMap<BigComplex>() {
+
 
             public UnivPowerSeries<BigComplex> map(UnivPowerSeries<BigComplex> e) {
                 return e.negate().integrate(fac.getONE()).integrate(fac.getZERO());
@@ -441,6 +456,7 @@ public class Examples {
         System.out.println("sin = " + sin);
 
         UnivPowerSeries<BigComplex> cos = pfac.fixPoint(new UnivPowerSeriesMap<BigComplex>() {
+
 
             public UnivPowerSeries<BigComplex> map(UnivPowerSeries<BigComplex> e) {
                 return e.negate().integrate(fac.getZERO()).integrate(fac.getONE());

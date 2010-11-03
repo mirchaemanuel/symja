@@ -1,5 +1,5 @@
 /*
- * $Id: Examples.java 3295 2010-08-26 17:01:10Z kredel $
+ * $Id: Examples.java 3356 2010-10-23 16:41:01Z kredel $
  */
 
 package edu.jas.integrate;
@@ -7,13 +7,13 @@ package edu.jas.integrate;
 
 import java.util.List;
 
-import edu.jas.application.Quotient;
-import edu.jas.application.QuotientRing;
 import edu.jas.arith.BigRational;
 import edu.jas.kern.ComputerThreads;
 import edu.jas.poly.GenPolynomial;
 import edu.jas.poly.GenPolynomialRing;
 import edu.jas.poly.TermOrder;
+import edu.jas.ufd.Quotient;
+import edu.jas.ufd.QuotientRing;
 
 
 /**

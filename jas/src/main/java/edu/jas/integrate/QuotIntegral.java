@@ -1,5 +1,5 @@
 /*
- * $Id: QuotIntegral.java 3295 2010-08-26 17:01:10Z kredel $
+ * $Id: QuotIntegral.java 3356 2010-10-23 16:41:01Z kredel $
  */
 
 package edu.jas.integrate;
@@ -9,10 +9,10 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import edu.jas.application.Quotient;
-import edu.jas.application.QuotientRing;
 import edu.jas.poly.GenPolynomial;
 import edu.jas.structure.GcdRingElem;
+import edu.jas.ufd.Quotient;
+import edu.jas.ufd.QuotientRing;
 
 
 /**

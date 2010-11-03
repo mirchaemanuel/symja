@@ -1,13 +1,13 @@
 /*
- * $Id: MultiPowerSeriesTest.java 3333 2010-09-26 17:59:00Z kredel $
+ * $Id: MultiVarPowerSeriesTest.java 3338 2010-10-02 14:48:15Z kredel $
  */
 
 package edu.jas.ps;
 
 
-import java.util.Map;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -25,7 +25,7 @@ import edu.jas.util.ExpVectorIterable;
  * @author Heinz Kredel.
  */
 
-public class MultiPowerSeriesTest extends TestCase {
+public class MultiVarPowerSeriesTest extends TestCase {
 
 
     /**
@@ -37,10 +37,10 @@ public class MultiPowerSeriesTest extends TestCase {
 
 
     /**
-     * Constructs a <CODE>MultiPowerSeriesTest</CODE> object.
+     * Constructs a <CODE>MultiVarPowerSeriesTest</CODE> object.
      * @param name String.
      */
-    public MultiPowerSeriesTest(String name) {
+    public MultiVarPowerSeriesTest(String name) {
         super(name);
     }
 
@@ -48,7 +48,7 @@ public class MultiPowerSeriesTest extends TestCase {
     /**
      */
     public static Test suite() {
-        TestSuite suite = new TestSuite(MultiPowerSeriesTest.class);
+        TestSuite suite = new TestSuite(MultiVarPowerSeriesTest.class);
         return suite;
     }
 
@@ -86,8 +86,8 @@ public class MultiPowerSeriesTest extends TestCase {
     @Override
     protected void setUp() {
         a = b = c = d = e = null;
-        String[] vars = new String[] { "x", "y" }; 
-        fac = new MultiVarPowerSeriesRing<BigRational>(new BigRational(1), rl,vars);
+        String[] vars = new String[] { "x", "y" };
+        fac = new MultiVarPowerSeriesRing<BigRational>(new BigRational(1), rl, vars);
         //System.out.println("fac = " + fac);
         //System.out.println("fac = " + fac.toScript());
     }
@@ -132,9 +132,8 @@ public class MultiPowerSeriesTest extends TestCase {
                 int[] v = i.dependencyOnVariables();
                 if (v.length == 1 && i.getVal(v[0]) == 1L) {
                     return pfac.coFac.getONE();
-                } else {
-                    return pfac.coFac.getZERO();
                 }
+                return pfac.coFac.getZERO();
             }
         };
 
@@ -182,7 +181,7 @@ public class MultiPowerSeriesTest extends TestCase {
         //System.out.println("zeroCache  = " + vars.zeroCache);
         //System.out.println("homCheck   = " + vars.homCheck);
         //System.out.println("homCheck   = " + vars.homCheck.length());
-        assertTrue("zeroCache is not empty", !vars.zeroCache.isEmpty());
+        //no-more: assertTrue("zeroCache is not empty", !vars.zeroCache.isEmpty());
         assertTrue("#coeffCache = " + m, vars.coeffCache.size() == (m + 1));
         assertTrue("#homCheck = " + m, vars.homCheck.length() == (m + 1));
     }
@@ -207,8 +206,8 @@ public class MultiPowerSeriesTest extends TestCase {
         assertTrue("isONE( d )", !d.isONE());
 
         List<MultiVarPowerSeries<BigRational>> gens = fac.generators();
-        assertTrue("#gens == rl+1 ", rl+1 == gens.size());
-        for ( MultiVarPowerSeries<BigRational> p : gens ) {
+        assertTrue("#gens == rl+1 ", rl + 1 == gens.size());
+        for (MultiVarPowerSeries<BigRational> p : gens) {
             //System.out.println("p = " + p);
             assertTrue("red(p) == 0 ", p.reductum().isZERO());
         }
@@ -269,9 +268,8 @@ public class MultiPowerSeriesTest extends TestCase {
                 int[] v = i.dependencyOnVariables();
                 if (v.length == 1 && i.getVal(v[0]) == 1L) {
                     return pfac.coFac.getONE();
-                } else {
-                    return pfac.coFac.getZERO();
                 }
+                return pfac.coFac.getZERO();
             }
         };
 
@@ -313,7 +311,7 @@ public class MultiPowerSeriesTest extends TestCase {
             //System.out.println("p = " + p + ", i = " + i);
             assertTrue("p==0 || deg(p)==1 ", p.isZERO() || p.degree() == 1L);
         }
-        assertTrue("zeroCache is not empty", !c.lazyCoeffs.zeroCache.isEmpty());
+        //no-more:assertTrue("zeroCache is not empty", !c.lazyCoeffs.zeroCache.isEmpty());
         assertTrue("#coeffCache = " + m, c.lazyCoeffs.coeffCache.size() == (m + 1));
         assertTrue("#homCheck = " + m, c.lazyCoeffs.homCheck.length() == (m + 1));
     }
@@ -493,7 +491,7 @@ public class MultiPowerSeriesTest extends TestCase {
         ExpVector k = m.getKey();
         BigRational br = m.getValue();
 
-        b = fac.getONE().multiply(br,k);
+        b = fac.getONE().multiply(br, k);
         //System.out.println("b = " + b);
 
         c = a.reductum();
@@ -503,11 +501,11 @@ public class MultiPowerSeriesTest extends TestCase {
         //System.out.println("d = " + d);
         assertEquals("a = red(a)+1*lm(a) ", a, d);
 
-        e = c.sum(br,k);
+        e = c.sum(br, k);
         //System.out.println("e = " + e);
         assertEquals("a = red(a)+lm(a) ", a, e);
 
-        e = a.subtract(br,k);
+        e = a.subtract(br, k);
         //System.out.println("e = " + e);
         assertEquals("a - lm(a) = red(a) ", c, e);
 
@@ -521,19 +519,19 @@ public class MultiPowerSeriesTest extends TestCase {
         d = a.sum(b.lazyCoeffs);
         //System.out.println("d = " + d);
 
-//         while ( !c.isZERO() ) {
-//             c = c.reductum();
-//             //System.out.println("c = " + c);
-//      }
-//         assertTrue("red^n(a) == 0 ", c.isZERO());
+        //         while ( !c.isZERO() ) {
+        //             c = c.reductum();
+        //             //System.out.println("c = " + c);
+        //      }
+        //         assertTrue("red^n(a) == 0 ", c.isZERO());
 
-        br = new BigRational(2,3);
-        c = a.prepend(br,0);
+        br = new BigRational(2, 3);
+        c = a.prepend(br, 0);
         d = c.reductum(0);
         assertEquals("red(a + br_0,0) = a ", d, a);
 
-        c = a.shift(3,0);
-        d = c.shift(-3,0);
+        c = a.shift(3, 0);
+        d = c.shift(-3, 0);
         assertEquals("shift(shift(a,3,),-3,0) = a ", d, a);
     }
 
@@ -546,7 +544,7 @@ public class MultiPowerSeriesTest extends TestCase {
         GenPolynomialRing<BigRational> pr = fac.polyRing();
         //System.out.println("pr = " + pr);
 
-        GenPolynomial<BigRational> p = pr.random(kl,3,3,q+q);
+        GenPolynomial<BigRational> p = pr.random(kl, 3, 3, q + q);
         //System.out.println("p = " + p);
 
         a = fac.fromPolynomial(p);
@@ -555,11 +553,12 @@ public class MultiPowerSeriesTest extends TestCase {
         GenPolynomial<BigRational> s = a.asPolynomial();
         //System.out.println("s = " + s);
         assertEquals("asPolynomial(fromPolynomial(p)) = p ", p, s);
-//         if ( a.isUnit() ) {
-//             b = a.inverse();
-//             System.out.println("b = " + b);
-//      }
+        //         if ( a.isUnit() ) {
+        //             b = a.inverse();
+        //             System.out.println("b = " + b);
+        //      }
     }
+
 
     /**
      * Test gcd.
@@ -592,38 +591,92 @@ public class MultiPowerSeriesTest extends TestCase {
      * 
      */
     public void testTaylor() {
+        BigRational ar = new BigRational(5);
         BigRational br = new BigRational(0);
+        BigRational cr = new BigRational(-5);
+        List<BigRational> Ar = new ArrayList<BigRational>(rl);
         List<BigRational> Br = new ArrayList<BigRational>(rl);
-        for ( int i = 0; i < rl; i++ ) {
-            Br.add(br);        
+        List<BigRational> Cr = new ArrayList<BigRational>(rl);
+        for (int i = 0; i < rl; i++) {
+            Ar.add(ar);
+            Br.add(br);
+            Cr.add(cr);
         }
         GenPolynomialRing<BigRational> pr = fac.polyRing();
-        System.out.println("pr  = " + pr.toScript());
+        //System.out.println("pr  = " + pr.toScript());
 
-        GenPolynomial<BigRational> p = pr.random(kl,3,3,q+q);
+        GenPolynomial<BigRational> p = pr.random(kl, 3, 3, q + q);
         System.out.println("p   = " + p);
         int tdeg = (int) p.degree();
-        fac.setTruncate( tdeg+1 );
-   
+        fac.setTruncate(tdeg + 1);
+
         TaylorFunction<BigRational> F = new PolynomialTaylorFunction<BigRational>(p);
 
         MultiVarPowerSeriesRing<BigRational> psr = new MultiVarPowerSeriesRing<BigRational>(pr);
-        System.out.println("psr = " + psr.toScript());
+        //System.out.println("psr = " + psr.toScript());
 
         MultiVarPowerSeries<BigRational> pps = fac.fromPolynomial(p);
-        System.out.println("pps = " + pps);
-        MultiVarPowerSeries<BigRational> ps = fac.seriesOfTaylor(F,Br);
-        System.out.println("ps  = " + ps);
+        //System.out.println("pps = " + pps);
+        MultiVarPowerSeries<BigRational> ps = fac.seriesOfTaylor(F, Br);
+        //System.out.println("ps  = " + ps);
         assertEquals("taylor(p) == p", ps, pps);
 
-        for ( GenPolynomial<BigRational> g : pr.generators() ) {
+        MultiVarPowerSeries<BigRational> psa = fac.seriesOfTaylor(F, Ar);
+        //System.out.println("psa  = " + psa);
+        F = new PolynomialTaylorFunction<BigRational>(psa.asPolynomial());
+        MultiVarPowerSeries<BigRational> psc = fac.seriesOfTaylor(F, Cr);
+        //System.out.println("psc  = " + psc);
+        assertEquals("taylor(taylor(p,5),-5) == p", ps, psc);
+
+        for (GenPolynomial<BigRational> g : pr.generators()) {
             F = new PolynomialTaylorFunction<BigRational>(g);
-            ps = fac.seriesOfTaylor(F,Br);
-            System.out.println("g   = " + g);
-            System.out.println("ps  = " + ps);
+            ps = fac.seriesOfTaylor(F, Br);
+            //System.out.println("g   = " + g);
+            //System.out.println("ps  = " + ps);
             pps = fac.fromPolynomial(g);
-            System.out.println("pps = " + pps);
+            //System.out.println("pps = " + pps);
             assertEquals("taylor(p) == p", ps, pps);
+
+            psa = fac.seriesOfTaylor(F, Ar);
+            //System.out.println("psa  = " + psa);
+            F = new PolynomialTaylorFunction<BigRational>(psa.asPolynomial());
+            psc = fac.seriesOfTaylor(F, Cr);
+            System.out.println("psc  = " + psc);
+            assertEquals("taylor(taylor(p,5),-5) == p", ps, psc);
         }
+    }
+
+
+    /**
+     * Test evaluation.
+     * 
+     */
+    public void testEvaluation() {
+        a = fac.random(kl, q);
+        b = fac.random(kl, q);
+        BigRational fv = new BigRational(0);
+        List<BigRational> v = new ArrayList<BigRational>(rl);
+        for ( int i = 0; i < rl; i++ ) {
+            v.add( fv.random(kl) );
+        }
+
+        BigRational av = a.evaluate(v);
+        BigRational bv = b.evaluate(v);
+
+        c = a.sum(b);
+        BigRational cv = c.evaluate(v);
+        BigRational dv = av.sum(bv);
+
+        assertEquals("a(v)+b(v) = (a+b)(v) ", cv, dv);
+
+        c = fac.getZERO();
+        cv = c.evaluate(v);
+        dv = fv.getZERO();
+        assertEquals("0(v) = 0 ", cv, dv);
+
+        c = fac.getONE();
+        cv = c.evaluate(v);
+        dv = fv.getONE();
+        assertEquals("1(v) = 1 ", cv, dv);
     }
 }

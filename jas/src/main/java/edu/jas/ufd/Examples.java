@@ -1,5 +1,5 @@
 /*
- * $Id: Examples.java 2996 2010-02-07 13:32:42Z kredel $
+ * $Id: Examples.java 3356 2010-10-23 16:41:01Z kredel $
  */
 
 package edu.jas.ufd;
@@ -9,8 +9,6 @@ import java.util.SortedMap;
 
 import org.apache.log4j.BasicConfigurator;
 
-import edu.jas.application.Quotient;
-import edu.jas.application.QuotientRing;
 import edu.jas.arith.BigRational;
 import edu.jas.kern.ComputerThreads;
 import edu.jas.poly.AlgebraicNumber;

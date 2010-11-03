@@ -1,5 +1,5 @@
 /*
- * $Id: ComplexRootsSturm.java 3320 2010-09-12 11:01:57Z kredel $
+ * $Id: ComplexRootsSturm.java 3364 2010-10-24 12:56:06Z kredel $
  */
 
 package edu.jas.root;
@@ -12,10 +12,10 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 import edu.jas.arith.Rational;
+import edu.jas.poly.Complex;
+import edu.jas.poly.ComplexRing;
 import edu.jas.poly.GenPolynomial;
 import edu.jas.poly.PolyUtil;
-import edu.jas.structure.Complex;
-import edu.jas.structure.ComplexRing;
 import edu.jas.structure.RingElem;
 import edu.jas.structure.RingFactory;
 import edu.jas.util.ArrayUtil;

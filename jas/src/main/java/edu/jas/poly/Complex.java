@@ -1,8 +1,8 @@
 /*
- * $Id: Complex.java 3292 2010-08-26 14:56:47Z kredel $
+ * $Id: Complex.java 3364 2010-10-24 12:56:06Z kredel $
  */
 
-package edu.jas.structure;
+package edu.jas.poly;
 
 
 import org.apache.log4j.Logger;
@@ -11,6 +11,9 @@ import edu.jas.arith.BigComplex;
 import edu.jas.arith.BigDecimal;
 import edu.jas.arith.BigInteger;
 import edu.jas.arith.BigRational;
+import edu.jas.structure.GcdRingElem;
+import edu.jas.structure.RingElem;
+import edu.jas.structure.StarRingElem;
 
 
 /**
@@ -410,7 +413,7 @@ public class Complex<C extends RingElem<C>> implements StarRingElem<Complex<C>>,
      */
     public Complex<C> multiply(Complex<C> B) {
         return new Complex<C>(ring, re.multiply(B.re).subtract(im.multiply(B.im)), re.multiply(B.im).sum(
-                im.multiply(B.re)));
+                        im.multiply(B.re)));
     }
 
 
@@ -433,9 +436,8 @@ public class Complex<C extends RingElem<C>> implements StarRingElem<Complex<C>>,
     public Complex<C> remainder(Complex<C> S) {
         if (ring.isField()) {
             return ring.getZERO();
-        } else {
-            return quotientRemainder(S)[1];
         }
+        return quotientRemainder(S)[1];
     }
 
 
@@ -447,9 +449,8 @@ public class Complex<C extends RingElem<C>> implements StarRingElem<Complex<C>>,
     public Complex<C> divide(Complex<C> B) {
         if (ring.isField()) {
             return this.multiply(B.inverse());
-        } else {
-            return quotientRemainder(B)[0];
         }
+        return quotientRemainder(B)[0];
     }
 
 
@@ -460,7 +461,7 @@ public class Complex<C extends RingElem<C>> implements StarRingElem<Complex<C>>,
      */
     @SuppressWarnings("unchecked")
     public Complex<C>[] quotientRemainder(Complex<C> S) {
-        Complex<C>[] ret = (Complex<C>[]) new Complex[2];
+        Complex<C>[] ret = new Complex[2];
         C n = S.norm().re;
         Complex<C> Sp = this.multiply(S.conjugate()); // == this*inv(S)*n
         C qr = Sp.re.divide(n);
@@ -534,6 +535,7 @@ public class Complex<C extends RingElem<C>> implements StarRingElem<Complex<C>>,
         return quotientRemainder(S);
     }
 
+
     /**
      * Complex number greatest common divisor.
      * @param S Complex<C>.
@@ -582,7 +584,7 @@ public class Complex<C extends RingElem<C>> implements StarRingElem<Complex<C>>,
      */
     @SuppressWarnings("unchecked")
     public Complex<C>[] egcd(Complex<C> S) {
-        Complex<C>[] ret = (Complex<C>[]) new Complex[3];
+        Complex<C>[] ret = new Complex[3];
         ret[0] = null;
         ret[1] = null;
         ret[2] = null;

@@ -1,5 +1,5 @@
 /*
- * $Id: RGroebnerBaseSeqTest.java 2412 2009-02-07 12:17:54Z kredel $
+ * $Id: RGroebnerBaseSeqTest.java 3368 2010-10-24 13:53:32Z kredel $
  */
 
 package edu.jas.gb;
@@ -17,18 +17,18 @@ import junit.framework.TestSuite;
 
 import org.apache.log4j.BasicConfigurator;
 
-import edu.jas.application.PolyUtilApp;
 import edu.jas.arith.BigInteger;
 import edu.jas.arith.BigRational;
 import edu.jas.arith.ModInteger;
 import edu.jas.arith.ModIntegerRing;
+import edu.jas.arith.Product;
+import edu.jas.arith.ProductRing;
 import edu.jas.poly.GenPolynomial;
 import edu.jas.poly.GenPolynomialRing;
 import edu.jas.poly.GenPolynomialTokenizer;
 import edu.jas.poly.PolynomialList;
 import edu.jas.poly.TermOrder;
-import edu.jas.structure.Product;
-import edu.jas.structure.ProductRing;
+import edu.jas.poly.PolyUtil;
 import edu.jas.structure.RingFactory;
 
 
@@ -242,7 +242,7 @@ public class RGroebnerBaseSeqTest extends TestCase {
         //System.out.println("fac    = " + fac);
 
         List<GenPolynomial<Product<ModInteger>>> Fp;
-        Fp = PolyUtilApp.toProduct(fac, F.list);
+        Fp = PolyUtil.toProduct(fac, F.list);
 
         List<GenPolynomial<Product<ModInteger>>> Fpp;
         Fpp = new ArrayList<GenPolynomial<Product<ModInteger>>>();

@@ -1,12 +1,13 @@
 /*
- * $Id: Quotient.java 3287 2010-08-23 21:29:53Z kredel $
+ * $Id: Quotient.java 3365 2010-10-24 12:59:34Z kredel $
  */
 
-package edu.jas.structure;
+package edu.jas.poly;
 
 
 import org.apache.log4j.Logger;
 
+import edu.jas.structure.Element;
 import edu.jas.structure.RingElem;
 import edu.jas.structure.RingFactory;
 import edu.jas.structure.GcdRingElem;
