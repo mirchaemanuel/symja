@@ -1,7 +1,5 @@
 package org.matheclipse.core.reflection.system;
 
-
-import org.matheclipse.basic.Util;
 import org.matheclipse.core.eval.interfaces.AbstractTrigArg1;
 import org.matheclipse.core.expression.ComplexNum;
 import org.matheclipse.core.expression.F;
@@ -15,7 +13,7 @@ import apache.harmony.math.BigInteger;
 
 public class Factorial2 extends AbstractTrigArg1 {
 
-	public Factorial2() { 
+	public Factorial2() {
 	}
 
 	@Override
@@ -39,8 +37,7 @@ public class Factorial2 extends AbstractTrigArg1 {
 			} else {
 				start = BigInteger.valueOf(-2);
 			}
-			for (BigInteger i = start; i.compareTo(biggi) >= 0; i = i
-					.plus(BigInteger.valueOf(-2))) {
+			for (BigInteger i = start; i.compareTo(biggi) >= 0; i = i.plus(BigInteger.valueOf(-2))) {
 				result = result.times(i);
 			}
 		} else {
@@ -49,8 +46,7 @@ public class Factorial2 extends AbstractTrigArg1 {
 			} else {
 				start = BigInteger.valueOf(2);
 			}
-			for (BigInteger i = start; i.compareTo(biggi) <= 0; i = i
-					.plus(BigInteger.valueOf(2))) {
+			for (BigInteger i = start; i.compareTo(biggi) <= 0; i = i.plus(BigInteger.valueOf(2))) {
 				result = result.times(i);
 			}
 		}
@@ -69,8 +65,8 @@ public class Factorial2 extends AbstractTrigArg1 {
 	}
 
 	@Override
-  public void setUp(final ISymbol symbol) throws SyntaxError {
-    symbol.setAttributes(ISymbol.LISTABLE | ISymbol.NUMERICFUNCTION);
-    super.setUp(symbol);
-  }
+	public void setUp(final ISymbol symbol) throws SyntaxError {
+		symbol.setAttributes(ISymbol.LISTABLE | ISymbol.NUMERICFUNCTION);
+		super.setUp(symbol);
+	}
 }

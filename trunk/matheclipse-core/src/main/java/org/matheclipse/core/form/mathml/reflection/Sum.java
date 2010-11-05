@@ -1,7 +1,5 @@
 package org.matheclipse.core.form.mathml.reflection;
 
-import static org.matheclipse.basic.Util.checkCanceled;
-
 import org.matheclipse.core.expression.IConstantHeaders;
 import org.matheclipse.core.form.mathml.AbstractConverter;
 import org.matheclipse.core.interfaces.IAST;
@@ -20,7 +18,6 @@ public class Sum extends AbstractConverter {
   public boolean convert(final StringBuffer buf, final IAST f, final int precedence) {
     if (f.size() >= 3) {
       for (int i = 2; i < f.size(); i++) {
-        checkCanceled();
 				fFactory.tagStart(buf, "mrow");
         if ((f.get(i) instanceof IAST) && ((IAST) f.get(i)).head().toString().equals(IConstantHeaders.List)) {
           final IAST list = (IAST) f.get(i);
@@ -47,7 +44,6 @@ public class Sum extends AbstractConverter {
       }
       fFactory.convert(buf, f.get(1), 0);
       for (int i = 2; i < f.size(); i++) {
-        checkCanceled();
 				fFactory.tagEnd(buf, "mrow");
       }
       return true;

@@ -1153,7 +1153,7 @@ public class UnivariateFactorizationOverZ {
 		                halt = false;
 		                vVectorDegree = nValue - 1;
 		                while ((vVectorDegree >= 0) & (halt == false)) {
-		                    if (((BigInteger[])vVectorsList.get(rIndex))[vVectorDegree].compareTo(BigInteger.ZERO) == 0) {
+		                    if ((vVectorsList.get(rIndex))[vVectorDegree].compareTo(BigInteger.ZERO) == 0) {
 		                        vVectorDegree--;
 		                    }
 		                    else {
@@ -1165,7 +1165,7 @@ public class UnivariateFactorizationOverZ {
 		                /* initialise 'v vector' */
 		                vVector = new BigInteger[vVectorDegree + 1];
 		                for (columnIndex = 0; columnIndex <= vVectorDegree; columnIndex++) {
-		                    vVector[columnIndex] = ((BigInteger[])vVectorsList.get(rIndex))[columnIndex];
+		                    vVector[columnIndex] = (vVectorsList.get(rIndex))[columnIndex];
 		                }
 		    
 		                originalElement = vVector[0];

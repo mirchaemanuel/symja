@@ -1,6 +1,5 @@
 package org.matheclipse.core.reflection.system;
 
-import static org.matheclipse.basic.Util.checkCanceled;
 
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
 import org.matheclipse.core.expression.F;
@@ -35,7 +34,6 @@ public class JacobiMatrix extends AbstractFunctionEvaluator {
 				for (int i = 1; i < vector.size(); i++) {
 					jacobiRow = F.List();
 					for (int j = 1; j < variables.size(); j++) {
-						checkCanceled();
 						jacobiRow.add(F.D(vector.get(i), variables.get(j)));
 					}
 					jacobiMatrix.add(jacobiRow);

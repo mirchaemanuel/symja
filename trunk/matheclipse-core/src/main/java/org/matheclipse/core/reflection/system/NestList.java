@@ -2,7 +2,6 @@ package org.matheclipse.core.reflection.system;
 
 import static org.matheclipse.core.expression.F.List;
 
-import org.matheclipse.core.eval.exception.NonNegativeIntegerExpected;
 import org.matheclipse.core.eval.exception.Validate;
 import org.matheclipse.core.eval.interfaces.IFunctionEvaluator;
 import org.matheclipse.core.expression.F;

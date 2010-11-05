@@ -19,11 +19,11 @@ public class Binomial extends AbstractConverter {
     if (f.size() != 3) {
       return false;
     }
-    buf.append("{");
+    buf.append('{');
     fFactory.convert(buf, f.get(1), 0);
     buf.append("\\choose ");
     fFactory.convert(buf, f.get(2), 0); 
-    buf.append("}");
+    buf.append('}');
     return true;
   }
 }

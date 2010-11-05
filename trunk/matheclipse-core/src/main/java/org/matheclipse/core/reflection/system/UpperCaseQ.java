@@ -1,7 +1,5 @@
 package org.matheclipse.core.reflection.system;
 
-import static org.matheclipse.basic.Util.checkCanceled;
-
 import org.matheclipse.core.eval.exception.WrongNumberOfArguments;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
 import org.matheclipse.core.expression.F;
@@ -39,7 +37,6 @@ public class UpperCaseQ extends AbstractFunctionEvaluator implements Predicate<I
 		final String str = obj.toString();
 		char ch;
 		for (int i = 0; i < str.length(); i++) {
-			checkCanceled();
 			ch = str.charAt(i);
 			if (!(Character.isUpperCase(ch))) {
 				return false;

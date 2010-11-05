@@ -1,9 +1,5 @@
 package org.matheclipse.core.expression;
 
-import static org.matheclipse.basic.Util.checkCanceled;
-
-import org.matheclipse.basic.Config;
-import org.matheclipse.core.eval.exception.PoolMemoryExceededException;
 import org.matheclipse.core.interfaces.IComplex;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.IFraction;
@@ -230,7 +226,6 @@ public class ComplexSym extends ExprImpl implements IComplex {
 		}
 
 		for (int i = 0; i < temp; i++) {
-			checkCanceled();
 			res = res.multiply(this);
 		}
 

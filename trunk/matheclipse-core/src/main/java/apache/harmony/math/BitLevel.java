@@ -17,8 +17,6 @@
 
 package apache.harmony.math;
 
-import static org.matheclipse.basic.Util.*;
-
 import org.matheclipse.basic.Config;
 import org.matheclipse.basic.ObjectMemoryExceededException;
 
@@ -78,14 +76,12 @@ class BitLevel {
 		;
 		if (val._sign > 0) {
 			for (; i < val._size; i++) {
-				checkCanceled();
 				bCount += Integer.bitCount(val._words[i]);
 			}
 		} else {// (sign < 0)
 			// this digit absorbs the carry
 			bCount += Integer.bitCount(-val._words[i]);
 			for (i++; i < val._size; i++) {
-				checkCanceled();
 				bCount += Integer.bitCount(~val._words[i]);
 			}
 			// We take the complement sum:
@@ -116,7 +112,6 @@ class BitLevel {
 		int i;
 
 		for (i = 0; (i < intCount) && (digits[i] == 0); i++) {
-			checkCanceled();
 			;
 		}
 		return ((i != intCount) || (digits[i] << (32 - bitCount) != 0));
@@ -180,14 +175,12 @@ class BitLevel {
 
 			result[result.length - 1] = 0;
 			for (int i = result.length - 1; i > intCount; i--) {
-				checkCanceled();
 				result[i] |= source[i - intCount - 1] >>> rightShiftCount;
 				result[i - 1] = source[i - intCount - 1] << count;
 			}
 		}
 
 		for (int i = 0; i < intCount; i++) {
-			checkCanceled();
 			result[i] = 0;
 		}
 	}
@@ -214,14 +207,12 @@ class BitLevel {
 			// Checking if the dropped bits are zeros (the remainder equals to
 			// 0)
 			for (i = 0; (i < intCount) && (source._words[i] == 0); i++) {
-				checkCanceled();
 				;
 			}
 			// If the remainder is not zero, add 1 to the result
 			if ((i < intCount)
 					|| ((count > 0) && ((source._words[i] << (32 - count)) != 0))) {
 				for (i = 0; (i < resLength) && (resDigits[i] == -1); i++) {
-					checkCanceled();
 					resDigits[i] = 0;
 				}
 				if (i == resLength) {
@@ -253,7 +244,6 @@ class BitLevel {
 			// remainder not zero: add one to the result
 			int i;
 			for (i = 0; (i < val._size) && (val._words[i] == -1); i++) {
-				checkCanceled();
 				val._words[i] = 0;
 			}
 			if (i == val._size) {
@@ -295,7 +285,6 @@ class BitLevel {
 
 			allZero &= (source[i] << leftShiftCount) == 0;
 			for (i = 0; i < resultLen - 1; i++) {
-				checkCanceled();
 				result[i] = (source[i + intCount] >>> count)
 						| (source[i + intCount + 1] << leftShiftCount);
 			}
@@ -343,7 +332,6 @@ class BitLevel {
 				} else if (intCount < firstNonZeroDigit) {
 					resDigits[intCount] = -bitNumber;
 					for (i = intCount + 1; i < firstNonZeroDigit; i++) {
-						checkCanceled();
 						resDigits[i] = -1;
 					}
 					resDigits[i] = resDigits[i]--;
@@ -352,7 +340,6 @@ class BitLevel {
 					resDigits[i] = -((-resDigits[intCount]) ^ bitNumber);
 					if (resDigits[i] == 0) {
 						for (i++; resDigits[i] == -1; i++) {
-							checkCanceled();
 							resDigits[i] = 0;
 						}
 						resDigits[i]++;

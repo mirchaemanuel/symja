@@ -3,7 +3,6 @@ package org.matheclipse.core.generic;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.Serializable;
-import java.util.Collection;
 
 import javax.annotation.Nullable;
 
@@ -37,6 +36,9 @@ public class Predicates {
 
 		@Override
 		public boolean equals(@Nullable Object obj) {
+			if (this == obj) {
+				return true;
+			}
 			if (obj instanceof InASTPredicate) {
 				InASTPredicate that = (InASTPredicate) obj;
 				return target.equals(that.target);

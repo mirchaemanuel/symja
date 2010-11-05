@@ -1,7 +1,5 @@
 package org.matheclipse.core.sql;
 
-import static org.matheclipse.basic.Util.checkCanceled;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -81,7 +79,6 @@ public class SQLExpressionMap {
 		final ResultSet resultSet = selectStmt.executeQuery();
 		try {
 			while (resultSet.next()) {
-				checkCanceled();
 				final String rhs = resultSet.getString(1);
 				final ASTNode parsedAST = parser.parse(rhs);
 				return AST2Expr.CONST.convert(parsedAST);

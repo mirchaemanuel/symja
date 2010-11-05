@@ -1,9 +1,7 @@
 package org.matheclipse.core.patternmatching;
 
-import org.matheclipse.basic.Config;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IExpr;
-import org.matheclipse.core.interfaces.IPatternMatcher;
 import org.matheclipse.core.visit.HashValueVisitor;
 
 /**

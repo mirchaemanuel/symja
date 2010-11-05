@@ -1,7 +1,5 @@
 package org.matheclipse.core.generic;
 
-import static org.matheclipse.basic.Util.checkCanceled;
-
 import org.matheclipse.core.eval.EvalEngine;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
@@ -20,7 +18,6 @@ public class MultipleArrayFunction implements IArrayFunction<IExpr> {
 	public IExpr evaluate(final Object[] index) {
 		final IAST ast = fHeadAST.clone();
 		for (int i = 0; i < index.length; i++) {
-			checkCanceled();
 			ast.add((IExpr) index[i]);
 		}
 		return fEngine.evaluate(ast);

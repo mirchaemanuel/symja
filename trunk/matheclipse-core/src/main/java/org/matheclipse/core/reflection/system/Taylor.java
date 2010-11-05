@@ -1,12 +1,10 @@
 package org.matheclipse.core.reflection.system;
 
-import org.matheclipse.basic.Config;
 import org.matheclipse.core.eval.exception.Validate;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
-import org.matheclipse.core.interfaces.IInteger;
 
 /**
  * Power series expansion with Taylor formula

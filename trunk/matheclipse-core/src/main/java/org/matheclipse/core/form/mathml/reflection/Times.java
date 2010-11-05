@@ -1,7 +1,5 @@
 package org.matheclipse.core.form.mathml.reflection;
 
-import static org.matheclipse.basic.Util.checkCanceled;
-
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.expression.IConstantHeaders;
 import org.matheclipse.core.expression.NumberUtil;
@@ -163,7 +161,6 @@ public class Times extends AbstractOperator {
 		}
 
 		for (int i = 2; i < f.size(); i++) {
-			checkCanceled();
 			fFactory.convert(buf, f.get(i), fPrecedence);
 			if ((i < f.size() - 1) && (fOperator.compareTo("") != 0)) {
 				fFactory.tag(buf, "mo", fOperator);

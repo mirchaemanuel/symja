@@ -1,7 +1,5 @@
 package org.matheclipse.core.form.mathml;
 
-import static org.matheclipse.basic.Util.checkCanceled;
-
 import org.matheclipse.core.interfaces.IAST;
 
 public class MMLFunction extends AbstractConverter {
@@ -28,7 +26,6 @@ public class MMLFunction extends AbstractConverter {
 
     fFactory.tag(buf, "mo", "(");
     for (int i = 1; i < f.size(); i++) {
-      checkCanceled();
 			fFactory.convert(buf, f.get(i), 0);
       if (i < f.size() - 1) {
         fFactory.tag(buf, "mo", ",");

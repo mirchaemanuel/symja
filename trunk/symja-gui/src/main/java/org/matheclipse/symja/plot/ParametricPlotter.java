@@ -19,21 +19,15 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
 
 package org.matheclipse.symja.plot;
 
-import java.util.*;
-
 import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
 import java.awt.EventQueue;
-import java.awt.GradientPaint;
-import java.awt.Rectangle;
-import java.awt.Font;
+import java.awt.Graphics2D;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.ListIterator;
 
-import java.awt.event.*;
-import javax.swing.*;
-
-import org.matheclipse.parser.client.eval.*;
+import org.matheclipse.parser.client.eval.DoubleEvaluator;
+import org.matheclipse.parser.client.eval.DoubleVariable;
 
 /** Plots parametric shapes.
   */

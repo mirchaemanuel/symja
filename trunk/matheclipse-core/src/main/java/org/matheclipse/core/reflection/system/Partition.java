@@ -1,7 +1,5 @@
 package org.matheclipse.core.reflection.system;
 
-import static org.matheclipse.basic.Util.checkCanceled;
-
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IAST;
@@ -31,10 +29,8 @@ public class Partition extends AbstractFunctionEvaluator {
 					v = ((IInteger) functionList.get(3)).getBigNumerator().intValue();
 				}
 				while (i <= f.size()-1) {
-					checkCanceled();
 					temp = F.ast(f.head());
 					for (int j = i - n; j < i; j++) {
-						checkCanceled();
 						temp.add(f.get(j+1));
 					}
 					i += v;

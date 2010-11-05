@@ -1,7 +1,5 @@
 package org.matheclipse.core.reflection.system;
 
-import static org.matheclipse.basic.Util.checkCanceled;
-
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.expression.StringX;
@@ -23,7 +21,6 @@ public class Equal extends AbstractFunctionEvaluator {
 			IAST result = lst.clone();
 			int i = 2;
 			while (i < result.size()) {
-				checkCanceled();
 				b = compare(result.get(i - 1), result.get(i));
 				if (b == (-1)) {
 					return F.False;

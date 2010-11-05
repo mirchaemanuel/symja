@@ -9,7 +9,7 @@ public class Alloc {
 
 	private int fMatrixCount;
 
-	transient private static final ThreadLocal<Alloc> instance = new ThreadLocal<Alloc>() {
+	private static final ThreadLocal<Alloc> instance = new ThreadLocal<Alloc>() {
 		@Override
 		public Alloc initialValue() {
 			return new Alloc();

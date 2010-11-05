@@ -17,8 +17,6 @@
 
 package apache.harmony.math;
 
-import static org.matheclipse.basic.Util.*;
-
 import org.matheclipse.basic.Config;
 import org.matheclipse.basic.ObjectMemoryExceededException;
 
@@ -76,16 +74,14 @@ class Multiplication {
         long fivePow = 1L;
         
         for (i = 0; i <= 18; i++) {
-            checkCanceled();
 						bigFivePows[i] = BigInteger.valueOfStatic(fivePow);
             bigTenPows[i] = BigInteger.valueOfStatic(fivePow << i);
             fivePow *= 5;
         }
         for (; i < bigTenPows.length; i++) {
-            checkCanceled();
 						bigFivePows[i] = bigFivePows[i - 1].times(bigFivePows[1]);
             bigTenPows[i] = bigTenPows[i - 1].times(BigInteger.TEN);
-        }
+        } 
     }
 
     /**
@@ -264,11 +260,9 @@ class Multiplication {
         int i, j, m;
         // Common case
         for (j = 0; j < bLen; j++) {
-            checkCanceled();
 						carry = 0;
             bDigit = (bDigits[j] & 0xFFFFFFFFL);
             for (i = 0, m = j; i < aLen; i++, m++) {
-                checkCanceled();
 								carry += (aDigits[i] & 0xFFFFFFFFL)
                 * bDigit
                 + (resDigits[m] & 0xFFFFFFFFL);
@@ -296,7 +290,6 @@ class Multiplication {
         long carry = 0;
 
         for (int i = 0; i < aSize; i++) {
-            checkCanceled();
 						carry += (a[i] & 0xFFFFFFFFL) * (factor & 0xFFFFFFFFL);
             res[i] = (int)carry;
             carry >>>= 32;
@@ -365,7 +358,6 @@ class Multiplication {
         BigInteger acc = base;
 
         for (; exponent > 1; exponent >>= 1) {
-            checkCanceled();
 						if ((exponent & 1) != 0) {
                 // if odd, multiply one more time by acc
                 res = res.times(acc);
@@ -396,11 +388,9 @@ class Multiplication {
         long cs;
         long aI;
         for(int i=0; i<s; i++){
-            checkCanceled();
 						cs = 0;
             aI = (0xFFFFFFFFL & a[i]);
             for (int j=i+1; j<s; j++){
-                checkCanceled();
 								cs += (0xFFFFFFFFL & t[i+j]) + aI * (0xFFFFFFFFL & a[j]) ;
                 t[i+j] = (int) cs;
                 cs >>>= 32;
@@ -412,7 +402,6 @@ class Multiplication {
         cs = 0;
         
         for(int i=0, index = 0; i< s; i++, index++){
-            checkCanceled();
 						aI = (0xFFFFFFFFL & a[i]);
             cs += aI * aI  + (t[index] & 0xFFFFFFFFL);
             t[index] = (int) cs;
@@ -488,7 +477,6 @@ class Multiplication {
         
         intExp = (int)(exp % Integer.MAX_VALUE);
         while (longExp > Integer.MAX_VALUE) {
-            checkCanceled();
 						res = res.times(powerOfFive);
             longExp -= Integer.MAX_VALUE;
         }
@@ -497,7 +485,6 @@ class Multiplication {
         res = res.shiftLeft(Integer.MAX_VALUE);
         longExp = exp - Integer.MAX_VALUE;
         while (longExp > Integer.MAX_VALUE) {
-            checkCanceled();
 						res = res.shiftLeft(Integer.MAX_VALUE);
             longExp -= Integer.MAX_VALUE;
         }

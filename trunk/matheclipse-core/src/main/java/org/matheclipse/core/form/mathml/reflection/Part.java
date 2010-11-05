@@ -1,7 +1,5 @@
 package org.matheclipse.core.form.mathml.reflection;
 
-import static org.matheclipse.basic.Util.checkCanceled;
-
 import org.matheclipse.core.form.mathml.AbstractConverter;
 import org.matheclipse.core.interfaces.IAST;
 
@@ -29,7 +27,6 @@ public class Part extends AbstractConverter {
       fFactory.tagStart(buf, "mrow");
       fFactory.convert(buf, f.get(2), 0);
       for (int i = 3; i < f.size(); i++) {
-        checkCanceled();
 				fFactory.tag(buf, "mo", ",");
         fFactory.convert(buf, f.get(i), 0);
       }

@@ -28,13 +28,12 @@ public class Limit extends AbstractConverter {
 				fFactory.convert(buf, rule.get(1), 0);
 				buf.append("\\rightarrow ");
 				fFactory.convert(buf, rule.get(2), 0); 
-				buf.append("}");
 			} else {
 				rule = null;
 				buf.append("\\lim_{");
 				fFactory.convert(buf, f.get(2), 0);
-				buf.append("}");
 			}
+			buf.append('}');
 
 			fFactory.convert(buf, f.get(1), 0);
 			return true;

@@ -6,7 +6,6 @@ import org.apache.commons.math.linear.InvalidMatrixException;
 import org.apache.commons.math.linear.RealMatrix;
 import org.apache.commons.math.linear.RealVector;
 import org.apache.commons.math.util.MathUtils;
-import org.matheclipse.basic.Config;
 import org.matheclipse.core.convert.Convert;
 import org.matheclipse.core.eval.exception.WrappedException;
 import org.matheclipse.core.eval.interfaces.AbstractMatrix1Expr;

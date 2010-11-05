@@ -1,6 +1,5 @@
 package org.matheclipse.core.eval.util;
 
-import static org.matheclipse.basic.Util.checkCanceled;
 import static org.matheclipse.core.expression.F.List;
 import static org.matheclipse.core.expression.F.Options;
 import static org.matheclipse.core.expression.F.ReplaceAll;

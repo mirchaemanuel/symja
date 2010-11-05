@@ -1,9 +1,7 @@
 package org.matheclipse.core.expression;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
@@ -19,19 +17,14 @@ import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IEvaluationEngine;
 import org.matheclipse.core.interfaces.IEvaluator;
 import org.matheclipse.core.interfaces.IExpr;
-import org.matheclipse.core.interfaces.IPattern;
 import org.matheclipse.core.interfaces.IPatternMatcher;
 import org.matheclipse.core.interfaces.ISymbol;
 import org.matheclipse.core.patternmatching.PatternMatcher;
-import org.matheclipse.core.patternmatching.PatternMatcherAndEvaluator;
 import org.matheclipse.core.patternmatching.PatternMatcherAndInvoker;
 import org.matheclipse.core.patternmatching.RulesData;
 import org.matheclipse.core.visit.IVisitor;
 import org.matheclipse.core.visit.IVisitorBoolean;
 import org.matheclipse.core.visit.IVisitorInt;
-import org.matheclipse.generic.interfaces.Pair;
-
-import com.google.common.collect.ArrayListMultimap;
 
 /**
  * Implements Symbols for function, constant and variable names

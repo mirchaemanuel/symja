@@ -1,7 +1,5 @@
 package org.matheclipse.core.reflection.system;
 
-import static org.matheclipse.basic.Util.checkCanceled;
-
 import org.matheclipse.core.eval.interfaces.IFunctionEvaluator;
 import org.matheclipse.core.expression.AST;
 import org.matheclipse.core.expression.F;
@@ -34,7 +32,6 @@ public class Tr implements IFunctionEvaluator {
 				}
 				IAST row;
 				for (int i = 1; i <= len; i++) {
-					checkCanceled();
 					row = (AST) mat.get(i);
 					tr.set(i, row.get(i));
 				}

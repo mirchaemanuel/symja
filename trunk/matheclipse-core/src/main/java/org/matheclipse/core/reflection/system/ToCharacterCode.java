@@ -1,6 +1,5 @@
 package org.matheclipse.core.reflection.system;
 
-import static org.matheclipse.basic.Util.checkCanceled;
 import static org.matheclipse.core.expression.F.List;
 
 import java.io.UnsupportedEncodingException;
@@ -41,7 +40,6 @@ public class ToCharacterCode extends AbstractFunctionEvaluator {
 			final String utf8String = new String(unicodeInput.getBytes(inputEncoding), "UTF-8");
 			int characterCode;
 			for (int i = 0; i < utf8String.length(); i++) {
-				checkCanceled();
 				characterCode = utf8String.charAt(i);
 				list.add(F.integer(characterCode));
 			}

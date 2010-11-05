@@ -1,7 +1,5 @@
 package org.matheclipse.core.reflection.system;
 
-import static org.matheclipse.basic.Util.checkCanceled;
-
 import org.matheclipse.core.eval.EvalEngine;
 import org.matheclipse.core.eval.exception.BreakException;
 import org.matheclipse.core.eval.exception.ContinueException;
@@ -34,8 +32,6 @@ public class For implements IFunctionEvaluator {
 					if (!engine.evaluate(functionList.get(2)).equals(F.True)) {
 						return temp;
 					}
-					checkCanceled();
-
 					temp = engine.evaluate(functionList.get(4));
 				} catch (final BreakException e) {
 					return F.Null;

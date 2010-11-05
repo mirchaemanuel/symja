@@ -1,6 +1,5 @@
 package org.matheclipse.core.eval;
 
-import static org.matheclipse.basic.Util.checkCanceled;
 
 import java.io.File;
 import java.net.URL;
@@ -87,7 +86,7 @@ public class SourceGenerator {
 			final String[] files = directory.list();
 			for (int i = 0; i < files.length; i++) {
 
-				checkCanceled();
+				
 				// we are only interested in .class files
 				if (files[i].endsWith(".class")) {
 					// removes the .class extension
@@ -134,7 +133,7 @@ public class SourceGenerator {
 			final String[] files = directory.list();
 			for (int i = 0; i < files.length; i++) {
 
-				checkCanceled();
+				
 				// we are only interested in .class files
 				if (files[i].endsWith(".class")) {
 					// removes the .class extension
@@ -180,7 +179,7 @@ public class SourceGenerator {
 			final String[] files = directory.list();
 			for (int i = 0; i < files.length; i++) {
 
-				checkCanceled();
+				
 				// we are only interested in .class files
 				if (files[i].endsWith(".class")) {
 					// removes the .class extension
@@ -232,7 +231,7 @@ public class SourceGenerator {
 			final String[] files = directory.list();
 			for (int i = 0; i < files.length; i++) {
 
-				checkCanceled();
+				
 				// we are only interested in .class files
 				if (files[i].endsWith(".class")) {
 					// removes the .class extension
@@ -284,7 +283,7 @@ public class SourceGenerator {
 			final String[] files = directory.list();
 			for (int i = 0; i < files.length; i++) {
 
-				checkCanceled();
+				
 				// we are only interested in .class files
 				if (files[i].endsWith(".class")) {
 					// removes the .class extension
@@ -329,7 +328,7 @@ public class SourceGenerator {
 			final String[] files = directory.list();
 			for (int i = 0; i < files.length; i++) {
 
-				checkCanceled();
+				
 				// we are only interested in .class files
 				if (files[i].endsWith(".class")) {
 					// removes the .class extension
@@ -392,7 +391,7 @@ public class SourceGenerator {
 			final String[] files = directory.list();
 			for (int i = 0; i < files.length; i++) {
 
-				checkCanceled();
+				
 				// we are only interested in .class files
 				if (files[i].endsWith(".class")) {
 					// removes the .class extension

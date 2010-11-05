@@ -27,12 +27,12 @@ public class Extract extends AbstractFunctionEvaluator {
 	public static IExpr extract(final IAST list, final IAST position) {
 		final PositionConverter converter = new PositionConverter();
 		if ((position.size() > 1) && (position.get(1) instanceof IInteger)) {
-			return (IExpr)AST.COPY.extract(list, position, converter, 1);
+			return AST.COPY.extract(list, position, converter, 1);
 		} else {
 			// construct an array
-//			final IAST resultList = List();
+			// final IAST resultList = List();
 			// NestedFinding.position(list, resultList, pos, 1);
-//			return (IAST) resultList;
+			// return resultList;
 		}
 		return null;
 	}

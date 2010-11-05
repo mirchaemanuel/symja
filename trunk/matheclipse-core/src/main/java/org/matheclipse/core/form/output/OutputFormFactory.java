@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.Map;
 
-import org.matheclipse.basic.Config;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.expression.IConstantHeaders;
 import org.matheclipse.core.interfaces.IAST;

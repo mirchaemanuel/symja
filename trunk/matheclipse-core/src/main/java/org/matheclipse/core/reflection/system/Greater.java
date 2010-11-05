@@ -1,7 +1,5 @@
 package org.matheclipse.core.reflection.system;
 
-import static org.matheclipse.basic.Util.checkCanceled;
-
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.generic.ITernaryComparator;
@@ -28,7 +26,6 @@ public class Greater extends AbstractFunctionEvaluator implements
 			int[] cResult = new int[lst.size()];
 			cResult[0] = 1;
 			for (int i = 1; i < lst.size() - 1; i++) {
-				checkCanceled();
 				b = compare(result.get(i), result.get(i + 1));
 				if (b == (-1)) {
 					return F.False;
@@ -46,7 +43,6 @@ public class Greater extends AbstractFunctionEvaluator implements
 			int i = 2;
 			evaled = false;
 			for (int j = 1; j < lst.size(); j++) {
-				checkCanceled();
 				if (cResult[j - 1] == 1 && cResult[j] == 1) {
 					evaled = true;
 					result.remove(i - 1);

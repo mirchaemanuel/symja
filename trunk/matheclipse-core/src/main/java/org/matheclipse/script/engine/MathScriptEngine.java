@@ -49,7 +49,7 @@ public class MathScriptEngine extends AbstractScriptEngine {
 		try {
 			while ((line = f.readLine()) != null) {
 				buff.append(line);
-				buff.append("\n");
+				buff.append('\n');
 			}
 			return eval(buff.toString());
 		} catch (final IOException e) {

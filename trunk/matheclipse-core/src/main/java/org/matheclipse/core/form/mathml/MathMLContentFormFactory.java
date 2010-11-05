@@ -1,7 +1,5 @@
 package org.matheclipse.core.form.mathml;
 
-import static org.matheclipse.basic.Util.checkCanceled;
-
 import java.util.Hashtable;
 
 import org.matheclipse.basic.Config;
@@ -304,7 +302,6 @@ public class MathMLContentFormFactory extends AbstractMathMLFormFactory implemen
 		tag(buf, "mo", "(");
 		tagStart(buf, "mrow");
 		for (int i = 1; i < f.size(); i++) {
-			checkCanceled();
 			convert(buf, f.get(i), 0);
 			if (i < f.size() - 1) {
 				tag(buf, "mo", ",");

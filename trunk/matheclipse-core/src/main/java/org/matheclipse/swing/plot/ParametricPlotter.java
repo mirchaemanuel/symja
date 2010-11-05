@@ -19,7 +19,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
 
 package org.matheclipse.swing.plot;
 
-import static org.matheclipse.basic.Util.checkCanceled;
 import static org.matheclipse.core.expression.F.N;
 
 import java.awt.Color;
@@ -138,7 +137,6 @@ public class ParametricPlotter extends AbstractPlotter2D {
 		yMax = yMin = new UnaryNumerical(((AST) funcs.get(1)).get(2), t, engine).value(tMin);
 
 		for (int f = 0; f < functions; ++f) {
-			checkCanceled();
 			doPlot(funcs, f, engine);
 		}
 
@@ -184,7 +182,6 @@ public class ParametricPlotter extends AbstractPlotter2D {
 		y = new UnaryNumerical(((AST) funcs.get(f + 1)).get(2), t, engine);
 
 		for (int counter = 0; counter <= thisResolution; ++counter) {
-			checkCanceled();
 			plotPoint(f, counter);
 		}
 		colorPlot(funcs, f);
@@ -247,7 +244,6 @@ public class ParametricPlotter extends AbstractPlotter2D {
 		final int y[] = new int[thisResolution + 1];
 
 		for (int f = 0; f < functions; ++f) {
-			checkCanceled();
 			paintPlot(g2d, top, height, bottom, left, width, right, x, y, f);
 		}
 	}
@@ -259,7 +255,6 @@ public class ParametricPlotter extends AbstractPlotter2D {
 			final int width, final int right, final int x[], final int y[], final int f) {
 		g2d.setColor(color[f]);
 		for (int counter = 0; counter <= thisResolution; ++counter) {
-			checkCanceled();
 			convertPoint(top, height, bottom, left, width, right, x, y, f, counter);
 		}
 		g2d.drawPolyline(x, y, thisResolution + 1);

@@ -1,6 +1,5 @@
 package org.matheclipse.core.eval.interfaces;
 
-import static org.matheclipse.basic.Util.checkCanceled;
 
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IAST;
@@ -27,7 +26,6 @@ public IExpr evaluate(final IAST functionList) {
       int i = 2;
 
       while (i < functionList.size()) {
-        checkCanceled();
 				tres = binaryOperator(temp, functionList.get(i));
         if (tres == null) {
           result.add(temp);

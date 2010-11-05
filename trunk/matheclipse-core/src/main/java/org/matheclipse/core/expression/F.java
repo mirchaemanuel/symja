@@ -43,9 +43,9 @@ import apache.harmony.math.Rational;
  * </a>
  */
 public class F {
-	transient private final static HashMap<String, ISymbol> fSymbolMap = new HashMap<String, ISymbol>();
+	private final static HashMap<String, ISymbol> fSymbolMap = new HashMap<String, ISymbol>();
 
-	transient public static ISymbolObserver SYMBOL_OBSERVER = new ISymbolObserver() {
+	public static ISymbolObserver SYMBOL_OBSERVER = new ISymbolObserver() {
 		@Override
 		public final boolean createPredefinedSymbol(String symbol) {
 			return false;

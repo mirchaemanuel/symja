@@ -7,7 +7,6 @@ import org.matheclipse.core.convert.ExprVariables;
 import org.matheclipse.core.convert.JASConvert;
 import org.matheclipse.core.eval.exception.WrongArgumentType;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
-import org.matheclipse.core.eval.interfaces.INumeric;
 import org.matheclipse.core.eval.util.Options;
 import org.matheclipse.core.expression.ASTRange;
 import org.matheclipse.core.expression.F;

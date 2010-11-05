@@ -1,6 +1,5 @@
 package org.matheclipse.core.reflection.system;
 
-import static org.matheclipse.basic.Util.checkCanceled;
 import static org.matheclipse.core.expression.F.Slot;
 
 import org.matheclipse.core.eval.interfaces.IFunctionEvaluator;
@@ -42,7 +41,6 @@ public class Function implements IFunctionEvaluator {
 	public static IExpr replaceSlots(final IExpr expr, final IAST list) {
 		final IAST intSlots = F.ast(null);
 		for (int i = 1; i < list.size(); i++) {
-			checkCanceled();
 			intSlots.add(Slot(i));
 		}
 		final IExpr result = AST.COPY.replaceAll(expr, intSlots, list, 1);
