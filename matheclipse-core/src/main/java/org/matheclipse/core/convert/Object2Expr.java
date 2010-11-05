@@ -1,6 +1,5 @@
 package org.matheclipse.core.convert;
 
-import static org.matheclipse.basic.Util.checkCanceled;
 import static org.matheclipse.core.expression.F.List;
 
 import java.math.BigDecimal;
@@ -96,7 +95,6 @@ public class Object2Expr extends Converter<Object, IExpr> {
 				list = F.function(head);
 
 				for (int i = 1; i < lst.size(); i++) {
-					checkCanceled();
 					list.add(convert(lst.get(i)));
 				}
 			}
@@ -106,7 +104,6 @@ public class Object2Expr extends Converter<Object, IExpr> {
 			final IAST list = List();
 			final Object[] array = (Object[]) obj;
 			for (int i = 0; i < array.length; i++) {
-				checkCanceled();
 				list.add(convert(array[i]));
 			}
 			return list;
@@ -121,10 +118,8 @@ public class Object2Expr extends Converter<Object, IExpr> {
 			final double[][] dd = (double[][]) obj;
 			final IAST list = List();
 			for (int i = 0; i < dd.length; i++) {
-				checkCanceled();
 				final IAST row = List();
 				for (int j = 0; j < dd[i].length; j++) {
-					checkCanceled();
 					row.add(F.num(dd[i][j]));
 				}
 				list.add(row);
@@ -135,7 +130,6 @@ public class Object2Expr extends Converter<Object, IExpr> {
 			final IAST list = List();
 			final boolean[] array = (boolean[]) obj;
 			for (int i = 0; i < array.length; i++) {
-				checkCanceled();
 				if (array[i]) {
 					list.add(F.True);
 				} else {

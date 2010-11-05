@@ -1,7 +1,5 @@
 package org.matheclipse.core.generic.util;
 
-import static org.matheclipse.basic.Util.checkCanceled;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -235,7 +233,6 @@ public class NestedFastTable<E extends INestedListElement> extends ArrayList<E> 
 		}
 		text.append('[');
 		for (int i = 1; i < size(); i++) {
-			checkCanceled();
 			final E o = get(i);
 			text = text.append(o == this ? "(this NestedList)" : o.toString());
 			if (i < size() - 1) {

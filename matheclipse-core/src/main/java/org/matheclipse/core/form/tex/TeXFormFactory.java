@@ -1,6 +1,5 @@
 package org.matheclipse.core.form.tex;
 
-import static org.matheclipse.basic.Util.checkCanceled;
 
 import java.util.Hashtable;
 
@@ -134,7 +133,7 @@ public class TeXFormFactory extends AbstractTeXFormFactory implements IConstantH
 			buf.append(sym.toString());
 		} else {
 			if (convertedSymbol.equals(True)) {
-				buf.append("\\");
+				buf.append('\\');
 				buf.append(sym.toString());
 			} else {
 				if (convertedSymbol instanceof Operator) {
@@ -150,7 +149,7 @@ public class TeXFormFactory extends AbstractTeXFormFactory implements IConstantH
 		if (obj instanceof ISymbol) {
 			final Object ho = CONSTANT_SYMBOLS.get(((ISymbol) obj).toString());
 			if ((ho != null) && ho.equals(True)) {
-				buf.append("\\");
+				buf.append('\\');
 			}
 			buf.append(((ISymbol) obj).toString());
 			return;
@@ -196,15 +195,14 @@ public class TeXFormFactory extends AbstractTeXFormFactory implements IConstantH
 
 	private void convertAST(final StringBuffer buf, final IAST f) {
 		convertHead(buf, f.head());
-		buf.append("(");
+		buf.append('(');
 		for (int i = 1; i < f.size(); i++) {
-			checkCanceled();
 			convert(buf, f.get(i), 0);
 			if (i < f.size() - 1) {
-				buf.append(",");
+				buf.append(',');
 			}
 		}
-		buf.append(")");
+		buf.append(')');
 
 	}
 

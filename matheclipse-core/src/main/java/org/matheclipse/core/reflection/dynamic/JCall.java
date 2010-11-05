@@ -1,6 +1,5 @@
 package org.matheclipse.core.reflection.dynamic;
 
-import org.matheclipse.core.eval.EvalEngine;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IExpr;
 

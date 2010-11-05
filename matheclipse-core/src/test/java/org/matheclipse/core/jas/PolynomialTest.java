@@ -197,17 +197,17 @@ public class PolynomialTest extends AbstractTestCase {
 		FactorAbstract<BigRational> factorAbstract = FactorFactory.getImplementation(BigRational.ONE);
 		SortedMap<GenPolynomial<BigRational>, Long> map = factorAbstract.baseFactors(poly1);
 		StringBuffer buf = new StringBuffer();
-		buf.append("{");
+		buf.append('{');
 		for (SortedMap.Entry<GenPolynomial<BigRational>, Long> entry : map.entrySet()) {
 			GenPolynomial<BigRational> key = entry.getKey();
-			buf.append("(");
+			buf.append('(');
 			buf.append(key.toString());
 			buf.append(")^");
 			Long val = entry.getValue();
 			buf.append(val.toString());
 			buf.append(", ");
 		}
-		buf.append("}");
+		buf.append('}');
 		assertEquals("{(x - 5 )^1, (x + 1 )^1, }", buf.toString());
 	}
 
@@ -222,17 +222,17 @@ public class PolynomialTest extends AbstractTestCase {
 		FactorAbstract<BigRational> factorAbstract = FactorFactory.getImplementation(BigRational.ONE);
 		SortedMap<GenPolynomial<BigRational>, Long> map = factorAbstract.baseFactors(poly1);
 		StringBuffer buf = new StringBuffer();
-		buf.append("{");
+		buf.append('{');
 		for (SortedMap.Entry<GenPolynomial<BigRational>, Long> entry : map.entrySet()) {
 			GenPolynomial<BigRational> key = entry.getKey();
-			buf.append("(");
+			buf.append('(');
 			buf.append(key.toString());
 			buf.append(")^");
 			Long val = entry.getValue();
 			buf.append(val.toString());
 			buf.append(", ");
 		}
-		buf.append("}");
+		buf.append('}');
 		assertEquals("{(1/2 )^1, (x - 5 )^1, (x + 1 )^1, }", buf.toString());
 	}
 
@@ -278,17 +278,17 @@ public class PolynomialTest extends AbstractTestCase {
 		FactorAbstract<ModInteger> factorAbstract = FactorFactory.getImplementation(mod17IntegerRing);
 		SortedMap<GenPolynomial<ModInteger>, Long> map = factorAbstract.baseFactors(poly1);
 		StringBuffer buf = new StringBuffer();
-		buf.append("{");
+		buf.append('{');
 		for (SortedMap.Entry<GenPolynomial<ModInteger>, Long> entry : map.entrySet()) {
 			GenPolynomial<ModInteger> key = entry.getKey();
-			buf.append("(");
+			buf.append('(');
 			buf.append(key.toString());
 			buf.append(")^");
 			Long val = entry.getValue();
 			buf.append(val.toString());
 			buf.append(", ");
 		}
-		buf.append("}");
+		buf.append('}');
 		assertEquals("{(x^2 + 5 )^1, (x^4 + 3 x^3 + 2 x^2 + 2 x + 8 )^1, (x^4 + 14 x^3 + 2 x^2 + 15 x + 8 )^1, }", buf.toString());
 	}
 

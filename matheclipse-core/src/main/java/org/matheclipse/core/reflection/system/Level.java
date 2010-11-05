@@ -1,6 +1,5 @@
 package org.matheclipse.core.reflection.system;
 
-import static org.matheclipse.basic.Util.checkCanceled;
 import static org.matheclipse.core.expression.F.List;
 
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
@@ -34,7 +33,6 @@ public class Level extends AbstractFunctionEvaluator {
 			// increment level becaus we select only subexpressions
 			level.setCurrentLevel(1);
 			for (int i = 1; i < ast.size(); i++) {
-				checkCanceled();
 				AST.COPY.level(ast.get(i), level, resultList, 1);
 			}
 			return resultList;

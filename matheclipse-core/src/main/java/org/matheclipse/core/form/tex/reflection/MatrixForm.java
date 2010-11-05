@@ -1,7 +1,5 @@
 package org.matheclipse.core.form.tex.reflection;
 
-import static org.matheclipse.basic.Util.checkCanceled;
-
 import org.matheclipse.core.form.tex.AbstractConverter;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
@@ -34,7 +32,6 @@ public class MatrixForm extends AbstractConverter {
 				buf.append("\\begin{matrix}");
 				IExpr temp;
 				for (int i = 1; i < vector.size(); i++) {
-					checkCanceled();
 					temp = vector.get(i);
 					fFactory.convert(buf, temp, 0);
 				}
@@ -44,10 +41,8 @@ public class MatrixForm extends AbstractConverter {
 			buf.append("\\begin{matrix}");
 			IAST temp;
 			for (int i = 1; i < matrix.size(); i++) {
-				checkCanceled();
-				temp = (IAST) matrix.get(i);
+				temp = (IAST) matrix.get(i); 
 				for (int j = 1; j < temp.size(); j++) {
-					checkCanceled();
 					buf.append(' ');
 					fFactory.convert(buf, temp.get(j), 0);
 					buf.append(' ');
@@ -72,7 +67,6 @@ public class MatrixForm extends AbstractConverter {
 		int subSize = -1;
 		IExpr temp;
 		for (int i = 1; i < size; i++) {
-			checkCanceled();
 			temp = list.get(i);
 			if (!(temp instanceof IAST)) {
 				return null;
@@ -101,7 +95,6 @@ public class MatrixForm extends AbstractConverter {
 		final int size = list.size();
 		IExpr temp;
 		for (int i = 1; i < size; i++) {
-			checkCanceled();
 			temp = list.get(i);
 			if ((temp instanceof IAST) && (((IAST) temp).topHead().toString().equals("List"))) {
 				return null;

@@ -1,7 +1,5 @@
 package org.matheclipse.core.form.java;
 
-import static org.matheclipse.basic.Util.checkCanceled;
-
 import java.util.Hashtable;
 
 import org.matheclipse.core.interfaces.IAST;
@@ -55,7 +53,6 @@ public class JavaFormFactory {
 			buf.append("()");
 		} else {
 			for (int i = 2; i < f.size(); i++) {
-				checkCanceled();
 				convert(buf, f.get(i));
 				if (i < f.size() - 1) {
 				}

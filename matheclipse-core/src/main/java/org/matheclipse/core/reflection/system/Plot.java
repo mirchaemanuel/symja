@@ -1,6 +1,5 @@
 package org.matheclipse.core.reflection.system;
 
-import static org.matheclipse.basic.Util.checkCanceled;
 import static org.matheclipse.core.expression.F.Graphics;
 import static org.matheclipse.core.expression.F.Line;
 import static org.matheclipse.core.expression.F.List;
@@ -78,7 +77,6 @@ public class Plot implements IFunctionEvaluator {
 					final IAST list = (IAST) ast.get(1);
 					final IAST primitives = List();
 					for (int i = 1; i < list.size(); i++) {
-						checkCanceled();
 						temp = plotLine(ad, bd, y0d, y1d, list.get(2), (ISymbol) lst.get(1), engine);
 
 						if (temp != null) {
@@ -118,7 +116,6 @@ public class Plot implements IFunctionEvaluator {
 		double x = ad;
 
 		for (int i = 0; i < N + 1; i++) {
-			checkCanceled();
 			y = hun.value(x);
 			if ((y0d != 0.0) || (y1d != 0.0)) {
 				if ((y >= y0d) && (y <= y1d)) {

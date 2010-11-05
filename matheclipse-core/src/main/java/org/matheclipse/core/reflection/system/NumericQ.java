@@ -1,7 +1,5 @@
 package org.matheclipse.core.reflection.system;
 
-import java.util.Iterator;
-
 import org.matheclipse.core.eval.exception.WrongNumberOfArguments;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
 import org.matheclipse.core.expression.F;

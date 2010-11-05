@@ -26,7 +26,7 @@ public class Integrate extends AbstractConverter {
         fFactory.convert(buf, list.get(2), 0);
         buf.append("}{");
         fFactory.convert(buf, list.get(3), 0);
-        buf.append("}");
+        buf.append('}');
       } else {
         list = null;
         buf.append("\\int ");

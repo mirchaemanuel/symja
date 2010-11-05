@@ -13,7 +13,6 @@ import org.matheclipse.core.interfaces.ISymbol;
 import org.matheclipse.generic.interfaces.BiPredicate;
 
 import edu.jas.arith.BigRational;
-import edu.jas.poly.GenPolynomial;
 
 /**
  * Returns <code>True</code>, if the given expression is a polynoomial object

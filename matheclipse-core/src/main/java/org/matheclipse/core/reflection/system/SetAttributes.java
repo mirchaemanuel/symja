@@ -1,7 +1,5 @@
 package org.matheclipse.core.reflection.system;
 
-import static org.matheclipse.basic.Util.checkCanceled;
-
 import org.matheclipse.basic.Config;
 import org.matheclipse.core.eval.EvalEngine;
 import org.matheclipse.core.eval.exception.RuleCreationError;
@@ -111,7 +109,6 @@ public class SetAttributes extends AbstractFunctionEvaluator implements IConstan
 					int symbolAttributes = ISymbol.NOATTRIBUTE;
 					for (int i = 1; i < lst.size(); i++) {
 
-						checkCanceled();
 						if (((ISymbol) lst.get(i)) == F.Flat) {
 							sym.setAttributes(symbolAttributes | ISymbol.FLAT);
 						}

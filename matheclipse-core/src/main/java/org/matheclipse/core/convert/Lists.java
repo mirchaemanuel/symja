@@ -1,7 +1,5 @@
 package org.matheclipse.core.convert;
 
-import static org.matheclipse.basic.Util.checkCanceled;
-
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IAST;
 
@@ -32,13 +30,14 @@ public class Lists {
 	 *          {@link org.matheclipse.core.interfaces.IAST}.
 	 * 
 	 * @return a {@link org.matheclipse.core.interfaces.IAST} of
-	 *         {@org.matheclipse.core.interfaces.ISymbol} objects.
+	 *                 {@org.matheclipse.core.interfaces.ISymbol
+	 * 
+	 * } objects.
 	 */
 	public static IAST asAST(boolean... p_booleans) {
 		IAST ast = F.ast(F.List);
 		if (p_booleans != null) {
 			for (int i = 0, t = p_booleans.length; i < t; i++) {
-				checkCanceled();
 				if (p_booleans[i]) {
 					ast.add(F.True);
 				} else {
@@ -65,7 +64,6 @@ public class Lists {
 		IAST ast = F.ast(F.List);
 		if (p_doubles != null) {
 			for (int i = 0, t = p_doubles.length; i < t; i++) {
-				checkCanceled();
 				ast.add(F.num(p_doubles[i]));
 			}
 		}
@@ -88,7 +86,6 @@ public class Lists {
 		IAST ast = F.ast(F.List);
 		if (p_doubles != null) {
 			for (int i = 0, t = p_doubles.length; i < t; i++) {
-				checkCanceled();
 				ast.add(F.num(p_doubles[i]));
 			}
 		}
@@ -111,7 +108,6 @@ public class Lists {
 		IAST ast = F.ast(F.List);
 		if (p_strings != null) {
 			for (int i = 0, t = p_strings.length; i < t; i++) {
-				checkCanceled();
 				ast.add(F.stringx(p_strings[i]));
 			}
 		}
@@ -134,7 +130,7 @@ public class Lists {
 		IAST ast = F.ast(F.List);
 		if (p_symbols != null) {
 			for (int i = 0, t = p_symbols.length; i < t; i++) {
-				checkCanceled();
+
 				ast.add(F.symbol(p_symbols[i]));
 			}
 		}
@@ -157,7 +153,6 @@ public class Lists {
 		IAST ast = F.ast(F.List);
 		if (p_shorts != null) {
 			for (int i = 0, t = p_shorts.length; i < t; i++) {
-				checkCanceled();
 				ast.add(F.integer(p_shorts[i]));
 			}
 		}
@@ -180,7 +175,6 @@ public class Lists {
 		IAST ast = F.ast(F.List);
 		if (p_ints != null) {
 			for (int i = 0, t = p_ints.length; i < t; i++) {
-				checkCanceled();
 				ast.add(F.integer(p_ints[i]));
 			}
 		}
@@ -203,7 +197,6 @@ public class Lists {
 		IAST ast = F.ast(F.List);
 		if (p_longs != null) {
 			for (int i = 0, t = p_longs.length; i < t; i++) {
-				checkCanceled();
 				ast.add(F.integer(p_longs[i]));
 			}
 		}
@@ -226,7 +219,6 @@ public class Lists {
 		IAST ast = F.ast(F.List);
 		if (p_objects != null) {
 			for (int i = 0, t = p_objects.length; i < t; i++) {
-				checkCanceled();
 				ast.add(Object2Expr.CONST.convert(p_objects[i]));
 			}
 		}

@@ -1,7 +1,5 @@
 package org.matheclipse.core.form.tex.reflection;
 
-import static org.matheclipse.basic.Util.checkCanceled;
-
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.expression.IConstantHeaders;
 import org.matheclipse.core.expression.NumberUtil;
@@ -48,8 +46,7 @@ public class Times extends AbstractOperator {
 		final IAST denominator = F
 				.function(IConstantHeaders.Times);
 		for (int i = 1; i < f.size(); i++) {
-			checkCanceled();
-			if ((f.get(i) instanceof IAST)
+			if ((f.get(i).isAST())
 					&& ((IAST) f.get(i)).head().toString().equals(
 							IConstantHeaders.Power)) {
 				// filter negative Powers:
@@ -134,7 +131,7 @@ public class Times extends AbstractOperator {
 				}
 			} else {
 				if (caller == PLUS_CALL) {
-					if ((expr instanceof ISignedNumber)
+					if ((expr.isSignedNumber())
 							&& (((ISignedNumber) expr).isNegative())) {
 						buf.append(" - ");
 						expr = ((ISignedNumber) expr).negate();
@@ -152,7 +149,6 @@ public class Times extends AbstractOperator {
 		}
 
 		for (int i = 2; i < f.size(); i++) {
-			checkCanceled();
 			fFactory.convert(buf, f.get(i), fPrecedence);
 			if ((i < f.size() - 1) && (fOperator.compareTo("") != 0)) {
 				buf.append("\\,");

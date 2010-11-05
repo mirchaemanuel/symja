@@ -1,16 +1,10 @@
 package org.matheclipse.core.eval.interfaces;
 
-import org.matheclipse.core.convert.AST2Expr;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.ISymbol;
 import org.matheclipse.core.patternmatching.HashedOrderlessMatcher;
-import org.matheclipse.parser.client.Parser;
-import org.matheclipse.parser.client.SyntaxError;
-import org.matheclipse.parser.client.ast.ASTNode;
-
-import com.google.common.collect.ArrayListMultimap;
 
 /**
  *

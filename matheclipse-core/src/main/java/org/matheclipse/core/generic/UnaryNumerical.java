@@ -25,7 +25,7 @@ public class UnaryNumerical implements Function<IExpr, IExpr>, DifferentiableUni
 
 	ISymbol fVariable;
 
-	transient EvalEngine fEngine;
+	EvalEngine fEngine;
 
 	public UnaryNumerical(final IExpr fn, final ISymbol v, final EvalEngine engine) {
 		fVariable = v;

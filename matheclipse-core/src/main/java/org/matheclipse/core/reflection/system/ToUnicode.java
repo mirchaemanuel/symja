@@ -1,7 +1,5 @@
 package org.matheclipse.core.reflection.system;
 
-import static org.matheclipse.basic.Util.checkCanceled;
-
 import java.io.UnsupportedEncodingException;
 
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
@@ -40,12 +38,10 @@ public class ToUnicode extends AbstractFunctionEvaluator {
 			String hexValueString = null;
 			int hexValueLength = 0;
 			for (int i = 0; i < utf8String.length(); i++) {
-				checkCanceled();
 				hexValueString = Integer.toHexString(utf8String.charAt(i));
 				hexValueLength = hexValueString.length();
 				if (hexValueLength < 4) {
 					for (int j = 0; j < (4 - hexValueLength); j++) {
-						checkCanceled();
 						hexValueString = "0" + hexValueString;
 					}
 				}

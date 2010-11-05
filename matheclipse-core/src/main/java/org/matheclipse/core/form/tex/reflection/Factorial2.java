@@ -22,7 +22,7 @@ public class Factorial2 extends AbstractConverter {
 			return false;
 		}
 		fFactory.convert(buf, f.get(0), 0);
-		buf.append("!");
+		buf.append('!');
 		return true;
 	}
 }

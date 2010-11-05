@@ -1,7 +1,5 @@
 package org.matheclipse.core.reflection.system;
 
-import static org.matheclipse.basic.Util.checkCanceled;
-
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IAST;
@@ -20,10 +18,8 @@ public class UnsameQ extends AbstractFunctionEvaluator {
 			int i = 2;
 			int j;
 			while (i < result.size()) {
-				checkCanceled();
 				j = i;
 				while (j < result.size()) {
-					checkCanceled();
 					if (result.get(i - 1).equals(result.get(j++))) {
 						return F.False;
 					}

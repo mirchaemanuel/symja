@@ -1,7 +1,5 @@
 package org.matheclipse.core.eval.util;
 
-import static org.matheclipse.basic.Util.checkCanceled;
-
 import org.matheclipse.core.eval.exception.WrongArgumentType;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
@@ -41,7 +39,6 @@ public class Sequence extends ListSizeSequence {
 		Sequence sequ = null;
 		int j = 0;
 		for (int i = offset; i < ast.size(); i++) {
-			checkCanceled();
 			if (ast.get(i).isList()) {
 				sequ = new Sequence((IAST) ast.get(i));
 			} else if (ast.get(i) instanceof IInteger) {

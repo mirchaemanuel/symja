@@ -1,7 +1,5 @@
 package org.matheclipse.core.reflection.system;
 
-import static org.matheclipse.basic.Util.checkCanceled;
-
 import org.matheclipse.core.eval.interfaces.AbstractTrigArg1;
 import org.matheclipse.core.expression.ComplexNum;
 import org.matheclipse.core.expression.F;
@@ -38,7 +36,6 @@ public class Fibonacci extends AbstractTrigArg1 {
 		BigInteger temp = iArg.getBigNumerator();
 
 		while (!temp.isZero()) {
-			checkCanceled();
 			if (temp.isOdd()) {
 				d = f.times(c);
 				f = a.times(c).plus(f.times(b).plus(d));

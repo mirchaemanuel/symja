@@ -1,7 +1,5 @@
 package org.matheclipse.core.form.tex.reflection;
 
-import static org.matheclipse.basic.Util.checkCanceled;
-
 import org.matheclipse.core.form.tex.AbstractOperator;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
@@ -29,7 +27,6 @@ public class Plus extends AbstractOperator {
 		precedenceOpen(buf, precedence);
 		final Times timesConverter = (Times) fFactory.reflection("Times");
 		for (int i = 1; i < f.size(); i++) {
-			checkCanceled();
 			expr = f.get(i);
 
 			if ((i > 1) && (expr instanceof IAST) && ((IAST) expr).head().toString().equals("Times")) {

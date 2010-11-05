@@ -1,7 +1,5 @@
 package org.matheclipse.core.form.tex;
 
-import static org.matheclipse.basic.Util.checkCanceled;
-
 import org.matheclipse.core.interfaces.IAST;
 
 /**
@@ -37,7 +35,6 @@ public abstract class AbstractOperator extends AbstractConverter {
   public boolean convert(final StringBuffer buf, final IAST f, final int precedence) {
     precedenceOpen(buf, precedence);
     for (int i = 1; i < f.size(); i++) {
-      checkCanceled();
 			fFactory.convert(buf, f.get(i), fPrecedence);
       if (i < f.size() - 1) {
         if (fOperator.compareTo("") != 0) {

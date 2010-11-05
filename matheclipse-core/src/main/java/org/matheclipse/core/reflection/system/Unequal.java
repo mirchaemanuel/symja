@@ -1,7 +1,5 @@
 package org.matheclipse.core.reflection.system;
 
-import static org.matheclipse.basic.Util.checkCanceled;
-
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
@@ -19,10 +17,8 @@ public class Unequal extends Equal {
 			int i = 2;
 			int j;
 			while (i < result.size()) {
-				checkCanceled();
 				j = i;
 				while (j < result.size()) {
-					checkCanceled();
 					b = compare(result.get(i - 1), result.get(j++));
 					if (b == (1)) {
 						return F.False;

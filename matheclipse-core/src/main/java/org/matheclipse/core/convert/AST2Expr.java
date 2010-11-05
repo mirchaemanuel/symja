@@ -38,9 +38,9 @@ public class AST2Expr extends Converter<ASTNode, IExpr> {
 	 * Converts a parsed FunctionNode expression into an IAST expression
 	 */
 	public IAST convert(IAST ast, FunctionNode functionNode) throws ConversionException {
-		ast.set(0, convert((ASTNode) functionNode.get(0)));
+		ast.set(0, convert(functionNode.get(0)));
 		for (int i = 1; i < functionNode.size(); i++) {
-			ast.add(convert((ASTNode) functionNode.get(i)));
+			ast.add(convert(functionNode.get(i)));
 		}
 		return ast;
 	}
@@ -55,9 +55,9 @@ public class AST2Expr extends Converter<ASTNode, IExpr> {
 		}
 		if (node instanceof FunctionNode) {
 			final FunctionNode functionNode = (FunctionNode) node;
-			final IAST ast = F.ast(convert((ASTNode) functionNode.get(0)), functionNode.size(), false);
+			final IAST ast = F.ast(convert(functionNode.get(0)), functionNode.size(), false);
 			for (int i = 1; i < functionNode.size(); i++) {
-				ast.add(convert((ASTNode) functionNode.get(i)));
+				ast.add(convert(functionNode.get(i)));
 			}
 			IExpr head = ast.head();
 			if (head.equals(F.PatternHead)) {

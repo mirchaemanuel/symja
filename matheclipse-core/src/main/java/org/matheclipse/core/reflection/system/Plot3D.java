@@ -1,6 +1,5 @@
 package org.matheclipse.core.reflection.system;
 
-import static org.matheclipse.basic.Util.checkCanceled;
 import static org.matheclipse.core.expression.F.List;
 import static org.matheclipse.core.expression.F.N;
 import static org.matheclipse.core.expression.F.Rule;
@@ -126,10 +125,8 @@ public class Plot3D implements IFunctionEvaluator {
 		// double zmax = Double.MAX_VALUE;
 
 		for (int i = 0; i < NUMBER_OF_DIVISIONS; i++) {
-			checkCanceled();
 			y = cd;
 			for (int j = 0; j < NUMBER_OF_DIVISIONS; j++) {
-				checkCanceled();
 				try {
 					z = hbn.value(x, y);
 					// if (Double.isNaN(z)) {

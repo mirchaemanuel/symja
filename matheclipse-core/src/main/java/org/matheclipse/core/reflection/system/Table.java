@@ -1,6 +1,5 @@
 package org.matheclipse.core.reflection.system;
 
-import static org.matheclipse.basic.Util.checkCanceled;
 import static org.matheclipse.core.expression.F.List;
 
 import java.util.ArrayList;
@@ -34,7 +33,6 @@ public class Table implements IFunctionEvaluator {
 				final EvalEngine engine = EvalEngine.get();
 				final List<Iterator> iterList = new ArrayList<Iterator>();
 				for (int i = 2; i < ast.size(); i++) {
-					checkCanceled();
 					iterList.add(new Iterator((IAST) ast.get(i), engine));
 				}
 

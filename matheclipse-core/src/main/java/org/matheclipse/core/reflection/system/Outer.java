@@ -6,7 +6,6 @@ import org.matheclipse.core.expression.AST;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
-import org.matheclipse.core.interfaces.ISymbol;
 import org.matheclipse.generic.nested.Generating;
 
 public class Outer extends AbstractFunctionEvaluator {

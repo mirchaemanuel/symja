@@ -17,9 +17,6 @@
 
 package apache.harmony.math;
 
-import static org.matheclipse.basic.Util.checkCanceled;
-
-
 import org.matheclipse.basic.Config;
 import org.matheclipse.basic.ObjectMemoryExceededException;
 
@@ -102,7 +99,6 @@ class Division {
 		int j = aLength;
 
 		while (i >= 0) {
-			checkCanceled();
 			// Step D3: calculate a guess digit guessDigit
 			int guessDigit = 0;
 			if (normA[j] == firstDivisorDigit) {
@@ -122,7 +118,6 @@ class Division {
 					guessDigit++; // to have the proper value in the loop
 					// below
 					do {
-						checkCanceled();
 						guessDigit--;
 						if (rOverflowed) {
 							break;
@@ -157,7 +152,6 @@ class Division {
 					guessDigit--;
 					long carry = 0;
 					for (int k = 0; k < normBLength; k++) {
-						checkCanceled();
 						carry += (normA[j - normBLength + k] & 0xffffffffL) + (normB[k] & 0xffffffffL);
 						normA[j - normBLength + k] = (int) carry;
 						carry >>>= 32;
@@ -203,7 +197,6 @@ class Division {
 		long bLong = divisor & 0xffffffffL;
 
 		for (int i = srcLength - 1; i >= 0; i--) {
-			checkCanceled();
 			long temp = (rem << 32) | (src[i] & 0xffffffffL);
 			long quot;
 			if (temp >= 0) {
@@ -257,7 +250,6 @@ class Division {
 		long result = 0;
 
 		for (int i = srcLength - 1; i >= 0; i--) {
-			checkCanceled();
 			long temp = (result << 32) + (src[i] & 0xffffffffL);
 			long res = divideLongByInt(temp, divisor);
 			result = (int) (res >> 32);
@@ -389,7 +381,6 @@ class Division {
 		int productInt;
 
 		for (i = 0; i < bLen; i++) {
-			checkCanceled();
 			product = c * (b[i] & 0xffffffffL);
 			productInt = (int) product;
 			productInt += carry;
@@ -442,7 +433,6 @@ class Division {
 
 		do { // INV: op2 >= op1 && both are odd unless op1 = 0
 
-			checkCanceled();
 			// Optimization for small operands
 			// (op2.bitLength() < 64) implies by INV (op1.bitLength() < 64)
 			if ((op2._size == 1) || ((op2._size == 2) && (op2._words[1] > 0))) {
@@ -461,7 +451,6 @@ class Division {
 
 				// Use Knuth's algorithm of sucessive subtract and shifting
 				do {
-					checkCanceled();
 					Elementary.inplaceSubtract(op2, op1); // both are odd
 					BitLevel.inplaceShiftRight(op2, op2.getLowestSetBit()); // op2
 					// is
@@ -500,7 +489,6 @@ class Division {
 			op2 >>>= lsb2;
 		}
 		do {
-			checkCanceled();
 			if (op1 >= op2) {
 				op1 -= op2;
 				op1 >>>= Long.numberOfTrailingZeros(op1);
@@ -556,7 +544,6 @@ class Division {
 		long powerOfTwo = 2L;
 
 		do {
-			checkCanceled();
 			if (((m0 * n2) & powerOfTwo) != 0) {
 				n2 |= powerOfTwo;
 			}
@@ -618,9 +605,7 @@ class Division {
 			// INV v >= 0, u >= 0, v odd, u odd (except last iteration when v is
 			// even (0))
 
-			checkCanceled();
 			while (u.compareTo(v) > BigInteger.EQUALS) {
-				checkCanceled();
 				Elementary.inplaceSubtract(u, v);
 				toShift = u.getLowestSetBit();
 				BitLevel.inplaceShiftRight(u, toShift);
@@ -631,7 +616,6 @@ class Division {
 			}
 
 			while (u.compareTo(v) <= BigInteger.EQUALS) {
-				checkCanceled();
 				Elementary.inplaceSubtract(v, u);
 				if (v.signum() == 0)
 					break;
@@ -666,7 +650,6 @@ class Division {
 		result = (exp >> 5 == bi._size - 1) && (bi._words[bi._size - 1] == 1 << (exp & 31));
 		if (result) {
 			for (int i = 0; result && i < bi._size - 1; i++) {
-				checkCanceled();
 				result = bi._words[i] == 0;
 			}
 		}
@@ -744,7 +727,6 @@ class Division {
 		int k;
 		while (!isPowerOfTwo(u, coefU) && !isPowerOfTwo(v, coefV)) {
 
-			checkCanceled();
 			// modification of original algorithm: I calculate how many times
 			// the algorithm will enter in the same branch of if
 			k = howManyIterations(u, n);
@@ -822,7 +804,6 @@ class Division {
 	static BigInteger squareAndMultiply(BigInteger x2, BigInteger a2, BigInteger exponent, BigInteger modulus, long n2) {
 		BigInteger res = x2;
 		for (int i = exponent.bitLength() - 1; i >= 0; i--) {
-			checkCanceled();
 			res = monPro(res, res, modulus, n2);
 			if (BitLevel.testBit(exponent, i)) {
 				res = monPro(res, a2, modulus, n2);
@@ -849,18 +830,15 @@ class Division {
 
 		x3 = monSquare(a2, modulus, n2);
 		for (int i = 1; i <= 7; i++) {
-			checkCanceled();
 			pows[i] = monPro(pows[i - 1], x3, modulus, n2);
 		}
 
 		for (int i = exponent.bitLength() - 1; i >= 0; i--) {
-			checkCanceled();
 			if (BitLevel.testBit(exponent, i)) {
 				lowexp = 1;
 				acc3 = i;
 
 				for (int j = Math.max(i - 3, 0); j <= i - 1; j++) {
-					checkCanceled();
 					if (BitLevel.testBit(exponent, j)) {
 						if (j < acc3) {
 							acc3 = j;
@@ -872,7 +850,6 @@ class Division {
 				}
 
 				for (int j = acc3; j <= i; j++) {
-					checkCanceled();
 					res = monSquare(res, modulus, n2);
 				}
 				res = monPro(pows[(lowexp - 1) >> 1], res, modulus, n2);
@@ -909,7 +886,6 @@ class Division {
 		long powerOfTwo = 2L;
 		// compute n2
 		do {
-			checkCanceled();
 			if (((m0 * n2) & powerOfTwo) != 0) {
 				n2 |= powerOfTwo;
 			}
@@ -981,7 +957,6 @@ class Division {
 		inplaceModPow2(baseMod2toN, j);
 
 		for (int i = e.bitLength() - 1; i >= 0; i--) {
-			checkCanceled();
 			res2 = res.copy();
 			inplaceModPow2(res2, j);
 			res = res.times(res2);
@@ -1014,10 +989,8 @@ class Division {
 
 		int limit = Math.min(s, aBig._size);
 		for (int i = 0; i < limit; i++) {
-			checkCanceled();
 			cs = 0;
 			for (int j = i + 1; j < limit; j++) {
-				checkCanceled();
 				cs += (0xFFFFFFFFL & t[i + j]) + (0xFFFFFFFFL & a[i]) * (0xFFFFFFFFL & a[j]);
 				t[i + j] = (int) cs;
 				cs >>>= 32;
@@ -1030,7 +1003,6 @@ class Division {
 		cs = 0;
 		long carry = 0;
 		for (int i = 0, index = 0; i < s; i++, index++) {
-			checkCanceled();
 			cs += (0xFFFFFFFFL & a[i]) * (0xFFFFFFFFL & a[i]) + (t[index] & 0xFFFFFFFFL);
 			t[index] = (int) cs;
 			cs >>>= 32;
@@ -1046,11 +1018,9 @@ class Division {
 		int i, j;
 		cs = carry = 0;
 		for (i = 0; i < s; i++) {
-			checkCanceled();
 			cs = 0;
 			m = (int) ((t[i] & 0xFFFFFFFFL) * (n2 & 0xFFFFFFFFL));
 			for (j = 0; j < s; j++) {
-				checkCanceled();
 				cs = (t[i + j] & 0xFFFFFFFFL) + (m & 0xFFFFFFFFL) * (n[j] & 0xFFFFFFFFL) + (cs >>> 32);
 				t[i + j] = (int) cs;
 			}
@@ -1064,7 +1034,6 @@ class Division {
 
 		/* t / r */
 		for (j = 0; j < s + 1; j++) {
-			checkCanceled();
 			t[j] = t[j + s];
 		}
 		/* step 3 */
@@ -1106,11 +1075,9 @@ class Division {
 		long aI;
 
 		for (i = 0; i < s; i++) {
-			checkCanceled();
 			C = 0;
 			aI = (i > aFirst) ? 0 : (a._words[i] & 0xFFFFFFFFL);
 			for (j = 0; j < s; j++) {
-				checkCanceled();
 				product = (t[j] & 0xFFFFFFFFL) + C + ((j > bFirst) ? 0 : (b._words[j] & 0xFFFFFFFFL) * aI);
 				C = product >>> 32;
 				t[j] = (int) product;
@@ -1124,7 +1091,6 @@ class Division {
 			product = (t[0] & 0xFFFFFFFFL) + (m & 0xFFFFFFFFL) * (n[0] & 0xFFFFFFFFL);
 			C = (int) (product >>> 32);
 			for (j = 1; j < s; j++) {
-				checkCanceled();
 				product = (t[j] & 0xFFFFFFFFL) + (C & 0xFFFFFFFFL) + (m & 0xFFFFFFFFL) * (n[j] & 0xFFFFFFFFL);
 				C = product >>> 32;
 				t[j - 1] = (int) product;
@@ -1195,7 +1161,6 @@ class Division {
 		y._sign = 1;
 
 		for (int i = 1; i < n; i++) {
-			checkCanceled();
 			if (BitLevel.testBit(x.times(y), i)) {
 				// Adding 2^i to y (setting the i-th bit)
 				y._words[i >> 5] |= (1 << (i & 31));

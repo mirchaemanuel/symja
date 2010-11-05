@@ -44,7 +44,7 @@ public class Min extends AbstractFunctionEvaluator {
 			}
 			if (f.size() > 1) {
 				f.add(1, max1);
-				if (((AST) f).equals((Object) list)) {
+				if (f.equals(list)) {
 					return null;
 				}
 				return f;

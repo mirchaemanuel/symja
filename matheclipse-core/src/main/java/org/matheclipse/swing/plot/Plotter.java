@@ -19,7 +19,6 @@
 
 package org.matheclipse.swing.plot;
 
-import static org.matheclipse.basic.Util.checkCanceled;
 import static org.matheclipse.core.expression.F.N;
 
 import java.awt.Color;
@@ -110,17 +109,14 @@ public class Plotter extends AbstractPlotter2D {
 			yMax = yMin = 0;
 		}
 		for (int func = 0; func < numFuncs; ++func) {
-			checkCanceled();
 			populate(funcs, func, xVar, engine);
 		}
 
 		for (int counter = 3; counter < args.size(); ++counter) {
-			checkCanceled();
 			final AST currentArgs = (AST) args.get(counter);
 
 			if (getColor(currentArgs.get(1)) != null) {
 				for (int i = 0; i < color.length; ++i) {
-					checkCanceled();
 					color[i] = getColor(currentArgs.get((i % (currentArgs.size()-1))+1));
 				}
 			} else {
@@ -157,7 +153,6 @@ public class Plotter extends AbstractPlotter2D {
 		final UnaryNumerical un = new UnaryNumerical(funcs.get(func+1), xVar, engine);
 		color[func] = COLOR[func % COLOR.length];
 		for (int counter = 0; counter <= thisResolution; ++counter) {
-			checkCanceled();
 			try {
 				populatePoint(func, un, counter);
 			} catch (final Exception e) {
@@ -212,7 +207,6 @@ public class Plotter extends AbstractPlotter2D {
 	@Override
 	protected void paintPlots(final Graphics2D g2d, final int top, final int height, final int bottom, final int left, final int width, final int right) {
 		for (int func = 0; func < numFuncs; ++func) {
-			checkCanceled();
 			paintPlot(g2d, top, height, bottom, left, width, right, func);
 		}
 	}
@@ -226,7 +220,6 @@ public class Plotter extends AbstractPlotter2D {
 		g2d.setColor(color[func]);
 
 		for (int counter = 0; counter <= thisResolution; ++counter) {
-			checkCanceled();
 			xPoint[index] = left + counter * width / thisResolution;
 			paintPoint[index] = top + height - (int) ((point[func][counter] - yMin) * height / yRange);
 			if ((paintPoint[index] >= top) && (paintPoint[index] <= bottom)) {

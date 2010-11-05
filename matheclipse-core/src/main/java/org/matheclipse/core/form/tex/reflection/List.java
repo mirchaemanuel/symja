@@ -1,7 +1,5 @@
 package org.matheclipse.core.form.tex.reflection;
 
-import static org.matheclipse.basic.Util.checkCanceled;
-
 import org.matheclipse.core.form.tex.AbstractConverter;
 import org.matheclipse.core.interfaces.IAST;
 
@@ -22,7 +20,6 @@ public class List extends AbstractConverter {
     if (f.size() > 1) {
       fFactory.convert(buf, f.get(1), 0);
       for (int i = 2; i < f.size(); i++) {
-      	checkCanceled();
 				buf.append(",");
         fFactory.convert(buf, f.get(i), 0);
       }
