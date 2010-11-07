@@ -26,7 +26,7 @@ public class PossibleZeroQ extends AbstractFunctionEvaluator {
 		return F.bool(possibleZeroQ(ast.get(1)));
 	}
 
-	public boolean possibleZeroQ(IExpr expr) {
+	public static boolean possibleZeroQ(IExpr expr) {
 		// TODO implement more tests if expr could be 0
 		if (expr instanceof IAST) {
 			expr = F.evalExpandAll(expr);
