@@ -130,7 +130,7 @@ public class Num extends ExprImpl implements INum {
 	/**
 	 * @return
 	 */
-	public Num absNumber() {
+	public Num eabs() {
 		return newInstance(Math.abs(fDouble));
 	}
 

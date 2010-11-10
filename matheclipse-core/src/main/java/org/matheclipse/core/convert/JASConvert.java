@@ -13,6 +13,8 @@ import org.matheclipse.core.interfaces.IFraction;
 import org.matheclipse.core.interfaces.IInteger;
 import org.matheclipse.core.interfaces.ISymbol;
 
+import com.google.common.base.Predicates;
+
 import edu.jas.arith.BigRational;
 import edu.jas.arith.ModInteger;
 import edu.jas.integrate.Integral;
@@ -46,15 +48,20 @@ public class JASConvert<C extends RingElem<C>> {
 
 	private final List<? extends IExpr> fVariables;
 
+	/**
+	 * Constructor which uses edu.jas.arith.BigRational as ring factory.
+	 * 
+	 * @param variablesList
+	 */
 	public JASConvert(final List<? extends IExpr> variablesList) {
-		this(variablesList, new BigRational(0));
+		this(variablesList, (RingFactory<C>) new BigRational(0));
 	};
 
-	public JASConvert(final List<? extends IExpr> variablesList, RingFactory ringFactory) {
+	public JASConvert(final List<? extends IExpr> variablesList, RingFactory<C> ringFactory) {
 		this(variablesList, ringFactory, new TermOrder(TermOrder.INVLEX));
 	}
 
-	public JASConvert(final List<? extends IExpr> variablesList, RingFactory ringFactory, TermOrder termOrder) {
+	public JASConvert(final List<? extends IExpr> variablesList, RingFactory<C> ringFactory, TermOrder termOrder) {
 		this.fRingFactory = ringFactory;
 		this.fVariables = variablesList;
 		String[] vars = new String[fVariables.size()];
@@ -117,6 +124,7 @@ public class JASConvert<C extends RingElem<C>> {
 					return fPolyFactory.getONE().multiply(e);
 				}
 			}
+			return new GenPolynomial(fPolyFactory, exprPoly);
 		} else if (exprPoly instanceof IInteger) {
 			// BigInteger bi = ((IInteger)
 			// exprPoly).getBigNumerator().toJavaBigInteger();
@@ -128,6 +136,9 @@ public class JASConvert<C extends RingElem<C>> {
 			BigRational dr = new BigRational(d);
 			BigRational r = nr.divide(dr);
 			return new GenPolynomial(fPolyFactory, r);// pfac.getONE().multiply(r);
+		}
+		if (exprPoly.isFree(Predicates.in(fVariables))) {
+			return new GenPolynomial(fPolyFactory, exprPoly);
 		}
 		throw new ClassCastException(exprPoly.toString());
 	}

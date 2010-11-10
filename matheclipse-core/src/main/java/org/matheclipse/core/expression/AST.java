@@ -21,17 +21,18 @@ import org.matheclipse.core.interfaces.ISignedNumber;
 import org.matheclipse.core.interfaces.IStringX;
 import org.matheclipse.core.interfaces.ISymbol;
 import org.matheclipse.core.patternmatching.PatternMatcher;
-import org.matheclipse.core.patternmatching.PatternMatcherAndEvaluator;
 import org.matheclipse.core.visit.IVisitor;
 import org.matheclipse.core.visit.IVisitorBoolean;
 import org.matheclipse.core.visit.IVisitorInt;
 import org.matheclipse.core.visit.VisitorReplaceAll;
 import org.matheclipse.generic.interfaces.BiFunction;
 
+import apache.harmony.math.BigInteger;
+
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 
-import apache.harmony.math.BigInteger;
+import edu.jas.structure.ElemFactory;
 
 /**
  * 
@@ -512,6 +513,10 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 		return size() == 2 && head().equals(F.ArcTanh);
 	}
 
+	public boolean isLog() {
+		return size() == 2 && head().equals(F.Log);
+	}
+	
 	public boolean isOne() {
 		return false;
 	}
@@ -1393,4 +1398,84 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 		}
 		return subList(1, sz);
 	}
+	
+	
+	@Override
+	public IExpr[] egcd(IExpr b) {
+		throw new UnsupportedOperationException(); 
+	}
+
+	@Override
+	public IExpr gcd(IExpr b) {
+		throw new UnsupportedOperationException(); 
+	}
+
+	@Override
+	public IExpr abs() {
+		if (this instanceof INumber) {
+			return ((INumber)this).eabs();
+		}
+		throw new UnsupportedOperationException(); 
+	}
+
+	@Override
+	public boolean isZERO() {
+		return isZero();
+	}
+
+	@Override
+	public int signum() {
+		throw new UnsupportedOperationException(); 
+	}
+
+	@Override
+	public IExpr subtract(IExpr that) {
+		return this.plus(that.negate()); 
+	}
+
+	@Override
+	public IExpr sum(IExpr that) {
+		return this.plus(that);  
+	}
+
+	@Override
+	public ElemFactory<IExpr> factory() {
+		throw new UnsupportedOperationException(); 
+	}
+
+	@Override
+	public String toScript() {
+		return toString();
+	}
+
+	@Override
+	public String toScriptFactory() {
+		throw new UnsupportedOperationException(); 
+	}
+
+	@Override
+	public IExpr divide(IExpr that) {
+		return this.div(that); 
+	}
+
+	@Override
+	public boolean isONE() {
+		return isOne();
+	}
+
+	@Override
+	public boolean isUnit() {
+    return isOne();
+	}
+
+	@Override
+	public IExpr remainder(IExpr S) {
+		throw new UnsupportedOperationException(); 
+	}
+	
+	@Override
+	public IExpr negate() {
+		return opposite();
+	}
+
 }

@@ -135,7 +135,7 @@ public class ComplexSym extends ExprImpl implements IComplex {
 		return ComplexSym.valueOf(_real, _imaginary.opposite());
 	}
 
-	public IExpr absNumber() {
+	public IExpr eabs() {
 		return F.Sqrt(FractionSym.valueOf(_real.times(_real).plus(_imaginary.times(_imaginary))));
 	}
 
@@ -199,6 +199,7 @@ public class ComplexSym extends ExprImpl implements IComplex {
 		return COMPLEXID;
 	}
 
+	@Override
 	public boolean isZero() {
 		return NumberUtil.isZero(_real) && NumberUtil.isZero(_imaginary);
 	}
@@ -313,6 +314,7 @@ public class ComplexSym extends ExprImpl implements IComplex {
 		// return toText().toString();
 	}
 
+	@Override
 	public String fullFormString() {
 		StringBuffer buf = new StringBuffer("Complex[");
 		if (_real.getDenominator().equals(BigInteger.ONE)) {
@@ -339,6 +341,7 @@ public class ComplexSym extends ExprImpl implements IComplex {
 		return buf.toString();
 	}
 
+	@Override
 	public String internalFormString(boolean callSymbolFactory) {
 		int real_numerator = _real.getNumerator().toInt();
 		int real_denominator = _real.getDenominator().toInt();
@@ -397,6 +400,7 @@ public class ComplexSym extends ExprImpl implements IComplex {
 		return (hierarchy() - (obj).hierarchy());
 	}
 
+	@Override
 	public ISymbol head() {
 		return F.ComplexHead;
 	}

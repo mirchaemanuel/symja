@@ -25,10 +25,11 @@ public class NRoots extends Roots {
     if (lst.size() != 2) {
       return null;
     }
-    IAST list = roots(lst);
-    if (list == null) {
+    IExpr temp = roots(lst);
+    if (temp == null || !temp.isList()) {
       return null;
     }
+    IAST list = (IAST)temp;
     IAST result = F.List();
     for (int i = 1; i < list.size(); i++) {
       result.add(F.evaln(list.get(i)));

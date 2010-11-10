@@ -27,5 +27,6 @@ public class JavaForm implements IFunctionEvaluator {
 	}
 
 	public void setUp(ISymbol symbol) {
+		// symbol.setAttributes(ISymbol.HOLDALL);
 	}
 }

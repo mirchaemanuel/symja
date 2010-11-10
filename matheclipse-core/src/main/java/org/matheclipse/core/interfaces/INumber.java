@@ -29,7 +29,7 @@ public interface INumber extends IExpr {
 	 * 
 	 * @return
 	 */
-	public IExpr absNumber();
+	public IExpr eabs();
 	
 	/**
 	 * Is this number equal an integer number?

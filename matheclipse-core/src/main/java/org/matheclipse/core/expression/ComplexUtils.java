@@ -271,7 +271,7 @@ public class ComplexUtils {
             return ComplexNum.NaN;
         }
 
-        return ComplexNum.valueOf(Math.log(z.abs()),
+        return ComplexNum.valueOf(Math.log(z.dabs()),
             Math.atan2(z.getImaginary(), z.getReal()));
     }
 
@@ -449,7 +449,7 @@ public class ComplexUtils {
         final double a = z.getReal();
         final double b = z.getImaginary();
 
-        final double t = Math.sqrt((Math.abs(a) + z.abs()) / 2.0);
+        final double t = Math.sqrt((Math.abs(a) + z.dabs()) / 2.0);
         if (a >= 0.0) {
             return ComplexNum.valueOf(t, b / (2.0 * t));
         } else {

@@ -16,6 +16,8 @@ import org.matheclipse.core.visit.IVisitor;
 import org.matheclipse.core.visit.IVisitorBoolean;
 import org.matheclipse.core.visit.IVisitorInt;
 
+import edu.jas.structure.ElemFactory;
+
 import apache.harmony.math.BigInteger;
 import apache.harmony.math.Primality;
 import apache.harmony.math.Rational;
@@ -164,7 +166,7 @@ public class IntegerSym extends ExprImpl implements IInteger {
 	/**
 	 * @return
 	 */
-	public IntegerSym absNumber() {
+	public IntegerSym eabs() {
 		return newInstance(fInteger.abs());
 	}
 
@@ -1027,4 +1029,5 @@ public class IntegerSym extends ExprImpl implements IInteger {
 	public int accept(IVisitorInt visitor) {
 		return visitor.visit(this);
 	}
+
 }

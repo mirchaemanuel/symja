@@ -10,6 +10,7 @@ import org.matheclipse.core.eval.exception.DivisionByZero;
 import org.matheclipse.core.eval.interfaces.AbstractArg2;
 import org.matheclipse.core.eval.interfaces.INumeric;
 import org.matheclipse.core.expression.F;
+import org.matheclipse.core.expression.FractionSym;
 import org.matheclipse.core.generic.Functors;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IComplex;
@@ -127,7 +128,7 @@ public class Power extends AbstractArg2 implements INumeric {
 			return F.C1;
 		}
 
-		if (o0.isAST(F.DirectedInfinity, 2) && o1 instanceof ISignedNumber) {
+		if (o0.isAST(F.DirectedInfinity, 2) && o1.isSignedNumber()) {
 			ISignedNumber is = (ISignedNumber) o1;
 			if (o0.equals(F.CInfinity)) {
 				if (is.isNegative()) {
@@ -136,7 +137,7 @@ public class Power extends AbstractArg2 implements INumeric {
 					return F.CInfinity;
 				}
 			}
-			if (o0.equals(F.CNInfinity) && o1 instanceof IInteger) {
+			if (o0.equals(F.CNInfinity) && o1.isInteger()) {
 				IInteger ii = (IInteger) o1;
 				if (ii.isNegative()) {
 					return F.C0;
@@ -151,40 +152,42 @@ public class Power extends AbstractArg2 implements INumeric {
 		}
 
 		if (o1.equals(F.CN1)) {
-			if (o0 instanceof IInteger) {
+			if (o0.isInteger()) {
 				return F.fraction(F.C1, (IInteger) o0);
 			}
-			if (o0 instanceof IFraction) {
+			if (o0.isFraction()) {
 				return F.fraction(((IFraction) o0).getDenominator(), ((IFraction) o0).getNumerator());
 			}
-			if (o0 instanceof IComplex) {
+			if (o0.isComplex()) {
 				return ((IComplex) o0).reciprocal();
 			}
 		}
 
-		if ((o0 instanceof ISignedNumber) && ((ISignedNumber) o0).isNegative() && o1.equals(F.C1D2)) {
+		if (o0.isSignedNumber() && ((ISignedNumber) o0).isNegative() && o1.equals(F.C1D2)) {
 			// extract I for sqrt
-			return F.Times(F.complex(F.C0, F.C1), F.Power(F.Times(F.CN1, o0), o1));
+			return F.Times(F.CI, F.Power(F.Times(F.CN1, o0), o1));
 		}
 
-		if ((o1 instanceof INumber) && o0.isAST(F.Power)) {
-			final IAST f0 = (IAST) o0;
+		if (o0.isAST()) {
+			IAST arg0 = (IAST) o0;
+			if (arg0.isTimes()) {
+				if (o1 instanceof IInteger) {
+					// (a * b * c)^n => a^n * b^n * c^n
+					return arg0.map(Functors.replace1st(Power(F.Null, o1)));
+				}
+				if (o1 instanceof INumber) {
+					final IAST f0 = arg0;
 
-			if ((f0.size() == 3) && (f0.get(2) instanceof INumber)) {
-				return F.function(F.Power, f0.get(1), F.function(F.Times, f0.get(2), o1));
+					if ((f0.size() > 1) && (f0.get(1) instanceof INumber)) {
+						return Times(Power(f0.get(1), o1), Power(F.ast(f0, F.Times, true, 2, f0.size()), o1));
+					}
+				}
 			}
-		}
 
-		if (o0.isAST(F.Times)) {
-			if (o1 instanceof IInteger) {
-				// (a * b * c)^n => a^n * b^n * c^n
-				return ((IAST) o0).map(Functors.replace1st(Power(F.Null, o1)));
-			}
-			if (o1 instanceof INumber) {
-				final IAST f0 = (IAST) o0;
-
-				if ((f0.size() > 1) && (f0.get(1) instanceof INumber)) {
-					return Times(Power(f0.get(1), o1), Power(F.ast(f0, F.Times, true, 2, f0.size()), o1));
+			if (arg0.isPower()) {
+				if (o1 instanceof IInteger) {
+					// (a ^ b )^n => a ^ (b * n)
+					return F.Power(arg0.get(1), F.Times(o1, arg0.get(2)));
 				}
 			}
 		}
@@ -198,6 +201,18 @@ public class Power extends AbstractArg2 implements INumeric {
 
 		if (f1.getNumerator().equals(F.C0)) {
 			return F.C1;
+		}
+
+		if (f1.equals(F.C1D2)) {
+			if (f0.isNegative()) {
+				return F.Times(F.CI, F.Power(f0.negate(), f1));
+			}
+		}
+
+		if (f1.equals(F.CN1D2)) {
+			if (f0.isNegative()) {
+				return F.Times(F.CN1, F.CI, F.Power(f0.negate().inverse(), f1.negate()));
+			}
 		}
 
 		if (!f1.getDenominator().equals(F.C1)) {
@@ -313,7 +328,7 @@ public class Power extends AbstractArg2 implements INumeric {
 				if (a.equals(F.CN1)) {
 					return null;
 					// if (n % 2 == 0) {
-					// // even exponent n
+					// // // even exponent n
 					// return null;
 					// } else {
 					// // odd exponent n
@@ -352,12 +367,8 @@ public class Power extends AbstractArg2 implements INumeric {
 		return c0.pow(i1.getBigNumerator().intValue());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.matheclipse.parser.interfaces.IEvaluator#setUp(org.matheclipse.parser
-	 * .interfaces.ISymbol)
+	/**
+	 * {@inheritDoc}
 	 */
 	@Override
 	public void setUp(final ISymbol symbol) {
