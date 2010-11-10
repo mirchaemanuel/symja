@@ -605,6 +605,10 @@ public class F {
 		return unary(Det, a0);
 	}
 
+	public static IAST Divide(final IExpr a0, final IExpr a1) {
+		return binary(Times, a0, binary(Power, a1, CN1));
+	}
+
 	public static IAST Dot(final IExpr a0, final IExpr a1) {
 
 		return binary(Dot, a0, a1);
@@ -1015,7 +1019,7 @@ public class F {
 	public static IAST LinearSolve(final IExpr a0, final IExpr a1) {
 		return binary(symbol("LinearSolve"), a0, a1);
 	}
-	
+
 	public static IAST Limit(final IExpr a0, final IExpr a1) {
 
 		return binary(Limit, a0, a1);
@@ -1109,8 +1113,12 @@ public class F {
 		return unary(N, a0);
 	}
 
+	/**
+	 * Multiplies the given argument by <code>-1</code>.
+	 * @param a
+	 * @return
+	 */
 	public static IAST Negate(final IExpr a) {
-
 		return binary(Times, CN1, a);
 	}
 
@@ -1173,6 +1181,11 @@ public class F {
 		return binary(Power, a0, integer(exp));
 	}
 
+	public static IAST PowerExpand(final IExpr a0) {
+
+		return unary(symbol("PowerExpand"), a0);
+	}
+
 	public static IAST Prepend(final IExpr a0) {
 
 		return unary(Prepend, a0);
@@ -1191,7 +1204,7 @@ public class F {
 	public static IAST Roots(final IExpr a0) {
 		return unary(symbol("Roots"), a0);
 	}
-	
+
 	public static IAST Rule(final IExpr a0, final IExpr a1) {
 
 		return binary(Rule, a0, a1);

@@ -23,7 +23,7 @@ public class Norm implements IFunctionEvaluator {
 		IExpr arg = functionList.get(1);
 		if (arg instanceof INumber) {
 			// absolute Value of a number
-			return ((INumber) arg).absNumber();
+			return ((INumber) arg).eabs();
 		}
 		int dim = arg.isVector();
 		if (dim > (-1)) {

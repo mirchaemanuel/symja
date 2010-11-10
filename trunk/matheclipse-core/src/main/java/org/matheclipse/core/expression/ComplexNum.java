@@ -206,7 +206,7 @@ public class ComplexNum extends ExprImpl implements IComplexNum {
 	 * 
 	 * @return the absolute value
 	 */
-	public double abs() {
+	public double dabs() {
 		if (isNaN()) {
 			return Double.NaN;
 		}
@@ -230,8 +230,8 @@ public class ComplexNum extends ExprImpl implements IComplexNum {
 		}
 	}
 
-	public Num absNumber() {
-		return Num.valueOf(abs());
+	public Num eabs() {
+		return Num.valueOf(dabs());
 	}
 
 	/**

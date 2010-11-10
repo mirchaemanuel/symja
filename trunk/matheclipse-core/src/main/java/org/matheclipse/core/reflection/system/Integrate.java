@@ -302,14 +302,14 @@ public class Integrate extends AbstractFunctionEvaluator implements IConstantHea
 									IFraction q = F.fraction(denom[0].numerator(), denom[0].denominator());
 									if (A.isZero()) {
 										// JavaForm[B*Log[p*x+q]/p]
-										temp = F.eval(Times(B, Log(Plus(q, Times(p, x))), Power(p, CN1)));
+										temp = Times(B, Log(Plus(q, Times(p, x))), Power(p, CN1));
 									} else {
 										// JavaForm[A/2*Log[x^2+p*x+q]+(2*B-A*p)/(4*q-p^2)^(1/2)*ArcTan[(2*x+p)/(4*q-p^2)^(1/2)]]
-										temp = F.eval(Plus(Times(C1D2, A, Log(Plus(q, Times(p, x), Power(x, C2)))), Times(ArcTan(Times(Plus(p, Times(
-												C2, x)), Power(Plus(Times(CN1, Power(p, C2)), Times(C4, q)), CN1D2))),
-												Plus(Times(C2, B), Times(CN1, A, p)), Power(Plus(Times(CN1, Power(p, C2)), Times(C4, q)), CN1D2))));
+										temp = Plus(Times(C1D2, A, Log(Plus(q, Times(p, x), Power(x, C2)))), Times(ArcTan(Times(Plus(p, Times(C2, x)),
+												Power(Plus(Times(CN1, Power(p, C2)), Times(C4, q)), CN1D2))), Plus(Times(C2, B), Times(CN1, A, p)), Power(
+												Plus(Times(CN1, Power(p, C2)), Times(C4, q)), CN1D2)));
 									}
-									result.add(temp);
+									result.add(F.eval(temp));
 								}
 							} else if (isDegreeLE2 && j > 1L) {
 								isQuadratic(genPolynomial, numer);
@@ -327,14 +327,14 @@ public class Integrate extends AbstractFunctionEvaluator implements IConstantHea
 											Power(Plus(c, Times(b, x), Times(a, Power(x, C2))), Plus(C1, Times(CN1, k))), x), Plus(Times(F.integer(-6L),
 											a), Times(C4, a, k)), Power(Plus(CN1, k), CN1), Power(Plus(Times(CN1, Power(b, C2)), Times(C4, a, c)), CN1)),
 											Times(Plus(b, Times(C2, a, x)), Power(Plus(CN1, k), CN1), Power(Plus(Times(CN1, Power(b, C2)),
-													Times(C4, a, c)), CN1), Power(Power(Plus(c, Times(b, x), Times(a, Power(x, C2))), Plus(CN1, k)), CN1))));
+													Times(C4, a, c)), CN1), Power(Plus(c, Times(b, x), Times(a, Power(x, C2))), Times(CN1, Plus(CN1, k))))));
 								} else {
 									// JavaForm[(-A)/(2*a*(k-1)*(a*x^2+b*x+c)^(k-1))+(B-A*b/(2*a))*Integrate[(a*x^2+b*x+c)^(-k),x]]
 									temp = Plus(Times(Integrate(Power(Plus(c, Times(b, x), Times(a, Power(x, C2))), Times(CN1, k)), x), Plus(B,
-											Times(CN1D2, A, Power(a, CN1), b))), Times(CN1D2, A, Power(a, CN1), Power(Plus(CN1, k), CN1), Power(Power(
-											Plus(c, Times(b, x), Times(a, Power(x, C2))), Plus(CN1, k)), CN1)));
+											Times(CN1D2, A, Power(a, CN1), b))), Times(CN1D2, A, Power(a, CN1), Power(Plus(CN1, k), CN1), Power(Plus(c,
+											Times(b, x), Times(a, Power(x, C2))), Times(CN1, Plus(CN1, k)))));
 								}
-								result.add(temp);
+								result.add(F.eval(temp));
 							} else {
 								temp = F.eval(F.Times(jas.poly2Expr(genPolynomial), F.Power(jas.poly2Expr(D.get(i - 1)), F.integer(j * (-1L)))));
 								if (!temp.equals(F.C0)) {

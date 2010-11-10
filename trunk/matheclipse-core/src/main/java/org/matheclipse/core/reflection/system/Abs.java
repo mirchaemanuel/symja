@@ -27,7 +27,7 @@ public class Abs extends AbstractTrigArg1 implements INumeric {
 
 	public IExpr evaluateArg1(final IExpr arg1) {
 		if (arg1 instanceof INumber) {
-			return ((INumber) arg1).absNumber();
+			return ((INumber) arg1).eabs();
 		}
 		return null;
 	}
@@ -45,7 +45,7 @@ public class Abs extends AbstractTrigArg1 implements INumeric {
 
 	@Override
 	public IExpr numericEvalDC1(final ComplexNum arg1) {
-		return F.num(arg1.abs());
+		return F.num(arg1.dabs());
 	}
 
 	@Override

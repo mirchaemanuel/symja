@@ -202,7 +202,7 @@ public class FractionSym extends ExprImpl implements IFraction {
 	/**
 	 * @return
 	 */
-	public FractionSym absNumber() {
+	public FractionSym eabs() {
 		return newInstance(fRational.abs());
 	}
 

@@ -2052,6 +2052,8 @@ public class SystemTestCase extends AbstractTestCase {
 	}
 
 	public void testSystem387a() {
+		// check("JavaForm[(1/2 * (m + n^(1/2))) ^ (1/3)]", "");
+
 		check("JavaForm[-1/4+ #2+b+c*3]", "\"Plus(CN1D4,b,Slot(C2),Times(C3,c))\"");
 		check("$a=1+I;JavaForm[$a]", "\"complex(1L,1L,1L,1L)\"");
 		check("JavaForm[1/3+I]", "\"complex(1L,3L,1L,1L)\"");
@@ -2061,10 +2063,10 @@ public class SystemTestCase extends AbstractTestCase {
 		check("JavaForm[B*Log[p*x+q]/p]", "\"Times(B,Log(Plus(q,Times(p,x))),Power(p,CN1))\"");
 		check(
 				"JavaForm[B*((2*a*x+b)/((k-1)*(4*a*c-b^2)*(a*x^2+b*x+c)^(k-1))+ (4*k*a-6*a)/((k-1)*(4*a*c-b^2))*Integrate[(a*x^2+b*x+c)^(-k+1),x])]",
-				"\"Times(B,Plus(Times(Integrate(Power(Plus(c,Times(b,x),Times(a,Power(x,C2))),Plus(C1,Times(CN1,k))),x),Plus(Times(integer(-6L),a),Times(C4,a,k)),Power(Plus(CN1,k),CN1),Power(Plus(Times(CN1,Power(b,C2)),Times(C4,a,c)),CN1)),Times(Plus(b,Times(C2,a,x)),Power(Plus(CN1,k),CN1),Power(Plus(Times(CN1,Power(b,C2)),Times(C4,a,c)),CN1),Power(Power(Plus(c,Times(b,x),Times(a,Power(x,C2))),Plus(CN1,k)),CN1))))\"");
+				"\"Times(B,Plus(Times(Integrate(Power(Plus(c,Times(b,x),Times(a,Power(x,C2))),Plus(C1,Times(CN1,k))),x),Plus(Times(integer(-6L),a),Times(C4,a,k)),Power(Plus(CN1,k),CN1),Power(Plus(Times(CN1,Power(b,C2)),Times(C4,a,c)),CN1)),Times(Plus(b,Times(C2,a,x)),Power(Plus(CN1,k),CN1),Power(Plus(Times(CN1,Power(b,C2)),Times(C4,a,c)),CN1),Power(Plus(c,Times(b,x),Times(a,Power(x,C2))),Times(CN1,Plus(CN1,k))))))\"");
 		check(
 				"JavaForm[(-A)/(2*a*(k-1)*(a*x^2+b*x+c)^(k-1))+(B-A*b/(2*a))*Integrate[(a*x^2+b*x+c)^(-k),x]]",
-				"\"Plus(Times(Integrate(Power(Plus(c,Times(b,x),Times(a,Power(x,C2))),Times(CN1,k)),x),Plus(B,Times(CN1D2,A,Power(a,CN1),b))),Times(CN1D2,A,Power(a,CN1),Power(Plus(CN1,k),CN1),Power(Power(Plus(c,Times(b,x),Times(a,Power(x,C2))),Plus(CN1,k)),CN1)))\"");
+				"\"Plus(Times(Integrate(Power(Plus(c,Times(b,x),Times(a,Power(x,C2))),Times(CN1,k)),x),Plus(B,Times(CN1D2,A,Power(a,CN1),b))),Times(CN1D2,A,Power(a,CN1),Power(Plus(CN1,k),CN1),Power(Plus(c,Times(b,x),Times(a,Power(x,C2))),Times(CN1,Plus(CN1,k)))))\"");
 		check(
 				"JavaForm[A/2*Log[x^2+p*x+q]+(2*B-A*p)/(4*q-p^2)^(1/2)*ArcTan[(2*x+p)/(4*q-p^2)^(1/2)]]",
 				"\"Plus(Times(C1D2,A,Log(Plus(q,Times(p,x),Power(x,C2)))),Times(ArcTan(Times(Plus(p,Times(C2,x)),Power(Plus(Times(CN1,Power(p,C2)),Times(C4,q)),CN1D2))),Plus(Times(C2,B),Times(CN1,A,p)),Power(Plus(Times(CN1,Power(p,C2)),Times(C4,q)),CN1D2)))\"");
@@ -2436,6 +2438,7 @@ public class SystemTestCase extends AbstractTestCase {
 	}
 
 	public void testSystem805() {
+		check("Solve[x^2+b*c*x+3==0, x]", "{{x->1/2*((b^2*c^2-12)^(1/2)-b*c)},{x->1/2*(-(b^2*c^2-12)^(1/2)-b*c)}}");
 		check("Solve[{x+2*y==10,3*x+y==20},{x,y}]", "{{x->6,y->2}}");
 		check("Solve[x^2==0,{x,y,z}]", "{{x->0}}");
 		check("Solve[x^2==0,x]", "{{x->0}}");
@@ -2443,6 +2446,16 @@ public class SystemTestCase extends AbstractTestCase {
 		check("Solve[{x^2==4,x+y==10},{x,y}]", "{{x->2,y->8},{x->-2,y->12}}");
 		check("Solve[{x^2==4,x+20==10},x]", "{}");
 		check("Solve[{x^2==4,x+y^2==6},{x,y}]", "{{x->2,y->2},{x->2,y->-2},{x->-2,y->2*2^(1/2)},{x->-2,y->(-2)*2^(1/2)}}");
+		check("Solve[{x^2==4,x+y^2==6,x+y^2+z^2==24},{x,y,z}]",
+				"{{x->2,y->2,z->3*2^(1/2)},{x->2,y->2,z->(-3)*2^(1/2)},{x->2,y->-2,z->3*2^(1/2)},{x->\n"
+						+ "2,y->-2,z->(-3)*2^(1/2)},{x->-2,y->2*2^(1/2),z->3*2^(1/2)},{x->-2,y->2*2^(1/2),z->(\n"
+						+ "-3)*2^(1/2)},{x->-2,y->(-2)*2^(1/2),z->3*2^(1/2)},{x->-2,y->(-2)*2^(1/2),z->(-3)*\n" + "2^(1/2)}}");
+	}
+
+	public void testSystem806() {
+		check("PowerExpand[(a^b)^(1/2)]", "a^(1/2*b)");
+		check("PowerExpand[(a*b)^(1/2)]", "a^(1/2)*b^(1/2)");
+		check("PowerExpand[Log[(a^b)^c]]", "b*c*Log[a]");
 	}
 
 	public void testSystem991() {
@@ -2522,24 +2535,34 @@ public class SystemTestCase extends AbstractTestCase {
 
 	public void testSystem999() {
 		// check("Factor[1+x^2,GaussianIntegers->True]", "");
-
+		check("Roots[x^3-3*x-2]", "{2,-1}");
+		check("Roots[x^3-4*x^2+x+6]", "{3,2,-1}");
 		check("Factor[3*x^2+6]", "3*(x^2+2)");
 		check("Factor[3/4*x^2+9/16]", "3/16*(4*x^2+3)");
 		check("Factor[3/4*x^2+9/16+7]", "1/16*(12*x^2+121)");
 		check("Factor[3/4*x^2+9/16*x+7]", "1/16*(12*x^2+9*x+112)");
 
-		check("Roots[x^2 + 5*x + 10]", "{1/2*(I*15^(1/2)-5),1/2*(-I*15^(1/2)-5)}");
-		check("Roots[4+x^2+2*x+3*x^3]", "{-1,1/6*(I*2*11^(1/2)+2),1/6*(-I*2*11^(1/2)+2)}");
+		// check("Roots[Sin[13]*x^3 + 5*x + 10]", "");
+		check("NRoots[Sin[13]*x^2 + 5*x + 10]", "{-2.5437534046413663,-9.356275778426076}");
 
-		check("Roots[x^3+4*x^2+x+2]", "{(-1/3)*((1/2)^(1/3)*(12*87^(1/2)+146)^(1/3)+(1/2)^(1/3)*(-12*87^(1/2)+146)^(1/3)+\n"
-				+ "4),(-1/3)*((-I*1/2*3^(1/2)-1/2)*(1/2)^(1/3)*(12*87^(1/2)+146)^(1/3)+(I*1/2*3^(1/\n"
-				+ "2)-1/2)*(1/2)^(1/3)*(-12*87^(1/2)+146)^(1/3)+4),(-1/3)*((I*1/2*3^(1/2)-1/2)*(1/2)^(\n"
-				+ "1/3)*(12*87^(1/2)+146)^(1/3)+(-I*1/2*3^(1/2)-1/2)*(1/2)^(1/3)*(-12*87^(1/2)+146)^(\n" + "1/3)+4)}");
+		check("Roots[x^2 + 5*x + 10]", "{1/2*(I*15^(1/2)-5),1/2*(-I*15^(1/2)-5)}");
+		check("Simplify[Roots[4+x^2+2*x+3*x^3]]", "{-1,I*1/3*11^(1/2)+1/3,-I*1/3*11^(1/2)+1/3}");
+
+		// check("Roots[x^3+4*x^2+x+2]",
+		// "{(-1/3)*((1/2)^(1/3)*(12*87^(1/2)+146)^(1/3)+(1/2)^(1/3)*(-12*87^(1/2)+146)^(1/3)+\n"
+		// +
+		// "4),(-1/3)*((-I*1/2*3^(1/2)-1/2)*(1/2)^(1/3)*(12*87^(1/2)+146)^(1/3)+(I*1/2*3^(1/\n"
+		// +
+		// "2)-1/2)*(1/2)^(1/3)*(-12*87^(1/2)+146)^(1/3)+4),(-1/3)*((I*1/2*3^(1/2)-1/2)*(1/2)^(\n"
+		// +
+		// "1/3)*(12*87^(1/2)+146)^(1/3)+(-I*1/2*3^(1/2)-1/2)*(1/2)^(1/3)*(-12*87^(1/2)+146)^(\n"
+		// + "1/3)+4)}");
 		check("N[{1/2*(I*15^(1/2)-5),1/2*(-I*15^(1/2)-5)}]", "{-2.5+I*1.9364916731037085,-2.5+I*(-1.9364916731037085)}");
 
 		check("NRoots[x^2 + 5x + 10]", "{-2.5+I*1.9364916731037085,-2.5+I*(-1.9364916731037085)}");
-		check("NRoots[x^3+4*x^2+x+2]", "{-3.8751297941627785," + "-0.06243510291861069+I*0.7156909967859645,"
-				+ "-0.06243510291861069+I*(-0.7156909967859645)}");
+		// check("NRoots[x^3+4*x^2+x+2]", "{-3.8751297941627785," +
+		// "-0.06243510291861069+I*0.7156909967859645,"
+		// + "-0.06243510291861069+I*(-0.7156909967859645)}");
 		check("Roots[Expand[(x-1)^3]]", "{1}");
 		check("Roots[x^6-1]", "{1,-1,1/2*(I*3^(1/2)+1),1/2*(-I*3^(1/2)+1),1/2*(I*3^(1/2)-1),1/2*(-I*3^(1/2)-1)}");
 

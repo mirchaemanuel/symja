@@ -18,15 +18,11 @@ import org.matheclipse.core.visit.VisitorReplaceAll;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 
+import edu.jas.structure.ElemFactory;
+
 import apache.harmony.math.BigInteger;
 
 public abstract class ExprImpl implements IExpr {
-	// protected int hash;
-
-	// @Override
-	// public Field<IExpr> getField() {
-	// return ExprFieldOld.CONST;
-	// }
 
 	public IExpr opposite() {
 		return F.function(F.Times, F.CN1, this);
@@ -238,6 +234,10 @@ public abstract class ExprImpl implements IExpr {
 	public boolean isArcTanh() {
 		return false;
 	}
+	
+	public boolean isLog() {
+		return false;
+	}
 
 	public boolean isOne() {
 		return false;
@@ -366,4 +366,84 @@ public abstract class ExprImpl implements IExpr {
 	public IExpr replaceAll(final Function<IExpr, IExpr> function) {
 		return this.accept(new VisitorReplaceAll(function));
 	}
+	
+	
+	@Override
+	public IExpr[] egcd(IExpr b) {
+		throw new UnsupportedOperationException(toString()); 
+	}
+
+	@Override
+	public IExpr gcd(IExpr b) {
+		throw new UnsupportedOperationException(toString()); 
+	}
+
+	@Override
+	public IExpr abs() {
+		if (this instanceof INumber) {
+			return ((INumber)this).eabs();
+		}
+		throw new UnsupportedOperationException(toString()); 
+	}
+
+	@Override
+	public boolean isZERO() {
+		return isZero();
+	}
+
+	@Override
+	public int signum() {
+		throw new UnsupportedOperationException(toString()); 
+	}
+
+	@Override
+	public IExpr subtract(IExpr that) {
+		return this.plus(that.negate()); 
+	}
+
+	@Override
+	public IExpr sum(IExpr that) {
+		return this.plus(that);  
+	}
+
+	@Override
+	public ElemFactory<IExpr> factory() {
+		throw new UnsupportedOperationException(toString()); 
+	}
+
+	@Override
+	public String toScript() {
+		return toString();
+	}
+
+	@Override
+	public String toScriptFactory() {
+		throw new UnsupportedOperationException(toString()); 
+	}
+
+	@Override
+	public IExpr divide(IExpr that) {
+		return this.div(that); 
+	}
+
+	@Override
+	public boolean isONE() {
+		return isOne();
+	}
+
+	@Override
+	public boolean isUnit() {
+		return isOne();
+	}
+
+	@Override
+	public IExpr remainder(IExpr S) {
+		throw new UnsupportedOperationException(toString()); 
+	}
+	
+	@Override
+	public IExpr negate() {
+		throw new UnsupportedOperationException(toString()); 
+	}
+	
 }

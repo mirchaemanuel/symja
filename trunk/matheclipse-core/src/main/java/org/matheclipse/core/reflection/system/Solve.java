@@ -285,7 +285,7 @@ public class Solve extends AbstractFunctionEvaluator {
 					}
 				}
 			} else if (exprAnalyzer.getNumberOfVars() == 1 && exprAnalyzer.isLinearOrPolynomial()) {
-				IAST listOfRules = rootsOfUnivariatePolynomial(exprAnalyzer, vars);
+				IAST listOfRules = rootsOfUnivariatePolynomial(exprAnalyzer);
 				if (listOfRules != null) {
 					boolean evaled = false;
 					++currEquation;
@@ -348,10 +348,10 @@ public class Solve extends AbstractFunctionEvaluator {
 	 * @param vars
 	 * @return
 	 */
-	private static IAST rootsOfUnivariatePolynomial(ExprAnalyzer exprAnalyzer, IAST vars) {
+	private static IAST rootsOfUnivariatePolynomial(ExprAnalyzer exprAnalyzer) {
 		IExpr expr = exprAnalyzer.getExpr();
 		for (ISymbol sym : exprAnalyzer.getSymbolSet()) {
-			IExpr temp = F.eval(F.Roots(expr));
+			IExpr temp = Roots.rootsOfVariable(expr, F.List(sym));
 			IAST resultList = F.List();
 			if (temp.isASTSizeGE(F.List, 2)) {
 				IAST rootsList = (IAST) temp;
