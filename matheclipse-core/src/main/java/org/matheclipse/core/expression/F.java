@@ -1,8 +1,5 @@
 package org.matheclipse.core.expression;
 
-import static org.matheclipse.core.expression.F.symbol;
-import static org.matheclipse.core.expression.F.unary;
-
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.InputStream;
