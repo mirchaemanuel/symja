@@ -3,11 +3,15 @@ package org.matheclipse.core.reflection.system;
 import org.matheclipse.basic.Config;
 import org.matheclipse.core.convert.ExprVariables;
 import org.matheclipse.core.convert.JASConvert;
+import org.matheclipse.core.eval.exception.Validate;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
 import org.matheclipse.core.expression.ASTRange;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
+import org.matheclipse.core.interfaces.ISymbol;
+import org.matheclipse.core.visit.VisitorExpr;
+import org.matheclipse.parser.client.SyntaxError;
 
 import edu.jas.arith.BigRational;
 import edu.jas.poly.GenPolynomial;
@@ -16,33 +20,46 @@ import edu.jas.poly.GenPolynomial;
  * 
  */
 public class Together extends AbstractFunctionEvaluator {
+	class TogetherVisitor extends VisitorExpr {
 
-	public Together() {
-	}
-
-	@Override
-	public IExpr evaluate(final IAST lst) {
-		if (lst.size() != 2) {
-			return null;
+		public TogetherVisitor() {
+			super();
 		}
-		IExpr arg = lst.get(1);
-		if (arg.isAST(F.Plus)) {
-			IAST f = (IAST) arg;
-			if (f.size() <= 1) {
-				return f;
+
+		@Override
+		public IExpr visit(IAST ast) {
+			IExpr temp = visitAST(ast);
+			IAST astTemp = ast;
+			if (temp != null) {
+				if (temp.isAST()) {
+					astTemp = (IAST) temp;
+				} else {
+					return temp;
+				}
+			}
+			if (astTemp.isPlus()) {
+				return visitPlus(astTemp);
+			}
+
+			return astTemp;
+		}
+
+		private IExpr visitPlus(IAST plusAST) {
+			if (plusAST.size() <= 1) {
+				return plusAST;
 			}
 			IAST ni;
 			IExpr temp;
-			IAST numer = F.ast(F.Plus, f.size(), false);
-			IAST denom = F.ast(F.Times, f.size(), false);
-			for (int i = 1; i < f.size(); i++) {
-				numer.add(i, F.eval(F.Numerator(f.get(i))));
-				denom.add(i, F.eval(F.Denominator(f.get(i))));
+			IAST numer = F.ast(F.Plus, plusAST.size(), false);
+			IAST denom = F.ast(F.Times, plusAST.size(), false);
+			for (int i = 1; i < plusAST.size(); i++) {
+				numer.add(i, F.eval(F.Numerator(plusAST.get(i))));
+				denom.add(i, F.eval(F.Denominator(plusAST.get(i))));
 			}
 
-			for (int i = 1; i < f.size(); i++) {
+			for (int i = 1; i < plusAST.size(); i++) {
 				ni = F.Times(numer.get(i));
-				for (int j = 1; j < f.size(); j++) {
+				for (int j = 1; j < plusAST.size(); j++) {
 					if (i == j) {
 						continue;
 					}
@@ -74,7 +91,21 @@ public class Together extends AbstractFunctionEvaluator {
 			}
 			return F.Times(exprNumerator, F.Power(exprDenominator, F.CN1));
 		}
-		return arg;
+	}
+
+	public Together() {
+	}
+
+	@Override
+	public IExpr evaluate(final IAST ast) {
+		Validate.checkSize(ast, 2);
+		if (ast.get(1).isAST()) {
+			IExpr expr = ast.get(1).accept(new TogetherVisitor());
+			if (expr != null) {
+				return expr;
+			}
+		}
+		return ast.get(1);
 	}
 
 	/**
@@ -117,5 +148,11 @@ public class Together extends AbstractFunctionEvaluator {
 			}
 		}
 		return null;
+	}
+
+	@Override
+	public void setUp(final ISymbol symbol) throws SyntaxError {
+		symbol.setAttributes(ISymbol.LISTABLE);
+		super.setUp(symbol);
 	}
 }

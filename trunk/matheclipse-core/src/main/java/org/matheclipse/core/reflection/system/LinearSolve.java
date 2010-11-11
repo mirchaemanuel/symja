@@ -8,6 +8,7 @@ import org.matheclipse.basic.Config;
 import org.matheclipse.core.convert.Convert;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
 import org.matheclipse.core.expression.ExprFieldElement;
+import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
 
@@ -34,7 +35,7 @@ public class LinearSolve extends AbstractFunctionEvaluator {
 
 				FieldDecompositionSolver<ExprFieldElement> fds = lu.getSolver();
 				FieldVector<ExprFieldElement> xVector = fds.solve(bVector);
-				return Convert.vector2List(xVector);
+				return F.eval(F.Together(Convert.vector2List(xVector)));
 			}
 		} catch (final ClassCastException e) {
 			if (Config.SHOW_STACKTRACE) {
