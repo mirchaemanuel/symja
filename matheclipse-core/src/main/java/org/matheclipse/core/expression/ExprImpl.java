@@ -13,7 +13,6 @@ import org.matheclipse.core.interfaces.INumber;
 import org.matheclipse.core.interfaces.ISignedNumber;
 import org.matheclipse.core.interfaces.ISymbol;
 import org.matheclipse.core.patternmatching.PatternMatcher;
-import org.matheclipse.core.visit.VisitorExpr;
 import org.matheclipse.core.visit.VisitorReplaceAll;
 
 import apache.harmony.math.BigInteger;
@@ -130,6 +129,10 @@ public abstract class ExprImpl implements IExpr {
 		return false;
 	}
 
+	public boolean isListOfLists() {
+		return false;
+	}
+	
 	public boolean isTrue() {
 		return false;
 	}

@@ -303,6 +303,15 @@ public interface IExpr extends Comparable<IExpr>, RingElem<IExpr>, INestedListEl
 	public boolean isList();
 
 	/**
+	 * Test if this expression is a list of lists
+	 * 
+	 * @see #isList()
+	 * @see #isMatrix()
+	 * @see #isVector()
+	 */
+	public boolean isListOfLists();
+
+	/**
 	 * Test if this expression is the function <code>Log[&lt;arg&gt;]</code>
 	 * 
 	 */

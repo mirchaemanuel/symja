@@ -1665,11 +1665,14 @@ public class SystemTestCase extends AbstractTestCase {
 		check("u[v[w,x,y] /. { x->y, w->y}]", "u[v[y,y,y]]");
 		check("{x,x,x} /. x->y+1", "{y+1,y+1,y+1}");
 		check("{a+b,x,c+d+e} /. x_+y_->{x,y}", "{{a,b},x,{c,e+d}}");
+
+		check("u2[v[w,x,y]] /. { {x->y}, {w->y, v->k}}", "{u2[v[w,y,y]],u2[k[y,x,y]]}");
 	}
 
 	public void testSystem306() {
 		// ReplaceRepeated
 		check("{a+b,x,c+d+e} //. x_+y_->{x,y}", "{{a,b},x,{c,{d,e}}}");
+		check("{a+b,x,c+d+e} //. {{x_+y_->{x,y}}, {x_+y_->rr[x,y]}}", "{{{a,b},x,{c,{d,e}}},{rr[a,b],x,rr[c,rr[d,e]]}}");
 	}
 
 	public void testSystem307() {
