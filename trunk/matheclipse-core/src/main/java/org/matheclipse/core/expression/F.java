@@ -249,6 +249,8 @@ public class F {
 
 	public static ISymbol Rule;
 
+	public static ISymbol RuleDelayed;
+	
 	public static ISymbol Set;
 
 	public static ISymbol SetAttributes;
@@ -920,6 +922,7 @@ public class F {
 			RotateLeft = predefinedSymbol("RotateLeft");
 			RotateRight = predefinedSymbol("RotateRight");
 			Rule = predefinedSymbol("Rule");
+			RuleDelayed = predefinedSymbol("RuleDelayed");
 			SetAttributes = predefinedSymbol("SetAttributes");
 			Sign = predefinedSymbol("Sign");
 			SignCmp = predefinedSymbol("SignCmp");
@@ -1207,10 +1210,13 @@ public class F {
 	}
 
 	public static IAST Rule(final IExpr a0, final IExpr a1) {
-
 		return binary(Rule, a0, a1);
 	}
 
+	public static IAST RuleDelayed(final IExpr a0, final IExpr a1) {
+		return binary(RuleDelayed, a0, a1);
+	}
+	
 	public static IAST Set(final IExpr a0, final IExpr a1) {
 
 		return binary(Set, a0, a1);

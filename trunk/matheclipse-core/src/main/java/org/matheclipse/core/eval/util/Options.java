@@ -18,7 +18,6 @@ public class Options {
 
 	private IAST fCurrentOptionsList;
 
-
 	public Options(final ISymbol symbol, final IAST currentOptionsList, final int startIndex) {
 		// get the List of pre-defined options:
 		final IExpr temp = F.eval(Options(symbol));
@@ -39,7 +38,8 @@ public class Options {
 	/**
 	 * Get the option from the internal option list.
 	 * 
-	 * @param optionString the option string
+	 * @param optionString
+	 *          the option string
 	 * @return the found option value or <code>null</code> if the option is not
 	 *         available
 	 */
@@ -49,7 +49,7 @@ public class Options {
 			try {
 				for (int i = 1; i < fCurrentOptionsList.size(); i++) {
 					rule = (IAST) fCurrentOptionsList.get(i);
-					if (rule.isAST(F.Rule, 3) && rule.get(1).toString().equals(optionString)) {
+					if (rule.isRuleAST() && rule.get(1).toString().equals(optionString)) {
 						return rule.get(2);
 					}
 				}
@@ -61,7 +61,7 @@ public class Options {
 			try {
 				for (int i = 1; i < fDefaultOptionsList.size(); i++) {
 					rule = (IAST) fDefaultOptionsList.get(i);
-					if (rule.isAST(F.Rule, 3) && rule.get(1).toString().equals(optionString)) {
+					if (rule.isRuleAST() && rule.get(1).toString().equals(optionString)) {
 						return rule.get(2);
 					}
 				}

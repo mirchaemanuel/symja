@@ -1,18 +1,17 @@
 package org.matheclipse.core.reflection.system;
 
-import static org.matheclipse.core.expression.F.Rule;
+import static org.matheclipse.core.expression.F.RuleDelayed;
 
 import org.matheclipse.core.eval.EvalEngine;
 import org.matheclipse.core.eval.exception.Validate;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
-import org.matheclipse.core.expression.Symbol;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.ISymbol;
 
-public class Rule extends AbstractFunctionEvaluator {
+public class RuleDelayed extends AbstractFunctionEvaluator {
 
-	public Rule() {
+	public RuleDelayed() {
 	}
 
 	@Override
@@ -21,15 +20,11 @@ public class Rule extends AbstractFunctionEvaluator {
 		final EvalEngine engine = EvalEngine.get();
 		IExpr leftHandSide = ast.get(1);
 		leftHandSide = Set.evalLeftHandSide(leftHandSide, engine);
-		IExpr arg2 = engine.evalNull(ast.get(2));
-		if (arg2 == null) {
-			if (leftHandSide.equals(ast.get(1))) {
-				return null;
-			}
-			return Rule(leftHandSide, ast.get(2));
+		if (!leftHandSide.equals(ast.get(1))) {
+			return RuleDelayed(leftHandSide, ast.get(2));
 		}
 
-		return Rule(leftHandSide, arg2);
+		return null;
 	}
 
 	@Override

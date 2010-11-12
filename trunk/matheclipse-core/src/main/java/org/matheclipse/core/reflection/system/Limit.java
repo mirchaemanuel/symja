@@ -162,7 +162,7 @@ public class Limit extends AbstractFunctionEvaluator implements IConstantHeaders
 
 	@Override
 	public IExpr evaluate(final IAST ast) {
-		if (ast.size() != 3 && ast.get(2).isAST(F.Rule, 3)) {
+		if (ast.size() != 3 && ast.get(2).isRuleAST()) {
 			return null;
 		}
 		IAST rule = (IAST) ast.get(2);

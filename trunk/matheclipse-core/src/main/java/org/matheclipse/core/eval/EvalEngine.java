@@ -547,6 +547,10 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 	 * @return
 	 */
 	public IAST evalSetAttributes(IAST ast) {
+		if ((ast.getEvalFlags() & IAST.IS_FLATTENED_OR_SORTED_MASK) != 0x0000) {
+			// already flattend or sorted
+			return ast;
+		}
 		final ISymbol symbol = ast.topHead();
 		final int attr = symbol.getAttributes();
 		IAST resultList = ast;

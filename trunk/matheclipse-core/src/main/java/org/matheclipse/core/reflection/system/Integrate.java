@@ -48,7 +48,7 @@ import edu.jas.ufd.SquarefreeFactory;
  * href="http://en.wikipedia.org/wiki/Integral">Integral</a>
  */
 public class Integrate extends AbstractFunctionEvaluator implements IConstantHeaders {
-	String[] RULES = {
+	private static String[] RULES = {
 			"Integrate[y_ * x_,z_Symbol]:= y*Integrate[x,z] /; FreeQ[y,z]",
 			"Integrate[y_,x_Symbol]:=y*x /; FreeQ[y,x]",
 			"Integrate[x_,x_Symbol]:= x^2/2",
