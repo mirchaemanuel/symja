@@ -1,61 +1,25 @@
 package org.matheclipse.core.reflection.system;
 
-import static org.matheclipse.core.expression.F.Power;
-
 import org.matheclipse.core.eval.exception.Validate;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
-import org.matheclipse.core.expression.F;
 import org.matheclipse.core.generic.Functors;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.ISymbol;
-import org.matheclipse.core.visit.VisitorExpr;
 import org.matheclipse.parser.client.SyntaxError;
+
+import com.google.common.base.Function;
 
 /**
  * Try to simplify a given expression
  */
 public class PowerExpand extends AbstractFunctionEvaluator {
-
-	class PowerExpandVisitor extends VisitorExpr {
-
-		public PowerExpandVisitor() {
-			super();
-		}
-
-		@Override
-		public IExpr visit(IAST ast) {
-			IExpr temp = visitAST(ast);
-			IAST astTemp = ast;
-			if (temp != null) {
-				if (temp.isAST()) {
-					astTemp = (IAST) temp;
-				} else {
-					return temp;
-				}
-			}
-			if (astTemp.isPower()) {
-				if (astTemp.get(1).isPower()) {
-					IAST arg1 = (IAST) astTemp.get(1);
-					return F.Power(arg1.get(1), F.Times(arg1.get(2), astTemp.get(2)));
-				}
-				if (astTemp.get(1).isTimes()) {
-					IAST arg1 = (IAST) astTemp.get(1);
-					return arg1.map(Functors.replace1st(Power(F.Null, astTemp.get(2))));
-				}
-			}
-			if (astTemp.isLog()) {
-				if (astTemp.get(1).isPower()) {
-					IAST arg1 = (IAST) astTemp.get(1);
-					// Log[a^b] => b*Log[a]
-					return F.Times(arg1.get(2), F.Log(arg1.get(1)));
-				}
-			}
-
-			return astTemp;
-		}
-
-	}
+	private static String[] REPLACE_STRINGS = { 
+		"Power[x_ ^ y_, z_] :>x ^(y*z)", 
+		"Power[x_ * y_, z_] :> x^z*y^z",
+		"Log[x_ ^ y_] :> y*Log[x]" };
+	
+	private static Function<IExpr, IExpr> REPLACE_RULES;
 
 	public PowerExpand() {
 	}
@@ -64,10 +28,7 @@ public class PowerExpand extends AbstractFunctionEvaluator {
 	public IExpr evaluate(final IAST ast) {
 		Validate.checkSize(ast, 2);
 		if (ast.get(1).isAST()) {
-			IExpr expr = ast.get(1).accept(new PowerExpandVisitor());
-			if (expr != null) {
-				return expr;
-			}
+			return ast.get(1).replaceRepeated(REPLACE_RULES);
 		}
 		return ast.get(1);
 	}
@@ -75,6 +36,7 @@ public class PowerExpand extends AbstractFunctionEvaluator {
 	@Override
 	public void setUp(final ISymbol symbol) throws SyntaxError {
 		symbol.setAttributes(ISymbol.LISTABLE);
+		REPLACE_RULES = Functors.rules(REPLACE_STRINGS);
 		super.setUp(symbol);
 	}
 }

@@ -516,7 +516,7 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 	public boolean isLog() {
 		return size() == 2 && head().equals(F.Log);
 	}
-	
+
 	public boolean isOne() {
 		return false;
 	}
@@ -693,6 +693,20 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 	/**
 	 * {@inheritDoc}
 	 */
+	public IExpr replaceRepeated(final IAST astRules) {
+		return ExprImpl.replaceRepeated(this, new VisitorReplaceAll(astRules));
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public IExpr replaceRepeated(final Function<IExpr, IExpr> function) {
+		return ExprImpl.replaceRepeated(this, new VisitorReplaceAll(function));
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
 	public boolean isAST() {
 		return true;
 	}
@@ -730,6 +744,11 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 	 */
 	public boolean isAST(final String symbol, final int size) {
 		return (size() == size) && get(0).toString().equals(symbol);
+	}
+
+	/** {@inheritDoc} */
+	public boolean isRuleAST() {
+		return size() == 3 && (head().equals(F.Rule) || head().equals(F.RuleDelayed));
 	}
 
 	/**
@@ -862,7 +881,7 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 		}
 		return false;
 	}
-	
+
 	@Override
 	public int hashCode() {
 		if (fHash == 0) {
@@ -1398,24 +1417,23 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 		}
 		return subList(1, sz);
 	}
-	
-	
+
 	@Override
 	public IExpr[] egcd(IExpr b) {
-		throw new UnsupportedOperationException(); 
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public IExpr gcd(IExpr b) {
-		throw new UnsupportedOperationException(); 
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public IExpr abs() {
 		if (this instanceof INumber) {
-			return ((INumber)this).eabs();
+			return ((INumber) this).eabs();
 		}
-		throw new UnsupportedOperationException(); 
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
@@ -1425,22 +1443,22 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 
 	@Override
 	public int signum() {
-		throw new UnsupportedOperationException(); 
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public IExpr subtract(IExpr that) {
-		return this.plus(that.negate()); 
+		return this.plus(that.negate());
 	}
 
 	@Override
 	public IExpr sum(IExpr that) {
-		return this.plus(that);  
+		return this.plus(that);
 	}
 
 	@Override
 	public ElemFactory<IExpr> factory() {
-		throw new UnsupportedOperationException(); 
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
@@ -1450,12 +1468,12 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 
 	@Override
 	public String toScriptFactory() {
-		throw new UnsupportedOperationException(); 
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public IExpr divide(IExpr that) {
-		return this.div(that); 
+		return this.div(that);
 	}
 
 	@Override
@@ -1465,14 +1483,14 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 
 	@Override
 	public boolean isUnit() {
-    return isOne();
+		return isOne();
 	}
 
 	@Override
 	public IExpr remainder(IExpr S) {
-		throw new UnsupportedOperationException(); 
+		throw new UnsupportedOperationException();
 	}
-	
+
 	@Override
 	public IExpr negate() {
 		return opposite();

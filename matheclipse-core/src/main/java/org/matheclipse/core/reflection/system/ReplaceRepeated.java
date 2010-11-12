@@ -6,15 +6,14 @@ import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.ISymbol;
 
-public class ReplaceAll implements IFunctionEvaluator {
+public class ReplaceRepeated implements IFunctionEvaluator {
 
-	public ReplaceAll() {
+	public ReplaceRepeated() {
 	}
 
 	public IExpr evaluate(final IAST ast) {
 		Validate.checkSize(ast, 3);
-		final IExpr result = ast.get(1).replaceAll((IAST) ast.get(2));
-		return (result == null) ? ast.get(1) : result;
+		return ast.get(1).replaceRepeated((IAST) ast.get(2));
 
 	}
 

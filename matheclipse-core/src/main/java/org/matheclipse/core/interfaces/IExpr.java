@@ -36,7 +36,7 @@ public interface IExpr extends Comparable<IExpr>, RingElem<IExpr>, INestedListEl
 	public final static int INTEGERID = 8;
 
 	public final static int METHODSYMBOLID = 1024;
-	
+
 	public final static int PATTERNID = 512;
 
 	public final static int STRINGID = 64;
@@ -350,10 +350,18 @@ public interface IExpr extends Comparable<IExpr>, RingElem<IExpr>, INestedListEl
 
 	/**
 	 * Test if this expression is the function
-	 * <code>Power[&lt;arg1&gt;, &lt;arg2&gt;, ...]</code>
+	 * <code>Power[&lt;arg1&gt;, &lt;arg2&gt;]</code>
 	 * 
 	 */
 	public boolean isPower();
+
+	/**
+	 * Test if this expression is of the form
+	 * <code>Rule[&lt;arg1&gt;, &lt;arg2&gt;]</code> or
+	 * <code>RuleDelayed[&lt;arg1&gt;, &lt;arg2&gt;]</code>.
+	 * 
+	 */
+	public boolean isRuleAST();
 
 	/**
 	 * Test if this expression equals the given expression. If the compared
@@ -482,6 +490,31 @@ public interface IExpr extends Comparable<IExpr>, RingElem<IExpr>, INestedListEl
 	 *         possible.
 	 */
 	public IExpr replaceAll(final IAST astRules);
+
+	/**
+	 * Repeatedly replace all (sub-) expressions with the given unary function. If
+	 * no substitution matches, the method returns <code>this</code>.
+	 * 
+	 * @param function
+	 *          if the unary functions <code>apply()</code> method returns
+	 *          <code>null</code> the expression isn't substituted.
+	 * @return <code>this</code> if no substitution of a (sub-)expression was
+	 *         possible.
+	 */
+	public IExpr replaceRepeated(final Function<IExpr, IExpr> function);
+
+	/**
+	 * Repeatedly replace all (sub-) expressions with the given rule set. If no
+	 * substitution matches, the method returns <code>this</code>.
+	 * 
+	 * @param astRules
+	 *          rules of the form <code>x-&gt;y</code> or
+	 *          <code>{a-&gt;b, c-&gt;d}</code>; the left-hand-side of the rule
+	 *          can contain pattern objects.
+	 * @return <code>this</code> if no substitution of a (sub-)expression was
+	 *         possible.
+	 */
+	public IExpr replaceRepeated(final IAST astRules);
 
 	/**
 	 * Returns the product of this object with the one specified.

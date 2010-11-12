@@ -3,6 +3,7 @@ package org.matheclipse.core.reflection.system;
 import org.matheclipse.core.eval.EvalEngine;
 import org.matheclipse.core.eval.exception.ReturnException;
 import org.matheclipse.core.eval.exception.RuleCreationError;
+import org.matheclipse.core.eval.exception.Validate;
 import org.matheclipse.core.eval.interfaces.ICreatePatternMatcher;
 import org.matheclipse.core.eval.interfaces.IFunctionEvaluator;
 import org.matheclipse.core.expression.F;
@@ -15,18 +16,15 @@ public class SetDelayed implements IFunctionEvaluator, ICreatePatternMatcher {
 	public SetDelayed() {
 	}
 
-	public IExpr evaluate(final IAST functionList) {
-		if (functionList.size() == 3) {
-			final IExpr leftHandSide = functionList.get(1);
-			final IExpr rightHandSide = functionList.get(2);
-			if (rightHandSide.isAST("Condition", 3)) {
-				createPatternMatcher(leftHandSide, ((IAST) rightHandSide).get(1), ((IAST) rightHandSide).get(2));
-			} else {
-				createPatternMatcher(leftHandSide, rightHandSide, null);
-			}
-			return F.Null;
+	public IExpr evaluate(final IAST ast) {
+		Validate.checkSize(ast, 3);
+		final IExpr leftHandSide = ast.get(1);
+		final IExpr rightHandSide = ast.get(2);
+		if (rightHandSide.isAST("Condition", 3)) {
+			createPatternMatcher(leftHandSide, ((IAST) rightHandSide).get(1), ((IAST) rightHandSide).get(2));
+		} else {
+			createPatternMatcher(leftHandSide, rightHandSide, null);
 		}
-
 		return F.Null;
 	}
 
@@ -34,15 +32,7 @@ public class SetDelayed implements IFunctionEvaluator, ICreatePatternMatcher {
 		final Object[] result = new Object[2];
 		final EvalEngine engine = EvalEngine.get();
 
-		try {
-			if (leftHandSide instanceof IAST) {
-				final IAST temp = engine.evalSetAttributes((IAST) leftHandSide);
-				if (temp != null) {
-					leftHandSide = temp;
-				}
-			}
-		} catch (final ReturnException e) {
-		}
+		leftHandSide = Set.evalLeftHandSide(leftHandSide, engine);
 
 		result[0] = null;
 		result[1] = rightHandSide;

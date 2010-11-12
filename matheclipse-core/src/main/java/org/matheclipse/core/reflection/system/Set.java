@@ -3,6 +3,7 @@ package org.matheclipse.core.reflection.system;
 import org.matheclipse.core.eval.EvalEngine;
 import org.matheclipse.core.eval.exception.ReturnException;
 import org.matheclipse.core.eval.exception.RuleCreationError;
+import org.matheclipse.core.eval.exception.Validate;
 import org.matheclipse.core.eval.interfaces.ICreatePatternMatcher;
 import org.matheclipse.core.eval.interfaces.IFunctionEvaluator;
 import org.matheclipse.core.expression.F;
@@ -11,40 +12,41 @@ import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.ISymbol;
 
 public class Set implements IFunctionEvaluator, ICreatePatternMatcher {
+	public static IExpr evalLeftHandSide(IExpr leftHandSide) {
+		return evalLeftHandSide(leftHandSide, EvalEngine.get());
+	}
+
+	public static IExpr evalLeftHandSide(IExpr leftHandSide, final EvalEngine engine) {
+		if (leftHandSide instanceof IAST) {
+			final IExpr temp = engine.evalSetAttributes((IAST) leftHandSide);
+			if (temp != null) {
+				leftHandSide = temp;
+			}
+		}
+		return leftHandSide;
+	}
 
 	public Set() {
 	}
 
-	public IExpr evaluate(final IAST functionList) {
-
-		if (functionList.size() == 3) {
-			final IExpr leftHandSide = functionList.get(1);
-			final IExpr rightHandSide = functionList.get(2);
-			Object[] result;
-			if (rightHandSide.isAST(F.Condition, 3)) {
-				result = createPatternMatcher(leftHandSide, ((IAST) rightHandSide).get(1), ((IAST) rightHandSide).get(2));
-			} else {
-				result = createPatternMatcher(leftHandSide, rightHandSide, null);
-			}
-			return (IExpr) result[1];
+	public IExpr evaluate(final IAST ast) {
+		Validate.checkSize(ast, 3);
+		final IExpr leftHandSide = ast.get(1);
+		final IExpr rightHandSide = ast.get(2);
+		Object[] result;
+		if (rightHandSide.isAST(F.Condition, 3)) {
+			result = createPatternMatcher(leftHandSide, ((IAST) rightHandSide).get(1), ((IAST) rightHandSide).get(2));
+		} else {
+			result = createPatternMatcher(leftHandSide, rightHandSide, null);
 		}
-
-		return F.Null;
+		return (IExpr) result[1];
 	}
 
 	public Object[] createPatternMatcher(IExpr leftHandSide, IExpr rightHandSide, IExpr condition) throws RuleCreationError {
 		final Object[] result = new Object[2];
 		final EvalEngine engine = EvalEngine.get();
 
-		try {
-			if (leftHandSide instanceof IAST) {
-				final IExpr temp = engine.evalSetAttributes((IAST) leftHandSide);
-				if (temp != null) {
-					leftHandSide = temp;
-				}
-			}
-		} catch (final ReturnException e) {
-		}
+		leftHandSide = evalLeftHandSide(leftHandSide, engine);
 
 		try {
 			rightHandSide = engine.evaluate(rightHandSide);

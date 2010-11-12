@@ -68,6 +68,21 @@ public interface IAST extends IExpr, INestedList<IExpr> {
 	public final int IS_DECOMPOSED_PARTIAL_FRACTION = 0x0080;
 
 	/**
+	 * This expression is an already flattened expression
+	 */
+	public final int IS_FLATTENED = 0x0100;
+
+	/**
+	 * This expression is an already sorted expression
+	 */
+	public final int IS_SORTED = 0x0200;
+
+	/**
+	 * This expression is an already flattende or sorted expression
+	 */
+	public final int IS_FLATTENED_OR_SORTED_MASK = 0x0300;
+
+	/**
 	 * Get the evaluation flags for this list.
 	 * 
 	 * @return

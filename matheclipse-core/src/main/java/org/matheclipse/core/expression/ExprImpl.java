@@ -13,14 +13,15 @@ import org.matheclipse.core.interfaces.INumber;
 import org.matheclipse.core.interfaces.ISignedNumber;
 import org.matheclipse.core.interfaces.ISymbol;
 import org.matheclipse.core.patternmatching.PatternMatcher;
+import org.matheclipse.core.visit.VisitorExpr;
 import org.matheclipse.core.visit.VisitorReplaceAll;
+
+import apache.harmony.math.BigInteger;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 
 import edu.jas.structure.ElemFactory;
-
-import apache.harmony.math.BigInteger;
 
 /**
  * Abstract base class for atomic expression objects.
@@ -184,6 +185,11 @@ public abstract class ExprImpl implements IExpr {
 	}
 
 	public boolean isPower() {
+		return false;
+	}
+
+	/** {@inheritDoc} */
+	public boolean isRuleAST() {
 		return false;
 	}
 
@@ -369,6 +375,30 @@ public abstract class ExprImpl implements IExpr {
 	 */
 	public IExpr replaceAll(final Function<IExpr, IExpr> function) {
 		return this.accept(new VisitorReplaceAll(function));
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public IExpr replaceRepeated(final IAST astRules) {
+		return replaceRepeated(this, new VisitorReplaceAll(astRules));
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public IExpr replaceRepeated(final Function<IExpr, IExpr> function) {
+		return replaceRepeated(this, new VisitorReplaceAll(function));
+	}
+
+	public static IExpr replaceRepeated(final IExpr expr, VisitorReplaceAll visitor) {
+		IExpr result = expr;
+		IExpr temp = expr.accept(visitor);
+		while (temp != null) {
+			result = temp;
+			temp = result.accept(visitor);
+		}
+		return result;
 	}
 
 	@Override

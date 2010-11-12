@@ -22,14 +22,19 @@ public class EvaluationSupport {
 	 * example: suppose the Symbol f has the attribute ISymbol.FLAT
 	 * f[a,b,f[x,y,f[u,v]],z] ==> f[a,b,x,y,u,v,z]
 	 * 
-	 * @param list
+	 * @param ast
 	 * 
 	 * @return returns the flattened list
 	 */
-	public static IAST flatten(final IAST list) {
-		final IAST res = F.ast(list.head());
+	public static IAST flatten(final IAST ast) {
+		if ((ast.getEvalFlags() & IAST.IS_FLATTENED) == IAST.IS_FLATTENED) {
+			// already flattened
+			return null;
+		}
+		final IAST res = F.ast(ast.head());
 
-		if (AST.COPY.flatten(list.head(), list, res, 1)) {
+		if (AST.COPY.flatten(ast.head(), ast, res, 1)) {
+			res.setEvalFlags(IAST.IS_FLATTENED);
 			return res;
 		}
 		return null;
@@ -45,6 +50,10 @@ public class EvaluationSupport {
 	 * @return returns the sorted list
 	 */
 	public final static void sort(final IAST ast) {
+		if ((ast.getEvalFlags() & IAST.IS_SORTED) == IAST.IS_SORTED) {
+			// already sorted
+			return;
+		}
 		if (ast.size() > 2) {
 			if (ast.size() == 3) {
 				// optimize special case
@@ -58,6 +67,7 @@ public class EvaluationSupport {
 				ast.args().sort(ExprComparator.CONS);
 			}
 		}
+		ast.setEvalFlags(IAST.IS_SORTED);
 	}
 
 	public final static void sort(final IAST list, Comparator<IExpr> comparator) {

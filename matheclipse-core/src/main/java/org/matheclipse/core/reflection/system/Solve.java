@@ -299,9 +299,15 @@ public class Solve extends AbstractFunctionEvaluator {
 							// collect linear and univariate polynomial equations:
 							for (int i = currEquation; i < analyzerList.size(); i++) {
 								IExpr expr = analyzerList.get(i).getExpr();
-								expr = F.eval(expr.replaceAll(listOfRules.getAST(k)));
-								exprAnalyzer = new ExprAnalyzer(expr, vars);
-								exprAnalyzer.analyze(expr);
+								IExpr temp = expr.replaceAll(listOfRules.getAST(k));
+								if (temp != null) {
+									expr = F.eval(temp);
+									exprAnalyzer = new ExprAnalyzer(expr, vars);
+									exprAnalyzer.analyze(expr);
+								} else {
+									// reuse old analyzer; expression hasn't changed
+									exprAnalyzer = analyzerList.get(i);
+								}
 								subAnalyzerList.add(exprAnalyzer);
 							}
 							try {

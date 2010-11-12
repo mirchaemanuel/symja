@@ -7,6 +7,8 @@ import java.util.Map;
 
 import javax.annotation.Nonnull;
 
+import org.matheclipse.core.convert.AST2Expr;
+import org.matheclipse.core.eval.EvalEngine;
 import org.matheclipse.core.eval.exception.WrongArgumentType;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IAST;
@@ -14,6 +16,8 @@ import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.IPattern;
 import org.matheclipse.core.interfaces.IPatternMatcher;
 import org.matheclipse.core.patternmatching.PatternMatcherAndEvaluator;
+import org.matheclipse.parser.client.Parser;
+import org.matheclipse.parser.client.ast.ASTNode;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -204,7 +208,39 @@ public class Functors {
 		return new RulesFunctor(rulesMap);
 	}
 
-	public static Function<IExpr, IExpr> rules(@Nonnull IAST rulesAST) throws WrongArgumentType {
+	/**
+	 * Create a functor from the given rules. All strings in <code>strRules</code>
+	 * are parsed in internal rules form.
+	 * 
+	 * @param strRules
+	 *          array of rules of the form &quot;<code>x-&gt;y</code>&quot;
+	 * @return
+	 * @throws WrongArgumentType
+	 */
+	public static Function<IExpr, IExpr> rules(@Nonnull String[] strRules) throws WrongArgumentType {
+		IAST astRules = F.List();
+		final Parser parser = new Parser();
+		final EvalEngine engine = EvalEngine.get();
+		for (String str : strRules) {
+			final ASTNode parsedAST = parser.parse(str);
+		  IExpr expr = AST2Expr.CONST.convert(parsedAST);
+			expr = engine.evaluate(expr);
+			astRules.add(expr);
+		}
+		return rules(astRules);
+	}
+
+	/**
+	 * Create a functor from the given rules. If <code>astRules</code> is a
+	 * <code>List[]</code> object, the elements of the list are taken as the rules
+	 * of the form <code>Rule[lhs, rhs]</code>, otherwise the
+	 * <code>astRules</code> itself is taken as the <code>Rule[lhs, rhs]</code>.
+	 * 
+	 * @param astRules
+	 * @return
+	 * @throws WrongArgumentType
+	 */
+	public static Function<IExpr, IExpr> rules(@Nonnull IAST astRules) throws WrongArgumentType {
 		Map<IExpr, IExpr> equalRules = new HashMap<IExpr, IExpr>();
 		List<PatternMatcherAndEvaluator> matchers = new ArrayList<PatternMatcherAndEvaluator>();
 		Predicate<IExpr> patternQ = new Predicate<IExpr>() {
@@ -213,12 +249,12 @@ public class Functors {
 				return input instanceof IPattern;
 			}
 		};
-		if (rulesAST.isList()) {
+		if (astRules.isList()) {
 			// assuming multiple rules in a list
 			IAST rule;
 
-			for (final IExpr expr : rulesAST) {
-				if (expr.isAST(F.Rule, 3)) {
+			for (final IExpr expr : astRules) {
+				if (expr.isRuleAST()) {
 					rule = (IAST) expr;
 					if (rule.get(1).isFree(patternQ)) {
 						equalRules.put(rule.get(1), rule.get(2));
@@ -226,19 +262,19 @@ public class Functors {
 						matchers.add(new PatternMatcherAndEvaluator(F.SetDelayed, rule.get(1), rule.get(2)));
 					}
 				} else {
-					throw new WrongArgumentType(rulesAST, rulesAST, -1, "Rule expression (x->y) expected: ");
+					throw new WrongArgumentType(astRules, astRules, -1, "Rule expression (x->y) expected: ");
 				}
 			}
 		} else {
-			if (rulesAST.isAST(F.Rule, 3)) {
+			if (astRules.isRuleAST()) {
 				// a single rule
-				if (rulesAST.get(1).isFree(patternQ)) {
-					equalRules.put(rulesAST.get(1), rulesAST.get(2));
+				if (astRules.get(1).isFree(patternQ)) {
+					equalRules.put(astRules.get(1), astRules.get(2));
 				} else {
-					matchers.add(new PatternMatcherAndEvaluator(F.SetDelayed, rulesAST.get(1), rulesAST.get(2)));
+					matchers.add(new PatternMatcherAndEvaluator(F.SetDelayed, astRules.get(1), astRules.get(2)));
 				}
 			} else {
-				throw new WrongArgumentType(rulesAST, rulesAST, -1, "Rule expression (x->y) expected: ");
+				throw new WrongArgumentType(astRules, astRules, -1, "Rule expression (x->y) expected: ");
 			}
 		}
 		if (matchers.size() > 0) {
