@@ -453,6 +453,19 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 		return head().equals(F.List);
 	}
 
+	public boolean isListOfLists() {
+		if (head().equals(F.List)) {
+			for (int i = 2; i < size(); i++) {
+				if (!get(i).isList()) {
+					// the row is no list
+					return false;
+				}
+			}
+			return true;
+		}
+		return false;
+	}
+
 	public boolean isPlus() {
 		return size() >= 3 && head().equals(F.Plus);
 	}
