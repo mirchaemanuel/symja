@@ -22,6 +22,10 @@ import edu.jas.structure.ElemFactory;
 
 import apache.harmony.math.BigInteger;
 
+/**
+ * Abstract base class for atomic expression objects.
+ * 
+ */
 public abstract class ExprImpl implements IExpr {
 
 	public IExpr opposite() {
@@ -234,7 +238,7 @@ public abstract class ExprImpl implements IExpr {
 	public boolean isArcTanh() {
 		return false;
 	}
-	
+
 	public boolean isLog() {
 		return false;
 	}
@@ -324,14 +328,14 @@ public abstract class ExprImpl implements IExpr {
 		return toString();
 	}
 
-	/** 
+	/**
 	 * {@inheritDoc}
 	 */
 	public List<IExpr> leaves() {
 		return null;
 	}
 
-	/** 
+	/**
 	 * {@inheritDoc}
 	 */
 	public IExpr apply(List<? extends IExpr> leaves) {
@@ -341,8 +345,8 @@ public abstract class ExprImpl implements IExpr {
 		}
 		return ast;
 	}
-	
-	/** 
+
+	/**
 	 * {@inheritDoc}
 	 */
 	public IExpr apply(IExpr... leaves) {
@@ -353,37 +357,36 @@ public abstract class ExprImpl implements IExpr {
 		return ast;
 	}
 
-	/** 
+	/**
 	 * {@inheritDoc}
 	 */
 	public IExpr replaceAll(final IAST astRules) {
 		return this.accept(new VisitorReplaceAll(astRules));
 	}
 
-	/** 
+	/**
 	 * {@inheritDoc}
 	 */
 	public IExpr replaceAll(final Function<IExpr, IExpr> function) {
 		return this.accept(new VisitorReplaceAll(function));
 	}
-	
-	
+
 	@Override
 	public IExpr[] egcd(IExpr b) {
-		throw new UnsupportedOperationException(toString()); 
+		throw new UnsupportedOperationException(toString());
 	}
 
 	@Override
 	public IExpr gcd(IExpr b) {
-		throw new UnsupportedOperationException(toString()); 
+		throw new UnsupportedOperationException(toString());
 	}
 
 	@Override
 	public IExpr abs() {
 		if (this instanceof INumber) {
-			return ((INumber)this).eabs();
+			return ((INumber) this).eabs();
 		}
-		throw new UnsupportedOperationException(toString()); 
+		throw new UnsupportedOperationException(toString());
 	}
 
 	@Override
@@ -393,22 +396,22 @@ public abstract class ExprImpl implements IExpr {
 
 	@Override
 	public int signum() {
-		throw new UnsupportedOperationException(toString()); 
+		throw new UnsupportedOperationException(toString());
 	}
 
 	@Override
 	public IExpr subtract(IExpr that) {
-		return this.plus(that.negate()); 
+		return this.plus(that.negate());
 	}
 
 	@Override
 	public IExpr sum(IExpr that) {
-		return this.plus(that);  
+		return this.plus(that);
 	}
 
 	@Override
 	public ElemFactory<IExpr> factory() {
-		throw new UnsupportedOperationException(toString()); 
+		throw new UnsupportedOperationException(toString());
 	}
 
 	@Override
@@ -418,12 +421,12 @@ public abstract class ExprImpl implements IExpr {
 
 	@Override
 	public String toScriptFactory() {
-		throw new UnsupportedOperationException(toString()); 
+		throw new UnsupportedOperationException(toString());
 	}
 
 	@Override
 	public IExpr divide(IExpr that) {
-		return this.div(that); 
+		return this.div(that);
 	}
 
 	@Override
@@ -438,12 +441,12 @@ public abstract class ExprImpl implements IExpr {
 
 	@Override
 	public IExpr remainder(IExpr S) {
-		throw new UnsupportedOperationException(toString()); 
+		throw new UnsupportedOperationException(toString());
 	}
-	
+
 	@Override
 	public IExpr negate() {
-		throw new UnsupportedOperationException(toString()); 
+		throw new UnsupportedOperationException(toString());
 	}
-	
+
 }

@@ -22,6 +22,7 @@ import org.matheclipse.core.eval.interfaces.IFunctionEvaluator;
 import org.matheclipse.core.eval.interfaces.ISymbolEvaluator;
 import org.matheclipse.core.expression.ComplexSym;
 import org.matheclipse.core.expression.F;
+import org.matheclipse.core.expression.MethodSymbol;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IComplex;
 import org.matheclipse.core.interfaces.IComplexNum;
@@ -483,13 +484,17 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 			return result;
 		}
 
-		final IEvaluator module = symbol.getEvaluator();
-		if (module instanceof IFunctionEvaluator) {
-			// evaluate a built-in function.
-			if (fNumericMode) {
-				return ((IFunctionEvaluator) module).numericEval(ast);
+		if (symbol instanceof MethodSymbol) {
+			return ((MethodSymbol) symbol).invoke(ast);
+		} else {
+			final IEvaluator module = symbol.getEvaluator();
+			if (module instanceof IFunctionEvaluator) {
+				// evaluate a built-in function.
+				if (fNumericMode) {
+					return ((IFunctionEvaluator) module).numericEval(ast);
+				}
+				return ((IFunctionEvaluator) module).evaluate(ast);
 			}
-			return ((IFunctionEvaluator) module).evaluate(ast);
 		}
 		return null;
 	}

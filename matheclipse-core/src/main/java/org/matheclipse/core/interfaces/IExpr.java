@@ -35,6 +35,8 @@ public interface IExpr extends Comparable<IExpr>, RingElem<IExpr>, INestedListEl
 
 	public final static int INTEGERID = 8;
 
+	public final static int METHODSYMBOLID = 1024;
+	
 	public final static int PATTERNID = 512;
 
 	public final static int STRINGID = 64;
