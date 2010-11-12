@@ -2,16 +2,34 @@ package org.matheclipse.core.system;
 
 import org.matheclipse.core.convert.AST2Expr;
 import org.matheclipse.core.eval.EvalEngine;
+import org.matheclipse.core.expression.F;
 import org.matheclipse.core.form.output.OutputFormFactory;
 import org.matheclipse.core.form.output.StringBufferWriter;
+import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
+import org.matheclipse.core.interfaces.ISymbol;
 import org.matheclipse.parser.client.Parser;
 import org.matheclipse.parser.client.ast.ASTNode;
 
 public class EvalEngineTestCase extends SpecialTestCase {
-	
+
 	public EvalEngineTestCase(String name) {
 		super(name);
+	}
+
+	public static IExpr dynamicMethodCall(IAST ast) {
+		StringBuilder buf = new StringBuilder();
+		for (IExpr expr : ast) {
+			buf.append(expr.toString());
+			buf.append(' ');
+		}
+		return F.stringx(buf.toString());
+	}
+
+	public void testDynamicMethodCall() {
+		ISymbol sym = F.method("__TEST__", "org.matheclipse.core.system", "EvalEngineTestCase", "dynamicMethodCall");
+		IExpr result = F.eval(F.$(sym, F.C1, F.C0));
+		assertEquals(result.toString(), "1 0 ");
 	}
 
 	public void testStepByStep() {
@@ -86,9 +104,9 @@ public class EvalEngineTestCase extends SpecialTestCase {
 			}
 
 			if (expr != null) {
-				// Step 5 
+				// Step 5
 				result = engine.evalStepByStep(expr);
-				// no further 
+				// no further
 				assertEquals(result, null);
 			}
 		} catch (Exception e) {

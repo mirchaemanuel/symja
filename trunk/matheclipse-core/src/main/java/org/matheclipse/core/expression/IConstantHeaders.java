@@ -83,7 +83,9 @@ public interface IConstantHeaders extends IConstantOperators {
 	public final static String Listable = "Listable";
 
 	public final static String Log = "Log";
-
+	
+	public final static String MethodHead = "MethodHead";
+	
 	public final static String MeshRange = "MeshRange";
 
 	public final static String Minus = "Minus"; // unary operator -
@@ -137,7 +139,7 @@ public interface IConstantHeaders extends IConstantOperators {
 	public final static String Set = "Set"; // operator =
 
 	public final static String SetDelayed = "SetDelayed"; // operator :=
-
+	
 	public final static String StringHead = "String";
 
 	public final static String Subtract = "Subtract"; // binary operator -

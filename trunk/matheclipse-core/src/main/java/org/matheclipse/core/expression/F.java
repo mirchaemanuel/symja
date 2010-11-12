@@ -505,6 +505,8 @@ public class F {
 
 	public static ISymbol StringHead;
 
+	public static ISymbol MethodHead;
+
 	//
 	// public static Generic JSCL_LEXICOGRAPHIC;
 	//
@@ -810,6 +812,7 @@ public class F {
 			PatternHead = predefinedSymbol(IConstantHeaders.PatternHead);
 			BlankHead = predefinedSymbol(IConstantHeaders.BlankHead);
 			StringHead = predefinedSymbol(IConstantHeaders.StringHead);
+			MethodHead = predefinedSymbol(IConstantHeaders.MethodHead);
 
 			Slot = predefinedSymbol("Slot");
 			Options = predefinedSymbol("Options");
@@ -1112,6 +1115,7 @@ public class F {
 
 	/**
 	 * Multiplies the given argument by <code>-1</code>.
+	 * 
 	 * @param a
 	 * @return
 	 */
@@ -2038,6 +2042,14 @@ public class F {
 	 */
 	final static public IStringX stringx(final StringBuffer str) {
 		return StringX.valueOf(str);
+	}
+
+	public static ISymbol method(final String symbolName, final String packageName, final String className, final String methodName) {
+		return new MethodSymbol(symbolName, packageName, className, methodName);
+	}
+
+	public static ISymbol method(final String symbolName, final String className, final String methodName) {
+		return new MethodSymbol(symbolName, className, methodName);
 	}
 
 	/**

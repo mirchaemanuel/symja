@@ -301,7 +301,7 @@ public class StringX extends ExprImpl implements IStringX {
 	}
 
 	public int hierarchy() {
-		return SYMBOLID;
+		return STRINGID;
 	}
 
 	/**
