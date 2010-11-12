@@ -14,6 +14,7 @@ import java.util.Set;
 import java.util.Stack;
 
 import org.matheclipse.basic.Config;
+import org.matheclipse.basic.Util;
 import org.matheclipse.core.convert.AST2Expr;
 import org.matheclipse.core.eval.exception.IterationLimitExceeded;
 import org.matheclipse.core.eval.exception.RecursionLimitExceeded;
@@ -672,7 +673,7 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 		if (Config.DEBUG) {
 			System.out.println(obj.toString());
 		}
-
+		Util.checkCanceled();
 		if (obj instanceof IAST) {
 			return evalAST((IAST) obj);
 		}
