@@ -19,7 +19,6 @@ public abstract class AbstractMatrix1Expr extends AbstractFunctionEvaluator {
 		FieldMatrix<ExprFieldElement> matrix;
 		try {
 			Validate.checkSize(function, 2);
-			 
 			final IAST list = (IAST) function.get(1);
 			matrix = Convert.list2Matrix(list);
 			return matrixEval(matrix).getExpr();

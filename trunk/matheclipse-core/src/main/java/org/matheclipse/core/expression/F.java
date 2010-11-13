@@ -1237,6 +1237,10 @@ public class F {
 		return unary(Show, a0);
 	}
 
+	public static IAST Simplify(final IExpr a0) {
+		return unary(symbol("Simplify"), a0);
+	}
+	
 	public static IAST Sin(final IExpr a0) {
 
 		return unary(Sin, a0);

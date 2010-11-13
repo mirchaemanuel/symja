@@ -246,7 +246,7 @@ public class OutputFormFactory implements IConstantHeaders {
 		buf.write(sym.toString());
 	}
 
-	public void convertHead(final Writer buf, final Object obj) throws IOException {
+	public void convertHead(final Writer buf, final IExpr obj) throws IOException {
 		convert(buf, obj);
 	}
 
@@ -256,7 +256,7 @@ public class OutputFormFactory implements IConstantHeaders {
 			buf.write("(");
 		}
 
-		Object temp;
+		IExpr temp;
 		int size = plusAST.size() - 1;
 		for (int i = size; i > 0; i--) {
 			temp = plusAST.get(i);
@@ -358,7 +358,7 @@ public class OutputFormFactory implements IConstantHeaders {
 		}
 	}
 
-	public void convert(final Writer buf, final Object o) throws IOException {
+	public void convert(final Writer buf, final IExpr o) throws IOException {
 		convert(buf, o, Integer.MIN_VALUE);
 	}
 
@@ -485,6 +485,14 @@ public class OutputFormFactory implements IConstantHeaders {
 	}
 
 	public void convertList(final Writer buf, final IAST list) throws IOException {
+		if (list.isEvalFlagOn(IAST.IS_MATRIX)) {
+			if (buf instanceof StringBufferWriter) {
+				StringBufferWriter sbw = (StringBufferWriter) buf;
+				if (!sbw.isEmpty()) {
+					sbw.newLine();
+				}
+			}
+		}
 		buf.write("{");
 		if (list.size() > 1) {
 			convert(buf, list.get(1));
@@ -492,7 +500,13 @@ public class OutputFormFactory implements IConstantHeaders {
 		for (int i = 2; i < list.size(); i++) {
 			buf.write(",");
 			if (list.isEvalFlagOn(IAST.IS_MATRIX)) {
-				buf.write("\n ");
+				if (buf instanceof StringBufferWriter) {
+					StringBufferWriter sbw = (StringBufferWriter) buf;
+					sbw.newLine();
+					sbw.write(' ');
+				} else {
+					buf.write("\n ");
+				}
 			}
 			convert(buf, list.get(i));
 		}
