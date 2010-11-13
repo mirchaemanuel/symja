@@ -42,8 +42,10 @@ The following functions are based on commons-math implementations:
   * {{{PolynomialQ}}} - ([http://code.google.com/p/symja/source/browse/trunk/matheclipse-core/src/main/java/org/matheclipse/core/reflection/system/PolynomialQ.java SVN])
   * {{{PolynomialQuotientRemainder}}} - ([http://code.google.com/p/symja/source/browse/trunk/matheclipse-core/src/main/java/org/matheclipse/core/reflection/system/PolynomialQuotientRemainder.java SVN])
   * {{{Roots}}} - ([http://code.google.com/p/symja/source/browse/trunk/matheclipse-core/src/main/java/org/matheclipse/core/reflection/system/Roots.java SVN])
+    * {{{Roots[x^3-4*x^2+x+6]}} gives {{{ {3,2,-1} }}}
   * {{{RootIntervals}}} - ([http://code.google.com/p/symja/source/browse/trunk/matheclipse-core/src/main/java/org/matheclipse/core/reflection/system/RootIntervals.java SVN])
   * {{{Solve}}} - ([http://code.google.com/p/symja/source/browse/trunk/matheclipse-core/src/main/java/org/matheclipse/core/reflection/system/Solve.java SVN]) uses {{{Roots}}} and {{{LinearSolve}}}.
+    * {{{Solve[{x+2*y==10,3*x+y==20},{x,y}]}}} gives {{{ {{x->6,y->2}} }}}
   * {{{Together}}} - ([http://code.google.com/p/symja/source/browse/trunk/matheclipse-core/src/main/java/org/matheclipse/core/reflection/system/Together.java SVN])
 
 In the {{{edu.jas.kern.ComputerThreads}}} class the following switch lets you choose between single thread and multiple thread execution inside the JAS library:
