@@ -218,7 +218,7 @@ public class PackageLoader {
 		for (int i = 0; i < symbolNames.length; i++) {
 			F.predefinedSymbol(symbolNames[i]);
 		}
-		
+
 		IExpr parsedExpression = engine.parse(packageEntity.getSource());
 		if (parsedExpression != null && parsedExpression.isAST("Package", 4)) {
 			IAST ast = (IAST) parsedExpression;

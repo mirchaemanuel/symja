@@ -73,26 +73,33 @@ public class EvaluateServlet extends HttpServlet {
 
 	protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 		PrintWriter out = res.getWriter();
-		res.setContentType("text/plain");
-		res.setHeader("Cache-Control", "no-cache");
+		try {
+			res.setContentType("text/plain");
+			res.setHeader("Cache-Control", "no-cache");
 
-		String name = "evaluate";
-		String value = req.getParameter(name);
-		if (value == null) {
-			out.println(URLEncoder.encode("0;error;No input expression posted!", "UTF-8"));
-			return;
+			String name = "evaluate";
+			String value = req.getParameter(name);
+			if (value == null) {
+				out.println(URLEncoder.encode("0;error;No input expression posted!", "UTF-8"));
+				return;
+			}
+			value = value.trim();
+			if (value.length() > Short.MAX_VALUE) {
+				out.println(URLEncoder.encode("0;error;Input expression to large!", "UTF-8"));
+				return;
+			}
+			log.warning("In::" + value);
+
+			String result = evaluate(req, value, "", 0);
+			// log.warning("Out::" + result);
+			out.println(result);// URLEncoder.encode(result, "UTF-8"));
+		} catch (Exception e) {
+			String msg = e.getMessage();
+			if (msg != null) {
+				out.println(URLEncoder.encode("0;error;Exception: " + msg, "UTF-8"));
+			}
+			out.println(URLEncoder.encode("0;error;Exception: " + e.getClass().getSimpleName(), "UTF-8"));
 		}
-		value = value.trim();
-		if (value.length() > Short.MAX_VALUE) {
-			out.println(URLEncoder.encode("0;error;Input expression to large!", "UTF-8"));
-			return;
-		}
-		log.warning("In::" + value);
-
-		String result = evaluate(req, value, "", 0);
-		// log.warning("Out::" + result);
-		out.println(result);// URLEncoder.encode(result, "UTF-8"));
-
 	}
 
 	public String evaluate(HttpServletRequest request, String expression, String function, int counter) {
@@ -265,7 +272,6 @@ public class EvaluateServlet extends HttpServlet {
 				return new String[] { "error", "IOException occured: " + msg };
 			}
 			return new String[] { "error", "IOException occured" };
-
 		} catch (Exception e) {
 			// error message
 			// if (Config.SHOW_STACKTRACE) {
@@ -275,7 +281,7 @@ public class EvaluateServlet extends HttpServlet {
 			if (msg != null) {
 				return new String[] { "error", "Error in evaluateString: " + msg };
 			}
-			return new String[] { "error", "Error in evaluateString" };
+			return new String[] { "error", "Error in evaluateString" + e.getClass().getSimpleName() };
 
 		}
 	}
@@ -467,9 +473,10 @@ public class EvaluateServlet extends HttpServlet {
 		// }
 		// }
 		if (!Config.SERVER_MODE) {
-			F.initSymbols(null, new SymbolObserver());
+			F.initSymbols(null, new SymbolObserver(), true);
 			Config.SERVER_MODE = true;
-			System.out.println("Config.SERVER_MODE = true");
+			log.info("Config.SERVER_MODE = true");
+			// System.out.println("Config.SERVER_MODE = true");
 		}
 		if (cache == null) {
 			try {

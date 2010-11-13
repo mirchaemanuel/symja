@@ -1,6 +1,8 @@
 package org.matheclipse.gwt.server;
 
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.matheclipse.basic.Config;
 import org.matheclipse.core.eval.EvalEngine;
@@ -25,14 +27,18 @@ import com.google.appengine.api.users.UserServiceFactory;
  * 
  */
 public class SymbolObserver implements ISymbolObserver {
+	private final static Set<String> LOADED_PACKAGE_SET = new HashSet<String>();
+
 	public SymbolObserver() {
 		super();
 	}
 
 	/**
 	 * Load an associated package from the Appengines datastore, if a new
-	 * &quot;symbol starting with an uppercase character&quot; is defined.
+	 * &quot;symbol starting with an uppercase character&quot; is defined. Doesn't
+	 * load a package multiple times, if it's already loaded.
 	 * 
+	 * @return <code>true</code> if a new package was loaded.
 	 */
 	@Override
 	synchronized public boolean createPredefinedSymbol(String symbolName) {
@@ -40,6 +46,10 @@ public class SymbolObserver implements ISymbolObserver {
 			SymbolEntity symbolEntity = SymbolService.findByName(symbolName);
 			if (symbolEntity != null) {
 				String packageName = symbolEntity.getPackageName();
+				if (LOADED_PACKAGE_SET.contains(packageName)) {
+					return false;
+				}
+				LOADED_PACKAGE_SET.add(packageName);
 				PackageEntity packageEntity = PackageService.findByName(packageName);
 				if (packageEntity != null) {
 					PackageLoader.loadPackage(EvalEngine.get(), packageEntity);
