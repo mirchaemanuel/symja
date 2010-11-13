@@ -107,7 +107,7 @@ public class Convert {
         if (expr instanceof INumber) {
           currOutRow.add(expr);
         } else {
-          currOutRow.add(F.Expand(expr));
+          currOutRow.add(F.eval(F.Together(expr)));
         }
       }
     }

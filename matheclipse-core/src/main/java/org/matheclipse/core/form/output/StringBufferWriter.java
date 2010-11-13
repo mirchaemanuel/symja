@@ -11,24 +11,23 @@ import java.io.Writer;
 public class StringBufferWriter extends Writer {
 	private boolean fIgnoreNewLine = false;
 
-	private StringBuffer fBuffer;
+	private StringBuilder fBuffer;
 
 	private int fColumnCounter;
 
 	public StringBufferWriter() {
-		fBuffer = new StringBuffer();
-		lock = fBuffer;
+		this(16);
 	}
 
 	public StringBufferWriter(final int initialSize) {
 		if (initialSize < 0) {
 			throw new IllegalArgumentException("Negative buffer size");
 		}
-		fBuffer = new StringBuffer(initialSize);
+		fBuffer = new StringBuilder(initialSize);
 		lock = fBuffer;
 	}
 
-	public StringBufferWriter(final StringBuffer buffer) {
+	public StringBufferWriter(final StringBuilder buffer) {
 		fBuffer = buffer;
 		lock = buffer;
 	}
@@ -41,7 +40,7 @@ public class StringBufferWriter extends Writer {
 	public void flush() {
 	}
 
-	public StringBuffer getBuffer() {
+	public StringBuilder getBuffer() {
 		return fBuffer;
 	}
 
@@ -65,7 +64,7 @@ public class StringBufferWriter extends Writer {
 
 	/**
 	 * @param columnCounter
-	 *            The columnCounter to set.
+	 *          The columnCounter to set.
 	 */
 	public void setColumnCounter(final int columnCounter) {
 		fColumnCounter = columnCounter;
@@ -78,8 +77,7 @@ public class StringBufferWriter extends Writer {
 
 	@Override
 	public void write(final char cbuf[], final int off, final int len) {
-		if ((off < 0) || (off > cbuf.length) || (len < 0)
-				|| ((off + len) > cbuf.length) || ((off + len) < 0)) {
+		if ((off < 0) || (off > cbuf.length) || (len < 0) || ((off + len) > cbuf.length) || ((off + len) < 0)) {
 			throw new IndexOutOfBoundsException();
 		} else if (len == 0) {
 			return;
@@ -114,8 +112,17 @@ public class StringBufferWriter extends Writer {
 	}
 
 	/**
+	 * Check if the buffer is empty.
+	 * 
+	 * @return
+	 */
+	public boolean isEmpty() {
+		return fBuffer.length() == 0;
+	}
+
+	/**
 	 * @param ignoreNewLine
-	 *            The ignoreNewLine to set.
+	 *          The ignoreNewLine to set.
 	 */
 	public void setIgnoreNewLine(final boolean ignoreNewLine) {
 		fIgnoreNewLine = ignoreNewLine;
@@ -124,7 +131,7 @@ public class StringBufferWriter extends Writer {
 	@Override
 	protected Object clone() throws CloneNotSupportedException {
 		StringBufferWriter writer = (StringBufferWriter) super.clone();
-		writer.fBuffer = new StringBuffer();
+		writer.fBuffer = new StringBuilder();
 		writer.lock = fBuffer;
 		writer.fIgnoreNewLine = fIgnoreNewLine;
 		return writer;

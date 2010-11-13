@@ -12,6 +12,7 @@ import org.apache.commons.math.MathRuntimeException;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.form.output.OutputFormFactory;
 import org.matheclipse.core.form.output.StringBufferWriter;
+import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.parser.client.SyntaxError;
 
 /**
@@ -175,7 +176,7 @@ public class Console {
 	 * 
 	 */
 	public String interpreter(final String strEval) {
-		Object result;
+		IExpr result;
 		final StringBufferWriter buf = new StringBufferWriter();
 		try {
 			result = util.evaluate(strEval);

@@ -15,23 +15,39 @@ import org.matheclipse.core.interfaces.IExpr;
  * See <a href="http://en.wikipedia.org/wiki/Determinant">Determinant</a>
  * 
  */
-public class Det extends AbstractMatrix1Expr { 
+public class Det extends AbstractMatrix1Expr {
 
-  public Det() {
-    super();
-  }
+	public Det() {
+		super();
+	}
 
-  @Override
-  public ExprFieldElement matrixEval(final FieldMatrix<ExprFieldElement> matrix) {
-    final FieldLUDecompositionImpl<ExprFieldElement> lu = new FieldLUDecompositionImpl<ExprFieldElement>(
-        matrix);
-    return lu.getDeterminant();
-    // return matrix.determinant();
-  }
+	@Override
+	public ExprFieldElement matrixEval(final FieldMatrix<ExprFieldElement> matrix) {
+		if (matrix.getRowDimension() == 2 && matrix.getColumnDimension() == 2) {
+			// 2x2 matrix
+			ExprFieldElement[] row1 = matrix.getRow(0);
+			ExprFieldElement[] row2 = matrix.getRow(1);
+			return row1[0].multiply(row2[1]).subtract((row1[1].multiply(row2[0])));
+		}
+		if (matrix.getRowDimension() == 3 && matrix.getColumnDimension() == 3) {
+			// 3x3 matrix
+			ExprFieldElement[] row1 = matrix.getRow(0);
+			ExprFieldElement[] row2 = matrix.getRow(1);
+			ExprFieldElement[] row3 = matrix.getRow(2);
+			return row1[0].multiply(row2[1].multiply(row3[2])).subtract(
+					  (row1[0].multiply(row2[2].multiply(row3[1])))).subtract(
+					  (row1[1].multiply(row2[0].multiply(row3[2])))).add(
+						(row1[1].multiply(row2[2].multiply(row3[0])))).add(
+						(row1[2].multiply(row2[0].multiply(row3[1])))).subtract(
+						(row1[2].multiply(row2[1].multiply(row3[0]))));
+		}
+		final FieldLUDecompositionImpl<ExprFieldElement> lu = new FieldLUDecompositionImpl<ExprFieldElement>(matrix);
+		return lu.getDeterminant();
+	}
 
-  @Override
-  public IExpr realMatrixEval(RealMatrix matrix) {
-    final LUDecompositionImpl lu = new LUDecompositionImpl(matrix);
-    return F.num(lu.getDeterminant());
-  }
+	@Override
+	public IExpr realMatrixEval(RealMatrix matrix) {
+		final LUDecompositionImpl lu = new LUDecompositionImpl(matrix);
+		return F.num(lu.getDeterminant());
+	}
 }
