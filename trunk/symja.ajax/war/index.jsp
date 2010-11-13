@@ -29,13 +29,10 @@
 		out
 				.println("<link rel=\"stylesheet\" type=\"text/css\"  href=\"screen.css\" >");
 	}
-%> <%
- 	if (!userAgent.contains("BlackBerry")) {
- %> <script type="text/javascript"
-	src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
-<%
-	}
-%> <script type="text/javascript" language="javascript">
+%>  
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script> 
+	
+<script type="text/javascript" language="javascript">
 var handlerFunc = function(resultstr) { 
   var index1 = resultstr.indexOf(';');
   if (index1>=0) { 
@@ -58,11 +55,7 @@ var handlerFunc = function(resultstr) {
 var errFunc = function(t) {
   document.getElementById('result').innerHTML = 'Error ' + t.status + ' -- ' + t.statusText;   
 }
-function stateChanged() {
-  if (request.readyState==4) {
-    handlerFunc(request.responseText);
-  }
-}
+ 
 function getResult(nameArray, btnStr) {
   var temp;
   for (var i = 0; i < nameArray.length; ++i) {
@@ -71,18 +64,10 @@ function getResult(nameArray, btnStr) {
   } 
   document.getElementById('result').innerHTML = 'Loading...';
   var poststr = "evaluate=" + encodeURIComponent( btnStr );	  
-<%if (userAgent.contains("BlackBerry")) {%>
-    poststr = "/calc?" + poststr;
-    request = new XMLHttpRequest();
-    request.onreadystatechange = stateChanged;
-    request.open("POST", poststr, true);
-    request.send(null);
-<%} else {%>
   $.ajax({ type: "POST", url: 'calc', data: poststr, 
     success: function(responseText){handlerFunc(responseText) },
     error: function(responseText){errFunc(responseText) },
   }); 
-<%}%>
 }
 
 function clearta(nameArray) {
@@ -93,12 +78,13 @@ function clearta(nameArray) {
 	document.getElementById(nameArray[0]).focus();
   }
 }
+function ol(){document.getElementById("ta").focus();}
 </script>
 </head>
-<body>
+<body onload="ol()">
 
-<form action="">
-<%
+<form autocomplete="off" action="">
+<% 
 	// input field 
 	String ci = request.getParameter("ci");
 	if (ci == null) {
@@ -224,5 +210,4 @@ function clearta(nameArray) {
 </table>
 </form>
 
-</body>
-</html>
+</body></html>
