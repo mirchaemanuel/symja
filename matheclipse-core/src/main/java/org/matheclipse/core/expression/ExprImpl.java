@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.matheclipse.basic.Config;
+import org.matheclipse.core.eval.EvalEngine;
+import org.matheclipse.core.eval.exception.IterationLimitExceeded;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IComplex;
 import org.matheclipse.core.interfaces.IExpr;
@@ -132,7 +134,7 @@ public abstract class ExprImpl implements IExpr {
 	public boolean isListOfLists() {
 		return false;
 	}
-	
+
 	public boolean isTrue() {
 		return false;
 	}
@@ -397,9 +399,14 @@ public abstract class ExprImpl implements IExpr {
 	public static IExpr replaceRepeated(final IExpr expr, VisitorReplaceAll visitor) {
 		IExpr result = expr;
 		IExpr temp = expr.accept(visitor);
+		final int iterationLimit = EvalEngine.get().getIterationLimit();
+		int iterationCounter = 1;
 		while (temp != null) {
 			result = temp;
 			temp = result.accept(visitor);
+			if (iterationLimit >= 0 && iterationLimit <= ++iterationCounter) {
+				IterationLimitExceeded.throwIt(iterationCounter, result);
+			}
 		}
 		return result;
 	}
