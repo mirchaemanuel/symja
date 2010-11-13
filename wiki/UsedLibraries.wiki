@@ -43,6 +43,7 @@ The following functions are based on commons-math implementations:
   * {{{PolynomialQuotientRemainder}}} - ([http://code.google.com/p/symja/source/browse/trunk/matheclipse-core/src/main/java/org/matheclipse/core/reflection/system/PolynomialQuotientRemainder.java SVN])
   * {{{Roots}}} - ([http://code.google.com/p/symja/source/browse/trunk/matheclipse-core/src/main/java/org/matheclipse/core/reflection/system/Roots.java SVN])
   * {{{RootIntervals}}} - ([http://code.google.com/p/symja/source/browse/trunk/matheclipse-core/src/main/java/org/matheclipse/core/reflection/system/RootIntervals.java SVN])
+  * {{{Solve}}} - ([http://code.google.com/p/symja/source/browse/trunk/matheclipse-core/src/main/java/org/matheclipse/core/reflection/system/Solve.java SVN]) uses {{{Roots}}} and {{{LinearSolve}}}.
   * {{{Together}}} - ([http://code.google.com/p/symja/source/browse/trunk/matheclipse-core/src/main/java/org/matheclipse/core/reflection/system/Together.java SVN])
 
 In the {{{edu.jas.kern.ComputerThreads}}} class the following switch lets you choose between single thread and multiple thread execution inside the JAS library:
