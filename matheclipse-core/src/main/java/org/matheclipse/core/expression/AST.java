@@ -554,6 +554,9 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 		return equals(expression);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public int[] isMatrix() {
 		if (isEvalFlagOn(IAST.IS_MATRIX)) {
 			final int[] dim = new int[2];

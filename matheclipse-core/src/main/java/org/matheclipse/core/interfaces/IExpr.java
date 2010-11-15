@@ -330,9 +330,10 @@ public interface IExpr extends Comparable<IExpr>, RingElem<IExpr>, INestedListEl
 	public boolean isLTOrdered(IExpr expr);
 
 	/**
-	 * Test if this expression is a matrix and return the dimensions. This
-	 * expression is only a matrix, if all elements are lists with the header
-	 * <code>List</code> and have the same size.
+	 * Test if this expression is a matrix and return the dimensions as array
+	 * [row-dimension, column-dimension]. This expression is only a matrix, if all
+	 * elements are lists with the header <code>List</code> and have the same
+	 * size.
 	 * 
 	 * @return <code>null</code> if the expression is no matrix
 	 */
