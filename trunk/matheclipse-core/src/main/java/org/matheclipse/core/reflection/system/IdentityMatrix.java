@@ -13,7 +13,8 @@ import org.matheclipse.generic.nested.IndexTableGenerator;
 /**
  * Create an identity matrix
  * 
- * <a href="http://en.wikipedia.org/wiki/Identity_matrix">Identity matrix</a>
+ * See <a href="http://en.wikipedia.org/wiki/Identity_matrix">Wikipedia -
+ * Identity matrix</a>
  */
 public class IdentityMatrix extends AbstractFunctionEvaluator {
 
@@ -28,19 +29,34 @@ public class IdentityMatrix extends AbstractFunctionEvaluator {
 
 		if (functionList.get(1) instanceof IInteger) {
 			int indx = Validate.checkIntType(functionList, 1);
-			final IAST resultList = F.List();
-			final int[] indexArray = new int[2];
-			indexArray[0] = indx;
-			indexArray[1] = indx;
 			final IExpr[] valueArray = { F.C0, F.C1 };
-			final IndexTableGenerator<IExpr, IAST> generator = new IndexTableGenerator<IExpr, IAST>(indexArray, resultList,
-					new UnaryIndexFunctionDiagonal(valueArray), AST.COPY);
-			final IAST matrix = (IAST) generator.table();
-			if (matrix != null) {
-				matrix.addEvalFlags(IAST.IS_MATRIX);
-			}
-			return matrix;
+			return diagonalMatrix(valueArray, indx);
 		}
 		return null;
+	}
+
+	/**
+	 * Create a diagonal matrix from <code>valueArray[0]</code> (non-diagonal
+	 * elements) and <code>valueArray[1]</code> (diagonal elements).
+	 * 
+	 * @param valueArray
+	 *          2 values for non-diagonal and diagonal elemnets of the matrix.
+	 * @param dimension
+	 *          of the square matrix
+	 * 
+	 * @return
+	 */
+	public static IAST diagonalMatrix(final IExpr[] valueArray, int dimension) {
+		final IAST resultList = F.List();
+		final int[] indexArray = new int[2];
+		indexArray[0] = dimension;
+		indexArray[1] = dimension;
+		final IndexTableGenerator<IExpr, IAST> generator = new IndexTableGenerator<IExpr, IAST>(indexArray, resultList,
+				new UnaryIndexFunctionDiagonal(valueArray), AST.COPY);
+		final IAST matrix = (IAST) generator.table();
+		if (matrix != null) {
+			matrix.addEvalFlags(IAST.IS_MATRIX);
+		}
+		return matrix;
 	}
 }
