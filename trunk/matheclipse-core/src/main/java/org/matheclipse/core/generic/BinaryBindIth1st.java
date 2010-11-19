@@ -1,10 +1,10 @@
 package org.matheclipse.core.generic;
 
+import javax.annotation.Nonnull;
+
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.generic.interfaces.IUnaryIndexFunction;
-
-import com.sun.istack.internal.NotNull;
 
 /**
  * Clone a given AST and set the i-th argument of the new AST to {@code arg} in
@@ -26,7 +26,7 @@ public class BinaryBindIth1st implements IUnaryIndexFunction<IExpr, IExpr> {
 	 *          a &quot;template AST&quot; with all arguments set with a
 	 *          predefined value.
 	 */
-	public BinaryBindIth1st(@NotNull final IAST constant1, @NotNull final IAST constant2) {
+	public BinaryBindIth1st(@Nonnull final IAST constant1, @Nonnull final IAST constant2) {
 		super();
 		fConstant1 = constant1;
 		fConstant2 = constant2;
