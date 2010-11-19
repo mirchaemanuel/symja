@@ -53,9 +53,9 @@ public class JASConvert<C extends RingElem<C>> {
 	 * 
 	 * @param variablesList
 	 */
-	public JASConvert(final List<? extends IExpr> variablesList) {
-		this(variablesList, (RingFactory<C>) new BigRational(0));
-	};
+//	public JASConvert(final List<? extends IExpr> variablesList) {
+//		this(variablesList, (RingFactory<BigRational>)BigRational.ZERO, new TermOrder(TermOrder.INVLEX));
+//	};
 
 	public JASConvert(final List<? extends IExpr> variablesList, RingFactory<C> ringFactory) {
 		this(variablesList, ringFactory, new TermOrder(TermOrder.INVLEX));
