@@ -16,15 +16,16 @@ import apache.harmony.math.BigInteger;
  * Converts a parsed ASTNode expression into an IExpr expression
  * 
  */
-public class Object2Expr extends Converter<Object, IExpr> {
+public class Object2Expr { // extends Converter<Object, IExpr> {
 
 	/**
-	 * Typical instance of an <code>java.lang.Object</code> to <code>IExpr</code> converter
+	 * Typical instance of an <code>java.lang.Object</code> to <code>IExpr</code>
+	 * converter
 	 */
 	public final static Object2Expr CONST = new Object2Expr(Object.class, IExpr.class);
 
 	public Object2Expr(final Class sType, final Class tType) {
-		super(sType, tType);
+		super();
 	}
 
 	/**
@@ -48,11 +49,10 @@ public class Object2Expr extends Converter<Object, IExpr> {
 	 * int[]                a list of Integer values
 	 * double[]             a list of Double values
 	 * double[][]           a matrix (i.e. nested lists) of Double values
-	 * boolean[]            a list of True or False symbols  
+	 * boolean[]            a list of True or False symbols
 	 * 
 	 * </pre>
 	 */
-	@Override
 	public IExpr convert(Object obj) throws ConversionException {
 		if (obj == null) {
 			return F.Null;
