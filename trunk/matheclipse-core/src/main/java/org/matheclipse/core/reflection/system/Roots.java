@@ -82,7 +82,7 @@ public class Roots extends AbstractFunctionEvaluator {
 		ASTRange r = new ASTRange(variables, 1);
 		List<IExpr> varList = r.toList();
 		try {
-			JASConvert<BigRational> jas = new JASConvert<BigRational>(varList);
+			JASConvert<BigRational> jas = new JASConvert<BigRational>(varList, BigRational.ZERO);
 			GenPolynomial<BigRational> rPoly = jas.expr2Poly(expr);
 
 			return rootsOfPolynomial(rPoly, jas);

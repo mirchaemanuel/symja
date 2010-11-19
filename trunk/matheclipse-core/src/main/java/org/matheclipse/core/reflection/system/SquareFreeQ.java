@@ -71,7 +71,7 @@ public class SquareFreeQ extends AbstractFunctionEvaluator {
 	}
 
 	public static boolean isSquarefree(IExpr expr, List<IExpr> varList) {
-		JASConvert<BigRational> jas = new JASConvert<BigRational>(varList);
+		JASConvert<BigRational> jas = new JASConvert<BigRational>(varList, BigRational.ZERO);
 		GenPolynomial<BigRational> poly = jas.expr2Poly(expr);
 
 		FactorAbstract<BigRational> factorAbstract = FactorFactory.getImplementation(BigRational.ONE);

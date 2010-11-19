@@ -61,7 +61,7 @@ public class Factor extends AbstractFunctionEvaluator {
 	}
 
 	public static IExpr factor(IExpr expr, List<IExpr> varList, boolean factorSquareFree) {
-		JASConvert<BigRational> jas = new JASConvert<BigRational>(varList);
+		JASConvert<BigRational> jas = new JASConvert<BigRational>(varList, BigRational.ZERO);
 		GenPolynomial<BigRational> polyRat = jas.expr2Poly(expr);
 		Object[] objects = jas.factorTerms(polyRat);
 		java.math.BigInteger gcd = (java.math.BigInteger) objects[0];

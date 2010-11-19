@@ -77,7 +77,7 @@ public class PolynomialLCM extends AbstractFunctionEvaluator {
 			}
 		}
 		try {
-			JASConvert<BigRational> jas = new JASConvert<BigRational>(r.toList());
+			JASConvert<BigRational> jas = new JASConvert<BigRational>(r.toList(), BigRational.ZERO);
 			GenPolynomial<BigRational> poly = jas.expr2Poly(expr);
 			GenPolynomial<BigRational> temp;
 			GenPolynomial<BigRational> gcd;

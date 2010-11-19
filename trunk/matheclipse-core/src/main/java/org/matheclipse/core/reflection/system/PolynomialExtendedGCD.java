@@ -81,7 +81,7 @@ public class PolynomialExtendedGCD extends AbstractFunctionEvaluator {
 		}
 
 		try {
-			JASConvert<BigRational> jas = new JASConvert<BigRational>(r.toList());
+			JASConvert<BigRational> jas = new JASConvert<BigRational>(r.toList(), BigRational.ZERO);
 			GenPolynomial<BigRational> poly1 = jas.expr2Poly(expr1);
 			GenPolynomial<BigRational> poly2 = jas.expr2Poly(expr2);
 			GenPolynomial<BigRational>[] result = poly1.egcd(poly2);

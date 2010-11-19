@@ -84,7 +84,7 @@ public class Apart extends AbstractFunctionEvaluator {
 
 			String[] varListStr = new String[1];
 			varListStr[0] = variableList.get(1).toString();
-			JASConvert<BigRational> jas = new JASConvert<BigRational>(varList);
+			JASConvert<BigRational> jas = new JASConvert<BigRational>(varList, BigRational.ZERO);
 			GenPolynomial<BigRational> numerator = jas.expr2Poly(exprNumerator);
 			GenPolynomial<BigRational> denominator = jas.expr2Poly(exprDenominator);
 
