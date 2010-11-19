@@ -336,7 +336,7 @@ public class PolynomialTest extends AbstractTestCase {
 		f.add(F.Power(y, IntegerSym.valueOf(3)));
 		f.add(F.Times(z, IntegerSym.valueOf(3)));
 		f.add(F.Times(IntegerSym.valueOf(4), x, z));
-		JASConvert jas999 = new JASConvert(variables);
+		JASConvert jas999 = new JASConvert(variables, BigRational.ZERO);
 		GenPolynomial<BigRational> poly = jas999.expr2Poly(f);
 
 		// assertEquals("4 x * z + x + y^3 + 3 z + 10 ", poly.toString());^
@@ -440,6 +440,6 @@ public class PolynomialTest extends AbstractTestCase {
 		ISymbol x = new Symbol("x");
 		ArrayList<ISymbol> variables = new ArrayList<ISymbol>();
 		variables.add(x);
-		fJAS = new JASConvert(variables);
+		fJAS = new JASConvert(variables, BigRational.ZERO);
 	}
 }
