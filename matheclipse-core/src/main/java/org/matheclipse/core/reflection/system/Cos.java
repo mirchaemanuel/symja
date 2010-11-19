@@ -11,7 +11,7 @@ import org.matheclipse.core.interfaces.ISymbol;
 import org.matheclipse.parser.client.SyntaxError;
 
 /**
- * Cosine
+ * Cosine function
  * 
  * See <a href="http://en.wikipedia.org/wiki/Trigonometric_functions">Trigonometric functions</a>
  */
