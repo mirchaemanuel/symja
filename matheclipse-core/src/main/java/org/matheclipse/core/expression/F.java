@@ -9,8 +9,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.matheclipse.basic.Config;
-import org.matheclipse.core.convert.AST2Expr;
-import org.matheclipse.core.convert.Converter;
 import org.matheclipse.core.convert.Object2Expr;
 import org.matheclipse.core.eval.EvalEngine;
 import org.matheclipse.core.eval.Namespace;
@@ -735,8 +733,8 @@ public class F {
 			// } catch (ParseException e) {
 			// e.printStackTrace();
 			// }
-			Converter.add(AST2Expr.CONST);
-			Converter.add(Object2Expr.CONST);
+//			Converter.add(AST2Expr.CONST);
+//			Converter.add(Object2Expr.CONST);
 
 			C0 = IntegerSym.valueOf(0);
 			C1 = IntegerSym.valueOf(1);
