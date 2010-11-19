@@ -98,6 +98,12 @@ public class SystemTestCase extends AbstractTestCase {
 
 	public void testSystem001() {
 		check("Sin[0.5]", "0.479425538604203");
+		check("Cot[0.5]", "1.830487721712452");
+		check("Csc[0.5]", "2.085829642933488");
+		check("Sec[0.5]", "1.139493927324549");
+		check("N[Cot[I]]", "0.0+I*(-1.313035285499331)");
+		check("N[Csc[I]]", "0.0+I*(-0.8509181282393214)");
+		check("N[Sec[I]]", "0.6480542736638853+I*0.0");
 	}
 
 	public void testSystem002() {
