@@ -129,7 +129,7 @@ public class Together extends AbstractFunctionEvaluator {
 			}
 
 			ASTRange r = new ASTRange(eVar.getVarList(), 1);
-			JASConvert<BigRational> jas = new JASConvert<BigRational>(r.toList());
+			JASConvert<BigRational> jas = new JASConvert<BigRational>(r.toList(), BigRational.ZERO);
 			GenPolynomial<BigRational> p1 = jas.expr2Poly(e1);
 			GenPolynomial<BigRational> p2 = jas.expr2Poly(e2);
 			GenPolynomial<BigRational> gcd = p1.gcd(p2);

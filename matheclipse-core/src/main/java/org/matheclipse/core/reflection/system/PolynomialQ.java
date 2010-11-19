@@ -46,7 +46,7 @@ public class PolynomialQ extends AbstractFunctionEvaluator implements BiPredicat
 		try {
 			IExpr expr = F.evalExpandAll(polnomialExpr);
 			ASTRange r = new ASTRange(variables, 1);
-			JASConvert<BigRational> jas = new JASConvert<BigRational>(r.toList());
+			JASConvert<BigRational> jas = new JASConvert<BigRational>(r.toList(), BigRational.ZERO);
 			// GenPolynomial<BigRational> poly = jas.expr2Poly(expr);
 			return jas.expr2Poly(expr) != null;
 		} catch (final Exception e) {

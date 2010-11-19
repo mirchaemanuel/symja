@@ -47,11 +47,11 @@ public class PolynomialQuotientRemainder extends AbstractFunctionEvaluator {
       eVar.addVarList(lst.get(2));
       IExpr expr = F.evalExpandAll(lst.get(1));
       ASTRange r = new ASTRange(eVar.getVarList(), 1);
-      JASConvert<BigRational> jas = new JASConvert<BigRational>(r.toList());
+      JASConvert<BigRational> jas = new JASConvert<BigRational>(r.toList(), BigRational.ZERO);
       GenPolynomial<BigRational> poly1 = jas.expr2Poly(expr);
       expr = F.evalExpandAll(lst.get(2));
       GenPolynomial<BigRational> poly2 = jas.expr2Poly(expr);
-      GenPolynomial<BigRational>[] divRem = poly1.divideAndRemainder(poly2);
+      GenPolynomial<BigRational>[] divRem = poly1.quotientRemainder(poly2);
       IExpr[] result = new IExpr[2];
       result[0] = jas.rationalPoly2Expr(divRem[0]);
       result[1] = jas.rationalPoly2Expr(divRem[1]);
