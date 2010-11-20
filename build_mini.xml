@@ -51,6 +51,7 @@
 		<unjar src="lib/log4j-1.2.11.jar " dest="${classes.dir}"> 
 		  <patternset>
             <exclude name="**/*.java"/>
+            <exclude name="**/*.gif"/>
           </patternset>
 		</unjar>
 		<unjar src="lib/junit-4.6.jar " dest="${classes.dir}"> 
@@ -91,6 +92,14 @@
 	         	-dontwarn
 	            -dontskipnonpubliclibraryclasses
 	         	-dontskipnonpubliclibraryclassmembers
+
+                -assumenosideeffects class org.apache.log4j.Logger {
+                   public static *** getLogger(...);
+                   public static *** debug(...);
+                   public static *** error(...);
+                   public static *** fatal(...);
+                   public static *** warn(...);
+                }
 
 	           <!-- Specify the input jars, output jars, and library jars. -->
 
