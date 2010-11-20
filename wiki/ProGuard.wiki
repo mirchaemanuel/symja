@@ -1,4 +1,5 @@
 #summary Shrinking the Console application with ProGuard
+#sidebar TableOfContents
 
 = build_mini.xml ANT script =
 To reduce the size of the {{{org.matheclipse.core.eval.Console}}} application we can use the [http://proguard.sourceforge.net/ ProGuard] tool. 
@@ -11,7 +12,8 @@ To run the shrinked Console application you can use a command similar to the fol
 
 At the moment the ANT script has the following drawbacks:
   * unfortunately I had to set the {{{-dontwarn}}} [http://proguard.sourceforge.net/ ProGuard]option to get it to run  
-  * the logging from the JAS library shows up as the first time you call a JAS related function:
-{{{log4j:WARN No such property [conversionPattern] in org.apache.log4j.PatternLayou
-t.
-log4j:WARN No such property [target] in org.apache.log4j.ConsoleAppender.}}}
+  * the logging from the JAS library shows up the first time you call a [http://krum.rz.uni-mannheim.de/jas/ JAS] related function (type something like {{{Roots[4+x^2+2*x+3*x^3]}}} for example)
+{{{
+log4j:WARN No such property [conversionPattern] in org.apache.log4j.PatternLayout.
+log4j:WARN No such property [target] in org.apache.log4j.ConsoleAppender.
+}}}
