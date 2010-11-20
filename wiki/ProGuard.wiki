@@ -5,5 +5,9 @@ To reduce the size of the {{{org.matheclipse.core.eval.Console}}} application we
 
 The {{{obfuscate}}} task in the [http://code.google.com/p/symja/source/browse/trunk/build_mini.xml build_mini.xml] ANT script creates a {{{build/jar/Symja.jar}}} and shrinked jar {{{build/jar/Symja_mini.jar}}}.
 
-To run the shrinked Console application you can use the following command:
+To run the shrinked Console application you can use a command similar to the following:
+
 {{{C:\Java\jdk1.6.0\bin>java -jar C:\eclipse\workspace\symja\build\jar\Symja_mini.jar}}}
+
+At the moment the ANT script has the following drawbacks:
+  * unfortunately I had to set the {{{-dontwarn}}} ProGuard option to get it to run  
