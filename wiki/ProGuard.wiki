@@ -10,4 +10,8 @@ To run the shrinked Console application you can use a command similar to the fol
 {{{C:\Java\jdk1.6.0\bin>java -jar C:\eclipse\workspace\symja\build\jar\Symja_mini.jar}}}
 
 At the moment the ANT script has the following drawbacks:
-  * unfortunately I had to set the {{{-dontwarn}}} ProGuard option to get it to run  
+  * unfortunately I had to set the {{{-dontwarn}}} [http://proguard.sourceforge.net/ ProGuard]option to get it to run  
+  * the logging from the JAS library shows up as the first time you call a JAS related function:
+{{{log4j:WARN No such property [conversionPattern] in org.apache.log4j.PatternLayou
+t.
+log4j:WARN No such property [target] in org.apache.log4j.ConsoleAppender.}}}
