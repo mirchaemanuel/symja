@@ -3,5 +3,7 @@
 = build_mini.xml ANT script =
 To reduce the size of the {{{org.matheclipse.core.eval.Console}}} application we can use the [http://proguard.sourceforge.net/ ProGuard] tool. 
 
-The {{{obfuscate}}} task in the [http://code.google.com/p/symja/source/browse/trunk/build_mini.xml build_mini.xml] ANT script creates a {{{build/jar/Symja.jar}}} and a {{{build/jar/Symja_mini.jar}}}
+The {{{obfuscate}}} task in the [http://code.google.com/p/symja/source/browse/trunk/build_mini.xml build_mini.xml] ANT script creates a {{{build/jar/Symja.jar}}} and shrinked jar {{{build/jar/Symja_mini.jar}}}.
 
+To run the shrinked Console application you can use the following command:
+{{{C:\Java\jdk1.6.0\bin>java -jar C:\eclipse\workspace\symja\build\jar\Symja_mini.jar}}}
