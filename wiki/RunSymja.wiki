@@ -7,7 +7,7 @@
 = The console application =
 In the folder where you've unzipped the downloaded [http://symja.googlecode.com/files/meconsole-0.0.9.zip ZIP file], run a command similar to this:
 {{{
-C:\Java\jdk1.6.0\jre\bin\java -classpath meconsole009.jar;jsr305.jar;google-collect-1.0-rc3.jar;commons-logging-1.1.1.jar;log4j-1.2.11.jar org.matheclipse.core.eval.Console
+C:\Java\jdk1.6.0\jre\bin\java -classpath meconsole010.jar;jsr305.jar;google-collect-1.0-rc3.jar;commons-logging-1.1.1.jar;log4j-1.2.11.jar org.matheclipse.core.eval.Console
 }}}
 
 The following console session appears:
@@ -45,7 +45,7 @@ With the {{{-d}}} or {{{-default}}} program argument, the default pattern-matchi
 = The jrunscript console application (JSR 223 scripting engine) =
 In the folder where you've unzipped the downloaded [http://symja.googlecode.com/files/meconsole-0.0.9.zip ZIP file], run a command similar to this:
 {{{
-C:\Java\jdk1.6.0\bin\jrunscript -classpath meconsole009.jar;jsr305.jar;google-collect-1.0-rc3.jar;commons-logging-1.1.1.jar;log4j-1.2.11.jar -l "matheclipse script"
+C:\Java\jdk1.6.0\bin\jrunscript -classpath meconsole010.jar;jsr305.jar;google-collect-1.0-rc3.jar;commons-logging-1.1.1.jar;log4j-1.2.11.jar -l "matheclipse script"
 }}}
 
 The following console session appears:
