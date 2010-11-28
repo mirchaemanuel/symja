@@ -83,7 +83,7 @@ public class MathMLUtilities {
 				} else {
 					// out.write("<math xmlns=\"&mathml;\">");
 
-					//out.write("<math xmlns=\"http://www.w3.org/1998/Math/MathML\">");
+					// out.write("<math xmlns=\"http://www.w3.org/1998/Math/MathML\">");
 					out.write("<?xml version=\"1.0\"?>\n"
 							+ "<!DOCTYPE math PUBLIC \"-//W3C//DTD MathML 2.0//EN\" \"http://www.w3.org/TR/MathML2/dtd/mathml2.dtd\">\n"
 							+ "<math mode=\"display\">\n");
@@ -91,6 +91,21 @@ public class MathMLUtilities {
 					out.write("</math>");
 				}
 			} catch (final Throwable e) {
+				// parsedExpression == null ==> fError occured
+			}
+		}
+	}
+
+	synchronized public void toJava(final String inputExpression, final Writer out) {
+		IExpr parsedExpression = null;
+		ASTNode node;
+		if (inputExpression != null) {
+			try {
+				node = fParser.parse(inputExpression);
+				parsedExpression = AST2Expr.CONST.convert(node);
+				out.write(parsedExpression.internalFormString(false));
+			} catch (final Throwable e) {
+				return;
 				// parsedExpression == null ==> fError occured
 			}
 		}
