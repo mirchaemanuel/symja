@@ -106,7 +106,15 @@ public class Main extends JApplet {
 	 * Cas panel inside that window. Calls init() and start() on the Cas to mimic
 	 * the applet initialization behavior.
 	 */
-	public static void main(String args[]) {
+	public static void main(final String args[]) {
+		javax.swing.SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				createFrame(args);
+			}
+		});
+	}
+
+	private static void createFrame(String args[]) {
 		frame = new JFrame("Symja");
 		Main panel = new Main();
 		panel.setArgs(args);
@@ -124,9 +132,10 @@ public class Main extends JApplet {
 	 */
 	protected static void readyFrame(JFrame frame) {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		// frame.pack();
+		// frame.setLocationRelativeTo(null);
 		frame.pack();
-		frame.setLocationRelativeTo(null);
-		frame.show();
+		frame.setVisible(true);
 	}
 
 	/**

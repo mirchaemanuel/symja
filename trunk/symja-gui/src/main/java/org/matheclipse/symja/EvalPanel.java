@@ -36,6 +36,7 @@ import javax.swing.ActionMap;
 import javax.swing.InputMap;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -52,6 +53,7 @@ import net.sourceforge.jeuclid.swing.JMathComponent;
 import org.matheclipse.core.eval.CompletionLists;
 import org.matheclipse.core.eval.EvalEngine;
 import org.matheclipse.core.eval.MathMLUtilities;
+import org.matheclipse.core.eval.TeXUtilities;
 import org.matheclipse.core.eval.TimeConstrainedEvaluator;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.form.output.StringBufferWriter;
@@ -84,6 +86,8 @@ public class EvalPanel extends JPanel implements DocumentListener {
 
 	private OutputTextPane jOutputPane = null;
 
+	private JComboBox jFormComboBox = new JComboBox();
+
 	/* custom created attributes */
 	final static long serialVersionUID = 0x000000001;
 
@@ -115,7 +119,7 @@ public class EvalPanel extends JPanel implements DocumentListener {
 		// final Vector<String> allFonts = new
 		// Vector<String>(FontFactory.getInstance().listFontNames());
 		// System.out.println(allFonts);
-		
+
 		try {
 			InputStream is = EvalPanel.class.getResourceAsStream("/fonts/STIXGeneral.ttf");
 			STIX_FONT = Font.createFont(Font.TRUETYPE_FONT, is);
@@ -496,7 +500,12 @@ public class EvalPanel extends JPanel implements DocumentListener {
 		calcThread.start();
 	}
 
-	protected void createMathML(final String cmd) {
+	/**
+	 * Print the MathML text gotm
+	 * 
+	 * @param cmd
+	 */
+	protected void createMathMLForm(final String cmd) {
 		if (fInitThread != null) {
 			try {
 				fInitThread.join();
@@ -514,6 +523,70 @@ public class EvalPanel extends JPanel implements DocumentListener {
 			final StringBufferWriter buf = new StringBufferWriter();
 
 			mathUtil.toMathML(cmd, buf);
+			jOutputPane.printOutColored("MathML:\n" + buf.toString() + "\n\n");
+		} catch (final Exception e) {
+			e.printStackTrace();
+			String mess = e.getMessage();
+			if (mess == null) {
+				jOutputPane.printOutColored(e.getClass().getName());
+			} else {
+				jOutputPane.printOutColored(e.getMessage());
+			}
+		} finally {
+			setBusy(false);
+		}
+	}
+
+	protected void createJavaForm(final String cmd) {
+		if (fInitThread != null) {
+			try {
+				fInitThread.join();
+			} catch (InterruptedException e) {
+			}
+		}
+		commandHistory[commandHistoryStoreIndex++] = cmd;
+		if (commandHistoryStoreIndex >= commandHistory.length) {
+			commandHistoryStoreIndex = 0;
+		}
+		commandHistoryReadIndex = commandHistoryStoreIndex;
+		try {
+			setBusy(true);
+			final MathMLUtilities mathUtil = new MathMLUtilities(EVAL_ENGINE, false);
+			final StringBufferWriter buf = new StringBufferWriter();
+
+			mathUtil.toJava(cmd, buf);
+			jOutputPane.printOutColored("MathML:\n" + buf.toString() + "\n\n");
+		} catch (final Exception e) {
+			e.printStackTrace();
+			String mess = e.getMessage();
+			if (mess == null) {
+				jOutputPane.printOutColored(e.getClass().getName());
+			} else {
+				jOutputPane.printOutColored(e.getMessage());
+			}
+		} finally {
+			setBusy(false);
+		}
+	}
+
+	protected void createTeXForm(final String cmd) {
+		if (fInitThread != null) {
+			try {
+				fInitThread.join();
+			} catch (InterruptedException e) {
+			}
+		}
+		commandHistory[commandHistoryStoreIndex++] = cmd;
+		if (commandHistoryStoreIndex >= commandHistory.length) {
+			commandHistoryStoreIndex = 0;
+		}
+		commandHistoryReadIndex = commandHistoryStoreIndex;
+		try {
+			setBusy(true);
+			final TeXUtilities texUtil = new TeXUtilities(EVAL_ENGINE);
+			final StringBufferWriter buf = new StringBufferWriter();
+
+			texUtil.toTeX(cmd, buf);
 			jOutputPane.printOutColored("MathML:\n" + buf.toString() + "\n\n");
 		} catch (final Exception e) {
 			e.printStackTrace();
@@ -623,28 +696,37 @@ public class EvalPanel extends JPanel implements DocumentListener {
 
 		buttonsPanel.add(fPrettyPrintStyle);
 
-		final JButton b3 = new JButton("MathML");
+		jFormComboBox = new JComboBox(new String[] { "JavaForm", "MathMLForm", "TeXForm" });
+		buttonsPanel.add(jFormComboBox);
+
+		final JButton b3 = new JButton("Convert to Form");
 		b3.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(final java.awt.event.ActionEvent e) {
 				final String cmd = jInputArea.getText();
 				jInputArea.setText("");
 				if (cmd.length() > 0) {
-					createMathML(cmd);
+					if (jFormComboBox.getSelectedItem().equals("JavaForm")) {
+						createJavaForm(cmd);
+					} else if (jFormComboBox.getSelectedItem().equals("MathMLForm")) {
+						createMathMLForm(cmd);
+					} else if (jFormComboBox.getSelectedItem().equals("TeXForm")) {
+						createTeXForm(cmd);
+					}
 				}
 			}
 		});
 		buttonsPanel.add(b3);
-		final JButton b4 = new JButton("Show MathML");
-		b4.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(final java.awt.event.ActionEvent e) {
-				final String cmd = jInputArea.getText();
-				jInputArea.setText("");
-				if (cmd.length() > 0) {
-					createMathMLComponent(cmd);
-				}
-			}
-		});
-		buttonsPanel.add(b4);
+		// final JButton b4 = new JButton("Show MathML");
+		// b4.addActionListener(new java.awt.event.ActionListener() {
+		// public void actionPerformed(final java.awt.event.ActionEvent e) {
+		// final String cmd = jInputArea.getText();
+		// jInputArea.setText("");
+		// if (cmd.length() > 0) {
+		// createMathMLComponent(cmd);
+		// }
+		// }
+		// });
+		// buttonsPanel.add(b4);
 
 		bPanel.add(buttonsPanel);
 
