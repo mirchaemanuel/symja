@@ -61,6 +61,7 @@ import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.INum;
 import org.matheclipse.core.util.WriterOutputStream;
+import org.matheclipse.parser.client.math.MathException;
 
 public class EvalPanel extends JPanel implements DocumentListener {
 	private static final String COMMIT_ACTION = "commit";
@@ -218,6 +219,13 @@ public class EvalPanel extends JPanel implements DocumentListener {
 				} else {
 					String result = buf0.toString();
 					jOutputPane.printOutColored("Out[" + commandHistoryStoreIndex + "]=" + result + "\n");
+				}
+			} catch (final MathException ex) {
+				String mess = ex.getMessage();
+				if (mess == null) {
+					jOutputPane.printErr(ex.getClass().getName());
+				} else {
+					jOutputPane.printErr(mess);
 				}
 			} catch (final Throwable ex) {
 				ex.printStackTrace();
@@ -523,7 +531,7 @@ public class EvalPanel extends JPanel implements DocumentListener {
 			final StringBufferWriter buf = new StringBufferWriter();
 
 			mathUtil.toMathML(cmd, buf);
-			jOutputPane.printOutColored("MathML:\n" + buf.toString() + "\n\n");
+			jOutputPane.printOutColored(buf.toString() + "\n\n");
 		} catch (final Exception e) {
 			e.printStackTrace();
 			String mess = e.getMessage();
@@ -555,7 +563,7 @@ public class EvalPanel extends JPanel implements DocumentListener {
 			final StringBufferWriter buf = new StringBufferWriter();
 
 			mathUtil.toJava(cmd, buf);
-			jOutputPane.printOutColored("MathML:\n" + buf.toString() + "\n\n");
+			jOutputPane.printOutColored(buf.toString() + "\n\n");
 		} catch (final Exception e) {
 			e.printStackTrace();
 			String mess = e.getMessage();
@@ -587,7 +595,7 @@ public class EvalPanel extends JPanel implements DocumentListener {
 			final StringBufferWriter buf = new StringBufferWriter();
 
 			texUtil.toTeX(cmd, buf);
-			jOutputPane.printOutColored("MathML:\n" + buf.toString() + "\n\n");
+			jOutputPane.printOutColored(buf.toString() + "\n\n");
 		} catch (final Exception e) {
 			e.printStackTrace();
 			String mess = e.getMessage();
