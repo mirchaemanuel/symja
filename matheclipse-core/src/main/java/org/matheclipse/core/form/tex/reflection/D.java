@@ -3,37 +3,29 @@ package org.matheclipse.core.form.tex.reflection;
 import org.matheclipse.core.form.tex.AbstractConverter;
 import org.matheclipse.core.interfaces.IAST;
 
-
-
 public class D extends AbstractConverter {
 
-  public D() {
-  }
+	public D() {
+	}
 
-  /**
-   * Converts a given function into the corresponding MathML output
-   *
-   *@param  buf  StringBuffer for MathML output
-   *@param  f    The math function which should be converted to MathML
-   */
-  public boolean convert(final StringBuffer buf, final IAST f, final int precedence) {
-    if (f.size() == 3) {
-//      fFactory.tagStart(buf, "mfrac");
-//      fFactory.tagStart(buf, "mrow");
-//    &PartialD;  &x02202;
-//      fFactory.tag(buf, "mo", "&#x2202;");
+	/**
+	 * Converts a given function into the corresponding MathML output
+	 * 
+	 *@param buf
+	 *          StringBuffer for MathML output
+	 *@param f
+	 *          The math function which should be converted to MathML
+	 */
+	public boolean convert(final StringBuffer buf, final IAST f, final int precedence) {
+		if (f.size() == 3) {
 
-      fFactory.convert(buf, f.get(0), 0);
-//      fFactory.tagEnd(buf, "mrow");
-//      fFactory.tagStart(buf, "mrow");
-      // &PartialD;  &x02202
-//      fFactory.tag(buf, "mo", "&#x2202;");
-      fFactory.convert(buf, f.get(1), 0);
+			buf.append("\\frac{d}{{d");
+			fFactory.convert(buf, f.get(2), 0);
+			buf.append("}}");
+			fFactory.convert(buf, f.get(1), 0);
 
-//      fFactory.tagEnd(buf, "mrow");
-//      fFactory.tagEnd(buf, "mfrac");
-      return true;
-    }
-    return false;
-  }
+			return true;
+		}
+		return false;
+	}
 }

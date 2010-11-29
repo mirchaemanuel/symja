@@ -53,9 +53,8 @@ import org.matheclipse.symja.plot.ParametricPlotWindow;
 import org.matheclipse.symja.plot.PlotWindow;
 
 /**
- * This is currently the primary class to launch CAS. Extends JApplet so that it
- * can functions as an applet; if main() is called, the applet is wrapped in a
- * window (JFrame).
+ * Symja Swing GUI. Extends JApplet so that it can functions as an applet; if
+ * main() is called, the applet is wrapped in a window (JFrame).
  */
 public class Main extends JApplet {
 	/**

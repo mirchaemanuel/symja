@@ -1,6 +1,5 @@
 package org.matheclipse.core.form.tex;
 
-
 import java.util.Hashtable;
 
 import org.matheclipse.basic.Config;
@@ -74,7 +73,7 @@ public class TeXFormFactory extends AbstractTeXFormFactory implements IConstantH
 	public void convertDoubleComplex(final StringBuffer buf, final IComplexNum dc, final int precedence) {
 		if (precedence > plusPrec) {
 			buf.append("\\left( ");
-		} 
+		}
 		convert(buf, dc.getRealPart(), 0);
 		buf.append(" + ");
 		convert(buf, dc.getImaginaryPart(), 0);
@@ -82,7 +81,7 @@ public class TeXFormFactory extends AbstractTeXFormFactory implements IConstantH
 		buf.append("\\imag");
 		if (precedence > plusPrec) {
 			buf.append("\\right) ");
-		} 
+		}
 	}
 
 	public void convertInteger(final StringBuffer buf, final IInteger i, final int precedence) {
@@ -98,7 +97,7 @@ public class TeXFormFactory extends AbstractTeXFormFactory implements IConstantH
 	public void convertFraction(final StringBuffer buf, final IFraction f, final int precedence) {
 		if (f.isNegative() && (precedence > plusPrec)) {
 			buf.append("\\left( ");
-		} 
+		}
 		buf.append("\\frac{");
 		buf.append(f.getBigNumerator().toString());
 		buf.append("}{");
@@ -112,7 +111,7 @@ public class TeXFormFactory extends AbstractTeXFormFactory implements IConstantH
 	public void convertComplex(final StringBuffer buf, final IComplex c, final int precedence) {
 		if (precedence > plusPrec) {
 			buf.append("\\left( ");
-		} 
+		}
 		convert(buf, c.getRealPart(), 0);
 		buf.append(" + ");
 		convert(buf, c.getImaginaryPart(), 0);
@@ -120,7 +119,7 @@ public class TeXFormFactory extends AbstractTeXFormFactory implements IConstantH
 		buf.append("\\imag");
 		if (precedence > plusPrec) {
 			buf.append("\\right) ");
-		} 
+		}
 	}
 
 	public void convertString(final StringBuffer buf, final String str) {
@@ -195,14 +194,14 @@ public class TeXFormFactory extends AbstractTeXFormFactory implements IConstantH
 
 	private void convertAST(final StringBuffer buf, final IAST f) {
 		convertHead(buf, f.head());
-		buf.append('(');
+		buf.append("\\left( ");
 		for (int i = 1; i < f.size(); i++) {
 			convert(buf, f.get(i), 0);
 			if (i < f.size() - 1) {
 				buf.append(',');
 			}
 		}
-		buf.append(')');
+		buf.append(" \\right)");
 
 	}
 
@@ -229,7 +228,7 @@ public class TeXFormFactory extends AbstractTeXFormFactory implements IConstantH
 		try {
 			module = (AbstractConverter) clazz.newInstance();
 			module.setFactory(this);
-//			module.setExpressionFactory(fExprFactory);
+			// module.setExpressionFactory(fExprFactory);
 			operTab.put(headString, module);
 			return module;
 		} catch (final Throwable se) {
