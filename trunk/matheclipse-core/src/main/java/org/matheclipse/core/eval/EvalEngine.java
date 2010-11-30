@@ -415,6 +415,50 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 	}
 
 	/**
+	 * Evaluate an AST with only one argument (i.e. <code>head[arg1]</code>). The
+	 * evaluation steps are controlled by the header attributes.
+	 * 
+	 * @param ast
+	 * @return
+	 */
+	private IExpr evalASTArg1(final IAST ast) {
+		// special case ast.size() == 2
+		// head == ast[0] --- arg1 == ast[1]
+		IExpr result;
+		if ((result = evalLoop(ast.head())) != null) {
+			// first evaluate the header !
+			IAST resultList = ast.clone();
+			resultList.setHeader(result);
+			return resultList;
+		}
+
+		final ISymbol symbol = ast.topHead();
+		final int attr = symbol.getAttributes();
+		final IExpr arg1 = ast.get(1);
+		if ((ISymbol.ONEIDENTITY & attr) == ISymbol.ONEIDENTITY) {
+			return arg1;
+		}
+
+		if ((ISymbol.FLAT & attr) == ISymbol.FLAT && arg1.topHead().equals(symbol)) {
+			// associative
+			return arg1;
+		}
+
+		if ((result = evalArgs(ast, attr)) != null) {
+			return result;
+		}
+
+		if ((ISymbol.LISTABLE & attr) == ISymbol.LISTABLE && arg1.isList()) {
+			// thread over the list
+			if ((result = EvaluationSupport.threadList(ast, ((IAST) arg1).size() - 1, 1)) != null) {
+				return result;
+			}
+		}
+
+		return evalASTBuiltinFunction(symbol, ast);
+	}
+
+	/**
 	 * Evaluate an AST. The evaluation steps are controlled by the header
 	 * attributes.
 	 * 
@@ -422,6 +466,9 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 	 * @return
 	 */
 	public IExpr evalAST(final IAST ast) {
+		if (ast.size() == 2) {
+			return evalASTArg1(ast);
+		}
 		IExpr result;
 
 		if ((result = evalLoop(ast.head())) != null) {
@@ -480,6 +527,17 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 			}
 		}
 
+		return evalASTBuiltinFunction(symbol, ast);
+	}
+
+	/**
+	 * 
+	 * @param symbol
+	 * @param ast
+	 * @return
+	 */
+	private IExpr evalASTBuiltinFunction(final ISymbol symbol, final IAST ast) {
+		IExpr result;
 		if ((result = symbol.evalDownRule(this, ast)) != null) {
 			return result;
 		}
@@ -518,6 +576,9 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 						resultList = ast.clone();
 					}
 					resultList.set(1, evaledExpr);
+					if (ast.size() == 2) {
+						return resultList;
+					}
 				}
 			}
 			if ((ISymbol.HOLDREST & attr) == ISymbol.NOATTRIBUTE) {
@@ -683,7 +744,7 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 			System.out.println(obj.toString());
 		}
 		Util.checkCanceled();
-		if (obj instanceof IAST) {
+		if (obj.isAST()) {
 			return evalAST((IAST) obj);
 		}
 
