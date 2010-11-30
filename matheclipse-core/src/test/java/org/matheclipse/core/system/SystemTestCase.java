@@ -41,6 +41,7 @@ public class SystemTestCase extends AbstractTestCase {
 		check("x^(-I*3.0)", "x^(0.0+I*(-3.0))");
 		check("Sin[3/10*Pi]", "1/4*5^(1/2)+1/4");
 		check("Sin[Pi/5]", "1/4*2^(1/2)*(-5^(1/2)+5)^(1/2)");
+		check("Sin[{a,b,c}]", "{Sin[a],Sin[b],Sin[c]}");
 		check("2^(-1)", "1/2");
 		check("x^3+x^2+x+42", "x^3+x^2+x+42");
 		check("x^3+2*x^2+4*x+3", "x^3+2*x^2+4*x+3");
