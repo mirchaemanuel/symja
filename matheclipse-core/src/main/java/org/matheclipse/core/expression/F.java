@@ -248,7 +248,7 @@ public class F {
 	public static ISymbol Rule;
 
 	public static ISymbol RuleDelayed;
-	
+
 	public static ISymbol Set;
 
 	public static ISymbol SetAttributes;
@@ -555,6 +555,11 @@ public class F {
 
 		return binary(ArcTan, a0, a1);
 	}
+	
+	public static IAST Binomial(final IExpr a0, final IExpr a1) {
+
+		return binary(symbol("Binomial"), a0, a1);
+	}
 
 	public static IAST CNInfinity() {
 		return binary(Times, CN1, Infinity);
@@ -733,8 +738,8 @@ public class F {
 			// } catch (ParseException e) {
 			// e.printStackTrace();
 			// }
-//			Converter.add(AST2Expr.CONST);
-//			Converter.add(Object2Expr.CONST);
+			// Converter.add(AST2Expr.CONST);
+			// Converter.add(Object2Expr.CONST);
 
 			C0 = IntegerSym.valueOf(0);
 			C1 = IntegerSym.valueOf(1);
@@ -1198,6 +1203,11 @@ public class F {
 		return unary(PrimeQ, a0);
 	}
 
+	public static IAST Product(final IExpr a0, final IExpr a1) {
+
+		return binary(symbol("Product"), a0, a1);
+	}
+
 	public static IAST ReplaceAll(final IExpr a0, final IExpr a1) {
 
 		return binary(ReplaceAll, a0, a1);
@@ -1214,7 +1224,7 @@ public class F {
 	public static IAST RuleDelayed(final IExpr a0, final IExpr a1) {
 		return binary(RuleDelayed, a0, a1);
 	}
-	
+
 	public static IAST Set(final IExpr a0, final IExpr a1) {
 
 		return binary(Set, a0, a1);
@@ -1238,7 +1248,7 @@ public class F {
 	public static IAST Simplify(final IExpr a0) {
 		return unary(symbol("Simplify"), a0);
 	}
-	
+
 	public static IAST Sin(final IExpr a0) {
 
 		return unary(Sin, a0);
@@ -1269,6 +1279,11 @@ public class F {
 
 	public static IAST Subtract(final IExpr a0, final IExpr a1) {
 		return binary(Plus, a0, binary(Times, CN1, a1));
+	}
+
+	public static IAST Sum(final IExpr a0, final IExpr a1) {
+
+		return binary(symbol("Sum"), a0, a1);
 	}
 
 	public static IAST SurfaceGraphics() {

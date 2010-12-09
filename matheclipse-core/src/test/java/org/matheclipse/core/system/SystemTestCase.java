@@ -1172,7 +1172,7 @@ public class SystemTestCase extends AbstractTestCase {
 
 	public void testSystem193() {
 		check("Sum[i,{i,10}]", "55");
-		check("Sum[i,{a,10,z}]", "Sum[i,{a,10,z}]");
+		check("Sum[i,{a,10,z}]", "i*(z+1)-10*i");
 		check("Sum[x,{x,1,1}]", "1");
 		check("Sum[x,{x,3,2,-1}]", "5");
 		check("Sum[x,{x,10,3,-4}]", "16");
@@ -1191,7 +1191,7 @@ public class SystemTestCase extends AbstractTestCase {
 		// use default value "0" for iterator with invalid range
 		check("Product[x,{x,1,0}]", "0");
 		check("Product[x,{x,2,3,-1}]", "0");
-		check("Product[i,{a,10,z}]", "Product[i,{a,10,z}]");
+		check("Product[i,{a,10,z}]", "i^(-10)*i^(z+1)");
 	}
 
 	public void testSystem195() {
