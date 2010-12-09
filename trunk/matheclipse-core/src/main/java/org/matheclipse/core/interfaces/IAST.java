@@ -2,11 +2,14 @@ package org.matheclipse.core.interfaces;
 
 import org.matheclipse.core.eval.exception.WrongArgumentType;
 import org.matheclipse.core.expression.ASTRange;
+import org.matheclipse.core.expression.F;
+import org.matheclipse.core.generic.Functors;
 import org.matheclipse.core.generic.util.INestedList;
 import org.matheclipse.core.reflection.system.Apart;
 import org.matheclipse.generic.interfaces.BiFunction;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 
 //import org.matheclipse.generic.INestedList;
 
@@ -171,6 +174,15 @@ public interface IAST extends IExpr, INestedList<IExpr> {
 	 * returns <code>null</code> the original element is used. If the function
 	 * returns <code>null</code> for every argument this AST is returned.
 	 * 
+	 * <br />
+	 * <br />
+	 * Example for mapping with <code>Functors#replace1st()</code>, where the
+	 * first argument will be replaced by the current argument of this AST:
+	 * 
+	 * <pre>
+	 * plusAST.map(Functors.replace1st(F.D(F.Null, dAST.get(2))));
+	 * </pre>
+	 * 
 	 * @param head
 	 * @return
 	 */
@@ -186,6 +198,21 @@ public interface IAST extends IExpr, INestedList<IExpr> {
 	 */
 	public IAST map(IAST resultAST, IAST secondAST, BiFunction<IExpr, IExpr, IExpr> function);
 
+	/**
+	 * Apply the predicate to each element in the range and append the elements
+	 * which match the predicate to the filterList, or otherwise append it to the
+	 * restList.
+	 * 
+	 * @param filterAST
+	 *          the elements which match the predicate
+	 * @param restAST
+	 *          the elements which don't match the predicate
+	 * @param predicate
+	 *          the predicate which filters each element in the range
+	 * @return the <code>filterList</code>
+	 */
+	public IAST select(IAST filterAST, IAST restAST, Predicate<IExpr> predicate);
+		 
 	/**
 	 * Set the head element of this list
 	 */

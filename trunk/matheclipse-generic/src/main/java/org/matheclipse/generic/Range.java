@@ -758,6 +758,30 @@ public class Range<E, L extends List<E>> implements Iterable<E> {
 	}
 
 	/**
+	 * Apply the predicate to each element in the range and append the elements
+	 * which match the predicate to the filterList, or otherwise append it to the
+	 * restList.
+	 * 
+	 * @param filterList
+	 *          the elements which match the predicate
+	 * @param restList
+	 *          the elements which don't match the predicate
+	 * @param predicate
+	 *          the predicate which filters each element in the range
+	 * @return the <code>filterList</code>
+	 */
+	public L select(L filterList, L restList, Predicate<E> predicate) {
+		for (int i = fStart; i < fEnd; i++) {
+			if (predicate.apply(fList.get(i))) {
+				filterList.add(fList.get(i));
+			} else {
+				restList.add(fList.get(i));
+			}
+		}
+		return filterList;
+	}
+
+	/**
 	 * Append the elements of this range to the <code>resultList</code>.
 	 * 
 	 */

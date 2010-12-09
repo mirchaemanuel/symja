@@ -28,6 +28,7 @@ import edu.jas.structure.ElemFactory;
  * Abstract base class for atomic expression objects.
  * 
  */
+@SuppressWarnings("serial")
 public abstract class ExprImpl implements IExpr {
 
 	public IExpr opposite() {
@@ -99,6 +100,7 @@ public abstract class ExprImpl implements IExpr {
 		return F.function(F.Part, this, F.integer(index));
 	}
 
+	@SuppressWarnings("unchecked")
 	public Object asType(Class clazz) {
 		if (clazz.equals(Boolean.class)) {
 			if (this.equals(F.True)) {
