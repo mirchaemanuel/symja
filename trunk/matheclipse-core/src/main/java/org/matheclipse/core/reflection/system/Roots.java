@@ -2,21 +2,12 @@ package org.matheclipse.core.reflection.system;
 
 import static org.matheclipse.core.expression.F.C0;
 import static org.matheclipse.core.expression.F.C1;
-import static org.matheclipse.core.expression.F.CN1;
-import static org.matheclipse.core.expression.F.C1D2;
-import static org.matheclipse.core.expression.F.C1D3;
 import static org.matheclipse.core.expression.F.C2;
-import static org.matheclipse.core.expression.F.C3;
-import static org.matheclipse.core.expression.F.C4;
-import static org.matheclipse.core.expression.F.CI;
-import static org.matheclipse.core.expression.F.CN1D2;
-import static org.matheclipse.core.expression.F.CN1D3;
 import static org.matheclipse.core.expression.F.List;
 import static org.matheclipse.core.expression.F.Plus;
 import static org.matheclipse.core.expression.F.Power;
 import static org.matheclipse.core.expression.F.Sqr;
 import static org.matheclipse.core.expression.F.Sqrt;
-import static org.matheclipse.core.expression.F.Subtract;
 import static org.matheclipse.core.expression.F.Times;
 import static org.matheclipse.core.expression.F.evalExpandAll;
 import static org.matheclipse.core.expression.F.fraction;
@@ -36,7 +27,6 @@ import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.IFraction;
 import org.matheclipse.core.interfaces.IInteger;
-import org.matheclipse.core.interfaces.ISignedNumber;
 
 import edu.jas.arith.BigRational;
 import edu.jas.poly.GenPolynomial;
@@ -224,7 +214,7 @@ public class Roots extends AbstractFunctionEvaluator {
 			GenPolynomial<edu.jas.arith.BigInteger> iPoly = (GenPolynomial<edu.jas.arith.BigInteger>) jas.factorTerms(key)[2];
 			Long val = entry.getValue();
 			long varDegree = iPoly.degree(0);
-			if (iPoly.isONE()) {
+			if (iPoly.isConstant()) {
 				continue;
 			}
 			if (varDegree <= 2) {
@@ -246,8 +236,11 @@ public class Roots extends AbstractFunctionEvaluator {
 					}
 				}
 				if (a.equals(C0)) {
-					IFraction rat = fraction(c, b);
-					result.add(rat.negate());
+					if (!b.equals(C0)) {
+						IFraction rat = fraction(c, b);
+						result.add(rat.negate());
+					}
+					
 				} else {
 					IAST sqrt = Sqrt(Plus(Sqr(b), Times(integer(-4), a, c)));
 					IFraction rev2a = fraction(C1, a.multiply(C2));
