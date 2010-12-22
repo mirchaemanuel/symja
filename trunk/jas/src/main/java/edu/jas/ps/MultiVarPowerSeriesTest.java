@@ -606,7 +606,7 @@ public class MultiVarPowerSeriesTest extends TestCase {
         //System.out.println("pr  = " + pr.toScript());
 
         GenPolynomial<BigRational> p = pr.random(kl, 3, 3, q + q);
-        System.out.println("p   = " + p);
+        //System.out.println("p   = " + p);
         int tdeg = (int) p.degree();
         fac.setTruncate(tdeg + 1);
 
@@ -641,7 +641,7 @@ public class MultiVarPowerSeriesTest extends TestCase {
             //System.out.println("psa  = " + psa);
             F = new PolynomialTaylorFunction<BigRational>(psa.asPolynomial());
             psc = fac.seriesOfTaylor(F, Cr);
-            System.out.println("psc  = " + psc);
+            //System.out.println("psc  = " + psc);
             assertEquals("taylor(taylor(p,5),-5) == p", ps, psc);
         }
     }

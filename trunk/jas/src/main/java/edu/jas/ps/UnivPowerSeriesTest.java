@@ -283,7 +283,7 @@ public class UnivPowerSeriesTest extends TestCase {
         //System.out.println("pr  = " + pr);
 
         GenPolynomial<BigRational> p = pr.random(kl,3,3,q+q);
-        System.out.println("p   = " + p);
+        //System.out.println("p   = " + p);
 
         TaylorFunction<BigRational> F = new PolynomialTaylorFunction<BigRational>(p);
 
@@ -299,10 +299,10 @@ public class UnivPowerSeriesTest extends TestCase {
         for ( GenPolynomial<BigRational> g : pr.generators() ) {
             F = new PolynomialTaylorFunction<BigRational>(g);
             ps = fac.seriesOfTaylor(F,br);
-            System.out.println("g   = " + g);
-            System.out.println("ps  = " + ps);
+            //System.out.println("g   = " + g);
+            //System.out.println("ps  = " + ps);
             pps = fac.fromPolynomial(g);
-            System.out.println("pps = " + pps);
+            //System.out.println("pps = " + pps);
             assertEquals("taylor(p) == p", ps, pps);
         }
     }

@@ -1,5 +1,5 @@
 /*
- * $Id: ThreadPool.java 3296 2010-08-26 17:30:55Z kredel $
+ * $Id: ThreadPool.java 3405 2010-12-12 21:34:20Z kredel $
  */
 
 // package edu.unima.ky.parallel;
@@ -132,7 +132,7 @@ public class ThreadPool {
     @Override
     public String toString() {
         return "ThreadPool( size=" + getNumber() + ", idle=" + idleworkers + ", " + getStrategy() + ", jobs="
-                + jobstack.size() + ")";
+            + jobstack.size() + ")";
     }
 
 
@@ -187,11 +187,16 @@ public class ThreadPool {
         shutdown = true;
         int s = jobstack.size();
         if (hasJobs()) {
-            logger.info("jobs canceled: " + jobstack);
-            jobstack.clear();
+            synchronized (this) {
+                logger.info("jobs canceled: " + jobstack);
+                jobstack.clear();
+	    }
         }
         int re = 0;
         for (int i = 0; i < workers.length; i++) {
+            if (workers[i] == null ) {
+                continue;
+            }
             try {
                 while (workers[i].isAlive()) {
                     synchronized (this) {
@@ -260,6 +265,9 @@ public class ThreadPool {
             return true;
         }
         for (int i = 0; i < workers.length; i++) {
+            if (workers[i] == null ) {
+                continue;
+            }
             if (workers[i].isWorking) {
                 return true;
             }
@@ -282,6 +290,9 @@ public class ThreadPool {
         // ( ( j > 0 && ( j+workers.length > n ) ) || ( j > n )
         int x = 0;
         for (int i = 0; i < workers.length; i++) {
+            if (workers[i] == null ) {
+                continue;
+            }
             if (workers[i].isWorking) {
                 x++;
             }
@@ -355,6 +366,8 @@ class PoolThread extends Thread {
                 Thread.currentThread().interrupt();
                 running = false;
                 isWorking = false;
+            } catch (RuntimeException e) {
+                logger.warn("catched " + e);
             }
         }
         isWorking = false;
