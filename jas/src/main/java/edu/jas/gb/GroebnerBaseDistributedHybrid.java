@@ -1,5 +1,5 @@
 /*
- * $Id: GroebnerBaseDistributedHybrid.java 3320 2010-09-12 11:01:57Z kredel $
+ * $Id: GroebnerBaseDistributedHybrid.java 3403 2010-12-12 17:37:56Z kredel $
  */
 
 package edu.jas.gb;
@@ -157,11 +157,35 @@ public class GroebnerBaseDistributedHybrid<C extends RingElem<C>> extends Groebn
      * Constructor.
      * @param threads number of threads to use.
      * @param threadsPerNode threads per node to use.
-     * @param pool ThreadPool to use.
+     * @param pl pair selection strategy
+     * @param port server port to use.
+     */
+    public GroebnerBaseDistributedHybrid(int threads, int threadsPerNode, PairList<C> pl, int port) {
+        this(threads, threadsPerNode, new ThreadPool(threads), pl, port);
+    }
+
+
+    /**
+     * Constructor.
+     * @param threads number of threads to use.
+     * @param threadsPerNode threads per node to use.
      * @param port server port to use.
      */
     public GroebnerBaseDistributedHybrid(int threads, int threadsPerNode, ThreadPool pool, int port) {
-        super( new ReductionPar<C>() );
+        this(threads, threadsPerNode, pool, new OrderedPairlist<C>(), port);
+    }
+
+
+    /**
+     * Constructor.
+     * @param threads number of threads to use.
+     * @param threadsPerNode threads per node to use.
+     * @param pool ThreadPool to use.
+     * @param pl pair selection strategy
+     * @param port server port to use.
+     */
+    public GroebnerBaseDistributedHybrid(int threads, int threadsPerNode, ThreadPool pool, PairList<C> pl, int port) {
+        super( new ReductionPar<C>(), pl );
         if (threads < 1) {
             threads = 1;
         }
@@ -201,7 +225,7 @@ public class GroebnerBaseDistributedHybrid<C extends RingElem<C>> extends Groebn
 
         GenPolynomial<C> p;
         List<GenPolynomial<C>> G = new ArrayList<GenPolynomial<C>>();
-        OrderedPairlist<C> pairlist = null;
+        PairList<C> pairlist = null;
         boolean oneInGB = false;
         int l = F.size();
         int unused;
@@ -220,14 +244,15 @@ public class GroebnerBaseDistributedHybrid<C extends RingElem<C>> extends Groebn
                     G.add(p);
                 }
                 if (pairlist == null) {
-                    pairlist = new OrderedPairlist<C>(modv, p.ring);
+                    //pairlist = new OrderedPairlist<C>(modv, p.ring);
+                    pairlist = strategy.create( modv, p.ring );
                     if ( ! p.ring.coFac.isField() ) {
                         throw new IllegalArgumentException("coefficients not from a field");
                     }
                 }
                 // theList not updated here
                 if (p.isONE()) {
-                    unused = pairlist.putOne(p);
+                    unused = pairlist.putOne();
                 } else {
                     unused = pairlist.put(p);
                 }
@@ -247,7 +272,7 @@ public class GroebnerBaseDistributedHybrid<C extends RingElem<C>> extends Groebn
 
         DistHashTable<Integer, GenPolynomial<C>> theList 
             = new DistHashTable<Integer, GenPolynomial<C>>("localhost", DL_PORT);
-        ArrayList<GenPolynomial<C>> al = pairlist.getList();
+        List<GenPolynomial<C>> al = pairlist.getList();
         for (int i = 0; i < al.size(); i++) {
             // no wait required
             GenPolynomial<C> nn = theList.put(new Integer(i), al.get(i));
@@ -413,8 +438,10 @@ public class GroebnerBaseDistributedHybrid<C extends RingElem<C>> extends Groebn
         while (G.size() > 0) {
             a = G.remove(0);
             // System.out.println("doing " + a.length());
-            mirs[i] = new MiReducerServer<C>((List<GenPolynomial<C>>) G.clone(), (List<GenPolynomial<C>>) F
-                    .clone(), a);
+            List<GenPolynomial<C>> R = new ArrayList<GenPolynomial<C>>(G.size()+F.size());
+            R.addAll(G);
+            R.addAll(F);
+            mirs[i] = new MiReducerServer<C>(R, a);
             pool.addJob(mirs[i]);
             i++;
             F.add(a);
@@ -457,7 +484,7 @@ class HybridReducerServer<C extends RingElem<C>> implements Runnable {
     private final DistHashTable<Integer, GenPolynomial<C>> theList;
 
 
-    private final OrderedPairlist<C> pairlist;
+    private final PairList<C> pairlist;
 
 
     private final int threadsPerNode;
@@ -490,7 +517,7 @@ class HybridReducerServer<C extends RingElem<C>> implements Runnable {
      * @param L ordered pair list
      */
     HybridReducerServer(int tpn, Terminator fin, ChannelFactory cf, 
-                        DistHashTable<Integer, GenPolynomial<C>> dl, OrderedPairlist<C> L) {
+                        DistHashTable<Integer, GenPolynomial<C>> dl, PairList<C> L) {
         threadsPerNode = tpn;
         finner = fin;
         this.cf = cf;
@@ -662,7 +689,7 @@ class HybridReducerReceiver<C extends RingElem<C>> extends Thread {
     private final DistHashTable<Integer, GenPolynomial<C>> theList;
 
 
-    private final OrderedPairlist<C> pairlist;
+    private final PairList<C> pairlist;
 
 
     private final TaggedSocketChannel pairChannel;
@@ -708,7 +735,7 @@ class HybridReducerReceiver<C extends RingElem<C>> extends Thread {
      * @param L ordered pair list
      */
     HybridReducerReceiver(int tpn, Terminator fin, AtomicInteger a, TaggedSocketChannel pc, 
-                          DistHashTable<Integer, GenPolynomial<C>> dl, OrderedPairlist<C> L) {
+                          DistHashTable<Integer, GenPolynomial<C>> dl, PairList<C> L) {
         active = a;
         threadsPerNode = tpn;
         finner = fin;
@@ -783,7 +810,7 @@ class HybridReducerReceiver<C extends RingElem<C>> extends Thread {
                     if (!H.isZERO()) {
                         if (H.isONE()) {
                             // finner.allIdle();
-                            polIndex = pairlist.putOne(H);
+                            polIndex = pairlist.putOne();
                             GenPolynomial<C> nn = theList.put(new Integer(polIndex), H);
                             if (nn != null) {
                                 logger.info("double polynomials nn = " + nn + ", H = " + H);

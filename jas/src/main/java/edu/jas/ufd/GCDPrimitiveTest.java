@@ -1,5 +1,5 @@
 /*
- * $Id: GCDPrimitiveTest.java 3299 2010-08-29 14:34:41Z kredel $
+ * $Id: GCDPrimitiveTest.java 3378 2010-11-28 17:02:21Z kredel $
  */
 
 package edu.jas.ufd;
@@ -181,7 +181,7 @@ public class GCDPrimitiveTest extends TestCase {
             //System.out.println("c  = " + c);
             //System.out.println("ci = " + ci);
 
-            if (a.isZERO() || c.isZERO()) {
+            if (a.isZERO() || c.isZERO() || ci.isZERO()) {
                 // skip for this turn
                 continue;
             }

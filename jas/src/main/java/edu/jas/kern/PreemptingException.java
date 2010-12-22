@@ -1,5 +1,5 @@
 /*
- * $Id: PreemptingException.java 1663 2008-02-05 17:32:07Z kredel $
+ * $Id: PreemptingException.java 3383 2010-12-02 22:03:41Z kredel $
  */
 
 package edu.jas.kern;
@@ -15,22 +15,22 @@ public class PreemptingException extends RuntimeException {
 
 
     public PreemptingException() {
-     super("PreemptingException");
+        super("PreemptingException");
     }
 
 
     public PreemptingException(String c) {
-     super(c);
+        super(c);
     }
 
 
     public PreemptingException(String c, Throwable t) {
-     super(c,t);
+        super(c,t);
     }
 
 
     public PreemptingException(Throwable t) {
-     super("PreemptingException",t);
+        super("PreemptingException",t);
     }
 
 }

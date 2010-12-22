@@ -1,5 +1,5 @@
 /*
- * $Id: Condition.java 3320 2010-09-12 11:01:57Z kredel $
+ * $Id: Condition.java 3376 2010-11-28 16:59:36Z kredel $
  */
 
 package edu.jas.application;
@@ -62,6 +62,7 @@ public class Condition<C extends GcdRingElem<C>> implements Serializable {
      */
     public Condition(GenPolynomialRing<C> ring) {
         this(new Ideal<C>(ring),new MultiplicativeSetSquarefree<C>(ring));
+        //this(new Ideal<C>(ring),new MultiplicativeSetFactors<C>(ring));
         if (ring == null) {
             throw new IllegalArgumentException("only for non null rings");
         }
@@ -75,6 +76,7 @@ public class Condition<C extends GcdRingElem<C>> implements Serializable {
      */
     public Condition(Ideal<C> z) {
         this(z,new MultiplicativeSetSquarefree<C>(z.list.ring));
+        //this(z,new MultiplicativeSetFactors<C>(z.list.ring));
     }
 
 

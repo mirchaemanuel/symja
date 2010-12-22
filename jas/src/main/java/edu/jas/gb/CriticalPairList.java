@@ -1,5 +1,5 @@
 /*
- * $Id: CriticalPairList.java 3288 2010-08-25 21:46:14Z kredel $
+ * $Id: CriticalPairList.java 3387 2010-12-04 11:52:51Z kredel $
  */
 
 package edu.jas.gb;
@@ -30,7 +30,7 @@ import edu.jas.structure.RingElem;
  * @author Heinz Kredel
  */
 
-public class CriticalPairList<C extends RingElem<C> > {
+public class CriticalPairList<C extends RingElem<C>> implements PairList<C> {
 
     private final GenPolynomialRing<C> ring;
 
@@ -83,6 +83,25 @@ public class CriticalPairList<C extends RingElem<C> > {
            useCriterion4 = false;
         }
         reduction = new ReductionSeq<C>();
+    }
+
+
+    /**
+     * Create a new PairList.
+     * @param r polynomial ring.
+     */
+    public PairList<C> create(GenPolynomialRing<C> r) {
+        return new CriticalPairList<C>(r);
+    }
+
+
+    /**
+     * Create a new PairList.
+     * @param m number of module variables.
+     * @param r polynomial ring.
+     */
+    public PairList<C> create(int m, GenPolynomialRing<C> r) {
+        return new CriticalPairList<C>(m,r);
     }
 
 
@@ -157,6 +176,21 @@ public class CriticalPairList<C extends RingElem<C> > {
         red.clear();
         recordCount = 0;
         return 0;
+    }
+
+
+    /**
+     * Get and remove the next required pair from the pairlist.
+     * Appy the criterions 3 and 4 to see if the S-polynomial is required.
+     * The pair is not removed from the pair list.
+     * @return the next pair if one exists, otherwise null.
+     */
+    public Pair<C> removeNext() { 
+        CriticalPair<C> cp = getNext();
+        if ( cp == null ) {
+            return null;
+        }
+        return new Pair<C>(cp.pi,cp.pj,cp.i,cp.j);
     }
 
 
@@ -385,7 +419,7 @@ public class CriticalPairList<C extends RingElem<C> > {
         boolean s;
         s = red.get( j ).get( i ); 
         if ( ! s ) { 
-           logger.warn("c3.s false for " + j + " " + i); 
+           logger.warn("c3.s false for " + i + "," + j + ", lcm=" + eij); 
            return s;
         }
         // now s == true;

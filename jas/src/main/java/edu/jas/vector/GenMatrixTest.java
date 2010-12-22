@@ -1,9 +1,12 @@
 /*
- * $Id: GenMatrixTest.java 2996 2010-02-07 13:32:42Z kredel $
+ * $Id: GenMatrixTest.java 3370 2010-11-28 16:42:46Z kredel $
  */
 
 package edu.jas.vector;
 
+
+import java.util.List;
+import java.util.ArrayList;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -114,6 +117,14 @@ public class GenMatrixTest extends TestCase {
         a = mfac.getONE();
         //System.out.println("a = " + a);
         assertTrue("isONE( a )", a.isONE());
+
+        List<ArrayList<BigRational>> m = a.matrix;
+        List<List<BigRational>> ml = new ArrayList<List<BigRational>>(m.size());
+        for ( ArrayList<BigRational> r : m ) {
+            ml.add(r);
+        }
+        b = mfac.fromList(ml);
+        assertEquals("a == fromList(a.matrix)", a, b);
     }
 
 

@@ -1,5 +1,5 @@
 /*
- * $Id: SquarefreeAlgQuotModTest.java 3356 2010-10-23 16:41:01Z kredel $
+ * $Id: SquarefreeAlgQuotModTest.java 3404 2010-12-12 19:02:05Z kredel $
  */
 
 package edu.jas.ufd;
@@ -280,7 +280,7 @@ public class SquarefreeAlgQuotModTest extends TestCase {
         //System.out.println("sfactors = " + sfactors);
 
         assertTrue("isFactorization(d,sfactors) ", asqf.isFactorization(d, sfactors));
-        assertTrue("#factors >= " + num, sfactors.size() >= num );
+        assertTrue("#factors " + sfactors.size() + " >= " + num, sfactors.size() >= num );
     }
 
 
@@ -365,7 +365,7 @@ public class SquarefreeAlgQuotModTest extends TestCase {
         //System.out.println("sfactors = " + sfactors);
 
         assertTrue("isFactorization(d,sfactors) ", asqf.isRecursiveFactorization(dr, sfactors));
-        assertTrue("#factors >= " + num, sfactors.size() >= num );
+        assertTrue("#factors " + sfactors.size() + " >= " + num, sfactors.size() >= num );
     }
 
 
@@ -448,7 +448,7 @@ public class SquarefreeAlgQuotModTest extends TestCase {
         //System.out.println("sfactors = " + sfactors);
 
         assertTrue("isFactorization(d,sfactors) ", asqf.isFactorization(d, sfactors));
-        assertTrue("#factors >= " + num, sfactors.size() >= num );
+        assertTrue("#factors " + sfactors.size() + " >= " + num, sfactors.size() >= num );
     }
 
 
