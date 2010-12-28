@@ -60,7 +60,7 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 	 * 
 	 * @see ExprFactory.fSymbolMap for global symbol names
 	 */
-	private HashMap<String, ISymbol> fVariableMap;
+	private Map<String, ISymbol> fVariableMap;
 
 	/**
 	 * Associate a symbol name with a local variable stack in this thread

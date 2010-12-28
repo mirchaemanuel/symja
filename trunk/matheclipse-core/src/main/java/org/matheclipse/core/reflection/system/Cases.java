@@ -20,7 +20,7 @@ public class Cases implements IFunctionEvaluator {
 
 	public static IAST cases(final IAST list, final IExpr pattern) {
 		final PatternMatcher matcher = new PatternMatcher(pattern);
-		return list.args().select(list.copyHead(), matcher);
+		return list.filter(list.copyHead(), matcher);
 	}
 
 	public IExpr numericEval(final IAST functionList) {

@@ -60,7 +60,7 @@ public class Sum extends Table {
 						// Sum[ Times[a,b,c,...], {var, from, to} ]
 						IAST filterCollector = F.Times();
 						IAST restCollector = F.Times();
-						((IAST) ast.get(1)).select(filterCollector, restCollector, new Predicate<IExpr>() {
+						((IAST) ast.get(1)).filter(filterCollector, restCollector, new Predicate<IExpr>() {
 							@Override
 							public boolean apply(IExpr input) {
 								return input.isFree(var) && input.isFree(to);

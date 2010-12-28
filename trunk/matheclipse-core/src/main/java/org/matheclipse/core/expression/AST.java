@@ -723,8 +723,15 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 	/**
 	 * {@inheritDoc}
 	 */
-	public IAST select(IAST filterAST, IAST restAST, Predicate<IExpr> predicate) {
-		return (new ASTRange(this, 1, size())).select(filterAST, restAST, predicate);
+	public IAST filter(IAST filterAST, Predicate<IExpr> predicate) {
+		return (new ASTRange(this, 1, size())).filter(filterAST, predicate);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public IAST filter(IAST filterAST, IAST restAST, Predicate<IExpr> predicate) {
+		return (new ASTRange(this, 1, size())).filter(filterAST, restAST, predicate);
 	}
 
 	/**

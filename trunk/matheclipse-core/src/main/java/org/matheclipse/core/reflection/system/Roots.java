@@ -1,17 +1,6 @@
 package org.matheclipse.core.reflection.system;
 
-import static org.matheclipse.core.expression.F.C0;
-import static org.matheclipse.core.expression.F.C1;
-import static org.matheclipse.core.expression.F.C2;
-import static org.matheclipse.core.expression.F.List;
-import static org.matheclipse.core.expression.F.Plus;
-import static org.matheclipse.core.expression.F.Power;
-import static org.matheclipse.core.expression.F.Sqr;
-import static org.matheclipse.core.expression.F.Sqrt;
-import static org.matheclipse.core.expression.F.Times;
-import static org.matheclipse.core.expression.F.evalExpandAll;
-import static org.matheclipse.core.expression.F.fraction;
-import static org.matheclipse.core.expression.F.integer;
+import static org.matheclipse.core.expression.F.*;
 
 import java.util.List;
 import java.util.SortedMap;
@@ -94,7 +83,7 @@ public class Roots extends AbstractFunctionEvaluator {
 	private static IExpr rootsOfPolynomial(GenPolynomial<IExpr> ePoly) {
 		long varDegree = ePoly.degree(0);
 		IAST result = List();
-		if (ePoly.isONE()) {
+		if (ePoly.isConstant()) {
 			return result;
 		}
 		IExpr a;
@@ -240,12 +229,22 @@ public class Roots extends AbstractFunctionEvaluator {
 						IFraction rat = fraction(c, b);
 						result.add(rat.negate());
 					}
-					
 				} else {
-					IAST sqrt = Sqrt(Plus(Sqr(b), Times(integer(-4), a, c)));
+					// 1 / (2*a)
 					IFraction rev2a = fraction(C1, a.multiply(C2));
-					result.add(Times(rev2a, Plus(b.negate(), sqrt)));
-					result.add(Times(rev2a, Plus(b.negate(), sqrt.negative())));
+					// IAST discriminant = Plus(Sqr(b), Times(integer(-4), a, c));
+					IInteger discriminant = b.multiply(b).add(integer(-4).multiply(a).multiply(c));
+					if (discriminant.isNegative()) {
+						// 2 complex roots
+						IAST sqrt = Times(CI, Sqrt(discriminant.negate()));
+						result.add(Times(rev2a,Plus(b.negate(), sqrt)));
+						result.add(Times(rev2a,Subtract(b.negate(), sqrt)));
+					} else {
+						// 2 real roots
+						IAST sqrt = Sqrt(discriminant);
+						result.add(Times(rev2a, Plus(b.negate(), sqrt)));
+						result.add(Times(rev2a, Plus(b.negate(), sqrt.negative())));
+					}
 				}
 				// } else if (varDegree <= 3) {
 				// iPoly = iPoly.monic();
@@ -303,5 +302,4 @@ public class Roots extends AbstractFunctionEvaluator {
 		}
 		return result;
 	}
-
 }
