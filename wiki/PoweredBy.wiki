@@ -1,0 +1,5 @@
+#summary Projects powered by the Symja engine
+#sidebar TableOfContents
+
+== Powered by ==
+  * [http://code.google.com/p/engineeringsuite/ engineeringsuite - Program for solving non-linear equation systems]  
