@@ -17,30 +17,36 @@ import org.matheclipse.core.interfaces.ISymbol;
 public abstract class AbstractArg2 extends AbstractFunctionEvaluator {
 
 	public IExpr binaryOperator(final IExpr o0, final IExpr o1) {
-		final IExpr result = e2ObjArg(o0, o1);
-		if (result != null) {
-			return result;
-		}
+		IExpr result = null;
 		if (o0 instanceof INum) {
+			// use specialized methods for numeric mode
 			if (o1 instanceof INum) {
-				return e2DblArg((INum) o0, (INum) o1);
+				result = e2DblArg((INum) o0, (INum) o1);
+			} else if (o1 instanceof IComplexNum) {
+				result = e2DblComArg(F.complexNum(((INum) o0).getRealPart()), (IComplexNum) o1);
 			}
-			if (o1 instanceof IComplexNum) {
-				return e2DblComArg(F.complexNum(((INum) o0).getRealPart()), (IComplexNum) o1);
+			if (result != null) {
+				return result;
 			}
-
-			return null;
+			return e2ObjArg(o0, o1);
 		}
 
 		if (o0 instanceof IComplexNum) {
+			// use specialized methods for complex numeric mode
 			if (o1 instanceof INum) {
-				return e2DblComArg((IComplexNum) o0, F.complexNum(((INum) o1).getRealPart()));
+				result = e2DblComArg((IComplexNum) o0, F.complexNum(((INum) o1).getRealPart()));
+			} else if (o1 instanceof IComplexNum) {
+				result = e2DblComArg((IComplexNum) o0, (IComplexNum) o1);
 			}
-			if (o1 instanceof IComplexNum) {
-				return e2DblComArg((IComplexNum) o0, (IComplexNum) o1);
+			if (result != null) {
+				return result;
 			}
+			return e2ObjArg(o0, o1);
+		}
 
-			return null;
+		result = e2ObjArg(o0, o1);
+		if (result != null) {
+			return result;
 		}
 
 		if (o0 instanceof IInteger) {
