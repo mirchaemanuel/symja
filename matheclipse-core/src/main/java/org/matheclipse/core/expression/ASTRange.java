@@ -7,7 +7,7 @@ import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.generic.Range;
 
-public class ASTRange extends Range<IExpr, IAST> {
+public class ASTRange extends Range<IExpr, IAST, IAST> {
 	/**
 	 * ASTRange [start..end[
 	 * 

@@ -38,7 +38,10 @@ import apache.harmony.math.Rational;
  * </a>
  */
 public class F {
-	private final static HashMap<String, ISymbol> fSymbolMap = new HashMap<String, ISymbol>();
+	/**
+	 * The map for predefined symbols
+	 */
+	public final static Map<String, ISymbol> PREDEFINED_SYMBOLS_MAP = new HashMap<String, ISymbol>(557);
 
 	public static ISymbolObserver SYMBOL_OBSERVER = new ISymbolObserver() {
 		@Override
@@ -2023,12 +2026,12 @@ public class F {
 	 * @return
 	 */
 	public static ISymbol predefinedSymbol(final String symbolName) {
-		ISymbol temp = fSymbolMap.get(symbolName);
+		ISymbol temp = PREDEFINED_SYMBOLS_MAP.get(symbolName);
 		if (temp != null) {
 			return temp;
 		}
 		temp = new Symbol(symbolName);
-		fSymbolMap.put(symbolName, temp);
+		PREDEFINED_SYMBOLS_MAP.put(symbolName, temp);
 		// if (!skipEvaluatorSettings &&
 		// Character.isUpperCase(symbolName.charAt(0))) {
 		// // probably a predefined function use reflection to setUp this
@@ -2083,7 +2086,7 @@ public class F {
 	 * @return
 	 */
 	public static ISymbol symbol(final String symbolName) {
-		ISymbol symbol = fSymbolMap.get(symbolName);
+		ISymbol symbol = PREDEFINED_SYMBOLS_MAP.get(symbolName);
 		if (symbol != null) {
 			return symbol;
 		}
@@ -2097,7 +2100,7 @@ public class F {
 			if (Character.isUpperCase(symbolName.charAt(0))) {
 				if (SYMBOL_OBSERVER.createPredefinedSymbol(symbolName)) {
 					// second try, because the symbol may now be added to fSymbolMap
-					ISymbol secondTry = fSymbolMap.get(symbolName);
+					ISymbol secondTry = PREDEFINED_SYMBOLS_MAP.get(symbolName);
 					if (secondTry != null) {
 						return secondTry;
 					}
@@ -2110,7 +2113,7 @@ public class F {
 			}
 		} else {
 			symbol = new Symbol(symbolName);
-			fSymbolMap.put(symbolName, symbol);
+			PREDEFINED_SYMBOLS_MAP.put(symbolName, symbol);
 			if (Character.isUpperCase(symbolName.charAt(0))) {
 				// probably a predefined function
 				// use reflection to setUp this symbol

@@ -22,12 +22,35 @@ import com.google.common.collect.Sets;
  * @param <E>
  * @param <L>
  */
-public class Range<E, L extends List<E>> implements Iterable<E> {
+public class Range<E, L extends List<E>, C extends Collection<E>> implements Iterable<E> {
+	class RangeIterator implements Iterator<E> {
+		private int fCurrrent;
+
+		private Range<E, L, C> fRange;
+
+		public RangeIterator(Range<E, L, C> range) {
+			fRange = range;
+			fCurrrent = fRange.fStart;
+		}
+
+		public boolean hasNext() {
+			return fCurrrent < fRange.fEnd;
+		}
+
+		public E next() {
+			return fRange.get(fCurrrent++);
+		}
+
+		public void remove() {
+			throw new UnsupportedOperationException();
+		}
+	}
+
+	final/* package private */int fEnd;
+
 	final/* package private */L fList;
 
 	final/* package private */int fStart;
-
-	final/* package private */int fEnd;
 
 	/**
 	 * Construct a range for a List
@@ -188,7 +211,7 @@ public class Range<E, L extends List<E>> implements Iterable<E> {
 	 * @param secondRange
 	 * @return
 	 */
-	public L complement(final L result, final Range<E, L> secondRange) {
+	public C complement(final C result, final Range<E, L, C> secondRange) {
 		if ((size() == 0) && (secondRange.size() == 0)) {
 			return result;
 		}
@@ -241,34 +264,7 @@ public class Range<E, L extends List<E>> implements Iterable<E> {
 		return counter;
 	}
 
-	/**
-	 * Locates the first pair of adjacent elements in a range that match the given
-	 * predicate
-	 * 
-	 * @return the index of the first element
-	 */
-	public int findAdjacent(Predicate<E> predicate) {
-		return findAdjacent(predicate, fStart);
-	}
-
-	/**
-	 * Locates the first pair of adjacent elements in a range that match the given
-	 * predicate starting at index
-	 * <code>start</start> and ending at the ranges upper limit.
-	 * 
-	 * @return the index of the first element
-	 */
-	public int findAdjacent(Predicate<E> predicate, int start) {
-		for (int i = start; i < fEnd - 1; i++) {
-
-			if (predicate.apply(fList.get(i)) && predicate.apply(fList.get(i + 1))) {
-				return i;
-			}
-		}
-		return -1;
-	}
-
-	public L difference(L result, final Range<E, L> secondList) {
+	public C difference(C result, final Range<E, L, C> secondList) {
 		if ((size() == 0) && (secondList.size() == 0)) {
 			return result;
 		}
@@ -279,6 +275,71 @@ public class Range<E, L extends List<E>> implements Iterable<E> {
 			result.add(e);
 		}
 		return result;
+	}
+
+	/**
+	 * Apply the predicate to each element in the range and append the elements
+	 * which match the predicate to the filterList, or otherwise append it to the
+	 * restList.
+	 * 
+	 * @param filterList
+	 *          the elements which match the predicate
+	 * @param restList
+	 *          the elements which don't match the predicate
+	 * @param predicate
+	 *          the predicate which filters each element in the range
+	 * @return the <code>filterList</code>
+	 */
+	public C filter(C filterList, C restList, Predicate<E> predicate) {
+		for (int i = fStart; i < fEnd; i++) {
+			if (predicate.apply(fList.get(i))) {
+				filterList.add(fList.get(i));
+			} else {
+				restList.add(fList.get(i));
+			}
+		}
+		return filterList;
+	}
+
+	/**
+	 * Apply the predicate to each element in the range and append the elements to
+	 * the list, which match the predicate.
+	 * 
+	 * @see Range#removeAll(List, Predicate)
+	 * @see Range#replaceAll(List, Function)
+	 */
+	public C filter(C list, Predicate<E> predicate) {
+		for (int i = fStart; i < fEnd; i++) {
+			if (predicate.apply(fList.get(i))) {
+				list.add(fList.get(i));
+			}
+		}
+		return list;
+	}
+
+	/**
+	 * Apply the predicate to each element in the range and append the elements to
+	 * the list, which match the predicate.
+	 * 
+	 * @see Range#removeAll(List, Predicate)
+	 * @see Range#replaceAll(List, Function)
+	 */
+	public C filter(C list, Predicate<E> predicate, int maxMatches) {
+		int count = 0;
+		if (count == maxMatches) {
+			return list;
+		}
+		for (int i = fStart; i < fEnd; i++) {
+
+			if (predicate.apply(fList.get(i))) {
+				if (++count == maxMatches) {
+					list.add(fList.get(i));
+					break;
+				}
+				list.add(fList.get(i));
+			}
+		}
+		return list;
 	}
 
 	/**
@@ -312,6 +373,33 @@ public class Range<E, L extends List<E>> implements Iterable<E> {
 				if (match.equals(fList.get(i)) && match.equals(fList.get(i))) {
 					return i;
 				}
+			}
+		}
+		return -1;
+	}
+
+	/**
+	 * Locates the first pair of adjacent elements in a range that match the given
+	 * predicate
+	 * 
+	 * @return the index of the first element
+	 */
+	public int findAdjacent(Predicate<E> predicate) {
+		return findAdjacent(predicate, fStart);
+	}
+
+	/**
+	 * Locates the first pair of adjacent elements in a range that match the given
+	 * predicate starting at index
+	 * <code>start</start> and ending at the ranges upper limit.
+	 * 
+	 * @return the index of the first element
+	 */
+	public int findAdjacent(Predicate<E> predicate, int start) {
+		for (int i = start; i < fEnd - 1; i++) {
+
+			if (predicate.apply(fList.get(i)) && predicate.apply(fList.get(i + 1))) {
+				return i;
 			}
 		}
 		return -1;
@@ -400,24 +488,6 @@ public class Range<E, L extends List<E>> implements Iterable<E> {
 		return fStart;
 	}
 
-	public int indexOf(Predicate<E> predicate) {
-		return indexOf(predicate, fStart);
-	}
-
-	/**
-	 * Returns the index of the first found object that match the predicate
-	 * 
-	 */
-	public int indexOf(Predicate<E> predicate, int start) {
-		for (int i = start; i < fEnd; i++) {
-
-			if (predicate.apply(fList.get(i))) {
-				return i;
-			}
-		}
-		return -1;
-	}
-
 	/**
 	 * Returns the index of the first found object from the range start
 	 * 
@@ -453,6 +523,24 @@ public class Range<E, L extends List<E>> implements Iterable<E> {
 		return -1;
 	}
 
+	public int indexOf(Predicate<E> predicate) {
+		return indexOf(predicate, fStart);
+	}
+
+	/**
+	 * Returns the index of the first found object that match the predicate
+	 * 
+	 */
+	public int indexOf(Predicate<E> predicate, int start) {
+		for (int i = start; i < fEnd; i++) {
+
+			if (predicate.apply(fList.get(i))) {
+				return i;
+			}
+		}
+		return -1;
+	}
+
 	/**
 	 * Create the (unordered) intersection set from both ranges. Multiple equal
 	 * values in both ranges.
@@ -461,7 +549,7 @@ public class Range<E, L extends List<E>> implements Iterable<E> {
 	 * @param secondRange
 	 * @return
 	 */
-	public L intersection(L result, final Range<E, L> secondList) {
+	public C intersection(C result, final Range<E, L, C> secondList) {
 		if ((size() == 0) && (secondList.size() == 0)) {
 			return result;
 		}
@@ -499,14 +587,8 @@ public class Range<E, L extends List<E>> implements Iterable<E> {
 		return result;
 	}
 
-	public int lastIndexOf(Predicate<E> predicate) {
-		for (int i = fEnd - 1; i >= fStart; i--) {
-
-			if (predicate.apply(fList.get(i))) {
-				return i;
-			}
-		}
-		return -1;
+	public Iterator<E> iterator() {
+		return new RangeIterator(this);
 	}
 
 	/**
@@ -534,6 +616,16 @@ public class Range<E, L extends List<E>> implements Iterable<E> {
 		return -1;
 	}
 
+	public int lastIndexOf(Predicate<E> predicate) {
+		for (int i = fEnd - 1; i >= fStart; i--) {
+
+			if (predicate.apply(fList.get(i))) {
+				return i;
+			}
+		}
+		return -1;
+	}
+
 	/**
 	 * Append the result of the pairwise mapped elements to the given
 	 * <code>list</code>. If the function evaluates to <code>null</code> append
@@ -544,7 +636,7 @@ public class Range<E, L extends List<E>> implements Iterable<E> {
 	 * @param fromIndex
 	 * @param toIndex
 	 */
-	public boolean map(L list, BiFunction<E, E, E> function) {
+	public boolean map(C list, BiFunction<E, E, E> function) {
 		if (fStart >= fEnd) {
 			return false;
 		}
@@ -572,7 +664,7 @@ public class Range<E, L extends List<E>> implements Iterable<E> {
 	 * @param list
 	 * @param function
 	 */
-	public L map(L list, Function<E, E> function) {
+	public C map(C list, Function<E, E> function) {
 		for (int i = fStart; i < fEnd; i++) {
 			list.add(function.apply(fList.get(i)));
 		}
@@ -585,7 +677,7 @@ public class Range<E, L extends List<E>> implements Iterable<E> {
 	 * @param list
 	 * @param function
 	 */
-	public L map(L list, IUnaryIndexFunction<E, E> function) {
+	public C map(C list, IUnaryIndexFunction<E, E> function) {
 		for (int i = fStart; i < fEnd; i++) {
 			list.add(function.apply(i, fList.get(i)));
 		}
@@ -601,7 +693,7 @@ public class Range<E, L extends List<E>> implements Iterable<E> {
 	 * @param leftArg
 	 *          left argument of the binary functions <code>apply()</code> method.
 	 */
-	public L mapLeft(L list, BiFunction<E, E, E> binaryFunction, E leftArg) {
+	public C mapLeft(C list, BiFunction<E, E, E> binaryFunction, E leftArg) {
 		for (int i = fStart; i < fEnd; i++) {
 
 			list.add(binaryFunction.apply(leftArg, fList.get(i)));
@@ -619,7 +711,7 @@ public class Range<E, L extends List<E>> implements Iterable<E> {
 	 *          right argument of the binary functions <code>apply()</code>
 	 *          method.
 	 */
-	public L mapRight(L list, BiFunction<E, E, E> binaryFunction, E rightArg) {
+	public C mapRight(C list, BiFunction<E, E, E> binaryFunction, E rightArg) {
 		for (int i = fStart; i < fEnd; i++) {
 
 			list.add(binaryFunction.apply(fList.get(i), rightArg));
@@ -661,10 +753,10 @@ public class Range<E, L extends List<E>> implements Iterable<E> {
 	 * Apply the predicate to each element in the range and append the elements to
 	 * the list, which don't match the predicate.
 	 * 
-	 * @see Range#select(List, Predicate)
+	 * @see Range#filter(List, Predicate)
 	 * @see Range#replaceAll(List, Function)
 	 */
-	public L removeAll(L list, Predicate<E> predicate) {
+	public C removeAll(C list, Predicate<E> predicate) {
 		for (int i = fStart; i < fEnd; i++) {
 
 			if (!predicate.apply(fList.get(i))) {
@@ -678,12 +770,11 @@ public class Range<E, L extends List<E>> implements Iterable<E> {
 	 * Apply the function to each element in the range and append the results to
 	 * the list.
 	 * 
-	 * @see Range#select(List, Predicate)
+	 * @see Range#filter(List, Predicate)
 	 * @see Range#removeAll(List, Predicate)
 	 */
-	public L replaceAll(L list, final Function<E, ? extends E> function) {
+	public C replaceAll(C list, final Function<E, ? extends E> function) {
 		for (int i = fStart; i < fEnd; i++) {
-
 			list.add(function.apply(fList.get(i)));
 		}
 		return list;
@@ -696,7 +787,7 @@ public class Range<E, L extends List<E>> implements Iterable<E> {
 	 * @param fromIndex
 	 * @param toIndex
 	 */
-	public L reverse(L list) {
+	public C reverse(C list) {
 		for (int i = fEnd - 1; i >= fStart; i--) {
 			list.add(fList.get(i));
 		}
@@ -710,7 +801,7 @@ public class Range<E, L extends List<E>> implements Iterable<E> {
 	 * @param list
 	 * @param n
 	 */
-	public L rotateLeft(L list, final int n) {
+	public C rotateLeft(C list, final int n) {
 		for (int i = fStart + n; i < fEnd; i++) {
 			list.add(fList.get(i));
 		}
@@ -729,105 +820,12 @@ public class Range<E, L extends List<E>> implements Iterable<E> {
 	 * @param list
 	 * @param n
 	 */
-	public L rotateRight(L list, final int n) {
+	public C rotateRight(C list, final int n) {
 		if (n <= size()) {
 			for (int i = fEnd - n; i < fEnd; i++) {
 				list.add(fList.get(i));
 			}
 			for (int i = fStart; i < fEnd - n; i++) {
-				list.add(fList.get(i));
-			}
-		}
-		return list;
-	}
-
-	/**
-	 * Apply the predicate to each element in the range and append the elements to
-	 * the list, which match the predicate.
-	 * 
-	 * @see Range#removeAll(List, Predicate)
-	 * @see Range#replaceAll(List, Function)
-	 */
-	public L select(L list, Predicate<E> predicate) {
-		for (int i = fStart; i < fEnd; i++) {
-			if (predicate.apply(fList.get(i))) {
-				list.add(fList.get(i));
-			}
-		}
-		return list;
-	}
-
-	/**
-	 * Apply the predicate to each element in the range and append the elements
-	 * which match the predicate to the filterList, or otherwise append it to the
-	 * restList.
-	 * 
-	 * @param filterList
-	 *          the elements which match the predicate
-	 * @param restList
-	 *          the elements which don't match the predicate
-	 * @param predicate
-	 *          the predicate which filters each element in the range
-	 * @return the <code>filterList</code>
-	 */
-	public L select(L filterList, L restList, Predicate<E> predicate) {
-		for (int i = fStart; i < fEnd; i++) {
-			if (predicate.apply(fList.get(i))) {
-				filterList.add(fList.get(i));
-			} else {
-				restList.add(fList.get(i));
-			}
-		}
-		return filterList;
-	}
-
-	/**
-	 * Append the elements of this range to the <code>resultList</code>.
-	 * 
-	 */
-	// public L append(L resultList) {
-	// for (int i = fStart; i < fEnd; i++) {
-	// resultList.add(fList.get(i));
-	// }
-	// return resultList;
-	// }
-
-	/**
-	 * Append the elements of this range to the <code>resultList</code> and
-	 * addittionally append the given ranges to the <code>resultList</code>
-	 * 
-	 */
-	// public L append(L resultList, Range<E, L>... ranges) {
-	// for (int i = fStart; i < fEnd; i++) {
-	// resultList.add(fList.get(i));
-	// }
-	// for (Range<E, L> range : ranges) {
-	// for (int i = range.fStart; i < range.fEnd; i++) {
-	// resultList.add(range.get(i));
-	// }
-	// }
-	// return resultList;
-	// }
-
-	/**
-	 * Apply the predicate to each element in the range and append the elements to
-	 * the list, which match the predicate.
-	 * 
-	 * @see Range#removeAll(List, Predicate)
-	 * @see Range#replaceAll(List, Function)
-	 */
-	public L select(L list, Predicate<E> predicate, int maxMatches) {
-		int count = 0;
-		if (count == maxMatches) {
-			return list;
-		}
-		for (int i = fStart; i < fEnd; i++) {
-
-			if (predicate.apply(fList.get(i))) {
-				if (++count == maxMatches) {
-					list.add(fList.get(i));
-					break;
-				}
 				list.add(fList.get(i));
 			}
 		}
@@ -846,7 +844,7 @@ public class Range<E, L extends List<E>> implements Iterable<E> {
 
 	/**
 	 * Sorts the elements of the specified range "in place" (i.e. modify the
-	 * internal referenced list) ,according to the order induced by the specified
+	 * internal referenced list), according to the order induced by the specified
 	 * comparator.
 	 */
 	@SuppressWarnings("unchecked")
@@ -857,6 +855,17 @@ public class Range<E, L extends List<E>> implements Iterable<E> {
 			fList.set(j, a[j]);
 		}
 		return fList;
+	}
+
+	public E[] toArray(E[] array) {
+		int j = fStart;
+		for (int i = 0; i < array.length; i++) {
+			array[i] = fList.get(j++);
+			if (j >= array.length) {
+				break;
+			}
+		}
+		return array;
 	}
 
 	/**
@@ -879,7 +888,7 @@ public class Range<E, L extends List<E>> implements Iterable<E> {
 	 * @param secondRange
 	 * @return
 	 */
-	public L union(final L result, final Range<E, L> secondList) {
+	public C union(final C result, final Range<E, L, C> secondList) {
 		if ((size() == 0) && (secondList.size() == 0)) {
 			return result;
 		}
@@ -890,44 +899,6 @@ public class Range<E, L extends List<E>> implements Iterable<E> {
 			result.add(e);
 		}
 		return result;
-	}
-
-	public E[] toArray(E[] array) {
-		int j = fStart;
-		for (int i = 0; i < array.length; i++) {
-			array[i] = fList.get(j++);
-			if (j >= array.length) {
-				break;
-			}
-		}
-		return array;
-	}
-
-	class RangeIterator implements Iterator<E> {
-		private Range<E, L> fRange;
-
-		private int fCurrrent;
-
-		public RangeIterator(Range<E, L> range) {
-			fRange = range;
-			fCurrrent = fRange.fStart;
-		}
-
-		public boolean hasNext() {
-			return fCurrrent < fRange.fEnd;
-		}
-
-		public E next() {
-			return fRange.get(fCurrrent++);
-		}
-
-		public void remove() {
-			throw new UnsupportedOperationException();
-		}
-	}
-
-	public Iterator<E> iterator() {
-		return new RangeIterator(this);
 	}
 
 }

@@ -1,6 +1,5 @@
 package org.matheclipse.core.expression;
 
-//import org.jscience.mathematics.number.Float64;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.INum;
 import org.matheclipse.core.interfaces.ISignedNumber;

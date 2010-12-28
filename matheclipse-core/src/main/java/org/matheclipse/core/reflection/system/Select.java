@@ -24,11 +24,11 @@ public class Select implements IFunctionEvaluator {
 	}
 
 	public static IAST select(final IAST list, final IExpr head) {
-		return list.args().select(list.copyHead(), Predicates.isTrue(head));
+		return list.filter(list.copyHead(), Predicates.isTrue(head));
 	}
 
 	public static IAST select(final IAST list, final IExpr head, final int resultLimit) {
-		return list.args().select(list.copyHead(), Predicates.isTrue(head), resultLimit);
+		return list.args().filter(list.copyHead(), Predicates.isTrue(head), resultLimit);
 	}
 
 	public IExpr numericEval(final IAST functionList) {

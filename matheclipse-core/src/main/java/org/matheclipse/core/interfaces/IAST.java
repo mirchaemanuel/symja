@@ -199,20 +199,32 @@ public interface IAST extends IExpr, INestedList<IExpr> {
 	public IAST map(IAST resultAST, IAST secondAST, BiFunction<IExpr, IExpr, IExpr> function);
 
 	/**
-	 * Apply the predicate to each element in the range and append the elements
-	 * which match the predicate to the filterList, or otherwise append it to the
-	 * restList.
+	 * Apply the predicate to each element in this <code>AST</code> and append the
+	 * elements which satisfy the predicate to the <code>filterAST</code>.
 	 * 
 	 * @param filterAST
-	 *          the elements which match the predicate
+	 *          the elements which satisfy the predicate
+	 * @param predicate
+	 *          the predicate which filters each element in the range
+	 * @return the <code>filterList</code>
+	 */
+	public IAST filter(IAST filterAST, Predicate<IExpr> predicate);
+
+	/**
+	 * Apply the predicate to each element in this <code>AST</code> and append the
+	 * elements which satisfy the predicate to the <code>filterAST</code>, or
+	 * otherwise append it to the <code>restAST</code>.
+	 * 
+	 * @param filterAST
+	 *          the elements satisfy match the predicate
 	 * @param restAST
 	 *          the elements which don't match the predicate
 	 * @param predicate
 	 *          the predicate which filters each element in the range
 	 * @return the <code>filterList</code>
 	 */
-	public IAST select(IAST filterAST, IAST restAST, Predicate<IExpr> predicate);
-		 
+	public IAST filter(IAST filterAST, IAST restAST, Predicate<IExpr> predicate);
+
 	/**
 	 * Set the head element of this list
 	 */

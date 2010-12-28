@@ -2,6 +2,7 @@ package org.matheclipse.core.system;
 
 import org.matheclipse.basic.Config;
 import org.matheclipse.core.eval.EvalEngine;
+import org.matheclipse.core.expression.F;
 import org.matheclipse.core.expression.Matrix;
 import org.matheclipse.core.expression.Vector;
 
@@ -114,10 +115,15 @@ public class SystemTestCase extends AbstractTestCase {
 
 	public void testSystem003() {
 		check("-0.0001E+15", "-1.0E11");
+		check("-0.0001E-15", "-1.0E-19");
 	}
 
 	public void testSystem004() {
-		check("-0.0001E-15", "-1.0E-19");
+		check("1.0-(1.0-1*(2))", "2.0");
+		check("1-(1-1*(2))", "2");
+		check("Chop[2.0+I*(-2.4492935982947064E-16)]", "2.0+I*0.0");
+		check("Chop[(-2.4492935982947064E-16)+I*0.5]", "0.0+I*0.5");
+		check("Chop[(-2.4492935982947064E-16)+I*(-1.0E-19)]", "0");
 	}
 
 	// public void testSystem004() {
@@ -687,21 +693,14 @@ public class SystemTestCase extends AbstractTestCase {
 		// "LUBackSubstitution[{{{1,2,3},{3,-2,2},{13,19/2,-50}},{1,2,3},0},{10,11,12}]"
 		// ,
 		// "{-11/4,33/4,-5/4}");
-		check("SingularValueDecomposition[{{ 24.0/25.0, 43.0/25.0 },{57.0/25.0, 24.0/25.0 }}]", "{\n" + 
-				"{{0.6000000000000001,-0.8},\n" + 
-				" {0.8,0.6000000000000001}},\n" + 
-				"{{3.0000000000000004,0.0},\n" + 
-				" {0.0,0.9999999999999998}},\n" + 
-				"{{0.8,0.6000000000000001},\n" + 
-				" {0.6000000000000001,-0.8}}}");
+		check("SingularValueDecomposition[{{ 24.0/25.0, 43.0/25.0 },{57.0/25.0, 24.0/25.0 }}]", "{\n" + "{{0.6000000000000001,-0.8},\n"
+				+ " {0.8,0.6000000000000001}},\n" + "{{3.0000000000000004,0.0},\n" + " {0.0,0.9999999999999998}},\n"
+				+ "{{0.8,0.6000000000000001},\n" + " {0.6000000000000001,-0.8}}}");
 
 		// See http://issues.apache.org/jira/browse/MATH-320:
 		check("SingularValueDecomposition[{{1,2},{1,2}}]",
-				"{{{-0.7071067811865475,0.7071067811865475},{-0.7071067811865475,-0.7071067811865475}},\n" + 
-				"{{3.1622776601683795,0.0},\n" + 
-				" {0.0,0.0}},\n" + 
-				"{{-0.4472135954999579,0.8944271909999159},\n" + 
-				" {-0.8944271909999159,-0.4472135954999579}}}");
+				"{{{-0.7071067811865475,0.7071067811865475},{-0.7071067811865475,-0.7071067811865475}},\n" + "{{3.1622776601683795,0.0},\n"
+						+ " {0.0,0.0}},\n" + "{{-0.4472135954999579,0.8944271909999159},\n" + " {-0.8944271909999159,-0.4472135954999579}}}");
 	}
 
 	public void testSystem104() {
@@ -2565,6 +2564,10 @@ public class SystemTestCase extends AbstractTestCase {
 		// check("Roots[Sin[13]*x^3 + 5*x + 10]", "");
 		check("NRoots[Sin[13]*x^2 + 5*x + 10]", "{-2.5437534046413663,-9.356275778426076}");
 
+		check("Roots[x^2 - 4*x + 8]", "{2+I*2,2-I*2}");
+		// not reduccible with current factor method
+		check("Factor[x^4-2*x^3+2*x^2-4*x+4]", "x^4-2*x^3+2*x^2-4*x+4");
+		check("Roots[x^6 - 4*x^3 + 8]", "{-1+I,-1-I,x^4-2*x^3+2*x^2-4*x+4}");
 		check("Roots[x^2 + 5*x + 10]", "{1/2*(I*15^(1/2)-5),1/2*(-I*15^(1/2)-5)}");
 		check("Simplify[Roots[4+x^2+2*x+3*x^3]]", "{-1,I*1/3*11^(1/2)+1/3,-I*1/3*11^(1/2)+1/3}");
 

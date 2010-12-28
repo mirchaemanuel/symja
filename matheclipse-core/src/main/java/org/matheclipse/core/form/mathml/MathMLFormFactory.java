@@ -112,7 +112,7 @@ public class MathMLFormFactory extends AbstractMathMLFormFactory implements ICon
 	}
 
 	public void convertFraction(final StringBuffer buf, final IFraction f, final int precedence) {
-		boolean isInteger = f.getBigDenominator().equals(BigInteger.ONE);
+		boolean isInteger = f.getBigDenominator().equals(apache.harmony.math.BigInteger.ONE);
 		if (f.isNegative() && (precedence > plusPrec)) {
 			tagStart(buf, "mrow");
 			tag(buf, "mo", "(");
@@ -142,7 +142,7 @@ public class MathMLFormFactory extends AbstractMathMLFormFactory implements ICon
 			tagStart(buf, "mrow");
 			tag(buf, "mo", "(");
 		}
-		if (f.getDenominator().equals(BigInteger.ONE)) {
+		if (f.getDenominator().equals(apache.harmony.math.BigInteger.ONE)) {
 			tagStart(buf, "mn");
 			buf.append(f.getNumerator().toString());
 			tagEnd(buf, "mn");
