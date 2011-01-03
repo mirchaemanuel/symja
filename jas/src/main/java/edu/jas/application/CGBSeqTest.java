@@ -1,5 +1,5 @@
 /*
- * $Id: CGBSeqTest.java 2033 2008-08-10 11:37:41Z kredel $
+ * $Id: CGBSeqTest.java 3426 2010-12-24 13:17:58Z kredel $
  */
 
 package edu.jas.application;
