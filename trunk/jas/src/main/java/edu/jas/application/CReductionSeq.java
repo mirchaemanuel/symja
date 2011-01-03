@@ -1,5 +1,5 @@
 /*
- * $Id: CReductionSeq.java 2824 2009-09-23 18:02:32Z kredel $
+ * $Id: CReductionSeq.java 3426 2010-12-24 13:17:58Z kredel $
  */
 
 package edu.jas.application;
