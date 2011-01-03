@@ -24,7 +24,7 @@ public class Integrate extends AbstractConverter {
       if ((list != null) && (list.size() == 4) && list.head().toString().equals("List")) {
       	buf.append("\\int_{");
         fFactory.convert(buf, list.get(2), 0);
-        buf.append("}{");
+        buf.append("}^{");
         fFactory.convert(buf, list.get(3), 0);
         buf.append('}');
       } else {
