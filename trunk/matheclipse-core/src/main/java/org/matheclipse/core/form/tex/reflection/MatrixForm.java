@@ -29,28 +29,36 @@ public class MatrixForm extends AbstractConverter {
 			if (vector == null) {
 				return false;
 			} else {
-				buf.append("\\begin{matrix}");
-				IExpr temp;
+				buf.append("\\begin{pmatrix}");
+				IExpr element;
 				for (int i = 1; i < vector.size(); i++) {
-					temp = vector.get(i);
-					fFactory.convert(buf, temp, 0);
+					element = vector.get(i);
+					buf.append(' ');
+					fFactory.convert(buf, element, 0);
+					buf.append(' ');
+					if (i < vector.size()-1) {
+						buf.append('&');
+					}
 				}
-				buf.append("\\end{matrix}");
+				buf.append("\\end{pmatrix}");
 			}
 		} else {
-			buf.append("\\begin{matrix}");
-			IAST temp;
+			buf.append("\\begin{pmatrix}");
+			IAST row;
 			for (int i = 1; i < matrix.size(); i++) {
-				temp = (IAST) matrix.get(i); 
-				for (int j = 1; j < temp.size(); j++) {
+				row = (IAST) matrix.get(i); 
+				for (int j = 1; j < row.size(); j++) {
 					buf.append(' ');
-					fFactory.convert(buf, temp.get(j), 0);
+					fFactory.convert(buf, row.get(j), 0);
 					buf.append(' ');
+					if (j < row.size()-1) {
+						buf.append('&');
+					}
 				}
-				buf.append("\\\n");
+				buf.append("\\\\\n");
 			}
 
-			buf.append("\\end{matrix}");
+			buf.append("\\end{pmatrix}");
 		}
 		return true;
 	}
