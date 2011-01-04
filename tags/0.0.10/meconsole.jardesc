@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<jardesc>
+    <jar path="C:/galileo/testme/meconsole009.jar"/>
+    <options buildIfNeeded="true" compress="true" descriptionLocation="/symja/meconsole.jardesc" exportErrors="true" exportWarnings="true" includeDirectoryEntries="false" overwrite="false" saveDescription="true" storeRefactorings="false" useSourceFolders="false"/>
+    <storedRefactorings deprecationInfo="true" structuralOnly="false"/>
+    <selectedProjects/>
+    <manifest generateManifest="false" manifestLocation="/symja/matheclipse-core/src/main/java/META-INF/MANIFEST.MF" manifestVersion="1.0" reuseManifest="false" saveManifest="false" usesManifest="true">
+        <sealing sealJar="false">
+            <packagesToSeal/>
+            <packagesToUnSeal/>
+        </sealing>
+    </manifest>
+    <selectedElements exportClassFiles="true" exportJavaFiles="false" exportOutputFolder="false">
+        <javaElement handleIdentifier="=symja/matheclipse-core\/src\/main\/java&lt;org.matheclipse.core.reflection.dynamic"/>
+        <javaElement handleIdentifier="=symja/matheclipse-core\/src\/main\/java&lt;org.matheclipse.core.polynomials"/>
+        <javaElement handleIdentifier="=symja/matheclipse-core\/src\/main\/java&lt;org.matheclipse.core.form.mathml"/>
+        <javaElement handleIdentifier="=symja/matheclipse-core\/src\/main\/java&lt;org.matheclipse.core.convert"/>
+        <file path="/symja/matheclipse-core/src/main/java/System.mep"/>
+        <javaElement handleIdentifier="=symja/matheclipse-parser\/src\/main\/java"/>
+        <javaElement handleIdentifier="=symja/matheclipse-core\/src\/main\/java&lt;org.matheclipse.core.form.tex"/>
+        <javaElement handleIdentifier="=symja/matheclipse-generic\/src\/main\/java"/>
+        <javaElement handleIdentifier="=symja/matheclipse-core\/src\/main\/java&lt;org.matheclipse.basic"/>
+        <javaElement handleIdentifier="=symja/matheclipse-core\/src\/main\/java&lt;org.matheclipse.core.sql"/>
+        <javaElement handleIdentifier="=symja/matheclipse-core\/src\/main\/java&lt;org.matheclipse.core.eval.exception"/>
+        <javaElement handleIdentifier="=symja/matheclipse-core\/src\/main\/java&lt;org.matheclipse.core.patternmatching"/>
+        <javaElement handleIdentifier="=symja/matheclipse-core\/src\/main\/java&lt;org.matheclipse.core.eval"/>
+        <javaElement handleIdentifier="=symja/matheclipse-core\/src\/main\/java&lt;org.matheclipse.core.visit"/>
+        <javaElement handleIdentifier="=symja/matheclipse-core\/src\/main\/java&lt;org.matheclipse.core.form.output"/>
+        <javaElement handleIdentifier="=symja/matheclipse-core\/src\/main\/java&lt;org.matheclipse.core.expression"/>
+        <javaElement handleIdentifier="=symja/matheclipse-parser\/src\/main\/resources"/>
+        <javaElement handleIdentifier="=symja/matheclipse-core\/src\/main\/java&lt;apache.harmony.math"/>
+        <folder path="/symja/matheclipse-core/src/main/java/META-INF"/>
+        <javaElement handleIdentifier="=symja/matheclipse-core\/src\/main\/java&lt;org.matheclipse.core.eval.interfaces"/>
+        <javaElement handleIdentifier="=symja/matheclipse-core\/src\/main\/java&lt;org.matheclipse.core.form.tex.reflection"/>
+        <javaElement handleIdentifier="=symja/matheclipse-core\/src\/main\/java&lt;org.matheclipse.core.combinatoric"/>
+        <javaElement handleIdentifier="=symja/matheclipse-core\/src\/main\/java&lt;org.matheclipse.core.reflection.system"/>
+        <javaElement handleIdentifier="=symja/commons-math\/src\/main\/java"/>
+        <javaElement handleIdentifier="=symja/matheclipse-core\/src\/main\/java&lt;org.matheclipse.script.engine"/>
+        <javaElement handleIdentifier="=symja/matheclipse-core\/src\/main\/java&lt;org.matheclipse.core.form.java"/>
+        <javaElement handleIdentifier="=symja/jas\/src\/main\/java"/>
+        <javaElement handleIdentifier="=symja/matheclipse-core\/src\/main\/java&lt;org.matheclipse.core.generic.util"/>
+        <javaElement handleIdentifier="=symja/matheclipse-core\/src\/main\/java&lt;org.matheclipse.core.list.algorithms"/>
+        <javaElement handleIdentifier="=symja/matheclipse-core\/src\/main\/java&lt;org.matheclipse.swing.plot"/>
+        <javaElement handleIdentifier="=symja/matheclipse-core\/src\/main\/java&lt;org.matheclipse.core.eval.util"/>
+        <javaElement handleIdentifier="=symja/matheclipse-core\/src\/main\/java&lt;org.matheclipse.core.interfaces"/>
+        <javaElement handleIdentifier="=symja/matheclipse-core\/src\/main\/java&lt;org.matheclipse.core.generic"/>
+        <javaElement handleIdentifier="=symja/matheclipse-core\/src\/main\/java&lt;org.matheclipse.core.util"/>
+        <javaElement handleIdentifier="=symja/matheclipse-core\/src\/main\/java&lt;org.matheclipse.core.form.mathml.reflection"/>
+        <javaElement handleIdentifier="=symja/matheclipse-core\/src\/main\/java&lt;org.matheclipse.core.convert.experimental"/>
+    </selectedElements>
+</jardesc>

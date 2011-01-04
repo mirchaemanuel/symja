@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jnlp spec="1.0+"
+  codebase="http://symja.googlecode.com/files"
+>
+<information>
+  <title>Symja</title>
+  <vendor>Matheclipse.org</vendor>
+  <homepage href="/" />
+  <description>Symja Symbolic Math System</description>
+</information>
+<offline-allowed/>
+<!--<security>
+  <j2ee-application-client-permissions/>
+</security>-->
+<resources>
+  <j2se version="1.5+" />
+  <jar href="symja-0.0.7.jar"/>
+</resources>
+<application-desc main-class="org.matheclipse.symja.Main" />
+</jnlp>
+

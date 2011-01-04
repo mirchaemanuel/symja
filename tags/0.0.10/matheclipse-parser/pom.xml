@@ -1,0 +1,67 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<parent>
+		<groupId>org.matheclipse</groupId>
+		<artifactId>matheclipse</artifactId>
+		<version>0.0.8-SNAPSHOT</version>
+	</parent>
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>matheclipse-parser</artifactId>
+	<groupId>org.matheclipse</groupId>
+	<packaging>jar</packaging>
+	<name>MathEclipse (Parser)</name>
+	<version>0.0.8-SNAPSHOT</version>
+	<description> This is the parser project of the MathEclipse system.</description>
+	<licenses>
+		<license>
+			<name>Eclipse Public License 1.0</name>
+			<url>http://www.opensource.org/licenses/eclipse-1.0.php</url>
+			<distribution>repo</distribution>
+		</license>
+		<license>
+			<name>GNU Lesser General Public License - v 2.1 or later</name>
+			<url>http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.5</version>
+			<type>jar</type>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.5</source>
+					<target>1.5</target>
+				</configuration>
+			</plugin>
+		</plugins>
+
+		<extensions>
+			<extension>
+				<groupId>org.apache.maven.wagon</groupId>
+				<artifactId>wagon-webdav</artifactId>
+				<version>1.0-beta-2</version>
+			</extension>
+		</extensions>
+	</build>
+	<distributionManagement>
+		<repository>
+			<id>googlecode.svn.symja</id>
+			<url>dav:https://symja.googlecode.com/svn/maven-repository/</url>
+		</repository>
+		<snapshotRepository>
+			<id>googlecode.svn.symja</id>
+			<url>dav:https://symja.googlecode.com/svn/maven-snapshot-repository/</url>
+			<uniqueVersion>false</uniqueVersion>
+		</snapshotRepository>
+	</distributionManagement>
+</project>
