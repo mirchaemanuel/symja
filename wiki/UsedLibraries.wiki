@@ -4,9 +4,17 @@
 <wiki:toc max_depth="1" />
 
 = Links to external open source libraries =
-  * [http://commons.apache.org/math/ Commons-Math: The Apache Commons Mathematics Library]
-  * [http://krum.rz.uni-mannheim.de/jas/ Java Algebra System (JAS)]
-  * [http://jeuclid.sourceforge.net/ JEuclid - MathML renderer]
+Used core libraries:
+  * [http://commons.apache.org/math/ Commons-Math - The Apache Commons Mathematics Library] (Apache software licence)
+  * [http://krum.rz.uni-mannheim.de/jas/ JAS - Java Algebra System] (LGPL software licence)
+
+Used libraries for the Symja-GUI
+  * [http://code.google.com/p/surfaceplotter/ Surfaceplotter] (LGPL software licence)
+  * [http://forge.scilab.org/index.php/p/jlatexmath/ JLaTeXMath - A Java API to render LaTeX] (GPL software licence)
+  * [http://code.google.com/p/jsyntaxpane/jsyntaxpane - Java EditorPane with support for Syntax Highlighting]
+
+Used in older versions of the GUI (up to version 0.0.10)
+  * [http://jeuclid.sourceforge.net/ JEuclid - MathML renderer] (Apache software licence)
 
 = Commons-Math functions =
 The following functions are based on commons-math implementations:
