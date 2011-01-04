@@ -1,6 +1,5 @@
 package org.matheclipse.core.eval;
 
-
 import java.io.File;
 import java.net.URL;
 
@@ -86,17 +85,13 @@ public class SourceGenerator {
 			final String[] files = directory.list();
 			for (int i = 0; i < files.length; i++) {
 
-				
 				// we are only interested in .class files
 				if (files[i].endsWith(".class")) {
 					// removes the .class extension
-					final String classname = files[i].substring(0, files[i]
-							.length() - 6);
+					final String classname = files[i].substring(0, files[i].length() - 6);
 					try {
 						// Try to create an instance of the object
-						final IFunctionEvaluator ev = (IFunctionEvaluator) Class
-								.forName(pckgname + "." + classname)
-								.newInstance();
+						final IFunctionEvaluator ev = (IFunctionEvaluator) Class.forName(pckgname + "." + classname).newInstance();
 						System.out.println(DS0 + classname + ";");
 						// System.out.println(DS0 + classname + CS0 + classname
 						// + "\");");
@@ -133,19 +128,14 @@ public class SourceGenerator {
 			final String[] files = directory.list();
 			for (int i = 0; i < files.length; i++) {
 
-				
 				// we are only interested in .class files
 				if (files[i].endsWith(".class")) {
 					// removes the .class extension
-					final String classname = files[i].substring(0, files[i]
-							.length() - 6);
+					final String classname = files[i].substring(0, files[i].length() - 6);
 					try {
 						// Try to create an instance of the object
-						final IFunctionEvaluator ev = (IFunctionEvaluator) Class
-								.forName(pckgname + "." + classname)
-								.newInstance();
-						System.out
-								.println(classname + CS0 + classname + "\");");
+						final IFunctionEvaluator ev = (IFunctionEvaluator) Class.forName(pckgname + "." + classname).newInstance();
+						System.out.println(classname + CS0 + classname + "\");");
 					} catch (final ClassCastException e) {
 						// e.printStackTrace();
 					} catch (final ClassNotFoundException cnfex) {
@@ -179,19 +169,14 @@ public class SourceGenerator {
 			final String[] files = directory.list();
 			for (int i = 0; i < files.length; i++) {
 
-				
 				// we are only interested in .class files
 				if (files[i].endsWith(".class")) {
 					// removes the .class extension
-					final String classname = files[i].substring(0, files[i]
-							.length() - 6);
+					final String classname = files[i].substring(0, files[i].length() - 6);
 					try {
 						// Try to create an instance of the object
-						final IFunctionEvaluator ev = (IFunctionEvaluator) Class
-								.forName(pckgname + "." + classname)
-								.newInstance();
-						if ((ev instanceof AbstractArgMultiple)
-								|| (ev instanceof AbstractNonOrderlessArgMultiple)) {
+						final IFunctionEvaluator ev = (IFunctionEvaluator) Class.forName(pckgname + "." + classname).newInstance();
+						if ((ev instanceof AbstractArgMultiple) || (ev instanceof AbstractNonOrderlessArgMultiple)) {
 							System.out.println(createBinary(classname));
 							System.out.println(createTernary(classname));
 						} else if (ev instanceof AbstractArg2) {
@@ -231,19 +216,14 @@ public class SourceGenerator {
 			final String[] files = directory.list();
 			for (int i = 0; i < files.length; i++) {
 
-				
 				// we are only interested in .class files
 				if (files[i].endsWith(".class")) {
 					// removes the .class extension
-					final String classname = files[i].substring(0, files[i]
-							.length() - 6);
+					final String classname = files[i].substring(0, files[i].length() - 6);
 					try {
 						// Try to create an instance of the object
-						final IFunctionEvaluator ev = (IFunctionEvaluator) Class
-								.forName(pckgname + "." + classname)
-								.newInstance();
-						if ((ev instanceof AbstractArgMultiple)
-								|| (ev instanceof AbstractNonOrderlessArgMultiple)) {
+						final IFunctionEvaluator ev = (IFunctionEvaluator) Class.forName(pckgname + "." + classname).newInstance();
+						if ((ev instanceof AbstractArgMultiple) || (ev instanceof AbstractNonOrderlessArgMultiple)) {
 							System.out.println(createEvalBinary(classname));
 							System.out.println(createEvalTernary(classname));
 						} else if (ev instanceof AbstractArg2) {
@@ -283,17 +263,14 @@ public class SourceGenerator {
 			final String[] files = directory.list();
 			for (int i = 0; i < files.length; i++) {
 
-				
 				// we are only interested in .class files
 				if (files[i].endsWith(".class")) {
 					// removes the .class extension
-					final String classname = files[i].substring(0, files[i]
-							.length() - 6);
+					final String classname = files[i].substring(0, files[i].length() - 6);
 					try {
 						// Try to create an instance of the object
 						Class.forName(pckgname + "." + classname).newInstance();
-						System.out.println("  f.createSymbol(\"" + classname
-								+ "\");");
+						System.out.println("  f.createSymbol(\"" + classname + "\");");
 						F.symbol(classname);
 					} catch (final ClassNotFoundException cnfex) {
 						System.err.println(cnfex);
@@ -307,6 +284,53 @@ public class SourceGenerator {
 				}
 			}
 		}
+	}
+
+	public static void generateJFlexKeywords(final String packageName, int maximumNumberOfChars) {
+		String name = packageName;
+		if (!name.startsWith("/")) {
+			name = "/" + name;
+		}
+
+		name = name.replace('.', '/');
+
+		// Get a File object for the package
+		final URL url = SourceGenerator.class.getResource(name);
+		final File directory = new File(url.getFile());
+
+		if (directory.exists()) {
+			System.out.println("  \"True |\"");
+			System.out.println("  \"False |\"");
+			System.out.println("  \"Null |\"");
+			// Get the list of the files contained in the package
+			final String[] files = directory.list();
+			for (int i = 0; i < files.length; i++) {
+
+				// we are only interested in .class files
+				if (files[i].endsWith(".class")) {
+					// removes the .class extension
+					final String classname = files[i].substring(0, files[i].length() - 6);
+					try {
+						// Try to create an instance of the object
+						final Object o = Class.forName(packageName + "." + classname).newInstance();
+
+						if (classname.length() >= maximumNumberOfChars) {
+							System.out.println("  \""+classname + "\" |");
+						}
+
+					} catch (final ClassNotFoundException cnfex) {
+						System.err.println(cnfex);
+					} catch (final InstantiationException iex) {
+						// We try to instantiate an interface
+						// or an object that does not have a
+						// default constructor
+					} catch (final IllegalAccessException iaex) {
+						// The class is not public
+					}
+				}
+			}
+		}
+
 	}
 
 	public static void generateJavaScript(final String pckgname) {
@@ -328,16 +352,13 @@ public class SourceGenerator {
 			final String[] files = directory.list();
 			for (int i = 0; i < files.length; i++) {
 
-				
 				// we are only interested in .class files
 				if (files[i].endsWith(".class")) {
 					// removes the .class extension
-					final String classname = files[i].substring(0, files[i]
-							.length() - 6);
+					final String classname = files[i].substring(0, files[i].length() - 6);
 					try {
 						// Try to create an instance of the object
-						final Object o = Class.forName(
-								pckgname + "." + classname).newInstance();
+						final Object o = Class.forName(pckgname + "." + classname).newInstance();
 
 						if (o instanceof AbstractSymbolEvaluator) {
 							System.out.print("\"" + classname + "\"");
@@ -391,45 +412,27 @@ public class SourceGenerator {
 			final String[] files = directory.list();
 			for (int i = 0; i < files.length; i++) {
 
-				
 				// we are only interested in .class files
 				if (files[i].endsWith(".class")) {
 					// removes the .class extension
-					final String classname = files[i].substring(0, files[i]
-							.length() - 6);
+					final String classname = files[i].substring(0, files[i].length() - 6);
 					try {
 						// Try to create an instance of the object
-						final Object o = Class.forName(
-								pckgname + "." + classname).newInstance();
+						final Object o = Class.forName(pckgname + "." + classname).newInstance();
 
 						if (o instanceof AbstractSymbolEvaluator) {
 							// <template id="pi" name="Pi" description="Pi"
 							// context="org.matheclipse.templates"
 							// enabled="true">Pi</template>
-							System.out
-									.print("\n<template id=\""
-											+ classname.toLowerCase()
-											+ "\" name=\""
-											+ classname
-											+ "\" description=\""
-											+ classname
-											+ "\" context=\"org.matheclipse.templates\""
-											+ " enabled=\"true\">" + classname
-											+ "</template>");
+							System.out.print("\n<template id=\"" + classname.toLowerCase() + "\" name=\"" + classname + "\" description=\""
+									+ classname + "\" context=\"org.matheclipse.templates\"" + " enabled=\"true\">" + classname + "</template>");
 						} else {
 							// <template id="if" name="If" description="If[]"
 							// context="org.matheclipse.templates"
 							// enabled="true">If[${cursor}]</template>
-							System.out
-									.print("\n<template id=\""
-											+ classname.toLowerCase()
-											+ "\" name=\""
-											+ classname
-											+ "\" description=\""
-											+ classname
-											+ "[]\" context=\"org.matheclipse.templates\""
-											+ " enabled=\"true\">" + classname
-											+ "[${cursor}]</template>");
+							System.out.print("\n<template id=\"" + classname.toLowerCase() + "\" name=\"" + classname + "\" description=\""
+									+ classname + "[]\" context=\"org.matheclipse.templates\"" + " enabled=\"true\">" + classname
+									+ "[${cursor}]</template>");
 						}
 					} catch (final ClassNotFoundException cnfex) {
 						System.err.println(cnfex);
@@ -447,6 +450,7 @@ public class SourceGenerator {
 	}
 
 	public static void main(final String[] args) {
+		F.initSymbols();
 		// generateTemplates("org.matheclipse.core.reflection.system");
 		// return;
 
@@ -460,12 +464,15 @@ public class SourceGenerator {
 		//		
 		// System.out.println("\n--------------------\n");
 
+		// generate list of symbols
+		generateJFlexKeywords("org.matheclipse.core.reflection.system", 1);
+
 		// generate javascript:
-		 System.out.println("private final String[] COMPLETIONS = { ");
-		
-		 generateJavaScript("org.matheclipse.core.reflection.system");
-		
-		 System.out.println("};");
+		System.out.println("private final String[] COMPLETIONS = { ");
+
+		generateJavaScript("org.matheclipse.core.reflection.system");
+
+		System.out.println("};");
 
 		System.out.println("\n--------------------\n");
 
