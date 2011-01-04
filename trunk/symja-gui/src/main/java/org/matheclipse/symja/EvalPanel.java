@@ -4,7 +4,6 @@ import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.EventQueue;
 import java.awt.Font;
-import java.awt.FontFormatException;
 import java.awt.GraphicsEnvironment;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -16,7 +15,6 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
-import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -25,32 +23,21 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
-import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
 import javax.swing.InputMap;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JEditorPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 import javax.swing.JTextPane;
-import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.text.BadLocationException;
 import javax.swing.text.JTextComponent;
 
-import net.sourceforge.jeuclid.swing.JMathComponent;
+import jsyntaxpane.DefaultSyntaxKit;
 
-import org.matheclipse.core.eval.CompletionLists;
 import org.matheclipse.core.eval.EvalEngine;
 import org.matheclipse.core.eval.MathMLUtilities;
 import org.matheclipse.core.eval.TeXUtilities;
@@ -62,25 +49,18 @@ import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.INum;
 import org.matheclipse.core.util.WriterOutputStream;
 import org.matheclipse.parser.client.math.MathException;
+import org.scilab.forge.jlatexmath.DefaultTeXFont;
+import org.scilab.forge.jlatexmath.TeXConstants;
+import org.scilab.forge.jlatexmath.TeXEnvironment;
+import org.scilab.forge.jlatexmath.TeXFormula;
+import org.scilab.forge.jlatexmath.TeXIcon;
 
-public class EvalPanel extends JPanel implements DocumentListener {
-	private static final String COMMIT_ACTION = "commit";
-	private static final int FONT_SIZE_TEXT = 12;
-	private static final float FONT_SIZE_MATHML = 24;
+public class EvalPanel extends JPanel { // implements DocumentListener {
+	private static final int FONT_SIZE_TEXT = 13;
+	// private static final float FONT_SIZE_MATHML = 24;
+	private static final int FONT_SIZE_TEX = 24;
 
-	private static enum Mode {
-		INSERT, COMPLETION
-	};
-
-	private String fReplacement;
-	private int fW;
-
-	private Mode mode = Mode.INSERT;
-	private final List<String> fWords = new ArrayList<String>(2048);
-	private final List<String> fReplaceWords = new ArrayList<String>(2048);
-
-	private JTextArea jInputArea = null;
-
+	private JEditorPane jInputArea = null;
 	private JScrollPane jScrollInputPane = null;
 
 	private JScrollPane jScrollOutputPane = null;
@@ -89,7 +69,6 @@ public class EvalPanel extends JPanel implements DocumentListener {
 
 	private JComboBox jFormComboBox = new JComboBox();
 
-	/* custom created attributes */
 	final static long serialVersionUID = 0x000000001;
 
 	private final static String versionStr = "Keyboard shortcuts:\n" + "  Ctrl+ENTER  - for symbolic evaluation\n"
@@ -107,31 +86,11 @@ public class EvalPanel extends JPanel implements DocumentListener {
 
 	public static EvalEngine EVAL_ENGINE;
 
-	final JCheckBox fPrettyPrintStyle = new JCheckBox("Pretty Print Output?");
+	final JCheckBox fPrettyPrintStyle = new JCheckBox("Pretty Formula?", null, false);
 
 	public static TimeConstrainedEvaluator EVAL;
 
-	private static Font STIX_FONT = null;
-
 	private InitThread fInitThread = null;
-
-	static {
-		// lsit all available fonts in this system
-		// final Vector<String> allFonts = new
-		// Vector<String>(FontFactory.getInstance().listFontNames());
-		// System.out.println(allFonts);
-
-		try {
-			InputStream is = EvalPanel.class.getResourceAsStream("/fonts/STIXGeneral.ttf");
-			STIX_FONT = Font.createFont(Font.TRUETYPE_FONT, is);
-		} catch (FontFormatException e) {
-			e.printStackTrace();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	// private InitJEuclidThread fInitJEuclidThread = null;
 
 	/**
 	 * If a string is on the system clipboard, this method returns it; otherwise
@@ -152,7 +111,6 @@ public class EvalPanel extends JPanel implements DocumentListener {
 	}
 
 	// This method writes a string to the system clipboard.
-	// otherwise it returns null.
 	private static void setClipboard(final String str) {
 		final StringSelection ss = new StringSelection(str);
 		Toolkit.getDefaultToolkit().getSystemClipboard().setContents(ss, null);
@@ -201,17 +159,24 @@ public class EvalPanel extends JPanel implements DocumentListener {
 				if (buf0.getBuffer().length() > 0 && fPrettyPrintStyle.isSelected()) {
 
 					final StringBufferWriter buf1 = new StringBufferWriter();
-					final MathMLUtilities mathUtil = new MathMLUtilities(EVAL_ENGINE, false);
+					// final MathMLUtilities mathUtil = new MathMLUtilities(EVAL_ENGINE,
+					// false);
+					final TeXUtilities texUtil = new TeXUtilities(EVAL_ENGINE);
 					try {
 						if (expr != null) {
-							mathUtil.toMathML(expr, buf1);
-
-							JMathComponent component = new JMathComponent();
-							component.setFontSize(FONT_SIZE_MATHML);
-							component.setFont(new Font("miscfixed", 0, 16));
-							component.setContent(buf1.toString());
+							// mathUtil.toMathML(expr, buf1);
+							texUtil.toTeX(expr, buf1);
+							TeXFormula formula = new TeXFormula(buf1.toString());
+							TeXIcon ticon = formula.createTeXIcon(TeXConstants.STYLE_DISPLAY, FONT_SIZE_TEX, TeXConstants.UNIT_PIXEL, 80,
+									TeXConstants.ALIGN_LEFT);
 							setBusy(false);
-							jOutputPane.addComponent(component, 0, true);
+							jOutputPane.addIcon(ticon, 0, true);
+							// JMathComponent component = new JMathComponent();
+							// component.setFontSize(FONT_SIZE_MATHML);
+							// component.setFont(new Font("miscfixed", 0, 16));
+							// component.setContent(buf1.toString());
+							// setBusy(false);
+							// jOutputPane.addComponent(component, 0, true);
 						}
 					} catch (final Exception e) {
 						e.printStackTrace();
@@ -281,19 +246,10 @@ public class EvalPanel extends JPanel implements DocumentListener {
 	private void setBusy(final boolean busy) {
 		if (busy) {
 			jInputArea.setEditable(false);
-			// jMenuItemBreak.setEnabled(true);
-			// jPopupMenuItemBreak.setEnabled(true);
 			this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-			// jOutputPane.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-			// jInputArea.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-
 		} else {
 			jInputArea.setEditable(true);
-			// jMenuItemBreak.setEnabled(false);
-			// jPopupMenuItemBreak.setEnabled(false);
 			this.setCursor(Cursor.getDefaultCursor());
-			// jOutputPane.setCursor(Cursor.getDefaultCursor());
-			// jInputArea.setCursor(Cursor.getDefaultCursor());
 			jInputArea.requestFocus();
 		}
 	}
@@ -314,9 +270,6 @@ public class EvalPanel extends JPanel implements DocumentListener {
 				popupSource = e.getComponent();
 				final boolean canPaste = ((JTextComponent) popupSource).isEditable() && (getClipboard() != null);
 				final boolean canCopy = ((JTextComponent) popupSource).getSelectedText() != null;
-				// jPopupMenuItemPaste.setEnabled(canPaste);
-				// jPopupMenuItemCopy.setEnabled(canCopy);
-				// jPopupMenu.show(popupSource, e.getX(), e.getY());
 			}
 		}
 	}
@@ -333,31 +286,25 @@ public class EvalPanel extends JPanel implements DocumentListener {
 			F.initSymbols(fDefaultSystemRulesFilename, null, false);
 			EVAL_ENGINE = new EvalEngine();
 			EVAL = new TimeConstrainedEvaluator(EVAL_ENGINE, false, 360000);
-			new CompletionLists(fWords, fReplaceWords);
+			// for faster initialization of pretty print output we create a dummy
+			// instance here:
+			new TeXEnvironment(TeXConstants.STYLE_DISPLAY, new DefaultTeXFont(16));
 		}
 	}
 
-	public class InitJEuclidThread extends Thread {
-
-		public InitJEuclidThread() {
-		}
-
-		@Override
-		public void run() {
-			JMathComponent component = new JMathComponent();
-			component.setFontSize(FONT_SIZE_MATHML);
-			component.setContent("<math><mo>.</mo></math>");
-			jOutputPane.addComponent(component);
-		}
-	}
-
-	private JScrollPane getJScrollInputPane() {
-		if (jScrollInputPane == null) {
-			jScrollInputPane = new JScrollPane();
-			jScrollInputPane.setViewportView(getJInputArea());
-		}
-		return jScrollInputPane;
-	}
+	// public class InitJEuclidThread extends Thread {
+	//
+	// public InitJEuclidThread() {
+	// }
+	//
+	// @Override
+	// public void run() {
+	// JMathComponent component = new JMathComponent();
+	// component.setFontSize(FONT_SIZE_MATHML);
+	// component.setContent("<math><mo>.</mo></math>");
+	// jOutputPane.addComponent(component);
+	// }
+	// }
 
 	/**
 	 * Adds the text from the given file into the input area.
@@ -388,20 +335,28 @@ public class EvalPanel extends JPanel implements DocumentListener {
 	}
 
 	/**
-	 * This method initializes jInputField
+	 * This method initializes <code>jScrollPane</code>
 	 * 
 	 * @return javax.swing.JTextField
 	 */
-	private JTextArea getJInputArea() {
-		if (jInputArea == null) {
-			jInputArea = new JTextArea(4, 80);
+	private JScrollPane getJScrollInputPane() {
+		if (jScrollInputPane == null) {
+			// jInputArea = new JTextArea(4, 80);
+			DefaultSyntaxKit.initKit();
+
+			jInputArea = new JEditorPane();
+			jScrollInputPane = new JScrollPane(jInputArea);
 			jInputArea.setEditable(false);
+			// jInputArea.setContentType("text/symja");
+			jInputArea.setEditorKit(new jsyntaxpane.syntaxkits.SymjaSyntaxKit());
+
+			jInputArea.setFont(new java.awt.Font("Monospaced", Font.PLAIN, FONT_SIZE_TEXT));
+			jInputArea.setCaretColor(new java.awt.Color(153, 204, 255));
+
 			jInputArea.setText("Loading library...");
-			jInputArea.getDocument().addDocumentListener(this);
+			// jInputArea.getDocument().addDocumentListener(this);
 			InputMap im = jInputArea.getInputMap();
 			ActionMap am = jInputArea.getActionMap();
-			im.put(KeyStroke.getKeyStroke("ENTER"), COMMIT_ACTION);
-			am.put(COMMIT_ACTION, new CommitAction());
 
 			jInputArea.addKeyListener(new java.awt.event.KeyAdapter() {
 				@Override
@@ -428,9 +383,9 @@ public class EvalPanel extends JPanel implements DocumentListener {
 					}
 				}
 			});
-
+			jScrollInputPane.setViewportView(jInputArea);
 		}
-		return jInputArea;
+		return jScrollInputPane;
 	}
 
 	/**
@@ -440,7 +395,7 @@ public class EvalPanel extends JPanel implements DocumentListener {
 	 */
 	private JScrollPane getJScrollOutputPane() {
 		if (jScrollOutputPane == null) {
-			jScrollOutputPane = new JScrollPane();
+			jScrollOutputPane = new JScrollPane(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 			jScrollOutputPane.setViewportView(getJOutputPane());
 		}
 		return jScrollOutputPane;
@@ -593,7 +548,6 @@ public class EvalPanel extends JPanel implements DocumentListener {
 			setBusy(true);
 			final TeXUtilities texUtil = new TeXUtilities(EVAL_ENGINE);
 			final StringBufferWriter buf = new StringBufferWriter();
-
 			texUtil.toTeX(cmd, buf);
 			jOutputPane.printOutColored(buf.toString() + "\n\n");
 		} catch (final Exception e) {
@@ -609,45 +563,45 @@ public class EvalPanel extends JPanel implements DocumentListener {
 		}
 	}
 
-	protected void createMathMLComponent(final String cmd) {
-		if (fInitThread != null) {
-			try {
-				fInitThread.join();
-			} catch (InterruptedException e) {
-			}
-		}
-		try {
-			setBusy(true);
-			final MathMLUtilities mathUtil = new MathMLUtilities(EVAL_ENGINE, false);
-			final StringBufferWriter buf = new StringBufferWriter();
-
-			mathUtil.toMathML(cmd, buf);
-
-			try {
-				JMathComponent component = new JMathComponent();
-				component.setFontSize(FONT_SIZE_MATHML);
-				if (STIX_FONT != null) {
-					component.setFont(STIX_FONT.deriveFont(FONT_SIZE_MATHML));
-				}
-				component.setContent(buf.toString());
-				setBusy(false);
-				jOutputPane.addComponent(component, 0, true);
-			} catch (final Exception e) {
-				e.printStackTrace();
-				jOutputPane.printOut("MathML:\n" + buf.toString() + "\n\n");
-			}
-		} catch (final Exception e) {
-			e.printStackTrace();
-			String mess = e.getMessage();
-			if (mess == null) {
-				jOutputPane.printErr(e.getClass().getName());
-			} else {
-				jOutputPane.printErr(e.getMessage());
-			}
-		} finally {
-			setBusy(false);
-		}
-	}
+	// protected void createMathMLComponent(final String cmd) {
+	// if (fInitThread != null) {
+	// try {
+	// fInitThread.join();
+	// } catch (InterruptedException e) {
+	// }
+	// }
+	// try {
+	// setBusy(true);
+	// final MathMLUtilities mathUtil = new MathMLUtilities(EVAL_ENGINE, false);
+	// final StringBufferWriter buf = new StringBufferWriter();
+	//
+	// mathUtil.toMathML(cmd, buf);
+	//
+	// try {
+	// JMathComponent component = new JMathComponent();
+	// component.setFontSize(FONT_SIZE_MATHML);
+	// if (STIX_FONT != null) {
+	// component.setFont(STIX_FONT.deriveFont(FONT_SIZE_MATHML));
+	// }
+	// component.setContent(buf.toString());
+	// setBusy(false);
+	// jOutputPane.addComponent(component, 0, true);
+	// } catch (final Exception e) {
+	// e.printStackTrace();
+	// jOutputPane.printOut("MathML:\n" + buf.toString() + "\n\n");
+	// }
+	// } catch (final Exception e) {
+	// e.printStackTrace();
+	// String mess = e.getMessage();
+	// if (mess == null) {
+	// jOutputPane.printErr(e.getClass().getName());
+	// } else {
+	// jOutputPane.printErr(e.getMessage());
+	// }
+	// } finally {
+	// setBusy(false);
+	// }
+	// }
 
 	/**
 	 * This method initializes jContentPane
@@ -758,9 +712,8 @@ public class EvalPanel extends JPanel implements DocumentListener {
 		validate(); // force redraw
 		setVisible(true);
 
-		final Font f = new Font("Monospaced", Font.PLAIN, FONT_SIZE_TEXT);
-		jOutputPane.setFont(f);
-		jInputArea.setFont(f);
+		jOutputPane.setFont(new Font("Monospaced", Font.PLAIN, FONT_SIZE_TEXT));
+		// jInputArea.setFont(f);
 
 		// height = jInputArea.getGraphics().getFontMetrics().getHeight();
 		jInputArea.setBounds(jInputArea.getBounds().x, getHeight() - height, jInputArea.getWidth(), height);
@@ -785,100 +738,37 @@ public class EvalPanel extends JPanel implements DocumentListener {
 
 	// Listener methods
 
-	public void changedUpdate(DocumentEvent ev) {
-	}
-
-	public void removeUpdate(DocumentEvent ev) {
-	}
-
-	public void insertUpdate(DocumentEvent ev) {
-		if (ev.getLength() != 1) {
-			return;
-		}
-
-		int pos = ev.getOffset();
-		String content = null;
-		try {
-			content = jInputArea.getText(0, pos + 1);
-		} catch (BadLocationException e) {
-			e.printStackTrace();
-		}
-
-		// Find where the word starts
-		int w;
-		for (w = pos; w >= 0; w--) {
-			if (!Character.isLetter(content.charAt(w))) {
-				break;
-			}
-		}
-		if (pos - w < 2) {
-			// Too few chars
-			return;
-		}
-
-		String prefix = content.substring(w + 1).toLowerCase();
-		int n = Collections.binarySearch(fWords, prefix);
-		if (n < 0 && -n <= fWords.size()) {
-			String match = fWords.get(-n - 1);
-			if (match.startsWith(prefix)) {
-				// A completion is found
-				String completion = match.substring(pos - w);
-				// We cannot modify Document from within notification,
-				// so we submit a task that does the change later
-				SwingUtilities.invokeLater(new CompletionTask(completion, pos + 1, w + 1, fReplaceWords.get(-n - 1)));
-			}
-		} else {
-			// Nothing found
-			mode = Mode.INSERT;
-		}
-	}
-
-	private class CompletionTask implements Runnable {
-		final String completion;
-		final int position;
-		final int w;
-		final String replacement;
-
-		CompletionTask(String completion, int position, int w, String replacement) {
-			this.completion = completion;
-			this.position = position;
-			this.w = w;
-			this.replacement = replacement;
-		}
-
-		public void run() {
-			jInputArea.insert(completion, position);
-			jInputArea.setCaretPosition(position + completion.length());
-			jInputArea.moveCaretPosition(position);
-			fW = w;
-			fReplacement = replacement;
-			mode = Mode.COMPLETION;
-		}
-	}
-
-	private class CommitAction extends AbstractAction {
-
-		public void actionPerformed(ActionEvent ev) {
-			if (mode == Mode.COMPLETION) {
-				int pos = jInputArea.getSelectionEnd();
-				jInputArea.replaceRange(fReplacement, fW, fW + fReplacement.length());
-				// jInputField.insert(" ", pos);
-				try {
-					String endChar = jInputArea.getText(pos - 1, 1);
-					if ("]".equals(endChar)) {
-						jInputArea.setCaretPosition(pos - 1);
-					} else {
-						jInputArea.setCaretPosition(pos);
-					}
-				} catch (BadLocationException e) {
-					jInputArea.setCaretPosition(pos);
-				}
-				mode = Mode.INSERT;
-			} else {
-				jInputArea.replaceSelection("\n");
-			}
-		}
-	}
+	// public void changedUpdate(DocumentEvent ev) {
+	// }
+	//
+	// public void removeUpdate(DocumentEvent ev) {
+	// }
+	//
+	// public void insertUpdate(DocumentEvent ev) {
+	// if (ev.getLength() != 1) {
+	// return;
+	// }
+	//
+	// int pos = ev.getOffset();
+	// String content = null;
+	// try {
+	// content = jInputArea.getText(0, pos + 1);
+	// } catch (BadLocationException e) {
+	// e.printStackTrace();
+	// }
+	//
+	// // Find where the word starts
+	// int w;
+	// for (w = pos; w >= 0; w--) {
+	// if (!Character.isLetter(content.charAt(w))) {
+	// break;
+	// }
+	// }
+	// if (pos - w < 2) {
+	// // Too few chars
+	// return;
+	// }
+	// }
 
 	/**
 	 * Set a new text in the input textarea

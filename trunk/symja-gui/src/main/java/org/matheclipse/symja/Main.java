@@ -50,6 +50,7 @@ import javax.swing.JPanel;
 import javax.swing.JToolBar;
 
 import org.matheclipse.symja.plot.ParametricPlotWindow;
+import org.matheclipse.symja.plot.Plot3DWindow;
 import org.matheclipse.symja.plot.PlotWindow;
 
 /**
@@ -300,7 +301,7 @@ public class Main extends JApplet {
 			public void actionPerformed(ActionEvent e) {
 				JDialog window = new PlotWindow(frame);
 				window.pack();
-				window.show();
+				window.setVisible(true);
 			}
 		});
 		plot.add(plot2D);
@@ -309,10 +310,20 @@ public class Main extends JApplet {
 			public void actionPerformed(ActionEvent e) {
 				JDialog window = new ParametricPlotWindow(frame);
 				window.pack();
-				window.show();
+				window.setVisible(true);
 			}
 		});
 		plot.add(parametricPlot);
+		JMenuItem plot3D = new JMenuItem("New 3D Plot ...");
+		plot3D.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JDialog window = new Plot3DWindow(frame);
+				window.pack();
+				window.setVisible(true);
+			}
+		});
+		plot.add(plot3D);
+		
 		// JMenuItem plot3D = new JMenuItem("New 3D Plot ...");
 		// plot3D.addActionListener(new ActionListener() {
 		// public void actionPerformed(ActionEvent e) {

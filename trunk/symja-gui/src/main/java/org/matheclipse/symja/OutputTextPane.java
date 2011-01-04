@@ -3,6 +3,7 @@ package org.matheclipse.symja;
 import java.awt.Color;
 import java.awt.Image;
 
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JTextPane;
@@ -12,6 +13,7 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
+
 
 /**
  * JTextPane with special support for Images
@@ -156,6 +158,19 @@ public class OutputTextPane extends JTextPane {
 		}
 	}
 
+	public void addIcon(Icon icon, int location, boolean addNewline) {
+		try {
+			StyledDocument doc = (StyledDocument) this.getDocument();
+			Style style = doc.addStyle(NAMED_COMPONENT_STYLE, null);
+			StyleConstants.setIcon(style, icon);
+			doc.insertString(location, " ", style);
+			if (addNewline) {
+				doc.insertString(location + 1, "\n", null);
+			}
+		} catch (BadLocationException ex) {
+		}
+	}
+	
 	public void addImage0(Image image, boolean addNewline) {
 		addImage(image, 0, true);
 	}
