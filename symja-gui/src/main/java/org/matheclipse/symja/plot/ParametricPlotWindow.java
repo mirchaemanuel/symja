@@ -1,8 +1,15 @@
 package org.matheclipse.symja.plot;
 
-import java.awt.*;
-import javax.swing.*;
-import javax.swing.event.*;
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
+
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerNumberModel;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 public class ParametricPlotWindow extends AbstractPlotWindow {
 	protected SpinnerNumberModel tMin;
@@ -19,7 +26,7 @@ public class ParametricPlotWindow extends AbstractPlotWindow {
 	protected JPanel createMinMaxControls() {
 		JPanel controls = super.createMinMaxControls();
 		tMin = new SpinnerNumberModel(0.0, -999.0, 999.0, 1.0);
-		tMax = new SpinnerNumberModel(0.0, -999.0, 999.0, 1.0);
+		tMax = new SpinnerNumberModel(Math.PI*2.0, -999.0, 999.0, 1.0);
 
 		GridBagConstraints c = new GridBagConstraints();
 		c.fill = GridBagConstraints.BOTH;
