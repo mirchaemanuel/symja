@@ -11,7 +11,7 @@ Used core libraries:
 Used libraries for the Symja-GUI
   * [http://code.google.com/p/surfaceplotter/ Surfaceplotter] (LGPL software licence)
   * [http://forge.scilab.org/index.php/p/jlatexmath/ JLaTeXMath - A Java API to render LaTeX] (GPL software licence)
-  * [http://code.google.com/p/jsyntaxpane/jsyntaxpane jsyntaxpane - Java EditorPane with support for Syntax Highlighting]
+  * [http://code.google.com/p/jsyntaxpane/jsyntaxpane jsyntaxpane - Java EditorPane with support for Syntax Highlighting] (Apache software licence)
 
 Used in older versions of the GUI (up to version 0.0.10)
   * [http://jeuclid.sourceforge.net/ JEuclid - MathML renderer] (Apache software licence)
