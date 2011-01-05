@@ -21,11 +21,11 @@ public class NRoots extends Roots {
   }
 
   @Override
-  public IExpr evaluate(final IAST lst) {
-    if (lst.size() != 2) {
+  public IExpr evaluate(final IAST ast) {
+    if (ast.size() != 2) {
       return null;
     }
-    IExpr temp = roots(lst);
+    IExpr temp = roots(ast);
     if (temp == null || !temp.isList()) {
       return null;
     }

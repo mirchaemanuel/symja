@@ -2,7 +2,6 @@ package org.matheclipse.core.system;
 
 import org.matheclipse.basic.Config;
 import org.matheclipse.core.eval.EvalEngine;
-import org.matheclipse.core.expression.F;
 import org.matheclipse.core.expression.Matrix;
 import org.matheclipse.core.expression.Vector;
 
@@ -54,6 +53,7 @@ public class SystemTestCase extends AbstractTestCase {
 		check("a+ArcSin[x]+ArcCos[x]+2/3", "a+1/2*Pi+2/3");
 		check("a+ArcTan[17]+ArcTan[1/17]+2/3", "a+1/2*Pi+2/3");
 		check("a+ArcTan[-2]+ArcTan[-1/2]+2/3", "a-1/2*Pi+2/3");
+		check("a+Cosh[x]^2-Sinh[x]^2+2/3", "a+5/3");
 	}
 
 	public void testSystem000a() {
@@ -1019,6 +1019,9 @@ public class SystemTestCase extends AbstractTestCase {
 	}
 
 	public void testSystem171() {
+		check("Integrate[x^(-1),x]","Log[x]");
+		check("Integrate[x^a,x]","Integrate[x^a,x]");
+		check("Integrate[x^10,x]","1/11*x^11");
 		check("Simplify[1/2*(2*x+2)]", "x+1");
 		check("Simplify[1/2*(2*x+2)*(1/2)^(1/2)]", "(x+1)*(1/2)^(1/2)");
 		check("Simplify[Integrate[(8*x+1)/(x^2+x+1)^2,x]]", "(-2*x-5)*(x^2+x+1)^(-1)-4*ArcTan[(2*x+1)*3^(-1/2)]*3^(-1/2)");
@@ -1868,13 +1871,21 @@ public class SystemTestCase extends AbstractTestCase {
 
 	public void testSystem346() {
 		check("Exp[1.0]", "2.718281828459045");
+		check("Exp[Log[a+b]]", "b+a");
 	}
 
 	public void testSystem347() {
 		check("Log[1.0]", "0.0");
-
+		check("Log[1]", "0");
+		check("Log[Exp[0.5]]", "0.5");
+		check("Log[Exp[1/2]]", "1/2");
+		check("Log[Exp[-42]]", "-42");
+		check("Log[Exp[I]]", "I");
+		check("Log[Exp[-I]]", "-I");
+		check("Log[Exp[1+2*I]]", "Log[E^(1+I*2)]");
+		check("Log[Exp[a+b]]", "Log[E^(b+a)]");
 	}
-
+ 
 	public void testSystem348() {
 		check("PolynomialQ[13 x^4 y^7+a^7*x, {x,y}]", "False");
 	}

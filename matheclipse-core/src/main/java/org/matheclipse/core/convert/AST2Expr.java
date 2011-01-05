@@ -19,7 +19,7 @@ import org.matheclipse.parser.client.ast.StringNode;
 import org.matheclipse.parser.client.ast.SymbolNode;
 
 /**
- * Converts a parsed org.matheclipse.parser.client.ast.ASTNode expression into
+ * Converts a parsed <code>org.matheclipse.parser.client.ast.ASTNode</code> expression into
  * an IExpr expression
  * 
  */

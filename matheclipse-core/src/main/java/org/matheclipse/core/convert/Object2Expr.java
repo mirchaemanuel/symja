@@ -13,7 +13,7 @@ import org.matheclipse.core.interfaces.ISymbol;
 import apache.harmony.math.BigInteger;
 
 /**
- * Converts a parsed ASTNode expression into an IExpr expression
+ * Converts objects into an IExpr expression
  * 
  */
 public class Object2Expr { // extends Converter<Object, IExpr> {
@@ -29,7 +29,7 @@ public class Object2Expr { // extends Converter<Object, IExpr> {
 	}
 
 	/**
-	 * Converts an arbitrary object into an IExpr expression
+	 * Converts the following J<va objects into an IExpr expression
 	 * 
 	 * <pre>
 	 * Java Object     -&gt; MathEclipse object

@@ -9,11 +9,13 @@ import org.matheclipse.parser.client.eval.DoubleVariable;
 import com.googlecode.surfaceplotter.AbstractSurfaceModel;
 
 public class StringSurfaceModel extends AbstractSurfaceModel implements Runnable {
+	public static String F1_DEFAULT_FUNCTION = "If[x*x+y*y==0,1,Sin[x*x+y*y]/(x*x+y*y)]";
+	public static String F2_DEFAULT_FUNCTION = "Sin[x*y]";
 	private final DoubleEvaluator engine = new DoubleEvaluator();
 	private ASTNode f1Node;
 	private ASTNode f2Node;
-	private String f1Function = "If[x*x+y*y==0,1,Sin[x*x+y*y]/(x*x+y*y)]";
-	private String f2Function = "Sin[x*y]";
+	private String f1Function = F1_DEFAULT_FUNCTION;
+	private String f2Function = F2_DEFAULT_FUNCTION;
 
 	StringSurfaceModel() {
 		super();

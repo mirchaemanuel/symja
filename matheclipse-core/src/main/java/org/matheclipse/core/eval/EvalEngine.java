@@ -23,6 +23,7 @@ import org.matheclipse.core.eval.interfaces.ISymbolEvaluator;
 import org.matheclipse.core.expression.ComplexSym;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.expression.MethodSymbol;
+import org.matheclipse.core.generic.Predicates;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IComplex;
 import org.matheclipse.core.interfaces.IComplexNum;
@@ -41,6 +42,8 @@ import org.matheclipse.core.list.algorithms.EvaluationSupport;
 import org.matheclipse.core.sql.SerializeVariables2DB;
 import org.matheclipse.parser.client.Parser;
 import org.matheclipse.parser.client.ast.ASTNode;
+
+import com.google.common.base.Predicate;
 
 import apache.harmony.math.BigInteger;
 import apache.harmony.math.Rational;
@@ -534,7 +537,7 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 	 * 
 	 * @param symbol
 	 * @param ast
-	 * @return
+	 * @return 
 	 */
 	private IExpr evalASTBuiltinFunction(final ISymbol symbol, final IAST ast) {
 		IExpr result;
@@ -609,17 +612,19 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 	 */
 	public IAST evalSetAttributes(IAST ast) {
 		if ((ast.getEvalFlags() & IAST.IS_FLATTENED_OR_SORTED_MASK) != 0x0000) {
-			// already flattend or sorted
+			// already flattened or sorted
 			return ast;
 		}
 		final ISymbol symbol = ast.topHead();
 		final int attr = symbol.getAttributes();
+		final Predicate<IExpr> isPattern = Predicates.isPattern();
 		IAST resultList = ast;
 		IAST result;
 		if ((ISymbol.FLAT & attr) == ISymbol.FLAT) {
 			// associative
 			if ((result = EvaluationSupport.flatten(ast)) != null) {
 				resultList = result;
+				ast = result;
 			}
 		}
 		if ((ISymbol.HOLDALL & attr) != ISymbol.HOLDALL) {
@@ -627,14 +632,24 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 			if ((ISymbol.HOLDFIRST & attr) == ISymbol.NOATTRIBUTE) {
 				// the HoldFirst attribute isn't set here
 				if (ast.size() > 1 && ast.get(1) instanceof IAST) {
-					resultList.set(1, evalSetAttributes((IAST) ast.get(1)));
+					IAST temp = (IAST) ast.get(1);
+					if (temp.isFree(isPattern)) {
+						resultList.set(1, evaluate(temp));
+					} else {
+						resultList.set(1, evalSetAttributes(temp));
+					}
 				}
 			}
 			if ((ISymbol.HOLDREST & attr) == ISymbol.NOATTRIBUTE) {
 				// the HoldRest attribute isn't set here
 				for (int i = 2; i < ast.size(); i++) {
 					if (ast.get(i) instanceof IAST) {
-						resultList.set(i, evalSetAttributes((IAST) ast.get(i)));
+						IAST temp = (IAST) ast.get(i);
+						if (temp.isFree(isPattern)) {
+							resultList.set(i, evaluate(temp));
+						} else {
+							resultList.set(i, evalSetAttributes(temp));
+						}
 					}
 				}
 			}

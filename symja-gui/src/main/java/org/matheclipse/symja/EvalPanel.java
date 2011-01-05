@@ -71,8 +71,9 @@ public class EvalPanel extends JPanel { // implements DocumentListener {
 
 	final static long serialVersionUID = 0x000000001;
 
-	private final static String versionStr = "Keyboard shortcuts:\n" + "  Ctrl+ENTER  - for symbolic evaluation\n"
-			+ "  Page up     - previous input\n" + "  Page down   - next input\n" + "Program arguments:\n"
+	private final static String versionStr = "Input editor keyboard shortcuts:\n" + "  Ctrl+ENTER  - for symbolic evaluation\n"
+			+ "  Ctrl+SPACE  - for code completion of function names\n" + "  Page up     - previous input\n"
+			+ "  Page down   - next input\n" + "Program arguments:\n"
 			+ "  -f or -file <filename>    - use filename as Editor input script\n"
 			+ "  -d or -default <filename> - use filename for system startup rules\n";
 

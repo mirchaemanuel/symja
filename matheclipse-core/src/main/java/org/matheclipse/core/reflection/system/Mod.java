@@ -6,6 +6,11 @@ import org.matheclipse.core.expression.IntegerSym;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.IInteger;
 
+/**
+ * 
+ * See: <a href="http://en.wikipedia.org/wiki/Modular_arithmetic">Wikipedia -
+ * Modular arithmetic</a>
+ */
 public class Mod extends AbstractArg2 {
 	public Mod() {
 	}
