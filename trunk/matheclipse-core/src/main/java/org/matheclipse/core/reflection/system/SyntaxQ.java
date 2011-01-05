@@ -1,7 +1,7 @@
 package org.matheclipse.core.reflection.system;
 
 import org.matheclipse.core.convert.AST2Expr;
-import org.matheclipse.core.eval.exception.WrongNumberOfArguments;
+import org.matheclipse.core.eval.exception.Validate;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IAST;
@@ -15,20 +15,22 @@ import org.matheclipse.parser.client.ast.ASTNode;
 import com.google.common.base.Predicate;
 
 /**
- * Returns <code>True</code>, if the given expression is a string which has the correct syntax
- *
+ * Returns <code>True</code>, if the given expression is a string which has the
+ * correct syntax
+ * 
  */
 public class SyntaxQ extends AbstractFunctionEvaluator implements Predicate<String> {
 
 	public SyntaxQ() {
-	} 
+	}
 
 	@Override
-	public IExpr evaluate(final IAST functionList) {
-		if ((functionList.size() != 2) || !(functionList.get(1) instanceof IStringX)) {
-			throw new WrongNumberOfArguments(functionList, 1, functionList.size() - 1);
+	public IExpr evaluate(final IAST ast) {
+		Validate.checkSize(ast, 2);
+		if (!(ast.get(1) instanceof IStringX)) {
+			return F.False;
 		}
-		return F.bool(apply(functionList.get(1).toString()));
+		return F.bool(apply(ast.get(1).toString()));
 	}
 
 	@Override
@@ -49,4 +51,5 @@ public class SyntaxQ extends AbstractFunctionEvaluator implements Predicate<Stri
 		}
 		return false;
 	}
+
 }

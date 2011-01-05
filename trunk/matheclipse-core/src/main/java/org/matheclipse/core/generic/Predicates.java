@@ -10,6 +10,7 @@ import org.matheclipse.core.eval.EvalEngine;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
+import org.matheclipse.core.interfaces.IPattern;
 
 import com.google.common.base.Predicate;
 
@@ -142,5 +143,20 @@ public class Predicates {
 	 */
 	public static Predicate<IExpr> in(IAST target) {
 		return new InASTPredicate(target);
+	}
+
+	/**
+	 * Returns a predicate that evaluates to {@code true} if the object reference
+	 * is an <code>instanceof IPattern</code>.
+	 * 
+	 * @return
+	 */
+	public static Predicate<IExpr> isPattern() {
+		return new Predicate() {
+			@Override
+			public boolean apply(Object input) {
+				return (input instanceof IPattern);
+			}
+		};
 	}
 }

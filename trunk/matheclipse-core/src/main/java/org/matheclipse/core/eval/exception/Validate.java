@@ -48,6 +48,21 @@ public final class Validate {
 	}
 
 	/**
+	 * Check if the argument at the given position is a integer.
+	 * 
+	 * @param position
+	 *          the position which has to be a symbol.
+	 * @throws WrongArgumentType
+	 *           if it's not a symbol.
+	 */
+	public static IInteger checkIntegerType(IAST ast, int position) {
+		if (ast.get(position).isInteger()) {
+			return (IInteger) ast.get(position);
+		}
+		throw new WrongArgumentType(ast, ast.get(position), position, "Integer expected!");
+	}
+	
+	/**
 	 * 
 	 * @throws WrongNumberOfArguments
 	 *           if {@code size} is not in the range {@code from} to {@code

@@ -1,6 +1,6 @@
 package org.matheclipse.core.reflection.system;
 
-import org.matheclipse.core.eval.exception.WrongNumberOfArguments;
+import org.matheclipse.core.eval.exception.Validate;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IAST;
@@ -13,13 +13,12 @@ import com.google.common.base.Predicate;
  * Returns <code>True</code>, if the given expression is an number object
  * 
  */
-public class NumberQ extends AbstractFunctionEvaluator implements
-		Predicate<IExpr> {
+public class NumberQ extends AbstractFunctionEvaluator implements Predicate<IExpr> {
 	/**
 	 * Constructor for the unary predicate
 	 */
 	public final static NumberQ CONST = new NumberQ();
-	
+
 	public NumberQ() {
 	}
 
@@ -28,11 +27,9 @@ public class NumberQ extends AbstractFunctionEvaluator implements
 	 * <code>False</code> otherwise
 	 */
 	@Override
-	public IExpr evaluate(final IAST functionList) {
-		if (functionList.size() != 2) {
-			throw new WrongNumberOfArguments(functionList, 1, functionList.size() - 1);
-		}
-		return F.bool(functionList.get(1).isNumber());
+	public IExpr evaluate(final IAST ast) {
+		Validate.checkSize(ast, 2);
+		return F.bool(ast.get(1).isNumber());
 	}
 
 	@Override
@@ -40,7 +37,7 @@ public class NumberQ extends AbstractFunctionEvaluator implements
 		symbol.setAttributes(ISymbol.LISTABLE);
 	}
 
-	public boolean apply(final IExpr obj) {
-		return obj.isNumber();
+	public boolean apply(final IExpr expr) {
+		return expr.isNumber();
 	}
 }

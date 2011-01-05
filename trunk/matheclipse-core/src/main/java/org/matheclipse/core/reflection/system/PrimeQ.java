@@ -1,19 +1,21 @@
 package org.matheclipse.core.reflection.system;
 
 import org.matheclipse.basic.Config;
+import org.matheclipse.core.eval.exception.Validate;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.IInteger;
+import org.matheclipse.core.interfaces.ISymbol;
 
 import apache.harmony.math.BigInteger;
 
 import com.google.common.base.Predicate;
 
 /**
- * Test if a number is prime.
- * See: <a href="http://en.wikipedia.org/wiki/Prime_number">Wikipedia:Prime number</a>
+ * Test if a number is prime. See: <a
+ * href="http://en.wikipedia.org/wiki/Prime_number">Wikipedia:Prime number</a>
  * 
  * @see org.matheclipse.core.reflection.system.NextPrime
  */
@@ -22,12 +24,13 @@ public class PrimeQ extends AbstractFunctionEvaluator implements Predicate<IExpr
 	public PrimeQ() {
 	}
 
-	@Override 
-	public IExpr evaluate(final IAST functionList) {
-		if ((functionList.size() != 2) || !(functionList.get(1) instanceof IInteger)) {
-			return null;
-		}
-		return F.bool(apply(functionList.get(1)));
+	@Override
+	public IExpr evaluate(final IAST ast) {
+		Validate.checkSize(ast, 2);
+		if (!(ast.get(1) instanceof IInteger)) {
+			return F.False;
+		} 
+		return F.bool(apply(ast.get(1)));
 	}
 
 	public boolean apply(final IExpr obj) {
@@ -40,5 +43,10 @@ public class PrimeQ extends AbstractFunctionEvaluator implements Predicate<IExpr
 			}
 		}
 		return false;
+	}
+	
+	@Override
+	public void setUp(final ISymbol symbol) {
+		symbol.setAttributes(ISymbol.LISTABLE);
 	}
 }

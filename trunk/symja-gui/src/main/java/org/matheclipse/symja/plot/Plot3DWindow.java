@@ -68,7 +68,7 @@ public class Plot3DWindow extends AbstractPlot3DWindow {
 
 
 	public void addField() {
-		addField("x(t) = ");
-		addField("y(t) = ");
+		addField("f1(x,y) = ", StringSurfaceModel.F1_DEFAULT_FUNCTION);
+		addField("f2/x,y) = ", StringSurfaceModel.F2_DEFAULT_FUNCTION);
 	}
 }

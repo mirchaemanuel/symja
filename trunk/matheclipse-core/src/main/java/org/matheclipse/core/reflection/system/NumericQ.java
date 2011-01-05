@@ -1,6 +1,6 @@
 package org.matheclipse.core.reflection.system;
 
-import org.matheclipse.core.eval.exception.WrongNumberOfArguments;
+import org.matheclipse.core.eval.exception.Validate;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IAST;
@@ -87,15 +87,13 @@ public class NumericQ extends AbstractFunctionEvaluator implements
   }
 
   /**
-   * Returns <code>True</code> if the 1st argument is a numeric object;
+   * Returns <code>True</code> if the first argument is a numeric object;
    * <code>False</code> otherwise
    */
   @Override
-  public IExpr evaluate(final IAST functionList) {
-    if (functionList.size() != 2) {
-      throw new WrongNumberOfArguments(functionList, 1, functionList.size() - 1);
-    }
-    return F.bool(apply(functionList.get(1)));
+  public IExpr evaluate(final IAST ast) {
+  	Validate.checkSize(ast, 2);
+    return F.bool(apply(ast.get(1)));
   }
 
   @Override

@@ -180,7 +180,7 @@ public abstract class AbstractPlotter3D extends JSurfacePanel {
 	public AbstractPlotter3D(SurfaceModel model) {
 		super(model);
 		setMinimumSize(new Dimension(0, 0));
-		setPreferredSize(new Dimension(640, 400));
+		setPreferredSize(new Dimension(640, 640));
 		setMaximumSize(new Dimension(Short.MAX_VALUE, Short.MAX_VALUE));
 		// updatePlot();
 	}

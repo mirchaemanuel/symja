@@ -72,30 +72,30 @@ public abstract class AbstractPlot3DWindow extends JDialog {
 
 		container.add(equations, gbc);
 		gbc.fill = GridBagConstraints.NONE;
-		JButton add = new JButton("Add Function");
-		add.setEnabled(true);
-		container.add(add, gbc);
+		// JButton add = new JButton("Add Function");
+		// add.setEnabled(true);
+		// container.add(add, gbc);
 
 		gbc.fill = GridBagConstraints.BOTH;
 		gbc.weightx = 1.0;
 		gbc.weighty = 1.0;
 		container.add(Box.createGlue(), gbc);
 
-		add.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				addField();
-				fieldScroller.validate();
-			}
-		});
+		// add.addActionListener(new ActionListener() {
+		// public void actionPerformed(ActionEvent e) {
+		// addField();
+		// fieldScroller.validate();
+		// }
+		// });
 
 		return container;
 	}
 
 	public abstract void addField();
 
-	protected void addField(String label) {
+	protected void addField(String label, String value) {
 		GridBagConstraints gbc = new GridBagConstraints();
-		JTextField field = new JTextField("");
+		JTextField field = new JTextField(value);
 
 		gbc.fill = GridBagConstraints.BOTH;
 		gbc.weightx = 0.0;
