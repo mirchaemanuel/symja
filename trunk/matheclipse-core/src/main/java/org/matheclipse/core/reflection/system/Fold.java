@@ -20,7 +20,7 @@ public class Fold implements IFunctionEvaluator {
 		try {
 			if ((ast.size() == 4) && (ast.get(3) instanceof IAST)) {
 				final IAST list = (IAST)ast.get(3);
-				return list.args().fold(new BinaryMap(F.ast(ast.get(1))),ast.get(2));
+				return list.args().foldLeft(new BinaryMap(F.ast(ast.get(1))),ast.get(2));
 //				return Folding.fold(ast.get(2), list, 1, list.size(), new BinaryMap(f.createAST(ast.get(1))));
 			}
 		} catch (final ArithmeticException e) {

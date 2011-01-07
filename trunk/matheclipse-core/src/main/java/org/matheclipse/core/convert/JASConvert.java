@@ -53,9 +53,10 @@ public class JASConvert<C extends RingElem<C>> {
 	 * 
 	 * @param variablesList
 	 */
-//	public JASConvert(final List<? extends IExpr> variablesList) {
-//		this(variablesList, (RingFactory<BigRational>)BigRational.ZERO, new TermOrder(TermOrder.INVLEX));
-//	};
+	// public JASConvert(final List<? extends IExpr> variablesList) {
+	// this(variablesList, (RingFactory<BigRational>)BigRational.ZERO, new
+	// TermOrder(TermOrder.INVLEX));
+	// };
 
 	public JASConvert(final List<? extends IExpr> variablesList, RingFactory<C> ringFactory) {
 		this(variablesList, ringFactory, new TermOrder(TermOrder.INVLEX));
@@ -110,6 +111,9 @@ public class JASConvert<C extends RingElem<C>> {
 				final IExpr expr = ast.get(1);
 				for (int i = 0; i < fVariables.size(); i++) {
 					if (fVariables.get(i).equals(expr)) {
+						if (((IInteger) ast.get(2)).isNegative()) {
+							throw new ArithmeticException("JASConvert:expr2Poly - negative exponent: " + ast.get(2).toString());
+						}
 						// may throw ClassCastExcepion or ArithmeticException
 						ExpVector e = ExpVector.create(fVariables.size(), i, ((IInteger) ast.get(2)).toInt());
 						return fPolyFactory.getONE().multiply(e);
@@ -137,7 +141,7 @@ public class JASConvert<C extends RingElem<C>> {
 			BigRational r = nr.divide(dr);
 			return new GenPolynomial(fPolyFactory, r);// pfac.getONE().multiply(r);
 		}
-		if (exprPoly.isFree(Predicates.in(fVariables))) {
+		if (exprPoly.isFree(Predicates.in(fVariables), true)) {
 			return new GenPolynomial(fPolyFactory, exprPoly);
 		}
 		throw new ClassCastException(exprPoly.toString());

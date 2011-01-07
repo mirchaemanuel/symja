@@ -14,6 +14,7 @@ import static org.matheclipse.core.expression.F.Plus;
 import static org.matheclipse.core.expression.F.Power;
 import static org.matheclipse.core.expression.F.Times;
 
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.SortedMap;
@@ -26,6 +27,7 @@ import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
 import org.matheclipse.core.expression.ASTRange;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.expression.IConstantHeaders;
+import org.matheclipse.core.generic.BinaryEval;
 import org.matheclipse.core.generic.Functors;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
@@ -97,18 +99,58 @@ public class Integrate extends AbstractFunctionEvaluator implements IConstantHea
 
 	@Override
 	public IExpr evaluate(final IAST ast) {
-		if (ast.size() != 3) {
+		if (ast.size() < 3) {
 			return null;
 		}
+		IExpr fx = ast.get(1);
+		if (ast.size() > 3) {
+			// reduce arguments by folding Integrate[fxy, x, y] to Integrate[
+			// Integrate[fxy, y], x] ...
+			return ast.range(2).foldRight(new BinaryEval(F.Integrate), fx);
+		}
+
+		IExpr arg2 = ast.get(2);
+		if (arg2.isList()) {
+			IAST xList = (IAST) arg2;
+			if (xList.isVector() == 3) {
+				// Integrate[f[x], {x,a,b}]
+				IAST clone = ast.clone();
+				clone.set(2, xList.get(1));
+				IExpr temp = F.eval(clone);
+				if (temp.isFree(F.Integrate, true)) {
+					// F(b)-F(a)
+					IExpr Fb = F.eval(temp.replaceAll(F.Rule(xList.get(1), xList.get(3))));
+					IExpr Fa = F.eval(temp.replaceAll(F.Rule(xList.get(1), xList.get(2))));
+					if (!Fb.isFree(F.DirectedInfinity, true) || !Fb.isFree(F.Indeterminate, true)) {
+						PrintStream stream = EvalEngine.get().getOutPrintStream();
+						if (stream == null) {
+							stream = System.out;
+						}
+						stream.println("Not integrable: " + temp + " for " + xList.get(1) + " = " + xList.get(3));
+						return null;
+					}
+					if (!Fa.isFree(F.DirectedInfinity, true) || !Fa.isFree(F.Indeterminate, true)) {
+						PrintStream stream = EvalEngine.get().getOutPrintStream();
+						if (stream == null) {
+							stream = System.out;
+						}
+						stream.println("Not integrable: " + temp + " for " + xList.get(1) + " = " + xList.get(2));
+						return null;
+					}
+					return F.Subtract(Fb, Fa);
+				}
+			}
+		}
+
 		// PatternMatcher matcher = new PatternMatcher((IExpr) lst.get(2));
 		// if (FreeQ.freeQ(matcher, (IExpr) lst.get(1))) {
 		// return C0;
 		// }
 		if (ast.get(1) instanceof INumber) {
 			// Integrate[x_NumberQ,y_] -> x*y
-			return Times(ast.get(1), ast.get(2));
+			return Times(ast.get(1), arg2);
 		}
-		if (ast.get(1).equals(ast.get(2))) {
+		if (ast.get(1).equals(arg2)) {
 			// Integrate[x_,x_] -> x^2 / 2
 			return Times(F.C1D2, Power(ast.get(1), F.C2));
 		}
@@ -150,7 +192,8 @@ public class Integrate extends AbstractFunctionEvaluator implements IConstantHea
 							// varListStr[0] = symbol.toString();
 							// JASConvert<BigRational> jas = new
 							// JASConvert<BigRational>(varList);
-							// GenPolynomial<BigRational> numerator = jas.expr2Poly(parts[0]);
+							// GenPolynomial<BigRational> numerator =
+							// jas.expr2Poly(parts[0]);
 							// GenPolynomial<BigRational> denominator =
 							// jas.expr2Poly(parts[1]);
 							// QuotientRing<BigRational> qfac = new
@@ -159,7 +202,8 @@ public class Integrate extends AbstractFunctionEvaluator implements IConstantHea
 							// numerator, denominator);
 							// ElementaryIntegration<BigRational> eIntegrator = new
 							// ElementaryIntegration<BigRational>(BigRational.ZERO);
-							// QuotIntegral<BigRational> integral = eIntegrator.integrate(q);
+							// QuotIntegral<BigRational> integral =
+							// eIntegrator.integrate(q);
 							// // if (Config.SHOW_STACKTRACE) {
 							// // System.out.println("Result: " + integral);
 							// // }
@@ -400,7 +444,7 @@ public class Integrate extends AbstractFunctionEvaluator implements IConstantHea
 				engine.setRecursionLimit(128);
 			}
 			IExpr fIntegrated = F.eval(F.Integrate(f, symbol));
-			if (!fIntegrated.isFree(Integrate)) {
+			if (!fIntegrated.isFree(Integrate, true)) {
 				return null;
 			}
 			IExpr gDerived = F.eval(F.D(g, symbol));
@@ -427,7 +471,7 @@ public class Integrate extends AbstractFunctionEvaluator implements IConstantHea
 		IExpr temp;
 		for (int i = 1; i < timesAST.size(); i++) {
 			temp = timesAST.get(i);
-			if (temp.isFree(symbol)) {
+			if (temp.isFree(symbol, true)) {
 				fTimes.add(temp);
 				continue;
 			} else if (temp.equals(symbol)) {

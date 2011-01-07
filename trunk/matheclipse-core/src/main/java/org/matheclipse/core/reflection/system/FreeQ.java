@@ -13,7 +13,7 @@ public class FreeQ implements IFunctionEvaluator {
 
 	public IExpr evaluate(final IAST functionList) {
 		if (functionList.size() == 3) {
-			return F.bool(functionList.get(1).isFree(functionList.get(2)));
+			return F.bool(functionList.get(1).isFree(functionList.get(2), true));
 		}
 		return F.False;
 	}

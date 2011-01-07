@@ -48,7 +48,7 @@ public class Sum extends Table {
 				final ISymbol var = (ISymbol) list.get(1);
 				final IInteger from = (IInteger) list.get(2);
 				final ISymbol to = (ISymbol) list.get(3);
-				if (ast.get(1).isFree(var) && ast.get(1).isFree(to)) {
+				if (ast.get(1).isFree(var, true) && ast.get(1).isFree(to, true)) {
 					if (from.equals(F.C1)) {
 						return F.Times(to, ast.get(1));
 					}
@@ -63,7 +63,7 @@ public class Sum extends Table {
 						((IAST) ast.get(1)).filter(filterCollector, restCollector, new Predicate<IExpr>() {
 							@Override
 							public boolean apply(IExpr input) {
-								return input.isFree(var) && input.isFree(to);
+								return input.isFree(var, true) && input.isFree(to, true);
 							}
 						});
 						if (filterCollector.size() > 1) {

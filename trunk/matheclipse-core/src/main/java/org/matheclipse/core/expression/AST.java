@@ -784,15 +784,21 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 	/**
 	 * {@inheritDoc}
 	 */
-	public boolean isFree(final IExpr pattern) {
+	public boolean isFree(final IExpr pattern, boolean heads) {
 		final PatternMatcher matcher = new PatternMatcher(pattern);
+		if (heads) {
+			return !AST.COPY.some((IExpr) this, matcher, 0);
+		}
 		return !AST.COPY.some((IExpr) this, matcher, 1);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public boolean isFree(Predicate<IExpr> predicate) {
+	public boolean isFree(Predicate<IExpr> predicate, boolean heads) {
+		if (heads) {
+			return !AST.COPY.some((IExpr) this, predicate, 0);
+		}
 		return !AST.COPY.some((IExpr) this, predicate, 1);
 	}
 

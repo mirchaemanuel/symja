@@ -256,7 +256,7 @@ public class Functors {
 			for (final IExpr expr : astRules) {
 				if (expr.isRuleAST()) {
 					rule = (IAST) expr;
-					if (rule.get(1).isFree(patternQ)) {
+					if (rule.get(1).isFree(patternQ, true)) {
 						equalRules.put(rule.get(1), rule.get(2));
 					} else {
 						matchers.add(new PatternMatcherAndEvaluator(F.SetDelayed, rule.get(1), rule.get(2)));
@@ -268,7 +268,7 @@ public class Functors {
 		} else {
 			if (astRules.isRuleAST()) {
 				// a single rule
-				if (astRules.get(1).isFree(patternQ)) {
+				if (astRules.get(1).isFree(patternQ, true)) {
 					equalRules.put(astRules.get(1), astRules.get(2));
 				} else {
 					matchers.add(new PatternMatcherAndEvaluator(F.SetDelayed, astRules.get(1), astRules.get(2)));

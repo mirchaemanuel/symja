@@ -53,7 +53,7 @@ public class Solve extends AbstractFunctionEvaluator {
 		 * 
 		 */
 		public void analyze(IExpr eqExpr) {
-			if (eqExpr.isFree(Predicates.in(vars))) {
+			if (eqExpr.isFree(Predicates.in(vars), true)) {
 				leafCount++;
 				value.add(eqExpr);
 			} else if (eqExpr.isPlus()) {
@@ -62,7 +62,7 @@ public class Solve extends AbstractFunctionEvaluator {
 				IExpr expr;
 				for (int i = 1; i < arg.size(); i++) {
 					expr = arg.get(i);
-					if (expr.isFree(Predicates.in(vars))) {
+					if (expr.isFree(Predicates.in(vars), true)) {
 						leafCount++;
 						value.add(expr);
 					} else {
@@ -117,7 +117,7 @@ public class Solve extends AbstractFunctionEvaluator {
 				IExpr expr;
 				for (int i = 1; i < arg.size(); i++) {
 					expr = arg.get(i);
-					if (expr.isFree(Predicates.in(vars))) {
+					if (expr.isFree(Predicates.in(vars), true)) {
 						leafCount++;
 					} else if (expr.isSymbol()) {
 						leafCount++;
@@ -186,7 +186,7 @@ public class Solve extends AbstractFunctionEvaluator {
 						}
 					}
 				}
-			} else if (expr.isFree(Predicates.in(vars))) {
+			} else if (expr.isFree(Predicates.in(vars), true)) {
 				leafCount++;
 				value.add(expr);
 			} else if (expr.isPower() && ((IAST) expr).get(2).isInteger()) {

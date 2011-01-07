@@ -54,7 +54,7 @@ public class D extends AbstractFunctionEvaluator {
 		IExpr fx = ast.get(1);
 		if (ast.size() > 3) {
 			// reduce arguments by folding D[fxy, x, y] to D[ D[fxy, x], y] ...
-			return ast.range(2).fold(new BinaryEval(F.D), fx);
+			return ast.range(2).foldLeft(new BinaryEval(F.D), fx);
 		}
 
 		if (fx.isList()) {
@@ -89,7 +89,7 @@ public class D extends AbstractFunctionEvaluator {
 
 		}
 
-		if (!(x.isList()) && fx.isFree(x)) {
+		if (!(x.isList()) && fx.isFree(x, true)) {
 			return F.C0;
 		}
 		if (fx instanceof INumber) {
