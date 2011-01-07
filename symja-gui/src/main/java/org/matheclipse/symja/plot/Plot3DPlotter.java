@@ -50,20 +50,20 @@ public class Plot3DPlotter extends AbstractPlotter3D {
 	 */
 	protected int numFuncs;
 
-	/**
-	 * The minimum bound on the independent variable.
-	 */
-	protected double tMin;
-
-	/**
-	 * The maximum bounds on the independent variable.
-	 */
-	protected double tMax;
-
-	/**
-	 * The range of the independent variable.
-	 */
-	protected double tRange;
+//	/**
+//	 * The minimum bound on the independent variable.
+//	 */
+//	protected double tMin;
+//
+//	/**
+//	 * The maximum bounds on the independent variable.
+//	 */
+//	protected double tMax;
+//
+//	/**
+//	 * The range of the independent variable.
+//	 */
+//	protected double tRange;
 
 	/**
 	 * The independent variable.
@@ -108,7 +108,7 @@ public class Plot3DPlotter extends AbstractPlotter3D {
 		return model;
 	}
 
-	public void setFunctions(java.util.List functions) {
+	public void setFunctions(java.util.List<String> functions) {
 		numFuncs = functions.size() / 2;
 		//
 		// xPoints = new double[numFuncs][thisResolution + 1];
@@ -116,7 +116,7 @@ public class Plot3DPlotter extends AbstractPlotter3D {
 		// color = new Color[numFuncs];
 		// DoubleEvaluator engine = new DoubleEvaluator();
 
-		ListIterator i = functions.listIterator();
+		ListIterator<String> i = functions.listIterator();
 		String f1 = "";
 		String f2 = "";
 		if (i.hasNext()) {
@@ -128,20 +128,24 @@ public class Plot3DPlotter extends AbstractPlotter3D {
 		StringSurfaceModel model = new StringSurfaceModel();
 		model.setF1Function(f1);
 		model.setF2Function(f2);
+		model.setXMin((float) xMin);
+		model.setXMax((float) xMax);
+		model.setYMin((float) yMin);
+		model.setYMax((float) yMax);
 		new Thread(model).start();
 		setModel(model);
 		repaint();
 	}
 
-	public void setTMax(double in) {
-		tMax = in;
-		tRange = tMax - tMin;
-	}
-
-	public void setTMin(double in) {
-		tMin = in;
-		tRange = tMax - tMin;
-	}
+//	public void setTMax(double in) {
+//		tMax = in;
+//		tRange = tMax - tMin;
+//	}
+//
+//	public void setTMin(double in) {
+//		tMin = in;
+//		tRange = tMax - tMin;
+//	}
 
 	/**
 	 * Returns either a new plot or a plot from a cache.
