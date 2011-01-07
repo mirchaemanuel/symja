@@ -244,15 +244,23 @@ public interface IExpr extends Comparable<IExpr>, RingElem<IExpr>, INestedListEl
 	 * Test if the expression is free of (sub-)expressions which match the
 	 * pattern.
 	 * 
+	 * @param heads
+	 *          if set to <code>false</code>, only the arguments of an IAST should
+	 *          be tested and not the <code>Head[]</code> element.
+	 * 
 	 */
-	public boolean isFree(IExpr pattern);
+	public boolean isFree(IExpr pattern, boolean heads);
 
 	/**
 	 * Test if the expression is free of (sub-)expressions which match the given
 	 * predicate.
 	 * 
+	 * @param heads
+	 *          if set to <code>false</code>, only the arguments of an IAST should
+	 *          be tested and not the <code>Head[]</code> element.
+	 * 
 	 */
-	public boolean isFree(Predicate<IExpr> predicate);
+	public boolean isFree(Predicate<IExpr> predicate, boolean heads);
 
 	/**
 	 * Compares this expression with the specified expression for order. Returns
@@ -437,10 +445,11 @@ public interface IExpr extends Comparable<IExpr>, RingElem<IExpr>, INestedListEl
 	public boolean isTrue();
 
 	/**
-	 * Test if this expression is a vector and return the dimension. This
-	 * expression is only a vector, if no element is itself a list.
+	 * Test if this expression is a vector and return the dimension of the vector.
+	 * This expression is only a vector, if no element is itself a list.
 	 * 
-	 * @return <code>-1</code> if the expression is no vector
+	 * @return <code>-1</code> if the expression is no vector or
+	 *         <code>size()-1</code> of the corresponding IAST.
 	 */
 	public int isVector();
 

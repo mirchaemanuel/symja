@@ -264,12 +264,12 @@ public abstract class ExprImpl implements IExpr {
 		return false;
 	}
 
-	public boolean isFree(final IExpr pattern) {
+	public boolean isFree(final IExpr pattern, boolean heads) {
 		final PatternMatcher matcher = new PatternMatcher(pattern);
 		return !AST.COPY.some(this, matcher, 1);
 	}
 
-	public boolean isFree(Predicate<IExpr> predicate) {
+	public boolean isFree(Predicate<IExpr> predicate, boolean heads) {
 		return !AST.COPY.some(this, predicate, 1);
 	}
 

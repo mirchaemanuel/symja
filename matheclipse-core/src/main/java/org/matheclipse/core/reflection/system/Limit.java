@@ -49,7 +49,7 @@ public class Limit extends AbstractFunctionEvaluator implements IConstantHeaders
 	}
 
 	public static IExpr limit(final IExpr expr, ISymbol sym, IExpr lim, IAST rule) {
-		if (expr.isFree(sym)) {
+		if (expr.isFree(sym, true)) {
 			// Limit[a_,sym->lim] -> a
 			return expr;
 		}
@@ -171,7 +171,7 @@ public class Limit extends AbstractFunctionEvaluator implements IConstantHeaders
 		}
 		ISymbol sym = (ISymbol) rule.get(1);
 		IExpr lim = null;
-		if (rule.get(2).isFree(sym)) {
+		if (rule.get(2).isFree(sym, true)) {
 			lim = rule.get(2);
 		} else {
 			return null;

@@ -382,6 +382,8 @@ public class Range<E, L extends List<E>, C extends Collection<E>> implements Ite
 	 * Locates the first pair of adjacent elements in a range that match the given
 	 * predicate
 	 * 
+	 * @param predicate
+	 *          a predicate that analyzes the given elements
 	 * @return the index of the first element
 	 */
 	public int findAdjacent(Predicate<E> predicate) {
@@ -393,9 +395,11 @@ public class Range<E, L extends List<E>, C extends Collection<E>> implements Ite
 	 * predicate starting at index
 	 * <code>start</start> and ending at the ranges upper limit.
 	 * 
+	 * @param predicate
+	 *          a predicate that analyzes the given elements
 	 * @return the index of the first element
 	 */
-	public int findAdjacent(Predicate<E> predicate, int start) {
+	private int findAdjacent(Predicate<E> predicate, int start) {
 		for (int i = start; i < fEnd - 1; i++) {
 
 			if (predicate.apply(fList.get(i)) && predicate.apply(fList.get(i + 1))) {
@@ -406,39 +410,36 @@ public class Range<E, L extends List<E>, C extends Collection<E>> implements Ite
 	}
 
 	/**
-	 * Apply the functor to pairwise elements of the range and return the final
-	 * result. Results do accumulate from one invocation to the next: each time
-	 * this method is called, the accumulation starts over with the value from the
-	 * previous function call.
+	 * Apply the functor to the elements of the range from left to right and
+	 * return the final result. Results do accumulate from one invocation to the
+	 * next: each time this method is called, the accumulation starts over with
+	 * value from the previous function call.
 	 * 
-	 * @return If the range contains only one element, the method will return
-	 *         <code>function.apply(element, null)</code>
+	 * @param function
+	 *          a binary function that accumulate the elements
+	 * @return the accumulated elements
 	 */
-	public E fold(BiFunction<E, E, ? extends E> function) {
-		if (fStart >= fEnd) {
-			return null;
-		}
-		E value = fList.get(fStart);
-		if (fStart == fEnd) {
-			return function.apply(value, null);
-		}
-		for (int i = fStart + 1; i < fEnd; i++) {
-
+	public E foldLeft(final BiFunction<E, E, ? extends E> function, E startValue) {
+		E value = startValue;
+		for (int i = fStart; i < fEnd; i++) {
 			value = function.apply(value, fList.get(i));
 		}
 		return value;
 	}
 
 	/**
-	 * Apply the functor to the elements of the range and return the final result.
-	 * Results do accumulate from one invocation to the next: each time this
-	 * method is called, the accumulation starts over with value from the previous
-	 * function call.
+	 * Apply the functor to the elements of the range from right to left and
+	 * return the final result. Results do accumulate from one invocation to the
+	 * next: each time this method is called, the accumulation starts over with
+	 * value from the previous function call.
 	 * 
+	 * @param function
+	 *          a binary function that accumulate the elements
+	 * @return the accumulated elements
 	 */
-	public E fold(final BiFunction<E, E, ? extends E> function, E startValue) {
+	public E foldRight(final BiFunction<E, E, ? extends E> function, E startValue) {
 		E value = startValue;
-		for (int i = fStart; i < fEnd; i++) {
+		for (int i = fEnd - 1; i >= fStart; i--) {
 			value = function.apply(value, fList.get(i));
 		}
 		return value;

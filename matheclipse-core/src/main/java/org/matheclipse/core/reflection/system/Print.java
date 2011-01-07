@@ -20,9 +20,7 @@ public class Print implements IFunctionEvaluator {
 	}
 
 	public IExpr evaluate(final IAST ast) {
-		final EvalEngine engine = EvalEngine.get();
-		PrintStream stream;
-		stream = engine.getOutPrintStream();
+		PrintStream stream = EvalEngine.get().getOutPrintStream();
 		if (stream == null) {
 			stream = System.out;
 		}
