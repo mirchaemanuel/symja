@@ -25,10 +25,10 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 public abstract class AbstractPlot3DWindow extends JDialog {
-	protected SpinnerNumberModel xMin = new SpinnerNumberModel(-10.0, -999.0, 999.0, 1.0);
-	protected SpinnerNumberModel xMax = new SpinnerNumberModel(10.0, -999.0, 999.0, 1.0);
-	protected SpinnerNumberModel yMin = new SpinnerNumberModel(-10.0, -999.0, 999.0, 1.0);
-	protected SpinnerNumberModel yMax = new SpinnerNumberModel(10.0, -999.0, 999.0, 1.0);
+	protected SpinnerNumberModel xMin = new SpinnerNumberModel(-3.0, -999.0, 999.0, 1.0);
+	protected SpinnerNumberModel xMax = new SpinnerNumberModel(3.0, -999.0, 999.0, 1.0);
+	protected SpinnerNumberModel yMin = new SpinnerNumberModel(-3.0, -999.0, 999.0, 1.0);
+	protected SpinnerNumberModel yMax = new SpinnerNumberModel(3.0, -999.0, 999.0, 1.0);
 
 	protected AbstractPlotter3D plot;
 
@@ -41,10 +41,14 @@ public abstract class AbstractPlot3DWindow extends JDialog {
 
 		JPanel controls = createControls();
 		plot = createPlot();
-		xMin.setValue(-1.0);
-		xMax.setValue(1.0);
-		yMin.setValue(-1.0);
-		yMax.setValue(1.0);
+		xMin.setValue(-3.0);
+		xMax.setValue(3.0);
+		yMin.setValue(-3.0);
+		yMax.setValue(3.0);
+		plot.setXMin(-3.0);
+		plot.setXMax(3.0);
+		plot.setYMin(-3.0);
+		plot.setYMax(3.0);
 
 		JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, plot, controls);
 		split.setResizeWeight(1);
