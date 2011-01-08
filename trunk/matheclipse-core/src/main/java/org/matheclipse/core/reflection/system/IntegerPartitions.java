@@ -1,5 +1,6 @@
 package org.matheclipse.core.reflection.system;
 
+import org.matheclipse.core.eval.exception.Validate;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IAST;
@@ -18,19 +19,14 @@ public class IntegerPartitions extends AbstractFunctionEvaluator {
 	public IntegerPartitions() {
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator#evaluate
-	 * (org.matheclipse.parser.interfaces.AbstractExpressionFactory,
-	 * org.matheclipse.parser.interfaces.IAST)
+	/**
+	 * {@inheritDoc}
 	 */
 	@Override
-	public IExpr evaluate(final IAST functionList) {
-
-		if ((functionList.size() == 2) && (functionList.get(1) instanceof IInteger)) {
-			final int n = ((IInteger) functionList.get(1)).getBigNumerator().intValue();
+	public IExpr evaluate(final IAST ast) {
+		Validate.checkSize(ast, 2);
+		if (ast.get(1) instanceof IInteger) {
+			final int n = ((IInteger) ast.get(1)).getBigNumerator().intValue();
 			final IAST result = F.function(F.List);
 			IAST temp;
 			final NumberPartitionsIterable comb = new NumberPartitionsIterable(n);

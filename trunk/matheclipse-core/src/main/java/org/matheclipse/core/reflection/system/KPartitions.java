@@ -6,7 +6,6 @@ import org.matheclipse.core.expression.AST;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
-import org.matheclipse.core.interfaces.IInteger;
 import org.matheclipse.generic.combinatoric.KPartitionsList;
 
 public class KPartitions extends AbstractFunctionEvaluator {
@@ -14,12 +13,15 @@ public class KPartitions extends AbstractFunctionEvaluator {
 	public KPartitions() {
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
-	public IExpr evaluate(final IAST functionList) {
-
-		if ((functionList.size() == 3) && (functionList.get(1) instanceof IAST) && (functionList.get(2) instanceof IInteger)) {
-			final IAST listArg0 = (IAST) functionList.get(1);
-			final int k = Validate.checkIntType(functionList, 2);
+	public IExpr evaluate(final IAST ast) {
+		Validate.checkSize(ast, 3);
+		if (ast.get(1).isAST() && ast.get(2).isInteger()) {
+			final IAST listArg0 = (IAST) ast.get(1);
+			final int k = Validate.checkIntType(ast, 2);
 			final IAST result = F.List();
 			final KPartitionsList<IExpr, IAST> iter = new KPartitionsList<IExpr, IAST>(listArg0, k, F.function(F.List), AST.COPY, 1);
 			for (IAST part : iter) {
@@ -29,5 +31,4 @@ public class KPartitions extends AbstractFunctionEvaluator {
 		}
 		return null;
 	}
-
 }

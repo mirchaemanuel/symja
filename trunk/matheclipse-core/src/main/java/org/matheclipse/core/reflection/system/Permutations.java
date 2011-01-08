@@ -19,10 +19,14 @@ public class Permutations extends AbstractFunctionEvaluator {
 	public Permutations() {
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
-	public IExpr evaluate(final IAST functionList) {
-		if ((functionList.size() >= 2) && (functionList.size() <= 3) && (functionList.get(1) instanceof IAST)) {
-			final IAST f = (IAST) functionList.get(1);
+	public IExpr evaluate(final IAST ast) {
+		Validate.checkRange(ast, 2, 3);
+		if (ast.get(1).isAST()) {
+			final IAST f = (IAST) ast.get(1);
 			final IAST result = F.ast(f.head());
 			if (f.size() <= 2) {
 				if (f.size() == 2) {
@@ -32,11 +36,11 @@ public class Permutations extends AbstractFunctionEvaluator {
 			}
 
 			int k = f.size() - 1;
-			if (functionList.size() == 3) {
-				if (!(functionList.get(2) instanceof IInteger)) {
+			if (ast.size() == 3) {
+				if (!(ast.get(2) instanceof IInteger)) {
 					return null;
 				}
-				k = Validate.checkIntType(functionList, 2);
+				k = Validate.checkIntType(ast, 2);
 				if (k > f.size() - 1) {
 					return null;
 				}

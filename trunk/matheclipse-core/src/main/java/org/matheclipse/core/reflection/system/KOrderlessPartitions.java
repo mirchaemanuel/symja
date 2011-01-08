@@ -1,5 +1,6 @@
 package org.matheclipse.core.reflection.system;
 
+import org.matheclipse.core.eval.exception.Validate;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IAST;
@@ -14,13 +15,17 @@ public class KOrderlessPartitions extends AbstractFunctionEvaluator {
 	public KOrderlessPartitions() {
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
-	public IExpr evaluate(final IAST functionList) {
-		if ((functionList.size() == 3) && (functionList.get(1) instanceof IAST) && (functionList.get(2) instanceof IInteger)) {
-			final IAST listArg0 = (IAST) functionList.get(1);
+	public IExpr evaluate(final IAST ast) {
+		Validate.checkSize(ast, 3);
+		if (ast.get(1).isAST() && ast.get(2).isInteger()) {
+			final IAST listArg0 = (IAST) ast.get(1);
 			final ISymbol sym = listArg0.topHead();
 			final int n = listArg0.size() - 1;
-			final int k = ((IInteger) functionList.get(2)).getBigNumerator().intValue();
+			final int k = ((IInteger) ast.get(2)).getBigNumerator().intValue();
 			final IAST result = F.function(F.List);
 			final KPermutationsIterable permutationIterator = new KPermutationsIterable(listArg0, n, 1);
 			final KPartitionsIterable partitionIterator = new KPartitionsIterable(n, k);

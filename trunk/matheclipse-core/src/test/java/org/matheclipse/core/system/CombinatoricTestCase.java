@@ -44,6 +44,6 @@ public class CombinatoricTestCase extends AbstractTestCase {
 		check("Subsets[{a,b,c,d},2]", "{{},{a},{b},{c},{d},{a,b},{a,c},{a,d},{b,c},{b,d},{c,d}}");
 		check("Subsets[{a,b,c,d},{2,3}]", "{{a,b},{a,c},{a,d},{b,c},{b,d},{c,d},{a,b,c},{a,b,d},{a,c,d},{b,c,d}}");
 		check("Subsets[{a,b,c,d},{2}]", "{{a,b},{a,c},{a,d},{b,c},{b,d},{c,d}}");
-		check("Subsets[{a,b,c}]", "{{a},{b},{c},{a,b},{a,c},{b,c},{a,b,c}}");
+		check("Subsets[{a,b,c}]", "{{},{a},{b},{c},{a,b},{a,c},{b,c},{a,b,c}}");
 	}
 }
