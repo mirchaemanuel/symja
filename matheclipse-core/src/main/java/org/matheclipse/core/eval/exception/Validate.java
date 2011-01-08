@@ -61,8 +61,10 @@ public final class Validate {
 		}
 		throw new WrongArgumentType(ast, ast.get(position), position, "Integer expected!");
 	}
-	
+
 	/**
+	 * If {@code ast.size() < from} throw a {@code WrongNumberOfArguments}
+	 * exception.
 	 * 
 	 * @throws WrongNumberOfArguments
 	 *           if {@code size} is not in the range {@code from} to {@code
@@ -73,6 +75,8 @@ public final class Validate {
 	}
 
 	/**
+	 * If {@code ast.size() < from || ast.size() > to} throw a {@code
+	 * WrongNumberOfArguments} exception.
 	 * 
 	 * @throws WrongNumberOfArguments
 	 *           if {@code size} is not in the range {@code from} to {@code to}
@@ -88,6 +92,8 @@ public final class Validate {
 	}
 
 	/**
+	 * If {@code ast.size() != size} throw a {@code WrongNumberOfArguments}
+	 * exception.
 	 * 
 	 * @throws WrongNumberOfArguments
 	 *           if {@code size} unequals the list size
@@ -143,7 +149,6 @@ public final class Validate {
 		throw new WrongArgumentType(ast, ast.get(position), position, "Function(AST) expected!");
 	}
 
-	
 	private Validate() {
 	}
 

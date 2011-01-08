@@ -1,5 +1,6 @@
 package org.matheclipse.core.reflection.system;
 
+import org.matheclipse.core.eval.exception.Validate;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
 import org.matheclipse.core.expression.AST;
 import org.matheclipse.core.expression.F;
@@ -18,24 +19,22 @@ public class Subsets extends AbstractFunctionEvaluator {
 	public Subsets() {
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
-	public IExpr evaluate(final IAST functionList) {
-
-		if ((functionList.size() >= 2) && (functionList.size() <= 3) && (functionList.get(1) instanceof IAST)) {
-			final IAST f = (IAST) functionList.get(1);
+	public IExpr evaluate(final IAST ast) {
+		Validate.checkRange(ast, 2, 3);
+		if (ast.get(1).isAST()) {
+			final IAST f = (IAST) ast.get(1);
 			final int n = f.size() - 1;
 			final LevelSpecification level;
-			if (functionList.size() == 3) {
-				level = new LevelSpecification(functionList.get(2));
+			if (ast.size() == 3) {
+				level = new LevelSpecification(ast.get(2));
 			} else {
-				level = new LevelSpecification(1, n);
+				level = new LevelSpecification(0, n);
 			}
 
-			// final int k = ((IInteger)
-			// functionList.get(2)).getBigNumerator().intValue();
-			// if (k > n) {
-			// return null;
-			// }
 			int k;
 			final IAST result = F.ast(f.head());
 			level.setFromLevelAsCurrent();
@@ -52,20 +51,7 @@ public class Subsets extends AbstractFunctionEvaluator {
 				}
 				level.incCurrentLevel();
 			}
-			// IAST temp;
-			// final KSubsetsIterator comb = new KSubsetsIterator(n, k);
-			// int j[];
-			// while ((j = comb.nextElement()) != null) {
-			// checkCanceled();
-			// temp = F.ast(f.getHeader());
-			// for (int i = 0; i < k; i++) {
-			// checkCanceled();
-			// temp.add(f.get(j[i]+1));
-			// }
-			// result.add(temp);
-			//
-			// Util.checkCanceled();
-			// }
+
 			return result;
 		}
 		return null;
