@@ -852,6 +852,11 @@ public class SystemTestCase extends AbstractTestCase {
 
 	public void testSystem137() {
 		check("Fibonacci[10]", "55");
+		check("StirlingS2[6,3]", "90");
+		check("StirlingS2[1300,1300]", "1");
+		check("StirlingS2[10,2]", "511");
+		check("StirlingS2[10,6]", "22827");
+		check("StirlingS2[10,8]", "750");
 	}
 
 	public void testSystem138() {
@@ -1019,9 +1024,9 @@ public class SystemTestCase extends AbstractTestCase {
 	}
 
 	public void testSystem171() {
-		check("Integrate[x^(-1),x]","Log[x]");
-		check("Integrate[x^a,x]","Integrate[x^a,x]");
-		check("Integrate[x^10,x]","1/11*x^11");
+		check("Integrate[x^(-1),x]", "Log[x]");
+		check("Integrate[x^a,x]", "Integrate[x^a,x]");
+		check("Integrate[x^10,x]", "1/11*x^11");
 		check("Simplify[1/2*(2*x+2)]", "x+1");
 		check("Simplify[1/2*(2*x+2)*(1/2)^(1/2)]", "(x+1)*(1/2)^(1/2)");
 		check("Simplify[Integrate[(8*x+1)/(x^2+x+1)^2,x]]", "(-2*x-5)*(x^2+x+1)^(-1)-4*ArcTan[(2*x+1)*3^(-1/2)]*3^(-1/2)");
@@ -1885,7 +1890,7 @@ public class SystemTestCase extends AbstractTestCase {
 		check("Log[Exp[1+2*I]]", "Log[E^(1+I*2)]");
 		check("Log[Exp[a+b]]", "Log[E^(b+a)]");
 	}
- 
+
 	public void testSystem348() {
 		check("PolynomialQ[13 x^4 y^7+a^7*x, {x,y}]", "False");
 	}
