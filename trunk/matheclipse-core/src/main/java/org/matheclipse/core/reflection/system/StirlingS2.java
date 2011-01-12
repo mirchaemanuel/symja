@@ -55,8 +55,11 @@ public class StirlingS2 extends AbstractFunctionEvaluator {
 				return Subtract(Power(C2, Subtract(ast.get(1), C1)), C1);
 			}
 			for (int j = 0; j < k; j++) {
-				temp.add(Times(Times(Power(CN1, integer(j)), Binomial(ast.get(2), integer(j))), Power(Plus(ast.get(2), Times(CN1,
-						integer(j))), ast.get(1))));
+				if ((j & 1) == 1) {
+					temp.add(Times(Times(CN1, Binomial(ast.get(2), integer(j))), Power(Plus(ast.get(2), integer(-j)), ast.get(1))));
+				} else {
+					temp.add(Times(Times(Binomial(ast.get(2), integer(j))), Power(Plus(ast.get(2), integer(-j)), ast.get(1))));
+				}
 			}
 			return Times(Power(Factorial(ast.get(2)), CN1), temp);
 		}
