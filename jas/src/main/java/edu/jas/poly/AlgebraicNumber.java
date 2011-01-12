@@ -1,5 +1,5 @@
 /*
- * $Id: AlgebraicNumber.java 3296 2010-08-26 17:30:55Z kredel $
+ * $Id: AlgebraicNumber.java 3472 2011-01-07 17:19:22Z kredel $
  */
 
 package edu.jas.poly;
@@ -326,9 +326,11 @@ public class AlgebraicNumber<C extends GcdRingElem<C>> implements GcdRingElem<Al
     public AlgebraicNumber<C> inverse() {
         try {
             return new AlgebraicNumber<C>(ring, val.modInverse(ring.modul));
+        } catch (AlgebraicNotInvertibleException e) {
+            throw e;
         } catch (NotInvertibleException e) {
-            throw new NotInvertibleException("val = " + val + ", modul = " + ring.modul + ", gcd = "
-                    + val.gcd(ring.modul));
+            throw new AlgebraicNotInvertibleException("val = " + val + ", modul = " + ring.modul + ", gcd = "
+                                                      + val.gcd(ring.modul),e);
         }
     }
 
