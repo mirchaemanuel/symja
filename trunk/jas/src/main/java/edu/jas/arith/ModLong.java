@@ -1,5 +1,5 @@
 /*
- * $Id: ModLong.java 3283 2010-08-22 17:23:03Z kredel $
+ * $Id: ModLong.java 3473 2011-01-07 20:01:05Z kredel $
  */
 
 package edu.jas.arith;
@@ -345,7 +345,9 @@ public final class ModLong implements GcdRingElem<ModLong>, Modular {
         try {
             return new ModLong(ring, modInverse(val, ring.modul));
         } catch (ArithmeticException e) {
-            throw new NotInvertibleException(e.getCause());
+            long g = gcd( val, ring.modul );
+            long f = ring.modul / g;
+            throw new ModularNotInvertibleException(e,new BigInteger(ring.modul),new BigInteger(g),new BigInteger(f));
         }
     }
 
@@ -556,7 +558,8 @@ public final class ModLong implements GcdRingElem<ModLong>, Modular {
         long[] hegcd = hegcd(T, m);
         long a = hegcd[0];
         if (!(a == 1L || a == -1L)) { // gcd != 1
-            throw new NotInvertibleException("element not invertible, gcd != 1");
+            throw new ModularNotInvertibleException("element not invertible, gcd != 1",
+                                                    new BigInteger(m),new BigInteger(a),new BigInteger(m/a));
         }
         long b = hegcd[1];
         if (b == 0L) { // when m divides this, e.g. m.isUnit()
