@@ -24,10 +24,16 @@ public abstract class AbstractSequence implements ISequence {
 		fStep = step;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public int getStep() {
 		return fStep;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public int[] getIndices() {
 		int j = getStart();
 		int step = getStep();

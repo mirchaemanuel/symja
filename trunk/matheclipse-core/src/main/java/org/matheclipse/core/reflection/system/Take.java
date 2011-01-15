@@ -6,6 +6,7 @@ import org.matheclipse.core.eval.util.Sequence;
 import org.matheclipse.core.expression.AST;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
+import org.matheclipse.generic.interfaces.ISequence;
 
 public class Take extends AbstractFunctionEvaluator {
 
@@ -16,7 +17,7 @@ public class Take extends AbstractFunctionEvaluator {
 	public IExpr evaluate(final IAST ast) {
 		try {
 			if ((ast.size() >= 3) && (ast.get(1) instanceof IAST)) {
-				final Sequence[] sequ = Sequence.createSequences(ast, 2);
+				final ISequence[] sequ = Sequence.createSequences(ast, 2);
 				final IAST arg1 = (IAST) ast.get(1);
 				if (sequ != null) {
 					return AST.COPY.take(arg1, 0, sequ);

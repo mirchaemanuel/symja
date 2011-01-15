@@ -1,5 +1,8 @@
 package org.matheclipse.core.interfaces;
 
+import java.util.Collection;
+import java.util.List;
+
 import org.matheclipse.core.eval.exception.WrongArgumentType;
 import org.matheclipse.core.expression.ASTRange;
 import org.matheclipse.core.expression.F;
@@ -128,6 +131,30 @@ public interface IAST extends IExpr, INestedList<IExpr> {
 	 * @param i
 	 */
 	public void addEvalFlags(int i);
+
+	/**
+	 * Appends all elements starting from offset <code>startPosition</code> in the
+	 * specified AST to the end of this AST.
+	 * 
+	 * @param ast
+	 *          AST containing elements to be added to this AST
+	 * @param startPosition
+	 *          the start offset in the specified AST
+	 * @return <tt>true</tt> if this AST changed as a result of the call
+	 * @see #add(Object)
+	 */
+	public boolean addAll(List<? extends IExpr> ast, int startPosition);
+
+	/**
+	 * Appends all of the arguments (starting from offset <code>1</code>) in the
+	 * specified AST to the end of this AST.
+	 * 
+	 * @param ast
+	 *          AST containing elements to be added to this AST
+	 * @return <tt>true</tt> if this AST changed as a result of the call
+	 * @see #add(Object)
+	 */
+	public boolean addAll(List<? extends IExpr> ast);
 
 	/**
 	 * Is this a list (i.e. with header == List)
