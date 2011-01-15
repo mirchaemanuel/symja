@@ -1,5 +1,6 @@
 package org.matheclipse.core.expression;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
@@ -1088,6 +1089,26 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 		} else {
 			return super.toString();
 		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public boolean addAll(List<? extends IExpr> ast) {
+		return addAll(ast, 1);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public boolean addAll(List<? extends IExpr> ast, int startPosition) {
+		if (ast.size() > 0 && startPosition < ast.size()) {
+			for (int i = startPosition; i < ast.size(); i++) {
+				add(ast.get(i));
+			}
+			return true;
+		}
+		return false;
 	}
 
 	/**

@@ -43,6 +43,9 @@ public class ListSizeSequence extends AbstractSequence {
 		fListSize = size;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public int getStart() {
 		if (fEndOffset < 0) {
 			if (fStartOffset < 0) {
@@ -62,7 +65,7 @@ public class ListSizeSequence extends AbstractSequence {
 	}
 
 	/**
-	 * @return the end offset of the sequence + 1;
+	 * {@inheritDoc}
 	 */
 	public int getEnd() {
 		if (fEndOffset < 0) {

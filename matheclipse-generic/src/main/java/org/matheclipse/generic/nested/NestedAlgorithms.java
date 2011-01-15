@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.matheclipse.core.generic.util.INestedListElement;
-import org.matheclipse.generic.ListSizeSequence;
 import org.matheclipse.generic.interfaces.IPositionConverter;
+import org.matheclipse.generic.interfaces.ISequence;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -867,7 +867,7 @@ public abstract class NestedAlgorithms<T extends INestedListElement, L extends L
 		return (result == null) ? expr : result;
 	}
 
-	public L take(final L list, final int level, final ListSizeSequence[] sequ) {
+	public L take(final L list, final int level, final ISequence[] sequ) {
 		sequ[level].setListSize(list.size());
 		final L resultList = newInstance(list);
 		final int newLevel = level + 1;
