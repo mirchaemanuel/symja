@@ -1048,6 +1048,12 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 		if (this.equals(F.CNInfinity)) {
 			return "CNInfinity";
 		}
+		if (this.equals(F.Slot1)) {
+			return "Slot1";
+		}
+		if (this.equals(F.Slot2)) {
+			return "Slot2";
+		}
 		StringBuffer text = new StringBuffer(size() * 10);
 		if (temp instanceof ISymbol) {
 			ISymbol sym = (ISymbol) temp;
