@@ -518,7 +518,7 @@ public class EvalPanel extends JPanel { // implements DocumentListener {
 			final MathMLUtilities mathUtil = new MathMLUtilities(EVAL_ENGINE, false);
 			final StringBufferWriter buf = new StringBufferWriter();
 
-			mathUtil.toJava(cmd, buf);
+			mathUtil.toJava(cmd, buf, true);
 			jOutputPane.printOutColored(buf.toString() + "\n\n");
 		} catch (final Exception e) {
 			e.printStackTrace();

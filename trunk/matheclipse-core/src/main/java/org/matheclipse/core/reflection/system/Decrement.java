@@ -5,9 +5,17 @@ import org.matheclipse.core.eval.interfaces.AbstractArg1;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.ISymbol;
- 
+
+import com.google.common.base.Function;
 
 public class Decrement extends AbstractArg1 {
+	class DecrementFunction implements Function<IExpr, IExpr> {
+		@Override
+		public IExpr apply(final IExpr assignedValue) {
+			return F.eval(F.Plus(assignedValue, F.CN1));
+		}
+
+	}
 
 	public Decrement() {
 		super();
@@ -19,32 +27,49 @@ public class Decrement extends AbstractArg1 {
 		if (o0 instanceof ISymbol) {
 
 			final ISymbol sym = (ISymbol) o0;
-
-			if (sym.hasLocalVariableStack()) {
-				IExpr symbolValue = sym.get();
-				IExpr calculatedResult = execute(symbolValue, engine);
-				sym.set(calculatedResult);
-				return getResult(symbolValue, calculatedResult);
-			} else {
-				IExpr symbolValue = engine.evaluate(sym);
-				if ((symbolValue != null) && !symbolValue.equals(sym)) {
-					IExpr calculatedResult = execute(symbolValue, engine);
-					sym.putDownRule(F.Set, true, sym, calculatedResult);
-					return getResult(symbolValue, calculatedResult);
-				}
+			IExpr[] results = sym.reassignSymbolValue(getFunction());
+			if (results != null) {
+				return getResult(results[0], results[1]);
 			}
+			// if (sym.hasLocalVariableStack()) {
+			// IExpr symbolValue = sym.get();
+			// IExpr calculatedResult = apply(symbolValue);
+			// sym.set(calculatedResult);
+			// return getResult(symbolValue, calculatedResult);
+			// } else {
+			// IExpr symbolValue = engine.evaluate(sym);
+			// if ((symbolValue != null) && !symbolValue.equals(sym)) {
+			// IExpr calculatedResult = apply(symbolValue);
+			// sym.putDownRule(F.Set, true, sym, calculatedResult);
+			// return getResult(symbolValue, calculatedResult);
+			// }
+			// }
 
 		}
 
 		return null;
 	}
 
+	protected Function<IExpr, IExpr> getFunction() {
+		return new DecrementFunction();
+	}
+
 	protected IExpr getResult(IExpr symbolValue, IExpr calculatedResult) {
 		return symbolValue;
 	}
 
-	protected IExpr execute(final IExpr first, final EvalEngine engine) {
-		return engine.evaluate(F.Plus(first, F.CN1));
+	/**
+	 * Evaluate <code>assignedValue - 1</code>. Override this method in
+	 * subclasses.
+	 * 
+	 * @param assignedValue
+	 *          the value currently assigned to the symbol
+	 * @param engine
+	 *          the evaluation engine
+	 * @return
+	 */
+	protected IExpr apply(final IExpr assignedValue) {
+		return F.eval(F.Plus(assignedValue, F.CN1));
 	}
 
 	@Override

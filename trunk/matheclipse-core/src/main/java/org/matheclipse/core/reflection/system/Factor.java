@@ -84,8 +84,8 @@ public class Factor extends AbstractFunctionEvaluator {
 		return result;
 	}
 
-	public static IExpr factorWithOption(final IAST lst, IExpr expr, List<IExpr> varList, boolean factorSquareFree) {
-		final Options options = new Options(lst.topHead(), lst, 2);
+	public static IExpr factorWithOption(final IAST ast, IExpr expr, List<IExpr> varList, boolean factorSquareFree) {
+		final Options options = new Options(ast.topHead(), ast, 2);
 		IExpr option = options.getOption("Modulus");
 		if (option != null && option instanceof IInteger) {
 			try {

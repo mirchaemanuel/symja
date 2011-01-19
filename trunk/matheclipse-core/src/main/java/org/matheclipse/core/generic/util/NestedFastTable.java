@@ -324,8 +324,8 @@ public class NestedFastTable<E extends INestedListElement> extends ArrayList<E> 
 	}
 
 	/**
-	 * Returns an iterator over the elements in this list starting with offset 1
-	 * (allocated on the stack when executed in a
+	 * Returns an iterator over the elements in this list starting with offset
+	 * <b>1</b>.
 	 * 
 	 * @return an iterator over this list values.
 	 */
@@ -342,8 +342,8 @@ public class NestedFastTable<E extends INestedListElement> extends ArrayList<E> 
 	}
 
 	/**
-	 * Returns an iterator over the elements in this list starting with offset 0
-	 * (allocated on the stack when executed in a
+	 * Returns an iterator over the elements in this list starting with offset
+	 * <b>0</b>.
 	 * 
 	 * @return an iterator over this list values.
 	 */

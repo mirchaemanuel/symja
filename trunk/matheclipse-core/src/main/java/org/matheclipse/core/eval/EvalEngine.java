@@ -103,6 +103,25 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 	transient int fModuleCounter = 0;
 
 	/**
+	 * List for results in <code>Reap[]</code> function.
+	 */
+	transient IAST reapList = null;
+
+	/**
+	 * @return the reapList
+	 */
+	public IAST getReapList() {
+		return reapList;
+	}
+
+	/**
+	 * @param reapList the reapList to set
+	 */
+	public void setReapList(IAST reapList) {
+		this.reapList = reapList;
+	}
+
+	/**
 	 * Increment the module counter by 1 and return the result.
 	 * 
 	 * @return the module counter
@@ -537,7 +556,7 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 	 * 
 	 * @param symbol
 	 * @param ast
-	 * @return 
+	 * @return
 	 */
 	private IExpr evalASTBuiltinFunction(final ISymbol symbol, final IAST ast) {
 		IExpr result;

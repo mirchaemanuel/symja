@@ -25,6 +25,9 @@ import org.matheclipse.core.patternmatching.RulesData;
 import org.matheclipse.core.visit.IVisitor;
 import org.matheclipse.core.visit.IVisitorBoolean;
 import org.matheclipse.core.visit.IVisitorInt;
+import org.matheclipse.generic.interfaces.Pair;
+
+import com.google.common.base.Function;
 
 /**
  * Implements Symbols for function, constant and variable names
@@ -67,6 +70,40 @@ public class Symbol extends ExprImpl implements ISymbol {
 	 * The pattern matching rules associated with this symbol.
 	 */
 	private RulesData fRulesData = new RulesData();
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public IExpr[] reassignSymbolValue(Function<IExpr, IExpr> function) {
+		IExpr[] result = new IExpr[2];
+		IExpr symbolValue;
+		if (hasLocalVariableStack()) {
+			symbolValue = get();
+			result[0] = symbolValue;
+			IExpr calculatedResult = function.apply(symbolValue);
+			if (calculatedResult != null) {
+				set(calculatedResult);
+				result[1] = calculatedResult;
+				return result;
+			}
+
+		} else {
+			Pair<ISymbol, IExpr> pair = fRulesData.getEqualRules().get(this);
+			if (pair != null) {
+				symbolValue = pair.getSecond();
+				if (symbolValue != null) {
+					result[0] = symbolValue;
+					IExpr calculatedResult = function.apply(symbolValue);
+					if (calculatedResult != null) {
+						pair.setSecond(calculatedResult);
+						result[1] = calculatedResult;
+						return result;
+					}
+				}
+			}
+		}
+		return null;
+	}
 
 	private Map<Integer, IExpr> fDefaultValues = null;
 
@@ -372,11 +409,18 @@ public class Symbol extends ExprImpl implements ISymbol {
 	}
 
 	@Override
-	public String internalFormString(boolean callSymbolFactory) {
-		if (callSymbolFactory) {
+	public String internalFormString(boolean symbolsAsFactoryMethod, int depth) {
+		if (symbolsAsFactoryMethod) {
+			if (Character.isUpperCase(fSymbolName.charAt(0))) {
+				if (fSymbolName.equals("Pi")) {
+					return "Pi";
+				} else if (fSymbolName.equals("E")) {
+					return "E";
+				}
+			}
 			return "symbol(\"" + fSymbolName + "\")";
 		}
-		return fSymbolName; 
+		return fSymbolName;
 	}
 
 	@Override

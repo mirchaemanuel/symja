@@ -96,14 +96,14 @@ public class MathMLUtilities {
 		}
 	}
 
-	synchronized public void toJava(final String inputExpression, final Writer out) {
+	synchronized public void toJava(final String inputExpression, final Writer out, boolean strictJava) {
 		IExpr parsedExpression = null;
 		ASTNode node;
 		if (inputExpression != null) {
 			try {
 				node = fParser.parse(inputExpression);
 				parsedExpression = AST2Expr.CONST.convert(node);
-				out.write(parsedExpression.internalFormString(false));
+				out.write(parsedExpression.internalFormString(strictJava, 0));
 			} catch (final Throwable e) {
 				return;
 				// parsedExpression == null ==> fError occured

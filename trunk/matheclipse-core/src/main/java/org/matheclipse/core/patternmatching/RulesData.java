@@ -199,7 +199,7 @@ public class RulesData {
 	/**
 	 * @return Returns the equalRules.
 	 */
-	private Map<IExpr, Pair<ISymbol, IExpr>> getEqualRules() {
+	public Map<IExpr, Pair<ISymbol, IExpr>> getEqualRules() {
 		if (fEqualRules == null) {
 			fEqualRules = new HashMap<IExpr, Pair<ISymbol, IExpr>>();
 		}

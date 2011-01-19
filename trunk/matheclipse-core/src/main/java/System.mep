@@ -2,7 +2,7 @@ Package[
   "System", 
   (* define the public available symbols *)
   {Abs, ArcCos, ArcCosh, ArcCot, ArcCoth, ArcSin, ArcSinh, ArcTan, ArcTanh, 
-   Cos, Cosh, Cot, Coth, Derivative, Log, Power, Sin, Sinh, 
+   Cos, Cosh, Cot, Coth, Derivative, Log, Power, Sinh, 
    Tan, Tanh}, 
 { 
   Abs[Pi]=Pi, 
@@ -114,6 +114,7 @@ Package[
   E^(I*Pi)=(-1),
   E^Log[x_]:=x,
   
+ (*
   Sin[Pi]=0,
   Sin[1/12*Pi]=1/4*(1-1/3*3^(1/2))*6^(1/2),
   Sin[I]=I*Sinh[1],
@@ -135,7 +136,8 @@ Package[
   Sin[x_NumberQ*y_]:=(-1)*Sin[(-1)*x*y]/;SignCmp[x]<0,
   Sin[Pi*x_NumberQ]:=If[x<1,Sin[(1-x)*Pi],If[x<2,(-1)*Sin[(2-x)*Pi],Sin[(x-2*Quotient[Trunc[x],2])*Pi]]]/;x>=1/2,
   Sin[x_NumberQ]:=(-1)*Sin[(-1)*x]/;SignCmp[x]<0,
-  
+ *)
+ 
   Tan[0]=0,
   Tan[1/3*Pi]=3^(1/2),
   Tan[1/5*Pi]=(5-2*5^(1/2))^(1/2),

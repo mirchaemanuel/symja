@@ -51,18 +51,18 @@ public class ConvertRubiFiles {
 			IExpr expr = AST2Expr.CONST.convert(node);
 			if (expr.isAST(F.SetDelayed, 3)) {
 				IAST ast = (IAST) expr;
-				buffer.append(ast.get(1).internalFormString(true));
+				buffer.append(ast.get(1).internalFormString(true, 0));
 				buffer.append(",\n");
-				buffer.append(ast.get(2).internalFormString(true));
+				buffer.append(ast.get(2).internalFormString(true, 0));
 				buffer.append(",\n");
 			} else if (expr.isAST(F.If, 4)) {
 				IAST ast = (IAST) expr;
 				expr = ast.get(3);
 				if (expr.isAST(F.SetDelayed, 3)) {
 					ast = (IAST) expr;
-					buffer.append(ast.get(1).internalFormString(true));
+					buffer.append(ast.get(1).internalFormString(true, 0));
 					buffer.append(",\n");
-					buffer.append(ast.get(2).internalFormString(true));
+					buffer.append(ast.get(2).internalFormString(true, 0));
 					buffer.append(",\n");
 				}
 			}

@@ -108,12 +108,15 @@ public interface IExpr extends Comparable<IExpr>, RingElem<IExpr>, INestedListEl
 	public int hierarchy();
 
 	/**
-	 * Return the internal Java form of this expression
+	 * Return the internal Java form of this expression.
 	 * 
-	 * @param callSymbolFactory
-	 *          TODO
+	 * @param symbolsAsFactoryMethod
+	 *          if <code>true</code> use the <code>F.symbol()</code> method,
+	 *          otherwise print the symbol name.
+	 * @param depth
+	 *          the recursion depth of this call
 	 */
-	public String internalFormString(boolean callSymbolFactory);
+	public String internalFormString(boolean symbolsAsFactoryMethod, int depth);
 
 	/**
 	 * Returns the multiplicative inverse of this object. It is the object such as
