@@ -558,7 +558,7 @@ public class F {
 
 		return binary(ArcTan, a0, a1);
 	}
-	
+
 	public static IAST Binomial(final IExpr a0, final IExpr a1) {
 
 		return binary(symbol("Binomial"), a0, a1);
@@ -686,7 +686,12 @@ public class F {
 	public static IAST Hold(final IExpr a0) {
 		return unary(Hold, a0);
 	}
+	
+	public static IAST If(final IExpr a0, final IExpr a1, final IExpr a2) {
 
+		return ternary(If, a0, a1, a2);
+	}
+	
 	public static IAST Numerator(final IExpr a0) {
 		return unary(Numerator, a0);
 	}
@@ -1021,6 +1026,16 @@ public class F {
 		return binary(LessEqual, a0, a1);
 	}
 
+	public static IAST Greater(final IExpr a0, final IExpr a1) {
+
+		return binary(Greater, a0, a1);
+	}
+
+	public static IAST GreaterEqual(final IExpr a0, final IExpr a1) {
+
+		return binary(GreaterEqual, a0, a1);
+	}
+
 	public static IAST Line() {
 		return function(Line);
 	}
@@ -1211,6 +1226,11 @@ public class F {
 		return binary(symbol("Product"), a0, a1);
 	}
 
+	public static IAST Quotient(final IExpr a0, final IExpr a1) {
+
+		return binary(symbol("Quotient"), a0, a1);
+	}
+
 	public static IAST ReplaceAll(final IExpr a0, final IExpr a1) {
 
 		return binary(ReplaceAll, a0, a1);
@@ -1244,8 +1264,11 @@ public class F {
 	}
 
 	public static IAST Show(final IExpr a0) {
-
 		return unary(Show, a0);
+	}
+
+	public static IAST SignCmp(final IExpr a0) {
+		return unary(SignCmp, a0);
 	}
 
 	public static IAST Simplify(final IExpr a0) {
@@ -1334,6 +1357,10 @@ public class F {
 
 	public static IAST Transpose(final IExpr a0) {
 		return unary(Transpose, a0);
+	}
+
+	public static IAST Trunc(final IExpr a0) {
+		return unary(Trunc, a0);
 	}
 
 	/**
@@ -1447,6 +1474,14 @@ public class F {
 		return ast;
 	}
 
+	public static IAST ternary(final IExpr head, final IExpr a0, final IExpr a1, final IExpr a2) {
+		final IAST ast = ast(head);
+		ast.add(a0);
+		ast.add(a1);
+		ast.add(a2);
+		return ast;
+	}
+	
 	/**
 	 * Gives symbols "True" or "False" (type ISymbol) depending on the boolean
 	 * value.

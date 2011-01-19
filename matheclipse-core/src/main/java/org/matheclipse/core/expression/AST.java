@@ -1,6 +1,5 @@
 package org.matheclipse.core.expression;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
@@ -37,18 +36,32 @@ import edu.jas.structure.ElemFactory;
 
 /**
  * 
- * (A)bstract (S)yntax (T)ree implementation of a given function
+ * <p>
+ * (A)bstract (S)yntax (T)ree of a given function.
+ * </p>
  * 
- * The AST represents a function in a tree expression (implemented as
- * nested-lists) and contains
+ * <p>
+ * In MathEclipse, an abstract syntax tree (AST), is a tree representation of
+ * the abstract syntactic structure of the MathEclipse source code. Each node of
+ * the tree denotes a construct occurring in the source code. The syntax is
+ * 'abstract' in the sense that it does not represent every detail that appears
+ * in the real syntax. For instance, grouping parentheses are implicit in the
+ * tree structure, and a syntactic construct such as a <code>Sin[x]</code>
+ * expression will be denoted by an AST with 2 nodes. One node for the header
+ * <code>Sin</code> and one node for the argument <code>x</code>.
+ * </p>
+ * 
+ * Internally an AST is represented as a <code>java.util.List</code> which
+ * contains
  * <ul>
- * <li>the operator of the tree (i.e. the "header"-symbol: Sin, Cos, Inverse,
- * Times, Plus ...) in the 0-th element of the list</li>
- * <li>the arguments of the function in the i-th element of the list. The
- * argument numbering starts with index 1. An argument in the IAST is either -
- * an IAST instance or - an atomic IExpr instance.</li>
+ * <li>the operator of a function (i.e. the &quot;header&quot;-symbol: Sin, Cos,
+ * Inverse, Plus, Times,...) at index <code>0</code> and</li>
+ * <li>the <code>n</code> arguments of a function in the index
+ * <code>0 to n</code></li>
  * </ul>
  * 
+ * See <a href="http://en.wikipedia.org/wiki/Abstract_syntax_tree">Abstract
+ * syntax tree</a>.
  */
 public class AST extends NestedFastTable<IExpr> implements IAST {
 	private final static IAST AST_DUMMY_INSTANCE = new AST();
@@ -1026,7 +1039,7 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 		return text.toString();
 	}
 
-	public String internalFormString(boolean callSymbolFactory) {
+	public String internalFormString(boolean symbolsAsFactoryMethod, int depth) {
 		final String sep = ",";
 		final IExpr temp = head();
 		StringBuffer text = new StringBuffer(size() * 10);
@@ -1035,7 +1048,7 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 			if (!Character.isUpperCase(sym.toString().charAt(0))) {
 				text.append("$(");
 				for (int i = 0; i < size(); i++) {
-					text.append(get(i).internalFormString(callSymbolFactory));
+					text.append(get(i).internalFormString(symbolsAsFactoryMethod, depth + 1));
 					if (i < size() - 1) {
 						text.append(sep);
 					}
@@ -1045,13 +1058,22 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 			}
 		}
 
-		text.append(temp.internalFormString(false));
+		text.append(temp.internalFormString(false, 0));
 		text.append('(');
+		if (depth == 0 && isList()) {
+			text.append('\n');
+		}
 		for (int i = 1; i < size(); i++) {
-			text.append(get(i).internalFormString(callSymbolFactory));
+			text.append(get(i).internalFormString(symbolsAsFactoryMethod, depth + 1));
 			if (i < size() - 1) {
 				text.append(sep);
+				if (depth == 0 && isList()) {
+					text.append('\n');
+				}
 			}
+		}
+		if (depth == 0 && isList()) {
+			text.append('\n');
 		}
 		text.append(')');
 		return text.toString();
@@ -1095,15 +1117,16 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 	 * {@inheritDoc}
 	 */
 	public boolean addAll(List<? extends IExpr> ast) {
-		return addAll(ast, 1);
+		return addAll(ast, 1, ast.size());
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public boolean addAll(List<? extends IExpr> ast, int startPosition) {
-		if (ast.size() > 0 && startPosition < ast.size()) {
-			for (int i = startPosition; i < ast.size(); i++) {
+	public boolean addAll(List<? extends IExpr> ast, int startPosition, int endPosition) {
+		if (ast.size() > 0 && startPosition < endPosition) {
+			ensureCapacity(size() + (endPosition - startPosition));
+			for (int i = startPosition; i < endPosition; i++) {
 				add(ast.get(i));
 			}
 			return true;
@@ -1112,10 +1135,7 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 	}
 
 	/**
-	 * Get the range of elements [1..sizeOfAST[ which are the arguments of a
-	 * function
-	 * 
-	 * @return
+	 * {@inheritDoc}
 	 */
 	public ASTRange args() {
 		return new ASTRange(this, 1);
@@ -1174,11 +1194,9 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 		return ast;
 	}
 
-	public static AST newInstance(final IAST ast, int index) {
+	private static AST newInstance(final IAST ast, int endPosition) {
 		AST result = new AST(5, false);
-		for (int i = 0; i < index; i++) {
-			ast.add(ast.get(i));
-		}
+		result.addAll(ast, 0, endPosition);
 		return result;
 	}
 

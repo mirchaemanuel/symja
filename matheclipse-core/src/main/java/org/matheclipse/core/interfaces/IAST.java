@@ -1,12 +1,10 @@
 package org.matheclipse.core.interfaces;
 
-import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 import org.matheclipse.core.eval.exception.WrongArgumentType;
 import org.matheclipse.core.expression.ASTRange;
-import org.matheclipse.core.expression.F;
-import org.matheclipse.core.generic.Functors;
 import org.matheclipse.core.generic.util.INestedList;
 import org.matheclipse.core.reflection.system.Apart;
 import org.matheclipse.generic.interfaces.BiFunction;
@@ -18,21 +16,32 @@ import com.google.common.base.Predicate;
 
 /**
  * 
- * (I)nterface for the (A)bstract (S)yntax (T)ree of a given function
+ * <p>
+ * (I)nterface for the (A)bstract (S)yntax (T)ree of a given function.
+ * </p>
  * 
- * The IAST represents one node of the tree and contains
+ * <p>
+ * In MathEclipse, an abstract syntax tree (AST), is a tree representation of
+ * the abstract syntactic structure of the MathEclipse source code. Each node of
+ * the tree denotes a construct occurring in the source code. The syntax is
+ * 'abstract' in the sense that it does not represent every detail that appears
+ * in the real syntax. For instance, grouping parentheses are implicit in the
+ * tree structure, and a syntactic construct such as a <code>Sin[x]</code>
+ * expression will be denoted by an AST with 2 nodes. One node for the header
+ * <code>Sin</code> and one node for the argument <code>x</code>.
+ * </p>
+ * 
+ * Internally an AST is represented as a <code>java.util.List</code> which
+ * contains
  * <ul>
- * <li>the operator of the tree (i.e. the &quot;header&quot;-symbol: Sin, Cos,
- * Inverse,...)</li>
- * <li>the arguments of the function</li>
+ * <li>the operator of a function (i.e. the &quot;header&quot;-symbol: Sin, Cos,
+ * Inverse, Plus, Times,...) at index <code>0</code> and</li>
+ * <li>the <code>n</code> arguments of a function in the index
+ * <code>0 to n</code></li>
  * </ul>
- * the arguments of the function are represented as a list (the i-th argument is
- * the i-th element in the list; the 0-element is the &quot;header&quot;-symbol)
- * an argument in the IAST is either
- * <ul>
- * <li>an IAST or</li>
- * <li>an atomic IExpr</li>
- * </ul>
+ * 
+ * See <a href="http://en.wikipedia.org/wiki/Abstract_syntax_tree">Abstract
+ * syntax tree</a>.
  */
 public interface IAST extends IExpr, INestedList<IExpr> {
 	/**
@@ -133,17 +142,19 @@ public interface IAST extends IExpr, INestedList<IExpr> {
 	public void addEvalFlags(int i);
 
 	/**
-	 * Appends all elements starting from offset <code>startPosition</code> in the
-	 * specified AST to the end of this AST.
+	 * Appends all elements from offset <code>startPosition</code> to
+	 * <code>endPosition</code> in the specified AST to the end of this AST.
 	 * 
 	 * @param ast
 	 *          AST containing elements to be added to this AST
 	 * @param startPosition
-	 *          the start offset in the specified AST
+	 *          the start position, inclusive.
+	 * @param endPosition
+	 *          the ending position, exclusive.
 	 * @return <tt>true</tt> if this AST changed as a result of the call
 	 * @see #add(Object)
 	 */
-	public boolean addAll(List<? extends IExpr> ast, int startPosition);
+	public boolean addAll(List<? extends IExpr> ast, int startPosition, int endPosition);
 
 	/**
 	 * Appends all of the arguments (starting from offset <code>1</code>) in the
@@ -168,6 +179,23 @@ public interface IAST extends IExpr, INestedList<IExpr> {
 	public boolean isPower();
 
 	public boolean isTimes();
+
+	/**
+	 * Returns an iterator over the elements in this list starting with offset
+	 * <b>1</b>.
+	 * 
+	 * @return an iterator over this list values.
+	 */
+	public Iterator<IExpr> iterator();
+
+	/**
+	 * Returns an iterator over the elements in this list starting with offset
+	 * <b>0</b>.
+	 * 
+	 * 
+	 * @return an iterator over this list values.
+	 */
+	public Iterator<IExpr> iterator0();
 
 	/**
 	 * Apply the given head to this expression (i.e. create a list clone and
@@ -285,8 +313,8 @@ public interface IAST extends IExpr, INestedList<IExpr> {
 	public int patternHashCode();
 
 	/**
-	 * Get the range of elements [1..ast.size()[. This range elements are the
-	 * arguments of a function.
+	 * Get the range of elements [1..ast.size()[. These range elements are the
+	 * arguments of a function (represented as an AST).
 	 * 
 	 * @return
 	 */

@@ -2,10 +2,14 @@ package org.matheclipse.core.interfaces;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import org.matheclipse.core.eval.EvalEngine;
 import org.matheclipse.core.patternmatching.PatternMatcher;
 import org.matheclipse.core.patternmatching.PatternMatcherAndInvoker;
+import org.matheclipse.generic.interfaces.Pair;
+
+import com.google.common.base.Function;
 
 /**
  * An expression representing a symbol (i.e. variable- constant- or
@@ -306,6 +310,18 @@ public interface ISymbol extends IExpr { // Variable<IExpr>
 	 * @see ISymbol#getDefaultValue(int)
 	 */
 	public void setDefaultValue(int position, IExpr expr);
+
+	/**
+	 * Apply the function to the currently assigned value of the symbol and
+	 * reassign the result value to the symbol.
+	 * 
+	 * @param function
+	 *          the function which should be applied
+	 * @return an array with the currently assigned value of the symbol and the
+	 *         new calculated value of the symbol or <code>null</code> if the
+	 *         reassignment isn't possible.
+	 */
+	public IExpr[] reassignSymbolValue(Function<IExpr, IExpr> function);
 
 	/**
 	 * Clear the associated rules for this symbol

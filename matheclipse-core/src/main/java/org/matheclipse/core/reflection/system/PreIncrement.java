@@ -1,20 +1,21 @@
 package org.matheclipse.core.reflection.system;
 
-import org.matheclipse.core.eval.EvalEngine;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IExpr;
-import org.matheclipse.core.interfaces.ISymbol;
+
+import com.google.common.base.Function;
 
 public class PreIncrement extends PreDecrement {
+	class IncrementFunction implements Function<IExpr, IExpr> {
+		@Override
+		public IExpr apply(final IExpr assignedValue) {
+			return F.eval(F.Plus(assignedValue, F.C1));
+		}
 
-	@Override
-	protected IExpr execute(final IExpr first, final EvalEngine engine) {
-		return engine.evaluate(F.Plus(first, F.C1));
 	}
 
-	@Override
-	public void setUp(final ISymbol symbol) {
-		symbol.setAttributes(ISymbol.HOLDALL);
+	protected Function<IExpr, IExpr> getFunction() {
+		return new IncrementFunction();
 	}
 
 }

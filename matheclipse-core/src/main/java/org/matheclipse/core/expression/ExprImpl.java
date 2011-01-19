@@ -337,7 +337,7 @@ public abstract class ExprImpl implements IExpr {
 		return toString();
 	}
 
-	public String internalFormString(boolean callSymbolFactory) {
+	public String internalFormString(boolean symbolsAsFactoryMethod, int depth) {
 		return toString();
 	}
 

@@ -31,15 +31,32 @@ public abstract class AbstractFunctionEvaluator implements IFunctionEvaluator {
 		return null;
 	}
 
+	public IAST getRuleAST() {
+		return null;
+	}
+
 	/**
 	 * Evaluate built-in rules and define Attributes for a function.
 	 * 
 	 */
 	public void setUp(final ISymbol symbol) throws SyntaxError {
+		IAST ruleList;
+		final EvalEngine engine = EvalEngine.get();
+		if ((ruleList = getRuleAST()) != null) {
+			boolean oldPackageMode = engine.isPackageMode();
+			try {
+				engine.setPackageMode(true);
+				for (IExpr rule : ruleList) {
+					engine.evaluate(rule);
+				}
+			} finally {
+				engine.setPackageMode(oldPackageMode);
+			}
+		}
 		String[] rules;
 		if ((rules = getRules()) != null) {
 			final Parser parser = new Parser();
-			final EvalEngine engine = EvalEngine.get();
+
 			boolean oldPackageMode = engine.isPackageMode();
 			try {
 				engine.setPackageMode(true);

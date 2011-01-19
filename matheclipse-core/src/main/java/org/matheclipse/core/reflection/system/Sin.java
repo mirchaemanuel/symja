@@ -5,15 +5,19 @@ import org.matheclipse.core.eval.interfaces.INumeric;
 import org.matheclipse.core.expression.ComplexUtils;
 import org.matheclipse.core.expression.ComplexNum;
 import org.matheclipse.core.expression.Num;
-import org.matheclipse.core.expression.F;
+import static org.matheclipse.core.expression.F.*;
+
+import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.ISymbol;
 import org.matheclipse.parser.client.SyntaxError;
 
 /**
- * Sine
+ * Sine function.
  * 
- * See <a href="http://en.wikipedia.org/wiki/Trigonometric_functions">Trigonometric functions</a>
+ * See <a
+ * href="http://en.wikipedia.org/wiki/Trigonometric_functions">Trigonometric
+ * functions</a>
  */
 public class Sin extends AbstractTrigArg1 implements INumeric {
 
@@ -42,6 +46,31 @@ public class Sin extends AbstractTrigArg1 implements INumeric {
 	// Sin[(x-2*Quotient[Trunc[x],2])*Pi] ] ] /; x>=1/2"
 	// };
 
+	final static IAST RULES = 
+		List(
+				Set(Sin(Pi),C0),
+				Set(Sin(Times(fraction(1L,12L),Pi)),Times(Times(C1D4,Plus(Times(CN1D3,Power(C3,C1D2)),C1)),Power(integer(6L),C1D2))),
+				Set(Sin(Times(fraction(1L,10L),Pi)),Plus(Times(C1D4,Power(C5,C1D2)),Times(CN1,C1D4))),
+				Set(Sin(Times(C1D2,Pi)),C1),
+				Set(Sin(Times(C1D4,Pi)),Times(C1D2,Power(C2,C1D2))),
+				Set(Sin(Times(fraction(2L,5L),Pi)),Times(Times(C1D4,Power(C2,C1D2)),Power(Plus(Power(C5,C1D2),C5),C1D2))),
+				Set(Sin(Times(C1D3,Pi)),Times(C1D2,Power(C3,C1D2))),
+				Set(Sin(Times(fraction(1L,6L),Pi)),C1D2),
+				Set(Sin(Times(fraction(3L,8L),Pi)),Times(C1D2,Power(Plus(Power(C2,C1D2),C2),C1D2))),
+				Set(Sin(Times(fraction(1L,5L),Pi)),Times(Times(C1D4,Power(C2,C1D2)),Power(Plus(Times(CN1,Power(C5,C1D2)),C5),C1D2))),
+				Set(Sin(Times(fraction(3L,10L),Pi)),Plus(Times(C1D4,Power(C5,C1D2)),C1D4)),
+				Set(Sin(Times(fraction(1L,8L),Pi)),Times(C1D2,Power(Plus(Times(CN1,Power(C2,C1D2)),C2),C1D2))),
+				Set(Sin(Times(fraction(5L,12L),Pi)),Times(Times(C1D4,Plus(Times(C1D3,Power(C3,C1D2)),C1)),Power(integer(6L),C1D2))),
+				Set(Sin(CI),Times(CI,Sinh(C1))),
+				Set(Sin(C0),C0),
+				SetDelayed(Sin(ArcSin(pattern("x"))),symbol("x")),
+				SetDelayed(Sin(ArcCos(pattern("x"))),Power(Plus(C1,Times(CN1,Power(symbol("x"),C2))),C1D2)),
+				SetDelayed(Sin(ArcTan(pattern("x"))),Times(symbol("x"),Power(Plus(C1,Power(symbol("x"),C2)),Power(C1D2,CN1)))),
+				SetDelayed(Sin(Times(pattern("x",symbol("NumberQ")),pattern("y"))),Condition(Times(CN1,Sin(Times(Times(CN1,symbol("x")),symbol("y")))),Less(SignCmp(symbol("x")),C0))),
+				SetDelayed(Sin(Times(Pi,pattern("x",symbol("NumberQ")))),Condition(If(Less(symbol("x"),C1),Sin(Times(Plus(C1,Times(CN1,symbol("x"))),Pi)),If(Less(symbol("x"),C2),Times(CN1,Sin(Times(Plus(C2,Times(CN1,symbol("x"))),Pi))),Sin(Times(Plus(symbol("x"),Times(CN1,Times(C2,Quotient(Trunc(symbol("x")),C2)))),Pi)))),GreaterEqual(symbol("x"),C1D2))),
+				SetDelayed(Sin(pattern("x",symbol("NumberQ"))),Condition(Times(CN1,Sin(Times(CN1,symbol("x")))),Less(SignCmp(symbol("x")),C0)))
+				);
+				
 	public Sin() {
 	}
 
@@ -51,8 +80,13 @@ public class Sin extends AbstractTrigArg1 implements INumeric {
 	// }
 
 	@Override
+	public IAST getRuleAST() {
+		return RULES;
+	}
+
+	@Override
 	public IExpr numericEvalD1(final Num arg1) {
-		return F.num(Math.sin(arg1.getRealPart()));
+		return num(Math.sin(arg1.getRealPart()));
 	}
 
 	@Override
@@ -68,8 +102,8 @@ public class Sin extends AbstractTrigArg1 implements INumeric {
 	}
 
 	@Override
-  public void setUp(final ISymbol symbol) throws SyntaxError {
-    symbol.setAttributes(ISymbol.LISTABLE | ISymbol.NUMERICFUNCTION);
-    super.setUp(symbol);
-  }
+	public void setUp(final ISymbol symbol) throws SyntaxError {
+		symbol.setAttributes(ISymbol.LISTABLE | ISymbol.NUMERICFUNCTION);
+		super.setUp(symbol);
+	}
 }
