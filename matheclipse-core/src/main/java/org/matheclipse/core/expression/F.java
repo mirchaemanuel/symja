@@ -530,6 +530,11 @@ public class F {
 		return unary(ArcCos, a0);
 	}
 
+	public static IAST ArcCosh(final IExpr a0) {
+
+		return unary(ArcCosh, a0);
+	}
+
 	public static IAST Append(final IExpr a0) {
 
 		return unary(Append, a0);
@@ -549,9 +554,23 @@ public class F {
 		return unary(ArcSin, a0);
 	}
 
+	public static IAST ArcSinh(final IExpr a0) {
+
+		return unary(ArcSinh, a0);
+	}
+
+	public static IAST ArcCot(final IExpr a0) {
+		return unary(symbol("ArcCot"), a0);
+	}
+	
 	public static IAST ArcTan(final IExpr a0) {
 
 		return unary(ArcTan, a0);
+	}
+
+	public static IAST ArcTanh(final IExpr a0) {
+
+		return unary(ArcTanh, a0);
 	}
 
 	public static IAST ArcTan(final IExpr a0, final IExpr a1) {
@@ -606,7 +625,11 @@ public class F {
 
 		return unary(Depth, a0);
 	}
-
+	
+	public static IAST Derivative(final IExpr a0) {
+		return unary(symbol("Derivative"), a0);
+	}
+	
 	public static IAST Det(final IExpr a0) {
 
 		return unary(Det, a0);
@@ -668,6 +691,10 @@ public class F {
 		return unary(FreeQ, a0);
 	}
 
+	public static IAST Function(final IExpr a0) {
+		return unary(symbol("Function"), a0);
+	}
+	
 	public static IAST FullForm(final IExpr a0) {
 
 		return unary(FullForm, a0);
@@ -686,12 +713,12 @@ public class F {
 	public static IAST Hold(final IExpr a0) {
 		return unary(Hold, a0);
 	}
-	
+
 	public static IAST If(final IExpr a0, final IExpr a1, final IExpr a2) {
 
 		return ternary(If, a0, a1, a2);
 	}
-	
+
 	public static IAST Numerator(final IExpr a0) {
 		return unary(Numerator, a0);
 	}
@@ -1481,7 +1508,7 @@ public class F {
 		ast.add(a2);
 		return ast;
 	}
-	
+
 	/**
 	 * Gives symbols "True" or "False" (type ISymbol) depending on the boolean
 	 * value.

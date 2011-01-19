@@ -44,13 +44,16 @@ public abstract class AbstractFunctionEvaluator implements IFunctionEvaluator {
 		final EvalEngine engine = EvalEngine.get();
 		if ((ruleList = getRuleAST()) != null) {
 			boolean oldPackageMode = engine.isPackageMode();
+			boolean oldTraceMode = engine.isTraceMode();
 			try {
 				engine.setPackageMode(true);
+				engine.setTraceMode(false);
 				for (IExpr rule : ruleList) {
 					engine.evaluate(rule);
 				}
 			} finally {
 				engine.setPackageMode(oldPackageMode);
+				engine.setTraceMode(oldTraceMode);
 			}
 		}
 		String[] rules;
@@ -58,8 +61,10 @@ public abstract class AbstractFunctionEvaluator implements IFunctionEvaluator {
 			final Parser parser = new Parser();
 
 			boolean oldPackageMode = engine.isPackageMode();
+			boolean oldTraceMode = engine.isTraceMode();
 			try {
 				engine.setPackageMode(true);
+				engine.setTraceMode(false);
 				// if (session != null) {
 				// parser.setFactory(ExpressionFactory.get());
 				// }
@@ -74,6 +79,7 @@ public abstract class AbstractFunctionEvaluator implements IFunctionEvaluator {
 				}
 			} finally {
 				engine.setPackageMode(oldPackageMode);
+				engine.setTraceMode(oldTraceMode);
 			}
 		}
 		F.SYMBOL_OBSERVER.createPredefinedSymbol(symbol.toString());

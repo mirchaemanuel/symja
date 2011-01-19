@@ -1,11 +1,14 @@
 package org.matheclipse.core.reflection.system;
 
+import static org.matheclipse.core.expression.F.*; 
+
 import org.matheclipse.core.eval.interfaces.AbstractTrigArg1;
 import org.matheclipse.core.eval.interfaces.INumeric;
 import org.matheclipse.core.expression.ComplexUtils;
 import org.matheclipse.core.expression.ComplexNum;
 import org.matheclipse.core.expression.Num;
 import org.matheclipse.core.expression.F;
+import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.ISymbol;
 import org.matheclipse.parser.client.SyntaxError;
@@ -28,11 +31,50 @@ public class ArcTan extends AbstractTrigArg1 implements INumeric {
 	// "ArcTan[(5-2*5^(1/2))^(1/2)]=1/5*Pi",
 	// "ArcTan[x_NumberQ]:= -ArcTan[-x] /; SignCmp[x]<0",
 	// "ArcTan[x_NumberQ*y_]:= -ArcTan[-x*y] /; SignCmp[x]<0" };
-	//
-	// @Override
-	// public String[] getRules() {
-	// return RULES;
-	// }
+	 
+	/**
+	 <pre>
+	 ArcTan[(5-2*5^(1/2))^(1/2)*1/5*5^(1/2)]=1/10*Pi,
+  ArcTan[(5+2*5^(1/2))^(1/2)*1/5*5^(1/2)]=3/10*Pi,
+  ArcTan[3^(1/2)]=1/3*Pi,
+  ArcTan[DirectedInfinity[1]]=1/2*Pi,
+  ArcTan[2-3^(1/2)]=1/12*Pi,
+  ArcTan[2+3^(1/2)]=5/12*Pi,
+  ArcTan[1+2^(1/2)]=3/8*Pi,
+  ArcTan[0]=0,
+  ArcTan[(5-2*5^(1/2))^(1/2)]=1/5*Pi,
+  ArcTan[0,0]=0,
+  ArcTan[1]=1/4*Pi,
+  ArcTan[(5+2*5^(1/2))^(1/2)]=2/5*Pi,
+  ArcTan[1/3*3^(1/2)]=1/6*Pi,
+  ArcTan[2^(1/2)-1]=1/8*Pi,
+  ArcTan[x_NumberQ*y_]:=(-1)*ArcTan[(-1)*x*y]/;SignCmp[x]<0,
+  ArcTan[x_NumberQ]:=(-1)*ArcTan[(-1)*x]/;SignCmp[x]<0
+	 </pre>
+	 */
+	final static IAST RULES = List(
+			Set(ArcTan(CInfinity),Times(C1D2,Pi)),
+			Set(ArcTan(Power(C3,C1D2)),Times(C1D3,Pi)),
+			Set(ArcTan(Plus(Times(CN1,Power(C3,C1D2)),C2)),Times(fraction(1L,12L),Pi)),
+			Set(ArcTan(Plus(Power(C3,C1D2),C2)),Times(fraction(5L,12L),Pi)),
+			Set(ArcTan(Plus(Power(C2,C1D2),Times(CN1,C1))),Times(fraction(1L,8L),Pi)),
+			Set(ArcTan(Plus(Power(C2,C1D2),C1)),Times(fraction(3L,8L),Pi)),
+			Set(ArcTan(C0),C0),
+			Set(ArcTan(Power(Plus(Times(integer(-2L),Power(C5,C1D2)),C5),C1D2)),Times(fraction(1L,5L),Pi)),
+			Set(ArcTan(C0,C0),C0),
+			Set(ArcTan(C1),Times(C1D4,Pi)),
+			Set(ArcTan(Power(Plus(Times(C2,Power(C5,C1D2)),C5),C1D2)),Times(fraction(2L,5L),Pi)),
+			Set(ArcTan(Times(C1D3,Power(C3,C1D2))),Times(fraction(1L,6L),Pi)),
+			Set(ArcTan(Times(Times(fraction(1L,5L),Power(C5,C1D2)),Power(Plus(Times(integer(-2L),Power(C5,C1D2)),C5),C1D2))),Times(fraction(1L,10L),Pi)),
+			Set(ArcTan(Times(Times(fraction(1L,5L),Power(C5,C1D2)),Power(Plus(Times(C2,Power(C5,C1D2)),C5),C1D2))),Times(fraction(3L,10L),Pi)),
+			SetDelayed(ArcTan(Times(pattern("x",symbol("NumberQ")),pattern("y"))),Condition(Times(CN1,ArcTan(Times(Times(CN1,symbol("x")),symbol("y")))),Less(SignCmp(symbol("x")),C0))),
+			SetDelayed(ArcTan(pattern("x",symbol("NumberQ"))),Condition(Times(CN1,ArcTan(Times(CN1,symbol("x")))),Less(SignCmp(symbol("x")),C0)))
+			);
+	
+	@Override
+	public IAST getRuleAST() {
+		return RULES;
+	}
 
 	public ArcTan() {
 	}

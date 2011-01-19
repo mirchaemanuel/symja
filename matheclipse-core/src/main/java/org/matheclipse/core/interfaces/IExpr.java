@@ -12,9 +12,7 @@ import org.matheclipse.core.visit.IVisitorInt;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 
-import edu.jas.arith.BigRational;
 import edu.jas.structure.RingElem;
-import edu.jas.structure.RingFactory;
 
 /**
  * 

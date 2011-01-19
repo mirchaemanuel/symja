@@ -1,9 +1,6 @@
 package org.matheclipse.core.reflection.system;
 
-import static org.matheclipse.core.expression.F.C1;
-import static org.matheclipse.core.expression.F.Power;
-import static org.matheclipse.core.expression.F.Times;
-import static org.matheclipse.core.expression.F.fraction;
+import static org.matheclipse.core.expression.F.*; 
 
 import org.matheclipse.core.eval.EvalEngine;
 import org.matheclipse.core.eval.exception.DivisionByZero;
@@ -26,6 +23,22 @@ import org.matheclipse.core.interfaces.ISymbol;
 
 public class Power extends AbstractArg2 implements INumeric {
 
+	/**
+	 * <pre>
+     E^(I*Pi)=(-1),
+     E^Log[x_]:=x
+	 </pre>
+	 */
+	final static IAST RULES = List(
+			Set(Power(E,Times(CI,Pi)),CN1),
+			SetDelayed(Power(E,Log(pattern("x"))),symbol("x"))
+			);
+
+	@Override
+	public IAST getRuleAST() {
+		return RULES;
+	}
+	
 	public Power() {
 	}
 
@@ -373,6 +386,7 @@ public class Power extends AbstractArg2 implements INumeric {
 	@Override
 	public void setUp(final ISymbol symbol) {
 		symbol.setAttributes(ISymbol.LISTABLE | ISymbol.NUMERICFUNCTION);
+		super.setUp(symbol);
 	}
 
 	public double evalReal(final double[] stack, final int top, final int size) {
