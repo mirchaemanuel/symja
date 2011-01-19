@@ -1,11 +1,14 @@
 package org.matheclipse.core.reflection.system;
 
+import static org.matheclipse.core.expression.F.*; 
+
 import org.matheclipse.core.eval.interfaces.AbstractTrigArg1;
 import org.matheclipse.core.eval.interfaces.INumeric;
 import org.matheclipse.core.expression.ComplexUtils;
 import org.matheclipse.core.expression.ComplexNum;
 import org.matheclipse.core.expression.Num;
 import org.matheclipse.core.expression.F;
+import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.ISymbol;
 import org.matheclipse.parser.client.SyntaxError;
@@ -34,12 +37,61 @@ public class Tan extends AbstractTrigArg1 implements INumeric {
 	// /; x>1/2"
 	//
 	// };
-	//
-	// @Override
-	// public String[] getRules() {
-	// return RULES;
-	// }
 
+
+	/**
+	 * <pre>
+	 *   Tan[0]=0,
+  Tan[1/3*Pi]=3^(1/2),
+  Tan[1/5*Pi]=(5-2*5^(1/2))^(1/2),
+  Tan[1/4*Pi]=1,
+  Tan[2/5*Pi]=(5+2*5^(1/2))^(1/2),
+  Tan[1/6*Pi]=1/3*3^(1/2),
+  Tan[3/8*Pi]=1+2^(1/2),
+  Tan[1/8*Pi]=-1+2^(1/2),
+  Tan[5/12*Pi]=2+3^(1/2),
+  Tan[3/10*Pi]=1/5*5^(1/2)*(5+2*5^(1/2))^(1/2),
+  Tan[1/10*Pi]=1/5*5^(1/2)*(5-2*5^(1/2))^(1/2),
+  Tan[1/12*Pi]=2-3^(1/2),
+  Tan[Pi]=0,
+  Tan[I]=I*Tanh[1],
+  Tan[ArcSin[x_]]:=x*(1-x^2)^(1/2)^(-1),
+  Tan[x_NumberQ*y_]:=(-1)*Tan[(-1)*x*y]/;SignCmp[x]<0,
+  Tan[Pi*x_NumberQ]:=If[x<1,(-1)*Tan[(1-x)*Pi],If[x<2,Tan[(x-1)*Pi],Tan[(x-2*Quotient[Trunc[x],2])*Pi]]]/;x>1/2,
+  Tan[ArcTan[x_]]:=x,
+  Tan[ArcCos[x_]]:=(1-x^2)^(1/2)*x^(-1),
+  Tan[ArcCot[x_]]:=x^(-1),
+  Tan[x_NumberQ]:=(-1)*Tan[(-1)*x]/;SignCmp[x]<0
+	 </pre>
+	 */
+	final static IAST RULES = List(
+			Set(Tan(CI),Times(CI,Tanh(C1))),
+			Set(Tan(C0),C0),
+			Set(Tan(Times(C1D3,Pi)),Power(C3,C1D2)),
+			Set(Tan(Times(fraction(1L,5L),Pi)),Power(Plus(Times(integer(-2L),Power(C5,C1D2)),C5),C1D2)),
+			Set(Tan(Times(C1D4,Pi)),C1),
+			Set(Tan(Times(fraction(2L,5L),Pi)),Power(Plus(Times(C2,Power(C5,C1D2)),C5),C1D2)),
+			Set(Tan(Times(fraction(1L,6L),Pi)),Times(C1D3,Power(C3,C1D2))),
+			Set(Tan(Times(fraction(3L,8L),Pi)),Plus(Power(C2,C1D2),C1)),
+			Set(Tan(Times(fraction(1L,8L),Pi)),Plus(Power(C2,C1D2),Times(CN1,C1))),
+			Set(Tan(Times(fraction(5L,12L),Pi)),Plus(Power(C3,C1D2),C2)),
+			Set(Tan(Times(fraction(3L,10L),Pi)),Times(Times(fraction(1L,5L),Power(C5,C1D2)),Power(Plus(Times(C2,Power(C5,C1D2)),C5),C1D2))),
+			Set(Tan(Times(fraction(1L,10L),Pi)),Times(Times(fraction(1L,5L),Power(C5,C1D2)),Power(Plus(Times(integer(-2L),Power(C5,C1D2)),C5),C1D2))),
+			Set(Tan(Times(fraction(1L,12L),Pi)),Plus(Times(CN1,Power(C3,C1D2)),C2)),
+			Set(Tan(Pi),C0),
+			SetDelayed(Tan(ArcSin(pattern("x"))),Times(symbol("x"),Power(Plus(Times(CN1,Power(symbol("x"),C2)),C1),Power(C1D2,CN1)))),
+			SetDelayed(Tan(Times(pattern("x",symbol("NumberQ")),pattern("y"))),Condition(Times(CN1,Tan(Times(Times(CN1,symbol("x")),symbol("y")))),Less(SignCmp(symbol("x")),C0))),
+			SetDelayed(Tan(Times(Pi,pattern("x",symbol("NumberQ")))),Condition(If(Less(symbol("x"),C1),Times(CN1,Tan(Times(Plus(Times(CN1,symbol("x")),C1),Pi))),If(Less(symbol("x"),C2),Tan(Times(Plus(CN1,symbol("x")),Pi)),Tan(Times(Plus(Times(integer(-2L),Quotient(Trunc(symbol("x")),C2)),symbol("x")),Pi)))),Greater(symbol("x"),C1D2))),
+			SetDelayed(Tan(ArcTan(pattern("x"))),symbol("x")),
+			SetDelayed(Tan(ArcCos(pattern("x"))),Times(Power(Plus(Times(CN1,Power(symbol("x"),C2)),C1),C1D2),Power(symbol("x"),CN1))),
+			SetDelayed(Tan(ArcCot(pattern("x"))),Power(symbol("x"),CN1)),
+			SetDelayed(Tan(pattern("x",symbol("NumberQ"))),Condition(Times(CN1,Tan(Times(CN1,symbol("x")))),Less(SignCmp(symbol("x")),C0)))
+			);
+
+	@Override
+	public IAST getRuleAST() {
+		return RULES;
+	}
 	public Tan() {
 	}
 

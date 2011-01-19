@@ -1042,6 +1042,12 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 	public String internalFormString(boolean symbolsAsFactoryMethod, int depth) {
 		final String sep = ",";
 		final IExpr temp = head();
+		if (this.equals(F.CInfinity)) {
+			return "CInfinity";
+		}
+		if (this.equals(F.CNInfinity)) {
+			return "CNInfinity";
+		}
 		StringBuffer text = new StringBuffer(size() * 10);
 		if (temp instanceof ISymbol) {
 			ISymbol sym = (ISymbol) temp;

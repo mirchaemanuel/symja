@@ -1,10 +1,13 @@
 package org.matheclipse.core.reflection.system;
 
+import static org.matheclipse.core.expression.F.*;
+
 import org.matheclipse.core.eval.interfaces.AbstractTrigArg1;
 import org.matheclipse.core.eval.interfaces.INumeric;
 import org.matheclipse.core.expression.ComplexNum;
 import org.matheclipse.core.expression.Num;
 import org.matheclipse.core.expression.F;
+import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.INumber;
 import org.matheclipse.core.interfaces.ISymbol;
@@ -17,11 +20,23 @@ import org.matheclipse.parser.client.SyntaxError;
 public class Abs extends AbstractTrigArg1 implements INumeric {
 //	final static String[] RULES = { "Abs[Pi]=Pi", "Abs[E]=E", "Abs[x_NumberQ*y_]:=Abs[x]*Abs[y]" };
 
-//	@Override
-//	public String[] getRules() {
-//		return RULES;
-//	}
-
+	/**
+	 <pre>Abs[Pi]=Pi, 
+  Abs[E]=E, 
+  Abs[x_NumberQ*y_]:=Abs[x]*Abs[y]
+  </pre>
+	 */
+	final static IAST RULES = List( 
+			Set(Abs(Pi),Pi),
+			Set(Abs(E),E),
+			SetDelayed(Abs(Times(pattern("x",symbol("NumberQ")),pattern("y"))),Times(Abs(symbol("x")),Abs(symbol("y"))))
+			);
+	
+	@Override
+	public IAST getRuleAST() {
+		return RULES;
+	}
+	
 	public Abs() {
 	}
 
