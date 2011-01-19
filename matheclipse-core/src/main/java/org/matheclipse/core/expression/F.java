@@ -386,6 +386,8 @@ public class F {
 
 	public static IAST CInfinity;
 	public static IAST CNInfinity;
+	public static IAST Slot1;
+	public static IAST Slot2;
 
 	/**
 	 * Constant integer &quot;-1&quot;
@@ -562,7 +564,7 @@ public class F {
 	public static IAST ArcCot(final IExpr a0) {
 		return unary(symbol("ArcCot"), a0);
 	}
-	
+
 	public static IAST ArcTan(final IExpr a0) {
 
 		return unary(ArcTan, a0);
@@ -625,11 +627,11 @@ public class F {
 
 		return unary(Depth, a0);
 	}
-	
+
 	public static IAST Derivative(final IExpr a0) {
 		return unary(symbol("Derivative"), a0);
 	}
-	
+
 	public static IAST Det(final IExpr a0) {
 
 		return unary(Det, a0);
@@ -694,7 +696,7 @@ public class F {
 	public static IAST Function(final IExpr a0) {
 		return unary(symbol("Function"), a0);
 	}
-	
+
 	public static IAST FullForm(final IExpr a0) {
 
 		return unary(FullForm, a0);
@@ -984,6 +986,8 @@ public class F {
 
 			CInfinity = function(DirectedInfinity, C1);
 			CNInfinity = function(DirectedInfinity, CN1);
+			Slot1 = function(Slot, C1);
+			Slot2 = function(Slot, C1);
 
 			if (symbolObserver != null) {
 				SYMBOL_OBSERVER = symbolObserver;
