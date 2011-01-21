@@ -314,8 +314,8 @@ public class SourceGenerator {
 						// Try to create an instance of the object
 						final Object o = Class.forName(packageName + "." + classname).newInstance();
 
-						if (classname.length() >= maximumNumberOfChars) {
-							System.out.println("  \""+classname + "\" |");
+						if (classname.length() >= maximumNumberOfChars && !(classname.contains("$"))) {
+							System.out.println("  \"" + classname + "\" |");
 						}
 
 					} catch (final ClassNotFoundException cnfex) {
@@ -356,26 +356,28 @@ public class SourceGenerator {
 				if (files[i].endsWith(".class")) {
 					// removes the .class extension
 					final String classname = files[i].substring(0, files[i].length() - 6);
-					try {
-						// Try to create an instance of the object
-						final Object o = Class.forName(pckgname + "." + classname).newInstance();
+					if (!(classname.contains("$"))) {
+						try {
+							// Try to create an instance of the object
+							final Object o = Class.forName(pckgname + "." + classname).newInstance();
 
-						if (o instanceof AbstractSymbolEvaluator) {
-							System.out.print("\"" + classname + "\"");
-						} else {
-							System.out.print("\"" + classname + "[]\"");
+							if (o instanceof AbstractSymbolEvaluator) {
+								System.out.print("\"" + classname + "\"");
+							} else {
+								System.out.print("\"" + classname + "[]\"");
+							}
+							if (i < files.length - 1) {
+								System.out.println(",");
+							}
+						} catch (final ClassNotFoundException cnfex) {
+							System.err.println(cnfex);
+						} catch (final InstantiationException iex) {
+							// We try to instantiate an interface
+							// or an object that does not have a
+							// default constructor
+						} catch (final IllegalAccessException iaex) {
+							// The class is not public
 						}
-						if (i < files.length - 1) {
-							System.out.println(",");
-						}
-					} catch (final ClassNotFoundException cnfex) {
-						System.err.println(cnfex);
-					} catch (final InstantiationException iex) {
-						// We try to instantiate an interface
-						// or an object that does not have a
-						// default constructor
-					} catch (final IllegalAccessException iaex) {
-						// The class is not public
 					}
 				}
 			}
