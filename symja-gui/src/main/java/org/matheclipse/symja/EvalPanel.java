@@ -352,7 +352,7 @@ public class EvalPanel extends JPanel { // implements DocumentListener {
 			jInputArea.setEditorKit(new jsyntaxpane.syntaxkits.SymjaSyntaxKit());
 
 			jInputArea.setFont(new java.awt.Font("Monospaced", Font.PLAIN, FONT_SIZE_TEXT));
-			jInputArea.setCaretColor(new java.awt.Color(153, 204, 255));
+			// jInputArea.setCaretColor(new java.awt.Color(153, 204, 255));
 
 			jInputArea.setText("Loading library...");
 			// jInputArea.getDocument().addDocumentListener(this);
