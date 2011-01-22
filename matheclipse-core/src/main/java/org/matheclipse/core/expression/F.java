@@ -585,6 +585,11 @@ public class F {
 		return binary(symbol("Binomial"), a0, a1);
 	}
 
+	public static IAST Ceiling(final IExpr a0) {
+
+		return unary(Ceiling, a0);
+	}
+	
 	public static IAST CNInfinity() {
 		return binary(Times, CN1, Infinity);
 	}
@@ -681,6 +686,11 @@ public class F {
 	public static IAST Factorial(final IExpr a0) {
 
 		return unary(Factorial, a0);
+	}
+	
+	public static IAST Floor(final IExpr a0) {
+
+		return unary(Floor, a0);
 	}
 
 	public static IAST Fibonacci(final IExpr a0) {
@@ -878,7 +888,7 @@ public class F {
 			AtomQ = predefinedSymbol("AtomQ");
 			Binomial = predefinedSymbol("Binomial");
 			Break = predefinedSymbol("Break");
-			Ceiling = predefinedSymbol("Ceil");
+			Ceiling = predefinedSymbol("Ceiling");
 			CompoundExpression = predefinedSymbol("CompoundExpression");
 			Condition = predefinedSymbol("Condition");
 			Continue = predefinedSymbol("Continue");

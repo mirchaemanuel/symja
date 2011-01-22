@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.generic.interfaces.Aggregator;
 import org.matheclipse.generic.interfaces.BiFunction;
 import org.matheclipse.generic.interfaces.BiPredicate;
@@ -294,6 +295,32 @@ public class Range<E, L extends List<E>, C extends Collection<E>> implements Ite
 		for (int i = fStart; i < fEnd; i++) {
 			if (predicate.apply(fList.get(i))) {
 				filterList.add(fList.get(i));
+			} else {
+				restList.add(fList.get(i));
+			}
+		}
+		return filterList;
+	}
+
+	/**
+	 * Apply the function to each element in the range and append the result
+	 * elements for which the function returns non-null elements to the
+	 * filterList, or otherwise append it to the restList.
+	 * 
+	 * @param filterList
+	 *          the elements which match the predicate
+	 * @param restList
+	 *          the elements which don't match the predicate
+	 * @param function
+	 *          the function which filters each element in the range by returning
+	 *          a non-null result.
+	 * @return the <code>filterList</code>
+	 */
+	public C filter(C filterList, C restList, final Function<E, E> function) {
+		for (int i = fStart; i < fEnd; i++) {
+			E expr = function.apply(fList.get(i));
+			if (expr != null) {
+				filterList.add(expr);
 			} else {
 				restList.add(fList.get(i));
 			}

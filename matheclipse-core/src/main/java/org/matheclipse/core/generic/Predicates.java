@@ -146,17 +146,49 @@ public class Predicates {
 	}
 
 	/**
-	 * Returns a predicate that evaluates to {@code true} if the object reference
-	 * is an <code>instanceof IPattern</code>.
+	 * Returns a predicate that evaluates to {@code true} if the input is an
+	 * <code>instanceof IPattern</code>.
 	 * 
 	 * @return
 	 */
 	public static Predicate<IExpr> isPattern() {
-		return new Predicate() {
+		return new Predicate<IExpr>() {
 			@Override
-			public boolean apply(Object input) {
+			public boolean apply(IExpr input) {
 				return (input instanceof IPattern);
 			}
 		};
 	}
+
+	/**
+	 * Returns a predicate that evaluates to {@code true} if
+	 * <code>input.isNumber()</code> gives {@code true}.
+	 * 
+	 * @return
+	 */
+	public static Predicate<IExpr> isNumber() {
+		return new Predicate<IExpr>() {
+			@Override
+			public boolean apply(IExpr input) {
+				return input.isNumber();
+			}
+		};
+	}
+	
+	/**
+	 * Returns a predicate that evaluates to {@code true} if
+	 * <code>input.isSignedNumber()</code> gives {@code true}.
+	 * 
+	 * @return
+	 */
+	public static Predicate<IExpr> isSignedNumber() {
+		return new Predicate<IExpr>() {
+			@Override
+			public boolean apply(IExpr input) {
+				return input.isSignedNumber();
+			}
+		};
+	}
+	
+	
 }

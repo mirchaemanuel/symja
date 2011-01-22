@@ -281,6 +281,31 @@ public interface IAST extends IExpr, INestedList<IExpr> {
 	public IAST filter(IAST filterAST, IAST restAST, Predicate<IExpr> predicate);
 
 	/**
+	 * Apply the predicate to each element in this <code>AST</code> and append the
+	 * elements which satisfy the predicate to the <code>0th element</code> of the
+	 * result array, or otherwise append it to the <code>1st element</code> of the
+	 * result array.
+	 * 
+	 * @param predicate
+	 *          the predicate which filters each element in the range
+	 * @return the resulting ASTs in the 0-th and 1-st element of the array
+	 */
+	public IAST[] split(Predicate<IExpr> predicate);
+
+	/**
+	 * Apply the function to each element in this <code>AST</code> and append the
+	 * result elements for which the function returns non-null elements to the
+	 * <code>0th element</code> of the result array, or otherwise append it to the
+	 * <code>1st element</code> of the result array.
+	 * 
+	 * @param function
+	 *          the function which filters each element in the range by returning
+	 *          a non-null result.
+	 * @return the resulting ASTs in the 0-th and 1-st element of the array
+	 */
+	public IAST[] split(final Function<IExpr, IExpr> function);
+
+	/**
 	 * Set the head element of this list
 	 */
 	public void setHeader(IExpr expr);

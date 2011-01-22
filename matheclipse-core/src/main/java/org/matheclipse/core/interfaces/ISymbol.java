@@ -2,12 +2,11 @@ package org.matheclipse.core.interfaces;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 
 import org.matheclipse.core.eval.EvalEngine;
 import org.matheclipse.core.patternmatching.PatternMatcher;
 import org.matheclipse.core.patternmatching.PatternMatcherAndInvoker;
-import org.matheclipse.generic.interfaces.Pair;
+import org.matheclipse.generic.interfaces.INumericFunction;
 
 import com.google.common.base.Function;
 
@@ -147,6 +146,22 @@ public interface ISymbol extends IExpr { // Variable<IExpr>
 	 * 
 	 */
 	public boolean isValue(IAST ast);
+
+	/**
+	 * If this symbol has attribute <code>ISymbol.CONSTANT</code> and the symbol's
+	 * evaluator is of instance <code>INumericConstant</code>, then apply the
+	 * constants double value to the given function and return the result,
+	 * otherwise return <code>null</code>.
+	 * 
+	 * @param function
+	 *          applys the function to a <code>double</code> value, resulting in
+	 *          an object of type {@code IExpr}.
+	 * @return the resulting expression from the function or <code>null</code>.
+	 * @see org.matheclipse.core.reflection.system.Abs
+	 * @see org.matheclipse.core.reflection.system.Ceiling
+	 * @see org.matheclipse.core.reflection.system.Floor
+	 */
+	public IExpr mapConstantDouble(INumericFunction<IExpr> function);
 
 	/**
 	 * Get the Attributes of this symbol (i.e. LISTABLE, FLAT, ORDERLESS,...)

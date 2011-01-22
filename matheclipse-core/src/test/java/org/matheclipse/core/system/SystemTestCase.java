@@ -1420,10 +1420,14 @@ public class SystemTestCase extends AbstractTestCase {
 
 	public void testSystem246() {
 		check("Ceiling[42]", "42");
+		check("Ceiling[Pi]", "4");
+		check("Ceiling[42+x+y]", "Ceiling[y+x]+42");
 	}
 
 	public void testSystem247() {
 		check("Floor[42]", "42");
+		check("Floor[Pi]", "3");
+		check("Floor[42+x+y]", "Floor[y+x]+42");
 	}
 
 	public void testSystem248() {
@@ -2259,6 +2263,7 @@ public class SystemTestCase extends AbstractTestCase {
 		check("Abs[E]", "E");
 		check("Abs[42]", "42");
 		check("Abs[-12/90]", "2/15");
+		check("Abs[-12/90*Pi*x*y]", "2/15*Pi*Abs[x*y]");
 		check("Abs[2/15]", "2/15");
 		check("Abs[-5.0 +  3.0*I ]", "5.8309518948453");
 		check("Abs[3-4*I]", "5");

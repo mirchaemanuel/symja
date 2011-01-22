@@ -751,6 +751,28 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 	/**
 	 * {@inheritDoc}
 	 */
+	public IAST[] split(Predicate<IExpr> predicate) {
+		IAST[] result = new IAST[2];
+		result[0] = copyHead();
+		result[1] = copyHead();
+		new ASTRange(this, 1, size()).filter(result[0], result[1], predicate);
+		return result;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public IAST[] split(final Function<IExpr, IExpr> function) {
+		IAST[] result = new IAST[2];
+		result[0] = copyHead();
+		result[1] = copyHead();
+		new ASTRange(this, 1, size()).filter(result[0], result[1], function);
+		return result;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
 	public boolean isAST() {
 		return true;
 	}

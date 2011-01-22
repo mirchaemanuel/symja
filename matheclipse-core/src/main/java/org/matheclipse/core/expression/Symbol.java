@@ -10,6 +10,7 @@ import org.matheclipse.basic.Config;
 import org.matheclipse.core.eval.EvalEngine;
 import org.matheclipse.core.eval.SystemNamespace;
 import org.matheclipse.core.eval.exception.RuleCreationError;
+import org.matheclipse.core.eval.interfaces.INumericConstant;
 import org.matheclipse.core.form.output.OutputFormFactory;
 import org.matheclipse.core.form.output.StringBufferWriter;
 import org.matheclipse.core.generic.UnaryVariable2Slot;
@@ -25,6 +26,7 @@ import org.matheclipse.core.patternmatching.RulesData;
 import org.matheclipse.core.visit.IVisitor;
 import org.matheclipse.core.visit.IVisitorBoolean;
 import org.matheclipse.core.visit.IVisitorInt;
+import org.matheclipse.generic.interfaces.INumericFunction;
 import org.matheclipse.generic.interfaces.Pair;
 
 import com.google.common.base.Function;
@@ -62,6 +64,9 @@ public class Symbol extends ExprImpl implements ISymbol {
 	// }
 	// };
 
+	/**
+	 * The attribute values of the symbol represented by single bits.
+	 */
 	private int fAttributes = NOATTRIBUTE;
 
 	private transient IEvaluator fEvaluator;
@@ -253,12 +258,6 @@ public class Symbol extends ExprImpl implements ISymbol {
 		return SYMBOLID;
 	}
 
-	// public boolean isLocalVariableStackEmpty() {
-	// ExpressionFactory f = ExpressionFactory.get();
-	// Stack<IExpr> localVariableStack = f.getLocalVarStack(fSymbolName);
-	// return localVariableStack.isEmpty();
-	// }
-
 	/** {@inheritDoc} */
 	public boolean isString(final String str) {
 		return fSymbolName.equals(str);
@@ -403,12 +402,18 @@ public class Symbol extends ExprImpl implements ISymbol {
 	}
 
 	@Override
+	/**
+	 * {@inheritDoc}
+	 */
 	public IExpr variables2Slots(final Map<IExpr, IExpr> map, final List<IExpr> variableList) {
 		final UnaryVariable2Slot uv2s = new UnaryVariable2Slot(map, variableList);
 		return uv2s.apply(this);
 	}
 
 	@Override
+	/**
+	 * {@inheritDoc}
+	 */
 	public String internalFormString(boolean symbolsAsFactoryMethod, int depth) {
 		if (symbolsAsFactoryMethod) {
 			if (Character.isUpperCase(fSymbolName.charAt(0))) {
@@ -428,6 +433,9 @@ public class Symbol extends ExprImpl implements ISymbol {
 		return fSymbolName;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public List<IAST> definition() {
 		return fRulesData.definition();
 	}
@@ -498,16 +506,42 @@ public class Symbol extends ExprImpl implements ISymbol {
 		fRulesData.writeSymbol(stream);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public <T> T accept(IVisitor<T> visitor) {
 		return visitor.visit(this);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public boolean accept(IVisitorBoolean visitor) {
 		return visitor.visit(this);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public int accept(IVisitorInt visitor) {
 		return visitor.visit(this);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public IExpr mapConstantDouble(INumericFunction<IExpr> function) {
+		if ((getAttributes() & ISymbol.CONSTANT) == ISymbol.CONSTANT) {
+			IEvaluator evaluator = getEvaluator();
+			if (evaluator instanceof INumericConstant) {
+				INumericConstant numericConstant = (INumericConstant) evaluator;
+				double value = numericConstant.evalReal();
+				if (value < Integer.MAX_VALUE && value > Integer.MIN_VALUE) {
+					return function.apply(value);
+				}
+			}
+		}
+		return null;
 	}
 
 }
