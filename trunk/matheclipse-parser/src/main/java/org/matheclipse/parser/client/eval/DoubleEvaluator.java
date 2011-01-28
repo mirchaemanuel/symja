@@ -281,7 +281,7 @@ public class DoubleEvaluator {
         return Math.asin(arg1);
       }
     });
-    FUNCTION_DOUBLE_MAP.put("Ceil", new IDouble1Function() {
+    FUNCTION_DOUBLE_MAP.put("Ceiling", new IDouble1Function() {
       public double evaluate(double arg1) {
         return Math.ceil(arg1);
       }
