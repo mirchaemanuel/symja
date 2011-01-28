@@ -1,13 +1,34 @@
 package org.matheclipse.core.reflection.system;
 
-import static org.matheclipse.core.expression.F.*; 
+import static org.matheclipse.core.expression.F.C0;
+import static org.matheclipse.core.expression.F.C1;
+import static org.matheclipse.core.expression.F.CI;
+import static org.matheclipse.core.expression.F.CN1;
+import static org.matheclipse.core.expression.F.Condition;
+import static org.matheclipse.core.expression.F.Cos;
+import static org.matheclipse.core.expression.F.Cot;
+import static org.matheclipse.core.expression.F.Csc;
+import static org.matheclipse.core.expression.F.E;
+import static org.matheclipse.core.expression.F.Less;
+import static org.matheclipse.core.expression.F.List;
+import static org.matheclipse.core.expression.F.Log;
+import static org.matheclipse.core.expression.F.Pi;
+import static org.matheclipse.core.expression.F.Power;
+import static org.matheclipse.core.expression.F.Sec;
+import static org.matheclipse.core.expression.F.Set;
+import static org.matheclipse.core.expression.F.SetDelayed;
+import static org.matheclipse.core.expression.F.Sin;
+import static org.matheclipse.core.expression.F.Tan;
+import static org.matheclipse.core.expression.F.Times;
+import static org.matheclipse.core.expression.F.fraction;
+import static org.matheclipse.core.expression.F.pattern;
+import static org.matheclipse.core.expression.F.symbol;
 
 import org.matheclipse.core.eval.EvalEngine;
 import org.matheclipse.core.eval.exception.DivisionByZero;
 import org.matheclipse.core.eval.interfaces.AbstractArg2;
 import org.matheclipse.core.eval.interfaces.INumeric;
 import org.matheclipse.core.expression.F;
-import org.matheclipse.core.expression.FractionSym;
 import org.matheclipse.core.generic.Functors;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IComplex;
@@ -26,13 +47,25 @@ public class Power extends AbstractArg2 implements INumeric {
 	/**
 	 * <pre>
      E^(I*Pi)=(-1),
-     E^Log[x_]:=x
+     E^Log[x_]:=x,
+     Tan[x_]^(n_IntegerQ):=Cot[x]^(-n)/;(n<0)
+     Cot[x_]^(n_IntegerQ):=Tan[x]^(-n)/;(n<0),
+     Sec[x_]^(n_IntegerQ):=Cos[x]^(-n)/;(n<0),
+     Cos[x_]^(n_IntegerQ):=Sec[x]^(-n)/;(n<0),
+     Csc[x_]^(n_IntegerQ):=Sin[x]^(-n)/;(n<0),
+     Sin[x_]^(n_IntegerQ):=Csc[x]^(-n)/;(n<0),
 	 </pre>
 	 */
-	final static IAST RULES = List(
+	final static IAST RULES = List( 
 			Set(Power(E,Times(CI,Pi)),CN1),
-			SetDelayed(Power(E,Log(pattern("x"))),symbol("x"))
-			);
+			SetDelayed(Power(E,Log(pattern("x"))),symbol("x")),
+			SetDelayed(Power(Tan(pattern("x")),pattern("n",symbol("IntegerQ"))),Condition(Power(Cot(symbol("x")),Times(CN1,symbol("n"))),Less(symbol("n"),C0))),
+			SetDelayed(Power(Cot(pattern("x")),pattern("n",symbol("IntegerQ"))),Condition(Power(Tan(symbol("x")),Times(CN1,symbol("n"))),Less(symbol("n"),C0))),
+			SetDelayed(Power(Sec(pattern("x")),pattern("n",symbol("IntegerQ"))),Condition(Power(Cos(symbol("x")),Times(CN1,symbol("n"))),Less(symbol("n"),C0))),
+			SetDelayed(Power(Cos(pattern("x")),pattern("n",symbol("IntegerQ"))),Condition(Power(Sec(symbol("x")),Times(CN1,symbol("n"))),Less(symbol("n"),C0))),
+			SetDelayed(Power(Csc(pattern("x")),pattern("n",symbol("IntegerQ"))),Condition(Power(Sin(symbol("x")),Times(CN1,symbol("n"))),Less(symbol("n"),C0))),
+			SetDelayed(Power(Sin(pattern("x")),pattern("n",symbol("IntegerQ"))),Condition(Power(Csc(symbol("x")),Times(CN1,symbol("n"))),Less(symbol("n"),C0)))
+	);
 
 	@Override
 	public IAST getRuleAST() {

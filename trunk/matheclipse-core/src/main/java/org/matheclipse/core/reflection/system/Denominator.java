@@ -2,6 +2,7 @@ package org.matheclipse.core.reflection.system;
 
 import org.matheclipse.core.eval.exception.WrongNumberOfArguments;
 import org.matheclipse.core.eval.interfaces.IFunctionEvaluator;
+import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.IRational;
@@ -17,27 +18,51 @@ import org.matheclipse.core.interfaces.ISymbol;
  */
 public class Denominator implements IFunctionEvaluator {
 
-  public Denominator() {
-  }
+	static ISymbol[] NUMERATOR_SYMBOLS = { F.Csc, F.Cot, F.Sec };
+	static ISymbol[] DENOMINATOR_SYMBOLS = { F.Sin, F.Tan, F.Cos };
 
-  public IExpr evaluate(final IAST ast) {
-    if (ast.size() != 2) {
-      throw new WrongNumberOfArguments(ast, 1, ast.size() - 1);
-    }
-    IExpr expr = ast.get(1);
-    if (expr instanceof IRational) {
-      return ((IRational) expr).getDenominator();
-    }
-    IExpr[] parts = Apart.getFractionalParts(expr);
-    return parts[1];
-  }
+	public Denominator() {
+	}
 
-  public IExpr numericEval(final IAST functionList) {
-    return evaluate(functionList);
-  }
+	public IExpr evaluate(final IAST ast) {
+		if (ast.size() != 2) {
+			throw new WrongNumberOfArguments(ast, 1, ast.size() - 1);
+		}
+		IExpr expr = ast.get(1);
+		if (expr instanceof IRational) {
+			return ((IRational) expr).getDenominator();
+		}
+		IExpr[] parts = Apart.getFractionalParts(expr);
+		return parts[1];
+	}
 
-  public void setUp(final ISymbol symbol) {
-    symbol.setAttributes(ISymbol.LISTABLE);
-  }
+	public IExpr numericEval(final IAST functionList) {
+		return evaluate(functionList);
+	}
+
+	public void setUp(final ISymbol symbol) {
+		symbol.setAttributes(ISymbol.LISTABLE);
+	}
+
+	/**
+	 * Get the &quot;denominator form&quot; of the given function. Example:
+	 * <code>Csc[x]</code> gives <code>Sin[x]</code>.
+	 * 
+	 * @param function
+	 *          the function which should be transformed to &quot;denominator
+	 *          form&quot;
+	 * @return
+	 */
+	public static IAST getDenominatorForm(IAST function) {
+		if (function.size() == 2) {
+			for (int i = 0; i < Denominator.NUMERATOR_SYMBOLS.length; i++) {
+				ISymbol sym = Denominator.NUMERATOR_SYMBOLS[i];
+				if (function.head().equals(sym)) {
+					return F.$(Denominator.DENOMINATOR_SYMBOLS[i], function.get(1));
+				}
+			}
+		}
+		return null;
+	}
 
 }

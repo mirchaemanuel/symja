@@ -941,6 +941,10 @@ public class IntegerSym extends ExprImpl implements IInteger {
 		return this;
 	}
 
+	public ISignedNumber round() {
+		return this;
+	}
+	
 	/**
 	 * Compares this expression with the specified expression for order. Returns a
 	 * negative integer, zero, or a positive integer as this expression is

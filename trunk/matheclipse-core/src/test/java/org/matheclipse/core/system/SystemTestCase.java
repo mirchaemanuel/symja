@@ -54,6 +54,13 @@ public class SystemTestCase extends AbstractTestCase {
 		check("a+ArcTan[17]+ArcTan[1/17]+2/3", "a+1/2*Pi+2/3");
 		check("a+ArcTan[-2]+ArcTan[-1/2]+2/3", "a-1/2*Pi+2/3");
 		check("a+Cosh[x]^2-Sinh[x]^2+2/3", "a+5/3");
+
+		check("Tan[x]^(-2)", "Cot[x]^2");
+		check("Cot[x]^(-2)", "Tan[x]^2");
+		check("Sec[x]^(-2)", "Cos[x]^2");
+		check("Cos[x]^(-2)", "Sec[x]^2");
+		check("Csc[x]^(-2)", "Sin[x]^2");
+		check("Sin[x]^(-2)", "Csc[x]^2");
 	}
 
 	public void testSystem000a() {
@@ -294,14 +301,16 @@ public class SystemTestCase extends AbstractTestCase {
 
 	public void testSystem038() {
 		check("Trace[D[Sin[x],x]]", "{{Derivative[Sin],Cos[#1]&},{x&,Cos[x]},{D[Sin[x],x],Cos[x]*D[x,x],{D[x,x],1},1*Cos[x],Cos[x]}}");
-		check("D[Sin[x]^Cos[x],x]", "(-Log[Sin[x]]*Sin[x]+Cos[x]^2*Sin[x]^(-1))*Sin[x]^Cos[x]");
-		check("Trace[D[Sin[x]^Cos[x],x]]", "{D[Sin[x]^Cos[x],x],Sin[x]^Cos[x]*(Log[Sin[x]]*D[Cos[x],x]+Cos[x]*D[Sin[x],x]*Sin[x]^(\n"
-				+ "-1)),{Derivative[Sin],Cos[#1]&},{x&,Cos[x]},{D[Sin[x],x],Cos[x]*D[x,x],{D[x,x],1},\n"
-				+ "1*Cos[x],Cos[x]},{Cos[x]*D[Sin[x],x]*Sin[x]^(-1),Cos[x]*Cos[x]*Sin[x]^(-1),Cos[x]^\n"
-				+ "2*Sin[x]^(-1)},{Derivative[Cos],(-1)*Sin[#1]&},{x&,(-1)*Sin[x]},{D[Cos[x],x],(-1)*Sin[x]*D[x,x],(\n"
-				+ "-1)*Sin[x]*D[x,x],{D[x,x],1},(-1)*1*Sin[x],(-1)*Sin[x]},{Log[Sin[x]]*D[Cos[x],x],Log[Sin[x]]*(\n"
-				+ "-1)*Sin[x],(-1)*Log[Sin[x]]*Sin[x]},{Log[Sin[x]]*D[Cos[x],x]+Cos[x]*D[Sin[x],x]*Sin[x]^(\n"
-				+ "-1),-Log[Sin[x]]*Sin[x]+Cos[x]^2*Sin[x]^(-1)},(-Log[Sin[x]]*Sin[x]+Cos[x]^2*Sin[x]^(\n" + "-1))*Sin[x]^Cos[x]}");
+		check("D[Sin[x]^Cos[x],x]", "(-Log[Sin[x]]*Sin[x]+Csc[x]*Cos[x]^2)*Sin[x]^Cos[x]");
+		check(
+				"Trace[D[Sin[x]^Cos[x],x]]",
+				"{D[Sin[x]^Cos[x],x],Sin[x]^Cos[x]*(Log[Sin[x]]*D[Cos[x],x]+Cos[x]*D[Sin[x],x]*Sin[x]^(\n"
+						+ "-1)),{Derivative[Sin],Cos[#1]&},{x&,Cos[x]},{D[Sin[x],x],Cos[x]*D[x,x],{D[x,x],1},\n"
+						+ "1*Cos[x],Cos[x]},{Sin[x]^(-1),Csc[x]^((-1)*(-1)),{(-1)*(-1),(-1)^2,1},Csc[x]^1,Csc[x]},{Cos[x]*D[Sin[x],x]*Sin[x]^(\n"
+						+ "-1),Cos[x]*Cos[x]*Csc[x],Csc[x]*Cos[x]^2},{Derivative[Cos],(-1)*Sin[#1]&},{x&,(\n"
+						+ "-1)*Sin[x]},{D[Cos[x],x],(-1)*Sin[x]*D[x,x],(-1)*Sin[x]*D[x,x],{D[x,x],1},(-1)*1*Sin[x],(\n"
+						+ "-1)*Sin[x]},{Log[Sin[x]]*D[Cos[x],x],Log[Sin[x]]*(-1)*Sin[x],(-1)*Log[Sin[x]]*Sin[x]},{Log[Sin[x]]*D[Cos[x],x]+Cos[x]*D[Sin[x],x]*Sin[x]^(\n"
+						+ "-1),-Log[Sin[x]]*Sin[x]+Csc[x]*Cos[x]^2},(-Log[Sin[x]]*Sin[x]+Csc[x]*Cos[x]^2)*Sin[x]^Cos[x]}");
 		check("Trace[NumberQ[1/3]]", "{NumberQ[1/3],True}");
 	}
 
@@ -511,7 +520,7 @@ public class SystemTestCase extends AbstractTestCase {
 	}
 
 	public void testSystem073() {
-		check("D[Log[Sin[x]],x]", "Cos[x]*Sin[x]^(-1)");
+		check("D[Log[Sin[x]],x]", "Cos[x]*Csc[x]");
 	}
 
 	public void testSystem074() {
@@ -532,7 +541,7 @@ public class SystemTestCase extends AbstractTestCase {
 
 	public void testSystem078() {
 		check("D[Sin[x] + Cos[y], {x, y}]", "D[Sin[x]+Cos[y],{x,y}]");
-		check("D[Sin[x]^Cos[x],x]", "(-Log[Sin[x]]*Sin[x]+Cos[x]^2*Sin[x]^(-1))*Sin[x]^Cos[x]");
+		check("D[Sin[x]^Cos[x],x]", "(-Log[Sin[x]]*Sin[x]+Csc[x]*Cos[x]^2)*Sin[x]^Cos[x]");
 		check("D[Cos[x]^10,{x,3}]", "280*Cos[x]^9*Sin[x]-720*Cos[x]^7*Sin[x]^3");
 		check("D[Cos[x*y]/(x+y),x,y]", "-(y+x)^(-1)*Sin[x*y]+y*(y+x)^(-2)*Sin[x*y]+x*(y+x)^(-2)*Sin[x*y]-x*y*Cos[x*y]*(y+x)^(\n"
 				+ "-1)+2*Cos[x*y]*(y+x)^(-3)");
@@ -1422,12 +1431,35 @@ public class SystemTestCase extends AbstractTestCase {
 		check("Ceiling[42]", "42");
 		check("Ceiling[Pi]", "4");
 		check("Ceiling[42+x+y]", "Ceiling[y+x]+42");
-	}
-
-	public void testSystem247() {
 		check("Floor[42]", "42");
 		check("Floor[Pi]", "3");
 		check("Floor[42+x+y]", "Floor[y+x]+42");
+	}
+
+	public void testSystem247() {
+		check("Round[1.1]", "1.0");
+		check("Round[1.5]", "2.0");
+		check("Round[2.5]", "2.0");
+		check("Round[2.6]", "3.0");
+		check("Round[3.5]", "4.0");
+		check("Round[7/3.0]", "2.0");
+		check("Round[-7/3.0]", "-2.0");
+		check("Round[-42]", "-42");
+		check("Round[42]", "42");
+		check("Round[3/2]", "2");
+		check("Round[5/2]", "2");
+		check("Round[7/2]", "4");
+		check("Round[9/2]", "4");
+		check("Round[6/2]", "3");
+		check("Round[-3/2]", "-2");
+		check("Round[-5/2]", "-2");
+		check("Round[-7/2]", "-4");
+		check("Round[-9/2]", "-4");
+		check("Round[-6/2]", "-3");
+		check("Round[7/3]", "2");
+		check("Round[-7/3]", "-2");
+		check("Round[Pi]", "3");
+		check("Round[42+x+y]", "Round[y+x]+42");
 	}
 
 	public void testSystem248() {
@@ -2187,6 +2219,12 @@ public class SystemTestCase extends AbstractTestCase {
 		check("Numerator[(x - 1)*(x - 2)/(x - 3)^2]", "(x-2)*(x-1)");
 		check("Numerator[1/3*(3*a-1/2*b)]", "-1/2*b+3*a");
 		check("Denominator[1/3*(3*a-1/2*b)]", "3");
+		
+		check("Denominator[Csc[x]]", "Sin[x]");
+		check("Denominator[Csc[x]^4]", "Sin[x]^4");
+		check("Denominator[42*Csc[x]]", "Sin[x]");
+		check("Denominator[42*Csc[x]^3]", "Sin[x]^3");
+		
 		check("Together[x+3/4*x^(-3)]", "1/4*(4*x^4+3)*x^(-3)");
 		check("Together[(x^2-2)^3/(x^2-2)+(x^2-2)^2/(x^2-2)]", "x^4-3*x^2+2");
 		check("Together[a/b+c/d]", "(a*d+b*c)*b^(-1)*d^(-1)");

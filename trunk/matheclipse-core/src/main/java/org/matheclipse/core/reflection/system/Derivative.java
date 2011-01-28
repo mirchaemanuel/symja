@@ -31,6 +31,8 @@ public class Derivative extends AbstractFunctionEvaluator {
   Derivative[ArcTan]=(1+#^2)^(-1)&,
   Derivative[ArcTanh]=(1-#^2)^(-1)&,
   Derivative[Cosh]=(-1)*Sinh[#]&,
+  Derivative[Sec]=Sec[#]*Tan[#]&,
+  Derivative[Csc]=(-1)*Cot[#]*Csc[#]&,
 	 </pre>
 	 */
 	final static IAST RULES = List(
@@ -50,7 +52,9 @@ public class Derivative extends AbstractFunctionEvaluator {
 			Set(Derivative(symbol("Tan")),Function(Power(Cos(Slot1),integer(-2L)))),
 			Set(Derivative(symbol("Sinh")),Function(Cosh(Slot1))),
 			Set(Derivative(symbol("Cosh")),Function(Times(CN1,Sinh(Slot1)))),
-			Set(Derivative(symbol("Coth")),Times(CN1,Function(Power(Sinh(Slot1),integer(-2L)))))
+			Set(Derivative(symbol("Coth")),Times(CN1,Function(Power(Sinh(Slot1),integer(-2L))))),
+			Set(Derivative(symbol("Sec")),Function(Times(Sec(Slot1),Tan(Slot1)))),
+			Set(Derivative(symbol("Csc")),Function(Times(Times(CN1,Cot(Slot1)),Csc(Slot1))))
 			);
 
 	@Override

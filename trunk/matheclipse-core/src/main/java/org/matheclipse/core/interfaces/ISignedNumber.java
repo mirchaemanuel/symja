@@ -9,11 +9,11 @@ public interface ISignedNumber extends INumber {
 	public boolean isNegative();
 
 	public boolean isPositive();
-	
+
 	public boolean isZero();
-	
+
 	public boolean isLessThan(ISignedNumber that);
-	
+
 	public boolean isGreaterThan(ISignedNumber that);
 
 	/**
@@ -27,7 +27,8 @@ public interface ISignedNumber extends INumber {
 	 * Subtract <code>that</code> signed number from <code>this</code> signed
 	 * number
 	 * 
-	 * @param that a signed number
+	 * @param that
+	 *          a signed number
 	 * @return
 	 */
 	public ISignedNumber minus(ISignedNumber that);
@@ -36,7 +37,8 @@ public interface ISignedNumber extends INumber {
 	 * Returns the signum function of this number (i.e., -1, 0 or 1 as the value
 	 * of this number is negative, zero or positive).
 	 * 
-	 * @return -1 if this is a negative number;<br/> 0 if this is a zero;<br/>
+	 * @return -1 if this is a negative number;<br/>
+	 *         0 if this is a zero;<br/>
 	 *         -1 if this is a negative number;
 	 */
 	public int sign();
@@ -54,14 +56,23 @@ public interface ISignedNumber extends INumber {
 
 	/**
 	 * Returns the largest (closest to positive infinity)
-	 * <code>ISignedNumber</code> value that is not greater than
-	 * <code>this</code> and is equal to a mathematical integer.
+	 * <code>ISignedNumber</code> value that is not greater than <code>this</code>
+	 * and is equal to a mathematical integer.
 	 * 
 	 * @return the largest (closest to positive infinity)
 	 *         <code>ISignedNumber</code> value that is not greater than
 	 *         <code>this</code> and is equal to a mathematical integer.
 	 */
 	public ISignedNumber floor();
+
+	/**
+	 * Answers the double conversion of the result of rounding the argument to an
+	 * integer.
+	 * 
+	 * @return the closest integer to the argument (as an IInteger in symbolic
+	 *         mode or a INum in numeric mode).
+	 */
+	public ISignedNumber round();
 
 	public double doubleValue();
 }

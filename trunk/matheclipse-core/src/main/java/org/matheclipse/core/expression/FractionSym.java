@@ -9,6 +9,8 @@ import org.matheclipse.core.visit.IVisitor;
 import org.matheclipse.core.visit.IVisitorBoolean;
 import org.matheclipse.core.visit.IVisitorInt;
 
+import java.math.BigDecimal;
+
 import apache.harmony.math.BigInteger;
 import apache.harmony.math.Rational;
 
@@ -16,18 +18,6 @@ import apache.harmony.math.Rational;
  * 
  */
 public class FractionSym extends ExprImpl implements IFraction {
-	// private static final ObjectFactory<FractionSym> FACTORY = new
-	// ObjectFactory<FractionSym>() {
-	// @Override
-	// protected FractionSym create() {
-	// if (Config.SERVER_MODE && currentQueue().getSize() >=
-	// Config.FRACTION_MAX_POOL_SIZE) {
-	// throw new PoolMemoryExceededException("FractionImpl",
-	// currentQueue().getSize());
-	// }
-	// return new FractionSym();
-	// }
-	// };
 
 	/**
 	 * Be cautious with this method, no new internal rational is created
@@ -36,84 +26,42 @@ public class FractionSym extends ExprImpl implements IFraction {
 	 * @return
 	 */
 	protected static FractionSym newInstance(final Rational rational) {
-		// FractionSym r;
-		// if (Config.SERVER_MODE) {
-		// r = FACTORY.object();
-		// } else {
-		// r = new FractionSym();
-		// }
 		FractionSym r = new FractionSym();
 		r.fRational = rational;
 		return r;
 	}
 
 	public static FractionSym valueOf(final BigInteger numerator) {
-		// FractionSym r;
-		// if (Config.SERVER_MODE) {
-		// r = FACTORY.object();
-		// } else {
-		// r = new FractionSym();
-		// }
 		FractionSym r = new FractionSym();
 		r.fRational = Rational.valueOf(numerator, BigInteger.ONE);
 		return r;
 	}
 
 	public static FractionSym valueOf(final Rational rat) {
-		// FractionSym r;
-		// if (Config.SERVER_MODE) {
-		// r = FACTORY.object();
-		// } else {
-		// r = new FractionSym();
-		// }
 		FractionSym r = new FractionSym();
 		r.fRational = Rational.valueOf(rat);
 		return r;
 	}
 
 	public static FractionSym valueOf(final BigInteger numerator, final BigInteger denominator) {
-		// FractionSym r;
-		// if (Config.SERVER_MODE) {
-		// r = FACTORY.object();
-		// } else {
-		// r = new FractionSym();
-		// }
 		FractionSym r = new FractionSym();
 		r.fRational = Rational.valueOf(numerator, denominator);
 		return r;
 	}
 
 	public static FractionSym valueOf(final IInteger numerator, final IInteger denominator) {
-		// FractionSym r;
-		// if (Config.SERVER_MODE) {
-		// r = FACTORY.object();
-		// } else {
-		// r = new FractionSym();
-		// }
 		FractionSym r = new FractionSym();
 		r.fRational = Rational.valueOf(numerator.getBigNumerator(), denominator.getBigNumerator());
 		return r;
 	}
 
 	public static FractionSym valueOf(final long numerator, final long denominator) {
-		// FractionSym r;
-		// if (Config.SERVER_MODE) {
-		// r = FACTORY.object();
-		// } else {
-		// r = new FractionSym();
-		// }
 		FractionSym r = new FractionSym();
 		r.fRational = Rational.valueOf(BigInteger.valueOf(numerator), BigInteger.valueOf(denominator));
 		return r;
 	}
 
 	public static FractionSym valueOf(final double value) {
-		// FractionSym r;
-		// if (Config.SERVER_MODE) {
-		// r = FACTORY.object();
-		// } else {
-		// r = new FractionSym();
-		// }
 		FractionSym r = new FractionSym();
 		r.fRational = Rational.valueOf(value);
 		return r;
@@ -130,15 +78,12 @@ public class FractionSym extends ExprImpl implements IFraction {
 		fRational = null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.matheclipse.parser.interfaces.INumber#isZero()
-	 */
+	/** {@inheritDoc} */
 	public boolean isZero() {
 		return fRational.getNumerator().equals(BigInteger.ZERO);
 	}
 
+	/** {@inheritDoc} */
 	public boolean equalsInt(final int i) {
 		return fRational.getNumerator().equals(BigInteger.valueOf(i)) && fRational.getDenominator().equals(BigInteger.ONE);
 	}
@@ -178,7 +123,8 @@ public class FractionSym extends ExprImpl implements IFraction {
 	public IInteger getNumerator() {
 		return IntegerSym.valueOf(fRational.getNumerator());
 	}
-
+	
+	/** {@inheritDoc} */
 	public int hierarchy() {
 		return FRACTIONID;
 	}
@@ -199,9 +145,7 @@ public class FractionSym extends ExprImpl implements IFraction {
 		return (fRational.getNumerator().compareTo(BigInteger.ZERO) == 1);
 	}
 
-	/**
-	 * @return
-	 */
+	/** {@inheritDoc} */
 	public FractionSym eabs() {
 		return newInstance(fRational.abs());
 	}
@@ -213,13 +157,6 @@ public class FractionSym extends ExprImpl implements IFraction {
 	public Rational add(final Rational that) {
 		return fRational.plus(that);
 	}
-
-	/**
-	 * @return
-	 */
-	// public byte byteValue() {
-	// return fRational.byteValue();
-	// }
 
 	/**
 	 * @param that
@@ -250,13 +187,6 @@ public class FractionSym extends ExprImpl implements IFraction {
 	/**
 	 * @return
 	 */
-	// public float floatValue() {
-	// return fRational.floatValue();
-	// }
-
-	/**
-	 * @return
-	 */
 	public BigInteger getDividend() {
 		return fRational.getNumerator();
 	}
@@ -276,51 +206,9 @@ public class FractionSym extends ExprImpl implements IFraction {
 	/**
 	 * @return
 	 */
-	// public int intValue() {
-	// return fRational.intValue();
-	// }
-
-	/**
-	 * @return
-	 */
 	public long longValue() {
 		return fRational.longValue();
 	}
-
-	/**
-	 * @param cs
-	 */
-	// @Override
-	// public boolean move(final ObjectSpace os) {
-	// if (super.move(os)) {
-	// fRational.move(os);
-	// return true;
-	// }
-	// return false;
-	// }
-	// public FractionSym copy() {
-	// // FractionSym r;
-	// // if (Config.SERVER_MODE) {
-	// // r = FACTORY.object();
-	// // } else {
-	// // r = new FractionSym();
-	// // }
-	// FractionSym r = new FractionSym();
-	// r.fRational = fRational.copy();
-	// return r;
-	// }
-	//
-	// public FractionSym copyNew() {
-	// FractionSym r = new FractionSym();
-	// r.fRational = fRational.copyNew();
-	// return r;
-	// }
-
-	// @Override
-	// public void recycle() {
-	// fRational.recycle();
-	// FACTORY.recycle(this);
-	// }
 
 	/**
 	 * @param that
@@ -359,7 +247,8 @@ public class FractionSym extends ExprImpl implements IFraction {
 		}
 		return super.plus(that);
 	}
-
+	
+	/** {@inheritDoc} */
 	public ISignedNumber minus(ISignedNumber that) {
 		if (that instanceof FractionSym) {
 			return this.add((FractionSym) that.negate());
@@ -372,14 +261,6 @@ public class FractionSym extends ExprImpl implements IFraction {
 		}
 		return Num.valueOf(doubleValue() - that.doubleValue());
 	}
-
-	/**
-	 * @param exp
-	 * @return
-	 */
-	// public IFraction pow(final int exp) {
-	// return newInstance(fRational.pow(exp));
-	// }
 
 	/**
 	 * Returns this number raised at the specified positive exponent.
@@ -405,27 +286,11 @@ public class FractionSym extends ExprImpl implements IFraction {
 		return result;
 	}
 
-	/**
-	 * @return
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public IExpr inverse() {
 		return newInstance(fRational.inverse());
 	}
-
-	/**
-	 * @return
-	 */
-	public BigInteger round() {
-		return fRational.round();
-	}
-
-	/**
-	 * @return
-	 */
-	// public short shortValue() {
-	// return fRational.shortValue();
-	// }
 
 	/**
 	 * @param that
@@ -435,10 +300,7 @@ public class FractionSym extends ExprImpl implements IFraction {
 		return fRational.minus(that);
 	}
 
-	/**
-	 * @param that
-	 * @return
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public IExpr times(final IExpr that) {
 		if (that instanceof FractionSym) {
@@ -450,6 +312,7 @@ public class FractionSym extends ExprImpl implements IFraction {
 		return super.times(that);
 	}
 
+	/** {@inheritDoc} */
 	public String internalFormString(boolean symbolsAsFactoryMethod, int depth) {
 		int numerator = fRational.getNumerator().intValue();
 		int denominator = fRational.getDenominator().intValue();
@@ -476,18 +339,10 @@ public class FractionSym extends ExprImpl implements IFraction {
 		return "fraction(" + numerator + "L," + denominator + "L)";
 	}
 
-	/**
-	 * @return
-	 */
-	// public Text toText() {
-	// return
-	// fRational.getDividend().toText().concat(Text.valueOf('/')).concat(fRational
-	// .getDivisor().toText());
-	// }
+ 
 	@Override
 	public String toString() {
 		return fRational.getNumerator().toString() + "/" + fRational.getDenominator().toString();
-		// return toText().toString();
 	}
 
 	@Override
@@ -500,13 +355,6 @@ public class FractionSym extends ExprImpl implements IFraction {
 		return buf.toString();
 	}
 
-	/**
-	 * @param radix
-	 * @return
-	 */
-	// public Text toText(final int radix) {
-	// return fRational.toText(radix);
-	// }
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -515,41 +363,30 @@ public class FractionSym extends ExprImpl implements IFraction {
 	public Rational getRational() {
 		return fRational;
 	}
-
+	
+	/** {@inheritDoc} */
 	public int sign() {
 		return fRational.getNumerator().signum();
 	}
 
+	/** {@inheritDoc} */
 	public int complexSign() {
 		return sign();
 	}
 
+	/** {@inheritDoc} */
 	public ISignedNumber ceil() {
-
-		BigInteger[] result = fRational.getNumerator().divideAndRemainder(fRational.getDenominator());
-		// final BigInteger[] result = new BigInteger[2];
-		// result[0] = fRational.getDividend().divide(fRational.getDivisor());
-		// result[1] = result[0].getRemainder();
-
-		if (!result[1].isPositive()) {
-			return IntegerSym.valueOf(result[0]);
-		}
-
-		return IntegerSym.valueOf(result[0].plus(BigInteger.ONE));
+		return IntegerSym.valueOf(fRational.ceiling());
 	}
 
+	/** {@inheritDoc} */
 	public ISignedNumber floor() {
-		BigInteger[] result = fRational.getNumerator().divideAndRemainder(fRational.getDenominator());
-		// final BigInteger[] result = new BigInteger[2];
-		// result[0] = fRational.getDividend().divide(fRational.getDivisor());
-		// result[1] = result[0].getRemainder();
+		return IntegerSym.valueOf(fRational.floor());
+	}
 
-		if (!result[1].isNegative()) {
-			return IntegerSym.valueOf(result[0]);
-		}
-
-		return IntegerSym.valueOf(result[0].minus(BigInteger.ONE));
-
+	/** {@inheritDoc} */
+	public ISignedNumber round() {
+		return IntegerSym.valueOf(fRational.round(BigDecimal.ROUND_HALF_EVEN));
 	}
 
 	/**
@@ -591,14 +428,17 @@ public class FractionSym extends ExprImpl implements IFraction {
 		return F.RationalHead;
 	}
 
+	/** {@inheritDoc} */
 	public <T> T accept(IVisitor<T> visitor) {
 		return visitor.visit(this);
 	}
 
+	/** {@inheritDoc} */
 	public boolean accept(IVisitorBoolean visitor) {
 		return visitor.visit(this);
 	}
 
+	/** {@inheritDoc} */
 	public int accept(IVisitorInt visitor) {
 		return visitor.visit(this);
 	}

@@ -387,6 +387,10 @@ public class Num extends ExprImpl implements INum {
 		// return fDouble == 1.0;
 	}
 
+	public ISignedNumber round() {
+		return valueOf(Math.rint(fDouble));
+	}
+	
 	public int sign() {
 		return (int) Math.signum(fDouble);
 	}
