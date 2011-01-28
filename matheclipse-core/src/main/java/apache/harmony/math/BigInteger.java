@@ -54,6 +54,9 @@ public class BigInteger implements Comparable<BigInteger>, Serializable {
 	public static final BigInteger ONE = new BigInteger(1, 1);
 
 	/** @ar.org.fitc.spec_ref */
+	public static final BigInteger TWO = new BigInteger(1, 2);
+	 
+	/** @ar.org.fitc.spec_ref */
 	public static final BigInteger TEN = new BigInteger(1, 10);
 
 	/** @ar.org.fitc.spec_ref */

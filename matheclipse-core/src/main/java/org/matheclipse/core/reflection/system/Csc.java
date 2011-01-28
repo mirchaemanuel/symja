@@ -1,11 +1,25 @@
 package org.matheclipse.core.reflection.system;
 
+import static org.matheclipse.core.expression.F.*;
+import static org.matheclipse.core.expression.F.CN1;
+import static org.matheclipse.core.expression.F.Condition;
+import static org.matheclipse.core.expression.F.Less;
+import static org.matheclipse.core.expression.F.List;
+import static org.matheclipse.core.expression.F.Sec;
+import static org.matheclipse.core.expression.F.SetDelayed;
+import static org.matheclipse.core.expression.F.SignCmp;
+import static org.matheclipse.core.expression.F.Tan;
+import static org.matheclipse.core.expression.F.Times;
+import static org.matheclipse.core.expression.F.pattern;
+import static org.matheclipse.core.expression.F.symbol;
+
 import org.matheclipse.core.eval.interfaces.AbstractTrigArg1;
 import org.matheclipse.core.eval.interfaces.INumeric;
 import org.matheclipse.core.expression.ComplexNum;
 import org.matheclipse.core.expression.ComplexUtils;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.expression.Num;
+import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.ISymbol;
 import org.matheclipse.parser.client.SyntaxError;
@@ -18,7 +32,22 @@ import org.matheclipse.parser.client.SyntaxError;
  * functions</a>
  */
 public class Csc extends AbstractTrigArg1 implements INumeric {
+	/**
+	 * <pre>
+	 *      Csc[x_NumberQ*y_]:=(-1)*Csc[(-1)*x*y]/;SignCmp[x]<0,
+	 *      Csc[x_NumberQ]:=(-1)*Csc[(-1)*x]/;SignCmp[x]<0
+	 * </pre>
+	 */
+	final static IAST RULES = List(
+			SetDelayed(Csc(pattern("x",symbol("NumberQ"))),Condition(Times(CN1,Csc(Times(CN1,symbol("x")))),Less(SignCmp(symbol("x")),C0))),
+			SetDelayed(Csc(Times(pattern("x",symbol("NumberQ")),pattern("y"))),Condition(Times(CN1,Csc(Times(Times(CN1,symbol("x")),symbol("y")))),Less(SignCmp(symbol("x")),C0)))
+	);
 
+	@Override
+	public IAST getRuleAST() {
+		return RULES;
+	}
+	
 	public Csc() {
 	}
 

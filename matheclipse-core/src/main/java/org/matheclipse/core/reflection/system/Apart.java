@@ -153,19 +153,40 @@ public class Apart extends AbstractFunctionEvaluator {
 		} else if (arg.isPower()) {
 			IAST temp = (IAST) arg;
 			if (temp.get(2) instanceof ISignedNumber) {
+				ISignedNumber sn = (ISignedNumber) temp.get(2);
 				parts = new IExpr[2];
-				if (temp.get(2).equals(F.CN1)) {
+				if (sn.equals(F.CN1)) {
 					parts[0] = F.C1;
 					parts[1] = temp.get(1);
-				} else if (((ISignedNumber) temp.get(2)).isNegative()) {
+				} else if (sn.isNegative()) {
 					parts[0] = F.C1;
-					parts[1] = F.Power(temp.get(1), ((ISignedNumber) temp.get(2)).negate());
+					parts[1] = F.Power(temp.get(1), sn.negate());
 				} else {
+					if (sn.isInteger() && temp.get(1).isAST()) {
+						// positive integer
+						IAST function = (IAST) temp.get(1);
+						IAST denomForm = Denominator.getDenominatorForm(function);
+						if (denomForm != null) {
+							parts[0] = F.C1;
+							parts[1] = F.Power(denomForm, sn);
+							return parts;
+						}
+
+					}
 					parts[0] = arg;
 					parts[1] = F.C1;
 				}
 			}
 		} else {
+			if (arg.isAST()) {
+				IAST denomForm = Denominator.getDenominatorForm((IAST) arg);
+				if (denomForm != null) {
+					parts = new IExpr[2];
+					parts[0] = F.C1;
+					parts[1] = denomForm;
+					return parts;
+				}
+			}
 			parts = new IExpr[2];
 			parts[0] = arg;
 			parts[1] = F.C1;
@@ -177,9 +198,10 @@ public class Apart extends AbstractFunctionEvaluator {
 	 * Return the numerator and denominator for the given <code>Times[...]</code>
 	 * AST, by separating positive and negative powers.
 	 * 
-	 * @param timesAST
+	 * @param ast
 	 *          a times expression (a*b*c....)
-	 * @param splitFractionalNumbers TODO
+	 * @param splitFractionalNumbers
+	 *          TODO
 	 * @return the numerator and denominator expression
 	 */
 	public static IExpr[] getFractionalPartsTimes(final IAST ast, boolean splitFractionalNumbers) {
@@ -188,19 +210,38 @@ public class Apart extends AbstractFunctionEvaluator {
 		IAST numerator = F.Times();
 		IAST denominator = F.Times();
 		IExpr arg;
-		IAST temp;
+		IAST argAST;
 		for (int i = 1; i < ast.size(); i++) {
 			arg = ast.get(i);
-			if (arg.isAST(F.Power, 3)) {
-				temp = (IAST) arg;
-				if (temp.get(2) instanceof ISignedNumber) {
-					if (temp.get(2).equals(F.CN1)) {
-						denominator.add(temp.get(1));
+			if (arg.isAST()) {
+				argAST = (IAST) arg;
+				if (argAST.size() == 2) {
+					IAST denomForm = Denominator.getDenominatorForm(argAST);
+					if (denomForm != null) {
+						denominator.add(denomForm);
 						continue;
 					}
-					if (((ISignedNumber) temp.get(2)).isNegative()) {
-						denominator.add(F.Power(temp.get(1), ((ISignedNumber) temp.get(2)).negate()));
-						continue;
+				} else if (arg.isPower()) {
+					if (argAST.get(2) instanceof ISignedNumber) {
+						ISignedNumber sn = (ISignedNumber) argAST.get(2);
+						if (sn.equals(F.CN1)) {
+							denominator.add(argAST.get(1));
+							continue;
+						}
+						if (sn.isNegative()) {
+							denominator.add(F.Power(argAST.get(1), ((ISignedNumber) argAST.get(2)).negate()));
+							continue;
+						}
+						if (sn.isInteger() && argAST.get(1).isAST()) {
+							// positive integer
+							IAST function = (IAST) argAST.get(1);
+							IAST denomForm = Denominator.getDenominatorForm(function);
+							if (denomForm != null) {
+								denominator.add(F.Power(denomForm, sn));
+								continue;
+							}
+
+						}
 					}
 				}
 			} else if (splitFractionalNumbers && arg instanceof IRational) {
@@ -237,5 +278,4 @@ public class Apart extends AbstractFunctionEvaluator {
 		return result;
 
 	}
-
 }

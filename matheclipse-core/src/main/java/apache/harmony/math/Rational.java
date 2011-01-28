@@ -9,6 +9,7 @@
 package apache.harmony.math;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 /**
  * <p>
@@ -21,48 +22,22 @@ import java.io.Serializable;
  * Matrix} class.
  * </p>
  * 
+ * <p>
+ * All parts of this class depending on the <code>roundToBigInteger()</code>
+ * method are based on Eric Laroche's <a
+ * href="http://www.lrdev.com/lr/software.html">BigRational.java -- dynamically
+ * sized big rational numbers</a> and are therefore &quot;Copyright (C)
+ * 2002-2010 Eric Laroche. All rights reserved.&quot;
+ * </p>
+ * 
+ * @author Eric Laroche <laroche@lrdev.com>
  * @author <a href="mailto:jean-marie@dautelle.com">Jean-Marie Dautelle</a>
- * @version 3.0, February 13, 2006
+ * 
  * @see <a href="http://en.wikipedia.org/wiki/Rational_numbers"> Wikipedia:
  *      Rational Numbers</a>
+ * 
  */
-public final class Rational implements Serializable {// extends Number<Rational> implements
-	// Field<Rational> {
-
-	// /**
-	// * Holds the default XML representation for rational numbers.
-	// * This representation consists of a simple <code>value</code> attribute
-	// * holding the {@link #toText() textual} representation.
-	// */
-	// protected static final XMLFormat<Rational> XML = new
-	// XMLFormat<Rational>(Rational.class) {
-	//        
-	// @Override
-	// public Rational newInstance(Class<Rational> cls, InputElement xml) throws
-	// XMLStreamException {
-	// return Rational.valueOf(xml.getAttribute("value"));
-	// }
-	//        
-	// public void write(Rational rational, OutputElement xml) throws
-	// XMLStreamException {
-	// xml.setAttribute("value", rational.toText());
-	// }
-	//
-	// public void read(InputElement xml, Rational rational) {
-	// // Nothing to do, immutable.
-	// }
-	// };
-
-	/**
-	 * Holds the factory constructing rational instances.
-	 */
-	// private static final ObjectFactory<Rational> FACTORY = new
-	// ObjectFactory<Rational>() {
-	//
-	// protected Rational create() {
-	// return new Rational();
-	// }
-	// };
+public final class Rational implements Serializable {
 
 	/**
 	 * The {@link Rational} representing the additive identity.
@@ -266,9 +241,9 @@ public final class Rational implements Serializable {// extends Number<Rational>
 	 * 
 	 * @return this rational rounded to the nearest integer.
 	 */
-	public BigInteger round() {
-		return fNumerator.divide(fDenominator);
-	}
+	// public BigInteger round() {
+	// return fNumerator.divide(fDenominator);
+	// }
 
 	/**
 	 * Returns the opposite of this rational number.
@@ -500,4 +475,202 @@ public final class Rational implements Serializable {// extends Number<Rational>
 
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * Floor, round towards negative infinity.
+	 * <P>
+	 * Possible loss of precision.
+	 */
+	public BigInteger floor() {
+		// [rounding step, possible loss of precision step]
+		return round(BigDecimal.ROUND_FLOOR);
+	}
+
+	/**
+	 * Ceiling, round towards positive infinity.
+	 * <P>
+	 * Possible loss of precision.
+	 */
+	public BigInteger ceiling() {
+		// [rounding step, possible loss of precision step]
+		return round(BigDecimal.ROUND_CEILING);
+	}
+
+	/**
+	 * Truncate, round towards zero.
+	 * <P>
+	 * Possible loss of precision.
+	 */
+	public BigInteger trunc() {
+		// [rounding step, possible loss of precision step]
+		return round(BigDecimal.ROUND_DOWN);
+	}
+
+	/**
+	 * Integer part.
+	 * <P>
+	 * Possible loss of precision.
+	 */
+	public BigInteger integerPart() {
+		// [rounding step, possible loss of precision step]
+		return round(BigDecimal.ROUND_DOWN);
+	}
+
+	/**
+	 * Fractional part.
+	 * <P>
+	 * Possible loss of precision.
+	 */
+	public Rational fractionalPart() {
+		// this==ip+fp; sign(fp)==sign(this)
+		// [possible loss of precision step]
+		return minus(valueOf(integerPart(), BigInteger.ONE));
+	}
+
+	/**
+	 * Round.
+	 * <P>
+	 * Round mode is one of {
+	 * <CODE>ROUND_UP, ROUND_DOWN, ROUND_CEILING, ROUND_FLOOR,
+	 * ROUND_HALF_UP, ROUND_HALF_DOWN, ROUND_HALF_EVEN,
+	 * ROUND_HALF_CEILING, ROUND_HALF_FLOOR, ROUND_HALF_ODD,
+	 * ROUND_UNNECESSARY, DEFAULT_ROUND_MODE (==ROUND_HALF_UP)</CODE> .
+	 * <P>
+	 * If rounding isn't necessary, i.e. this BigRational is an integer, [as an
+	 * optimization] this BigRational is returned.
+	 * <P>
+	 * Possible loss of precision.
+	 */
+	// @PrecisionLoss
+	public BigInteger round(int roundMode) {
+		// [rounding step, possible loss of precision step]
+		return roundToBigInteger(roundMode);
+	}
+
+	/**
+	 * Round to BigInteger helper function. Internally used.
+	 * <P>
+	 * Possible loss of precision.
+	 */
+	// @PrecisionLoss
+	private BigInteger roundToBigInteger(int roundMode) {
+		// note: remainder and its duplicate are calculated for all cases.
+
+		BigInteger n = fNumerator;
+		final BigInteger q = fDenominator;
+
+		final int sgn = n.signum();
+
+		// optimization
+		if (sgn == 0) {
+			// [typically not reached due to earlier test for integers]
+			return BigInteger.ZERO;
+		}
+
+		// keep info on the sign
+		final boolean pos = (sgn > 0);
+
+		// operate on positive values
+		if (!pos) {
+			n = n.negate();
+		}
+
+		final BigInteger[] divrem = n.divideAndRemainder(q);
+		BigInteger dv = divrem[0];
+		final BigInteger r = divrem[1];
+
+		// return if we don't need to round, independent of rounding mode
+		if (r.isZero()) {
+			// [typically not reached since remainder is not zero
+			// with normalized that are not integerp]
+			if (!pos) {
+				dv = dv.negate();
+			}
+
+			return dv;
+		}
+
+		boolean up = false;
+		final int comp = r.multiply(BigInteger.TWO).compareTo(q);
+
+		switch (roundMode) {
+
+		// Rounding mode to round away from zero.
+		case BigDecimal.ROUND_UP:
+			up = true;
+			break;
+
+		// Rounding mode to round towards zero.
+		case BigDecimal.ROUND_DOWN:
+			up = false;
+			break;
+
+		// Rounding mode to round towards positive infinity.
+		case BigDecimal.ROUND_CEILING:
+			up = pos;
+			break;
+
+		// Rounding mode to round towards negative infinity.
+		case BigDecimal.ROUND_FLOOR:
+			up = !pos;
+			break;
+
+		// Rounding mode to round towards "nearest neighbor" unless both
+		// neighbors are equidistant, in which case round up.
+		case BigDecimal.ROUND_HALF_UP:
+			up = (comp >= 0);
+			break;
+
+		// Rounding mode to round towards "nearest neighbor" unless both
+		// neighbors are equidistant, in which case round down.
+		case BigDecimal.ROUND_HALF_DOWN:
+			up = (comp > 0);
+			break;
+
+		// case BigDecimal.ROUND_HALF_CEILING:
+		// up = (comp != 0 ? comp > 0 : pos);
+		// break;
+		//
+		// case BigDecimal.ROUND_HALF_FLOOR:
+		// up = (comp != 0 ? comp > 0 : !pos);
+		// break;
+
+		// Rounding mode to round towards the "nearest neighbor" unless both
+		// neighbors are equidistant, in which case, round towards the even
+		// neighbor.
+		case BigDecimal.ROUND_HALF_EVEN:
+			up = (comp != 0 ? comp > 0 : !dv.remainder(BigInteger.TWO).isZero());
+			break;
+
+		// case BigDecimal.ROUND_HALF_ODD:
+		// up = (comp != 0 ? comp > 0 :
+		// bigIntegerIsZero(dv.remainder(BIG_INTEGER_TWO)));
+		// break;
+
+		// Rounding mode to assert that the requested operation has an exact
+		// result, hence no rounding is necessary. If this rounding mode is
+		// specified on an operation that yields an inexact result, an
+		// ArithmeticException is thrown.
+		// case ROUND_UNNECESSARY:
+		// if (!r.isZero()) {
+		// throw new ArithmeticException("rounding necessary");
+		// }
+		// // [typically not reached due to earlier test for integerp]
+		// up = false;
+		// break;
+
+		default:
+			throw new IllegalArgumentException("unsupported rounding mode");
+		}
+
+		if (up) {
+			dv = dv.add(BigInteger.ONE);
+		}
+
+		if (!pos) {
+			dv = dv.negate();
+		}
+
+		// [rounding step, possible loss of precision step]
+		return dv;
+	}
 }

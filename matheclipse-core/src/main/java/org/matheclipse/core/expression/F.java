@@ -95,10 +95,14 @@ public class F {
 	public static ISymbol Continue;
 
 	public static ISymbol Cos;
-
+	
+	public static ISymbol Cot;
+	
 	public static ISymbol Cosh;
 
 	public static ISymbol Cross;
+	
+	public static ISymbol Csc;
 
 	public static ISymbol D;
 
@@ -252,6 +256,8 @@ public class F {
 
 	public static ISymbol RuleDelayed;
 
+	public static ISymbol Sec;
+	
 	public static ISymbol Set;
 
 	public static ISymbol SetAttributes;
@@ -589,7 +595,7 @@ public class F {
 
 		return unary(Ceiling, a0);
 	}
-	
+
 	public static IAST CNInfinity() {
 		return binary(Times, CN1, Infinity);
 	}
@@ -607,6 +613,10 @@ public class F {
 	public static IAST Cosh(final IExpr a0) {
 
 		return unary(Cosh, a0);
+	}
+
+	public static IAST Sec(final IExpr a0) {
+		return unary(Sec, a0);
 	}
 
 	public static IAST Cross(final IExpr a0, final IExpr a1) {
@@ -687,7 +697,7 @@ public class F {
 
 		return unary(Factorial, a0);
 	}
-	
+
 	public static IAST Floor(final IExpr a0) {
 
 		return unary(Floor, a0);
@@ -888,12 +898,14 @@ public class F {
 			AtomQ = predefinedSymbol("AtomQ");
 			Binomial = predefinedSymbol("Binomial");
 			Break = predefinedSymbol("Break");
+			Csc = predefinedSymbol("Csc");
 			Ceiling = predefinedSymbol("Ceiling");
 			CompoundExpression = predefinedSymbol("CompoundExpression");
 			Condition = predefinedSymbol("Condition");
 			Continue = predefinedSymbol("Continue");
 			Cos = predefinedSymbol("Cos");
 			Cosh = predefinedSymbol("Cosh");
+			Cot = predefinedSymbol("Cot");
 			Cross = predefinedSymbol("Cross");
 			D = predefinedSymbol("D");
 			Denominator = predefinedSymbol("Denominator");
@@ -973,6 +985,7 @@ public class F {
 			RotateRight = predefinedSymbol("RotateRight");
 			Rule = predefinedSymbol("Rule");
 			RuleDelayed = predefinedSymbol("RuleDelayed");
+			Sec = predefinedSymbol("Sec");
 			SetAttributes = predefinedSymbol("SetAttributes");
 			Sign = predefinedSymbol("Sign");
 			SignCmp = predefinedSymbol("SignCmp");
@@ -1281,6 +1294,11 @@ public class F {
 		return unary(symbol("Roots"), a0);
 	}
 
+	public static IAST Round(final IExpr a0) {
+		return unary(symbol("Round"), a0);
+	}
+
+	
 	public static IAST Rule(final IExpr a0, final IExpr a1) {
 		return binary(Rule, a0, a1);
 	}
@@ -1326,6 +1344,10 @@ public class F {
 		return unary(Sinh, a0);
 	}
 
+	public static IAST Csc(final IExpr a0) {
+		return unary(Csc, a0);
+	}
+
 	public static IAST Slot(final IExpr a0) {
 		return unary(Slot, a0);
 	}
@@ -1356,6 +1378,10 @@ public class F {
 	public static IAST SurfaceGraphics() {
 
 		return function(SurfaceGraphics);
+	}
+
+	public static IAST Cot(final IExpr a0) {
+		return unary(Cot, a0);
 	}
 
 	public static IAST Tan(final IExpr a0) {

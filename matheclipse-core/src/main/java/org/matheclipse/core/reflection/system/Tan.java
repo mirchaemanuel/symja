@@ -73,7 +73,7 @@ public class Tan extends AbstractTrigArg1 implements INumeric {
 			Set(Tan(Times(fraction(2L,5L),Pi)),Power(Plus(Times(C2,Power(C5,C1D2)),C5),C1D2)),
 			Set(Tan(Times(fraction(1L,6L),Pi)),Times(C1D3,Power(C3,C1D2))),
 			Set(Tan(Times(fraction(3L,8L),Pi)),Plus(Power(C2,C1D2),C1)),
-			Set(Tan(Times(fraction(1L,8L),Pi)),Plus(Power(C2,C1D2),Times(CN1,C1))),
+			Set(Tan(Times(fraction(1L,8L),Pi)),Plus(Power(C2,C1D2),CN1)),
 			Set(Tan(Times(fraction(5L,12L),Pi)),Plus(Power(C3,C1D2),C2)),
 			Set(Tan(Times(fraction(3L,10L),Pi)),Times(Times(fraction(1L,5L),Power(C5,C1D2)),Power(Plus(Times(C2,Power(C5,C1D2)),C5),C1D2))),
 			Set(Tan(Times(fraction(1L,10L),Pi)),Times(Times(fraction(1L,5L),Power(C5,C1D2)),Power(Plus(Times(integer(-2L),Power(C5,C1D2)),C5),C1D2))),
@@ -92,6 +92,7 @@ public class Tan extends AbstractTrigArg1 implements INumeric {
 	public IAST getRuleAST() {
 		return RULES;
 	}
+	
 	public Tan() {
 	}
 
