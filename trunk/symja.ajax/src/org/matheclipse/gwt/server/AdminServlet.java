@@ -115,7 +115,7 @@ public class AdminServlet extends HttpServlet {
 
 		try {
 			String[] result = evaluateString(request, engine, expression, function);
-			StringBuffer buf = outWriter.getBuffer();
+			StringBuilder buf = outWriter.getBuffer();
 			buf.append(result[1]);
 			return counter + ";" + result[0] + ";" + buf.toString();
 		} catch (Exception e) {
