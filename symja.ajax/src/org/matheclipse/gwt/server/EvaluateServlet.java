@@ -140,7 +140,7 @@ public class EvaluateServlet extends HttpServlet {
 			if (!saveModifiedUserSymbols(engine)) {
 				return counter + ";error;Number of user '$'-symbols\ngreater than " + MAX_NUMBER_OF_VARS + " or \nformula to big!";
 			}
-			StringBuffer buf = outWriter.getBuffer();
+			StringBuilder buf = outWriter.getBuffer();
 			buf.append(result[1]);
 			return counter + ";" + result[0] + ";" + buf.toString();
 			// } catch (Exception e) {
@@ -473,7 +473,7 @@ public class EvaluateServlet extends HttpServlet {
 		// }
 		// }
 		if (!Config.SERVER_MODE) {
-			F.initSymbols(null, new SymbolObserver(), true);
+			F.initSymbols(null, new SymbolObserver(), false);
 			Config.SERVER_MODE = true;
 			log.info("Config.SERVER_MODE = true");
 			// System.out.println("Config.SERVER_MODE = true");

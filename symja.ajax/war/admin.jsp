@@ -73,7 +73,7 @@ function getResult(nameArray, btnStr) {
 <%} else {%>
   $.ajax({ type: "POST", url: 'admin', data: poststr, 
     success: function(responseText){handlerFunc(responseText) },
-    error: function(responseText){errFunc(responseText) },
+    error: function(responseText){errFunc(responseText) }
   }); 
 <%}%>
 }

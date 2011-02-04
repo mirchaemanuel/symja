@@ -1,7 +1,8 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java"%>
+<%@ page contentType="text/html;charset=UTF-8" isELIgnored="true" language="java"%>
 <%@ page import="com.google.appengine.api.users.User"%>
 <%@ page import="com.google.appengine.api.users.UserService"%>
-<%@ page import="com.google.appengine.api.users.UserServiceFactory"%>
+<%@ page import="com.google.appengine.api.users.UserServiceFactory"%> 
+    
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 <head>
@@ -33,7 +34,7 @@
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script> 
 	
 <script type="text/javascript" language="javascript">
-var handlerFunc = function(resultstr) { 
+var handlerFunc = function(resultstr) {  
   var index1 = resultstr.indexOf(';');
   if (index1>=0) { 
     var index2 = resultstr.indexOf(';',index1+1);
@@ -66,7 +67,7 @@ function getResult(nameArray, btnStr) {
   var poststr = "evaluate=" + encodeURIComponent( btnStr );	  
   $.ajax({ type: "POST", url: 'calc', data: poststr, 
     success: function(responseText){handlerFunc(responseText) },
-    error: function(responseText){errFunc(responseText) },
+    error: function(responseText){errFunc(responseText) }
   }); 
 }
 
