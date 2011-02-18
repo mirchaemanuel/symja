@@ -120,7 +120,7 @@ import org.apache.commons.math.util.FastMath;
  * estimations, these operations run in O(n) time, where n is the
  * number of measurements.</p>
 
- * @version $Revision: 990658 $ $Date: 2010-08-30 00:04:09 +0200 (Mo, 30 Aug 2010) $
+ * @version $Revision: 1056035 $ $Date: 2011-01-06 20:43:30 +0100 (Do, 06 Jan 2011) $
  * @since 2.0
 
  */
@@ -177,8 +177,6 @@ public class HarmonicCoefficientsGuesser {
                     observations[i + 1] = mI;
                     if (i-- != 0) {
                         mI = observations[i];
-                    } else {
-                        mI = null;
                     }
                 }
                 observations[i + 1] = curr;

@@ -17,15 +17,15 @@
 
 package org.apache.commons.math.optimization.general;
 
-import org.apache.commons.math.FunctionEvaluationException;
+import org.apache.commons.math.exception.MathUserException;
+import org.apache.commons.math.exception.SingularMatrixException;
+import org.apache.commons.math.exception.ConvergenceException;
 import org.apache.commons.math.exception.util.LocalizedFormats;
 import org.apache.commons.math.linear.BlockRealMatrix;
 import org.apache.commons.math.linear.DecompositionSolver;
-import org.apache.commons.math.linear.InvalidMatrixException;
 import org.apache.commons.math.linear.LUDecompositionImpl;
 import org.apache.commons.math.linear.QRDecompositionImpl;
 import org.apache.commons.math.linear.RealMatrix;
-import org.apache.commons.math.exception.ConvergenceException;
 import org.apache.commons.math.optimization.VectorialPointValuePair;
 import org.apache.commons.math.optimization.ConvergenceChecker;
 
@@ -38,7 +38,7 @@ import org.apache.commons.math.optimization.ConvergenceChecker;
  * is faster but QR decomposition is more robust for difficult problems.
  * </p>
  *
- * @version $Revision: 994988 $ $Date: 2010-09-08 13:22:41 +0200 (Mi, 08 Sep 2010) $
+ * @version $Revision: 1037328 $ $Date: 2010-11-20 22:01:50 +0100 (Sa, 20 Nov 2010) $
  * @since 2.0
  *
  */
@@ -62,8 +62,7 @@ public class GaussNewtonOptimizer extends AbstractLeastSquaresOptimizer {
 
     /** {@inheritDoc} */
     @Override
-    public VectorialPointValuePair doOptimize()
-        throws FunctionEvaluationException {
+    public VectorialPointValuePair doOptimize() throws MathUserException {
 
         final ConvergenceChecker<VectorialPointValuePair> checker
             = getConvergenceChecker();
@@ -120,7 +119,7 @@ public class GaussNewtonOptimizer extends AbstractLeastSquaresOptimizer {
                 for (int i = 0; i < cols; ++i) {
                     point[i] += dX[i];
                 }
-            } catch (InvalidMatrixException e) {
+            } catch (SingularMatrixException e) {
                 throw new ConvergenceException(LocalizedFormats.UNABLE_TO_SOLVE_SINGULAR_PROBLEM);
             }
 

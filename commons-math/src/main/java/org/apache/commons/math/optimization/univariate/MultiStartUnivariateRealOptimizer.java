@@ -20,15 +20,15 @@ package org.apache.commons.math.optimization.univariate;
 import java.util.Arrays;
 import java.util.Comparator;
 
-import org.apache.commons.math.FunctionEvaluationException;
 import org.apache.commons.math.analysis.UnivariateRealFunction;
+import org.apache.commons.math.exception.MathUserException;
 import org.apache.commons.math.exception.MathIllegalStateException;
-import org.apache.commons.math.exception.ConvergenceException;
+import org.apache.commons.math.exception.NotStrictlyPositiveException;
+import org.apache.commons.math.exception.NullArgumentException;
 import org.apache.commons.math.exception.util.LocalizedFormats;
 import org.apache.commons.math.random.RandomGenerator;
 import org.apache.commons.math.optimization.GoalType;
 import org.apache.commons.math.optimization.ConvergenceChecker;
-import org.apache.commons.math.util.FastMath;
 
 /**
  * Special implementation of the {@link UnivariateRealOptimizer} interface
@@ -40,7 +40,7 @@ import org.apache.commons.math.util.FastMath;
  *
  * @param <FUNC> Type of the objective function to be optimized.
  *
- * @version $Revision: 990792 $ $Date: 2010-08-30 15:06:22 +0200 (Mo, 30 Aug 2010) $
+ * @version $Revision: 1060430 $ $Date: 2011-01-18 17:02:30 +0100 (Di, 18 Jan 2011) $
  * @since 3.0
  */
 public class MultiStartUnivariateRealOptimizer<FUNC extends UnivariateRealFunction>
@@ -62,14 +62,25 @@ public class MultiStartUnivariateRealOptimizer<FUNC extends UnivariateRealFuncti
      * Create a multi-start optimizer from a single-start optimizer.
      *
      * @param optimizer Single-start optimizer to wrap.
-     * @param starts Number of starts to perform (including the
-     * first one), multi-start is disabled if value is less than or
-     * equal to 1.
+     * @param starts Number of starts to perform. If {@code starts == 1},
+     * the {@code optimize} methods will return the same solution as
+     * {@code optimizer} would.
      * @param generator Random generator to use for restarts.
+     * @throws NullArgumentException if {@code optimizer} or {@code generator}
+     * is {@code null}.
+     * @throws NotStrictlyPositiveException if {@code starts < 1}.
      */
     public MultiStartUnivariateRealOptimizer(final BaseUnivariateRealOptimizer<FUNC> optimizer,
                                              final int starts,
                                              final RandomGenerator generator) {
+        if (optimizer == null ||
+                generator == null) {
+                throw new NullArgumentException();
+        }
+        if (starts < 1) {
+            throw new NotStrictlyPositiveException(starts);
+        }
+
         this.optimizer = optimizer;
         this.starts = starts;
         this.generator = generator;
@@ -99,20 +110,14 @@ public class MultiStartUnivariateRealOptimizer<FUNC extends UnivariateRealFuncti
         return totalEvaluations;
     }
 
-    /** {@inheritDoc} */
-    public void setMaxEvaluations(int maxEvaluations) {
-        this.maxEvaluations = maxEvaluations;
-        optimizer.setMaxEvaluations(maxEvaluations);
-    }
-
     /**
      * Get all the optima found during the last call to {@link
-     * #optimize(FUNC,GoalType,double,double) optimize}.
+     * #optimize(int,UnivariateRealFunction,GoalType,double,double) optimize}.
      * The optimizer stores all the optima found during a set of
-     * restarts. The {@link #optimize(FUNC,GoalType,double,double) optimize}
+     * restarts. The {@link #optimize(int,UnivariateRealFunction,GoalType,double,double) optimize}
      * method returns the best point only. This method returns all the points
      * found at the end of each starts, including the best one already
-     * returned by the {@link #optimize(FUNC,GoalType,double,double) optimize}
+     * returned by the {@link #optimize(int,UnivariateRealFunction,GoalType,double,double) optimize}
      * method.
      * <br/>
      * The returned array as one element for each start as specified
@@ -122,14 +127,15 @@ public class MultiStartUnivariateRealOptimizer<FUNC extends UnivariateRealFuncti
      * descending order if maximizing), followed by {@code null} elements
      * corresponding to the runs that did not converge. This means all
      * elements will be {@code null} if the {@link
-     * #optimize(FUNC,GoalType,double,double) optimize} method did throw a
-     * {@link ConvergenceException}). This also means that if the first
-     * element is not {@code null}, it is the best point found across all
-     * starts.
+     * #optimize(int,UnivariateRealFunction,GoalType,double,double) optimize}
+     * method did throw a {@link MathUserException}).
+     * This also means that if the first element is not {@code null}, it is
+     * the best point found across all starts.
      *
      * @return an array containing the optima.
      * @throws MathIllegalStateException if {@link
-     * #optimize(FUNC,GoalType,double,double) optimize} has not been called.
+     * #optimize(int,UnivariateRealFunction,GoalType,double,double) optimize}
+     * has not been called.
      */
     public UnivariateRealPointValuePair[] getOptima() {
         if (optima == null) {
@@ -139,52 +145,42 @@ public class MultiStartUnivariateRealOptimizer<FUNC extends UnivariateRealFuncti
     }
 
     /** {@inheritDoc} */
-    public UnivariateRealPointValuePair optimize(final FUNC f,
+    public UnivariateRealPointValuePair optimize(int maxEval, final FUNC f,
                                                  final GoalType goal,
-                                                 final double min, final double max)
-        throws FunctionEvaluationException {
+                                                 final double min, final double max) {
+        return optimize(maxEval, f, goal, min, max, min + 0.5 * (max - min));
+    }
 
+    /** {@inheritDoc} */
+    public UnivariateRealPointValuePair optimize(int maxEval, final FUNC f,
+                                                 final GoalType goal,
+                                                 final double min, final double max,
+                                                 final double startValue) {
+        MathUserException lastException = null;
         optima = new UnivariateRealPointValuePair[starts];
         totalEvaluations = 0;
 
         // Multi-start loop.
         for (int i = 0; i < starts; ++i) {
             try {
-                final double bound1 = (i == 0) ? min : min + generator.nextDouble() * (max - min);
-                final double bound2 = (i == 0) ? max : min + generator.nextDouble() * (max - min);
-                optima[i] = optimizer.optimize(f, goal,
-                                               FastMath.min(bound1, bound2),
-                                               FastMath.max(bound1, bound2));
-            } catch (FunctionEvaluationException fee) {
-                optima[i] = null;
-            } catch (ConvergenceException ce) {
+                final double s = (i == 0) ? startValue : min + generator.nextDouble() * (max - min);
+                optima[i] = optimizer.optimize(maxEval - totalEvaluations, f, goal, min, max, s);
+            } catch (MathUserException mue) {
+                lastException = mue;
                 optima[i] = null;
             }
 
-            final int usedEvaluations = optimizer.getEvaluations();
-            optimizer.setMaxEvaluations(optimizer.getMaxEvaluations() - usedEvaluations);
-            totalEvaluations += usedEvaluations;
+            totalEvaluations += optimizer.getEvaluations();
         }
 
         sortPairs(goal);
 
         if (optima[0] == null) {
-            throw new ConvergenceException(LocalizedFormats.NO_CONVERGENCE_WITH_ANY_START_POINT,
-                                           starts);
+            throw lastException; // cannot be null if starts >=1
         }
 
         // Return the point with the best objective function value.
         return optima[0];
-    }
-
-    /** {@inheritDoc} */
-    public UnivariateRealPointValuePair optimize(final FUNC f, final GoalType goalType,
-                                                 final double min, final double max,
-                                                 final double startValue)
-            throws FunctionEvaluationException {
-        // XXX Main code should be here, using "startValue" for the first start.
-        // XXX This method should set "startValue" to min + 0.5 * (max - min)
-        return optimize(f, goalType, min, max);
     }
 
     /**

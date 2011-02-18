@@ -19,7 +19,7 @@ package org.apache.commons.math.optimization.linear;
 
 import java.util.Collection;
 
-import org.apache.commons.math.MaxIterationsExceededException;
+import org.apache.commons.math.exception.MaxCountExceededException;
 import org.apache.commons.math.optimization.GoalType;
 import org.apache.commons.math.optimization.OptimizationException;
 import org.apache.commons.math.optimization.RealPointValuePair;
@@ -28,7 +28,7 @@ import org.apache.commons.math.optimization.RealPointValuePair;
  * Base class for implementing linear optimizers.
  * <p>This base class handles the boilerplate methods associated to thresholds
  * settings and iterations counters.</p>
- * @version $Revision: 925812 $ $Date: 2010-03-21 16:49:31 +0100 (So, 21 Mrz 2010) $
+ * @version $Revision: 1040868 $ $Date: 2010-12-01 04:43:20 +0100 (Mi, 01 Dez 2010) $
  * @since 2.0
  *
  */
@@ -96,7 +96,7 @@ public abstract class AbstractLinearOptimizer implements LinearOptimizer {
     protected void incrementIterationsCounter()
         throws OptimizationException {
         if (++iterations > maxIterations) {
-            throw new OptimizationException(new MaxIterationsExceededException(maxIterations));
+            throw new OptimizationException(new MaxCountExceededException(maxIterations));
         }
     }
 

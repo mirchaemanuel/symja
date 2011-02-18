@@ -25,16 +25,14 @@ import java.io.Serializable;
  * <p>This is a simple immutable container.</p>
  * @see VectorialPointValuePair
  * @see org.apache.commons.math.analysis.MultivariateRealFunction
- * @version $Revision: 980981 $ $Date: 2010-07-31 00:03:04 +0200 (Sa, 31 Jul 2010) $
+ * @version $Revision: 1027007 $ $Date: 2010-10-25 11:42:33 +0200 (Mo, 25 Okt 2010) $
  * @since 2.0
  */
 public class RealPointValuePair implements Serializable {
     /** Serializable version identifier. */
     private static final long serialVersionUID = 1003888396256744753L;
-
     /** Point coordinates. */
     private final double[] point;
-
     /** Value of the objective function at the point. */
     private final double value;
 
@@ -45,7 +43,7 @@ public class RealPointValuePair implements Serializable {
      */
     public RealPointValuePair(final double[] point, final double value) {
         this.point = (point == null) ? null : point.clone();
-        this.value  = value;
+        this.value = value;
     }
 
     /** Build a point/objective function value pair.
@@ -60,7 +58,7 @@ public class RealPointValuePair implements Serializable {
         this.point = copyArray ?
                      ((point == null) ? null : point.clone()) :
                      point;
-        this.value  = value;
+        this.value = value;
     }
 
     /** Get the point.

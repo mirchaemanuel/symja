@@ -42,7 +42,7 @@ import org.apache.commons.math.stat.descriptive.AbstractStorelessUnivariateStati
  * one of the threads invokes the <code>increment()</code> or
  * <code>clear()</code> method, it must be synchronized externally.</p>
  *
- * @version $Revision: 902934 $ $Date: 2010-01-25 20:09:17 +0100 (Mo, 25 Jan 2010) $
+ * @version $Revision: 1006301 $ $Date: 2010-10-10 16:50:56 +0200 (So, 10 Okt 2010) $
  */
 public class FirstMoment extends AbstractStorelessUnivariateStatistic
     implements Serializable {
@@ -151,6 +151,7 @@ public class FirstMoment extends AbstractStorelessUnivariateStatistic
      * @throws NullPointerException if either source or dest is null
      */
     public static void copy(FirstMoment source, FirstMoment dest) {
+        dest.setData(source.getDataRef());
         dest.n = source.n;
         dest.m1 = source.m1;
         dest.dev = source.dev;

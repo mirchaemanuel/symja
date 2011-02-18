@@ -18,8 +18,8 @@ package org.apache.commons.math.optimization.general;
 
 import java.util.Arrays;
 
-import org.apache.commons.math.FunctionEvaluationException;
 import org.apache.commons.math.exception.ConvergenceException;
+import org.apache.commons.math.exception.MathUserException;
 import org.apache.commons.math.exception.util.LocalizedFormats;
 import org.apache.commons.math.optimization.VectorialPointValuePair;
 import org.apache.commons.math.optimization.ConvergenceChecker;
@@ -101,7 +101,7 @@ import org.apache.commons.math.util.FastMath;
  *     POSSIBILITY OF SUCH LOSS OR DAMAGES.</strong></li>
  * <ol></td></tr>
  * </table>
- * @version $Revision: 994988 $ $Date: 2010-09-08 13:22:41 +0200 (Mi, 08 Sep 2010) $
+ * @version $Revision: 1037328 $ $Date: 2010-11-20 22:01:50 +0100 (Sa, 20 Nov 2010) $
  * @since 2.0
  *
  */
@@ -215,8 +215,7 @@ public class LevenbergMarquardtOptimizer extends AbstractLeastSquaresOptimizer {
 
     /** {@inheritDoc} */
     @Override
-    protected VectorialPointValuePair doOptimize()
-        throws FunctionEvaluationException {
+    protected VectorialPointValuePair doOptimize() throws MathUserException {
         // arrays shared with the other private methods
         solvedCols  = FastMath.min(rows, cols);
         diagR       = new double[cols];

@@ -17,8 +17,6 @@
 
 package org.apache.commons.math.optimization.fitting;
 
-import org.apache.commons.math.FunctionEvaluationException;
-import org.apache.commons.math.MathRuntimeException;
 import org.apache.commons.math.analysis.polynomials.PolynomialFunction;
 import org.apache.commons.math.optimization.DifferentiableMultivariateVectorialOptimizer;
 
@@ -26,7 +24,7 @@ import org.apache.commons.math.optimization.DifferentiableMultivariateVectorialO
  * <p>Polynomial fitting is a very simple case of curve fitting. The
  * estimated coefficients are the polynomial coefficients. They are
  * searched by a least square estimator.</p>
- * @version $Revision: 994988 $ $Date: 2010-09-08 13:22:41 +0200 (Mi, 08 Sep 2010) $
+ * @version $Revision: 1034996 $ $Date: 2010-11-14 14:41:13 +0100 (So, 14 Nov 2010) $
  * @since 2.0
  */
 
@@ -76,12 +74,7 @@ public class PolynomialFitter {
      * if the algorithm failed to converge.
      */
     public PolynomialFunction fit() {
-        try {
-            return new PolynomialFunction(fitter.fit(new ParametricPolynomial(), new double[degree + 1]));
-        } catch (FunctionEvaluationException fee) {
-            // this should never happen
-            throw MathRuntimeException.createInternalError(fee);
-        }
+        return new PolynomialFunction(fitter.fit(new ParametricPolynomial(), new double[degree + 1]));
     }
 
     /**
@@ -90,8 +83,7 @@ public class PolynomialFitter {
     private static class ParametricPolynomial implements ParametricRealFunction {
 
         /** {@inheritDoc} */
-        public double[] gradient(double x, double[] parameters)
-                throws FunctionEvaluationException {
+        public double[] gradient(double x, double[] parameters) {
             final double[] gradient = new double[parameters.length];
             double xn = 1.0;
             for (int i = 0; i < parameters.length; ++i) {

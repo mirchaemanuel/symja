@@ -17,7 +17,6 @@
 
 package org.apache.commons.math.optimization.univariate;
 
-import org.apache.commons.math.FunctionEvaluationException;
 import org.apache.commons.math.util.Incrementor;
 import org.apache.commons.math.exception.MaxCountExceededException;
 import org.apache.commons.math.exception.TooManyEvaluationsException;
@@ -30,7 +29,7 @@ import org.apache.commons.math.optimization.ConvergenceChecker;
  * Provide a default implementation for several functions useful to generic
  * optimizers.
  *
- * @version $Revision: 994988 $ $Date: 2010-09-08 13:22:41 +0200 (Mi, 08 Sep 2010) $
+ * @version $Revision: 1043078 $ $Date: 2010-12-07 16:01:37 +0100 (Di, 07 Dez 2010) $
  * @since 2.0
  */
 public abstract class AbstractUnivariateRealOptimizer
@@ -49,11 +48,6 @@ public abstract class AbstractUnivariateRealOptimizer
     private double searchStart;
     /** Function to optimize. */
     private UnivariateRealFunction function;
-
-    /** {@inheritDoc} */
-    public void setMaxEvaluations(int maxEvaluations) {
-        evaluations.setMaximalCount(maxEvaluations);
-    }
 
     /** {@inheritDoc} */
     public int getMaxEvaluations() {
@@ -95,13 +89,12 @@ public abstract class AbstractUnivariateRealOptimizer
      *
      * @param point Point at which the objective function must be evaluated.
      * @return the objective function value at specified point.
-     * @throws FunctionEvaluationException if the function cannot be
-     * evaluated.
      * @throws TooManyEvaluationsException if the maximal number of evaluations
      * is exceeded.
+     * @throws org.apache.commons.math.exception.MathUserException if the
+     * objective function throws one.
      */
-    protected double computeObjectiveValue(double point)
-        throws FunctionEvaluationException {
+    protected double computeObjectiveValue(double point) {
         try {
             evaluations.incrementCount();
         } catch (MaxCountExceededException e) {
@@ -111,11 +104,10 @@ public abstract class AbstractUnivariateRealOptimizer
     }
 
     /** {@inheritDoc} */
-    public UnivariateRealPointValuePair optimize(UnivariateRealFunction f,
+    public UnivariateRealPointValuePair optimize(int maxEval, UnivariateRealFunction f,
                                                  GoalType goalType,
                                                  double min, double max,
-                                                 double startValue)
-        throws FunctionEvaluationException {
+                                                 double startValue) {
         // Checks.
         if (f == null) {
             throw new NullArgumentException();
@@ -130,6 +122,7 @@ public abstract class AbstractUnivariateRealOptimizer
         searchStart = startValue;
         goal = goalType;
         function = f;
+        evaluations.setMaximalCount(maxEval);
         evaluations.resetCount();
 
         // Perform computation.
@@ -137,11 +130,11 @@ public abstract class AbstractUnivariateRealOptimizer
     }
 
     /** {@inheritDoc} */
-    public UnivariateRealPointValuePair optimize(UnivariateRealFunction f,
+    public UnivariateRealPointValuePair optimize(int maxEval,
+                                                 UnivariateRealFunction f,
                                                  GoalType goalType,
-                                                 double min, double max)
-        throws FunctionEvaluationException {
-        return optimize(f, goalType, min, max, min + 0.5 * (max - min));
+                                                 double min, double max){
+        return optimize(maxEval, f, goalType, min, max, min + 0.5 * (max - min));
     }
 
     /**
@@ -165,9 +158,8 @@ public abstract class AbstractUnivariateRealOptimizer
      * @return the optimum and its corresponding function value.
      * @throws TooManyEvaluationsException if the maximal number of evaluations
      * is exceeded.
-     * @throws FunctionEvaluationException if an error occurs evaluating
-     * the function.
+     * @throws org.apache.commons.math.exception.MathUserException if the
+     * function to optimize throws one during search.
      */
-    protected abstract UnivariateRealPointValuePair doOptimize()
-        throws FunctionEvaluationException;
+    protected abstract UnivariateRealPointValuePair doOptimize();
 }

@@ -54,7 +54,7 @@ import org.apache.commons.math.stat.descriptive.summary.Sum;
  * one of the threads invokes the <code>increment()</code> or
  * <code>clear()</code> method, it must be synchronized externally.
  *
- * @version $Revision: 908626 $ $Date: 2010-02-10 19:44:42 +0100 (Mi, 10 Feb 2010) $
+ * @version $Revision: 1006301 $ $Date: 2010-10-10 16:50:56 +0200 (So, 10 Okt 2010) $
  */
 public class Mean extends AbstractStorelessUnivariateStatistic
     implements Serializable, WeightedEvaluation {
@@ -265,6 +265,7 @@ public class Mean extends AbstractStorelessUnivariateStatistic
      * @throws NullPointerException if either source or dest is null
      */
     public static void copy(Mean source, Mean dest) {
+        dest.setData(source.getDataRef());
         dest.incMoment = source.incMoment;
         dest.moment = source.moment.copy();
     }

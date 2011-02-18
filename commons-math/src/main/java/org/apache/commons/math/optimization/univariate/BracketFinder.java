@@ -17,10 +17,10 @@
 package org.apache.commons.math.optimization.univariate;
 
 import org.apache.commons.math.util.Incrementor;
+import org.apache.commons.math.exception.MathUserException;
 import org.apache.commons.math.exception.NotStrictlyPositiveException;
 import org.apache.commons.math.exception.TooManyEvaluationsException;
 import org.apache.commons.math.exception.MaxCountExceededException;
-import org.apache.commons.math.FunctionEvaluationException;
 import org.apache.commons.math.analysis.UnivariateRealFunction;
 import org.apache.commons.math.optimization.GoalType;
 
@@ -103,20 +103,16 @@ public class BracketFinder {
     /**
      * Search new points that bracket a local optimum of the function.
      *
-     * @param func Function whose optimum should be bracketted.
+     * @param func Function whose optimum should be bracketed.
      * @param goal {@link GoalType Goal type}.
      * @param xA Initial point.
      * @param xB Initial point.
      * @throws TooManyEvaluationsException if the maximum number of evaluations
      * is exceeded.
-     * @throws FunctionEvaluationException if an error occurs evaluating
-     * the function.
+     * @throws MathUserException if function throw one
      */
-    public void search(UnivariateRealFunction func,
-                       GoalType goal,
-                       double xA,
-                       double xB)
-        throws FunctionEvaluationException {
+    public void search(UnivariateRealFunction func, GoalType goal, double xA, double xB)
+        throws MathUserException {
         evaluations.resetCount();
         final boolean isMinim = goal == GoalType.MINIMIZE;
 
@@ -280,13 +276,11 @@ public class BracketFinder {
      * @param f Function.
      * @param x Argument.
      * @return {@code f(x)}
-     * @throws FunctionEvaluationException if function cannot be evaluated.
      * @throws TooManyEvaluationsException if the maximal number of evaluations is
      * exceeded.
+     * @throws MathUserException if f throws one.
      */
-    private double eval(UnivariateRealFunction f,
-                        double x)
-        throws FunctionEvaluationException {
+    private double eval(UnivariateRealFunction f, double x) throws MathUserException {
         try {
             evaluations.incrementCount();
         } catch (MaxCountExceededException e) {

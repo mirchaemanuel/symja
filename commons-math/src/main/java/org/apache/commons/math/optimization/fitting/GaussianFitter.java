@@ -17,9 +17,7 @@
 
 package org.apache.commons.math.optimization.fitting;
 
-import org.apache.commons.math.FunctionEvaluationException;
 import org.apache.commons.math.optimization.DifferentiableMultivariateVectorialOptimizer;
-import org.apache.commons.math.optimization.OptimizationException;
 import org.apache.commons.math.optimization.fitting.CurveFitter;
 import org.apache.commons.math.optimization.fitting.WeightedObservedPoint;
 
@@ -42,15 +40,14 @@ import org.apache.commons.math.optimization.fitting.WeightedObservedPoint;
  *   fitter.addObservedPoint(4.07525716, 1447024.0);
  *   fitter.addObservedPoint(4.08237071, 717104.0);
  *   fitter.addObservedPoint(4.08366408, 620014.0);
- *  GaussianFunction fitFunction = fitter.fit();
+ *   GaussianFunction fitFunction = fitter.fit();
  * </pre>
  *
  * @see ParametricGaussianFunction
  * @since 2.2
- * @version $Revision: 982950 $ $Date: 2010-08-06 15:29:01 +0200 (Fr, 06 Aug 2010) $
+ * @version $Revision: 1039083 $ $Date: 2010-11-25 17:22:00 +0100 (Do, 25 Nov 2010) $
  */
 public class GaussianFitter {
-
     /** Fitter used for fitting. */
     private final CurveFitter fitter;
 
@@ -64,23 +61,23 @@ public class GaussianFitter {
     }
 
     /**
-     * Adds point (<code>x</code>, <code>y</code>) to list of observed points
-     * with a weight of 1.0.
+     * Adds point ({@code x}, {@code y}) to list of observed points
+     * with a weight of 1.
      *
-     * @param x <tt>x</tt> point value
-     * @param y <tt>y</tt> point value
+     * @param x Abscissa value.
+     * @param y Ordinate value.
      */
     public void addObservedPoint(double x, double y) {
-        addObservedPoint(1.0, x, y);
+        addObservedPoint(1, x, y);
     }
 
     /**
-     * Adds point (<code>x</code>, <code>y</code>) to list of observed points
-     * with a weight of <code>weight</code>.
+     * Adds point ({@code x}, {@code y}) to list of observed points
+     * with a weight of {@code weight}.
      *
-     * @param weight weight assigned to point
-     * @param x <tt>x</tt> point value
-     * @param y <tt>y</tt> point value
+     * @param weight Weight assigned to the given point.
+     * @param x Abscissa value.
+     * @param y Ordinate value.
      */
     public void addObservedPoint(double weight, double x, double y) {
         fitter.addObservedPoint(weight, x, y);
@@ -88,31 +85,24 @@ public class GaussianFitter {
 
     /**
      * Fits Gaussian function to the observed points.
+     * It will call the base class
+     * {@link CurveFitter#fit(ParametricRealFunction,double[]) fit} method.
      *
-     * @return Gaussian function best fitting the observed points
-     *
-     * @throws FunctionEvaluationException if <code>CurveFitter.fit</code>
-     *         throws it
-     * @throws OptimizationException if <code>CurveFitter.fit</code> throws it
-     * @throws IllegalArgumentException if <code>CurveFitter.fit</code> throws
-     *         it
-     *
+     * @return the Gaussian function that best fits the observed points.
      * @see CurveFitter
      */
-    public GaussianFunction fit()
-        throws FunctionEvaluationException, OptimizationException {
+    public GaussianFunction fit() {
         return new GaussianFunction(fitter.fit(new ParametricGaussianFunction(),
                                                createParametersGuesser(fitter.getObservations()).guess()));
     }
 
     /**
-     * Factory method to create a <code>GaussianParametersGuesser</code>
+     * Factory method to create a {@code GaussianParametersGuesser}
      * instance initialized with the specified observations.
      *
      * @param observations points used to initialize the created
-     *        <code>GaussianParametersGuesser</code> instance
-     *
-     * @return new <code>GaussianParametersGuesser</code> instance
+     * {@code GaussianParametersGuesser} instance.
+     * @return a new {@code GaussianParametersGuesser} instance.
      */
     protected GaussianParametersGuesser createParametersGuesser(WeightedObservedPoint[] observations) {
         return new GaussianParametersGuesser(observations);

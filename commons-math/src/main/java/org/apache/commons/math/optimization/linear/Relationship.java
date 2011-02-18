@@ -19,7 +19,7 @@ package org.apache.commons.math.optimization.linear;
 
 /**
  * Types of relationships between two cells in a Solver {@link LinearConstraint}.
- * @version $Revision: 758920 $ $Date: 2009-03-27 00:25:30 +0100 (Fr, 27 Mrz 2009) $
+ * @version $Revision: 1003346 $ $Date: 2010-10-01 03:27:16 +0200 (Fr, 01 Okt 2010) $
  * @since 2.0
  */
 public enum Relationship {
@@ -34,7 +34,7 @@ public enum Relationship {
     GEQ(">=");
 
     /** Display string for the relationship. */
-    private String stringValue;
+    private final String stringValue;
 
     /** Simple constructor.
      * @param stringValue display string for the relationship

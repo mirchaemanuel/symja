@@ -17,20 +17,21 @@
 
 package org.apache.commons.math.optimization.general;
 
-import org.apache.commons.math.FunctionEvaluationException;
 import org.apache.commons.math.analysis.DifferentiableMultivariateRealFunction;
 import org.apache.commons.math.analysis.MultivariateVectorialFunction;
+import org.apache.commons.math.exception.MathUserException;
 import org.apache.commons.math.optimization.DifferentiableMultivariateRealOptimizer;
 import org.apache.commons.math.optimization.GoalType;
 import org.apache.commons.math.optimization.ConvergenceChecker;
 import org.apache.commons.math.optimization.RealPointValuePair;
+import org.apache.commons.math.optimization.direct.BaseAbstractScalarOptimizer;
 
 /**
  * Base class for implementing optimizers for multivariate scalar
  * differentiable functions.
  * It contains boiler-plate code for dealing with gradient evaluation.
  *
- * @version $Revision: 994988 $ $Date: 2010-09-08 13:22:41 +0200 (Mi, 08 Sep 2010) $
+ * @version $Revision: 1043078 $ $Date: 2010-12-07 16:01:37 +0100 (Di, 07 Dez 2010) $
  * @since 2.0
  */
 public abstract class AbstractScalarDifferentiableOptimizer
@@ -50,11 +51,9 @@ public abstract class AbstractScalarDifferentiableOptimizer
     protected AbstractScalarDifferentiableOptimizer() {}
     /**
      * @param checker Convergence checker.
-     * @param maxEvaluations Maximum number of function evaluations.
      */
-    protected AbstractScalarDifferentiableOptimizer(ConvergenceChecker<RealPointValuePair> checker,
-                                                    int maxEvaluations) {
-        super(checker, maxEvaluations);
+    protected AbstractScalarDifferentiableOptimizer(ConvergenceChecker<RealPointValuePair> checker) {
+        super(checker);
     }
 
     /**
@@ -62,24 +61,24 @@ public abstract class AbstractScalarDifferentiableOptimizer
      *
      * @param evaluationPoint Point at which the gradient must be evaluated.
      * @return the gradient at the specified point.
-     * @throws FunctionEvaluationException if the function gradient cannot be
-     * evaluated.
      * @throws org.apache.commons.math.exception.TooManyEvaluationsException
      * if the allowed number of evaluations is exceeded.
+     * @throws MathUserException if objective function gradient throws one
      */
     protected double[] computeObjectiveGradient(final double[] evaluationPoint)
-        throws FunctionEvaluationException {
+        throws MathUserException {
         return gradient.value(evaluationPoint);
     }
 
     /** {@inheritDoc} */
-    public RealPointValuePair optimize(final DifferentiableMultivariateRealFunction f,
+    @Override
+    public RealPointValuePair optimize(int maxEval,
+                                       final DifferentiableMultivariateRealFunction f,
                                        final GoalType goalType,
-                                       final double[] startPoint)
-        throws FunctionEvaluationException {
+                                       final double[] startPoint) throws MathUserException {
         // Store optimization problem characteristics.
         gradient = f.gradient();
 
-        return super.optimize(f, goalType, startPoint);
+        return super.optimize(maxEval, f, goalType, startPoint);
     }
 }

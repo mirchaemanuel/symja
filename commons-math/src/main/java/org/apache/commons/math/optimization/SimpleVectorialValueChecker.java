@@ -28,7 +28,7 @@ import org.apache.commons.math.util.FastMath;
  * threshold or if either the absolute difference between the objective
  * function values is smaller than another threshold for all vectors elements.
  *
- * @version $Revision: 994988 $ $Date: 2010-09-08 13:22:41 +0200 (Mi, 08 Sep 2010) $
+ * @version $Revision: 1003351 $ $Date: 2010-10-01 03:50:12 +0200 (Fr, 01 Okt 2010) $
  * @since 3.0
  */
 public class SimpleVectorialValueChecker
@@ -69,6 +69,7 @@ public class SimpleVectorialValueChecker
      * @param current Best point in the current iteration.
      * @return {@code true} if the algorithm has converged.
      */
+    @Override
     public boolean converged(final int iteration,
                              final VectorialPointValuePair previous,
                              final VectorialPointValuePair current) {

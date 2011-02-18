@@ -47,7 +47,7 @@ import org.apache.commons.math.stat.descriptive.AbstractUnivariateStatistic;
  * more of these threads invoke property setters, external synchronization must
  * be provided to ensure correct results.</p>
  *
- * @version $Revision: 983921 $ $Date: 2010-08-10 12:46:06 +0200 (Di, 10 Aug 2010) $
+ * @version $Revision: 1006301 $ $Date: 2010-10-10 16:50:56 +0200 (So, 10 Okt 2010) $
  * @since 2.1
  */
 
@@ -159,6 +159,7 @@ public class SemiVariance extends AbstractUnivariateStatistic implements Seriali
      * @throws NullPointerException if either source or dest is null
      */
     public static void copy(final SemiVariance source, SemiVariance dest) {
+        dest.setData(source.getDataRef());
         dest.biasCorrected = source.biasCorrected;
         dest.varianceDirection = source.varianceDirection;
     }

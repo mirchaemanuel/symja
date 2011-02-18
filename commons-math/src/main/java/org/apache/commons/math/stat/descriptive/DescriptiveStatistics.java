@@ -53,7 +53,7 @@ import org.apache.commons.math.util.FastMath;
  * {@link SynchronizedDescriptiveStatistics} if concurrent access from multiple
  * threads is required.</p>
  *
- * @version $Revision: 990658 $ $Date: 2010-08-30 00:04:09 +0200 (Mo, 30 Aug 2010) $
+ * @version $Revision: 1063037 $ $Date: 2011-01-24 23:33:11 +0100 (Mo, 24 Jan 2011) $
  */
 public class DescriptiveStatistics implements StatisticalSummary, Serializable {
 
@@ -121,6 +121,20 @@ public class DescriptiveStatistics implements StatisticalSummary, Serializable {
      */
     public DescriptiveStatistics(int window) {
         setWindowSize(window);
+    }
+
+    /**
+     * Construct a DescriptiveStatistics instance with an infinite window
+     * and the initial data values in double[] initialDoubleArray.
+     * If initialDoubleArray is null, then this constructor corresponds to
+     * DescriptiveStatistics()
+     *
+     * @param initialDoubleArray the initial double[].
+     */
+    public DescriptiveStatistics(double[] initialDoubleArray) {
+        if (initialDoubleArray != null) {
+            eDA = new ResizableDoubleArray(initialDoubleArray);
+        }
     }
 
     /**
@@ -409,7 +423,7 @@ public class DescriptiveStatistics implements StatisticalSummary, Serializable {
      */
     @Override
     public String toString() {
-        StringBuffer outBuffer = new StringBuffer();
+        StringBuilder outBuffer = new StringBuilder();
         String endl = "\n";
         outBuffer.append("DescriptiveStatistics:").append(endl);
         outBuffer.append("n: ").append(getN()).append(endl);

@@ -17,9 +17,7 @@
 
 package org.apache.commons.math.optimization.general;
 
-import org.apache.commons.math.FunctionEvaluationException;
 import org.apache.commons.math.exception.MathIllegalStateException;
-import org.apache.commons.math.exception.ConvergenceException;
 import org.apache.commons.math.analysis.UnivariateRealFunction;
 import org.apache.commons.math.analysis.solvers.BrentSolver;
 import org.apache.commons.math.analysis.solvers.UnivariateRealSolver;
@@ -36,11 +34,10 @@ import org.apache.commons.math.util.FastMath;
  * optional preconditioning.
  * </p>
  *
- * @version $Revision: 990792 $ $Date: 2010-08-30 15:06:22 +0200 (Mo, 30 Aug 2010) $
+ * @version $Revision: 1042151 $ $Date: 2010-12-04 12:31:12 +0100 (Sa, 04 Dez 2010) $
  * @since 2.0
  *
  */
-
 public class NonLinearConjugateGradientOptimizer
     extends AbstractScalarDifferentiableOptimizer {
     /** Update formula for the beta parameter. */
@@ -86,7 +83,7 @@ public class NonLinearConjugateGradientOptimizer
      * default {@link BrentSolver Brent solver}.
      */
     public void setLineSearchSolver(final UnivariateRealSolver lineSearchSolver) {
-        this.solver = lineSearchSolver;
+        solver = lineSearchSolver;
     }
 
     /**
@@ -109,8 +106,7 @@ public class NonLinearConjugateGradientOptimizer
 
     /** {@inheritDoc} */
     @Override
-    protected RealPointValuePair doOptimize()
-        throws FunctionEvaluationException {
+    protected RealPointValuePair doOptimize() {
         // Initialization.
         if (preconditioner == null) {
             preconditioner = new IdentityPreconditioner();
@@ -139,6 +135,7 @@ public class NonLinearConjugateGradientOptimizer
 
         RealPointValuePair current = null;
         int iter = 0;
+        int maxEval = getMaxEvaluations();
         while (true) {
             ++iter;
 
@@ -159,15 +156,16 @@ public class NonLinearConjugateGradientOptimizer
 
             // Find the optimal step in the search direction.
             final UnivariateRealFunction lsf = new LineSearchFunction(searchDirection);
-            try {
-                final double step = solver.solve(lsf, 0, findUpperBound(lsf, 0, initialStep));
+            final double uB = findUpperBound(lsf, 0, initialStep);
+            // XXX Last parameters is set to a value clode to zero in order to
+            // work around the divergence problem in the "testCircleFitting"
+            // unit test (see MATH-439).
+            final double step = solver.solve(maxEval, lsf, 0, uB, 1e-15);
+            maxEval -= solver.getEvaluations(); // Subtract used up evaluations.
 
-                // Validate new point.
-                for (int i = 0; i < point.length; ++i) {
-                    point[i] += step * searchDirection[i];
-                }
-            } catch (org.apache.commons.math.ConvergenceException e) {
-                throw new ConvergenceException(); // XXX ugly workaround.
+            // Validate new point.
+            for (int i = 0; i < point.length; ++i) {
+                point[i] += step * searchDirection[i];
             }
 
             r = computeObjectiveGradient(point);
@@ -212,18 +210,18 @@ public class NonLinearConjugateGradientOptimizer
     }
 
     /**
-     * Find the upper bound b ensuring bracketing of a root between a and b
-     * @param f function whose root must be bracketed
-     * @param a lower bound of the interval
-     * @param h initial step to try
-     * @return b such that f(a) and f(b) have opposite signs
-     * @exception FunctionEvaluationException if the function cannot be computed
-     * @exception MathIllegalStateException if no bracket can be found
-     * @deprecated in 2.2 (must be replaced with "BracketFinder").
+     * Find the upper bound b ensuring bracketing of a root between a and b.
+     *
+     * @param f function whose root must be bracketed.
+     * @param a lower bound of the interval.
+     * @param h initial step to try.
+     * @return b such that f(a) and f(b) have opposite signs.
+     * @throws MathIllegalStateException if no bracket can be found.
+     * @throws org.apache.commons.math.exception.MathUserException if the
+     * function throws one.
      */
     private double findUpperBound(final UnivariateRealFunction f,
-                                  final double a, final double h)
-        throws FunctionEvaluationException {
+                                  final double a, final double h) {
         final double yA = f.value(a);
         double yB = yA;
         for (double step = h; step < Double.MAX_VALUE; step *= FastMath.max(2, yA / yB)) {
@@ -243,7 +241,6 @@ public class NonLinearConjugateGradientOptimizer
         public double[] precondition(double[] variables, double[] r) {
             return r.clone();
         }
-
     }
 
     /** Internal class for line search.
@@ -267,8 +264,7 @@ public class NonLinearConjugateGradientOptimizer
         }
 
         /** {@inheritDoc} */
-        public double value(double x) throws FunctionEvaluationException {
-
+        public double value(double x) {
             // current point in the search direction
             final double[] shiftedPoint = point.clone();
             for (int i = 0; i < shiftedPoint.length; ++i) {
@@ -285,9 +281,6 @@ public class NonLinearConjugateGradientOptimizer
             }
 
             return dotProduct;
-
         }
-
     }
-
 }

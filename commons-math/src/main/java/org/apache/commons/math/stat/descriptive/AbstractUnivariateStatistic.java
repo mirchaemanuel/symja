@@ -16,11 +16,12 @@
  */
 package org.apache.commons.math.stat.descriptive;
 
-import org.apache.commons.math.MathRuntimeException;
-import org.apache.commons.math.exception.util.LocalizedFormats;
-import org.apache.commons.math.exception.NullArgumentException;
-import org.apache.commons.math.exception.NotPositiveException;
 import org.apache.commons.math.exception.DimensionMismatchException;
+import org.apache.commons.math.exception.NotPositiveException;
+import org.apache.commons.math.exception.NullArgumentException;
+import org.apache.commons.math.exception.NumberIsTooLargeException;
+import org.apache.commons.math.exception.MathIllegalArgumentException;
+import org.apache.commons.math.exception.util.LocalizedFormats;
 
 /**
  * Abstract base class for all implementations of the
@@ -33,10 +34,64 @@ import org.apache.commons.math.exception.DimensionMismatchException;
  * Also includes a <code>test</code> method that performs generic parameter
  * validation for the <code>evaluate</code> methods.</p>
  *
- * @version $Revision: 994988 $ $Date: 2010-09-08 13:22:41 +0200 (Mi, 08 Sep 2010) $
+ * @version $Revision: 1044186 $ $Date: 2010-12-10 01:50:50 +0100 (Fr, 10 Dez 2010) $
  */
 public abstract class AbstractUnivariateStatistic
     implements UnivariateStatistic {
+
+    /** Stored data. */
+    private double[] storedData;
+
+    /**
+     * Set the data array.
+     * <p>
+     * The stored value is a copy of the parameter array, not the array itself
+     * </p>
+     * @param values data array to store (may be null to remove stored data)
+     * @see #evaluate()
+     */
+    public void setData(final double[] values) {
+        storedData = (values == null) ? null : values.clone();
+    }
+
+    /**
+     * Get a copy of the stored data array.
+     * @return copy of the stored data array (may be null)
+     */
+    public double[] getData() {
+        return (storedData == null) ? null : storedData.clone();
+    }
+
+    /**
+     * Get a reference to the stored data array.
+     * @return reference to the stored data array (may be null)
+     */
+    protected double[] getDataRef() {
+        return storedData;
+    }
+
+    /**
+     * Set the data array.
+     * @param values data array to store
+     * @param begin the index of the first element to include
+     * @param length the number of elements to include
+     * @see #evaluate()
+     */
+    public void setData(final double[] values, final int begin, final int length) {
+        storedData = new double[length];
+        System.arraycopy(values, begin, storedData, 0, length);
+    }
+
+    /**
+     * Returns the result of evaluating the statistic over the stored data.
+     * <p>
+     * The stored array is the one which was set by previous calls to
+     * </p>
+     * @return the value of the statistic applied to the stored data
+     */
+    public double evaluate() {
+        return evaluate(storedData);
+    }
 
     /**
      * {@inheritDoc}
@@ -118,8 +173,8 @@ public abstract class AbstractUnivariateStatistic
         }
 
         if (begin + length > values.length) {
-            throw MathRuntimeException.createIllegalArgumentException(
-                    LocalizedFormats.SUBARRAY_ENDS_AFTER_ARRAY_END);
+            throw new NumberIsTooLargeException(LocalizedFormats.SUBARRAY_ENDS_AFTER_ARRAY_END,
+                                                begin + length, values.length, true);
         }
 
         if (length == 0 && !allowEmpty) {
@@ -211,16 +266,13 @@ public abstract class AbstractUnivariateStatistic
         boolean containsPositiveWeight = false;
         for (int i = begin; i < begin + length; i++) {
             if (Double.isNaN(weights[i])) {
-                throw MathRuntimeException.createIllegalArgumentException(
-                        LocalizedFormats.NAN_ELEMENT_AT_INDEX, i);
+                throw new MathIllegalArgumentException(LocalizedFormats.NAN_ELEMENT_AT_INDEX, i);
             }
             if (Double.isInfinite(weights[i])) {
-                throw MathRuntimeException.createIllegalArgumentException(
-                        LocalizedFormats.INFINITE_ARRAY_ELEMENT, weights[i], i);
+                throw new MathIllegalArgumentException(LocalizedFormats.INFINITE_ARRAY_ELEMENT, weights[i], i);
             }
             if (weights[i] < 0) {
-                throw MathRuntimeException.createIllegalArgumentException(
-                        LocalizedFormats.NEGATIVE_ELEMENT_AT_INDEX, i, weights[i]);
+                throw new MathIllegalArgumentException(LocalizedFormats.NEGATIVE_ELEMENT_AT_INDEX, i, weights[i]);
             }
             if (!containsPositiveWeight && weights[i] > 0.0) {
                 containsPositiveWeight = true;
@@ -228,8 +280,7 @@ public abstract class AbstractUnivariateStatistic
         }
 
         if (!containsPositiveWeight) {
-            throw MathRuntimeException.createIllegalArgumentException(
-                    LocalizedFormats.WEIGHT_AT_LEAST_ONE_NON_ZERO);
+            throw new MathIllegalArgumentException(LocalizedFormats.WEIGHT_AT_LEAST_ONE_NON_ZERO);
         }
 
         return test(values, begin, length, allowEmpty);

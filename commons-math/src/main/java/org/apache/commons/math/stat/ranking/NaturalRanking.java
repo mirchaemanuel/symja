@@ -22,7 +22,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.commons.math.MathRuntimeException;
+import org.apache.commons.math.exception.MathInternalError;
 import org.apache.commons.math.random.RandomData;
 import org.apache.commons.math.random.RandomDataImpl;
 import org.apache.commons.math.random.RandomGenerator;
@@ -66,7 +66,7 @@ import org.apache.commons.math.util.FastMath;
  * <td>(6, 5, 7, 8, 5, 9, 2, 2, 5)</td></tr></table></p>
  *
  * @since 2.0
- * @version $Revision: 990658 $ $Date: 2010-08-30 00:04:09 +0200 (Mo, 30 Aug 2010) $
+ * @version $Revision: 1061498 $ $Date: 2011-01-20 21:32:54 +0100 (Do, 20 Jan 2011) $
  */
 public class NaturalRanking implements RankingAlgorithm {
 
@@ -211,7 +211,7 @@ public class NaturalRanking implements RankingAlgorithm {
                 nanPositions = getNanPositions(ranks);
                 break;
             default: // this should not happen unless NaNStrategy enum is changed
-                throw MathRuntimeException.createInternalError(null);
+                throw new MathInternalError();
         }
 
         // Sort the IntDoublePairs
@@ -359,7 +359,7 @@ public class NaturalRanking implements RankingAlgorithm {
                 }
                 break;
             default: // this should not happen unless TiesStrategy enum is changed
-                throw MathRuntimeException.createInternalError(null);
+                throw new MathInternalError();
         }
     }
 

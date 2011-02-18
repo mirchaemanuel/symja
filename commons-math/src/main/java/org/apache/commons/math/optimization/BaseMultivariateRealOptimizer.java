@@ -17,7 +17,6 @@
 
 package org.apache.commons.math.optimization;
 
-import org.apache.commons.math.FunctionEvaluationException;
 import org.apache.commons.math.analysis.MultivariateRealFunction;
 
 /**
@@ -43,17 +42,18 @@ public interface BaseMultivariateRealOptimizer<FUNC extends MultivariateRealFunc
      * @param goalType Type of optimization goal: either
      * {@link GoalType#MAXIMIZE} or {@link GoalType#MINIMIZE}.
      * @param startPoint Start point for optimization.
+     * @param maxEval Maximum number of function evaluations.
      * @return the point/value pair giving the optimal value for objective
      * function.
-     * @throws org.apache.commons.math.FunctionEvaluationException if the
-     * objective function throws one during the search.
      * @throws org.apache.commons.math.exception.DimensionMismatchException
      * if the start point dimension is wrong.
      * @throws org.apache.commons.math.exception.TooManyEvaluationsException
      * if the maximal number of evaluations is exceeded.
      * @throws org.apache.commons.math.exception.NullArgumentException if
      * any argument is {@code null}.
+     * @throws org.apache.commons.math.exception.MathUserException if the
+     * objective function throws one during search.
      */
-    RealPointValuePair optimize(FUNC f, GoalType goalType, double[] startPoint)
-        throws FunctionEvaluationException;
+    RealPointValuePair optimize(int maxEval, FUNC f, GoalType goalType,
+                                double[] startPoint);
 }

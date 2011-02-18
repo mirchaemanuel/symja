@@ -15,18 +15,18 @@
  * limitations under the License.
  */
 
-package org.apache.commons.math.optimization.general;
+package org.apache.commons.math.optimization.direct;
 
-import java.util.Arrays;
-
-import org.apache.commons.math.FunctionEvaluationException;
 import org.apache.commons.math.util.FastMath;
+import org.apache.commons.math.util.MathUtils;
 import org.apache.commons.math.analysis.UnivariateRealFunction;
+import org.apache.commons.math.analysis.MultivariateRealFunction;
 import org.apache.commons.math.exception.NumberIsTooSmallException;
 import org.apache.commons.math.exception.NotStrictlyPositiveException;
 import org.apache.commons.math.optimization.GoalType;
 import org.apache.commons.math.optimization.RealPointValuePair;
 import org.apache.commons.math.optimization.ConvergenceChecker;
+import org.apache.commons.math.optimization.MultivariateRealOptimizer;
 import org.apache.commons.math.optimization.univariate.BracketFinder;
 import org.apache.commons.math.optimization.univariate.BrentOptimizer;
 import org.apache.commons.math.optimization.univariate.UnivariateRealPointValuePair;
@@ -47,7 +47,8 @@ import org.apache.commons.math.optimization.univariate.UnivariateRealPointValueP
  * @since 2.2
  */
 public class PowellOptimizer
-    extends AbstractScalarOptimizer {
+    extends BaseAbstractScalarOptimizer<MultivariateRealFunction>
+    implements MultivariateRealOptimizer {
     /**
      * Minimum relative tolerance.
      */
@@ -55,15 +56,15 @@ public class PowellOptimizer
     /**
      * Relative threshold.
      */
-    private double relativeThreshold;
+    private final double relativeThreshold;
     /**
      * Absolute threshold.
      */
-    private double absoluteThreshold;
+    private final double absoluteThreshold;
     /**
      * Line search.
      */
-    private LineSearch line;
+    private final LineSearch line;
 
     /**
      * The arguments control the behaviour of the default convergence
@@ -95,20 +96,7 @@ public class PowellOptimizer
 
     /** {@inheritDoc} */
     @Override
-    public void setMaxEvaluations(int maxEvaluations) {
-        super.setMaxEvaluations(maxEvaluations);
-
-        // We must allow at least as many iterations to the underlying line
-        // search optimizer. Because the line search inner class will call
-        // "computeObjectiveValue" in this class, we ensure that this class
-        // will be the first to eventually throw "TooManyEvaluationsException".
-        line.setMaxEvaluations(maxEvaluations);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected RealPointValuePair doOptimize()
-        throws FunctionEvaluationException {
+    protected RealPointValuePair doOptimize() {
         final GoalType goal = getGoalType();
         final double[] guess = getStartPoint();
         final int n = guess.length;
@@ -135,7 +123,7 @@ public class PowellOptimizer
             double alphaMin = 0;
 
             for (int i = 0; i < n; i++) {
-                final double[] d = Arrays.copyOf(direc[i], n);
+                final double[] d = MathUtils.copyOf(direc[i]);
 
                 fX2 = fVal;
 
@@ -253,19 +241,15 @@ public class PowellOptimizer
          * @param p Starting point.
          * @param d Search direction.
          * @return the optimum.
-         * @throws FunctionEvaluationException if the function evaluation
-         * fails.
          * @throws org.apache.commons.math.exception.TooManyEvaluationsException
          * if the number of evaluations is exceeded.
+         * @throws org.apache.commons.math.exception.MathUserException if the
+         * objective function throws one.
          */
-        public UnivariateRealPointValuePair search(final double[] p,
-                                                   final double[] d)
-            throws FunctionEvaluationException {
-
+        public UnivariateRealPointValuePair search(final double[] p, final double[] d) {
             final int n = p.length;
             final UnivariateRealFunction f = new UnivariateRealFunction() {
-                    public double value(double alpha)
-                        throws FunctionEvaluationException {
+                    public double value(double alpha) {
                         final double[] x = new double[n];
                         for (int i = 0; i < n; i++) {
                             x[i] = p[i] + alpha * d[i];
@@ -277,8 +261,11 @@ public class PowellOptimizer
 
             final GoalType goal = PowellOptimizer.this.getGoalType();
             bracket.search(f, goal, 0, 1);
-            return optimize(f, goal, bracket.getLo(), bracket.getHi(),
-                            bracket.getMid());
+            // Passing "MAX_VALUE" as a dummy value because it is the enclosing
+            // class that counts the number of evaluations (and will eventually
+            // generate the exception).
+            return optimize(Integer.MAX_VALUE, f, goal,
+                            bracket.getLo(), bracket.getHi(), bracket.getMid());
         }
     }
 }
