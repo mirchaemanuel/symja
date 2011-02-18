@@ -1,5 +1,5 @@
 /*
- * $Id: ExpVector.java 3338 2010-10-02 14:48:15Z kredel $
+ * $Id: ExpVector.java 3497 2011-01-20 21:30:04Z kredel $
  */
 
 package edu.jas.poly;
@@ -296,6 +296,7 @@ public abstract class ExpVector implements AbelianGroupElem<ExpVector>
         boolean pit;
         int r = length();
         if ( r != vars.length ) {
+            //logger.warn("length mismatch " + r + " <> " + vars.length);
             return toString();
         }
         if ( r == 0 ) {

@@ -1,5 +1,5 @@
 /*
- * $Id: MultiVarPowerSeries.java 3444 2010-12-25 17:13:53Z kredel $
+ * $Id: MultiVarPowerSeries.java 3507 2011-01-26 22:23:58Z kredel $
  */
 
 package edu.jas.ps;
@@ -17,6 +17,7 @@ import java.util.TreeMap;
 
 import edu.jas.poly.ExpVector;
 import edu.jas.poly.GenPolynomial;
+import edu.jas.poly.AlgebraicNumber;
 import edu.jas.structure.BinaryFunctor;
 import edu.jas.structure.RingElem;
 import edu.jas.structure.Selector;
@@ -174,7 +175,13 @@ public class MultiVarPowerSeries<C extends RingElem<C>> implements RingElem<Mult
                     sb.append(" - ");
                 }
                 if (!c.isONE() || i.isZERO()) {
+                    if (c instanceof GenPolynomial || c instanceof AlgebraicNumber) {
+                         sb.append("{ ");
+                    }
                     sb.append(c.toString());
+                    if (c instanceof GenPolynomial || c instanceof AlgebraicNumber) {
+                        sb.append(" }");
+                    }
                     if (!i.isZERO()) {
                         sb.append(" * ");
                     }
@@ -223,7 +230,13 @@ public class MultiVarPowerSeries<C extends RingElem<C>> implements RingElem<Mult
                     sb.append(" - ");
                 }
                 if (!c.isONE() || i.isZERO()) {
+                    if (c instanceof GenPolynomial || c instanceof AlgebraicNumber) {
+                         sb.append("( ");
+                    }
                     sb.append(c.toScript());
+                    if (c instanceof GenPolynomial || c instanceof AlgebraicNumber) {
+                         sb.append(" )");
+                    }
                     if (!i.isZERO()) {
                         sb.append(" * ");
                     }

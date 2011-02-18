@@ -1,5 +1,5 @@
 /*
- * $Id: PolyUtilApp.java 3426 2010-12-24 13:17:58Z kredel $
+ * $Id: PolyUtilApp.java 3496 2011-01-20 21:26:46Z kredel $
  */
 
 package edu.jas.application;
@@ -720,8 +720,8 @@ public class PolyUtilApp<C extends RingElem<C>> {
                 //System.out.println("ix = " + ix);
                 for (RealAlgebraicNumber<D> rr : rra) {
                     //System.out.println("rr.ring = " + rr.ring);
-                    GenPolynomial<D> pip2el = PolyUtil.<D> evaluateMain(ufac, pip2r, rr.ring.getRoot().left);
-                    GenPolynomial<D> pip2er = PolyUtil.<D> evaluateMain(ufac, pip2r, rr.ring.getRoot().right);
+                    GenPolynomial<D> pip2el = PolyUtil.<D> evaluateMainRecursive(ufac, pip2r, rr.ring.getRoot().left);
+                    GenPolynomial<D> pip2er = PolyUtil.<D> evaluateMainRecursive(ufac, pip2r, rr.ring.getRoot().right);
                     GenPolynomialRing<D> upfac = I.upolys.get(ix).ring;
                     GenPolynomial<D> pip2elc = convert(upfac, pip2el);
                     GenPolynomial<D> pip2erc = convert(upfac, pip2er);

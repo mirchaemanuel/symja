@@ -1,5 +1,5 @@
 /*
- * $Id: Power.java 2712 2009-07-05 13:05:37Z kredel $
+ * $Id: Power.java 3530 2011-02-13 12:38:54Z kredel $
  */
 
 package edu.jas.structure;
@@ -305,4 +305,23 @@ public class Power<C extends RingElem<C> > {
         return modPower( fac, a, n, m );
     }
  
+
+    /** Logarithm.
+     * @param p logarithm base. 
+     * @param a element.
+     * @return k &ge; 1 minimal with p^k &ge; b.
+     */
+    public static <C extends RingElem<C>> long logarithm(C p, C a) {
+        //if ( p.compareTo(a) < 0 ) {
+        //    return 0L;
+        //}
+        long k = 1L;
+        C m = p;
+        while ( m.compareTo(a) < 0 ) {
+            m = m.multiply(p);
+            k++;
+        }
+        return k;
+    }
+
 }
