@@ -17,7 +17,6 @@
 
 package org.apache.commons.math.optimization;
 
-import org.apache.commons.math.FunctionEvaluationException;
 import org.apache.commons.math.analysis.MultivariateVectorialFunction;
 
 /**
@@ -47,16 +46,16 @@ public interface BaseMultivariateVectorialOptimizer<FUNC extends MultivariateVec
      * @param startPoint Start point for optimization.
      * @return the point/value pair giving the optimal value for objective
      * function.
-     * @throws FunctionEvaluationException if the objective function throws one
-     * during the search.
+     * @param maxEval Maximum number of function evaluations.
      * @throws org.apache.commons.math.exception.DimensionMismatchException
      * if the start point dimension is wrong.
      * @throws org.apache.commons.math.exception.TooManyEvaluationsException
      * if the maximal number of evaluations is exceeded.
      * @throws org.apache.commons.math.exception.NullArgumentException if
      * any argument is {@code null}.
+     * @throws org.apache.commons.math.exception.MathUserException if the
+     * function throws one during search.
      */
-    VectorialPointValuePair optimize(FUNC f, double[] target, double[] weight,
-                                     double[] startPoint)
-        throws FunctionEvaluationException;
+    VectorialPointValuePair optimize(int maxEval, FUNC f, double[] target,
+                                     double[] weight, double[] startPoint);
 }

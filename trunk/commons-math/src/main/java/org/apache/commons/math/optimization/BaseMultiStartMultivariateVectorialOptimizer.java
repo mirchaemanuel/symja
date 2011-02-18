@@ -20,9 +20,11 @@ package org.apache.commons.math.optimization;
 import java.util.Arrays;
 import java.util.Comparator;
 
-import org.apache.commons.math.FunctionEvaluationException;
 import org.apache.commons.math.exception.MathIllegalStateException;
 import org.apache.commons.math.exception.ConvergenceException;
+import org.apache.commons.math.exception.MathUserException;
+import org.apache.commons.math.exception.NullArgumentException;
+import org.apache.commons.math.exception.NotStrictlyPositiveException;
 import org.apache.commons.math.analysis.MultivariateVectorialFunction;
 import org.apache.commons.math.exception.util.LocalizedFormats;
 import org.apache.commons.math.random.RandomVectorGenerator;
@@ -58,14 +60,25 @@ public class BaseMultiStartMultivariateVectorialOptimizer<FUNC extends Multivari
      * Create a multi-start optimizer from a single-start optimizer.
      *
      * @param optimizer Single-start optimizer to wrap.
-     * @param starts Number of starts to perform (including the
-     * first one), multi-start is disabled if value is less than or
-     * equal to 1.
+     * @param starts Number of starts to perform. If {@code starts == 1},
+     * the {@link #optimize(int,MultivariateVectorialFunction,double[],double[],double[])
+     * optimize} will return the same solution as {@code optimizer} would.
      * @param generator Random vector generator to use for restarts.
+     * @throws NullArgumentException if {@code optimizer} or {@code generator}
+     * is {@code null}.
+     * @throws NotStrictlyPositiveException if {@code starts < 1}.
      */
     protected BaseMultiStartMultivariateVectorialOptimizer(final BaseMultivariateVectorialOptimizer<FUNC> optimizer,
                                                            final int starts,
                                                            final RandomVectorGenerator generator) {
+        if (optimizer == null ||
+            generator == null) {
+            throw new NullArgumentException();
+        }
+        if (starts < 1) {
+            throw new NotStrictlyPositiveException(starts);
+        }
+
         this.optimizer = optimizer;
         this.starts = starts;
         this.generator = generator;
@@ -73,13 +86,13 @@ public class BaseMultiStartMultivariateVectorialOptimizer<FUNC extends Multivari
 
     /**
      * Get all the optima found during the last call to {@link
-     * #optimize(FUNC,double[],double[],double[]) optimize}.
+     * #optimize(int,MultivariateVectorialFunction,double[],double[],double[]) optimize}.
      * The optimizer stores all the optima found during a set of
-     * restarts. The {@link #optimize(FUNC,double[],double[],double[])
+     * restarts. The {@link #optimize(int,MultivariateVectorialFunction,double[],double[],double[])
      * optimize} method returns the best point only. This method
      * returns all the points found at the end of each starts, including
      * the best one already returned by the {@link
-     * #optimize(FUNC,double[],double[],double[]) optimize} method.
+     * #optimize(int,MultivariateVectorialFunction,double[],double[],double[]) optimize} method.
      * <br/>
      * The returned array as one element for each start as specified
      * in the constructor. It is ordered with the results from the
@@ -88,14 +101,14 @@ public class BaseMultiStartMultivariateVectorialOptimizer<FUNC extends Multivari
      * descending order if maximizing), followed by and null elements
      * corresponding to the runs that did not converge. This means all
      * elements will be null if the {@link
-     * #optimize(FUNC,double[],double[],double[]) optimize} method did
+     * #optimize(int,MultivariateVectorialFunction,double[],double[],double[]) optimize} method did
      * throw a {@link ConvergenceException}). This also means that if
      * the first element is not {@code null}, it is the best point found
      * across all starts.
      *
      * @return array containing the optima
      * @throws MathIllegalStateException if {@link
-     * #optimize(FUNC,double[],double[],double[]) optimize} has not been
+     * #optimize(int,MultivariateVectorialFunction,double[],double[],double[]) optimize} has not been
      * called.
      */
     public VectorialPointValuePair[] getOptima() {
@@ -116,12 +129,6 @@ public class BaseMultiStartMultivariateVectorialOptimizer<FUNC extends Multivari
     }
 
     /** {@inheritDoc} */
-    public void setMaxEvaluations(int maxEvaluations) {
-        this.maxEvaluations = maxEvaluations;
-        optimizer.setMaxEvaluations(maxEvaluations);
-    }
-
-    /** {@inheritDoc} */
     public void setConvergenceChecker(ConvergenceChecker<VectorialPointValuePair> checker) {
         optimizer.setConvergenceChecker(checker);
     }
@@ -134,35 +141,34 @@ public class BaseMultiStartMultivariateVectorialOptimizer<FUNC extends Multivari
     /**
      * {@inheritDoc}
      */
-    public VectorialPointValuePair optimize(final FUNC f,
+    public VectorialPointValuePair optimize(int maxEval, final FUNC f,
                                             double[] target, double[] weights,
-                                            double[] startPoint)
-        throws FunctionEvaluationException {
-
+                                            double[] startPoint) {
+        maxEvaluations = maxEval;
+        MathUserException lastException = null;
         optima = new VectorialPointValuePair[starts];
+        totalEvaluations = 0;
 
         // Multi-start loop.
         for (int i = 0; i < starts; ++i) {
 
             try {
-                optima[i] = optimizer.optimize(f, target, weights,
+                optima[i] = optimizer.optimize(maxEval - totalEvaluations, f, target, weights,
                                                i == 0 ? startPoint : generator.nextVector());
-            } catch (FunctionEvaluationException fee) {
+            } catch (MathUserException mue) {
+                lastException = mue;
                 optima[i] = null;
             } catch (ConvergenceException oe) {
                 optima[i] = null;
             }
 
-            final int usedEvaluations = optimizer.getEvaluations();
-            optimizer.setMaxEvaluations(optimizer.getMaxEvaluations() - usedEvaluations);
-            totalEvaluations += usedEvaluations;
+            totalEvaluations += optimizer.getEvaluations();
         }
 
         sortPairs(target, weights);
 
         if (optima[0] == null) {
-            throw new ConvergenceException(LocalizedFormats.NO_CONVERGENCE_WITH_ANY_START_POINT,
-                                           starts);
+            throw lastException; // cannot be null if starts >=1
         }
 
         // Return the found point given the best objective function value.

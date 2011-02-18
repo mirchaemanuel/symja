@@ -16,7 +16,6 @@
  */
 package org.apache.commons.math.stat.descriptive;
 
-import org.apache.commons.math.DimensionMismatchException;
 import org.apache.commons.math.linear.RealMatrix;
 
 /**
@@ -29,10 +28,10 @@ import org.apache.commons.math.linear.RealMatrix;
  * thread is computing a statistic from the instance, no other thread can modify
  * the instance nor compute another statistic.
  * @since 1.2
- * @version $Revision: 811685 $ $Date: 2009-09-05 19:36:48 +0200 (Sa, 05 Sep 2009) $
+ * @version $Revision: 1061839 $ $Date: 2011-01-21 16:12:55 +0100 (Fr, 21 Jan 2011) $
  */
 public class SynchronizedMultivariateSummaryStatistics
-  extends MultivariateSummaryStatistics {
+    extends MultivariateSummaryStatistics {
 
     /** Serialization UID */
     private static final long serialVersionUID = 7099834153347155363L;
@@ -52,8 +51,7 @@ public class SynchronizedMultivariateSummaryStatistics
      * {@inheritDoc}
      */
     @Override
-    public synchronized void addValue(double[] value)
-      throws DimensionMismatchException {
+    public synchronized void addValue(double[] value) {
       super.addValue(value);
     }
 
@@ -189,8 +187,7 @@ public class SynchronizedMultivariateSummaryStatistics
      * {@inheritDoc}
      */
     @Override
-    public synchronized void setSumImpl(StorelessUnivariateStatistic[] sumImpl)
-      throws DimensionMismatchException {
+    public synchronized void setSumImpl(StorelessUnivariateStatistic[] sumImpl) {
         super.setSumImpl(sumImpl);
     }
 
@@ -206,8 +203,7 @@ public class SynchronizedMultivariateSummaryStatistics
      * {@inheritDoc}
      */
     @Override
-    public synchronized void setSumsqImpl(StorelessUnivariateStatistic[] sumsqImpl)
-      throws DimensionMismatchException {
+    public synchronized void setSumsqImpl(StorelessUnivariateStatistic[] sumsqImpl) {
         super.setSumsqImpl(sumsqImpl);
     }
 
@@ -223,8 +219,7 @@ public class SynchronizedMultivariateSummaryStatistics
      * {@inheritDoc}
      */
     @Override
-    public synchronized void setMinImpl(StorelessUnivariateStatistic[] minImpl)
-      throws DimensionMismatchException {
+    public synchronized void setMinImpl(StorelessUnivariateStatistic[] minImpl) {
         super.setMinImpl(minImpl);
     }
 
@@ -240,8 +235,7 @@ public class SynchronizedMultivariateSummaryStatistics
      * {@inheritDoc}
      */
     @Override
-    public synchronized void setMaxImpl(StorelessUnivariateStatistic[] maxImpl)
-      throws DimensionMismatchException {
+    public synchronized void setMaxImpl(StorelessUnivariateStatistic[] maxImpl) {
         super.setMaxImpl(maxImpl);
     }
 
@@ -257,8 +251,7 @@ public class SynchronizedMultivariateSummaryStatistics
      * {@inheritDoc}
      */
     @Override
-    public synchronized void setSumLogImpl(StorelessUnivariateStatistic[] sumLogImpl)
-      throws DimensionMismatchException {
+    public synchronized void setSumLogImpl(StorelessUnivariateStatistic[] sumLogImpl) {
         super.setSumLogImpl(sumLogImpl);
     }
 
@@ -274,8 +267,7 @@ public class SynchronizedMultivariateSummaryStatistics
      * {@inheritDoc}
      */
     @Override
-    public synchronized void setGeoMeanImpl(StorelessUnivariateStatistic[] geoMeanImpl)
-      throws DimensionMismatchException {
+    public synchronized void setGeoMeanImpl(StorelessUnivariateStatistic[] geoMeanImpl) {
         super.setGeoMeanImpl(geoMeanImpl);
     }
 
@@ -291,9 +283,7 @@ public class SynchronizedMultivariateSummaryStatistics
      * {@inheritDoc}
      */
     @Override
-    public synchronized void setMeanImpl(StorelessUnivariateStatistic[] meanImpl)
-      throws DimensionMismatchException {
+    public synchronized void setMeanImpl(StorelessUnivariateStatistic[] meanImpl) {
         super.setMeanImpl(meanImpl);
     }
-
 }

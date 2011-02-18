@@ -43,10 +43,10 @@ import java.util.Iterator;
  * {@link SummaryStatistics#addValue(double)} methods must synchronize on the aggregating
  * instance maintained by this class.  In multithreaded environments, if the functionality
  * provided by {@link #aggregate(Collection)} is adequate, that method should be used
- * to avoid unecessary computation and synchronization delays.</p>
+ * to avoid unnecessary computation and synchronization delays.</p>
  *
  * @since 2.0
- * @version $Revision: 811833 $ $Date: 2009-09-06 18:27:50 +0200 (So, 06 Sep 2009) $
+ * @version $Revision: 1001229 $ $Date: 2010-09-25 16:57:54 +0200 (Sa, 25 Sep 2010) $
  *
  */
 public class AggregateSummaryStatistics implements StatisticalSummary,

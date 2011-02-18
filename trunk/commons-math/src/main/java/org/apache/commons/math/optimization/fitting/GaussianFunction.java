@@ -19,7 +19,6 @@ package org.apache.commons.math.optimization.fitting;
 
 import java.io.Serializable;
 
-import org.apache.commons.math.FunctionEvaluationException;
 import org.apache.commons.math.analysis.DifferentiableUnivariateRealFunction;
 import org.apache.commons.math.analysis.UnivariateRealFunction;
 import org.apache.commons.math.exception.DimensionMismatchException;
@@ -46,7 +45,7 @@ import org.apache.commons.math.exception.NullArgumentException;
  * @see GaussianDerivativeFunction
  * @see ParametricGaussianFunction
  * @since 2.2
- * @version $Revision: 994988 $ $Date: 2010-09-08 13:22:41 +0200 (Mi, 08 Sep 2010) $
+ * @version $Revision: 1034996 $ $Date: 2010-11-14 14:41:13 +0100 (So, 14 Nov 2010) $
  */
 public class GaussianFunction implements DifferentiableUnivariateRealFunction, Serializable {
 
@@ -117,7 +116,7 @@ public class GaussianFunction implements DifferentiableUnivariateRealFunction, S
     }
 
     /** {@inheritDoc} */
-    public double value(double x) throws FunctionEvaluationException {
+    public double value(double x) {
         final double xMc = x - c;
         return a + b * Math.exp(-xMc * xMc / (2.0 * (d * d)));
     }

@@ -63,7 +63,7 @@ import org.apache.commons.math.stat.descriptive.AbstractStorelessUnivariateStati
  * one of the threads invokes the <code>increment()</code> or
  * <code>clear()</code> method, it must be synchronized externally.</p>
  *
- * @version $Revision: 983921 $ $Date: 2010-08-10 12:46:06 +0200 (Di, 10 Aug 2010) $
+ * @version $Revision: 1006301 $ $Date: 2010-10-10 16:50:56 +0200 (So, 10 Okt 2010) $
  */
 public class Variance extends AbstractStorelessUnivariateStatistic implements Serializable, WeightedEvaluation {
 
@@ -602,6 +602,7 @@ public class Variance extends AbstractStorelessUnivariateStatistic implements Se
             dest == null) {
             throw new NullArgumentException();
         }
+        dest.setData(source.getDataRef());
         dest.moment = source.moment.copy();
         dest.isBiasCorrected = source.isBiasCorrected;
         dest.incMoment = source.incMoment;

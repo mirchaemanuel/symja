@@ -17,16 +17,13 @@
 
 package org.apache.commons.math.optimization.general;
 
-import org.apache.commons.math.FunctionEvaluationException;
-
 /**
  * This interface represents a preconditioner for differentiable scalar
  * objective function optimizers.
- * @version $Revision: 811685 $ $Date: 2009-09-05 19:36:48 +0200 (Sa, 05 Sep 2009) $
+ * @version $Revision: 1034996 $ $Date: 2010-11-14 14:41:13 +0100 (So, 14 Nov 2010) $
  * @since 2.0
  */
 public interface Preconditioner {
-
     /**
      * Precondition a search direction.
      * <p>
@@ -43,10 +40,6 @@ public interface Preconditioner {
      * @param point current point at which the search direction was computed
      * @param r raw search direction (i.e. opposite of the gradient)
      * @return approximation of H<sup>-1</sup>r where H is the objective function hessian
-     * @exception FunctionEvaluationException if no cost can be computed for the parameters
-     * @exception IllegalArgumentException if point dimension is wrong
      */
-    double[] precondition(double[] point, double[] r)
-        throws FunctionEvaluationException, IllegalArgumentException;
-
+    double[] precondition(double[] point, double[] r);
 }

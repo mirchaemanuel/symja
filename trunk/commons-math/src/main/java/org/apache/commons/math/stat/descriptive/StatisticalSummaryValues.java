@@ -24,7 +24,7 @@ import org.apache.commons.math.util.MathUtils;
 /**
  *  Value object representing the results of a univariate statistical summary.
  *
- * @version $Revision: 990658 $ $Date: 2010-08-30 00:04:09 +0200 (Mo, 30 Aug 2010) $
+ * @version $Revision: 1060449 $ $Date: 2011-01-18 17:24:27 +0100 (Di, 18 Jan 2011) $
  */
 public class StatisticalSummaryValues implements Serializable,
     StatisticalSummary {
@@ -159,6 +159,28 @@ public class StatisticalSummaryValues implements Serializable,
         result = result * 31 + MathUtils.hash(getSum());
         result = result * 31 + MathUtils.hash(getVariance());
         return result;
+    }
+
+    /**
+     * Generates a text report displaying values of statistics.
+     * Each statistic is displayed on a separate line.
+     *
+     * @return String with line feeds displaying statistics
+     */
+    @Override
+    public String toString() {
+        StringBuffer outBuffer = new StringBuffer();
+        String endl = "\n";
+        outBuffer.append("StatisticalSummaryValues:").append(endl);
+        outBuffer.append("n: ").append(getN()).append(endl);
+        outBuffer.append("min: ").append(getMin()).append(endl);
+        outBuffer.append("max: ").append(getMax()).append(endl);
+        outBuffer.append("mean: ").append(getMean()).append(endl);
+        outBuffer.append("std dev: ").append(getStandardDeviation())
+            .append(endl);
+        outBuffer.append("variance: ").append(getVariance()).append(endl);
+        outBuffer.append("sum: ").append(getSum()).append(endl);
+        return outBuffer.toString();
     }
 
 }

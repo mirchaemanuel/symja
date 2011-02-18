@@ -44,7 +44,7 @@ import org.apache.commons.math.exception.util.LocalizedFormats;
  * The values are ordered using the default (natural order), unless a
  * <code>Comparator</code> is supplied in the constructor.</p>
  *
- * @version $Revision: 983921 $ $Date: 2010-08-10 12:46:06 +0200 (Di, 10 Aug 2010) $
+ * @version $Revision: 1063037 $ $Date: 2011-01-24 23:33:11 +0100 (Mo, 24 Jan 2011) $
  */
 public class Frequency implements Serializable {
 
@@ -80,7 +80,7 @@ public class Frequency implements Serializable {
     @Override
     public String toString() {
         NumberFormat nf = NumberFormat.getPercentInstance();
-        StringBuffer outBuffer = new StringBuffer();
+        StringBuilder outBuffer = new StringBuilder();
         outBuffer.append("Value \t Freq. \t Pct. \t Cum Pct. \n");
         Iterator<Comparable<?>> iter = freqTable.keySet().iterator();
         while (iter.hasNext()) {
@@ -95,29 +95,6 @@ public class Frequency implements Serializable {
             outBuffer.append('\n');
         }
         return outBuffer.toString();
-    }
-
-    /**
-     * Adds 1 to the frequency count for v.
-     * <p>
-     * If other objects have already been added to this Frequency, v must
-     * be comparable to those that have already been added.
-     * </p>
-     *
-     * @param v the value to add.
-     * @throws IllegalArgumentException if <code>v</code> is not Comparable,
-     *         or is not comparable with previous entries
-     * @deprecated use {@link #addValue(Comparable)} instead
-     */
-    @Deprecated
-    public void addValue(Object v) {
-        if (v instanceof Comparable<?>){
-            addValue((Comparable<?>) v);
-        } else {
-            throw MathRuntimeException.createIllegalArgumentException(
-                  LocalizedFormats.CLASS_DOESNT_IMPLEMENT_COMPARABLE,
-                  v.getClass().getName());
-        }
     }
 
     /**
@@ -157,17 +134,6 @@ public class Frequency implements Serializable {
      */
     public void addValue(int v) {
         addValue(Long.valueOf(v));
-    }
-
-    /**
-     * Adds 1 to the frequency count for v.
-     *
-     * @param v the value to add.
-     * @deprecated to be removed in math 3.0
-     */
-    @Deprecated
-    public void addValue(Integer v) {
-        addValue(Long.valueOf(v.longValue()));
     }
 
     /**
@@ -228,19 +194,6 @@ public class Frequency implements Serializable {
      *
      * @param v the value to lookup.
      * @return the frequency of v.
-     * @deprecated replaced by {@link #getCount(Comparable)} as of 2.0
-     */
-    @Deprecated
-    public long getCount(Object v) {
-        return getCount((Comparable<?>) v);
-    }
-
-    /**
-     * Returns the number of values = v.
-     * Returns 0 if the value is not comparable.
-     *
-     * @param v the value to lookup.
-     * @return the frequency of v.
      */
     public long getCount(Comparable<?> v) {
         if (v instanceof Integer) {
@@ -288,21 +241,14 @@ public class Frequency implements Serializable {
         return getCount(Character.valueOf(v));
     }
 
-    //-------------------------------------------------------------
-
     /**
-      * Returns the percentage of values that are equal to v
-     * (as a proportion between 0 and 1).
-     * <p>
-     * Returns <code>Double.NaN</code> if no values have been added.</p>
+     * Returns the number of values in the frequency table.
      *
-     * @param v the value to lookup
-     * @return the proportion of values equal to v
-     * @deprecated replaced by {@link #getPct(Comparable)} as of 2.0
+     * @return the number of unique values that have been added to the frequency table.
+     * @see #valuesIterator()
      */
-    @Deprecated
-    public double getPct(Object v) {
-        return getPct((Comparable<?>) v);
+    public int getUniqueCount(){
+        return freqTable.keySet().size();
     }
 
     /**
@@ -356,20 +302,6 @@ public class Frequency implements Serializable {
     }
 
     //-----------------------------------------------------------------------------------------
-
-    /**
-     * Returns the cumulative frequency of values less than or equal to v.
-     * <p>
-     * Returns 0 if v is not comparable to the values set.</p>
-     *
-     * @param v the value to lookup.
-     * @return the proportion of values equal to v
-     * @deprecated replaced by {@link #getCumFreq(Comparable)} as of 2.0
-     */
-    @Deprecated
-    public long getCumFreq(Object v) {
-        return getCumFreq((Comparable<?>) v);
-    }
 
     /**
      * Returns the cumulative frequency of values less than or equal to v.
@@ -459,24 +391,6 @@ public class Frequency implements Serializable {
     }
 
     //----------------------------------------------------------------------------------------------
-
-    /**
-     * Returns the cumulative percentage of values less than or equal to v
-     * (as a proportion between 0 and 1).
-     * <p>
-     * Returns <code>Double.NaN</code> if no values have been added.
-     * Returns 0 if at least one value has been added, but v is not comparable
-     * to the values set.</p>
-     *
-     * @param v the value to lookup
-     * @return the proportion of values less than or equal to v
-     * @deprecated replaced by {@link #getCumPct(Comparable)} as of 2.0
-     */
-    @Deprecated
-    public double getCumPct(Object v) {
-        return getCumPct((Comparable<?>) v);
-
-    }
 
     /**
      * Returns the cumulative percentage of values less than or equal to v

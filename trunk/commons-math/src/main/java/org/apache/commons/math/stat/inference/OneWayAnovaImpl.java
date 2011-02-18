@@ -44,7 +44,7 @@ import org.apache.commons.math.stat.descriptive.summary.SumOfSquares;
  * </pre>
  *
  * @since 1.2
- * @version $Revision: 983921 $ $Date: 2010-08-10 12:46:06 +0200 (Di, 10 Aug 2010) $
+ * @version $Revision: 1065894 $ $Date: 2011-02-01 03:15:57 +0100 (Di, 01 Feb 2011) $
  */
 public class OneWayAnovaImpl implements OneWayAnova  {
 
@@ -186,13 +186,13 @@ public class OneWayAnovaImpl implements OneWayAnova  {
     private static class AnovaStats {
 
         /** Degrees of freedom in numerator (between groups). */
-        private int dfbg;
+        private final int dfbg;
 
         /** Degrees of freedom in denominator (within groups). */
-        private int dfwg;
+        private final int dfwg;
 
         /** Statistic. */
-        private double F;
+        private final double F;
 
         /**
          * Constructor

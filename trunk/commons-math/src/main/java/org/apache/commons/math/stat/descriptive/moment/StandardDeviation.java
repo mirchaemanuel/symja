@@ -36,7 +36,7 @@ import org.apache.commons.math.util.FastMath;
  * one of the threads invokes the <code>increment()</code> or
  * <code>clear()</code> method, it must be synchronized externally.</p>
  *
- * @version $Revision: 990658 $ $Date: 2010-08-30 00:04:09 +0200 (Mo, 30 Aug 2010) $
+ * @version $Revision: 1006301 $ $Date: 2010-10-10 16:50:56 +0200 (So, 10 Okt 2010) $
  */
 public class StandardDeviation extends AbstractStorelessUnivariateStatistic
     implements Serializable {
@@ -264,6 +264,7 @@ public class StandardDeviation extends AbstractStorelessUnivariateStatistic
      * @throws NullPointerException if either source or dest is null
      */
     public static void copy(StandardDeviation source, StandardDeviation dest) {
+        dest.setData(source.getDataRef());
         dest.variance = source.variance.copy();
     }
 

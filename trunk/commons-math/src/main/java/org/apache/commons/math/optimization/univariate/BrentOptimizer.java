@@ -16,9 +16,9 @@
  */
 package org.apache.commons.math.optimization.univariate;
 
-import org.apache.commons.math.FunctionEvaluationException;
 import org.apache.commons.math.util.MathUtils;
 import org.apache.commons.math.util.FastMath;
+import org.apache.commons.math.exception.MathUserException;
 import org.apache.commons.math.exception.NumberIsTooSmallException;
 import org.apache.commons.math.exception.NotStrictlyPositiveException;
 import org.apache.commons.math.optimization.ConvergenceChecker;
@@ -37,7 +37,7 @@ import org.apache.commons.math.optimization.GoalType;
  * #setConvergenceChecker(ConvergenceChecker) ConvergenceChecker}
  * prior to using the optimizer.
  *
- * @version $Revision: 995035 $ $Date: 2010-09-08 14:51:38 +0200 (Mi, 08 Sep 2010) $
+ * @version $Revision: 1037328 $ $Date: 2010-11-20 22:01:50 +0100 (Sa, 20 Nov 2010) $
  * @since 2.0
  */
 public class BrentOptimizer extends AbstractUnivariateRealOptimizer {
@@ -85,8 +85,8 @@ public class BrentOptimizer extends AbstractUnivariateRealOptimizer {
     }
 
     /** {@inheritDoc} */
-    protected UnivariateRealPointValuePair doOptimize()
-        throws FunctionEvaluationException {
+    @Override
+    protected UnivariateRealPointValuePair doOptimize() throws MathUserException {
         final boolean isMinim = getGoalType() == GoalType.MINIMIZE;
         final double lo = getMin();
         final double mid = getStartValue();

@@ -54,7 +54,7 @@ import org.apache.commons.math.util.FastMath;
  * {@link SynchronizedSummaryStatistics} if concurrent access from multiple
  * threads is required.
  * </p>
- * @version $Revision: 990658 $ $Date: 2010-08-30 00:04:09 +0200 (Mo, 30 Aug 2010) $
+ * @version $Revision: 1042422 $ $Date: 2010-12-05 20:25:21 +0100 (So, 05 Dez 2010) $
  */
 public class SummaryStatistics implements StatisticalSummary, Serializable {
 
@@ -309,7 +309,7 @@ public class SummaryStatistics implements StatisticalSummary, Serializable {
      */
     @Override
     public String toString() {
-        StringBuffer outBuffer = new StringBuffer();
+        StringBuilder outBuffer = new StringBuilder();
         String endl = "\n";
         outBuffer.append("SummaryStatistics:").append(endl);
         outBuffer.append("n: ").append(getN()).append(endl);

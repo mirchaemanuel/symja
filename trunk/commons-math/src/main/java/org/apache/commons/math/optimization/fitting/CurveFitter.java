@@ -20,7 +20,6 @@ package org.apache.commons.math.optimization.fitting;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.math.FunctionEvaluationException;
 import org.apache.commons.math.analysis.DifferentiableMultivariateVectorialFunction;
 import org.apache.commons.math.analysis.MultivariateMatrixFunction;
 import org.apache.commons.math.optimization.DifferentiableMultivariateVectorialOptimizer;
@@ -36,14 +35,12 @@ import org.apache.commons.math.optimization.VectorialPointValuePair;
  * is done by finding the parameters values that minimizes the objective
  * function &sum;(y<sub>i</sub>-f(x<sub>i</sub>))<sup>2</sup>. This is
  * really a least squares problem.</p>
- * @version $Revision: 994988 $ $Date: 2010-09-08 13:22:41 +0200 (Mi, 08 Sep 2010) $
+ * @version $Revision: 1044186 $ $Date: 2010-12-10 01:50:50 +0100 (Fr, 10 Dez 2010) $
  * @since 2.0
  */
 public class CurveFitter {
-
     /** Optimizer to use for the fitting. */
     private final DifferentiableMultivariateVectorialOptimizer optimizer;
-
     /** Observed points. */
     private final List<WeightedObservedPoint> observations;
 
@@ -57,7 +54,7 @@ public class CurveFitter {
 
     /** Add an observed (x,y) point to the sample with unit weight.
      * <p>Calling this method is equivalent to call
-     * <code>addObservedPoint(1.0, x, y)</code>.</p>
+     * {@code addObservedPoint(1.0, x, y)}.</p>
      * @param x abscissa of the point
      * @param y observed value of the point at x, after fitting we should
      * have f(x) as close as possible to this value
@@ -109,25 +106,45 @@ public class CurveFitter {
         observations.clear();
     }
 
-    /** Fit a curve.
-     * <p>This method compute the coefficients of the curve that best
+    /**
+     * Fit a curve.
+     * This method compute the coefficients of the curve that best
      * fit the sample of observed points previously given through calls
      * to the {@link #addObservedPoint(WeightedObservedPoint)
-     * addObservedPoint} method.</p>
-     * @param f parametric function to fit
-     * @param initialGuess first guess of the function parameters
-     * @return fitted parameters
-     * @exception FunctionEvaluationException if the objective function throws one during
-     * the search
-     * @exception org.apache.commons.math.exception.ConvergenceException
-     * if the algorithm failed to converge.
-     * @exception org.apache.commons.math.exception.DimensionMismatchException
+     * addObservedPoint} method.
+     *
+     * @param f parametric function to fit.
+     * @param initialGuess first guess of the function parameters.
+     * @return the fitted parameters.
+     * @throws org.apache.commons.math.exception.DimensionMismatchException
      * if the start point dimension is wrong.
+     * @throws org.apache.commons.math.exception.MathUserException if the
+     * parametric function throws one.
      */
-    public double[] fit(final ParametricRealFunction f,
-                        final double[] initialGuess)
-        throws FunctionEvaluationException {
+    public double[] fit(final ParametricRealFunction f, final double[] initialGuess) {
+        return fit(Integer.MAX_VALUE, f, initialGuess);
+    }
 
+    /**
+     * Fit a curve.
+     * This method compute the coefficients of the curve that best
+     * fit the sample of observed points previously given through calls
+     * to the {@link #addObservedPoint(WeightedObservedPoint)
+     * addObservedPoint} method.
+     *
+     * @param f parametric function to fit.
+     * @param initialGuess first guess of the function parameters.
+     * @param maxEval Maximum number of function evaluations.
+     * @return the fitted parameters.
+     * @throws org.apache.commons.math.exception.TooManyEvaluationsException
+     * if the number of allowed evaluations is exceeded.
+     * @throws org.apache.commons.math.exception.DimensionMismatchException
+     * if the start point dimension is wrong.
+     * @throws org.apache.commons.math.exception.MathUserException if the
+     * parametric function throws one.
+     */
+    public double[] fit(int maxEval, final ParametricRealFunction f,
+                        final double[] initialGuess) {
         // prepare least squares problem
         double[] target  = new double[observations.size()];
         double[] weights = new double[observations.size()];
@@ -140,7 +157,8 @@ public class CurveFitter {
 
         // perform the fit
         VectorialPointValuePair optimum =
-            optimizer.optimize(new TheoreticalValuesFunction(f), target, weights, initialGuess);
+            optimizer.optimize(maxEval, new TheoreticalValuesFunction(f),
+                               target, weights, initialGuess);
 
         // extract the coefficients
         return optimum.getPointRef();
@@ -149,7 +167,6 @@ public class CurveFitter {
     /** Vectorial function computing function theoretical values. */
     private class TheoreticalValuesFunction
         implements DifferentiableMultivariateVectorialFunction {
-
         /** Function to fit. */
         private final ParametricRealFunction f;
 
@@ -163,9 +180,7 @@ public class CurveFitter {
         /** {@inheritDoc} */
         public MultivariateMatrixFunction jacobian() {
             return new MultivariateMatrixFunction() {
-                public double[][] value(double[] point)
-                    throws FunctionEvaluationException, IllegalArgumentException {
-
+                public double[][] value(double[] point) {
                     final double[][] jacobian = new double[observations.size()][];
 
                     int i = 0;
@@ -174,15 +189,12 @@ public class CurveFitter {
                     }
 
                     return jacobian;
-
                 }
             };
         }
 
         /** {@inheritDoc} */
-        public double[] value(double[] point)
-                throws FunctionEvaluationException, IllegalArgumentException {
-
+        public double[] value(double[] point) {
             // compute the residuals
             final double[] values = new double[observations.size()];
             int i = 0;
@@ -191,9 +203,6 @@ public class CurveFitter {
             }
 
             return values;
-
         }
-
     }
-
 }

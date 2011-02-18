@@ -34,7 +34,7 @@ import org.apache.commons.math.util.FastMath;
  * one of the threads invokes the <code>increment()</code> or
  * <code>clear()</code> method, it must be synchronized externally.</p>
  *
- * @version $Revision: 991812 $ $Date: 2010-09-02 06:49:11 +0200 (Do, 02 Sep 2010) $
+ * @version $Revision: 1006301 $ $Date: 2010-10-10 16:50:56 +0200 (So, 10 Okt 2010) $
  */
 public class Product extends AbstractStorelessUnivariateStatistic implements Serializable, WeightedEvaluation {
 
@@ -213,6 +213,7 @@ public class Product extends AbstractStorelessUnivariateStatistic implements Ser
      * @throws NullPointerException if either source or dest is null
      */
     public static void copy(Product source, Product dest) {
+        dest.setData(source.getDataRef());
         dest.n = source.n;
         dest.value = source.value;
     }

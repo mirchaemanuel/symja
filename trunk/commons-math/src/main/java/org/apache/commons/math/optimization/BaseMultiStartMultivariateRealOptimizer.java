@@ -20,9 +20,10 @@ package org.apache.commons.math.optimization;
 import java.util.Arrays;
 import java.util.Comparator;
 
-import org.apache.commons.math.FunctionEvaluationException;
+import org.apache.commons.math.exception.MathUserException;
 import org.apache.commons.math.exception.MathIllegalStateException;
-import org.apache.commons.math.exception.ConvergenceException;
+import org.apache.commons.math.exception.NullArgumentException;
+import org.apache.commons.math.exception.NotStrictlyPositiveException;
 import org.apache.commons.math.analysis.MultivariateRealFunction;
 import org.apache.commons.math.exception.util.LocalizedFormats;
 import org.apache.commons.math.random.RandomVectorGenerator;
@@ -59,14 +60,25 @@ public class BaseMultiStartMultivariateRealOptimizer<FUNC extends MultivariateRe
      * Create a multi-start optimizer from a single-start optimizer.
      *
      * @param optimizer Single-start optimizer to wrap.
-     * @param starts Number of starts to perform (including the
-     * first one), multi-start is disabled if value is less than or
-     * equal to 1.
+     * @param starts Number of starts to perform. If {@code starts == 1},
+     * the {@link #optimize(int,MultivariateRealFunction,GoalType,double[])
+     * optimize} will return the same solution as {@code optimizer} would.
      * @param generator Random vector generator to use for restarts.
+     * @throws NullArgumentException if {@code optimizer} or {@code generator}
+     * is {@code null}.
+     * @throws NotStrictlyPositiveException if {@code starts < 1}.
      */
     protected BaseMultiStartMultivariateRealOptimizer(final BaseMultivariateRealOptimizer<FUNC> optimizer,
                                                       final int starts,
                                                       final RandomVectorGenerator generator) {
+        if (optimizer == null ||
+            generator == null) {
+            throw new NullArgumentException();
+        }
+        if (starts < 1) {
+            throw new NotStrictlyPositiveException(starts);
+        }
+
         this.optimizer = optimizer;
         this.starts = starts;
         this.generator = generator;
@@ -74,13 +86,13 @@ public class BaseMultiStartMultivariateRealOptimizer<FUNC extends MultivariateRe
 
     /**
      * Get all the optima found during the last call to {@link
-     * #optimize(FUNC,GoalType,double[]) optimize}.
+     * #optimize(int,MultivariateRealFunction,GoalType,double[]) optimize}.
      * The optimizer stores all the optima found during a set of
-     * restarts. The {@link #optimize(FUNC,GoalType,double[])
+     * restarts. The {@link #optimize(int,MultivariateRealFunction,GoalType,double[])
      * optimize} method returns the best point only. This method
      * returns all the points found at the end of each starts,
      * including the best one already returned by the {@link
-     * #optimize(FUNC,GoalType,double[]) optimize} method.
+     * #optimize(int,MultivariateRealFunction,GoalType,double[]) optimize} method.
      * <br/>
      * The returned array as one element for each start as specified
      * in the constructor. It is ordered with the results from the
@@ -88,14 +100,15 @@ public class BaseMultiStartMultivariateRealOptimizer<FUNC extends MultivariateRe
      * objective value (i.e in ascending order if minimizing and in
      * descending order if maximizing), followed by and null elements
      * corresponding to the runs that did not converge. This means all
-     * elements will be null if the {@link #optimize(FUNC,GoalType,double[])
-     * optimize} method did throw a {@link ConvergenceException}).
+     * elements will be null if the {@link #optimize(int,MultivariateRealFunction,GoalType,double[])
+     * optimize} method did throw a {@link MathUserException}).
      * This also means that if the first element is not {@code null}, it
      * is the best point found across all starts.
      *
      * @return an array containing the optima.
      * @throws MathIllegalStateException if {@link
-     * #optimize(FUNC,GoalType,double[]) optimize} has not been called.
+     * #optimize(int,MultivariateRealFunction,GoalType,double[]) optimize}
+     * has not been called.
      */
     public RealPointValuePair[] getOptima() {
         if (optima == null) {
@@ -115,12 +128,6 @@ public class BaseMultiStartMultivariateRealOptimizer<FUNC extends MultivariateRe
     }
 
     /** {@inheritDoc} */
-    public void setMaxEvaluations(int maxEvaluations) {
-        this.maxEvaluations = maxEvaluations;
-        optimizer.setMaxEvaluations(maxEvaluations);
-    }
-
-    /** {@inheritDoc} */
     public void setConvergenceChecker(ConvergenceChecker<RealPointValuePair> checker) {
         optimizer.setConvergenceChecker(checker);
     }
@@ -133,34 +140,31 @@ public class BaseMultiStartMultivariateRealOptimizer<FUNC extends MultivariateRe
     /**
      * {@inheritDoc}
      */
-    public RealPointValuePair optimize(final FUNC f,
+    public RealPointValuePair optimize(int maxEval, final FUNC f,
                                        final GoalType goal,
-                                       double[] startPoint)
-        throws FunctionEvaluationException {
+                                       double[] startPoint) {
+        maxEvaluations = maxEval;
+        MathUserException lastException = null;
         optima = new RealPointValuePair[starts];
+        totalEvaluations = 0;
 
         // Multi-start loop.
         for (int i = 0; i < starts; ++i) {
-
             try {
-                optima[i] = optimizer.optimize(f, goal,
+                optima[i] = optimizer.optimize(maxEval - totalEvaluations, f, goal,
                                                i == 0 ? startPoint : generator.nextVector());
-            } catch (FunctionEvaluationException fee) {
-                optima[i] = null;
-            } catch (ConvergenceException oe) {
+            } catch (MathUserException mue) {
+                lastException = mue;
                 optima[i] = null;
             }
 
-            final int usedEvaluations = optimizer.getEvaluations();
-            optimizer.setMaxEvaluations(optimizer.getMaxEvaluations() - usedEvaluations);
-            totalEvaluations += usedEvaluations;
+            totalEvaluations += optimizer.getEvaluations();
         }
 
         sortPairs(goal);
 
         if (optima[0] == null) {
-            throw new ConvergenceException(LocalizedFormats.NO_CONVERGENCE_WITH_ANY_START_POINT,
-                                           starts);
+            throw lastException; // cannot be null if starts >=1
         }
 
         // Return the found point given the best objective function value.
