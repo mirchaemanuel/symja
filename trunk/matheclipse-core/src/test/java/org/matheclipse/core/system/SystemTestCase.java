@@ -578,7 +578,7 @@ public class SystemTestCase extends AbstractTestCase {
 		check("Eigenvalues[{{0.0,1.0,-1.0},{1.0,1.0,0.0},{-1.0,0.0,1.0}}]",
 				"{1.9999999999999996,0.9999999999999999,-1.0000000000000002}");
 		check("Eigenvalues[{{1,0,0},{0,1,0},{0,0,1}}]", "{1.0,1.0,1.0}");
-		check("Eigenvalues[{{1,0,0},{-2,1,0},{0,0,1}}]", "eigen decomposition of assymetric matrices not supported yet");
+		check("Eigenvalues[{{1,0,0},{-2,1,0},{0,0,1}}]", "non symmetric matrix: the difference between entries at (0,1) and (1,0) is larger than 0");
 
 		check("Fit[{2,3,5,7,11,13},3,x]", "-0.08333333333333395*x^3.0+1.1071428571428645*x^2.0-1.9523809523809792*x+3.0000000000000293");
 		check("Fit[{{1,1},{2,4},{3,9},{4,16}},2,x]", "x^2.0");
@@ -2083,15 +2083,15 @@ public class SystemTestCase extends AbstractTestCase {
 		check("Exp[3.4341896]", "31.006274895944433");
 		check("Pi^3.0", "31.006276680299816");
 		check("FindRoot[Exp[x]==Pi^3,{x,-1,10}, Bisection]", "{x->3.434189647436142}");
-		check("FindRoot[Exp[x]==Pi^3,{x,-1,10}, Brent]", "{x->3.434189604205737}");
-		check("FindRoot[Exp[x]==Pi^3,{x,-1,10}, Muller]", "{x->3.4341896575482025}");
+		check("FindRoot[Exp[x]==Pi^3,{x,-1,10}, Brent]", "{x->3.4341896127725238}");
+		check("FindRoot[Exp[x]==Pi^3,{x,-1,10}, Muller]", "{x->3.4341896575483015}");
 		check("FindRoot[Exp[x]==Pi^3,{x,-1,10}, Ridders]", "{x->3.4341896575482007}");
 		check("FindRoot[Exp[x]==Pi^3,{x,-1,10}, Secant]", "{x->3.4341896575482007}");
 
 	}
 
 	public void testSystem381() {
-		check("FindRoot[Exp[x]==Pi^3,{x,-1,10}, Brent]", "{x->3.434189604205737}");
+		check("FindRoot[Exp[x]==Pi^3,{x,-1,10}, Brent]", "{x->3.4341896127725238}");
 	}
 
 	public void testSystem382() {

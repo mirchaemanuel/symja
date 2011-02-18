@@ -1,7 +1,7 @@
 package org.matheclipse.core.reflection.system;
 
 import org.apache.commons.math.ConvergenceException;
-import org.apache.commons.math.FunctionEvaluationException;
+import org.apache.commons.math.MathException;
 import org.apache.commons.math.analysis.DifferentiableUnivariateRealFunction;
 import org.apache.commons.math.analysis.integration.LegendreGaussIntegrator;
 import org.apache.commons.math.analysis.integration.RombergIntegrator;
@@ -58,7 +58,7 @@ public class NIntegrate extends AbstractFunctionEvaluator implements
             if (Config.SHOW_STACKTRACE) {
               e.printStackTrace();
             }
-          } catch (FunctionEvaluationException e) {
+          } catch (MathException e) {
             if (Config.SHOW_STACKTRACE) {
               e.printStackTrace();
             }
@@ -70,7 +70,7 @@ public class NIntegrate extends AbstractFunctionEvaluator implements
   }
 
   private double integrate(String method, IAST list, IExpr function)
-      throws ConvergenceException, FunctionEvaluationException {
+      throws ConvergenceException {
     ISymbol xVar = (ISymbol) list.get(1);
     ISignedNumber min = (ISignedNumber) list.get(2);
     ISignedNumber max = (ISignedNumber) list.get(3);
