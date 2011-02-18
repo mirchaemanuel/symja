@@ -29,7 +29,7 @@ import org.apache.commons.math.exception.NullArgumentException;
  * into a primitive double or to turn a String representation of a Number into
  * a double.
  *
- * @version $Revision: 983921 $ $Date: 2010-08-10 12:46:06 +0200 (Di, 10 Aug 2010) $
+ * @version $Revision: 1042513 $ $Date: 2010-12-06 03:10:44 +0100 (Mo, 06 Dez 2010) $
  */
 public class DefaultTransformer implements NumberTransformer, Serializable {
 
@@ -41,7 +41,7 @@ public class DefaultTransformer implements NumberTransformer, Serializable {
      * @return a double primitive representation of the Object o.
      * @throws MathException if it cannot successfully be transformed.
      * @throws NullArgumentException if is {@code null}.
-     * @see <a href="http://commons.apache.org/collections/api-release/org/apache/commons/collections/Transformer.html"/>
+     * @see <a href="http://commons.apache.org/collections/api-release/org/apache/commons/collections/Transformer.html">Commons Collections Transformer</a>
      */
     public double transform(Object o) throws MathException {
         if (o == null) {

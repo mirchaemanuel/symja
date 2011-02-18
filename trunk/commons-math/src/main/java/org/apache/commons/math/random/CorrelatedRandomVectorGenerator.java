@@ -17,9 +17,9 @@
 
 package org.apache.commons.math.random;
 
-import org.apache.commons.math.DimensionMismatchException;
+import org.apache.commons.math.exception.DimensionMismatchException;
+import org.apache.commons.math.exception.NonPositiveDefiniteMatrixException;
 import org.apache.commons.math.linear.MatrixUtils;
-import org.apache.commons.math.linear.NotPositiveDefiniteMatrixException;
 import org.apache.commons.math.linear.RealMatrix;
 import org.apache.commons.math.util.FastMath;
 
@@ -36,7 +36,7 @@ import org.apache.commons.math.util.FastMath;
  * interesting case is when the generated vector should be drawn from a <a
  * href="http://en.wikipedia.org/wiki/Multivariate_normal_distribution">
  * Multivariate Normal Distribution</a>. The approach using a Cholesky
- * decomposition is quite usual in this case. However, it cas be extended
+ * decomposition is quite usual in this case. However, it can be extended
  * to other cases as long as the underlying random generator provides
  * {@link NormalizedRandomGenerator normalized values} like {@link
  * GaussianRandomGenerator} or {@link UniformRandomGenerator}.</p>
@@ -48,7 +48,7 @@ import org.apache.commons.math.util.FastMath;
  * should be null. Another non-conventional extension handling this case
  * is used here. Rather than computing <code>C = U<sup>T</sup>.U</code>
  * where <code>C</code> is the covariance matrix and <code>U</code>
- * is an uppertriangular matrix, we compute <code>C = B.B<sup>T</sup></code>
+ * is an upper-triangular matrix, we compute <code>C = B.B<sup>T</sup></code>
  * where <code>B</code> is a rectangular matrix having
  * more rows than columns. The number of columns of <code>B</code> is
  * the rank of the covariance matrix, and it is the dimension of the
@@ -56,25 +56,20 @@ import org.apache.commons.math.util.FastMath;
  * of the correlated vector. This class handles this situation
  * automatically.</p>
  *
- * @version $Revision: 990658 $ $Date: 2010-08-30 00:04:09 +0200 (Mo, 30 Aug 2010) $
+ * @version $Revision: 1061839 $ $Date: 2011-01-21 16:12:55 +0100 (Fr, 21 Jan 2011) $
  * @since 1.2
  */
 
 public class CorrelatedRandomVectorGenerator
     implements RandomVectorGenerator {
-
     /** Mean vector. */
     private final double[] mean;
-
     /** Underlying generator. */
     private final NormalizedRandomGenerator generator;
-
     /** Storage for the normalized vector. */
     private final double[] normalized;
-
     /** Permutated Cholesky root of the covariance matrix. */
     private RealMatrix root;
-
     /** Rank of the covariance matrix. */
     private int rank;
 
@@ -87,18 +82,14 @@ public class CorrelatedRandomVectorGenerator
      * considered to be dependent on previous ones and are discarded
      * @param generator underlying generator for uncorrelated normalized
      * components
-     * @exception IllegalArgumentException if there is a dimension
-     * mismatch between the mean vector and the covariance matrix
-     * @exception NotPositiveDefiniteMatrixException if the
+     * @throws NonPositiveDefiniteMatrixException if the
      * covariance matrix is not strictly positive definite
-     * @exception DimensionMismatchException if the mean and covariance
-     * arrays dimensions don't match
+     * @throws DimensionMismatchException if the mean and covariance
+     * arrays dimensions do not match.
      */
     public CorrelatedRandomVectorGenerator(double[] mean,
                                            RealMatrix covariance, double small,
-                                           NormalizedRandomGenerator generator)
-    throws NotPositiveDefiniteMatrixException, DimensionMismatchException {
-
+                                           NormalizedRandomGenerator generator) {
         int order = covariance.getRowDimension();
         if (mean.length != order) {
             throw new DimensionMismatchException(mean.length, order);
@@ -120,13 +111,11 @@ public class CorrelatedRandomVectorGenerator
      * considered to be dependent on previous ones and are discarded
      * @param generator underlying generator for uncorrelated normalized
      * components
-     * @exception NotPositiveDefiniteMatrixException if the
+     * @exception NonPositiveDefiniteMatrixException if the
      * covariance matrix is not strictly positive definite
      */
     public CorrelatedRandomVectorGenerator(RealMatrix covariance, double small,
-                                           NormalizedRandomGenerator generator)
-    throws NotPositiveDefiniteMatrixException {
-
+                                           NormalizedRandomGenerator generator) {
         int order = covariance.getRowDimension();
         mean = new double[order];
         for (int i = 0; i < order; ++i) {
@@ -182,12 +171,10 @@ public class CorrelatedRandomVectorGenerator
      * @param covariance covariance matrix
      * @param small diagonal elements threshold under which  column are
      * considered to be dependent on previous ones and are discarded
-     * @exception NotPositiveDefiniteMatrixException if the
-     * covariance matrix is not strictly positive definite
+     * @throws NonPositiveDefiniteMatrixException if the
+     * covariance matrix is not strictly positive definite.
      */
-    private void decompose(RealMatrix covariance, double small)
-    throws NotPositiveDefiniteMatrixException {
-
+    private void decompose(RealMatrix covariance, double small) {
         int order = covariance.getRowDimension();
         double[][] c = covariance.getData();
         double[][] b = new double[order][order];
@@ -224,7 +211,7 @@ public class CorrelatedRandomVectorGenerator
             if (c[ir][ir] < small) {
 
                 if (rank == 0) {
-                    throw new NotPositiveDefiniteMatrixException();
+                    throw new NonPositiveDefiniteMatrixException(ir, small);
                 }
 
                 // check remaining diagonal elements
@@ -232,7 +219,7 @@ public class CorrelatedRandomVectorGenerator
                     if (c[index[i]][index[i]] < -small) {
                         // there is at least one sufficiently negative diagonal element,
                         // the covariance matrix is wrong
-                        throw new NotPositiveDefiniteMatrixException();
+                        throw new NonPositiveDefiniteMatrixException(i, small);
                     }
                 }
 
@@ -262,9 +249,7 @@ public class CorrelatedRandomVectorGenerator
 
                 // prepare next iteration
                 loop = ++rank < order;
-
             }
-
         }
 
         // build the root matrix
@@ -298,7 +283,5 @@ public class CorrelatedRandomVectorGenerator
         }
 
         return correlated;
-
     }
-
 }

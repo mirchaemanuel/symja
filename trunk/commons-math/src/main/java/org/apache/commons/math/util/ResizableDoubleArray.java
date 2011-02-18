@@ -70,7 +70,7 @@ import org.apache.commons.math.exception.util.LocalizedFormats;
  * properties enforce this requirement, throwing IllegalArgumentException if it
  * is violated.
  * </p>
- * @version $Revision: 990658 $ $Date: 2010-08-30 00:04:09 +0200 (Mo, 30 Aug 2010) $
+ * @version $Revision: 1060449 $ $Date: 2011-01-18 17:24:27 +0100 (Di, 18 Jan 2011) $
  */
 public class ResizableDoubleArray implements DoubleArray, Serializable {
 
@@ -158,6 +158,34 @@ public class ResizableDoubleArray implements DoubleArray, Serializable {
     public ResizableDoubleArray(int initialCapacity) {
         setInitialCapacity(initialCapacity);
         internalArray = new double[this.initialCapacity];
+    }
+
+    /**
+     * Create a ResizableArray from an existing double[] with the
+     * initial capacity and numElements corresponding to the size of
+     * the supplied double[] array. If the supplied array is null, a
+     * new empty array with the default initial capacity will be created.
+     * The input array is copied, not referenced.
+     * Other properties take default values:
+     * <ul>
+     * <li><code>initialCapacity = 16</code></li>
+     * <li><code>expansionMode = MULTIPLICATIVE_MODE</code></li>
+     * <li><code>expansionFactor = 2.5</code></li>
+     * <li><code>contractionFactor = 2.0</code></li>
+     * </ul>
+     *
+     * @param initialArray initial array
+     * @since 2.2
+     */
+    public ResizableDoubleArray(double[] initialArray) {
+        if (initialArray == null) {
+            this.internalArray = new double[initialCapacity];
+        } else {
+            this.internalArray = new double[initialArray.length];
+            System.arraycopy(initialArray, 0, this.internalArray, 0, initialArray.length);
+            initialCapacity = initialArray.length;
+            numElements = initialArray.length;
+        }
     }
 
     /**
@@ -273,6 +301,20 @@ public class ResizableDoubleArray implements DoubleArray, Serializable {
         if (shouldContract()) {
             contract();
         }
+    }
+
+    /**
+     * Adds several element to the end of this expandable array.
+     *
+     * @param values to be added to end of array
+     */
+    public synchronized void addElements(double[] values) {
+        final double[] tempArray = new double[numElements + values.length + 1];
+        System.arraycopy(internalArray, startIndex, tempArray, 0, numElements);
+        System.arraycopy(values, 0, tempArray, numElements, values.length);
+        internalArray = tempArray;
+        startIndex = 0;
+        numElements += values.length;
     }
 
     /**
@@ -602,23 +644,6 @@ public class ResizableDoubleArray implements DoubleArray, Serializable {
      */
     public synchronized int getNumElements() {
         return numElements;
-    }
-
-    /**
-     * Returns the internal storage array.  Note that this method returns
-     * a reference to the internal storage array, not a copy, and to correctly
-     * address elements of the array, the <code>startIndex</code> is
-     * required (available via the {@link #start} method).  This method should
-     * only be used in cases where copying the internal array is not practical.
-     * The {@link #getElements} method should be used in all other cases.
-     *
-     *
-     * @return the internal storage array used by this object
-     * @deprecated replaced by {@link #getInternalValues()} as of 2.0
-     */
-    @Deprecated
-    public synchronized double[] getValues() {
-        return internalArray;
     }
 
     /**

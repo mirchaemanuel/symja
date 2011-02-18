@@ -16,7 +16,7 @@
  */
 package org.apache.commons.math.transform;
 
-import org.apache.commons.math.FunctionEvaluationException;
+import org.apache.commons.math.exception.MathUserException;
 import org.apache.commons.math.analysis.UnivariateRealFunction;
 
 /**
@@ -28,7 +28,7 @@ import org.apache.commons.math.analysis.UnivariateRealFunction;
  * interface since it produces {@link org.apache.commons.math.complex.Complex complex}
  * results instead of real ones.
  * </p>
- * @version $Revision: 811786 $ $Date: 2009-09-06 11:36:08 +0200 (So, 06 Sep 2009) $
+ * @version $Revision: 1037328 $ $Date: 2010-11-20 22:01:50 +0100 (Sa, 20 Nov 2010) $
  * @since 2.0
  */
 public interface RealTransformer  {
@@ -49,12 +49,11 @@ public interface RealTransformer  {
      * @param max the upper bound for the interval
      * @param n the number of sample points
      * @return the real transformed array
-     * @throws FunctionEvaluationException if function cannot be evaluated
-     * at some point
+     * @throws MathUserException if function cannot be evaluated at some point
      * @throws IllegalArgumentException if any parameters are invalid
      */
     double[] transform(UnivariateRealFunction f, double min, double max, int n)
-        throws FunctionEvaluationException, IllegalArgumentException;
+        throws MathUserException, IllegalArgumentException;
 
     /**
      * Inversely transform the given real data set.
@@ -72,11 +71,10 @@ public interface RealTransformer  {
      * @param max the upper bound for the interval
      * @param n the number of sample points
      * @return the real inversely transformed array
-     * @throws FunctionEvaluationException if function cannot be evaluated
-     * at some point
+     * @throws MathUserException if function cannot be evaluated at some point
      * @throws IllegalArgumentException if any parameters are invalid
      */
     double[] inversetransform(UnivariateRealFunction f, double min, double max, int n)
-        throws FunctionEvaluationException, IllegalArgumentException;
+        throws MathUserException, IllegalArgumentException;
 
 }

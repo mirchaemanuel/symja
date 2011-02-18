@@ -21,8 +21,7 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
-import org.apache.commons.math.MathRuntimeException;
-import org.apache.commons.math.ode.DerivativeException;
+import org.apache.commons.math.exception.MathUserException;
 
 /** This abstract class represents an interpolator over the last step
  * during an ODE integration.
@@ -36,7 +35,7 @@ import org.apache.commons.math.ode.DerivativeException;
  * @see org.apache.commons.math.ode.SecondOrderIntegrator
  * @see StepHandler
  *
- * @version $Revision: 811685 $ $Date: 2009-09-05 19:36:48 +0200 (Sa, 05 Sep 2009) $
+ * @version $Revision: 1061508 $ $Date: 2011-01-20 21:57:11 +0100 (Do, 20 Jan 2011) $
  * @since 1.2
  *
  */
@@ -44,11 +43,17 @@ import org.apache.commons.math.ode.DerivativeException;
 public abstract class AbstractStepInterpolator
   implements StepInterpolator {
 
-  /** previous time */
-  protected double previousTime;
+  /** global previous time */
+  private double globalPreviousTime;
 
-  /** current time */
-  protected double currentTime;
+  /** global current time */
+  private double globalCurrentTime;
+
+  /** soft previous time */
+  private double softPreviousTime;
+
+  /** soft current time */
+  private double softCurrentTime;
 
   /** current time step */
   protected double h;
@@ -87,8 +92,10 @@ public abstract class AbstractStepInterpolator
    * initializing the copy.
    */
   protected AbstractStepInterpolator() {
-    previousTime            = Double.NaN;
-    currentTime             = Double.NaN;
+    globalPreviousTime      = Double.NaN;
+    globalCurrentTime       = Double.NaN;
+    softPreviousTime        = Double.NaN;
+    softCurrentTime         = Double.NaN;
     h                       = Double.NaN;
     interpolatedTime        = Double.NaN;
     currentState            = null;
@@ -106,10 +113,12 @@ public abstract class AbstractStepInterpolator
    */
   protected AbstractStepInterpolator(final double[] y, final boolean forward) {
 
-    previousTime      = Double.NaN;
-    currentTime       = Double.NaN;
-    h                 = Double.NaN;
-    interpolatedTime  = Double.NaN;
+    globalPreviousTime = Double.NaN;
+    globalCurrentTime  = Double.NaN;
+    softPreviousTime   = Double.NaN;
+    softCurrentTime    = Double.NaN;
+    h                  = Double.NaN;
+    interpolatedTime   = Double.NaN;
 
     currentState            = y;
     interpolatedState       = new double[y.length];
@@ -140,10 +149,12 @@ public abstract class AbstractStepInterpolator
    */
   protected AbstractStepInterpolator(final AbstractStepInterpolator interpolator) {
 
-    previousTime      = interpolator.previousTime;
-    currentTime       = interpolator.currentTime;
-    h                 = interpolator.h;
-    interpolatedTime  = interpolator.interpolatedTime;
+    globalPreviousTime = interpolator.globalPreviousTime;
+    globalCurrentTime  = interpolator.globalCurrentTime;
+    softPreviousTime   = interpolator.softPreviousTime;
+    softCurrentTime    = interpolator.softCurrentTime;
+    h                  = interpolator.h;
+    interpolatedTime   = interpolator.interpolatedTime;
 
     if (interpolator.currentState != null) {
       currentState            = interpolator.currentState.clone();
@@ -168,10 +179,12 @@ public abstract class AbstractStepInterpolator
    */
   protected void reinitialize(final double[] y, final boolean isForward) {
 
-    previousTime      = Double.NaN;
-    currentTime       = Double.NaN;
-    h                 = Double.NaN;
-    interpolatedTime  = Double.NaN;
+    globalPreviousTime = Double.NaN;
+    globalCurrentTime  = Double.NaN;
+    softPreviousTime   = Double.NaN;
+    softCurrentTime    = Double.NaN;
+    h                  = Double.NaN;
+    interpolatedTime   = Double.NaN;
 
     currentState            = y;
     interpolatedState       = new double[y.length];
@@ -184,7 +197,7 @@ public abstract class AbstractStepInterpolator
   }
 
   /** {@inheritDoc} */
-   public StepInterpolator copy() throws DerivativeException {
+   public StepInterpolator copy() throws MathUserException {
 
      // finalize the step before performing copy
      finalizeStep();
@@ -208,7 +221,9 @@ public abstract class AbstractStepInterpolator
    * interpolator for future calls to {@link #storeTime storeTime}
    */
   public void shift() {
-    previousTime = currentTime;
+    globalPreviousTime = globalCurrentTime;
+    softPreviousTime   = globalPreviousTime;
+    softCurrentTime    = globalCurrentTime;
   }
 
   /** Store the current step time.
@@ -216,8 +231,9 @@ public abstract class AbstractStepInterpolator
    */
   public void storeTime(final double t) {
 
-    currentTime = t;
-    h           = currentTime - previousTime;
+    globalCurrentTime = t;
+    softCurrentTime   = globalCurrentTime;
+    h                 = globalCurrentTime - globalPreviousTime;
     setInterpolatedTime(t);
 
     // the step is not finalized anymore
@@ -225,14 +241,53 @@ public abstract class AbstractStepInterpolator
 
   }
 
-  /** {@inheritDoc} */
-  public double getPreviousTime() {
-    return previousTime;
+  /** Restrict step range to a limited part of the global step.
+   * <p>
+   * This method can be used to restrict a step and make it appear
+   * as if the original step was smaller. Calling this method
+   * <em>only</em> changes the value returned by {@link #getPreviousTime()}
+   * and {@link #getCurrentTime()}, it does not change any
+   * </p>
+   * @param softPreviousTime start of the restricted step
+   * @param softCurrentTime end of the restricted step
+   */
+  public void setSoftBounds(final double softPreviousTime, final double softCurrentTime) {
+      this.softPreviousTime = softPreviousTime;
+      this.softCurrentTime  = softCurrentTime;
   }
 
-  /** {@inheritDoc} */
+  /**
+   * Get the previous global grid point time.
+   * @return previous global grid point time
+   */
+  public double getGlobalPreviousTime() {
+    return globalPreviousTime;
+  }
+
+  /**
+   * Get the current global grid point time.
+   * @return current global grid point time
+   */
+  public double getGlobalCurrentTime() {
+    return globalCurrentTime;
+  }
+
+  /**
+   * Get the previous soft grid point time.
+   * @return previous soft grid point time
+   * @see #setSoftBounds(double, double)
+   */
+  public double getPreviousTime() {
+    return softPreviousTime;
+  }
+
+  /**
+   * Get the current soft grid point time.
+   * @return current soft grid point time
+   * @see #setSoftBounds(double, double)
+   */
   public double getCurrentTime() {
-    return currentTime;
+    return softCurrentTime;
   }
 
   /** {@inheritDoc} */
@@ -258,19 +313,19 @@ public abstract class AbstractStepInterpolator
    * (theta is zero at the previous time step and one at the current time step)
    * @param oneMinusThetaH time gap between the interpolated time and
    * the current time
-   * @throws DerivativeException this exception is propagated to the caller if the
+   * @throws MathUserException this exception is propagated to the caller if the
    * underlying user function triggers one
    */
   protected abstract void computeInterpolatedStateAndDerivatives(double theta,
                                                                  double oneMinusThetaH)
-    throws DerivativeException;
+    throws MathUserException;
 
   /** {@inheritDoc} */
-  public double[] getInterpolatedState() throws DerivativeException {
+  public double[] getInterpolatedState() throws MathUserException {
 
       // lazy evaluation of the state
       if (dirtyState) {
-          final double oneMinusThetaH = currentTime - interpolatedTime;
+          final double oneMinusThetaH = globalCurrentTime - interpolatedTime;
           final double theta = (h == 0) ? 0 : (h - oneMinusThetaH) / h;
           computeInterpolatedStateAndDerivatives(theta, oneMinusThetaH);
           dirtyState = false;
@@ -281,11 +336,11 @@ public abstract class AbstractStepInterpolator
   }
 
   /** {@inheritDoc} */
-  public double[] getInterpolatedDerivatives() throws DerivativeException {
+  public double[] getInterpolatedDerivatives() throws MathUserException {
 
       // lazy evaluation of the state
       if (dirtyState) {
-          final double oneMinusThetaH = currentTime - interpolatedTime;
+          final double oneMinusThetaH = globalCurrentTime - interpolatedTime;
           final double theta = (h == 0) ? 0 : (h - oneMinusThetaH) / h;
           computeInterpolatedStateAndDerivatives(theta, oneMinusThetaH);
           dirtyState = false;
@@ -333,11 +388,11 @@ public abstract class AbstractStepInterpolator
    * Therefore, subclasses are not allowed not reimplement it, they
    * should rather reimplement <code>doFinalize</code>.</p>
 
-   * @throws DerivativeException this exception is propagated to the
+   * @throws MathUserException this exception is propagated to the
    * caller if the underlying user function triggers one
    */
   public final void finalizeStep()
-    throws DerivativeException {
+    throws MathUserException {
     if (! finalized) {
       doFinalize();
       finalized = true;
@@ -347,11 +402,11 @@ public abstract class AbstractStepInterpolator
   /**
    * Really finalize the step.
    * The default implementation of this method does nothing.
-   * @throws DerivativeException this exception is propagated to the
+   * @throws MathUserException this exception is propagated to the
    * caller if the underlying user function triggers one
    */
   protected void doFinalize()
-    throws DerivativeException {
+    throws MathUserException {
   }
 
   /** {@inheritDoc} */
@@ -376,8 +431,10 @@ public abstract class AbstractStepInterpolator
     } else {
         out.writeInt(currentState.length);
     }
-    out.writeDouble(previousTime);
-    out.writeDouble(currentTime);
+    out.writeDouble(globalPreviousTime);
+    out.writeDouble(globalCurrentTime);
+    out.writeDouble(softPreviousTime);
+    out.writeDouble(softCurrentTime);
     out.writeDouble(h);
     out.writeBoolean(forward);
 
@@ -395,8 +452,10 @@ public abstract class AbstractStepInterpolator
     // finalize the step (and don't bother saving the now true flag)
     try {
       finalizeStep();
-    } catch (DerivativeException e) {
-      throw MathRuntimeException.createIOException(e);
+    } catch (MathUserException e) {
+        IOException ioe = new IOException(e.getLocalizedMessage());
+        ioe.initCause(e);
+        throw ioe;
     }
 
   }
@@ -414,11 +473,13 @@ public abstract class AbstractStepInterpolator
     throws IOException {
 
     final int dimension = in.readInt();
-    previousTime  = in.readDouble();
-    currentTime   = in.readDouble();
-    h             = in.readDouble();
-    forward       = in.readBoolean();
-    dirtyState    = true;
+    globalPreviousTime  = in.readDouble();
+    globalCurrentTime   = in.readDouble();
+    softPreviousTime    = in.readDouble();
+    softCurrentTime     = in.readDouble();
+    h                   = in.readDouble();
+    forward             = in.readBoolean();
+    dirtyState          = true;
 
     if (dimension < 0) {
         currentState = null;

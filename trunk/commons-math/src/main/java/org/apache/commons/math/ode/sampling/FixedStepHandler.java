@@ -17,7 +17,7 @@
 
 package org.apache.commons.math.ode.sampling;
 
-import org.apache.commons.math.ode.DerivativeException;
+import org.apache.commons.math.exception.MathUserException;
 
 /**
  * This interface represents a handler that should be called after
@@ -34,7 +34,7 @@ import org.apache.commons.math.ode.DerivativeException;
  *
  * @see StepHandler
  * @see StepNormalizer
- * @version $Revision: 811786 $ $Date: 2009-09-06 11:36:08 +0200 (So, 06 Sep 2009) $
+ * @version $Revision: 1037328 $ $Date: 2010-11-20 22:01:50 +0100 (Sa, 20 Nov 2010) $
  * @since 1.2
  */
 
@@ -55,8 +55,8 @@ public interface FixedStepHandler  {
    * provide at the end of the integration a complete array of all
    * steps), it should build a local copy store this copy.
    * @param isLast true if the step is the last one
-   * @throws DerivativeException if some error condition is encountered
+   * @throws MathUserException if some error condition is encountered
    */
-  void handleStep(double t, double[] y, double[] yDot, boolean isLast) throws DerivativeException;
+  void handleStep(double t, double[] y, double[] yDot, boolean isLast) throws MathUserException;
 
 }

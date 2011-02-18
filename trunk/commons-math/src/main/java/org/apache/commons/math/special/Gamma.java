@@ -17,7 +17,7 @@
 package org.apache.commons.math.special;
 
 import org.apache.commons.math.MathException;
-import org.apache.commons.math.MaxIterationsExceededException;
+import org.apache.commons.math.exception.MaxCountExceededException;
 import org.apache.commons.math.util.ContinuedFraction;
 import org.apache.commons.math.util.FastMath;
 
@@ -25,7 +25,7 @@ import org.apache.commons.math.util.FastMath;
  * This is a utility class that provides computation methods related to the
  * Gamma family of functions.
  *
- * @version $Revision: 990658 $ $Date: 2010-08-30 00:04:09 +0200 (Mo, 30 Aug 2010) $
+ * @version $Revision: 1042513 $ $Date: 2010-12-06 03:10:44 +0100 (Mo, 06 Dez 2010) $
  */
 public class Gamma {
 
@@ -185,7 +185,7 @@ public class Gamma {
                 sum = sum + an;
             }
             if (n >= maxIterations) {
-                throw new MaxIterationsExceededException(maxIterations);
+                throw new MaxCountExceededException(maxIterations);
             } else if (Double.isInfinite(sum)) {
                 ret = 1.0;
             } else {
@@ -288,7 +288,7 @@ public class Gamma {
      * @param x  the argument
      * @return   digamma(x) to within 10-8 relative or absolute error whichever is smaller
      * @see <a href="http://en.wikipedia.org/wiki/Digamma_function"> Digamma at wikipedia </a>
-     * @see <a href="http://www.uv.es/~bernardo/1976AppStatist.pdf"> Bernardo's original article </a>
+     * @see <a href="http://www.uv.es/~bernardo/1976AppStatist.pdf"> Bernardo&apos;s original article </a>
      * @since 2.0
      */
     public static double digamma(double x) {

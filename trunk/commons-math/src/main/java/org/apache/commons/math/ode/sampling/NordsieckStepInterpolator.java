@@ -22,8 +22,8 @@ import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.util.Arrays;
 
+import org.apache.commons.math.exception.MathUserException;
 import org.apache.commons.math.linear.Array2DRowRealMatrix;
-import org.apache.commons.math.ode.DerivativeException;
 import org.apache.commons.math.util.FastMath;
 
 /**
@@ -34,7 +34,7 @@ import org.apache.commons.math.util.FastMath;
  *
  * @see org.apache.commons.math.ode.nonstiff.AdamsBashforthIntegrator
  * @see org.apache.commons.math.ode.nonstiff.AdamsMoultonIntegrator
- * @version $Revision: 990658 $ $Date: 2010-08-30 00:04:09 +0200 (Mo, 30 Aug 2010) $
+ * @version $Revision: 1037328 $ $Date: 2010-11-20 22:01:50 +0100 (Sa, 20 Nov 2010) $
  * @since 2.0
  */
 
@@ -171,11 +171,11 @@ public class NordsieckStepInterpolator extends AbstractStepInterpolator {
      * to be preserved across several calls.</p>
      * @return state vector at time {@link #getInterpolatedTime}
      * @see #getInterpolatedDerivatives()
-     * @throws DerivativeException if this call induces an automatic
+     * @throws MathUserException if this call induces an automatic
      * step finalization that throws one
      */
     public double[] getInterpolatedStateVariation()
-        throws DerivativeException {
+        throws MathUserException {
         // compute and ignore interpolated state
         // to make sure state variation is computed as a side effect
         getInterpolatedState();

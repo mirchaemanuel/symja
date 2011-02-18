@@ -19,16 +19,12 @@ package org.apache.commons.math.random;
 
 import java.io.Serializable;
 import java.security.MessageDigest;
-import java.security.SecureRandom;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
+import java.security.SecureRandom;
 import java.util.Collection;
 
 import org.apache.commons.math.MathException;
-import org.apache.commons.math.MathRuntimeException;
-import org.apache.commons.math.exception.util.LocalizedFormats;
-import org.apache.commons.math.exception.NotStrictlyPositiveException;
-import org.apache.commons.math.exception.NumberIsTooLargeException;
 import org.apache.commons.math.distribution.BetaDistributionImpl;
 import org.apache.commons.math.distribution.BinomialDistributionImpl;
 import org.apache.commons.math.distribution.CauchyDistributionImpl;
@@ -42,8 +38,12 @@ import org.apache.commons.math.distribution.PascalDistributionImpl;
 import org.apache.commons.math.distribution.TDistributionImpl;
 import org.apache.commons.math.distribution.WeibullDistributionImpl;
 import org.apache.commons.math.distribution.ZipfDistributionImpl;
-import org.apache.commons.math.util.MathUtils;
+import org.apache.commons.math.exception.MathInternalError;
+import org.apache.commons.math.exception.NotStrictlyPositiveException;
+import org.apache.commons.math.exception.NumberIsTooLargeException;
+import org.apache.commons.math.exception.util.LocalizedFormats;
 import org.apache.commons.math.util.FastMath;
+import org.apache.commons.math.util.MathUtils;
 
 /**
  * Implements the {@link RandomData} interface using a {@link RandomGenerator}
@@ -100,7 +100,7 @@ import org.apache.commons.math.util.FastMath;
  * </ul>
  * </p>
  *
- * @version $Revision: 990658 $ $Date: 2010-08-30 00:04:09 +0200 (Mo, 30 Aug 2010) $
+ * @version $Revision: 1061498 $ $Date: 2011-01-20 21:32:54 +0100 (Do, 20 Jan 2011) $
  */
 public class RandomDataImpl implements RandomData, Serializable {
 
@@ -159,7 +159,7 @@ public class RandomDataImpl implements RandomData, Serializable {
         RandomGenerator ran = getRan();
 
         // Initialize output buffer
-        StringBuffer outBuffer = new StringBuffer();
+        StringBuilder outBuffer = new StringBuilder();
 
         // Get int(len/2)+1 random bytes
         byte[] randomBytes = new byte[(len / 2) + 1];
@@ -258,14 +258,14 @@ public class RandomDataImpl implements RandomData, Serializable {
             alg = MessageDigest.getInstance("SHA-1");
         } catch (NoSuchAlgorithmException ex) {
             // this should never happen
-            throw MathRuntimeException.createInternalError(ex);
+            throw new MathInternalError(ex);
         }
         alg.reset();
 
         // Compute number of iterations required (40 bytes each)
         int numIter = (len / 40) + 1;
 
-        StringBuffer outBuffer = new StringBuffer();
+        StringBuilder outBuffer = new StringBuilder();
         for (int iter = 1; iter < numIter + 1; iter++) {
             byte[] randomBytes = new byte[40];
             secRan.nextBytes(randomBytes);

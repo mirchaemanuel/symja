@@ -58,7 +58,7 @@ import org.apache.commons.math.util.FastMath;
  *    entry per line.</li>
  * </ul></p>
  *
- * @version $Revision: 990658 $ $Date: 2010-08-30 00:04:09 +0200 (Mo, 30 Aug 2010) $
+ * @version $Revision: 1003346 $ $Date: 2010-10-01 03:27:16 +0200 (Fr, 01 Okt 2010) $
  */
 public class EmpiricalDistributionImpl implements Serializable, EmpiricalDistribution {
 
@@ -66,7 +66,7 @@ public class EmpiricalDistributionImpl implements Serializable, EmpiricalDistrib
     private static final long serialVersionUID = 5729073523949762654L;
 
     /** List of SummaryStatistics objects characterizing the bins */
-    private List<SummaryStatistics> binStats = null;
+    private final List<SummaryStatistics> binStats;
 
     /** Sample statistics */
     private SummaryStatistics sampleStats = null;
@@ -81,7 +81,7 @@ public class EmpiricalDistributionImpl implements Serializable, EmpiricalDistrib
     private double delta = 0d;
 
     /** number of bins */
-    private int binCount = 1000;
+    private final int binCount;
 
     /** is the distribution loaded? */
     private boolean loaded = false;
@@ -90,12 +90,13 @@ public class EmpiricalDistributionImpl implements Serializable, EmpiricalDistrib
     private double[] upperBounds = null;
 
     /** RandomData instance to use in repeated calls to getNext() */
-    private RandomData randomData = new RandomDataImpl();
+    private final RandomData randomData = new RandomDataImpl();
 
     /**
      * Creates a new EmpiricalDistribution with the default bin count.
      */
     public EmpiricalDistributionImpl() {
+        binCount = 1000;
         binStats = new ArrayList<SummaryStatistics>();
     }
 
