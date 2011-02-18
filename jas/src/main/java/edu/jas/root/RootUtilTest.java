@@ -1,5 +1,5 @@
 /*
- * $Id: RootUtilTest.java 3395 2010-12-10 21:23:32Z kredel $
+ * $Id: RootUtilTest.java 3487 2011-01-10 22:39:18Z kredel $
  */
 
 package edu.jas.root;
@@ -261,7 +261,7 @@ public class RootUtilTest extends TestCase {
 
         List<ComplexAlgebraicNumber<BigRational>> lcn = RootFactory.<BigRational> complexAlgebraicNumbers(a);
         //System.out.println("lcn = " + lcn);
-        assertTrue("#roots == deg(a) ", lcn.size() == a.degree(0));
+        assertTrue("#roots == deg(a) " + lcn.size() + ", " + a.degree(0), lcn.size() == a.degree(0));
 
         if (true)
             return;

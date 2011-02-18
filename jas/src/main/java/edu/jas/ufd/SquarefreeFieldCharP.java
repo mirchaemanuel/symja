@@ -1,5 +1,5 @@
 /*
- * $Id: SquarefreeFieldCharP.java 3356 2010-10-23 16:41:01Z kredel $
+ * $Id: SquarefreeFieldCharP.java 3502 2011-01-23 19:34:46Z kredel $
  */
 
 package edu.jas.ufd;
@@ -74,7 +74,8 @@ public abstract class SquarefreeFieldCharP<C extends GcdRingElem<C>> extends Squ
     public SquarefreeFieldCharP(RingFactory<C> fac) {
         super( GCDFactory.<C> getProxy(fac) );
         if (!fac.isField()) {
-            throw new IllegalArgumentException("fac must be a field");
+            //throw new IllegalArgumentException("fac must be a field");
+            logger.warn("fac should be a field: " + fac.toScript());
         }
         if (fac.characteristic().signum() == 0) {
             throw new IllegalArgumentException("characterisic(fac) must be non-zero");

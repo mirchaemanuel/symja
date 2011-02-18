@@ -1,5 +1,5 @@
 /*
- * $Id: Ideal.java 3432 2010-12-24 14:28:19Z kredel $
+ * $Id: Ideal.java 3518 2011-01-29 19:17:17Z kredel $
  */
 
 package edu.jas.application;
@@ -1084,6 +1084,27 @@ public class Ideal<C extends GcdRingElem<C>> implements Comparable<Ideal<C>>, Se
             }
         }
         return Q;
+    }
+
+
+    /**
+     * Power. Generators for the power of this ideal. Note: if this ideal is
+     * a Groebner base, a Groebner base is returned.
+     * @param d integer
+     * @return ideal(this^d)
+     */
+    public Ideal<C> power(int d) {
+        if ( d <= 0 ) {
+            return getONE();
+        }
+        if (this.isZERO() || this.isONE()) {
+            return this;
+        }
+        Ideal<C> c = this;
+        for (int i = 1; i < d; i++ ) {
+            c = c.product(this);
+        }
+        return c;
     }
 
 

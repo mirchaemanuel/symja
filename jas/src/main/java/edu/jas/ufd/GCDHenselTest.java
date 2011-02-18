@@ -1,5 +1,5 @@
 /*
- * $Id: GCDHenselTest.java 2948 2009-12-30 14:02:18Z kredel $
+ * $Id: GCDHenselTest.java 3538 2011-02-18 19:53:41Z kredel $
  */
 
 package edu.jas.ufd;
@@ -7,12 +7,15 @@ package edu.jas.ufd;
 
 //import java.util.Map;
 
+import org.apache.log4j.BasicConfigurator;
+
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import edu.jas.arith.BigInteger;
 import edu.jas.arith.ModInteger;
+import edu.jas.poly.ExpVector;
 import edu.jas.poly.GenPolynomial;
 import edu.jas.poly.GenPolynomialRing;
 import edu.jas.poly.PolyUtil;
@@ -31,7 +34,7 @@ public class GCDHenselTest extends TestCase {
      * main.
      */
     public static void main(String[] args) {
-        //BasicConfigurator.configure();
+        BasicConfigurator.configure();
         junit.textui.TestRunner.run(suite());
     }
 
@@ -138,7 +141,7 @@ public class GCDHenselTest extends TestCase {
     int rl = 3;
 
 
-    int kl = 34;
+    int kl = 4;
 
 
     int ll = 5;
@@ -177,7 +180,6 @@ public class GCDHenselTest extends TestCase {
 
     /**
      * Test univariate Hensel algorithm gcd with subres PRS recursive algorithm.
-     * 
      */
     public void testHenselSubresGcd() {
 
@@ -224,7 +226,7 @@ public class GCDHenselTest extends TestCase {
             //System.out.println("d  = " + d);
             //System.out.println("e  = " + e);
 
-            assertTrue("c | gcd(ac,bc): " + e, e.isZERO());
+            assertTrue("c | gcd(ac,bc): " + d + ", c = " + c, e.isZERO());
 
             e = PolyUtil.<BigInteger> basePseudoRemainder(a, d);
             //System.out.println("e  = " + e);
@@ -239,8 +241,7 @@ public class GCDHenselTest extends TestCase {
 
     /**
      * Test univariate linear Hensel algorithm gcd with subres PRS recursive
- * algorithm.
-     * 
+     * algorithm.
      */
     public void testHenselLinearSubresGcd() {
 
@@ -299,7 +300,7 @@ public class GCDHenselTest extends TestCase {
             //System.out.println("d  = " + d);
             //System.out.println("e  = " + e);
 
-            assertTrue("c | gcd(ac,bc): " + e, e.isZERO());
+            assertTrue("c | gcd(ac,bc): " + d + ", c = " + c, e.isZERO());
 
             e = PolyUtil.<BigInteger> basePseudoRemainder(a, d);
             //System.out.println("e  = " + e);
@@ -308,6 +309,65 @@ public class GCDHenselTest extends TestCase {
             e = PolyUtil.<BigInteger> basePseudoRemainder(b, d);
             //System.out.println("e  = " + e);
             assertTrue("gcd(a,b) | b: " + e, e.isZERO());
+        }
+    }
+
+
+    /**
+     * Test Hensel gcd 3 variables.
+     * 
+     */
+    public void testHenselGCD3() {
+        BigInteger ifa = new BigInteger(1);
+        //dfac = new GenPolynomialRing<BigInteger>(ifa, 2, to , new String[] {"x", "y" });
+        dfac = new GenPolynomialRing<BigInteger>(ifa, 3, to , new String[] { "x" , "y", "z" });
+
+        for (int i = 0; i < 1; i++) {
+            a = dfac.random(kl, ll, el + i, q);
+            b = dfac.random(kl, ll, el, q);
+            c = dfac.random(kl, ll, el, q);
+            // make monic and c with univariate head term
+            ExpVector ev = a.leadingExpVector();
+            if ( ev != null ) {
+                a.doPutToMap(ev,ifa.getONE());
+            }
+            ev = b.leadingExpVector();
+            if ( ev != null ) {
+                b.doPutToMap(ev,ifa.getONE());
+            }
+            ev = c.leadingExpVector();
+            if ( ev != null ) {
+                c.doPutToMap(ev,ifa.getONE());
+            }
+            if ( ev.dependencyOnVariables().length > 1 ) {
+                c = dfac.univariate(1); //getONE();
+            }
+            //a = dfac.parse(" y^2 + 2 x y - 3 y + x^2 - 3 x - 4 ");
+            //b = dfac.parse(" y^2 + 2 x y + 5 y + x^2 + 5 x + 4 ");
+            //a = dfac.parse(" x + 2 y + z^2 + 5 ");
+            //b = dfac.parse(" x - y - 3 + y z ");
+            //c = dfac.parse(" x y + z^2 + y ");
+            //System.out.println("a = " + a);
+            //System.out.println("b = " + b);
+            //System.out.println("c = " + c);
+
+            if (a.isZERO() || b.isZERO() || c.isZERO()) {
+                // skip for this turn
+                continue;
+            }
+            //assertTrue(" not isZERO( c"+i+" )", !c.isZERO() );
+
+            a = a.multiply(c);
+            b = b.multiply(c);
+            //System.out.println("a = " + a);
+            //System.out.println("b = " + b);
+
+            d = ufd.gcd(a, b);
+            e = PolyUtil.<BigInteger> basePseudoRemainder(d, c);
+            //System.out.println("e = " + e);
+            //System.out.println("d = " + d);
+            //System.out.println("c = " + c);
+            assertTrue("c | gcd(ac,bc) " + e, e.isZERO());
         }
     }
 

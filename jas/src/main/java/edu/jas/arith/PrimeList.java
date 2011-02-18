@@ -1,5 +1,5 @@
 /*
- * $Id: PrimeList.java 3283 2010-08-22 17:23:03Z kredel $
+ * $Id: PrimeList.java 3497 2011-01-20 21:30:04Z kredel $
  */
 
 package edu.jas.arith;
@@ -197,7 +197,7 @@ public final class PrimeList implements Iterable<java.math.BigInteger> {
      * @param m for 2**n - m.
      * @return 2**n - m
      */
-    protected static java.math.BigInteger getLongPrime(int n, int m) {
+    public static java.math.BigInteger getLongPrime(int n, int m) {
         long prime = 2; // knuth (2,390)
         for ( int i = 1; i < n; i++ ) {
             prime *= 2;
@@ -213,7 +213,7 @@ public final class PrimeList implements Iterable<java.math.BigInteger> {
      * @param n power for 2.
      * @return 2**n - 1
      */
-    protected static java.math.BigInteger getMersennePrime(int n) {
+    public static java.math.BigInteger getMersennePrime(int n) {
         BigInteger t = new BigInteger(2);
         BigInteger p = Power.positivePower(t,n);
         p = p.subtract(new BigInteger(1));
