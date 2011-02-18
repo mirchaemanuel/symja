@@ -35,39 +35,21 @@ package org.apache.commons.math.distribution;
  * </ul>
  * </p>
  *
- * @version $Revision: 920852 $ $Date: 2010-03-09 13:53:44 +0100 (Di, 09 Mrz 2010) $
+ * @version $Revision: 1003512 $ $Date: 2010-10-01 14:46:16 +0200 (Fr, 01 Okt 2010) $
  * @since 1.2
  */
 public interface PascalDistribution extends IntegerDistribution {
     /**
      * Access the number of successes for this distribution.
      *
-     * @return the number of successes
+     * @return the number of successes.
      */
     int getNumberOfSuccesses();
 
     /**
      * Access the probability of success for this distribution.
      *
-     * @return the probability of success
+     * @return the probability of success.
      */
     double getProbabilityOfSuccess();
-
-    /**
-     * Change the number of successes for this distribution.
-     *
-     * @param successes the new number of successes
-     * @deprecated as of v2.1
-     */
-    @Deprecated
-    void setNumberOfSuccesses(int successes);
-
-    /**
-     * Change the probability of success for this distribution.
-     *
-     * @param p the new probability of success
-     * @deprecated as of v2.1
-     */
-    @Deprecated
-    void setProbabilityOfSuccess(double p);
 }

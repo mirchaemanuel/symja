@@ -47,7 +47,7 @@ package org.apache.commons.math.linear;
  * </ul>
  * @see <a href="http://mathworld.wolfram.com/SingularValueDecomposition.html">MathWorld</a>
  * @see <a href="http://en.wikipedia.org/wiki/Singular_value_decomposition">Wikipedia</a>
- * @version $Revision: 928081 $ $Date: 2010-03-26 23:36:38 +0100 (Fr, 26 Mrz 2010) $
+ * @version $Revision: 1038403 $ $Date: 2010-11-24 01:42:12 +0100 (Mi, 24 Nov 2010) $
  * @since 2.0
  */
 public interface SingularValueDecomposition {
@@ -111,7 +111,7 @@ public interface SingularValueDecomposition {
      * @exception IllegalArgumentException if minSingularValue is larger than
      * the largest singular value, meaning all singular values are ignored
      */
-    RealMatrix getCovariance(double minSingularValue) throws IllegalArgumentException;
+    RealMatrix getCovariance(double minSingularValue);
 
     /**
      * Returns the L<sub>2</sub> norm of the matrix.

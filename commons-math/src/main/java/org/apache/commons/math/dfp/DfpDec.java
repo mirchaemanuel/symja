@@ -21,7 +21,7 @@ package org.apache.commons.math.dfp;
  * This should give outward appearances of being a decimal number with DIGITS*4-3
  * decimal digits. This class can be subclassed to appear to be an arbitrary number
  * of decimal digits less than DIGITS*4-3.
- * @version $Revision: 992697 $ $Date: 2010-09-05 00:59:21 +0200 (So, 05 Sep 2010) $
+ * @version $Revision: 1003351 $ $Date: 2010-10-01 03:50:12 +0200 (Fr, 01 Okt 2010) $
  * @since 2.2
  */
 public class DfpDec extends Dfp {
@@ -94,31 +94,37 @@ public class DfpDec extends Dfp {
     }
 
     /** {@inheritDoc} */
+    @Override
     public Dfp newInstance() {
         return new DfpDec(getField());
     }
 
     /** {@inheritDoc} */
+    @Override
     public Dfp newInstance(final byte x) {
         return new DfpDec(getField(), x);
     }
 
     /** {@inheritDoc} */
+    @Override
     public Dfp newInstance(final int x) {
         return new DfpDec(getField(), x);
     }
 
     /** {@inheritDoc} */
+    @Override
     public Dfp newInstance(final long x) {
         return new DfpDec(getField(), x);
     }
 
     /** {@inheritDoc} */
+    @Override
     public Dfp newInstance(final double x) {
         return new DfpDec(getField(), x);
     }
 
     /** {@inheritDoc} */
+    @Override
     public Dfp newInstance(final Dfp d) {
 
         // make sure we don't mix number with different precision
@@ -134,11 +140,13 @@ public class DfpDec extends Dfp {
     }
 
     /** {@inheritDoc} */
+    @Override
     public Dfp newInstance(final String s) {
         return new DfpDec(getField(), s);
     }
 
     /** {@inheritDoc} */
+    @Override
     public Dfp newInstance(final byte sign, final byte nans) {
         return new DfpDec(getField(), sign, nans);
     }
@@ -153,6 +161,7 @@ public class DfpDec extends Dfp {
     }
 
     /** {@inheritDoc} */
+    @Override
     protected int round(int in) {
 
         int msb = mant[mant.length-1];
@@ -280,6 +289,7 @@ public class DfpDec extends Dfp {
     }
 
     /** {@inheritDoc} */
+    @Override
     public Dfp nextAfter(Dfp x) {
 
         final String trapName = "nextAfter";

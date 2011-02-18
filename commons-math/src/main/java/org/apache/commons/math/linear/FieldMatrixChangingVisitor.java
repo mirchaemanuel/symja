@@ -23,11 +23,10 @@ import org.apache.commons.math.FieldElement;
  * Interface defining a visitor for matrix entries.
  *
  * @param <T> the type of the field elements
- * @version $Revision: 811685 $ $Date: 2009-09-05 19:36:48 +0200 (Sa, 05 Sep 2009) $
+ * @version $Revision: 1038403 $ $Date: 2010-11-24 01:42:12 +0100 (Mi, 24 Nov 2010) $
  * @since 2.0
  */
 public interface FieldMatrixChangingVisitor<T extends FieldElement<?>> {
-
     /**
      * Start visiting a matrix.
      * <p>This method is called once before any entry of the matrix is visited.</p>
@@ -47,10 +46,10 @@ public interface FieldMatrixChangingVisitor<T extends FieldElement<?>> {
      * @param column column index of the entry
      * @param value current value of the entry
      * @return the new value to be set for the entry
-     * @throws MatrixVisitorException if something wrong occurs
+     * @throws org.apache.commons.math.exception.MathUserException if the visitor
+     * cannot process an entry.
      */
-    T visit(int row, int column, T value)
-        throws MatrixVisitorException;
+    T visit(int row, int column, T value);
 
     /**
      * End visiting a matrix.
@@ -58,5 +57,4 @@ public interface FieldMatrixChangingVisitor<T extends FieldElement<?>> {
      * @return the value that the <code>walkInXxxOrder</code> must return
      */
     T end();
-
 }

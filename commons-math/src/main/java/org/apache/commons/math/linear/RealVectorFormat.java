@@ -19,14 +19,12 @@ package org.apache.commons.math.linear;
 
 import java.text.FieldPosition;
 import java.text.NumberFormat;
-import java.text.ParseException;
 import java.text.ParsePosition;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import org.apache.commons.math.MathRuntimeException;
-import org.apache.commons.math.exception.util.LocalizedFormats;
+import org.apache.commons.math.exception.MathParseException;
 import org.apache.commons.math.util.CompositeFormat;
 
 /**
@@ -40,43 +38,32 @@ import org.apache.commons.math.util.CompositeFormat;
  * returned. In the second case, however, the parse position after parsing will be
  * just after the closing curly brace, i.e. just before the trailing space.</p>
  *
- * @version $Revision: 983921 $ $Date: 2010-08-10 12:46:06 +0200 (Di, 10 Aug 2010) $
+ * @version $Revision: 1055835 $ $Date: 2011-01-06 12:32:07 +0100 (Do, 06 Jan 2011) $
  * @since 2.0
  */
-public class RealVectorFormat extends CompositeFormat {
-
+public class RealVectorFormat {
     /** Serializable version identifier */
     private static final long serialVersionUID = -708767813036157690L;
-
     /** The default prefix: "{". */
     private static final String DEFAULT_PREFIX = "{";
-
     /** The default suffix: "}". */
     private static final String DEFAULT_SUFFIX = "}";
-
     /** The default separator: ", ". */
     private static final String DEFAULT_SEPARATOR = "; ";
-
     /** Prefix. */
     private final String prefix;
-
     /** Suffix. */
     private final String suffix;
-
     /** Separator. */
     private final String separator;
-
     /** Trimmed prefix. */
     private final String trimmedPrefix;
-
     /** Trimmed suffix. */
     private final String trimmedSuffix;
-
     /** Trimmed separator. */
     private final String trimmedSeparator;
-
     /** The format used for components. */
-    private NumberFormat format;
+    private final NumberFormat format;
 
     /**
      * Create an instance with default settings.
@@ -84,7 +71,8 @@ public class RealVectorFormat extends CompositeFormat {
      * "{", "}", and "; " and the default number format for components.</p>
      */
     public RealVectorFormat() {
-        this(DEFAULT_PREFIX, DEFAULT_SUFFIX, DEFAULT_SEPARATOR, getDefaultNumberFormat());
+        this(DEFAULT_PREFIX, DEFAULT_SUFFIX, DEFAULT_SEPARATOR,
+             CompositeFormat.getDefaultNumberFormat());
     }
 
     /**
@@ -103,7 +91,8 @@ public class RealVectorFormat extends CompositeFormat {
      */
     public RealVectorFormat(final String prefix, final String suffix,
                             final String separator) {
-        this(prefix, suffix, separator, getDefaultNumberFormat());
+        this(prefix, suffix, separator,
+             CompositeFormat.getDefaultNumberFormat());
     }
 
     /**
@@ -180,18 +169,17 @@ public class RealVectorFormat extends CompositeFormat {
      * @return the real vector format specific to the given locale.
      */
     public static RealVectorFormat getInstance(final Locale locale) {
-        return new RealVectorFormat(getDefaultNumberFormat(locale));
+        return new RealVectorFormat(CompositeFormat.getDefaultNumberFormat(locale));
     }
 
     /**
-     * This static method calls {@link #format(Object)} on a default instance of
-     * RealVectorFormat.
+     * This method calls {@link #format(RealVector,StringBuffer,FieldPosition)}.
      *
-     * @param v RealVector object to format
-     * @return A formatted vector
+     * @param v RealVector object to format.
+     * @return a formatted vector.
      */
-    public static String formatRealVector(RealVector v) {
-        return getInstance().format(v);
+    public String format(RealVector v) {
+        return format(v, new StringBuffer(), new FieldPosition(0)).toString();
     }
 
     /**
@@ -216,63 +204,38 @@ public class RealVectorFormat extends CompositeFormat {
             if (i > 0) {
                 toAppendTo.append(separator);
             }
-            formatDouble(vector.getEntry(i), format, toAppendTo, pos);
+            CompositeFormat.formatDouble(vector.getEntry(i), format, toAppendTo, pos);
         }
 
         // format suffix
         toAppendTo.append(suffix);
 
         return toAppendTo;
-
     }
 
     /**
-     * Formats a object to produce a string.
-     * <p><code>obj</code> must be a  {@link RealVector} object. Any other type of
-     * object will result in an {@link IllegalArgumentException} being thrown.</p>
-     * @param obj the object to format.
-     * @param toAppendTo where the text is to be appended
-     * @param pos On input: an alignment field, if desired. On output: the
-     *            offsets of the alignment field
-     * @return the value passed in as toAppendTo.
-     * @see java.text.Format#format(java.lang.Object, java.lang.StringBuffer, java.text.FieldPosition)
-     * @throws IllegalArgumentException is <code>obj</code> is not a valid type.
-     */
-    @Override
-    public StringBuffer format(Object obj, StringBuffer toAppendTo,
-                               FieldPosition pos) {
-
-        if (obj instanceof RealVector) {
-            return format( (RealVector)obj, toAppendTo, pos);
-        }
-
-        throw MathRuntimeException.createIllegalArgumentException(
-              LocalizedFormats.CANNOT_FORMAT_INSTANCE_AS_REAL_VECTOR,
-              obj.getClass().getName());
-
-    }
-
-    /**
-     * Parses a string to produce a {@link RealVector} object.
-     * @param source the string to parse
+     * Parse a string to produce a {@link RealVector} object.
+     *
+     * @param source String to parse.
      * @return the parsed {@link RealVector} object.
-     * @exception ParseException if the beginning of the specified string
-     *            cannot be parsed.
+     * @throws MathParseException if the beginning of the specified string
+     * cannot be parsed.
      */
-    public ArrayRealVector parse(String source) throws ParseException {
-        ParsePosition parsePosition = new ParsePosition(0);
-        ArrayRealVector result = parse(source, parsePosition);
+    public ArrayRealVector parse(String source) {
+        final ParsePosition parsePosition = new ParsePosition(0);
+        final ArrayRealVector result = parse(source, parsePosition);
         if (parsePosition.getIndex() == 0) {
-            throw MathRuntimeException.createParseException(
-                    parsePosition.getErrorIndex(),
-                    LocalizedFormats.UNPARSEABLE_REAL_VECTOR, source);
+            throw new MathParseException(source,
+                                         parsePosition.getErrorIndex(),
+                                         ArrayRealVector.class);
         }
         return result;
     }
 
     /**
-     * Parses a string to produce a {@link RealVector} object.
-     * @param source the string to parse
+     * Parse a string to produce a {@link RealVector} object.
+     *
+     * @param source String to parse.
      * @param pos input/ouput parsing parameter.
      * @return the parsed {@link RealVector} object.
      */
@@ -280,8 +243,8 @@ public class RealVectorFormat extends CompositeFormat {
         int initialIndex = pos.getIndex();
 
         // parse prefix
-        parseAndIgnoreWhitespace(source, pos);
-        if (!parseFixedstring(source, trimmedPrefix, pos)) {
+        CompositeFormat.parseAndIgnoreWhitespace(source, pos);
+        if (!CompositeFormat.parseFixedstring(source, trimmedPrefix, pos)) {
             return null;
         }
 
@@ -290,15 +253,15 @@ public class RealVectorFormat extends CompositeFormat {
         for (boolean loop = true; loop;){
 
             if (!components.isEmpty()) {
-                parseAndIgnoreWhitespace(source, pos);
-                if (!parseFixedstring(source, trimmedSeparator, pos)) {
+                CompositeFormat.parseAndIgnoreWhitespace(source, pos);
+                if (!CompositeFormat.parseFixedstring(source, trimmedSeparator, pos)) {
                     loop = false;
                 }
             }
 
             if (loop) {
-                parseAndIgnoreWhitespace(source, pos);
-                Number component = parseNumber(source, format, pos);
+                CompositeFormat.parseAndIgnoreWhitespace(source, pos);
+                Number component = CompositeFormat.parseNumber(source, format, pos);
                 if (component != null) {
                     components.add(component);
                 } else {
@@ -312,8 +275,8 @@ public class RealVectorFormat extends CompositeFormat {
         }
 
         // parse suffix
-        parseAndIgnoreWhitespace(source, pos);
-        if (!parseFixedstring(source, trimmedSuffix, pos)) {
+        CompositeFormat.parseAndIgnoreWhitespace(source, pos);
+        if (!CompositeFormat.parseFixedstring(source, trimmedSuffix, pos)) {
             return null;
         }
 
@@ -323,19 +286,5 @@ public class RealVectorFormat extends CompositeFormat {
             data[i] = components.get(i).doubleValue();
         }
         return new ArrayRealVector(data, false);
-
     }
-
-    /**
-     * Parses a string to produce a object.
-     * @param source the string to parse
-     * @param pos input/ouput parsing parameter.
-     * @return the parsed object.
-     * @see java.text.Format#parseObject(java.lang.String, java.text.ParsePosition)
-     */
-    @Override
-    public Object parseObject(String source, ParsePosition pos) {
-        return parse(source, pos);
-    }
-
 }

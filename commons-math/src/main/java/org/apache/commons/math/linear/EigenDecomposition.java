@@ -38,7 +38,7 @@ package org.apache.commons.math.linear;
  * </ul>
  * @see <a href="http://mathworld.wolfram.com/EigenDecomposition.html">MathWorld</a>
  * @see <a href="http://en.wikipedia.org/wiki/Eigendecomposition_of_a_matrix">Wikipedia</a>
- * @version $Revision: 826627 $ $Date: 2009-10-19 12:27:47 +0200 (Mo, 19 Okt 2009) $
+ * @version $Revision: 997724 $ $Date: 2010-09-16 14:39:34 +0200 (Do, 16 Sep 2010) $
  * @since 2.0
  */
 public interface EigenDecomposition {
@@ -47,6 +47,9 @@ public interface EigenDecomposition {
      * Returns the matrix V of the decomposition.
      * <p>V is an orthogonal matrix, i.e. its transpose is also its inverse.</p>
      * <p>The columns of V are the eigenvectors of the original matrix.</p>
+     * <p>No assumption is made about the orientation of the system axes formed
+     * by the columns of V (e.g. in a 3-dimension space, V can form a left-
+     * or right-handed system).</p>
      * @return the V matrix
      */
     RealMatrix getV();
@@ -66,6 +69,9 @@ public interface EigenDecomposition {
      * Returns the transpose of the matrix V of the decomposition.
      * <p>V is an orthogonal matrix, i.e. its transpose is also its inverse.</p>
      * <p>The columns of V are the eigenvectors of the original matrix.</p>
+     * <p>No assumption is made about the orientation of the system axes formed
+     * by the columns of V (e.g. in a 3-dimension space, V can form a left-
+     * or right-handed system).</p>
      * @return the transpose of the V matrix
      */
     RealMatrix getVT();

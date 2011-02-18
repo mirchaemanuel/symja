@@ -50,11 +50,10 @@ public class MessageFactory {
      * an argument list.
      *
      * @param locale Locale in which the message should be translated.
-     * @param specific Format specifier.
-     * @param general Format specifier.
-     * @param arguments Format arguments. They will be substituted first in
-     * the {@code specific} format specifier, then the remaining arguments
-     * will be substituted in the {@code general} format specifier.
+     * @param specific Format specifier (may be null).
+     * @param general Format specifier (may be null).
+     * @param arguments Format arguments. They will be substituted in
+     * <em>both</em> the {@code general} and {@code specific} format specifiers.
      * @return a localized message string.
      */
     public static String buildMessage(Locale locale,
@@ -62,14 +61,17 @@ public class MessageFactory {
                                       Localizable general,
                                       Object ... arguments) {
         final StringBuilder sb = new StringBuilder();
-        MessageFormat fmt = null;
-        if (specific != null) {
-            fmt = new MessageFormat(specific.getLocalizedString(locale), locale);
+        if (general != null) {
+            final MessageFormat fmt = new MessageFormat(general.getLocalizedString(locale), locale);
             sb.append(fmt.format(arguments));
-            sb.append(": ");
         }
-        fmt = new MessageFormat(general.getLocalizedString(locale), locale);
-        sb.append(fmt.format(arguments));
+        if (specific != null) {
+            if (general != null) {
+                sb.append(": ");
+            }
+            final MessageFormat fmt = new MessageFormat(specific.getLocalizedString(locale), locale);
+            sb.append(fmt.format(arguments));
+        }
 
         return sb.toString();
     }

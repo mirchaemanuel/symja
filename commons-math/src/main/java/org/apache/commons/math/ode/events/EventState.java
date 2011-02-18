@@ -18,11 +18,10 @@
 package org.apache.commons.math.ode.events;
 
 import org.apache.commons.math.ConvergenceException;
-import org.apache.commons.math.FunctionEvaluationException;
-import org.apache.commons.math.MathRuntimeException;
 import org.apache.commons.math.analysis.UnivariateRealFunction;
 import org.apache.commons.math.analysis.solvers.BrentSolver;
-import org.apache.commons.math.ode.DerivativeException;
+import org.apache.commons.math.exception.MathInternalError;
+import org.apache.commons.math.exception.MathUserException;
 import org.apache.commons.math.ode.sampling.StepInterpolator;
 import org.apache.commons.math.util.FastMath;
 
@@ -34,13 +33,12 @@ import org.apache.commons.math.util.FastMath;
  * of one handler during one integration step, with references to the
  * state at the end of the preceding step. This information is used to
  * decide if the handler should trigger an event or not during the
- * proposed step (and hence the step should be reduced to ensure the
- * event occurs at a bound rather than inside the step).</p>
+ * proposed step.</p>
  *
- * @version $Revision: 990658 $ $Date: 2010-08-30 00:04:09 +0200 (Mo, 30 Aug 2010) $
+ * @version $Revision: 1061508 $ $Date: 2011-01-20 21:57:11 +0100 (Do, 20 Jan 2011) $
  * @since 1.2
  */
-public class EventState {
+public class EventState implements Comparable<EventState> {
 
     /** Event handler. */
     private final EventHandler handler;
@@ -140,48 +138,83 @@ public class EventState {
     }
 
     /** Reinitialize the beginning of the step.
-     * @param tStart value of the independent <i>time</i> variable at the
-     * beginning of the step
-     * @param yStart array containing the current value of the state vector
-     * at the beginning of the step
+     * @param interpolator valid for the current step
      * @exception EventException if the event handler
      * value cannot be evaluated at the beginning of the step
      */
-    public void reinitializeBegin(final double tStart, final double[] yStart)
+    public void reinitializeBegin(final StepInterpolator interpolator)
         throws EventException {
-        t0 = tStart;
-        g0 = handler.g(tStart, yStart);
-        g0Positive = g0 >= 0;
+        try {
+            // excerpt from MATH-421 issue:
+            // If an ODE solver is setup with an EventHandler that return STOP
+            // when the even is triggered, the integrator stops (which is exactly
+            // the expected behavior). If however the user want to restart the
+            // solver from the final state reached at the event with the same
+            // configuration (expecting the event to be triggered again at a
+            // later time), then the integrator may fail to start. It can get stuck
+            // at the previous event.
+
+            // The use case for the bug MATH-421 is fairly general, so events occurring
+            // less than epsilon after the solver start in the first step should be ignored,
+            // where epsilon is the convergence threshold of the event. The sign of the g
+            // function should be evaluated after this initial ignore zone, not exactly at
+            // beginning (if there are no event at the very beginning g(t0) and g(t0+epsilon)
+            // have the same sign, so this does not hurt ; if there is an event at the very
+            // beginning, g(t0) and g(t0+epsilon) have opposite signs and we want to start
+            // with the second one. Of course, the sign of epsilon depend on the integration
+            // direction (forward or backward). This explains what is done below.
+
+            final double ignoreZone = interpolator.isForward() ? getConvergence() : -getConvergence();
+            t0 = interpolator.getPreviousTime() + ignoreZone;
+            interpolator.setInterpolatedTime(t0);
+            g0 = handler.g(t0, interpolator.getInterpolatedState());
+            if (g0 == 0) {
+                // extremely rare case: there is a zero EXACTLY at end of ignore zone
+                // we will use the opposite of sign at step beginning to force ignoring this zero
+                final double tStart = interpolator.getPreviousTime();
+                interpolator.setInterpolatedTime(tStart);
+                g0Positive = handler.g(tStart, interpolator.getInterpolatedState()) <= 0;
+            } else {
+                g0Positive = g0 >= 0;
+            }
+
+        } catch (MathUserException mue) {
+            throw new EventException(mue);
+        }
     }
 
     /** Evaluate the impact of the proposed step on the event handler.
      * @param interpolator step interpolator for the proposed step
      * @return true if the event handler triggers an event before
-     * the end of the proposed step (this implies the step should be
-     * rejected)
-     * @exception DerivativeException if the interpolator fails to
+     * the end of the proposed step
+     * @exception MathUserException if the interpolator fails to
      * compute the switching function somewhere within the step
      * @exception EventException if the switching function
      * cannot be evaluated
      * @exception ConvergenceException if an event cannot be located
      */
     public boolean evaluateStep(final StepInterpolator interpolator)
-        throws DerivativeException, EventException, ConvergenceException {
+        throws MathUserException, EventException, ConvergenceException {
 
         try {
 
             forward = interpolator.isForward();
             final double t1 = interpolator.getCurrentTime();
-            final int    n  = FastMath.max(1, (int) FastMath.ceil(FastMath.abs(t1 - t0) / maxCheckInterval));
-            final double h  = (t1 - t0) / n;
+            if (FastMath.abs(t1 - t0) < convergence) {
+                // we cannot do anything on such a small step, don't trigger any events
+                return false;
+            }
+            final double start = forward ? (t0 + convergence) : t0 - convergence;
+            final double dt    = t1 - start;
+            final int    n     = FastMath.max(1, (int) FastMath.ceil(FastMath.abs(dt) / maxCheckInterval));
+            final double h     = dt / n;
 
             double ta = t0;
             double ga = g0;
-            double tb = t0 + (interpolator.isForward() ? convergence : -convergence);
             for (int i = 0; i < n; ++i) {
 
                 // evaluate handler value at the end of the substep
-                tb += h;
+                final double tb = start + (i + 1) * h;
                 interpolator.setInterpolatedTime(tb);
                 final double gb = handler.g(tb, interpolator.getInterpolatedState());
 
@@ -189,7 +222,22 @@ public class EventState {
                 if (g0Positive ^ (gb >= 0)) {
                     // there is a sign change: an event is expected during this step
 
-                    if (ga * gb > 0) {
+                    // variation direction, with respect to the integration direction
+                    increasing = gb >= ga;
+
+                    final UnivariateRealFunction f = new UnivariateRealFunction() {
+                        public double value(final double t) throws MathUserException {
+                            try {
+                                interpolator.setInterpolatedTime(t);
+                                return handler.g(t, interpolator.getInterpolatedState());
+                            } catch (EventException e) {
+                                throw new MathUserException(e);
+                            }
+                        }
+                    };
+                    final BrentSolver solver = new BrentSolver(convergence);
+
+                    if (ga * gb >= 0) {
                         // this is a corner case:
                         // - there was an event near ta,
                         // - there is another event between ta and tb
@@ -200,53 +248,33 @@ public class EventState {
                         final double epsilon = (forward ? 0.25 : -0.25) * convergence;
                         for (int k = 0; (k < 4) && (ga * gb > 0); ++k) {
                             ta += epsilon;
-                            interpolator.setInterpolatedTime(ta);
-                            ga = handler.g(ta, interpolator.getInterpolatedState());
+                            ga = f.value(ta);
                         }
                         if (ga * gb > 0) {
                             // this should never happen
-                            throw MathRuntimeException.createInternalError(null);
+                            throw new MathInternalError();
                         }
                     }
 
-                    // variation direction, with respect to the integration direction
-                    increasing = gb >= ga;
+                    final double root = (ta <= tb) ?
+                                        solver.solve(maxIterationCount, f, ta, tb) :
+                                        solver.solve(maxIterationCount, f, tb, ta);
 
-                    final UnivariateRealFunction f = new UnivariateRealFunction() {
-                        public double value(final double t) throws FunctionEvaluationException {
-                            try {
-                                interpolator.setInterpolatedTime(t);
-                                return handler.g(t, interpolator.getInterpolatedState());
-                            } catch (DerivativeException e) {
-                                throw new FunctionEvaluationException(e, t);
-                            } catch (EventException e) {
-                                throw new FunctionEvaluationException(e, t);
-                            }
-                        }
-                    };
-                    final BrentSolver solver = new BrentSolver();
-                    solver.setAbsoluteAccuracy(convergence);
-                    solver.setMaximalIterationCount(maxIterationCount);
-                    final double root = (ta <= tb) ? solver.solve(f, ta, tb) : solver.solve(f, tb, ta);
-                    if ((FastMath.abs(root - ta) <= convergence) &&
-                         (FastMath.abs(root - previousEventTime) <= convergence)) {
+                    if ((!Double.isNaN(previousEventTime)) &&
+                        (FastMath.abs(root - ta) <= convergence) &&
+                        (FastMath.abs(root - previousEventTime) <= convergence)) {
                         // we have either found nothing or found (again ?) a past event, we simply ignore it
                         ta = tb;
                         ga = gb;
                     } else if (Double.isNaN(previousEventTime) ||
                                (FastMath.abs(previousEventTime - root) > convergence)) {
                         pendingEventTime = root;
-                        if (pendingEvent && (FastMath.abs(t1 - pendingEventTime) <= convergence)) {
-                            // we were already waiting for this event which was
-                            // found during a previous call for a step that was
-                            // rejected, this step must now be accepted since it
-                            // properly ends exactly at the event occurrence
-                            return false;
-                        }
-                        // either we were not waiting for the event or it has
-                        // moved in such a way the step cannot be accepted
                         pendingEvent = true;
                         return true;
+                    } else {
+                        // no sign change: there is no event for now
+                        ta = tb;
+                        ga = gb;
                     }
 
                 } else {
@@ -262,14 +290,12 @@ public class EventState {
             pendingEventTime = Double.NaN;
             return false;
 
-        } catch (FunctionEvaluationException e) {
-            final Throwable cause = e.getCause();
-            if ((cause != null) && (cause instanceof DerivativeException)) {
-                throw (DerivativeException) cause;
-            } else if ((cause != null) && (cause instanceof EventException)) {
+        } catch (MathUserException mue) {
+            final Throwable cause = mue.getCause();
+            if ((cause != null) && (cause instanceof EventException)) {
                 throw (EventException) cause;
             }
-            throw new EventException(e);
+            throw mue;
         }
 
     }
@@ -297,7 +323,7 @@ public class EventState {
         t0 = t;
         g0 = handler.g(t, y);
 
-        if (pendingEvent) {
+        if (pendingEvent && (FastMath.abs(pendingEventTime - t) <= convergence)) {
             // force the sign to its value "just after the event"
             previousEventTime = t;
             g0Positive        = increasing;
@@ -328,7 +354,7 @@ public class EventState {
     public boolean reset(final double t, final double[] y)
         throws EventException {
 
-        if (! pendingEvent) {
+        if (!(pendingEvent && (FastMath.abs(pendingEventTime - t) <= convergence))) {
             return false;
         }
 
@@ -341,6 +367,23 @@ public class EventState {
         return (nextAction == EventHandler.RESET_STATE) ||
                (nextAction == EventHandler.RESET_DERIVATIVES);
 
+    }
+
+    /** Compare the instance with another event state.
+     * <p>
+     * Event state ordering is based on occurrence time within the last
+     * evaluated step. If no event occurs during the step, a time arbitrarily
+     * set to positive infinity is used.
+     * </p>
+     * @param state other event state to compare the instance to
+     * @return a negative integer, zero, or a positive integer as the event
+     * occurs before, simultaneous, or after the specified event of the
+     * specified state.
+     */
+    public int compareTo(final EventState state) {
+        final double instanceTime = pendingEvent ? pendingEventTime : Double.POSITIVE_INFINITY;
+        final double otherTime = state.pendingEvent ? state.pendingEventTime : Double.POSITIVE_INFINITY;
+        return Double.compare(instanceTime, otherTime);
     }
 
 }

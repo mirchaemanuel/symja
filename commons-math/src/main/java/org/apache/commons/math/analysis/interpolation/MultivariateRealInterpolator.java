@@ -16,14 +16,13 @@
  */
 package org.apache.commons.math.analysis.interpolation;
 
-import org.apache.commons.math.MathException;
 import org.apache.commons.math.analysis.MultivariateRealFunction;
 
 /**
  * Interface representing a univariate real interpolating function.
  *
  * @since 2.1
- * @version $Revision: 924794 $ $Date: 2010-03-18 15:15:50 +0100 (Do, 18 Mrz 2010) $
+ * @version $Revision: 1061790 $ $Date: 2011-01-21 13:51:03 +0100 (Fr, 21 Jan 2011) $
  */
 public interface MultivariateRealInterpolator {
 
@@ -37,10 +36,15 @@ public interface MultivariateRealInterpolator {
      * point (where {@code d} is thus the dimension of the space).
      * @param yval the values for the interpolation points
      * @return a function which interpolates the data set
-     * @throws MathException if arguments violate assumptions made by the
-     *         interpolation algorithm or some dimension mismatch occurs
-     * @throws IllegalArgumentException if there are no data (xval null or zero length)
+     * @throws org.apache.commons.math.exception.MathIllegalArgumentException
+     * if the arguments violate assumptions made by the interpolation
+     * algorithm.
+     * @throws org.apache.commons.math.exception.DimensionMismatchException
+     * when the array dimensions are not consistent.
+     * @throws org.apache.commons.math.exception.NoDataException if an
+     * array has zero-length.
+     * @throws org.apache.commons.math.exception.NullArgumentException if
+     * the arguments are {@code null}.
      */
-    MultivariateRealFunction interpolate(double[][] xval, double[] yval)
-        throws MathException, IllegalArgumentException;
+    MultivariateRealFunction interpolate(double[][] xval, double[] yval);
 }

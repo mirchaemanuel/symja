@@ -16,10 +16,10 @@
  */
 package org.apache.commons.math.analysis.integration;
 
-import org.apache.commons.math.FunctionEvaluationException;
+import org.apache.commons.math.exception.MathUserException;
 import org.apache.commons.math.MathRuntimeException;
-import org.apache.commons.math.MaxIterationsExceededException;
 import org.apache.commons.math.analysis.UnivariateRealFunction;
+import org.apache.commons.math.exception.MaxCountExceededException;
 import org.apache.commons.math.exception.util.LocalizedFormats;
 import org.apache.commons.math.util.FastMath;
 
@@ -33,7 +33,7 @@ import org.apache.commons.math.util.FastMath;
  * rule to remove error terms less than order O(N^(-2k)). Simpson's rule
  * is a special case of k = 2.</p>
  *
- * @version $Revision: 990658 $ $Date: 2010-08-30 00:04:09 +0200 (Mo, 30 Aug 2010) $
+ * @version $Revision: 1065763 $ $Date: 2011-01-31 21:42:00 +0100 (Mo, 31 Jan 2011) $
  * @since 1.2
  */
 public class RombergIntegrator extends UnivariateRealIntegratorImpl {
@@ -57,17 +57,15 @@ public class RombergIntegrator extends UnivariateRealIntegratorImpl {
         super(32);
     }
 
-    /** {@inheritDoc} */
     @Deprecated
     public double integrate(final double min, final double max)
-        throws MaxIterationsExceededException, FunctionEvaluationException, IllegalArgumentException {
+        throws MaxCountExceededException, MathUserException, IllegalArgumentException {
         return integrate(f, min, max);
     }
 
     /** {@inheritDoc} */
-    public double integrate(final UnivariateRealFunction f,
-                            final double min, final double max)
-        throws MaxIterationsExceededException, FunctionEvaluationException, IllegalArgumentException {
+    public double integrate(final UnivariateRealFunction f, final double min, final double max)
+        throws MaxCountExceededException, MathUserException, IllegalArgumentException {
 
         final int m = maximalIterationCount + 1;
         double previousRow[] = new double[m];
@@ -105,7 +103,7 @@ public class RombergIntegrator extends UnivariateRealIntegratorImpl {
             }
             olds = s;
         }
-        throw new MaxIterationsExceededException(maximalIterationCount);
+        throw new MaxCountExceededException(maximalIterationCount);
     }
 
     /** {@inheritDoc} */

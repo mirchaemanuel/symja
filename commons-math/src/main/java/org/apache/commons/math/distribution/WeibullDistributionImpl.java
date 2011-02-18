@@ -19,8 +19,10 @@ package org.apache.commons.math.distribution;
 
 import java.io.Serializable;
 
-import org.apache.commons.math.MathRuntimeException;
+import org.apache.commons.math.exception.OutOfRangeException;
+import org.apache.commons.math.exception.NotStrictlyPositiveException;
 import org.apache.commons.math.exception.util.LocalizedFormats;
+import org.apache.commons.math.special.Gamma;
 import org.apache.commons.math.util.FastMath;
 
 /**
@@ -28,59 +30,68 @@ import org.apache.commons.math.util.FastMath;
  * {@link org.apache.commons.math.distribution.WeibullDistribution}.
  *
  * @since 1.1
- * @version $Revision: 990658 $ $Date: 2010-08-30 00:04:09 +0200 (Mo, 30 Aug 2010) $
+ * @version $Revision: 1060449 $ $Date: 2011-01-18 17:24:27 +0100 (Di, 18 Jan 2011) $
  */
 public class WeibullDistributionImpl extends AbstractContinuousDistribution
-        implements WeibullDistribution, Serializable {
-
+    implements WeibullDistribution, Serializable {
     /**
-     * Default inverse cumulative probability accuracy
+     * Default inverse cumulative probability accuracy.
      * @since 2.1
      */
     public static final double DEFAULT_INVERSE_ABSOLUTE_ACCURACY = 1e-9;
-
-    /** Serializable version identifier */
+    /** Serializable version identifier. */
     private static final long serialVersionUID = 8589540077390120676L;
-
     /** The shape parameter. */
-    private double shape;
-
+    private final double shape;
     /** The scale parameter. */
-    private double scale;
-
-    /** Inverse cumulative probability accuracy */
+    private final double scale;
+    /** Inverse cumulative probability accuracy. */
     private final double solverAbsoluteAccuracy;
 
     /**
-     * Creates weibull distribution with the given shape and scale and a
+     * Create a Weibull distribution with the given shape and scale and a
      * location equal to zero.
-     * @param alpha the shape parameter.
-     * @param beta the scale parameter.
+     *
+     * @param alpha Shape parameter.
+     * @param beta Scale parameter.
      */
-    public WeibullDistributionImpl(double alpha, double beta){
+    public WeibullDistributionImpl(double alpha, double beta) {
         this(alpha, beta, DEFAULT_INVERSE_ABSOLUTE_ACCURACY);
     }
 
     /**
-     * Creates weibull distribution with the given shape, scale and inverse
+     * Create a Weibull distribution with the given shape, scale and inverse
      * cumulative probability accuracy and a location equal to zero.
-     * @param alpha the shape parameter.
-     * @param beta the scale parameter.
-     * @param inverseCumAccuracy the maximum absolute error in inverse cumulative probability estimates
-     * (defaults to {@link #DEFAULT_INVERSE_ABSOLUTE_ACCURACY})
+     *
+     * @param alpha Shape parameter.
+     * @param beta Scale parameter.
+     * @param inverseCumAccuracy Maximum absolute error in inverse
+     * cumulative probability estimates
+     * (defaults to {@link #DEFAULT_INVERSE_ABSOLUTE_ACCURACY}).
+     * @throws NotStrictlyPositiveException if {@code alpha <= 0} or
+     * {@code beta <= 0}.
      * @since 2.1
      */
-    public WeibullDistributionImpl(double alpha, double beta, double inverseCumAccuracy){
-        super();
-        setShapeInternal(alpha);
-        setScaleInternal(beta);
+    public WeibullDistributionImpl(double alpha, double beta,
+                                   double inverseCumAccuracy) {
+        if (alpha <= 0) {
+            throw new NotStrictlyPositiveException(LocalizedFormats.SHAPE,
+                                                   alpha);
+        }
+        if (beta <= 0) {
+            throw new NotStrictlyPositiveException(LocalizedFormats.SCALE,
+                                                   beta);
+        }
+        scale = beta;
+        shape = alpha;
         solverAbsoluteAccuracy = inverseCumAccuracy;
     }
 
     /**
-     * For this distribution, X, this method returns P(X &lt; <code>x</code>).
-     * @param x the value at which the CDF is evaluated.
-     * @return CDF evaluted at <code>x</code>.
+     * For this distribution, {@code X}, this method returns {@code P(X < x)}.
+     *
+     * @param x Value at which the CDF is evaluated.
+     * @return the CDF evaluated at {@code x}.
      */
     public double cumulativeProbability(double x) {
         double ret;
@@ -93,27 +104,21 @@ public class WeibullDistributionImpl extends AbstractContinuousDistribution
     }
 
     /**
-     * Access the shape parameter.
-     * @return the shape parameter.
+     * {@inheritDoc}
      */
     public double getShape() {
         return shape;
     }
 
     /**
-     * Access the scale parameter.
-     * @return the scale parameter.
+     * {@inheritDoc}
      */
     public double getScale() {
         return scale;
     }
 
     /**
-     * Returns the probability density for a particular point.
-     *
-     * @param x The point at which the density should be computed.
-     * @return The pdf at point x.
-     * @since 2.1
+     * {@inheritDoc}
      */
     @Override
     public double density(double x) {
@@ -135,23 +140,20 @@ public class WeibullDistributionImpl extends AbstractContinuousDistribution
     }
 
     /**
-     * For this distribution, X, this method returns the critical point x, such
-     * that P(X &lt; x) = <code>p</code>.
-     * <p>
-     * Returns <code>Double.NEGATIVE_INFINITY</code> for p=0 and
-     * <code>Double.POSITIVE_INFINITY</code> for p=1.</p>
+     * For this distribution, {@code X}, this method returns the critical
+     * point {@code x}, such that {@code P(X < x) = p}.
+     * It will return {@code Double.NEGATIVE_INFINITY} when p = 0 and
+     * {@code Double.POSITIVE_INFINITY} when p = 1.
      *
-     * @param p the desired probability
-     * @return x, such that P(X &lt; x) = <code>p</code>
-     * @throws IllegalArgumentException if <code>p</code> is not a valid
-     *         probability.
+     * @param p Desired probability.
+     * @return {@code x}, such that {@code P(X < x) = p}.
+     * @throws OutOfRangeException if {@code p} is not a valid probability.
      */
     @Override
     public double inverseCumulativeProbability(double p) {
         double ret;
         if (p < 0.0 || p > 1.0) {
-            throw MathRuntimeException.createIllegalArgumentException(
-                  LocalizedFormats.OUT_OF_RANGE_SIMPLE, p, 0.0, 1.0);
+            throw new OutOfRangeException(p, 0.0, 1.0);
         } else if (p == 0) {
             ret = 0.0;
         } else  if (p == 1) {
@@ -162,72 +164,27 @@ public class WeibullDistributionImpl extends AbstractContinuousDistribution
         return ret;
     }
 
-    /**
-     * Modify the shape parameter.
-     * @param alpha the new shape parameter value.
-     * @deprecated as of 2.1 (class will become immutable in 3.0)
-     */
-    @Deprecated
-    public void setShape(double alpha) {
-        setShapeInternal(alpha);
-    }
-    /**
-     * Modify the shape parameter.
-     * @param alpha the new shape parameter value.
-     */
-    private void setShapeInternal(double alpha) {
-        if (alpha <= 0.0) {
-            throw MathRuntimeException.createIllegalArgumentException(
-                  LocalizedFormats.NOT_POSITIVE_SHAPE,
-                  alpha);
-        }
-        this.shape = alpha;
-    }
 
     /**
-     * Modify the scale parameter.
-     * @param beta the new scale parameter value.
-     * @deprecated as of 2.1 (class will become immutable in 3.0)
-     */
-    @Deprecated
-    public void setScale(double beta) {
-        setScaleInternal(beta);
-    }
-    /**
-     * Modify the scale parameter.
-     * @param beta the new scale parameter value.
-     */
-    private void setScaleInternal(double beta) {
-        if (beta <= 0.0) {
-            throw MathRuntimeException.createIllegalArgumentException(
-                  LocalizedFormats.NOT_POSITIVE_SCALE,
-                  beta);
-        }
-        this.scale = beta;
-    }
-
-    /**
-     * Access the domain value lower bound, based on <code>p</code>, used to
+     * Access the domain value lower bound, based on {@code p}, used to
      * bracket a CDF root.  This method is used by
      * {@link #inverseCumulativeProbability(double)} to find critical values.
      *
-     * @param p the desired probability for the critical value
-     * @return domain value lower bound, i.e.
-     *         P(X &lt; <i>lower bound</i>) &lt; <code>p</code>
+     * @param p Desired probability for the critical value.
+     * @return the domain value lower bound, i.e. {@code P(X < 'lower bound') < p}.
      */
     @Override
     protected double getDomainLowerBound(double p) {
-        return 0.0;
+        return 0;
     }
 
     /**
-     * Access the domain value upper bound, based on <code>p</code>, used to
+     * Access the domain value upper bound, based on {@code p}, used to
      * bracket a CDF root.  This method is used by
      * {@link #inverseCumulativeProbability(double)} to find critical values.
      *
-     * @param p the desired probability for the critical value
-     * @return domain value upper bound, i.e.
-     *         P(X &lt; <i>upper bound</i>) &gt; <code>p</code>
+     * @param p Desired probability for the critical value.
+     * @return the domain value upper bound, i.e. {@code P(X < 'upper bound') > p}.
      */
     @Override
     protected double getDomainUpperBound(double p) {
@@ -235,12 +192,12 @@ public class WeibullDistributionImpl extends AbstractContinuousDistribution
     }
 
     /**
-     * Access the initial domain value, based on <code>p</code>, used to
+     * Access the initial domain value, based on {@code p}, used to
      * bracket a CDF root.  This method is used by
      * {@link #inverseCumulativeProbability(double)} to find critical values.
      *
-     * @param p the desired probability for the critical value
-     * @return initial domain value
+     * @param p Desired probability for the critical value.
+     * @return the initial domain value.
      */
     @Override
     protected double getInitialDomain(double p) {
@@ -252,11 +209,88 @@ public class WeibullDistributionImpl extends AbstractContinuousDistribution
      * Return the absolute accuracy setting of the solver used to estimate
      * inverse cumulative probabilities.
      *
-     * @return the solver absolute accuracy
+     * @return the solver absolute accuracy.
      * @since 2.1
      */
     @Override
     protected double getSolverAbsoluteAccuracy() {
         return solverAbsoluteAccuracy;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * The lower bound of the support is always 0 no matter the parameters.
+     *
+     * @return lower bound of the support (always 0)
+     */
+    @Override
+    public double getSupportLowerBound() {
+        return 0;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * The upper bound of the support is always positive infinity
+     * no matter the parameters.
+     *
+     * @return upper bound of the support (always Double.POSITIVE_INFINITY)
+     */
+    @Override
+    public double getSupportUpperBound() {
+        return Double.POSITIVE_INFINITY;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * The mean is <code>scale * Gamma(1 + (1 / shape))</code>
+     * where <code>Gamma(...)</code> is the Gamma-function
+     *
+     * @return {@inheritDoc}
+     */
+    @Override
+    protected double calculateNumericalMean() {
+        final double sh = getShape();
+        final double sc = getScale();
+
+        return sc * FastMath.exp(Gamma.logGamma(1 + (1 / sh)));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * The variance is
+     * <code>scale^2 * Gamma(1 + (2 / shape)) - mean^2</code>
+     * where <code>Gamma(...)</code> is the Gamma-function
+     *
+     * @return {@inheritDoc}
+     */
+    @Override
+    protected double calculateNumericalVariance() {
+        final double sh = getShape();
+        final double sc = getScale();
+        final double mn = getNumericalMean();
+
+        return (sc * sc) *
+            FastMath.exp(Gamma.logGamma(1 + (2 / sh))) -
+            (mn * mn);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean isSupportLowerBoundInclusive() {
+        return true;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean isSupportUpperBoundInclusive() {
+        return false;
     }
 }

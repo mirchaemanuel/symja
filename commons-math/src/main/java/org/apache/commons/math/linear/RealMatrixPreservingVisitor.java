@@ -21,11 +21,10 @@ package org.apache.commons.math.linear;
  * Interface defining a visitor for matrix entries.
  *
  * @see DefaultRealMatrixPreservingVisitor
- * @version $Revision: 811685 $ $Date: 2009-09-05 19:36:48 +0200 (Sa, 05 Sep 2009) $
+ * @version $Revision: 1038403 $ $Date: 2010-11-24 01:42:12 +0100 (Mi, 24 Nov 2010) $
  * @since 2.0
  */
 public interface RealMatrixPreservingVisitor {
-
     /**
      * Start visiting a matrix.
      * <p>This method is called once before any entry of the matrix is visited.</p>
@@ -44,10 +43,10 @@ public interface RealMatrixPreservingVisitor {
      * @param row row index of the entry
      * @param column column index of the entry
      * @param value current value of the entry
-     * @throws MatrixVisitorException if something wrong occurs
+     * @throws org.apache.commons.math.exception.MathUserException if the visitor
+     * cannot process an entry.
      */
-    void visit(int row, int column, double value)
-        throws MatrixVisitorException;
+    void visit(int row, int column, double value);
 
     /**
      * End visiting a matrix.
@@ -55,5 +54,4 @@ public interface RealMatrixPreservingVisitor {
      * @return the value that the <code>walkInXxxOrder</code> must return
      */
     double end();
-
 }

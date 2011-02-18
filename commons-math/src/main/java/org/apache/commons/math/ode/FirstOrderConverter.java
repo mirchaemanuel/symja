@@ -17,6 +17,8 @@
 
 package org.apache.commons.math.ode;
 
+import org.apache.commons.math.exception.MathUserException;
+
 /** This class converts second order differential equations to first
  * order ones.
  *
@@ -49,7 +51,7 @@ package org.apache.commons.math.ode;
  * @see FirstOrderIntegrator
  * @see FirstOrderDifferentialEquations
  * @see SecondOrderDifferentialEquations
- * @version $Revision: 811827 $ $Date: 2009-09-06 17:32:50 +0200 (So, 06 Sep 2009) $
+ * @version $Revision: 1037328 $ $Date: 2010-11-20 22:01:50 +0100 (Sa, 20 Nov 2010) $
  * @since 1.2
  */
 
@@ -95,11 +97,11 @@ public class FirstOrderConverter implements FirstOrderDifferentialEquations {
    * @param t current value of the independent <I>time</I> variable
    * @param y array containing the current value of the state vector
    * @param yDot placeholder array where to put the time derivative of the state vector
-   * @throws DerivativeException this exception is propagated to the caller if the
+   * @throws MathUserException this exception is propagated to the caller if the
    * underlying user function triggers one
    */
   public void computeDerivatives(final double t, final double[] y, final double[] yDot)
-      throws DerivativeException {
+      throws MathUserException {
 
     // split the state vector in two
     System.arraycopy(y, 0,         z,    0, dimension);

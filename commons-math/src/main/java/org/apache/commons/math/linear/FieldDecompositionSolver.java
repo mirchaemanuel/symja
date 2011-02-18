@@ -32,7 +32,7 @@ import org.apache.commons.math.FieldElement;
  * solution exists it is also the minimal norm solution.</p>
  *
  * @param <T> the type of the field elements
- * @version $Revision: 781122 $ $Date: 2009-06-02 20:53:23 +0200 (Di, 02 Jun 2009) $
+ * @version $Revision: 1034220 $ $Date: 2010-11-12 01:13:27 +0100 (Fr, 12 Nov 2010) $
  * @since 2.0
  */
 public interface FieldDecompositionSolver<T extends FieldElement<T>> {
@@ -42,33 +42,36 @@ public interface FieldDecompositionSolver<T extends FieldElement<T>> {
      * decomposition algorithm.</p>
      * @param b right-hand side of the equation A &times; X = B
      * @return a vector X that minimizes the two norm of A &times; X - B
-     * @exception IllegalArgumentException if matrices dimensions don't match
-     * @exception InvalidMatrixException if decomposed matrix is singular
+     * @throws org.apache.commons.math.exception.DimensionMismatchException
+     * if the matrices dimensions do not match.
+     * @throws org.apache.commons.math.exception.SingularMatrixException
+     * if the decomposed matrix is singular.
      */
-    T[] solve(final T[] b)
-        throws IllegalArgumentException, InvalidMatrixException;
+    T[] solve(final T[] b);
 
     /** Solve the linear equation A &times; X = B for matrices A.
      * <p>The A matrix is implicit, it is provided by the underlying
      * decomposition algorithm.</p>
      * @param b right-hand side of the equation A &times; X = B
      * @return a vector X that minimizes the two norm of A &times; X - B
-     * @exception IllegalArgumentException if matrices dimensions don't match
-     * @exception InvalidMatrixException if decomposed matrix is singular
+     * @throws org.apache.commons.math.exception.DimensionMismatchException
+     * if the matrices dimensions do not match.
+     * @throws org.apache.commons.math.exception.SingularMatrixException
+     * if the decomposed matrix is singular.
      */
-    FieldVector<T> solve(final FieldVector<T> b)
-        throws IllegalArgumentException, InvalidMatrixException;
+    FieldVector<T> solve(final FieldVector<T> b);
 
     /** Solve the linear equation A &times; X = B for matrices A.
      * <p>The A matrix is implicit, it is provided by the underlying
      * decomposition algorithm.</p>
      * @param b right-hand side of the equation A &times; X = B
      * @return a matrix X that minimizes the two norm of A &times; X - B
-     * @exception IllegalArgumentException if matrices dimensions don't match
-     * @exception InvalidMatrixException if decomposed matrix is singular
+     * @throws org.apache.commons.math.exception.DimensionMismatchException
+     * if the matrices dimensions do not match.
+     * @throws org.apache.commons.math.exception.SingularMatrixException
+     * if the decomposed matrix is singular.
      */
-    FieldMatrix<T> solve(final FieldMatrix<T> b)
-        throws IllegalArgumentException, InvalidMatrixException;
+    FieldMatrix<T> solve(final FieldMatrix<T> b);
 
     /**
      * Check if the decomposed matrix is non-singular.
@@ -78,9 +81,8 @@ public interface FieldDecompositionSolver<T extends FieldElement<T>> {
 
     /** Get the inverse (or pseudo-inverse) of the decomposed matrix.
      * @return inverse matrix
-     * @throws InvalidMatrixException if decomposed matrix is singular
+     * @throws org.apache.commons.math.exception.SingularMatrixException
+     * if the decomposed matrix is singular.
      */
-    FieldMatrix<T> getInverse()
-        throws InvalidMatrixException;
-
+    FieldMatrix<T> getInverse();
 }

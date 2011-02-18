@@ -17,14 +17,13 @@
 package org.apache.commons.math.analysis.integration;
 
 import org.apache.commons.math.ConvergenceException;
-import org.apache.commons.math.ConvergingAlgorithm;
-import org.apache.commons.math.FunctionEvaluationException;
+import org.apache.commons.math.exception.MathUserException;
 import org.apache.commons.math.analysis.UnivariateRealFunction;
 
 /**
  * Interface for univariate real integration algorithms.
  *
- * @version $Revision: 811685 $ $Date: 2009-09-05 19:36:48 +0200 (Sa, 05 Sep 2009) $
+ * @version $Revision: 1062707 $ $Date: 2011-01-24 10:48:39 +0100 (Mo, 24 Jan 2011) $
  * @since 1.2
  */
 public interface UnivariateRealIntegrator extends ConvergingAlgorithm {
@@ -62,38 +61,18 @@ public interface UnivariateRealIntegrator extends ConvergingAlgorithm {
     /**
      * Integrate the function in the given interval.
      *
-     * @param min the lower bound for the interval
-     * @param max the upper bound for the interval
-     * @return the value of integral
-     * @throws ConvergenceException if the maximum iteration count is exceeded
-     * or the integrator detects convergence problems otherwise
-     * @throws FunctionEvaluationException if an error occurs evaluating the
-     * function
-     * @throws IllegalArgumentException if min > max or the endpoints do not
-     * satisfy the requirements specified by the integrator
-     * @deprecated replaced by {@link #integrate(UnivariateRealFunction, double, double)}
-     * since 2.0
-     */
-    @Deprecated
-    double integrate(double min, double max) throws ConvergenceException,
-        FunctionEvaluationException, IllegalArgumentException;
-
-    /**
-     * Integrate the function in the given interval.
-     *
      * @param f the integrand function
      * @param min the lower bound for the interval
      * @param max the upper bound for the interval
      * @return the value of integral
      * @throws ConvergenceException if the maximum iteration count is exceeded
      * or the integrator detects convergence problems otherwise
-     * @throws FunctionEvaluationException if an error occurs evaluating the
-     * function
+     * @throws MathUserException if an error occurs evaluating the function
      * @throws IllegalArgumentException if min > max or the endpoints do not
      * satisfy the requirements specified by the integrator
      */
-    double integrate(UnivariateRealFunction f, double min, double max) throws ConvergenceException,
-        FunctionEvaluationException, IllegalArgumentException;
+    double integrate(UnivariateRealFunction f, double min, double max)
+        throws ConvergenceException, MathUserException, IllegalArgumentException;
 
     /**
      * Get the result of the last run of the integrator.
@@ -103,5 +82,4 @@ public interface UnivariateRealIntegrator extends ConvergingAlgorithm {
      * because no result was yet computed or the last attempt failed
      */
     double getResult() throws IllegalStateException;
-
 }
