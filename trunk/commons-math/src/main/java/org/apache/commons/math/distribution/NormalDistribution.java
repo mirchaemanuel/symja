@@ -28,38 +28,20 @@ package org.apache.commons.math.distribution;
  * </ul>
  * </p>
  *
- * @version $Revision: 920852 $ $Date: 2010-03-09 13:53:44 +0100 (Di, 09 Mrz 2010) $
+ * @version $Revision: 1003048 $ $Date: 2010-09-30 14:55:02 +0200 (Do, 30 Sep 2010) $
  */
-public interface NormalDistribution extends ContinuousDistribution, HasDensity<Double> {
+public interface NormalDistribution extends ContinuousDistribution {
     /**
      * Access the mean.
-     * @return mean for this distribution
+     *
+     * @return the mean for this distribution.
      */
     double getMean();
-    /**
-     * Modify the mean.
-     * @param mean for this distribution
-     * @deprecated as of v2.1
-     */
-    @Deprecated
-    void setMean(double mean);
-    /**
-     * Access the standard deviation.
-     * @return standard deviation for this distribution
-     */
-    double getStandardDeviation();
-    /**
-     * Modify the standard deviation.
-     * @param sd standard deviation for this distribution
-     * @deprecated as of v2.1
-     */
-    @Deprecated
-    void setStandardDeviation(double sd);
 
     /**
-     * Return the probability density for a particular point.
-     * @param x  The point at which the density should be computed.
-     * @return  The pdf at point x.
+     * Access the standard deviation.
+     *
+     * @return the standard deviation for this distribution.
      */
-    double density(Double x);
+    double getStandardDeviation();
 }

@@ -17,12 +17,7 @@
 
 package org.apache.commons.math.analysis.solvers;
 
-import org.apache.commons.math.FunctionEvaluationException;
-import org.apache.commons.math.MathRuntimeException;
-import org.apache.commons.math.MaxIterationsExceededException;
 import org.apache.commons.math.analysis.DifferentiableUnivariateRealFunction;
-import org.apache.commons.math.analysis.UnivariateRealFunction;
-import org.apache.commons.math.exception.util.LocalizedFormats;
 import org.apache.commons.math.util.FastMath;
 
 /**
@@ -31,108 +26,63 @@ import org.apache.commons.math.util.FastMath;
  * <p>
  * The function should be continuous but not necessarily smooth.</p>
  *
- * @version $Revision: 990658 $ $Date: 2010-08-30 00:04:09 +0200 (Mo, 30 Aug 2010) $
+ * @version $Revision: 1042596 $ $Date: 2010-12-06 12:56:26 +0100 (Mo, 06 Dez 2010) $
  */
-public class NewtonSolver extends UnivariateRealSolverImpl {
-
-    /**
-     * Construct a solver for the given function.
-     * @param f function to solve.
-     * @deprecated as of 2.0 the function to solve is passed as an argument
-     * to the {@link #solve(UnivariateRealFunction, double, double)} or
-     * {@link UnivariateRealSolverImpl#solve(UnivariateRealFunction, double, double, double)}
-     * method.
-     */
-    @Deprecated
-    public NewtonSolver(DifferentiableUnivariateRealFunction f) {
-        super(f, 100, 1E-6);
-    }
+public class NewtonSolver extends AbstractDifferentiableUnivariateRealSolver {
+    /** Default absolute accuracy. */
+    private static final double DEFAULT_ABSOLUTE_ACCURACY = 1e-6;
 
     /**
      * Construct a solver.
      */
     public NewtonSolver() {
-        super(100, 1E-6);
+        this(DEFAULT_ABSOLUTE_ACCURACY);
     }
-
-    /** {@inheritDoc} */
-    @Deprecated
-    public double solve(final double min, final double max)
-        throws MaxIterationsExceededException,
-        FunctionEvaluationException  {
-        return solve(f, min, max);
-    }
-
-    /** {@inheritDoc} */
-    @Deprecated
-    public double solve(final double min, final double max, final double startValue)
-        throws MaxIterationsExceededException, FunctionEvaluationException  {
-        return solve(f, min, max, startValue);
+    /**
+     * Construct a solver.
+     *
+     * @param absoluteAccuracy Absolute accuracy.
+     */
+    public NewtonSolver(double absoluteAccuracy) {
+        super(absoluteAccuracy);
     }
 
     /**
-     * Find a zero near the midpoint of <code>min</code> and <code>max</code>.
+     * Find a zero near the midpoint of {@code min} and {@code max}.
      *
-     * @param f the function to solve
-     * @param min the lower bound for the interval
-     * @param max the upper bound for the interval
-     * @return the value where the function is zero
-     * @throws MaxIterationsExceededException if the maximum iteration count is exceeded
-     * @throws FunctionEvaluationException if an error occurs evaluating the
-     * function or derivative
-     * @throws IllegalArgumentException if min is not less than max
+     * @param f Function to solve.
+     * @param min Lower bound for the interval?
+     * @param max Upper bound for the interval.
+     * @param maxEval Maximum number of evaluations.
+     * @return the value where the function is zero.
+     * @throws org.apache.commons.math.exception.TooManyEvaluationsException
+     * if the maximum evaluation count is exceeded.
+     * @throws org.apache.commons.math.exception.NumberIsTooLargeException
+     * if {@code min >= max}.
      */
-    public double solve(final UnivariateRealFunction f,
-                        final double min, final double max)
-        throws MaxIterationsExceededException, FunctionEvaluationException  {
-        return solve(f, min, max, UnivariateRealSolverUtils.midpoint(min, max));
+    @Override
+    public double solve(int maxEval, final DifferentiableUnivariateRealFunction f,
+                        final double min, final double max) {
+        return super.solve(maxEval, f, UnivariateRealSolverUtils.midpoint(min, max));
     }
 
     /**
-     * Find a zero near the value <code>startValue</code>.
-     *
-     * @param f the function to solve
-     * @param min the lower bound for the interval (ignored).
-     * @param max the upper bound for the interval (ignored).
-     * @param startValue the start value to use.
-     * @return the value where the function is zero
-     * @throws MaxIterationsExceededException if the maximum iteration count is exceeded
-     * @throws FunctionEvaluationException if an error occurs evaluating the
-     * function or derivative
-     * @throws IllegalArgumentException if startValue is not between min and max or
-     * if function is not a {@link DifferentiableUnivariateRealFunction} instance
+     * {@inheritDoc}
      */
-    public double solve(final UnivariateRealFunction f,
-                        final double min, final double max, final double startValue)
-        throws MaxIterationsExceededException, FunctionEvaluationException {
+    @Override
+    protected double doSolve() {
+        final double startValue = getStartValue();
+        final double absoluteAccuracy = getAbsoluteAccuracy();
 
-        try {
-
-            final UnivariateRealFunction derivative =
-                ((DifferentiableUnivariateRealFunction) f).derivative();
-            clearResult();
-            verifySequence(min, startValue, max);
-
-            double x0 = startValue;
-            double x1;
-
-            int i = 0;
-            while (i < maximalIterationCount) {
-
-                x1 = x0 - (f.value(x0) / derivative.value(x0));
-                if (FastMath.abs(x1 - x0) <= absoluteAccuracy) {
-                    setResult(x1, i);
-                    return x1;
-                }
-
-                x0 = x1;
-                ++i;
+        double x0 = startValue;
+        double x1;
+        while (true) {
+            x1 = x0 - (computeObjectiveValue(x0) / computeDerivativeObjectiveValue(x0));
+            if (FastMath.abs(x1 - x0) <= absoluteAccuracy) {
+                return x1;
             }
 
-            throw new MaxIterationsExceededException(maximalIterationCount);
-        } catch (ClassCastException cce) {
-            throw MathRuntimeException.createIllegalArgumentException(LocalizedFormats.FUNCTION_NOT_DIFFERENTIABLE);
+            x0 = x1;
         }
     }
-
 }

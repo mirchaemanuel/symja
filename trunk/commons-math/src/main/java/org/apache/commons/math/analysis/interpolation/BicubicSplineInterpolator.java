@@ -16,17 +16,16 @@
  */
 package org.apache.commons.math.analysis.interpolation;
 
-import org.apache.commons.math.DimensionMismatchException;
-import org.apache.commons.math.MathException;
 import org.apache.commons.math.analysis.UnivariateRealFunction;
 import org.apache.commons.math.analysis.polynomials.PolynomialSplineFunction;
+import org.apache.commons.math.exception.DimensionMismatchException;
 import org.apache.commons.math.exception.NoDataException;
 import org.apache.commons.math.util.MathUtils;
 
 /**
  * Generates a bicubic interpolating function.
  *
- * @version $Revision: 980944 $ $Date: 2010-07-30 22:31:11 +0200 (Fr, 30 Jul 2010) $
+ * @version $Revision: 1055931 $ $Date: 2011-01-06 17:20:51 +0100 (Do, 06 Jan 2011) $
  * @since 2.2
  */
 public class BicubicSplineInterpolator
@@ -36,8 +35,7 @@ public class BicubicSplineInterpolator
      */
     public BicubicSplineInterpolatingFunction interpolate(final double[] xval,
                                                           final double[] yval,
-                                                          final double[][] fval)
-        throws MathException, IllegalArgumentException {
+                                                          final double[][] fval) {
         if (xval.length == 0 || yval.length == 0 || fval.length == 0) {
             throw new NoDataException();
         }

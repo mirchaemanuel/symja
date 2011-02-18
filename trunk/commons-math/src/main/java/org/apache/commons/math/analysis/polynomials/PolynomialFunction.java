@@ -31,7 +31,7 @@ import org.apache.commons.math.util.FastMath;
  * <a href="http://mathworld.wolfram.com/HornersMethod.html">Horner's Method</a>
  *  is used to evaluate the function.</p>
  *
- * @version $Revision: 990658 $ $Date: 2010-08-30 00:04:09 +0200 (Mo, 30 Aug 2010) $
+ * @version $Revision: 1042422 $ $Date: 2010-12-05 20:25:21 +0100 (So, 05 Dez 2010) $
  */
 public class PolynomialFunction implements DifferentiableUnivariateRealFunction, Serializable {
 
@@ -281,7 +281,7 @@ public class PolynomialFunction implements DifferentiableUnivariateRealFunction,
     @Override
      public String toString() {
 
-       StringBuffer s = new StringBuffer();
+       StringBuilder s = new StringBuilder();
        if (coefficients[0] == 0.0) {
          if (coefficients.length == 1) {
            return "0";

@@ -16,39 +16,21 @@
  */
 package org.apache.commons.math.exception;
 
-import java.util.Locale;
-
-import org.apache.commons.math.exception.util.ArgUtils;
-import org.apache.commons.math.exception.util.MessageFactory;
 import org.apache.commons.math.exception.util.Localizable;
 
 /**
  * Base class for all preconditions violation exceptions.
- * This class is not intended to be instantiated directly: it should serve
- * as a base class to create all the exceptions that share the semantics of
- * the standard {@link IllegalArgumentException}, but must also provide a
+ * In most cases, this class should not be instantiated directly: it should
+ * serve as a base class to create all the exceptions that share the semantics
+ * of the standard {@link IllegalArgumentException}, but must also provide a
  * localized message.
  *
  * @since 2.2
  * @version $Revision$ $Date$
  */
-public class MathIllegalArgumentException extends IllegalArgumentException {
-
+public class MathIllegalArgumentException extends MathRuntimeException {
     /** Serializable version Id. */
     private static final long serialVersionUID = -6024911025449780478L;
-
-    /**
-     * Pattern used to build the message (specific context).
-     */
-    private final Localizable specific;
-    /**
-     * Pattern used to build the message (general problem description).
-     */
-    private final Localizable general;
-    /**
-     * Arguments used to build the message.
-     */
-    private final Object[] arguments;
 
     /**
      * @param specific Message pattern providing the specific context of
@@ -56,42 +38,17 @@ public class MathIllegalArgumentException extends IllegalArgumentException {
      * @param general Message pattern explaining the cause of the error.
      * @param args Arguments.
      */
-    protected MathIllegalArgumentException(Localizable specific,
-                                           Localizable general,
-                                           Object ... args) {
-        this.specific = specific;
-        this.general = general;
-        arguments = ArgUtils.flatten(args);
+    public MathIllegalArgumentException(Localizable specific,
+                                        Localizable general,
+                                        Object ... args) {
+        super(null, specific, general, args);
     }
     /**
      * @param general Message pattern explaining the cause of the error.
      * @param args Arguments.
      */
-    protected MathIllegalArgumentException(Localizable general,
-                                           Object ... args) {
+    public MathIllegalArgumentException(Localizable general,
+                                        Object ... args) {
         this(null, general, args);
-    }
-
-    /**
-     * Get the message in a specified locale.
-     *
-     * @param locale Locale in which the message should be translated.
-     *
-     * @return the localized message.
-     */
-    public String getMessage(final Locale locale) {
-        return MessageFactory.buildMessage(locale, specific, general, arguments);
-    }
-
-   /** {@inheritDoc} */
-    @Override
-    public String getMessage() {
-        return getMessage(Locale.US);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public String getLocalizedMessage() {
-        return getMessage(Locale.getDefault());
     }
 }

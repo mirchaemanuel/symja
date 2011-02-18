@@ -90,7 +90,7 @@ import org.apache.commons.math.FieldElement;
  *  detail and is really only a matter of definition.  Any side effects of
  *  this can be rendered invisible by a subclass.</p>
  * @see DfpField
- * @version $Revision: 992864 $ $Date: 2010-09-05 21:09:44 +0200 (So, 05 Sep 2010) $
+ * @version $Revision: 1003349 $ $Date: 2010-10-01 03:40:02 +0200 (Fr, 01 Okt 2010) $
  * @since 2.2
  */
 public class Dfp implements FieldElement<Dfp> {
@@ -344,19 +344,19 @@ public class Dfp implements FieldElement<Dfp> {
         // Check some special cases
         if (s.equals(POS_INFINITY_STRING)) {
             sign = (byte) 1;
-            nans = (byte) INFINITE;
+            nans = INFINITE;
             return;
         }
 
         if (s.equals(NEG_INFINITY_STRING)) {
             sign = (byte) -1;
-            nans = (byte) INFINITE;
+            nans = INFINITE;
             return;
         }
 
         if (s.equals(NAN_STRING)) {
             sign = (byte) 1;
-            nans = (byte) QNAN;
+            nans = QNAN;
             return;
         }
 
@@ -1949,6 +1949,7 @@ public class Dfp implements FieldElement<Dfp> {
     /** Get a string representation of the instance.
      * @return string representation of the instance
      */
+    @Override
     public String toString() {
         if (nans != FINITE) {
             // if non-finite exceptional cases

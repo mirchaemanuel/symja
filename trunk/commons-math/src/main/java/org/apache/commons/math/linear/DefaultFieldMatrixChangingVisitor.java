@@ -27,12 +27,11 @@ import org.apache.commons.math.FieldElement;
  * </p>
  *
  * @param <T> the type of the field elements
- * @version $Revision: 811685 $ $Date: 2009-09-05 19:36:48 +0200 (Sa, 05 Sep 2009) $
+ * @version $Revision: 1038403 $ $Date: 2010-11-24 01:42:12 +0100 (Mi, 24 Nov 2010) $
  * @since 2.0
  */
 public class DefaultFieldMatrixChangingVisitor<T extends FieldElement<T>>
     implements FieldMatrixChangingVisitor<T> {
-
     /** Zero element of the field. */
     private final T zero;
 
@@ -49,8 +48,7 @@ public class DefaultFieldMatrixChangingVisitor<T extends FieldElement<T>>
     }
 
     /** {@inheritDoc} */
-    public T visit(int row, int column, T value)
-        throws MatrixVisitorException {
+    public T visit(int row, int column, T value) {
         return value;
     }
 
@@ -58,5 +56,4 @@ public class DefaultFieldMatrixChangingVisitor<T extends FieldElement<T>>
     public T end() {
         return zero;
     }
-
 }

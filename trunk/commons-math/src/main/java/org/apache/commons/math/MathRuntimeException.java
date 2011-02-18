@@ -26,6 +26,7 @@ import java.util.ConcurrentModificationException;
 import java.util.Locale;
 import java.util.NoSuchElementException;
 
+import org.apache.commons.math.exception.MathThrowable;
 import org.apache.commons.math.exception.util.DummyLocalizable;
 import org.apache.commons.math.exception.util.Localizable;
 import org.apache.commons.math.exception.util.LocalizedFormats;
@@ -33,10 +34,10 @@ import org.apache.commons.math.exception.util.LocalizedFormats;
 /**
 * Base class for commons-math unchecked exceptions.
 *
-* @version $Revision: 996179 $ $Date: 2010-09-11 19:19:54 +0200 (Sa, 11 Sep 2010) $
+* @version $Revision: 1035476 $ $Date: 2010-11-15 23:39:56 +0100 (Mo, 15 Nov 2010) $
 * @since 2.0
 */
-public class MathRuntimeException extends RuntimeException {
+public class MathRuntimeException extends RuntimeException implements MathThrowable {
 
     /** Serializable version identifier. */
     private static final long serialVersionUID = 9058794795027570002L;
@@ -139,26 +140,24 @@ public class MathRuntimeException extends RuntimeException {
     /** Gets the pattern used to build the message of this throwable.
     *
     * @return the pattern used to build the message of this throwable
-    * @deprecated as of 2.2 replaced by {@link #getLocalizablePattern()}
+    * @deprecated as of 2.2 replaced by {@link #getSpecificPattern()} and {@link #getGeneralPattern()}
     */
     @Deprecated
     public String getPattern() {
         return pattern.getSourceString();
     }
 
-    /** Gets the localizable pattern used to build the message of this throwable.
-     *
-     * @return the localizable pattern used to build the message of this throwable
-     * @since 2.2
-     */
-    public Localizable getLocalizablePattern() {
+    /** {@inheritDoc} */
+    public Localizable getSpecificPattern() {
+        return null;
+    }
+
+    /** {@inheritDoc} */
+    public Localizable getGeneralPattern() {
         return pattern;
     }
 
-    /** Gets the arguments used to build the message of this throwable.
-     *
-     * @return the arguments used to build the message of this throwable
-     */
+    /** {@inheritDoc} */
     public Object[] getArguments() {
         return arguments.clone();
     }
@@ -559,6 +558,7 @@ public class MathRuntimeException extends RuntimeException {
      * @deprecated in 2.2. Please use {@link org.apache.commons.math.exception.MathUnsupportedOperationException}
      * instead.
      */
+    @Deprecated
     public static UnsupportedOperationException createUnsupportedOperationException(final Localizable pattern,
                                                                                     final Object ... arguments) {
         return new UnsupportedOperationException() {
@@ -604,6 +604,7 @@ public class MathRuntimeException extends RuntimeException {
      * @since 2.2
      * @deprecated in 2.2. Checks for "null" must not be performed in Commons-Math.
      */
+    @Deprecated
     public static NullPointerException createNullPointerException(final Localizable pattern,
                                                                   final Object ... arguments) {
         return new NullPointerException() {

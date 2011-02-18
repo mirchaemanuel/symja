@@ -19,7 +19,7 @@ package org.apache.commons.math.distribution;
 import java.io.Serializable;
 
 import org.apache.commons.math.MathException;
-import org.apache.commons.math.MathRuntimeException;
+import org.apache.commons.math.exception.NotStrictlyPositiveException;
 import org.apache.commons.math.exception.util.LocalizedFormats;
 import org.apache.commons.math.special.Gamma;
 import org.apache.commons.math.util.FastMath;
@@ -27,27 +27,22 @@ import org.apache.commons.math.util.FastMath;
 /**
  * The default implementation of {@link GammaDistribution}.
  *
- * @version $Revision: 990658 $ $Date: 2010-08-30 00:04:09 +0200 (Mo, 30 Aug 2010) $
+ * @version $Revision: 1060449 $ $Date: 2011-01-18 17:24:27 +0100 (Di, 18 Jan 2011) $
  */
 public class GammaDistributionImpl extends AbstractContinuousDistribution
     implements GammaDistribution, Serializable  {
-
     /**
-     * Default inverse cumulative probability accuracy
+     * Default inverse cumulative probability accuracy.
      * @since 2.1
      */
     public static final double DEFAULT_INVERSE_ABSOLUTE_ACCURACY = 1e-9;
-
-    /** Serializable version identifier */
+    /** Serializable version identifier. */
     private static final long serialVersionUID = -3239549463135430361L;
-
     /** The shape parameter. */
-    private double alpha;
-
+    private final double alpha;
     /** The scale parameter. */
-    private double beta;
-
-    /** Inverse cumulative probability accuracy */
+    private final double beta;
+    /** Inverse cumulative probability accuracy. */
     private final double solverAbsoluteAccuracy;
 
     /**
@@ -61,41 +56,53 @@ public class GammaDistributionImpl extends AbstractContinuousDistribution
 
     /**
      * Create a new gamma distribution with the given alpha and beta values.
-     * @param alpha the shape parameter.
-     * @param beta the scale parameter.
-     * @param inverseCumAccuracy the maximum absolute error in inverse cumulative probability estimates
-     * (defaults to {@link #DEFAULT_INVERSE_ABSOLUTE_ACCURACY})
+     *
+     * @param alpha Shape parameter.
+     * @param beta Scale parameter.
+     * @param inverseCumAccuracy Maximum absolute error in inverse
+     * cumulative probability estimates (defaults to
+     * {@link #DEFAULT_INVERSE_ABSOLUTE_ACCURACY}).
+     * @throws NotStrictlyPositiveException if {@code alpha <= 0} or
+     * {@code beta <= 0}.
      * @since 2.1
      */
     public GammaDistributionImpl(double alpha, double beta, double inverseCumAccuracy) {
-        super();
-        setAlphaInternal(alpha);
-        setBetaInternal(beta);
+        if (alpha <= 0) {
+            throw new NotStrictlyPositiveException(LocalizedFormats.ALPHA, alpha);
+        }
+        if (beta <= 0) {
+            throw new NotStrictlyPositiveException(LocalizedFormats.BETA, beta);
+        }
+
+        this.alpha = alpha;
+        this.beta = beta;
         solverAbsoluteAccuracy = inverseCumAccuracy;
     }
 
     /**
-     * For this distribution, X, this method returns P(X &lt; x).
+     * For this distribution, {@code X}, this method returns {@code P(X < x)}.
      *
      * The implementation of this method is based on:
      * <ul>
-     * <li>
-     * <a href="http://mathworld.wolfram.com/Chi-SquaredDistribution.html">
-     * Chi-Squared Distribution</a>, equation (9).</li>
-     * <li>Casella, G., & Berger, R. (1990). <i>Statistical Inference</i>.
-     * Belmont, CA: Duxbury Press.</li>
+     *  <li>
+     *   <a href="http://mathworld.wolfram.com/Chi-SquaredDistribution.html">
+     *    Chi-Squared Distribution</a>, equation (9).
+     *  </li>
+     *  <li>Casella, G., & Berger, R. (1990). <i>Statistical Inference</i>.
+     *    Belmont, CA: Duxbury Press.
+     *  </li>
      * </ul>
      *
-     * @param x the value at which the CDF is evaluated.
+     * @param x Value at which the CDF is evaluated.
      * @return CDF for this distribution.
      * @throws MathException if the cumulative probability can not be
-     *            computed due to convergence or other numerical errors.
+     * computed due to convergence or other numerical errors.
      */
     public double cumulativeProbability(double x) throws MathException{
         double ret;
 
-        if (x <= 0.0) {
-            ret = 0.0;
+        if (x <= 0) {
+            ret = 0;
         } else {
             ret = Gamma.regularizedGammaP(alpha, x / beta);
         }
@@ -104,23 +111,23 @@ public class GammaDistributionImpl extends AbstractContinuousDistribution
     }
 
     /**
-     * For this distribution, X, this method returns the critical point x, such
-     * that P(X &lt; x) = <code>p</code>.
-     * <p>
-     * Returns 0 for p=0 and <code>Double.POSITIVE_INFINITY</code> for p=1.</p>
+     * For this distribution, {@code X}, this method returns the critical
+     * point {@code x}, such that {@code P(X < x) = p}.
+     * It will return 0 when p = 0 and {@code Double.POSITIVE_INFINITY}
+     * when p = 1.
      *
-     * @param p the desired probability
-     * @return x, such that P(X &lt; x) = <code>p</code>
-     * @throws MathException if the inverse cumulative probability can not be
-     *         computed due to convergence or other numerical errors.
-     * @throws IllegalArgumentException if <code>p</code> is not a valid
-     *         probability.
+     * @param p Desired probability.
+     * @return {@code x}, such that {@code P(X < x) = p}.
+     * @throws MathException if the inverse cumulative probability cannot be
+     * computed due to convergence or other numerical errors.
+     * @throws org.apache.commons.math.exception.OutOfRangeException if
+     * {@code p} is not a valid probability.
      */
     @Override
     public double inverseCumulativeProbability(final double p)
-    throws MathException {
+        throws MathException {
         if (p == 0) {
-            return 0d;
+            return 0;
         }
         if (p == 1) {
             return Double.POSITIVE_INFINITY;
@@ -129,102 +136,36 @@ public class GammaDistributionImpl extends AbstractContinuousDistribution
     }
 
     /**
-     * Modify the shape parameter, alpha.
-     * @param alpha the new shape parameter.
-     * @throws IllegalArgumentException if <code>alpha</code> is not positive.
-     * @deprecated as of 2.1 (class will become immutable in 3.0)
-     */
-    @Deprecated
-    public void setAlpha(double alpha) {
-        setAlphaInternal(alpha);
-    }
-
-    /**
-     * Modify the shape parameter, alpha.
-     * @param newAlpha the new shape parameter.
-     * @throws IllegalArgumentException if <code>newAlpha</code> is not positive.
-     */
-    private void setAlphaInternal(double newAlpha) {
-        if (newAlpha <= 0.0) {
-            throw MathRuntimeException.createIllegalArgumentException(
-                  LocalizedFormats.NOT_POSITIVE_ALPHA,
-                  newAlpha);
-        }
-        this.alpha = newAlpha;
-    }
-
-    /**
-     * Access the shape parameter, alpha
-     * @return alpha.
+     * {@inheritDoc}
      */
     public double getAlpha() {
         return alpha;
     }
 
     /**
-     * Modify the scale parameter, beta.
-     * @param newBeta the new scale parameter.
-     * @throws IllegalArgumentException if <code>newBeta</code> is not positive.
-     * @deprecated as of 2.1 (class will become immutable in 3.0)
-     */
-    @Deprecated
-    public void setBeta(double newBeta) {
-        setBetaInternal(newBeta);
-    }
-
-    /**
-     * Modify the scale parameter, beta.
-     * @param newBeta the new scale parameter.
-     * @throws IllegalArgumentException if <code>newBeta</code> is not positive.
-     */
-    private void setBetaInternal(double newBeta) {
-        if (newBeta <= 0.0) {
-            throw MathRuntimeException.createIllegalArgumentException(
-                  LocalizedFormats.NOT_POSITIVE_BETA,
-                  newBeta);
-        }
-        this.beta = newBeta;
-    }
-
-    /**
-     * Access the scale parameter, beta
-     * @return beta.
+     * {@inheritDoc}
      */
     public double getBeta() {
         return beta;
     }
 
     /**
-     * Returns the probability density for a particular point.
-     *
-     * @param x The point at which the density should be computed.
-     * @return The pdf at point x.
+     * {@inheritDoc}
      */
     @Override
     public double density(double x) {
         if (x < 0) return 0;
-        return FastMath.pow(x / beta, alpha - 1) / beta * FastMath.exp(-x / beta) / FastMath.exp(Gamma.logGamma(alpha));
+        return FastMath.pow(x / beta, alpha - 1) / beta *
+            FastMath.exp(-x / beta) / FastMath.exp(Gamma.logGamma(alpha));
     }
 
     /**
-     * Return the probability density for a particular point.
-     *
-     * @param x The point at which the density should be computed.
-     * @return The pdf at point x.
-     * @deprecated
-     */
-    public double density(Double x) {
-        return density(x.doubleValue());
-    }
-
-    /**
-     * Access the domain value lower bound, based on <code>p</code>, used to
+     * Access the domain value lower bound, based on {@code p}, used to
      * bracket a CDF root.  This method is used by
      * {@link #inverseCumulativeProbability(double)} to find critical values.
      *
-     * @param p the desired probability for the critical value
-     * @return domain value lower bound, i.e.
-     *         P(X &lt; <i>lower bound</i>) &lt; <code>p</code>
+     * @param p Desired probability for the critical value.
+     * @return the domain value lower bound, i.e. {@code P(X < 'lower bound') < p}.
      */
     @Override
     protected double getDomainLowerBound(double p) {
@@ -233,13 +174,12 @@ public class GammaDistributionImpl extends AbstractContinuousDistribution
     }
 
     /**
-     * Access the domain value upper bound, based on <code>p</code>, used to
+     * Access the domain value upper bound, based on {@code p}, used to
      * bracket a CDF root.  This method is used by
      * {@link #inverseCumulativeProbability(double)} to find critical values.
      *
-     * @param p the desired probability for the critical value
-     * @return domain value upper bound, i.e.
-     *         P(X &lt; <i>upper bound</i>) &gt; <code>p</code>
+     * @param p Desired probability for the critical value.
+     * @return the domain value upper bound, i.e. {@code P(X < 'upper bound') > p}.
      */
     @Override
     protected double getDomainUpperBound(double p) {
@@ -249,7 +189,7 @@ public class GammaDistributionImpl extends AbstractContinuousDistribution
 
         double ret;
 
-        if (p < .5) {
+        if (p < 0.5) {
             // use mean
             ret = alpha * beta;
         } else {
@@ -261,12 +201,12 @@ public class GammaDistributionImpl extends AbstractContinuousDistribution
     }
 
     /**
-     * Access the initial domain value, based on <code>p</code>, used to
+     * Access the initial domain value, based on {@code p}, used to
      * bracket a CDF root.  This method is used by
      * {@link #inverseCumulativeProbability(double)} to find critical values.
      *
-     * @param p the desired probability for the critical value
-     * @return initial domain value
+     * @param p Desired probability for the critical value.
+     * @return the initial domain value.
      */
     @Override
     protected double getInitialDomain(double p) {
@@ -275,9 +215,9 @@ public class GammaDistributionImpl extends AbstractContinuousDistribution
 
         double ret;
 
-        if (p < .5) {
+        if (p < 0.5) {
             // use 1/2 mean
-            ret = alpha * beta * .5;
+            ret = alpha * beta * 0.5;
         } else {
             // use mean
             ret = alpha * beta;
@@ -290,11 +230,81 @@ public class GammaDistributionImpl extends AbstractContinuousDistribution
      * Return the absolute accuracy setting of the solver used to estimate
      * inverse cumulative probabilities.
      *
-     * @return the solver absolute accuracy
+     * @return the solver absolute accuracy.
      * @since 2.1
      */
     @Override
     protected double getSolverAbsoluteAccuracy() {
         return solverAbsoluteAccuracy;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * The lower bound of the support is always 0 no matter the parameters.
+     *
+     * @return lower bound of the support (always 0)
+     */
+    @Override
+    public double getSupportLowerBound() {
+        return 0;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * The upper bound of the support is always positive infinity
+     * no matter the parameters.
+     *
+     * @return upper bound of the support (always Double.POSITIVE_INFINITY)
+     */
+    @Override
+    public double getSupportUpperBound() {
+        return Double.POSITIVE_INFINITY;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * For shape parameter <code>alpha</code> and scale
+     * parameter <code>beta</code>, the mean is
+     * <code>alpha * beta</code>
+     *
+     * @return {@inheritDoc}
+     */
+    @Override
+    protected double calculateNumericalMean() {
+        return getAlpha() * getBeta();
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * For shape parameter <code>alpha</code> and scale
+     * parameter <code>beta</code>, the variance is
+     * <code>alpha * beta^2</code>
+     *
+     * @return {@inheritDoc}
+     */
+    @Override
+    protected double calculateNumericalVariance() {
+        final double b = getBeta();
+        return getAlpha() * b * b;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean isSupportLowerBoundInclusive() {
+        return true;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean isSupportUpperBoundInclusive() {
+        return false;
     }
 }

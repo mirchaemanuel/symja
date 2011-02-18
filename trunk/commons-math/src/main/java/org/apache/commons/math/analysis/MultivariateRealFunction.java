@@ -17,23 +17,29 @@
 
 package org.apache.commons.math.analysis;
 
-import org.apache.commons.math.FunctionEvaluationException;
-
 /**
  * An interface representing a multivariate real function.
- * @version $Revision: 811685 $ $Date: 2009-09-05 19:36:48 +0200 (Sa, 05 Sep 2009) $
+ *
+ * @version $Revision: 1061790 $ $Date: 2011-01-21 13:51:03 +0100 (Fr, 21 Jan 2011) $
  * @since 2.0
  */
 public interface MultivariateRealFunction {
 
     /**
      * Compute the value for the function at the given point.
-     * @param point point at which the function must be evaluated
-     * @return function value for the given point
-     * @exception FunctionEvaluationException if the function evaluation fails
-     * @exception IllegalArgumentException if points dimension is wrong
+     *
+     * @param point Point at which the function must be evaluated.
+     * @return the function value for the given point.
+     * @throws org.apache.commons.math.exception.MathUserException if
+     * the function evaluation fails.
+     * @throws org.apache.commons.math.exception.DimensionMismatchException
+     * if the parameter's dimension is wrong for the function being evaluated.
+     * @throws  org.apache.commons.math.exception.MathIllegalArgumentException
+     * when the activated method itself can ascertain that preconditions,
+     * specified in the API expressed at the level of the activated method,
+     * have been violated.  In the vast majority of cases where Commons Math
+     * throws this exception, it is the result of argument checking of actual
+     * parameters immediately passed to a method.
      */
-    double value(double[] point)
-        throws FunctionEvaluationException, IllegalArgumentException;
-
+    double value(double[] point);
 }

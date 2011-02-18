@@ -21,7 +21,7 @@ import java.util.Locale;
 /**
  * Dummy implementation of the {@link Localizable} interface, without localization.
  *
- * @version $Revision: 983921 $ $Date: 2010-08-10 12:46:06 +0200 (Di, 10 Aug 2010) $
+ * @version $Revision: 1003351 $ $Date: 2010-10-01 03:50:12 +0200 (Fr, 01 Okt 2010) $
  * @since 2.2
  */
 public class DummyLocalizable implements Localizable {
@@ -50,6 +50,7 @@ public class DummyLocalizable implements Localizable {
     }
 
     /** {@inheritDoc} */
+    @Override
     public String toString() {
         return source;
     }

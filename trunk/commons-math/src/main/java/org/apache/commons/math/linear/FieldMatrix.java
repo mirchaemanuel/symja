@@ -28,157 +28,162 @@ import org.apache.commons.math.FieldElement;
  * returns the element in the first row, first column of the matrix.</p>
  *
  * @param <T> the type of the field elements
- * @version $Revision: 811786 $ $Date: 2009-09-06 11:36:08 +0200 (So, 06 Sep 2009) $
+ * @version $Revision: 1038403 $ $Date: 2010-11-24 01:42:12 +0100 (Mi, 24 Nov 2010) $
  */
 public interface FieldMatrix<T extends FieldElement<T>> extends AnyMatrix {
-
     /**
      * Get the type of field elements of the matrix.
-     * @return type of field elements of the matrix
+     *
+     * @return the type of field elements of the matrix.
      */
     Field<T> getField();
 
     /**
-     * Create a new FieldMatrix<T> of the same type as the instance with the supplied
-     * row and column dimensions.
+     * Create a new FieldMatrix<T> of the same type as the instance with
+     * the supplied row and column dimensions.
      *
      * @param rowDimension  the number of rows in the new matrix
      * @param columnDimension  the number of columns in the new matrix
      * @return a new matrix of the same type as the instance
-     * @throws IllegalArgumentException if row or column dimension is not positive
+     * @throws org.apache.commons.math.exception.NotStrictlyPositiveException
+     * if row or column dimension is not positive.
      * @since 2.0
      */
     FieldMatrix<T> createMatrix(final int rowDimension, final int columnDimension);
 
     /**
-     * Returns a (deep) copy of this.
+     * Make a (deep) copy of this.
      *
-     * @return matrix copy
+     * @return a copy of this matrix.
      */
     FieldMatrix<T> copy();
 
     /**
      * Compute the sum of this and m.
      *
-     * @param m    matrix to be added
-     * @return     this + m
-     * @throws  IllegalArgumentException if m is not the same size as this
+     * @param m Matrix to be added.
+     * @return {@code this} + {@code m}.
+     * @throws org.apache.commons.math.exception.MatrixDimensionMismatchException
+     * if {@code m} is not the same size as this matrix.
      */
-    FieldMatrix<T> add(FieldMatrix<T> m) throws IllegalArgumentException;
+    FieldMatrix<T> add(FieldMatrix<T> m);
 
     /**
-     * Compute this minus m.
+     * Subtract {@code m} from this matrix.
      *
-     * @param m    matrix to be subtracted
-     * @return     this + m
-     * @throws  IllegalArgumentException if m is not the same size as this
+     * @param m Matrix to be subtracted.
+     * @return {@code this} - {@code m}.
+     * @throws org.apache.commons.math.exception.MatrixDimensionMismatchException
+     * if {@code m} is not the same size as this matrix.
      */
-    FieldMatrix<T> subtract(FieldMatrix<T> m) throws IllegalArgumentException;
+    FieldMatrix<T> subtract(FieldMatrix<T> m);
 
      /**
-     * Returns the result of adding d to each entry of this.
+     * Increment each entry of this matrix.
      *
-     * @param d    value to be added to each entry
-     * @return     d + this
+     * @param d Value to be added to each entry.
+     * @return {@code d} + {@code this}.
      */
     FieldMatrix<T> scalarAdd(T d);
 
     /**
-     * Returns the result multiplying each entry of this by d.
+     * Multiply each entry by {@code d}.
      *
-     * @param d    value to multiply all entries by
-     * @return     d * this
+     * @param d Value to multiply all entries by.
+     * @return {@code d} * {@code this}.
      */
     FieldMatrix<T> scalarMultiply(T d);
 
     /**
-     * Returns the result of postmultiplying this by m.
+     * Postmultiply this matrix by {@code m}.
      *
-     * @param m    matrix to postmultiply by
-     * @return     this * m
-     * @throws     IllegalArgumentException
+     * @param m  Matrix to postmultiply by.
+     * @return {@code this} * {@code m}.
+     * @throws IllegalArgumentException
      *             if columnDimension(this) != rowDimension(m)
      */
-    FieldMatrix<T> multiply(FieldMatrix<T> m) throws IllegalArgumentException;
+    FieldMatrix<T> multiply(FieldMatrix<T> m);
 
     /**
-     * Returns the result premultiplying this by <code>m</code>.
-     * @param m    matrix to premultiply by
-     * @return     m * this
-     * @throws     IllegalArgumentException
-     *             if rowDimension(this) != columnDimension(m)
+     * Premultiply this matrix by {@code m}.
+     *
+     * @param m Matrix to premultiply by.
+     * @return {@code m} * {@code this}.
+     * @throws org.apache.commons.math.exception.DimensionMismatchException
+     * if the number of columns of {@code m} differ from the number of rows
+     * of this matrix.
      */
-    FieldMatrix<T> preMultiply(FieldMatrix<T> m) throws IllegalArgumentException;
+    FieldMatrix<T> preMultiply(FieldMatrix<T> m);
 
     /**
      * Returns matrix entries as a two-dimensional array.
      *
-     * @return    2-dimensional array of entries
+     * @return a 2-dimensional array of entries.
      */
     T[][] getData();
 
     /**
-     * Gets a submatrix. Rows and columns are indicated
-     * counting from 0 to n-1.
+     * Get a submatrix. Rows and columns are indicated
+     * counting from 0 to n - 1.
      *
      * @param startRow Initial row index
      * @param endRow Final row index (inclusive)
      * @param startColumn Initial column index
      * @param endColumn Final column index (inclusive)
-     * @return The subMatrix containing the data of the
-     *         specified rows and columns
-     * @exception MatrixIndexException  if the indices are not valid
+     * @return the matrix containing the data of the
+     * specified rows and columns.
+     * @throws org.apache.commons.math.exception.OutOfRangeException
+     * if the indices are not valid.
      */
-   FieldMatrix<T> getSubMatrix(int startRow, int endRow, int startColumn, int endColumn)
-       throws MatrixIndexException;
+   FieldMatrix<T> getSubMatrix(int startRow, int endRow, int startColumn, int endColumn);
 
    /**
-    * Gets a submatrix. Rows and columns are indicated
-    * counting from 0 to n-1.
+    * Get a submatrix. Rows and columns are indicated
+    * counting from 0 to n - 1.
     *
     * @param selectedRows Array of row indices.
     * @param selectedColumns Array of column indices.
-    * @return The subMatrix containing the data in the
-    *         specified rows and columns
-    * @exception MatrixIndexException if row or column selections are not valid
+    * @return the matrix containing the data in the
+    * specified rows and columns.
+    * @throws org.apache.commons.math.exception.OutOfRangeException
+    * if row or column selections are not valid.
     */
-   FieldMatrix<T> getSubMatrix(int[] selectedRows, int[] selectedColumns)
-       throws MatrixIndexException;
+   FieldMatrix<T> getSubMatrix(int[] selectedRows, int[] selectedColumns);
 
    /**
     * Copy a submatrix. Rows and columns are indicated
     * counting from 0 to n-1.
     *
-    * @param startRow Initial row index
-    * @param endRow Final row index (inclusive)
-    * @param startColumn Initial column index
-    * @param endColumn Final column index (inclusive)
+    * @param startRow Initial row index.
+    * @param endRow Final row index (inclusive).
+    * @param startColumn Initial column index.
+    * @param endColumn Final column index (inclusive).
     * @param destination The arrays where the submatrix data should be copied
-    * (if larger than rows/columns counts, only the upper-left part will be used)
-    * @exception MatrixIndexException if the indices are not valid
-    * @exception IllegalArgumentException if the destination array is too small
+    * (if larger than rows/columns counts, only the upper-left part will be used).
+    * @throws org.apache.commons.math.exception.OutOfRangeException
+    * if the indices are not valid.
+    * @exception IllegalArgumentException if the destination array is too small.
     */
   void copySubMatrix(int startRow, int endRow, int startColumn, int endColumn,
-                     T[][] destination)
-      throws MatrixIndexException, IllegalArgumentException;
+                     T[][] destination);
 
   /**
    * Copy a submatrix. Rows and columns are indicated
-   * counting from 0 to n-1.
+   * counting from 0 to n - 1.
    *
-    * @param selectedRows Array of row indices.
-    * @param selectedColumns Array of column indices.
-   * @param destination The arrays where the submatrix data should be copied
+   * @param selectedRows Array of row indices.
+   * @param selectedColumns Array of column indices.
+   * @param destination Arrays where the submatrix data should be copied
    * (if larger than rows/columns counts, only the upper-left part will be used)
-   * @exception MatrixIndexException if the indices are not valid
+   * @throws org.apache.commons.math.exception.OutOfRangeException
+   * if the indices are not valid.
    * @exception IllegalArgumentException if the destination array is too small
    */
-  void copySubMatrix(int[] selectedRows, int[] selectedColumns, T[][] destination)
-      throws MatrixIndexException, IllegalArgumentException;
+  void copySubMatrix(int[] selectedRows, int[] selectedColumns, T[][] destination);
 
    /**
-    * Replace the submatrix starting at <code>row, column</code> using data in
-    * the input <code>subMatrix</code> array. Indexes are 0-based.
+    * Replace the submatrix starting at {@code (row, column)} using data in
+    * the input {@code subMatrix} array. Indexes are 0-based.
     * <p>
     * Example:<br>
     * Starting with <pre>
@@ -193,234 +198,218 @@ public interface FieldMatrix<T extends FieldElement<T>> extends AnyMatrix {
     * 9  5  6  2
     * </pre></p>
     *
-    * @param subMatrix  array containing the submatrix replacement data
-    * @param row  row coordinate of the top, left element to be replaced
-    * @param column  column coordinate of the top, left element to be replaced
-    * @throws MatrixIndexException  if subMatrix does not fit into this
-    *    matrix from element in (row, column)
-    * @throws IllegalArgumentException if <code>subMatrix</code> is not rectangular
-    *  (not all rows have the same length) or empty
-    * @throws NullPointerException if <code>subMatrix</code> is null
+    * @param subMatrix Array containing the submatrix replacement data.
+    * @param row Row coordinate of the top-left element to be replaced.
+    * @param column Column coordinate of the top-left element to be replaced.
+    * @throws org.apache.commons.math.exception.MatrixDimensionMismatchException
+    * if {@code subMatrix} does not fit into this matrix from element in
+    * {@code (row, column)}.
+    * @throws org.apache.commons.math.exception.ZeroException if a row or column
+    * of {@code subMatrix} is empty.
+    * @throws org.apache.commons.math.exception.DimensionMismatchException
+    * if {@code subMatrix} is not rectangular (not all rows have the same
+    * length).
+    * @throws org.apache.commons.math.exception.NullArgumentException
+    * if {@code subMatrix} is {@code null}.
     * @since 2.0
     */
-   void setSubMatrix(T[][] subMatrix, int row, int column)
-       throws MatrixIndexException;
+  void setSubMatrix(T[][] subMatrix, int row, int column);
 
    /**
-    * Returns the entries in row number <code>row</code>
-    * as a row matrix.  Row indices start at 0.
+    * Get the entries in row number {@code row}
+    * as a row matrix.
     *
-    * @param row the row to be fetched
-    * @return row matrix
-    * @throws MatrixIndexException if the specified row index is invalid
+    * @param row Row to be fetched.
+    * @return a row matrix.
+    * @throws org.apache.commons.math.exception.OutOfRangeException
+    * if the specified row index is invalid.
     */
-   FieldMatrix<T> getRowMatrix(int row) throws MatrixIndexException;
+   FieldMatrix<T> getRowMatrix(int row);
 
    /**
-    * Sets the entries in row number <code>row</code>
-    * as a row matrix.  Row indices start at 0.
+    * Set the entries in row number {@code row}
+    * as a row matrix.
     *
-    * @param row the row to be set
-    * @param matrix row matrix (must have one row and the same number of columns
-    * as the instance)
-    * @throws MatrixIndexException if the specified row index is invalid
-    * @throws InvalidMatrixException if the matrix dimensions do not match one
-    * instance row
+    * @param row Row to be set.
+    * @param matrix Row matrix (must have one row and the same number
+    * of columns as the instance).
+    * @throws org.apache.commons.math.exception.OutOfRangeException
+    * if the specified row index is invalid.
+    * @throws org.apache.commons.math.exception.MatrixDimensionMismatchException
+    * if the matrix dimensions do not match one instance row.
     */
-   void setRowMatrix(int row, FieldMatrix<T> matrix)
-       throws MatrixIndexException, InvalidMatrixException;
+   void setRowMatrix(int row, FieldMatrix<T> matrix);
 
    /**
-    * Returns the entries in column number <code>column</code>
-    * as a column matrix.  Column indices start at 0.
+    * Get the entries in column number {@code column}
+    * as a column matrix.
     *
-    * @param column the column to be fetched
-    * @return column matrix
-    * @throws MatrixIndexException if the specified column index is invalid
+    * @param column Column to be fetched.
+    * @return a column matrix.
+    * @throws org.apache.commons.math.exception.OutOfRangeException
+    * if the specified column index is invalid.
     */
-   FieldMatrix<T> getColumnMatrix(int column) throws MatrixIndexException;
+   FieldMatrix<T> getColumnMatrix(int column);
 
    /**
-    * Sets the entries in column number <code>column</code>
-    * as a column matrix.  Column indices start at 0.
+    * Set the entries in column number {@code column}
+    * as a column matrix.
     *
-    * @param column the column to be set
-    * @param matrix column matrix (must have one column and the same number of rows
-    * as the instance)
-    * @throws MatrixIndexException if the specified column index is invalid
-    * @throws InvalidMatrixException if the matrix dimensions do not match one
-    * instance column
+    * @param column Column to be set.
+    * @param matrix column matrix (must have one column and the same
+    * number of rows as the instance).
+    * @throws org.apache.commons.math.exception.OutOfRangeException
+    * if the specified column index is invalid.
+    * @throws org.apache.commons.math.exception.MatrixDimensionMismatchException
+    * if the matrix dimensions do not match one instance column.
     */
-   void setColumnMatrix(int column, FieldMatrix<T> matrix)
-       throws MatrixIndexException, InvalidMatrixException;
+   void setColumnMatrix(int column, FieldMatrix<T> matrix);
 
    /**
-    * Returns the entries in row number <code>row</code>
-    * as a vector.  Row indices start at 0.
+    * Get the entries in row number {@code row}
+    * as a vector.
     *
-    * @param row the row to be fetched
-    * @return row vector
-    * @throws MatrixIndexException if the specified row index is invalid
+    * @param row Row to be fetched
+    * @return a row vector.
+    * @throws org.apache.commons.math.exception.OutOfRangeException
+    * if the specified row index is invalid.
     */
-   FieldVector<T> getRowVector(int row) throws MatrixIndexException;
+   FieldVector<T> getRowVector(int row);
 
    /**
-    * Sets the entries in row number <code>row</code>
-    * as a vector.  Row indices start at 0.
+    * Set the entries in row number {@code row}
+    * as a vector.
     *
-    * @param row the row to be set
+    * @param row Row to be set.
     * @param vector row vector (must have the same number of columns
-    * as the instance)
-    * @throws MatrixIndexException if the specified row index is invalid
-    * @throws InvalidMatrixException if the vector dimension does not match one
-    * instance row
+    * as the instance).
+    * @throws org.apache.commons.math.exception.OutOfRangeException
+    * if the specified row index is invalid.
+    * @throws org.apache.commons.math.exception.MatrixDimensionMismatchException
+    * if the vector dimension does not match one instance row.
     */
-   void setRowVector(int row, FieldVector<T> vector)
-       throws MatrixIndexException, InvalidMatrixException;
+   void setRowVector(int row, FieldVector<T> vector);
 
    /**
-    * Returns the entries in column number <code>column</code>
-    * as a vector.  Column indices start at 0.
+    * Returns the entries in column number {@code column}
+    * as a vector.
     *
-    * @param column the column to be fetched
-    * @return column vector
-    * @throws MatrixIndexException if the specified column index is invalid
+    * @param column Column to be fetched.
+    * @return a column vector.
+    * @throws org.apache.commons.math.exception.OutOfRangeException
+    * if the specified column index is invalid.
     */
-   FieldVector<T> getColumnVector(int column) throws MatrixIndexException;
+   FieldVector<T> getColumnVector(int column);
 
    /**
-    * Sets the entries in column number <code>column</code>
-    * as a vector.  Column indices start at 0.
+    * Set the entries in column number {@code column}
+    * as a vector.
     *
-    * @param column the column to be set
-    * @param vector column vector (must have the same number of rows as the instance)
-    * @throws MatrixIndexException if the specified column index is invalid
-    * @throws InvalidMatrixException if the vector dimension does not match one
-    * instance column
+    * @param column Column to be set.
+    * @param vector Column vector (must have the same number of rows
+    * as the instance).
+    * @throws org.apache.commons.math.exception.OutOfRangeException
+    * if the specified column index is invalid.
+    * @throws org.apache.commons.math.exception.MatrixDimensionMismatchException
+    * if the vector dimension does not match one instance column.
     */
-   void setColumnVector(int column, FieldVector<T> vector)
-       throws MatrixIndexException, InvalidMatrixException;
+   void setColumnVector(int column, FieldVector<T> vector);
 
     /**
-     * Returns the entries in row number <code>row</code> as an array.
-     * <p>
-     * Row indices start at 0.  A <code>MatrixIndexException</code> is thrown
-     * unless <code>0 <= row < rowDimension.</code></p>
+     * Get the entries in row number {@code row} as an array.
      *
-     * @param row the row to be fetched
-     * @return array of entries in the row
-     * @throws MatrixIndexException if the specified row index is not valid
+     * @param row Row to be fetched.
+     * @return array of entries in the row.
+     * @throws org.apache.commons.math.exception.OutOfRangeException
+     * if the specified row index is not valid.
      */
-    T[] getRow(int row) throws MatrixIndexException;
+    T[] getRow(int row);
 
     /**
-     * Sets the entries in row number <code>row</code>
-     * as a row matrix.  Row indices start at 0.
+     * Set the entries in row number {@code row}
+     * as a row matrix.
      *
-     * @param row the row to be set
-     * @param array row matrix (must have the same number of columns as the instance)
-     * @throws MatrixIndexException if the specified row index is invalid
-     * @throws InvalidMatrixException if the array size does not match one
-     * instance row
+     * @param row Row to be set.
+     * @param array Row matrix (must have the same number of columns as
+     * the instance).
+     * @throws org.apache.commons.math.exception.OutOfRangeException
+     * if the specified row index is invalid.
+     * @throws org.apache.commons.math.exception.MatrixDimensionMismatchException
+     * if the array size does not match one instance row.
      */
-    void setRow(int row, T[] array)
-        throws MatrixIndexException, InvalidMatrixException;
+    void setRow(int row, T[] array);
 
     /**
-     * Returns the entries in column number <code>col</code> as an array.
-     * <p>
-     * Column indices start at 0.  A <code>MatrixIndexException</code> is thrown
-     * unless <code>0 <= column < columnDimension.</code></p>
+     * Get the entries in column number {@code col} as an array.
      *
      * @param column the column to be fetched
      * @return array of entries in the column
-     * @throws MatrixIndexException if the specified column index is not valid
+     * @throws org.apache.commons.math.exception.OutOfRangeException
+     * if the specified column index is not valid.
      */
-    T[] getColumn(int column) throws MatrixIndexException;
+    T[] getColumn(int column);
 
     /**
-     * Sets the entries in column number <code>column</code>
-     * as a column matrix.  Column indices start at 0.
+     * Set the entries in column number {@code column}
+     * as a column matrix.
      *
      * @param column the column to be set
      * @param array column array (must have the same number of rows as the instance)
-     * @throws MatrixIndexException if the specified column index is invalid
-     * @throws InvalidMatrixException if the array size does not match one
-     * instance column
+     * @throws org.apache.commons.math.exception.OutOfRangeException
+     * if the specified column index is invalid.
+     * @throws org.apache.commons.math.exception.MatrixDimensionMismatchException
+     * if the array size does not match one instance column.
      */
-    void setColumn(int column, T[] array)
-        throws MatrixIndexException, InvalidMatrixException;
+    void setColumn(int column, T[] array);
 
     /**
      * Returns the entry in the specified row and column.
-     * <p>
-     * Row and column indices start at 0 and must satisfy
-     * <ul>
-     * <li><code>0 <= row < rowDimension</code></li>
-     * <li><code> 0 <= column < columnDimension</code></li>
-     * </ul>
-     * otherwise a <code>MatrixIndexException</code> is thrown.</p>
      *
      * @param row  row location of entry to be fetched
      * @param column  column location of entry to be fetched
      * @return matrix entry in row,column
-     * @throws MatrixIndexException if the row or column index is not valid
+     * @throws org.apache.commons.math.exception.OutOfRangeException
+     * if the row or column index is not valid.
      */
-    T getEntry(int row, int column) throws MatrixIndexException;
+    T getEntry(int row, int column);
 
     /**
      * Set the entry in the specified row and column.
-     * <p>
-     * Row and column indices start at 0 and must satisfy
-     * <ul>
-     * <li><code>0 <= row < rowDimension</code></li>
-     * <li><code> 0 <= column < columnDimension</code></li>
-     * </ul>
-     * otherwise a <code>MatrixIndexException</code> is thrown.</p>
      *
      * @param row  row location of entry to be set
      * @param column  column location of entry to be set
      * @param value matrix entry to be set in row,column
-     * @throws MatrixIndexException if the row or column index is not valid
+     * @throws org.apache.commons.math.exception.OutOfRangeException
+     * if the row or column index is not valid.
      * @since 2.0
      */
-    void setEntry(int row, int column, T value) throws MatrixIndexException;
+    void setEntry(int row, int column, T value);
 
     /**
      * Change an entry in the specified row and column.
-     * <p>
-     * Row and column indices start at 0 and must satisfy
-     * <ul>
-     * <li><code>0 <= row < rowDimension</code></li>
-     * <li><code> 0 <= column < columnDimension</code></li>
-     * </ul>
-     * otherwise a <code>MatrixIndexException</code> is thrown.</p>
      *
-     * @param row  row location of entry to be set
-     * @param column  column location of entry to be set
-     * @param increment value to add to the current matrix entry in row,column
-     * @throws MatrixIndexException if the row or column index is not valid
+     * @param row Row location of entry to be set.
+     * @param column Column location of entry to be set.
+     * @param increment Value to add to the current matrix entry in
+     * {@code (row, column)}.
+     * @throws org.apache.commons.math.exception.OutOfRangeException
+     * if the row or column index is not valid.
      * @since 2.0
      */
-    void addToEntry(int row, int column, T increment) throws MatrixIndexException;
+    void addToEntry(int row, int column, T increment);
 
     /**
      * Change an entry in the specified row and column.
-     * <p>
-     * Row and column indices start at 0 and must satisfy
-     * <ul>
-     * <li><code>0 <= row < rowDimension</code></li>
-     * <li><code> 0 <= column < columnDimension</code></li>
-     * </ul>
-     * otherwise a <code>MatrixIndexException</code> is thrown.</p>
      *
-     * @param row  row location of entry to be set
-     * @param column  column location of entry to be set
-     * @param factor multiplication factor for the current matrix entry in row,column
-     * @throws MatrixIndexException if the row or column index is not valid
+     * @param row Row location of entry to be set.
+     * @param column Column location of entry to be set.
+     * @param factor Multiplication factor for the current matrix entry
+     * in {@code (row,column)}
+     * @throws org.apache.commons.math.exception.OutOfRangeException
+     * if the row or column index is not valid.
      * @since 2.0
      */
-    void multiplyEntry(int row, int column, T factor) throws MatrixIndexException;
+    void multiplyEntry(int row, int column, T factor);
 
     /**
      * Returns the transpose of this matrix.
@@ -434,9 +423,10 @@ public interface FieldMatrix<T extends FieldElement<T>> extends AnyMatrix {
      * trace</a> of the matrix (the sum of the elements on the main diagonal).
      *
      * @return trace
-     * @throws NonSquareMatrixException if the matrix is not square
+     * @throws org.apache.commons.math.exception.NonSquareMatrixException
+     * if the matrix is not square.
      */
-    T getTrace() throws NonSquareMatrixException;
+    T getTrace();
 
     /**
      * Returns the result of multiplying this by the vector <code>v</code>.
@@ -445,7 +435,7 @@ public interface FieldMatrix<T extends FieldElement<T>> extends AnyMatrix {
      * @return this*v
      * @throws IllegalArgumentException if columnDimension != v.size()
      */
-    T[] operate(T[] v) throws IllegalArgumentException;
+    T[] operate(T[] v);
 
     /**
      * Returns the result of multiplying this by the vector <code>v</code>.
@@ -454,7 +444,7 @@ public interface FieldMatrix<T extends FieldElement<T>> extends AnyMatrix {
      * @return this*v
      * @throws IllegalArgumentException if columnDimension != v.size()
      */
-    FieldVector<T> operate(FieldVector<T> v) throws IllegalArgumentException;
+    FieldVector<T> operate(FieldVector<T> v);
 
     /**
      * Returns the (row) vector result of premultiplying this by the vector <code>v</code>.
@@ -463,7 +453,7 @@ public interface FieldMatrix<T extends FieldElement<T>> extends AnyMatrix {
      * @return v*this
      * @throws IllegalArgumentException if rowDimension != v.size()
      */
-    T[] preMultiply(T[] v) throws IllegalArgumentException;
+    T[] preMultiply(T[] v);
 
     /**
      * Returns the (row) vector result of premultiplying this by the vector <code>v</code>.
@@ -472,7 +462,7 @@ public interface FieldMatrix<T extends FieldElement<T>> extends AnyMatrix {
      * @return v*this
      * @throws IllegalArgumentException if rowDimension != v.size()
      */
-    FieldVector<T> preMultiply(FieldVector<T> v) throws IllegalArgumentException;
+    FieldVector<T> preMultiply(FieldVector<T> v);
 
     /**
      * Visit (and possibly change) all matrix entries in row order.
@@ -480,7 +470,8 @@ public interface FieldMatrix<T extends FieldElement<T>> extends AnyMatrix {
      * of a row from left to right before going to the leftmost element
      * of the next row.</p>
      * @param visitor visitor used to process all matrix entries
-     * @exception  MatrixVisitorException if the visitor cannot process an entry
+     * @throws org.apache.commons.math.exception.MathUserException if the visitor
+     * cannot process an entry.
      * @see #walkInRowOrder(FieldMatrixPreservingVisitor)
      * @see #walkInRowOrder(FieldMatrixChangingVisitor, int, int, int, int)
      * @see #walkInRowOrder(FieldMatrixPreservingVisitor, int, int, int, int)
@@ -495,8 +486,7 @@ public interface FieldMatrix<T extends FieldElement<T>> extends AnyMatrix {
      * @return the value returned by {@link FieldMatrixChangingVisitor#end()} at the end
      * of the walk
      */
-    T walkInRowOrder(FieldMatrixChangingVisitor<T> visitor)
-        throws MatrixVisitorException;
+    T walkInRowOrder(FieldMatrixChangingVisitor<T> visitor);
 
     /**
      * Visit (but don't change) all matrix entries in row order.
@@ -504,7 +494,8 @@ public interface FieldMatrix<T extends FieldElement<T>> extends AnyMatrix {
      * of a row from left to right before going to the leftmost element
      * of the next row.</p>
      * @param visitor visitor used to process all matrix entries
-     * @exception  MatrixVisitorException if the visitor cannot process an entry
+     * @throws org.apache.commons.math.exception.MathUserException if the visitor
+     * cannot process an entry.
      * @see #walkInRowOrder(FieldMatrixChangingVisitor)
      * @see #walkInRowOrder(FieldMatrixChangingVisitor, int, int, int, int)
      * @see #walkInRowOrder(FieldMatrixPreservingVisitor, int, int, int, int)
@@ -519,8 +510,7 @@ public interface FieldMatrix<T extends FieldElement<T>> extends AnyMatrix {
      * @return the value returned by {@link FieldMatrixPreservingVisitor#end()} at the end
      * of the walk
      */
-    T walkInRowOrder(FieldMatrixPreservingVisitor<T> visitor)
-        throws MatrixVisitorException;
+    T walkInRowOrder(FieldMatrixPreservingVisitor<T> visitor);
 
     /**
      * Visit (and possibly change) some matrix entries in row order.
@@ -532,8 +522,10 @@ public interface FieldMatrix<T extends FieldElement<T>> extends AnyMatrix {
      * @param endRow Final row index (inclusive)
      * @param startColumn Initial column index
      * @param endColumn Final column index
-     * @exception  MatrixVisitorException if the visitor cannot process an entry
-     * @exception MatrixIndexException  if the indices are not valid
+     * @throws org.apache.commons.math.exception.MathUserException if the visitor
+     * cannot process an entry.
+     * @throws org.apache.commons.math.exception.OutOfRangeException
+     * if the indices are not valid.
      * @see #walkInRowOrder(FieldMatrixChangingVisitor)
      * @see #walkInRowOrder(FieldMatrixPreservingVisitor)
      * @see #walkInRowOrder(FieldMatrixPreservingVisitor, int, int, int, int)
@@ -549,8 +541,7 @@ public interface FieldMatrix<T extends FieldElement<T>> extends AnyMatrix {
      * of the walk
      */
     T walkInRowOrder(FieldMatrixChangingVisitor<T> visitor,
-                          int startRow, int endRow, int startColumn, int endColumn)
-        throws MatrixIndexException, MatrixVisitorException;
+                     int startRow, int endRow, int startColumn, int endColumn);
 
     /**
      * Visit (but don't change) some matrix entries in row order.
@@ -562,8 +553,10 @@ public interface FieldMatrix<T extends FieldElement<T>> extends AnyMatrix {
      * @param endRow Final row index (inclusive)
      * @param startColumn Initial column index
      * @param endColumn Final column index
-     * @exception  MatrixVisitorException if the visitor cannot process an entry
-     * @exception MatrixIndexException  if the indices are not valid
+     * @throws org.apache.commons.math.exception.MathUserException if the visitor
+     * cannot process an entry.
+     * @throws org.apache.commons.math.exception.OutOfRangeException
+     * if the indices are not valid.
      * @see #walkInRowOrder(FieldMatrixChangingVisitor)
      * @see #walkInRowOrder(FieldMatrixPreservingVisitor)
      * @see #walkInRowOrder(FieldMatrixChangingVisitor, int, int, int, int)
@@ -579,8 +572,7 @@ public interface FieldMatrix<T extends FieldElement<T>> extends AnyMatrix {
      * of the walk
      */
     T walkInRowOrder(FieldMatrixPreservingVisitor<T> visitor,
-                          int startRow, int endRow, int startColumn, int endColumn)
-        throws MatrixIndexException, MatrixVisitorException;
+                     int startRow, int endRow, int startColumn, int endColumn);
 
     /**
      * Visit (and possibly change) all matrix entries in column order.
@@ -588,7 +580,8 @@ public interface FieldMatrix<T extends FieldElement<T>> extends AnyMatrix {
      * of a column from top to bottom before going to the topmost element
      * of the next column.</p>
      * @param visitor visitor used to process all matrix entries
-     * @exception  MatrixVisitorException if the visitor cannot process an entry
+     * @throws org.apache.commons.math.exception.MathUserException if the visitor
+     * cannot process an entry.
      * @see #walkInRowOrder(FieldMatrixChangingVisitor)
      * @see #walkInRowOrder(FieldMatrixPreservingVisitor)
      * @see #walkInRowOrder(FieldMatrixChangingVisitor, int, int, int, int)
@@ -603,8 +596,7 @@ public interface FieldMatrix<T extends FieldElement<T>> extends AnyMatrix {
      * @return the value returned by {@link FieldMatrixChangingVisitor#end()} at the end
      * of the walk
      */
-    T walkInColumnOrder(FieldMatrixChangingVisitor<T> visitor)
-        throws MatrixVisitorException;
+    T walkInColumnOrder(FieldMatrixChangingVisitor<T> visitor);
 
     /**
      * Visit (but don't change) all matrix entries in column order.
@@ -612,7 +604,8 @@ public interface FieldMatrix<T extends FieldElement<T>> extends AnyMatrix {
      * of a column from top to bottom before going to the topmost element
      * of the next column.</p>
      * @param visitor visitor used to process all matrix entries
-     * @exception  MatrixVisitorException if the visitor cannot process an entry
+     * @throws org.apache.commons.math.exception.MathUserException if the visitor
+     * cannot process an entry.
      * @see #walkInRowOrder(FieldMatrixChangingVisitor)
      * @see #walkInRowOrder(FieldMatrixPreservingVisitor)
      * @see #walkInRowOrder(FieldMatrixChangingVisitor, int, int, int, int)
@@ -627,8 +620,7 @@ public interface FieldMatrix<T extends FieldElement<T>> extends AnyMatrix {
      * @return the value returned by {@link FieldMatrixPreservingVisitor#end()} at the end
      * of the walk
      */
-    T walkInColumnOrder(FieldMatrixPreservingVisitor<T> visitor)
-        throws MatrixVisitorException;
+    T walkInColumnOrder(FieldMatrixPreservingVisitor<T> visitor);
 
     /**
      * Visit (and possibly change) some matrix entries in column order.
@@ -640,8 +632,10 @@ public interface FieldMatrix<T extends FieldElement<T>> extends AnyMatrix {
      * @param endRow Final row index (inclusive)
      * @param startColumn Initial column index
      * @param endColumn Final column index
-     * @exception  MatrixVisitorException if the visitor cannot process an entry
-     * @exception MatrixIndexException  if the indices are not valid
+     * @throws org.apache.commons.math.exception.MathUserException if the visitor
+     * cannot process an entry.
+     * @throws org.apache.commons.math.exception.OutOfRangeException
+     * if the indices are not valid.
      * @see #walkInRowOrder(FieldMatrixChangingVisitor)
      * @see #walkInRowOrder(FieldMatrixPreservingVisitor)
      * @see #walkInRowOrder(FieldMatrixChangingVisitor, int, int, int, int)
@@ -657,8 +651,7 @@ public interface FieldMatrix<T extends FieldElement<T>> extends AnyMatrix {
      * of the walk
      */
     T walkInColumnOrder(FieldMatrixChangingVisitor<T> visitor,
-                             int startRow, int endRow, int startColumn, int endColumn)
-        throws MatrixIndexException, MatrixVisitorException;
+                        int startRow, int endRow, int startColumn, int endColumn);
 
     /**
      * Visit (but don't change) some matrix entries in column order.
@@ -670,8 +663,10 @@ public interface FieldMatrix<T extends FieldElement<T>> extends AnyMatrix {
      * @param endRow Final row index (inclusive)
      * @param startColumn Initial column index
      * @param endColumn Final column index
-     * @exception  MatrixVisitorException if the visitor cannot process an entry
-     * @exception MatrixIndexException  if the indices are not valid
+     * @throws org.apache.commons.math.exception.MathUserException if the visitor
+     * cannot process an entry.
+     * @throws org.apache.commons.math.exception.OutOfRangeException
+     * if the indices are not valid.
      * @see #walkInRowOrder(FieldMatrixChangingVisitor)
      * @see #walkInRowOrder(FieldMatrixPreservingVisitor)
      * @see #walkInRowOrder(FieldMatrixChangingVisitor, int, int, int, int)
@@ -687,15 +682,15 @@ public interface FieldMatrix<T extends FieldElement<T>> extends AnyMatrix {
      * of the walk
      */
     T walkInColumnOrder(FieldMatrixPreservingVisitor<T> visitor,
-                             int startRow, int endRow, int startColumn, int endColumn)
-        throws MatrixIndexException, MatrixVisitorException;
+                        int startRow, int endRow, int startColumn, int endColumn);
 
     /**
      * Visit (and possibly change) all matrix entries using the fastest possible order.
      * <p>The fastest walking order depends on the exact matrix class. It may be
      * different from traditional row or column orders.</p>
      * @param visitor visitor used to process all matrix entries
-     * @exception  MatrixVisitorException if the visitor cannot process an entry
+     * @throws org.apache.commons.math.exception.MathUserException if the visitor
+     * cannot process an entry.
      * @see #walkInRowOrder(FieldMatrixChangingVisitor)
      * @see #walkInRowOrder(FieldMatrixPreservingVisitor)
      * @see #walkInRowOrder(FieldMatrixChangingVisitor, int, int, int, int)
@@ -710,15 +705,15 @@ public interface FieldMatrix<T extends FieldElement<T>> extends AnyMatrix {
      * @return the value returned by {@link FieldMatrixChangingVisitor#end()} at the end
      * of the walk
      */
-    T walkInOptimizedOrder(FieldMatrixChangingVisitor<T> visitor)
-        throws MatrixVisitorException;
+    T walkInOptimizedOrder(FieldMatrixChangingVisitor<T> visitor);
 
     /**
      * Visit (but don't change) all matrix entries using the fastest possible order.
      * <p>The fastest walking order depends on the exact matrix class. It may be
      * different from traditional row or column orders.</p>
      * @param visitor visitor used to process all matrix entries
-     * @exception  MatrixVisitorException if the visitor cannot process an entry
+     * @throws org.apache.commons.math.exception.MathUserException if the visitor
+     * cannot process an entry.
      * @see #walkInRowOrder(FieldMatrixChangingVisitor)
      * @see #walkInRowOrder(FieldMatrixPreservingVisitor)
      * @see #walkInRowOrder(FieldMatrixChangingVisitor, int, int, int, int)
@@ -733,8 +728,7 @@ public interface FieldMatrix<T extends FieldElement<T>> extends AnyMatrix {
      * @return the value returned by {@link FieldMatrixPreservingVisitor#end()} at the end
      * of the walk
      */
-    T walkInOptimizedOrder(FieldMatrixPreservingVisitor<T> visitor)
-        throws MatrixVisitorException;
+    T walkInOptimizedOrder(FieldMatrixPreservingVisitor<T> visitor);
 
     /**
      * Visit (and possibly change) some matrix entries using the fastest possible order.
@@ -745,8 +739,10 @@ public interface FieldMatrix<T extends FieldElement<T>> extends AnyMatrix {
      * @param endRow Final row index (inclusive)
      * @param startColumn Initial column index
      * @param endColumn Final column index (inclusive)
-     * @exception  MatrixVisitorException if the visitor cannot process an entry
-     * @exception MatrixIndexException  if the indices are not valid
+     * @throws org.apache.commons.math.exception.MathUserException if the visitor
+     * cannot process an entry.
+     * @throws org.apache.commons.math.exception.OutOfRangeException
+     * if the indices are not valid.
      * @see #walkInRowOrder(FieldMatrixChangingVisitor)
      * @see #walkInRowOrder(FieldMatrixPreservingVisitor)
      * @see #walkInRowOrder(FieldMatrixChangingVisitor, int, int, int, int)
@@ -762,8 +758,7 @@ public interface FieldMatrix<T extends FieldElement<T>> extends AnyMatrix {
      * of the walk
      */
     T walkInOptimizedOrder(FieldMatrixChangingVisitor<T> visitor,
-                                int startRow, int endRow, int startColumn, int endColumn)
-        throws MatrixIndexException, MatrixVisitorException;
+                           int startRow, int endRow, int startColumn, int endColumn);
 
     /**
      * Visit (but don't change) some matrix entries using the fastest possible order.
@@ -774,8 +769,10 @@ public interface FieldMatrix<T extends FieldElement<T>> extends AnyMatrix {
      * @param endRow Final row index (inclusive)
      * @param startColumn Initial column index
      * @param endColumn Final column index (inclusive)
-     * @exception  MatrixVisitorException if the visitor cannot process an entry
-     * @exception MatrixIndexException  if the indices are not valid
+     * @throws org.apache.commons.math.exception.MathUserException if the visitor
+     * cannot process an entry.
+     * @throws org.apache.commons.math.exception.OutOfRangeException
+     * if the indices are not valid.
      * @see #walkInRowOrder(FieldMatrixChangingVisitor)
      * @see #walkInRowOrder(FieldMatrixPreservingVisitor)
      * @see #walkInRowOrder(FieldMatrixChangingVisitor, int, int, int, int)
@@ -791,7 +788,5 @@ public interface FieldMatrix<T extends FieldElement<T>> extends AnyMatrix {
      * of the walk
      */
     T walkInOptimizedOrder(FieldMatrixPreservingVisitor<T> visitor,
-                                int startRow, int endRow, int startColumn, int endColumn)
-        throws MatrixIndexException, MatrixVisitorException;
-
+                           int startRow, int endRow, int startColumn, int endColumn);
 }

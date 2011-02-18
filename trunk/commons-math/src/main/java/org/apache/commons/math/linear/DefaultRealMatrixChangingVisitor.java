@@ -24,19 +24,17 @@ package org.apache.commons.math.linear;
  * methods. This class provides default implementations that do nothing.
  * </p>
  *
- * @version $Revision: 811685 $ $Date: 2009-09-05 19:36:48 +0200 (Sa, 05 Sep 2009) $
+ * @version $Revision: 1038403 $ $Date: 2010-11-24 01:42:12 +0100 (Mi, 24 Nov 2010) $
  * @since 2.0
  */
 public class DefaultRealMatrixChangingVisitor implements RealMatrixChangingVisitor {
-
     /** {@inheritDoc} */
     public void start(int rows, int columns,
                       int startRow, int endRow, int startColumn, int endColumn) {
     }
 
     /** {@inheritDoc} */
-    public double visit(int row, int column, double value)
-        throws MatrixVisitorException {
+    public double visit(int row, int column, double value) {
         return value;
     }
 
@@ -44,5 +42,4 @@ public class DefaultRealMatrixChangingVisitor implements RealMatrixChangingVisit
     public double end() {
         return 0;
     }
-
 }

@@ -17,13 +17,13 @@
 
 package org.apache.commons.math.analysis;
 
-import org.apache.commons.math.FunctionEvaluationException;
+import org.apache.commons.math.exception.MathUserException;
 
 /**
  * An interface representing a bivariate real function.
  *
  * @since 2.1
- * @version $Revision: 980981 $ $Date: 2010-07-31 00:03:04 +0200 (Sa, 31 Jul 2010) $
+ * @version $Revision: 1037328 $ $Date: 2010-11-20 22:01:50 +0100 (Sa, 20 Nov 2010) $
  */
 public interface BivariateRealFunction {
     /**
@@ -32,9 +32,9 @@ public interface BivariateRealFunction {
      * @param x Abscissa for which the function value should be computed.
      * @param y Ordinate for which the function value should be computed.
      * @return the value.
-     * @throws FunctionEvaluationException if the function evaluation fails.
+     * @throws MathUserException if the function evaluation fails.
      */
     double value(double x, double y)
-        throws FunctionEvaluationException;
+        throws MathUserException;
 
 }

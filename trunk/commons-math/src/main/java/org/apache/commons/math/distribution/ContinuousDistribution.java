@@ -19,25 +19,56 @@ package org.apache.commons.math.distribution;
 import org.apache.commons.math.MathException;
 
 /**
- * <p>Base interface for continuous distributions.</p>
+ * Base interface for continuous distributions.
  *
- * <p>Note: this interface will be extended in version 3.0 to include
- * <br/><code>public double density(double x)</code><br/>
- * that is, from version 3.0 forward, continuous distributions <strong>must</strong>
- * include implementations of probability density functions. As of version
- * 2.1, all continuous distribution implementations included in commons-math
- * provide implementations of this method.</p>
- *
- * @version $Revision: 924362 $ $Date: 2010-03-17 17:45:31 +0100 (Mi, 17 Mrz 2010) $
+ * @version $Revision: 1003512 $ $Date: 2010-10-01 14:46:16 +0200 (Fr, 01 Okt 2010) $
  */
 public interface ContinuousDistribution extends Distribution {
-
     /**
-     * For this distribution, X, this method returns x such that P(X &lt; x) = p.
-     * @param p the cumulative probability.
-     * @return x.
-     * @throws MathException if the inverse cumulative probability can not be
-     *            computed due to convergence or other numerical errors.
+     * For a distribution, {@code X}, compute {@code x} such that
+     * {@code P(X < x) = p}.
+     *
+     * @param p Cumulative probability.
+     * @return {@code x} such that {@code P(X < x) = p}.
+     * @throws MathException if the inverse cumulative probability cannot be
+     * computed due to convergence or other numerical errors.
      */
     double inverseCumulativeProbability(double p) throws MathException;
+
+    /**
+     * Probability density for a particular point.
+     *
+     * @param x Point at which the density should be computed.
+     * @return the pdf at point {@code x}.
+     */
+    double density(double x);
+
+    /**
+     * Reseed the random generator used to generate samples.
+     *
+     * @param seed New seed.
+     * @since 3.0
+     */
+    void reseedRandomGenerator(long seed);
+
+    /**
+     * Generate a random value sampled from this distribution.
+     *
+     * @return a random value.
+     * @throws MathException if an error occurs generating the random value.
+     * @since 3.0
+     */
+    double sample() throws MathException;
+
+    /**
+     * Generate a random sample from the distribution.
+     *
+     * @param sampleSize number of random values to generate.
+     * @return an array representing the random sample.
+     * @throws MathException if an error occurs generating the sample.
+     * @throws org.apache.commons.math.exception.NotStrictlyPositiveException
+     * if {@code sampleSize} is not positive.
+     * @since 3.0
+     */
+    double[] sample(int sampleSize) throws MathException;
 }

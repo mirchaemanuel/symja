@@ -19,8 +19,8 @@ package org.apache.commons.math.linear;
 
 import java.util.Arrays;
 
-import org.apache.commons.math.MathRuntimeException;
-import org.apache.commons.math.exception.util.LocalizedFormats;
+import org.apache.commons.math.exception.DimensionMismatchException;
+import org.apache.commons.math.exception.SingularMatrixException;
 import org.apache.commons.math.util.FastMath;
 
 
@@ -37,7 +37,7 @@ import org.apache.commons.math.util.FastMath;
  * @see <a href="http://mathworld.wolfram.com/QRDecomposition.html">MathWorld</a>
  * @see <a href="http://en.wikipedia.org/wiki/QR_decomposition">Wikipedia</a>
  *
- * @version $Revision: 990658 $ $Date: 2010-08-30 00:04:09 +0200 (Mo, 30 Aug 2010) $
+ * @version $Revision: 1034220 $ $Date: 2010-11-12 01:13:27 +0100 (Fr, 12 Nov 2010) $
  * @since 1.2
  */
 public class QRDecompositionImpl implements QRDecomposition {
@@ -162,12 +162,10 @@ public class QRDecompositionImpl implements QRDecomposition {
                     cachedR.setEntry(row, col, qrt[col][row]);
                 }
             }
-
         }
 
         // return the cached matrix
         return cachedR;
-
     }
 
     /** {@inheritDoc} */
@@ -180,7 +178,6 @@ public class QRDecompositionImpl implements QRDecomposition {
 
     /** {@inheritDoc} */
     public RealMatrix getQT() {
-
         if (cachedQT == null) {
 
             // QT is supposed to be m x m
@@ -214,17 +211,14 @@ public class QRDecompositionImpl implements QRDecomposition {
                     }
                 }
             }
-
         }
 
         // return the cached matrix
         return cachedQT;
-
     }
 
     /** {@inheritDoc} */
     public RealMatrix getH() {
-
         if (cachedH == null) {
 
             final int n = qrt.length;
@@ -235,12 +229,10 @@ public class QRDecompositionImpl implements QRDecomposition {
                     cachedH.setEntry(i, j, qrt[j][i] / -rDiag[j]);
                 }
             }
-
         }
 
         // return the cached matrix
         return cachedH;
-
     }
 
     /** {@inheritDoc} */
@@ -281,19 +273,14 @@ public class QRDecompositionImpl implements QRDecomposition {
                 }
             }
             return true;
-
         }
 
         /** {@inheritDoc} */
-        public double[] solve(double[] b)
-        throws IllegalArgumentException, InvalidMatrixException {
-
+        public double[] solve(double[] b) {
             final int n = qrt.length;
             final int m = qrt[0].length;
             if (b.length != m) {
-                throw MathRuntimeException.createIllegalArgumentException(
-                        LocalizedFormats.VECTOR_LENGTH_MISMATCH,
-                        b.length, m);
+                throw new DimensionMismatchException(b.length, m);
             }
             if (!isNonSingular()) {
                 throw new SingularMatrixException();
@@ -315,7 +302,6 @@ public class QRDecompositionImpl implements QRDecomposition {
                 for (int row = minor; row < m; row++) {
                     y[row] += dotProduct * qrtMinor[row];
                 }
-
             }
 
             // solve triangular system R.x = y
@@ -330,12 +316,10 @@ public class QRDecompositionImpl implements QRDecomposition {
             }
 
             return x;
-
         }
 
         /** {@inheritDoc} */
-        public RealVector solve(RealVector b)
-        throws IllegalArgumentException, InvalidMatrixException {
+        public RealVector solve(RealVector b) {
             try {
                 return solve((ArrayRealVector) b);
             } catch (ClassCastException cce) {
@@ -347,24 +331,19 @@ public class QRDecompositionImpl implements QRDecomposition {
          * <p>The A matrix is implicit here. It is </p>
          * @param b right-hand side of the equation A &times; X = B
          * @return a vector X that minimizes the two norm of A &times; X - B
-         * @throws IllegalArgumentException if matrices dimensions don't match
-         * @throws InvalidMatrixException if decomposed matrix is singular
+         * @throws DimensionMismatchException if the matrices dimensions do not match.
+         * @throws SingularMatrixException if the decomposed matrix is singular.
          */
-        public ArrayRealVector solve(ArrayRealVector b)
-        throws IllegalArgumentException, InvalidMatrixException {
+        public ArrayRealVector solve(ArrayRealVector b) {
             return new ArrayRealVector(solve(b.getDataRef()), false);
         }
 
         /** {@inheritDoc} */
-        public RealMatrix solve(RealMatrix b)
-        throws IllegalArgumentException, InvalidMatrixException {
-
+        public RealMatrix solve(RealMatrix b) {
             final int n = qrt.length;
             final int m = qrt[0].length;
             if (b.getRowDimension() != m) {
-                throw MathRuntimeException.createIllegalArgumentException(
-                        LocalizedFormats.DIMENSIONS_MISMATCH_2x2,
-                        b.getRowDimension(), b.getColumnDimension(), m, "n");
+                throw new DimensionMismatchException(b.getRowDimension(), m);
             }
             if (!isNonSingular()) {
                 throw new SingularMatrixException();
@@ -409,7 +388,6 @@ public class QRDecompositionImpl implements QRDecomposition {
                             yRow[k] += alpha[k] * d;
                         }
                     }
-
                 }
 
                 // solve triangular system R.x = y
@@ -433,21 +411,15 @@ public class QRDecompositionImpl implements QRDecomposition {
                             yI[k] -= yJ[k] * rIJ;
                         }
                     }
-
                 }
-
             }
 
             return new BlockRealMatrix(n, columns, xBlocks, false);
-
         }
 
         /** {@inheritDoc} */
-        public RealMatrix getInverse()
-        throws InvalidMatrixException {
+        public RealMatrix getInverse() {
             return solve(MatrixUtils.createRealIdentityMatrix(rDiag.length));
         }
-
     }
-
 }

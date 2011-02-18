@@ -21,7 +21,9 @@ import java.io.Serializable;
 
 import org.apache.commons.math.Field;
 import org.apache.commons.math.FieldElement;
-import org.apache.commons.math.MathRuntimeException;
+import org.apache.commons.math.exception.NoDataException;
+import org.apache.commons.math.exception.DimensionMismatchException;
+import org.apache.commons.math.exception.MathIllegalStateException;
 import org.apache.commons.math.exception.util.LocalizedFormats;
 
 /**
@@ -33,13 +35,13 @@ import org.apache.commons.math.exception.util.LocalizedFormats;
  * </p>
  *
  * @param <T> the type of the field elements
- * @version $Revision: 983921 $ $Date: 2010-08-10 12:46:06 +0200 (Di, 10 Aug 2010) $
+ * @version $Revision: 1038403 $ $Date: 2010-11-24 01:42:12 +0100 (Mi, 24 Nov 2010) $
  */
-public class Array2DRowFieldMatrix<T extends FieldElement<T>> extends AbstractFieldMatrix<T> implements Serializable {
-
+public class Array2DRowFieldMatrix<T extends FieldElement<T>>
+    extends AbstractFieldMatrix<T>
+    implements Serializable {
     /** Serializable version identifier */
     private static final long serialVersionUID = 7260756672015356458L;
-
     /** Entries of the matrix */
     protected T[][] data;
 
@@ -52,57 +54,57 @@ public class Array2DRowFieldMatrix<T extends FieldElement<T>> extends AbstractFi
     }
 
     /**
-     * Create a new FieldMatrix<T> with the supplied row and column dimensions.
+     * Create a new {@code FieldMatrix<T>} with the supplied row and column dimensions.
      *
-     * @param field field to which the elements belong
-     * @param rowDimension  the number of rows in the new matrix
-     * @param columnDimension  the number of columns in the new matrix
-     * @throws IllegalArgumentException if row or column dimension is not
-     *  positive
+     * @param field Field to which the elements belong.
+     * @param rowDimension Number of rows in the new matrix.
+     * @param columnDimension Number of columns in the new matrix.
+     * @throws org.apache.commons.math.exception.NotStrictlyPositiveException
+     * if row or column dimension is not positive.
      */
     public Array2DRowFieldMatrix(final Field<T> field,
-                           final int rowDimension, final int columnDimension)
-        throws IllegalArgumentException {
+                                 final int rowDimension,
+                                 final int columnDimension) {
         super(field, rowDimension, columnDimension);
         data = buildArray(field, rowDimension, columnDimension);
     }
 
     /**
-     * Create a new FieldMatrix<T> using the input array as the underlying
+     * Create a new {@code FieldMatrix<T>} using the input array as the underlying
      * data array.
      * <p>The input array is copied, not referenced. This constructor has
      * the same effect as calling {@link #Array2DRowFieldMatrix(FieldElement[][], boolean)}
-     * with the second argument set to <code>true</code>.</p>
+     * with the second argument set to {@code true}.</p>
      *
-     * @param d data for new matrix
-     * @throws IllegalArgumentException if <code>d</code> is not rectangular
-     *  (not all rows have the same length) or empty
-     * @throws NullPointerException if <code>d</code> is null
+     * @param d Data for the new matrix.
+     * @throws DimensionMismatchException if {@code d} is not rectangular.
+     * @throws org.apache.commons.math.exception.NullArgumentException if
+     * {@code d} is {@code null}.
+     * @throws NoDataException if there are not at least one row and one column.
      * @see #Array2DRowFieldMatrix(FieldElement[][], boolean)
      */
-    public Array2DRowFieldMatrix(final T[][] d)
-        throws IllegalArgumentException, NullPointerException {
+    public Array2DRowFieldMatrix(final T[][] d) {
         super(extractField(d));
         copyIn(d);
     }
 
     /**
-     * Create a new FieldMatrix<T> using the input array as the underlying
+     * Create a new {@code FieldMatrix<T>} using the input array as the underlying
      * data array.
      * <p>If an array is built specially in order to be embedded in a
-     * FieldMatrix<T> and not used directly, the <code>copyArray</code> may be
-     * set to <code>false</code. This will prevent the copying and improve
+     * {@code FieldMatrix<T>} and not used directly, the {@code copyArray} may be
+     * set to {@code false}. This will prevent the copying and improve
      * performance as no new array will be built and no data will be copied.</p>
-     * @param d data for new matrix
-     * @param copyArray if true, the input array will be copied, otherwise
-     * it will be referenced
-     * @throws IllegalArgumentException if <code>d</code> is not rectangular
-     *  (not all rows have the same length) or empty
-     * @throws NullPointerException if <code>d</code> is null
+     *
+     * @param d Data for the new matrix.
+     * @param copyArray Whether to copy or reference the input array.
+     * @throws DimensionMismatchException if {@code d} is not rectangular.
+     * @throws NoDataException if there are not at least one row and one column.
+     * @throws org.apache.commons.math.exception.NullArgumentException
+     * if {@code d} is {@code null}.
      * @see #Array2DRowFieldMatrix(FieldElement[][])
      */
-    public Array2DRowFieldMatrix(final T[][] d, final boolean copyArray)
-        throws IllegalArgumentException, NullPointerException {
+    public Array2DRowFieldMatrix(final T[][] d, final boolean copyArray) {
         super(extractField(d));
         if (copyArray) {
             copyIn(d);
@@ -112,18 +114,15 @@ public class Array2DRowFieldMatrix<T extends FieldElement<T>> extends AbstractFi
             }
             final int nRows = d.length;
             if (nRows == 0) {
-                throw MathRuntimeException.createIllegalArgumentException(
-                      LocalizedFormats.AT_LEAST_ONE_ROW);
+                throw new NoDataException(LocalizedFormats.AT_LEAST_ONE_ROW);
             }
             final int nCols = d[0].length;
             if (nCols == 0) {
-                throw MathRuntimeException.createIllegalArgumentException(
-                      LocalizedFormats.AT_LEAST_ONE_COLUMN);
+                throw new NoDataException(LocalizedFormats.AT_LEAST_ONE_COLUMN);
             }
             for (int r = 1; r < nRows; r++) {
                 if (d[r].length != nCols) {
-                    throw MathRuntimeException.createIllegalArgumentException(
-                          LocalizedFormats.DIFFERENT_ROWS_LENGTHS, nCols, d[r].length);
+                    throw new DimensionMismatchException(nCols, d[r].length);
                 }
             }
             data = d;
@@ -131,12 +130,11 @@ public class Array2DRowFieldMatrix<T extends FieldElement<T>> extends AbstractFi
     }
 
     /**
-     * Create a new (column) FieldMatrix<T> using <code>v</code> as the
-     * data for the unique column of the <code>v.length x 1</code> matrix
-     * created.
-     * <p>The input array is copied, not referenced.</p>
+     * Create a new (column) {@code FieldMatrix<T>} using {@code v} as the
+     * data for the unique column of the created matrix.
+     * The input array is copied.
      *
-     * @param v column vector holding data for new matrix
+     * @param v Column vector holding data for new matrix.
      */
     public Array2DRowFieldMatrix(final T[] v) {
         super(extractField(v));
@@ -149,8 +147,7 @@ public class Array2DRowFieldMatrix<T extends FieldElement<T>> extends AbstractFi
 
     /** {@inheritDoc} */
     @Override
-    public FieldMatrix<T> createMatrix(final int rowDimension, final int columnDimension)
-        throws IllegalArgumentException {
+    public FieldMatrix<T> createMatrix(final int rowDimension, final int columnDimension) {
         return new Array2DRowFieldMatrix<T>(getField(), rowDimension, columnDimension);
     }
 
@@ -160,27 +157,15 @@ public class Array2DRowFieldMatrix<T extends FieldElement<T>> extends AbstractFi
         return new Array2DRowFieldMatrix<T>(copyOut(), false);
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public FieldMatrix<T> add(final FieldMatrix<T> m)
-        throws IllegalArgumentException {
-        try {
-            return add((Array2DRowFieldMatrix<T>) m);
-        } catch (ClassCastException cce) {
-            return super.add(m);
-        }
-    }
-
     /**
-     * Compute the sum of this and <code>m</code>.
+     * Add {@code m} to this matrix.
      *
-     * @param m    matrix to be added
-     * @return     this + m
-     * @throws  IllegalArgumentException if m is not the same size as this
+     * @param m Matrix to be added.
+     * @return {@code this} + m.
+     * @throws org.apache.commons.math.exception.MatrixDimensionMismatchException
+     * if {@code m} is not the same size as this matrix.
      */
-    public Array2DRowFieldMatrix<T> add(final Array2DRowFieldMatrix<T> m)
-        throws IllegalArgumentException {
-
+    public Array2DRowFieldMatrix<T> add(final Array2DRowFieldMatrix<T> m) {
         // safety check
         checkAdditionCompatible(m);
 
@@ -197,30 +182,17 @@ public class Array2DRowFieldMatrix<T extends FieldElement<T>> extends AbstractFi
         }
 
         return new Array2DRowFieldMatrix<T>(outData, false);
-
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public FieldMatrix<T> subtract(final FieldMatrix<T> m)
-        throws IllegalArgumentException {
-        try {
-            return subtract((Array2DRowFieldMatrix<T>) m);
-        } catch (ClassCastException cce) {
-            return super.subtract(m);
-        }
     }
 
     /**
-     * Compute  this minus <code>m</code>.
+     * Subtract {@code m} from this matrix.
      *
-     * @param m    matrix to be subtracted
-     * @return     this + m
-     * @throws  IllegalArgumentException if m is not the same size as this
+     * @param m Matrix to be subtracted.
+     * @return {@code this} + m.
+     * @throws org.apache.commons.math.exception.MatrixDimensionMismatchException
+     * if {@code m} is not the same size as this matrix.
      */
-    public Array2DRowFieldMatrix<T> subtract(final Array2DRowFieldMatrix<T> m)
-        throws IllegalArgumentException {
-
+    public Array2DRowFieldMatrix<T> subtract(final Array2DRowFieldMatrix<T> m) {
         // safety check
         checkSubtractionCompatible(m);
 
@@ -240,27 +212,15 @@ public class Array2DRowFieldMatrix<T extends FieldElement<T>> extends AbstractFi
 
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public FieldMatrix<T> multiply(final FieldMatrix<T> m)
-        throws IllegalArgumentException {
-        try {
-            return multiply((Array2DRowFieldMatrix<T>) m);
-        } catch (ClassCastException cce) {
-            return super.multiply(m);
-        }
-    }
-
     /**
-     * Returns the result of postmultiplying this by <code>m</code>.
-     * @param m    matrix to postmultiply by
-     * @return     this*m
-     * @throws     IllegalArgumentException
-     *             if columnDimension(this) != rowDimension(m)
+     * Postmultiplying this matrix by {@code m}.
+     *
+     * @param m Matrix to postmultiply by.
+     * @return {@code this} * m.
+     * @throws DimensionMismatchException if the number of columns of this
+     * matrix is not equal to the number of rows of {@code m}.
      */
-    public Array2DRowFieldMatrix<T> multiply(final Array2DRowFieldMatrix<T> m)
-        throws IllegalArgumentException {
-
+    public Array2DRowFieldMatrix<T> multiply(final Array2DRowFieldMatrix<T> m) {
         // safety check
         checkMultiplicationCompatible(m);
 
@@ -291,11 +251,10 @@ public class Array2DRowFieldMatrix<T extends FieldElement<T>> extends AbstractFi
     }
 
     /**
-     * Returns a reference to the underlying data array.
-     * <p>
-     * Does <strong>not</strong> make a fresh copy of the underlying data.</p>
+     * Get a reference to the underlying data array.
+     * This methods returns internal data, <strong>not</strong> fresh copy of it.
      *
-     * @return 2-dimensional array of entries
+     * @return the 2-dimensional array of entries.
      */
     public T[][] getDataRef() {
         return data;
@@ -303,33 +262,27 @@ public class Array2DRowFieldMatrix<T extends FieldElement<T>> extends AbstractFi
 
     /** {@inheritDoc} */
     @Override
-    public void setSubMatrix(final T[][] subMatrix, final int row, final int column)
-    throws MatrixIndexException {
+    public void setSubMatrix(final T[][] subMatrix, final int row, final int column) {
         if (data == null) {
             if (row > 0) {
-                throw MathRuntimeException.createIllegalStateException(
-                      LocalizedFormats.FIRST_ROWS_NOT_INITIALIZED_YET, row);
+                throw new MathIllegalStateException(LocalizedFormats.FIRST_ROWS_NOT_INITIALIZED_YET, row);
             }
             if (column > 0) {
-                throw MathRuntimeException.createIllegalStateException(
-                      LocalizedFormats.FIRST_COLUMNS_NOT_INITIALIZED_YET, column);
+                throw new MathIllegalStateException(LocalizedFormats.FIRST_COLUMNS_NOT_INITIALIZED_YET, column);
             }
             final int nRows = subMatrix.length;
             if (nRows == 0) {
-                throw MathRuntimeException.createIllegalArgumentException(
-                      LocalizedFormats.AT_LEAST_ONE_ROW);
+                throw new NoDataException(LocalizedFormats.AT_LEAST_ONE_ROW);
             }
 
             final int nCols = subMatrix[0].length;
             if (nCols == 0) {
-                throw MathRuntimeException.createIllegalArgumentException(
-                      LocalizedFormats.AT_LEAST_ONE_COLUMN);
+                throw new NoDataException(LocalizedFormats.AT_LEAST_ONE_COLUMN);
             }
             data = buildArray(getField(), subMatrix.length, nCols);
             for (int i = 0; i < data.length; ++i) {
                 if (subMatrix[i].length != nCols) {
-                    throw MathRuntimeException.createIllegalArgumentException(
-                          LocalizedFormats.DIFFERENT_ROWS_LENGTHS, nCols, subMatrix[i].length);
+                    throw new DimensionMismatchException(nCols, subMatrix[i].length);
                 }
                 System.arraycopy(subMatrix[i], 0, data[i + row], column, nCols);
             }
@@ -341,50 +294,38 @@ public class Array2DRowFieldMatrix<T extends FieldElement<T>> extends AbstractFi
 
     /** {@inheritDoc} */
     @Override
-    public T getEntry(final int row, final int column)
-        throws MatrixIndexException {
-        try {
-            return data[row][column];
-        } catch (ArrayIndexOutOfBoundsException e) {
-            throw new MatrixIndexException(
-                      LocalizedFormats.NO_SUCH_MATRIX_ENTRY, row, column, getRowDimension(), getColumnDimension());
-        }
+    public T getEntry(final int row, final int column) {
+        checkRowIndex(row);
+        checkColumnIndex(column);
+
+        return data[row][column];
     }
 
     /** {@inheritDoc} */
     @Override
-    public void setEntry(final int row, final int column, final T value)
-        throws MatrixIndexException {
-        try {
-            data[row][column] = value;
-        } catch (ArrayIndexOutOfBoundsException e) {
-            throw new MatrixIndexException(
-                      LocalizedFormats.NO_SUCH_MATRIX_ENTRY, row, column, getRowDimension(), getColumnDimension());
-        }
+    public void setEntry(final int row, final int column, final T value) {
+        checkRowIndex(row);
+        checkColumnIndex(column);
+
+        data[row][column] = value;
     }
 
     /** {@inheritDoc} */
     @Override
-    public void addToEntry(final int row, final int column, final T increment)
-        throws MatrixIndexException {
-        try {
-            data[row][column] = data[row][column].add(increment);
-        } catch (ArrayIndexOutOfBoundsException e) {
-            throw new MatrixIndexException(
-                      LocalizedFormats.NO_SUCH_MATRIX_ENTRY, row, column, getRowDimension(), getColumnDimension());
-        }
+    public void addToEntry(final int row, final int column, final T increment) {
+        checkRowIndex(row);
+        checkColumnIndex(column);
+
+        data[row][column] = data[row][column].add(increment);
     }
 
     /** {@inheritDoc} */
     @Override
-    public void multiplyEntry(final int row, final int column, final T factor)
-        throws MatrixIndexException {
-        try {
-            data[row][column] = data[row][column].multiply(factor);
-        } catch (ArrayIndexOutOfBoundsException e) {
-            throw new MatrixIndexException(
-                      LocalizedFormats.NO_SUCH_MATRIX_ENTRY, row, column, getRowDimension(), getColumnDimension());
-        }
+    public void multiplyEntry(final int row, final int column, final T factor) {
+        checkRowIndex(row);
+        checkColumnIndex(column);
+
+        data[row][column] = data[row][column].multiply(factor);
     }
 
     /** {@inheritDoc} */
@@ -401,13 +342,11 @@ public class Array2DRowFieldMatrix<T extends FieldElement<T>> extends AbstractFi
 
     /** {@inheritDoc} */
     @Override
-    public T[] operate(final T[] v)
-        throws IllegalArgumentException {
+    public T[] operate(final T[] v) {
         final int nRows = this.getRowDimension();
         final int nCols = this.getColumnDimension();
         if (v.length != nCols) {
-            throw MathRuntimeException.createIllegalArgumentException(
-                  LocalizedFormats.VECTOR_LENGTH_MISMATCH, v.length, nCols);
+            throw new DimensionMismatchException(v.length, nCols);
         }
         final T[] out = buildArray(getField(), nRows);
         for (int row = 0; row < nRows; row++) {
@@ -423,14 +362,11 @@ public class Array2DRowFieldMatrix<T extends FieldElement<T>> extends AbstractFi
 
     /** {@inheritDoc} */
     @Override
-    public T[] preMultiply(final T[] v)
-        throws IllegalArgumentException {
-
+    public T[] preMultiply(final T[] v) {
         final int nRows = getRowDimension();
         final int nCols = getColumnDimension();
         if (v.length != nRows) {
-            throw MathRuntimeException.createIllegalArgumentException(
-                  LocalizedFormats.VECTOR_LENGTH_MISMATCH, v.length, nRows);
+            throw new DimensionMismatchException(v.length, nRows);
         }
 
         final T[] out = buildArray(getField(), nCols);
@@ -443,13 +379,11 @@ public class Array2DRowFieldMatrix<T extends FieldElement<T>> extends AbstractFi
         }
 
         return out;
-
     }
 
     /** {@inheritDoc} */
     @Override
-    public T walkInRowOrder(final FieldMatrixChangingVisitor<T> visitor)
-        throws MatrixVisitorException {
+    public T walkInRowOrder(final FieldMatrixChangingVisitor<T> visitor) {
         final int rows    = getRowDimension();
         final int columns = getColumnDimension();
         visitor.start(rows, columns, 0, rows - 1, 0, columns - 1);
@@ -464,8 +398,7 @@ public class Array2DRowFieldMatrix<T extends FieldElement<T>> extends AbstractFi
 
     /** {@inheritDoc} */
     @Override
-    public T walkInRowOrder(final FieldMatrixPreservingVisitor<T> visitor)
-        throws MatrixVisitorException {
+    public T walkInRowOrder(final FieldMatrixPreservingVisitor<T> visitor) {
         final int rows    = getRowDimension();
         final int columns = getColumnDimension();
         visitor.start(rows, columns, 0, rows - 1, 0, columns - 1);
@@ -482,8 +415,7 @@ public class Array2DRowFieldMatrix<T extends FieldElement<T>> extends AbstractFi
     @Override
     public T walkInRowOrder(final FieldMatrixChangingVisitor<T> visitor,
                             final int startRow, final int endRow,
-                            final int startColumn, final int endColumn)
-        throws MatrixIndexException, MatrixVisitorException {
+                            final int startColumn, final int endColumn) {
         checkSubMatrixIndex(startRow, endRow, startColumn, endColumn);
         visitor.start(getRowDimension(), getColumnDimension(),
                       startRow, endRow, startColumn, endColumn);
@@ -500,8 +432,7 @@ public class Array2DRowFieldMatrix<T extends FieldElement<T>> extends AbstractFi
     @Override
     public T walkInRowOrder(final FieldMatrixPreservingVisitor<T> visitor,
                             final int startRow, final int endRow,
-                            final int startColumn, final int endColumn)
-        throws MatrixIndexException, MatrixVisitorException {
+                            final int startColumn, final int endColumn) {
         checkSubMatrixIndex(startRow, endRow, startColumn, endColumn);
         visitor.start(getRowDimension(), getColumnDimension(),
                       startRow, endRow, startColumn, endColumn);
@@ -516,8 +447,7 @@ public class Array2DRowFieldMatrix<T extends FieldElement<T>> extends AbstractFi
 
     /** {@inheritDoc} */
     @Override
-    public T walkInColumnOrder(final FieldMatrixChangingVisitor<T> visitor)
-        throws MatrixVisitorException {
+    public T walkInColumnOrder(final FieldMatrixChangingVisitor<T> visitor) {
         final int rows    = getRowDimension();
         final int columns = getColumnDimension();
         visitor.start(rows, columns, 0, rows - 1, 0, columns - 1);
@@ -532,8 +462,7 @@ public class Array2DRowFieldMatrix<T extends FieldElement<T>> extends AbstractFi
 
     /** {@inheritDoc} */
     @Override
-    public T walkInColumnOrder(final FieldMatrixPreservingVisitor<T> visitor)
-        throws MatrixVisitorException {
+    public T walkInColumnOrder(final FieldMatrixPreservingVisitor<T> visitor) {
         final int rows    = getRowDimension();
         final int columns = getColumnDimension();
         visitor.start(rows, columns, 0, rows - 1, 0, columns - 1);
@@ -549,8 +478,7 @@ public class Array2DRowFieldMatrix<T extends FieldElement<T>> extends AbstractFi
     @Override
     public T walkInColumnOrder(final FieldMatrixChangingVisitor<T> visitor,
                                final int startRow, final int endRow,
-                               final int startColumn, final int endColumn)
-        throws MatrixIndexException, MatrixVisitorException {
+                               final int startColumn, final int endColumn) {
         checkSubMatrixIndex(startRow, endRow, startColumn, endColumn);
         visitor.start(getRowDimension(), getColumnDimension(),
                       startRow, endRow, startColumn, endColumn);
@@ -567,8 +495,7 @@ public class Array2DRowFieldMatrix<T extends FieldElement<T>> extends AbstractFi
     @Override
     public T walkInColumnOrder(final FieldMatrixPreservingVisitor<T> visitor,
                                final int startRow, final int endRow,
-                               final int startColumn, final int endColumn)
-        throws MatrixIndexException, MatrixVisitorException {
+                               final int startColumn, final int endColumn) {
         checkSubMatrixIndex(startRow, endRow, startColumn, endColumn);
         visitor.start(getRowDimension(), getColumnDimension(),
                       startRow, endRow, startColumn, endColumn);
@@ -581,7 +508,7 @@ public class Array2DRowFieldMatrix<T extends FieldElement<T>> extends AbstractFi
     }
 
     /**
-     * Returns a fresh copy of the underlying data array.
+     * Get a fresh copy of the underlying data array.
      *
      * @return a copy of the underlying data array.
      */
@@ -596,17 +523,15 @@ public class Array2DRowFieldMatrix<T extends FieldElement<T>> extends AbstractFi
     }
 
     /**
-     * Replaces data with a fresh copy of the input array.
-     * <p>
-     * Verifies that the input array is rectangular and non-empty.</p>
+     * Replace data with a fresh copy of the input array.
      *
-     * @param in data to copy in
-     * @throws IllegalArgumentException if input array is empty or not
-     *    rectangular
-     * @throws NullPointerException if input array is null
+     * @param in Data to copy.
+     * @throws NoDataException if the input array is empty.
+     * @throws DimensionMismatchException if the input array is not rectangular.
+     * @throws org.apache.commons.math.exception.NullArgumentException if
+     * the input array is {@code null}.
      */
     private void copyIn(final T[][] in) {
         setSubMatrix(in, 0, 0);
     }
-
 }

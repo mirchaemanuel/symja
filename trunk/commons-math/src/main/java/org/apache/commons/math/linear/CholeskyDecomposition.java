@@ -28,7 +28,8 @@ package org.apache.commons.math.linear;
  *   <li>a {@link #getLT() getLT} method has been added,</li>
  *   <li>the <code>isspd</code> method has been removed, the constructors of
  *   implementation classes being expected to throw {@link
- *   NotPositiveDefiniteMatrixException} when a matrix cannot be decomposed,</li>
+ *   org.apache.commons.math.exception.NonPositiveDefiniteMatrixException}
+ *   when a matrix cannot be decomposed,</li>
  *   <li>a {@link #getDeterminant() getDeterminant} method has been added,</li>
  *   <li>the <code>solve</code> method has been replaced by a {@link
  *   #getSolver() getSolver} method and the equivalent method provided by
@@ -37,7 +38,7 @@ package org.apache.commons.math.linear;
  *
  * @see <a href="http://mathworld.wolfram.com/CholeskyDecomposition.html">MathWorld</a>
  * @see <a href="http://en.wikipedia.org/wiki/Cholesky_decomposition">Wikipedia</a>
- * @version $Revision: 826627 $ $Date: 2009-10-19 12:27:47 +0200 (Mo, 19 Okt 2009) $
+ * @version $Revision: 1034220 $ $Date: 2010-11-12 01:13:27 +0100 (Fr, 12 Nov 2010) $
  * @since 2.0
  */
 public interface CholeskyDecomposition {

@@ -16,21 +16,34 @@
  */
 package org.apache.commons.math.analysis;
 
-import org.apache.commons.math.FunctionEvaluationException;
+import org.apache.commons.math.exception.MathUserException;
 
 /**
  * An interface representing a univariate real function.
  *
- * @version $Revision: 811786 $ $Date: 2009-09-06 11:36:08 +0200 (So, 06 Sep 2009) $
+ * @version $Revision: 1037328 $ $Date: 2010-11-20 22:01:50 +0100 (Sa, 20 Nov 2010) $
  */
 public interface UnivariateRealFunction {
-
     /**
-     * Compute the value for the function.
-     * @param x the point for which the function value should be computed
-     * @return the value
-     * @throws FunctionEvaluationException if the function evaluation fails
+     * Compute the value of the function.
+     *
+     * @param x Point at which the function value should be computed.
+     * @return the value.
+     * @throws IllegalArgumentException when the activated method itself can
+     * ascertain that preconditions, specified in the API expressed at the
+     * level of the activated method, have been violated.  In the vast
+     * majority of cases where Commons-Math throws IllegalArgumentException,
+     * it is the result of argument checking of actual parameters immediately
+     * passed to a method.
+     * @throws MathUserException when the method may encounter errors during evaluation.
+     * This should be thrown only in circumstances where, at the level of the
+     * activated function, IllegalArgumentException is not appropriate and it
+     * should indicate that while formal preconditions of the method have not
+     * been violated, an irrecoverable error has occurred evaluating a
+     * function at some (usually lower) level of the call stack.
+     * Convergence failures, runtime exceptions (even IllegalArgumentException)
+     * in user code or lower level methods can cause (and should be wrapped in)
+     * a MathUserException.
      */
-    double value(double x) throws FunctionEvaluationException;
-
+    double value(double x) throws MathUserException;
 }

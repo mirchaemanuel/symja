@@ -18,7 +18,6 @@ package org.apache.commons.math.analysis.interpolation;
 
 import java.io.Serializable;
 
-import org.apache.commons.math.MathException;
 import org.apache.commons.math.analysis.polynomials.PolynomialFunctionLagrangeForm;
 
 /**
@@ -30,7 +29,7 @@ import org.apache.commons.math.analysis.polynomials.PolynomialFunctionLagrangeFo
  * The actual code of Neville's evalution is in PolynomialFunctionLagrangeForm,
  * this class provides an easy-to-use interface to it.</p>
  *
- * @version $Revision: 799857 $ $Date: 2009-08-01 15:07:12 +0200 (Sa, 01 Aug 2009) $
+ * @version $Revision: 1055931 $ $Date: 2011-01-06 17:20:51 +0100 (Do, 06 Jan 2011) $
  * @since 1.2
  */
 public class NevilleInterpolator implements UnivariateRealInterpolator,
@@ -45,10 +44,14 @@ public class NevilleInterpolator implements UnivariateRealInterpolator,
      * @param x the interpolating points array
      * @param y the interpolating values array
      * @return a function which interpolates the data set
-     * @throws MathException if arguments are invalid
+     * @throws org.apache.commons.math.exception.DimensionMismatchException if
+     * the array lengths are different.
+     * @throws org.apache.commons.math.exception.NumberIsTooSmallException if
+     * the number of points is less than 2.
+     * @throws org.apache.commons.math.exception.NonMonotonousSequenceException
+     * if two abscissae have the same value.
      */
-    public PolynomialFunctionLagrangeForm interpolate(double x[], double y[])
-        throws MathException {
+    public PolynomialFunctionLagrangeForm interpolate(double x[], double y[]) {
         return new PolynomialFunctionLagrangeForm(x, y);
     }
 }

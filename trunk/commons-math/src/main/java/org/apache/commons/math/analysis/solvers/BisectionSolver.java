@@ -16,9 +16,6 @@
  */
 package org.apache.commons.math.analysis.solvers;
 
-import org.apache.commons.math.FunctionEvaluationException;
-import org.apache.commons.math.MaxIterationsExceededException;
-import org.apache.commons.math.analysis.UnivariateRealFunction;
 import org.apache.commons.math.util.FastMath;
 
 /**
@@ -27,69 +24,56 @@ import org.apache.commons.math.util.FastMath;
  * <p>
  * The function should be continuous but not necessarily smooth.</p>
  *
- * @version $Revision: 990658 $ $Date: 2010-08-30 00:04:09 +0200 (Mo, 30 Aug 2010) $
+ * @version $Revision: 1042596 $ $Date: 2010-12-06 12:56:26 +0100 (Mo, 06 Dez 2010) $
  */
-public class BisectionSolver extends UnivariateRealSolverImpl {
+public class BisectionSolver extends AbstractUnivariateRealSolver {
+    /** Default absolute accuracy. */
+    private static final double DEFAULT_ABSOLUTE_ACCURACY = 1e-6;
 
     /**
-     * Construct a solver for the given function.
-     *
-     * @param f function to solve.
-     * @deprecated as of 2.0 the function to solve is passed as an argument
-     * to the {@link #solve(UnivariateRealFunction, double, double)} or
-     * {@link UnivariateRealSolverImpl#solve(UnivariateRealFunction, double, double, double)}
-     * method.
+     * Construct a solver with default accuracy (1e-6).
      */
-    @Deprecated
-    public BisectionSolver(UnivariateRealFunction f) {
-        super(f, 100, 1E-6);
+    public BisectionSolver() {
+        this(DEFAULT_ABSOLUTE_ACCURACY);
     }
-
     /**
      * Construct a solver.
      *
+     * @param absoluteAccuracy Absolute accuracy.
      */
-    public BisectionSolver() {
-        super(100, 1E-6);
+    public BisectionSolver(double absoluteAccuracy) {
+        super(absoluteAccuracy);
+    }
+    /**
+     * Construct a solver.
+     *
+     * @param relativeAccuracy Relative accuracy.
+     * @param absoluteAccuracy Absolute accuracy.
+     */
+    public BisectionSolver(double relativeAccuracy,
+                           double absoluteAccuracy) {
+        super(relativeAccuracy, absoluteAccuracy);
     }
 
-    /** {@inheritDoc} */
-    @Deprecated
-    public double solve(double min, double max, double initial)
-        throws MaxIterationsExceededException, FunctionEvaluationException {
-        return solve(f, min, max);
-    }
-
-    /** {@inheritDoc} */
-    @Deprecated
-    public double solve(double min, double max)
-        throws MaxIterationsExceededException, FunctionEvaluationException {
-        return solve(f, min, max);
-    }
-
-    /** {@inheritDoc} */
-    public double solve(final UnivariateRealFunction f, double min, double max, double initial)
-        throws MaxIterationsExceededException, FunctionEvaluationException {
-        return solve(f, min, max);
-    }
-
-    /** {@inheritDoc} */
-    public double solve(final UnivariateRealFunction f, double min, double max)
-        throws MaxIterationsExceededException, FunctionEvaluationException {
-
-        clearResult();
-        verifyInterval(min,max);
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected double doSolve() {
+        double min = getMin();
+        double max = getMax();
+        verifyInterval(min, max);
+        final double absoluteAccuracy = getAbsoluteAccuracy();
         double m;
         double fm;
         double fmin;
 
-        int i = 0;
-        while (i < maximalIterationCount) {
+        while (true) {
             m = UnivariateRealSolverUtils.midpoint(min, max);
-           fmin = f.value(min);
-           fm = f.value(m);
+            fmin = computeObjectiveValue(min);
+            fm = computeObjectiveValue(m);
 
-            if (fm * fmin > 0.0) {
+            if (fm * fmin > 0) {
                 // max and m bracket the root.
                 min = m;
             } else {
@@ -99,12 +83,8 @@ public class BisectionSolver extends UnivariateRealSolverImpl {
 
             if (FastMath.abs(max - min) <= absoluteAccuracy) {
                 m = UnivariateRealSolverUtils.midpoint(min, max);
-                setResult(m, i);
                 return m;
             }
-            ++i;
         }
-
-        throw new MaxIterationsExceededException(maximalIterationCount);
     }
 }
