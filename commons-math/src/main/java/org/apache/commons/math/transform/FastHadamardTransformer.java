@@ -16,7 +16,7 @@
  */
 package org.apache.commons.math.transform;
 
-import org.apache.commons.math.FunctionEvaluationException;
+import org.apache.commons.math.exception.MathUserException;
 import org.apache.commons.math.MathRuntimeException;
 import org.apache.commons.math.analysis.UnivariateRealFunction;
 import org.apache.commons.math.exception.util.LocalizedFormats;
@@ -29,7 +29,7 @@ import org.apache.commons.math.exception.util.LocalizedFormats;
  * cannot be inverted directly. Due to a scaling factor it may lead to rational results.
  * As an example, the inverse transform of integer vector (0, 1, 0, 1) is rational
  * vector (1/2, -1/2, 0, 0).</p>
- * @version $Revision: 983921 $ $Date: 2010-08-10 12:46:06 +0200 (Di, 10 Aug 2010) $
+ * @version $Revision: 1037328 $ $Date: 2010-11-20 22:01:50 +0100 (Sa, 20 Nov 2010) $
  * @since 2.0
  */
 public class FastHadamardTransformer implements RealTransformer {
@@ -43,7 +43,7 @@ public class FastHadamardTransformer implements RealTransformer {
     /** {@inheritDoc} */
     public double[] transform(UnivariateRealFunction f,
                               double min, double max, int n)
-        throws FunctionEvaluationException, IllegalArgumentException {
+        throws MathUserException, IllegalArgumentException {
         return fht(FastFourierTransformer.sample(f, min, max, n));
     }
 
@@ -56,7 +56,7 @@ public class FastHadamardTransformer implements RealTransformer {
     /** {@inheritDoc} */
     public double[] inversetransform(UnivariateRealFunction f,
                                      double min, double max, int n)
-        throws FunctionEvaluationException, IllegalArgumentException {
+        throws MathUserException, IllegalArgumentException {
         final double[] unscaled =
             fht(FastFourierTransformer.sample(f, min, max, n));
         return FastFourierTransformer.scaleArray(unscaled, 1.0 / n);

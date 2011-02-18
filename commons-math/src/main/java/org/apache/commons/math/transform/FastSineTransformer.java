@@ -16,7 +16,7 @@
  */
 package org.apache.commons.math.transform;
 
-import org.apache.commons.math.FunctionEvaluationException;
+import org.apache.commons.math.exception.MathUserException;
 import org.apache.commons.math.MathRuntimeException;
 import org.apache.commons.math.analysis.UnivariateRealFunction;
 import org.apache.commons.math.complex.Complex;
@@ -37,7 +37,7 @@ import org.apache.commons.math.util.FastMath;
  * transformation after sampling.</p>
  * <p>As of version 2.0 this no longer implements Serializable</p>
  *
- * @version $Revision: 990658 $ $Date: 2010-08-30 00:04:09 +0200 (Mo, 30 Aug 2010) $
+ * @version $Revision: 1037328 $ $Date: 2010-11-20 22:01:50 +0100 (Sa, 20 Nov 2010) $
  * @since 1.2
  */
 public class FastSineTransformer implements RealTransformer {
@@ -75,13 +75,13 @@ public class FastSineTransformer implements RealTransformer {
      * @param max the upper bound for the interval
      * @param n the number of sample points
      * @return the real transformed array
-     * @throws FunctionEvaluationException if function cannot be evaluated
+     * @throws MathUserException if function cannot be evaluated
      * at some point
      * @throws IllegalArgumentException if any parameters are invalid
      */
     public double[] transform(UnivariateRealFunction f,
                               double min, double max, int n)
-        throws FunctionEvaluationException, IllegalArgumentException {
+        throws MathUserException, IllegalArgumentException {
 
         double data[] = FastFourierTransformer.sample(f, min, max, n);
         data[0] = 0.0;
@@ -115,13 +115,13 @@ public class FastSineTransformer implements RealTransformer {
      * @param max the upper bound for the interval
      * @param n the number of sample points
      * @return the real transformed array
-     * @throws FunctionEvaluationException if function cannot be evaluated
+     * @throws MathUserException if function cannot be evaluated
      * at some point
      * @throws IllegalArgumentException if any parameters are invalid
      */
     public double[] transform2(
         UnivariateRealFunction f, double min, double max, int n)
-        throws FunctionEvaluationException, IllegalArgumentException {
+        throws MathUserException, IllegalArgumentException {
 
         double data[] = FastFourierTransformer.sample(f, min, max, n);
         data[0] = 0.0;
@@ -156,12 +156,11 @@ public class FastSineTransformer implements RealTransformer {
      * @param max the upper bound for the interval
      * @param n the number of sample points
      * @return the real inversely transformed array
-     * @throws FunctionEvaluationException if function cannot be evaluated
-     * at some point
+     * @throws MathUserException if function cannot be evaluated at some point
      * @throws IllegalArgumentException if any parameters are invalid
      */
     public double[] inversetransform(UnivariateRealFunction f, double min, double max, int n)
-        throws FunctionEvaluationException, IllegalArgumentException {
+        throws MathUserException, IllegalArgumentException {
 
         double data[] = FastFourierTransformer.sample(f, min, max, n);
         data[0] = 0.0;
@@ -195,12 +194,11 @@ public class FastSineTransformer implements RealTransformer {
      * @param max the upper bound for the interval
      * @param n the number of sample points
      * @return the real inversely transformed array
-     * @throws FunctionEvaluationException if function cannot be evaluated
-     * at some point
+     * @throws MathUserException if function cannot be evaluated at some point
      * @throws IllegalArgumentException if any parameters are invalid
      */
     public double[] inversetransform2(UnivariateRealFunction f, double min, double max, int n)
-        throws FunctionEvaluationException, IllegalArgumentException {
+        throws MathUserException, IllegalArgumentException {
 
         return transform2(f, min, max, n);
     }

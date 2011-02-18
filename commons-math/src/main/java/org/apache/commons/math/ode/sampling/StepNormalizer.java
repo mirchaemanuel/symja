@@ -17,7 +17,7 @@
 
 package org.apache.commons.math.ode.sampling;
 
-import org.apache.commons.math.ode.DerivativeException;
+import org.apache.commons.math.exception.MathUserException;
 import org.apache.commons.math.util.FastMath;
 
 /**
@@ -44,7 +44,7 @@ import org.apache.commons.math.util.FastMath;
  *
  * @see StepHandler
  * @see FixedStepHandler
- * @version $Revision: 990658 $ $Date: 2010-08-30 00:04:09 +0200 (Mo, 30 Aug 2010) $
+ * @version $Revision: 1037328 $ $Date: 2010-11-20 22:01:50 +0100 (Sa, 20 Nov 2010) $
  * @since 1.2
  */
 
@@ -109,11 +109,11 @@ public class StepNormalizer implements StepHandler {
      * should build a local copy using the clone method and store this
      * copy.
      * @param isLast true if the step is the last one
-     * @throws DerivativeException this exception is propagated to the
+     * @throws MathUserException this exception is propagated to the
      * caller if the underlying user function triggers one
      */
     public void handleStep(final StepInterpolator interpolator, final boolean isLast)
-        throws DerivativeException {
+        throws MathUserException {
 
         if (lastState == null) {
 

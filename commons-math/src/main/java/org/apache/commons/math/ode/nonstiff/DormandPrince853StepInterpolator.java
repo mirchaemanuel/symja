@@ -21,9 +21,8 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
-import org.apache.commons.math.MathRuntimeException;
+import org.apache.commons.math.exception.MathUserException;
 import org.apache.commons.math.ode.AbstractIntegrator;
-import org.apache.commons.math.ode.DerivativeException;
 import org.apache.commons.math.ode.sampling.StepInterpolator;
 
 /**
@@ -32,7 +31,7 @@ import org.apache.commons.math.ode.sampling.StepInterpolator;
  *
  * @see DormandPrince853Integrator
  *
- * @version $Revision: 811827 $ $Date: 2009-09-06 17:32:50 +0200 (So, 06 Sep 2009) $
+ * @version $Revision: 1061508 $ $Date: 2011-01-20 21:57:11 +0100 (Do, 20 Jan 2011) $
  * @since 1.2
  */
 
@@ -313,7 +312,7 @@ class DormandPrince853StepInterpolator
   @Override
   protected void computeInterpolatedStateAndDerivatives(final double theta,
                                           final double oneMinusThetaH)
-    throws DerivativeException {
+    throws MathUserException {
 
     if (! vectorsInitialized) {
 
@@ -387,7 +386,7 @@ class DormandPrince853StepInterpolator
   /** {@inheritDoc} */
   @Override
   protected void doFinalize()
-    throws DerivativeException {
+    throws MathUserException {
 
     if (currentState == null) {
       // we are finalizing an uninitialized instance
@@ -396,6 +395,7 @@ class DormandPrince853StepInterpolator
 
     double s;
     final double[] yTmp = new double[currentState.length];
+    final double pT = getGlobalPreviousTime();
 
     // k14
     for (int j = 0; j < currentState.length; ++j) {
@@ -404,7 +404,7 @@ class DormandPrince853StepInterpolator
           K14_11 * yDotK[10][j] + K14_12 * yDotK[11][j] + K14_13 * yDotK[12][j];
       yTmp[j] = currentState[j] + h * s;
     }
-    integrator.computeDerivatives(previousTime + C14 * h, yTmp, yDotKLast[0]);
+    integrator.computeDerivatives(pT + C14 * h, yTmp, yDotKLast[0]);
 
     // k15
     for (int j = 0; j < currentState.length; ++j) {
@@ -414,7 +414,7 @@ class DormandPrince853StepInterpolator
          K15_14 * yDotKLast[0][j];
      yTmp[j] = currentState[j] + h * s;
     }
-    integrator.computeDerivatives(previousTime + C15 * h, yTmp, yDotKLast[1]);
+    integrator.computeDerivatives(pT + C15 * h, yTmp, yDotKLast[1]);
 
     // k16
     for (int j = 0; j < currentState.length; ++j) {
@@ -424,7 +424,7 @@ class DormandPrince853StepInterpolator
           K16_14 * yDotKLast[0][j] +  K16_15 * yDotKLast[1][j];
       yTmp[j] = currentState[j] + h * s;
     }
-    integrator.computeDerivatives(previousTime + C16 * h, yTmp, yDotKLast[2]);
+    integrator.computeDerivatives(pT + C16 * h, yTmp, yDotKLast[2]);
 
   }
 
@@ -436,8 +436,10 @@ class DormandPrince853StepInterpolator
     try {
       // save the local attributes
       finalizeStep();
-    } catch (DerivativeException e) {
-      throw MathRuntimeException.createIOException(e);
+    } catch (MathUserException e) {
+        IOException ioe = new IOException(e.getLocalizedMessage());
+        ioe.initCause(e);
+        throw ioe;
     }
     final int dimension = (currentState == null) ? -1 : currentState.length;
     out.writeInt(dimension);

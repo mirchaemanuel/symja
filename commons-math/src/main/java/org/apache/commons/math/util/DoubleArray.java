@@ -22,7 +22,7 @@ package org.apache.commons.math.util;
  * array implementations to support various storage mechanisms
  * such as automatic expansion, contraction, and array "rolling".
  *
- * @version $Revision: 811685 $ $Date: 2009-09-05 19:36:48 +0200 (Sa, 05 Sep 2009) $
+ * @version $Revision: 1053283 $ $Date: 2010-12-28 10:03:53 +0100 (Di, 28 Dez 2010) $
  */
 public interface DoubleArray {
 
@@ -66,6 +66,13 @@ public interface DoubleArray {
      * @param value to be added to end of array
      */
     void addElement(double value);
+
+    /**
+     * Adds elements to the end of this expandable array
+     *
+     * @param values to be added to end of array
+     */
+    void addElements(double[] values);
 
     /**
      * <p>

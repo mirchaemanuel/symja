@@ -43,7 +43,7 @@ import org.apache.commons.math.exception.util.LocalizedFormats;
  *                       standard deviation = <code>sigma</code></li>
  * <li> CONSTANT_MODE -- returns <code>mu</code> every time.</li></ul></p>
  *
- * @version $Revision: 983921 $ $Date: 2010-08-10 12:46:06 +0200 (Di, 10 Aug 2010) $
+ * @version $Revision: 1003346 $ $Date: 2010-10-01 03:27:16 +0200 (Fr, 01 Okt 2010) $
  *
  */
 public class ValueServer {
@@ -85,12 +85,13 @@ public class ValueServer {
     private BufferedReader filePointer = null;
 
     /** RandomDataImpl to use for random data generation. */
-    private RandomData randomData = new RandomDataImpl();
+    private final RandomData randomData;
 
     // Data generation modes ======================================
 
     /** Creates new ValueServer */
     public ValueServer() {
+        randomData = new RandomDataImpl();
     }
 
     /**

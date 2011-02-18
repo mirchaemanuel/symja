@@ -17,7 +17,7 @@
 
 package org.apache.commons.math.ode.nonstiff;
 
-import org.apache.commons.math.ode.DerivativeException;
+import org.apache.commons.math.exception.MathUserException;
 import org.apache.commons.math.ode.sampling.StepInterpolator;
 
 /**
@@ -35,7 +35,7 @@ import org.apache.commons.math.ode.sampling.StepInterpolator;
  * the derivatives already computed during the step.</p>
  *
  * @see EulerIntegrator
- * @version $Revision: 809744 $ $Date: 2009-08-31 22:59:15 +0200 (Mo, 31 Aug 2009) $
+ * @version $Revision: 1037328 $ $Date: 2010-11-20 22:01:50 +0100 (Sa, 20 Nov 2010) $
  * @since 1.2
  */
 
@@ -79,7 +79,7 @@ class EulerStepInterpolator
   @Override
   protected void computeInterpolatedStateAndDerivatives(final double theta,
                                           final double oneMinusThetaH)
-    throws DerivativeException {
+    throws MathUserException {
 
     for (int i = 0; i < interpolatedState.length; ++i) {
       interpolatedState[i] = currentState[i] - oneMinusThetaH * yDotK[0][i];

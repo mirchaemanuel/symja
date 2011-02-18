@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
-import org.apache.commons.math.ode.DerivativeException;
 import org.apache.commons.math.ode.sampling.AbstractStepInterpolator;
 import org.apache.commons.math.ode.sampling.StepInterpolator;
 import org.apache.commons.math.util.FastMath;
@@ -71,7 +70,7 @@ import org.apache.commons.math.util.FastMath;
  * </table>
  *
  * @see GraggBulirschStoerIntegrator
- * @version $Revision: 990658 $ $Date: 2010-08-30 00:04:09 +0200 (Mo, 30 Aug 2010) $
+ * @version $Revision: 1061508 $ $Date: 2011-01-20 21:57:11 +0100 (Do, 20 Jan 2011) $
  * @since 1.2
  */
 
@@ -310,8 +309,7 @@ class GraggBulirschStoerStepInterpolator
   /** {@inheritDoc} */
   @Override
   protected void computeInterpolatedStateAndDerivatives(final double theta,
-                                          final double oneMinusThetaH)
-    throws DerivativeException {
+                                          final double oneMinusThetaH) {
 
     final int dimension = currentState.length;
 

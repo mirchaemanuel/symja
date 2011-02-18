@@ -17,8 +17,28 @@
 package org.apache.commons.math.util;
 
 /**
- * Faster, more accurate, portable alternative to StrictMath.
- * @version $Revision: 996172 $ $Date: 2010-09-11 18:57:30 +0200 (Sa, 11 Sep 2010) $
+ * Faster, more accurate, portable alternative to {@link StrictMath}.
+ * <p>
+ * Additionally implements the following methods not found in StrictMath:
+ * <ul>
+ * <li>{@link #asinh(double)}</li>
+ * <li>{@link #acosh(double)}</li>
+ * <li>{@link #atanh(double)}</li>
+ * </ul>
+ * The following methods are found in StrictMath since 1.6 only
+ * <ul>
+ * <li>{@link #copySign(double, double)}</li>
+ * <li>{@link #getExponent(double)}</li>
+ * <li>{@link #nextAfter(double,double)}</li>
+ * <li>{@link #nextUp(double)}</li>
+ * <li>{@link #scalb(double, int)}</li>
+ * <li>{@link #copySign(float, float)}</li>
+ * <li>{@link #getExponent(float)}</li>
+ * <li>{@link #nextAfter(float,double)}</li>
+ * <li>{@link #nextUp(float)}</li>
+ * <li>{@link #scalb(float, int)}</li>
+ * </ul>
+ * @version $Revision: 1066279 $ $Date: 2011-02-02 00:56:36 +0100 (Mi, 02 Feb 2011) $
  * @since 2.2
  */
 public class FastMath {
@@ -123,7 +143,7 @@ public class FastMath {
     private static final double TANGENT_TABLE_B[] = new double[14];
 
     /** Bits of 1/(2*pi), need for reducePayneHanek(). */
-    private static long RECIP_2PI[] = new long[] {
+    private static final long RECIP_2PI[] = new long[] {
         (0x28be60dbL << 32) | 0x9391054aL,
         (0x7f09d5f4L << 32) | 0x7d4d3770L,
         (0x36d8a566L << 32) | 0x4f10e410L,
@@ -144,22 +164,41 @@ public class FastMath {
          0x9afed7ecL << 32  };
 
     /** Bits of pi/4, need for reducePayneHanek(). */
-    private static long PI_O_4_BITS[] = new long[] {
+    private static final long PI_O_4_BITS[] = new long[] {
         (0xc90fdaa2L << 32) | 0x2168c234L,
         (0xc4c6628bL << 32) | 0x80dc1cd1L };
 
-    /** Eighthes.
+    /** Eighths.
      * This is used by sinQ, because its faster to do a table lookup than
      * a multiply in this time-critical routine
      */
-    private static final double EIGHTHES[] = {0, 0.125, 0.25, 0.375, 0.5, 0.625, 0.75, 0.875, 1.0, 1.125, 1.25, 1.375, 1.5, 1.625};
+    private static final double EIGHTHS[] = {0, 0.125, 0.25, 0.375, 0.5, 0.625, 0.75, 0.875, 1.0, 1.125, 1.25, 1.375, 1.5, 1.625};
 
-    /* Table of 2^((n+2)/3) */
+    /** Table of 2^((n+2)/3) */
     private static final double CBRTTWO[] = { 0.6299605249474366,
-                                            0.7937005259840998, 
-                                            1.0, 
-                                            1.2599210498948732, 
+                                            0.7937005259840998,
+                                            1.0,
+                                            1.2599210498948732,
                                             1.5874010519681994 };
+
+    /*
+     *  There are 52 bits in the mantissa of a double.
+     *  For additional precision, the code splits double numbers into two parts,
+     *  by clearing the low order 30 bits if possible, and then performs the arithmetic
+     *  on each half separately.
+     */
+
+    /**
+     * 0x40000000 - used to split a double into two parts, both with the low order bits cleared.
+     * Equivalent to 2^30.
+     */
+    private static final long HEX_40000000 = 0x40000000L; // 1073741824L
+
+    /** Mask used to clear low order 30 bits */
+    private static final long MASK_30BITS = -1L - (HEX_40000000 -1); // 0xFFFFFFFFC0000000L;
+
+    /** 2^52 - double numbers this large must be integral (no fraction) or NaN or Infinite */
+    private static final double TWO_POWER_52 = 4503599627370496.0;
 
     // Initialize tables
     static {
@@ -167,7 +206,7 @@ public class FastMath {
 
         // Generate an array of factorials
         FACT[0] = 1.0;
-        for (i = 1; i < 20; i++) {
+        for (i = 1; i < FACT.length; i++) {
             FACT[i] = FACT[i-1] * i;
         }
 
@@ -189,14 +228,14 @@ public class FastMath {
         }
 
         // Populate expFracTable
-        for (i = 0; i < 1025; i++) {
+        for (i = 0; i < EXP_FRAC_TABLE_A.length; i++) {
             slowexp(i/1024.0, tmp);
             EXP_FRAC_TABLE_A[i] = tmp[0];
             EXP_FRAC_TABLE_B[i] = tmp[1];
         }
 
         // Populate lnMant table
-        for (i = 0; i < 1024; i++) {
+        for (i = 0; i < LN_MANT.length; i++) {
             double d = Double.longBitsToDouble( (((long) i) << 42) | 0x3ff0000000000000L );
             LN_MANT[i] = slowLog(d);
         }
@@ -211,7 +250,26 @@ public class FastMath {
     private FastMath() {
     }
 
+    // Generic helper methods
+
+    /**
+     * Get the high order bits from the mantissa.
+     * Equivalent to adding and subtracting HEX_40000 but also works for very large numbers
+     *
+     * @param d the value to split
+     * @return the high order part of the mantissa
+     */
+    private static double doubleHighPart(double d) {
+        if (d > -MathUtils.SAFE_MIN && d < MathUtils.SAFE_MIN){
+            return d; // These are un-normalised - don't try to convert
+        }
+        long xl = Double.doubleToLongBits(d);
+        xl = xl & MASK_30BITS; // Drop low order bits
+        return Double.longBitsToDouble(xl);
+    }
+
     /** Compute the square root of a number.
+     * <p><b>Note:</b> this implementation currently delegates to {@link Math#sqrt}
      * @param a number on which evaluation is done
      * @return square root of a
      */
@@ -220,68 +278,285 @@ public class FastMath {
     }
 
     /** Compute the hyperbolic cosine of a number.
-     * @param a number on which evaluation is done
-     * @return hyperbolic cosine of a
+     * @param x number on which evaluation is done
+     * @return hyperbolic cosine of x
      */
-    public static double cosh(final double a) {
-        return 0.5 * (FastMath.exp(a) + FastMath.exp(-a));
+    public static double cosh(double x) {
+      if (x != x) {
+          return x;
+      }
+
+      if (x > 20.0) {
+          return exp(x)/2.0;
+      }
+
+      if (x < -20) {
+          return exp(-x)/2.0;
+      }
+
+      double hiPrec[] = new double[2];
+      if (x < 0.0) {
+          x = -x;
+      }
+      exp(x, 0.0, hiPrec);
+
+      double ya = hiPrec[0] + hiPrec[1];
+      double yb = -(ya - hiPrec[0] - hiPrec[1]);
+
+      double temp = ya * HEX_40000000;
+      double yaa = ya + temp - temp;
+      double yab = ya - yaa;
+
+      // recip = 1/y
+      double recip = 1.0/ya;
+      temp = recip * HEX_40000000;
+      double recipa = recip + temp - temp;
+      double recipb = recip - recipa;
+
+      // Correct for rounding in division
+      recipb += (1.0 - yaa*recipa - yaa*recipb - yab*recipa - yab*recipb) * recip;
+      // Account for yb
+      recipb += -yb * recip * recip;
+
+      // y = y + 1/y
+      temp = ya + recipa;
+      yb += -(temp - ya - recipa);
+      ya = temp;
+      temp = ya + recipb;
+      yb += -(temp - ya - recipb);
+      ya = temp;
+
+      double result = ya + yb;
+      result *= 0.5;
+      return result;
     }
 
     /** Compute the hyperbolic sine of a number.
-     * @param a number on which evaluation is done
-     * @return hyperbolic sine of a
+     * @param x number on which evaluation is done
+     * @return hyperbolic sine of x
      */
-    public static double sinh(double a) {
+    public static double sinh(double x) {
+      boolean negate = false;
+      if (x != x) {
+          return x;
+      }
 
-        boolean negative = false;
-        if (a < 0) {
-            negative = true;
-            a = -a;
-        }
+      if (x > 20.0) {
+          return exp(x)/2.0;
+      }
 
-        double absSinh;
-        if (a > 0.3) {
-            absSinh = 0.5 * (FastMath.exp(a) - FastMath.exp(-a));
-        } else {
-            final double a2 = a * a;
-            if (a > 0.05) {
-                absSinh = a * (1 + a2 * (1 + a2  * (1 + a2 * (1 + a2 * (1 + a2 / 110) / 72) / 42) / 20) / 6);
-            } else {
-                absSinh = a * (1 + a2 * (1 + a2  * (1 + a2 / 42) / 20) / 6);
-            }
-        }
+      if (x < -20) {
+          return -exp(-x)/2.0;
+      }
 
-        return negative ? -absSinh : absSinh;
+      if (x == 0) {
+          return x;
+      }
 
+      if (x < 0.0) {
+          x = -x;
+          negate = true;
+      }
+
+      double result;
+
+      if (x > 0.25) {
+          double hiPrec[] = new double[2];
+          exp(x, 0.0, hiPrec);
+
+          double ya = hiPrec[0] + hiPrec[1];
+          double yb = -(ya - hiPrec[0] - hiPrec[1]);
+
+          double temp = ya * HEX_40000000;
+          double yaa = ya + temp - temp;
+          double yab = ya - yaa;
+
+          // recip = 1/y
+          double recip = 1.0/ya;
+          temp = recip * HEX_40000000;
+          double recipa = recip + temp - temp;
+          double recipb = recip - recipa;
+
+          // Correct for rounding in division
+          recipb += (1.0 - yaa*recipa - yaa*recipb - yab*recipa - yab*recipb) * recip;
+          // Account for yb
+          recipb += -yb * recip * recip;
+
+          recipa = -recipa;
+          recipb = -recipb;
+
+          // y = y + 1/y
+          temp = ya + recipa;
+          yb += -(temp - ya - recipa);
+          ya = temp;
+          temp = ya + recipb;
+          yb += -(temp - ya - recipb);
+          ya = temp;
+
+          result = ya + yb;
+          result *= 0.5;
+      }
+      else {
+          double hiPrec[] = new double[2];
+          expm1(x, hiPrec);
+
+          double ya = hiPrec[0] + hiPrec[1];
+          double yb = -(ya - hiPrec[0] - hiPrec[1]);
+
+          /* Compute expm1(-x) = -expm1(x) / (expm1(x) + 1) */
+          double denom = 1.0 + ya;
+          double denomr = 1.0 / denom;
+          double denomb = -(denom - 1.0 - ya) + yb;
+          double ratio = ya * denomr;
+          double temp = ratio * HEX_40000000;
+          double ra = ratio + temp - temp;
+          double rb = ratio - ra;
+
+          temp = denom * HEX_40000000;
+          double za = denom + temp - temp;
+          double zb = denom - za;
+
+          rb += (ya - za*ra - za*rb - zb*ra - zb*rb) * denomr;
+
+          // Adjust for yb
+          rb += yb*denomr;                        // numerator
+          rb += -ya * denomb * denomr * denomr;   // denominator
+
+          // y = y - 1/y
+          temp = ya + ra;
+          yb += -(temp - ya - ra);
+          ya = temp;
+          temp = ya + rb;
+          yb += -(temp - ya - rb);
+          ya = temp;
+
+          result = ya + yb;
+          result *= 0.5;
+      }
+
+      if (negate) {
+          result = -result;
+      }
+
+      return result;
     }
 
     /** Compute the hyperbolic tangent of a number.
-     * @param a number on which evaluation is done
-     * @return hyperbolic tangent of a
+     * @param x number on which evaluation is done
+     * @return hyperbolic tangent of x
      */
-    public static double tanh(double a) {
+    public static double tanh(double x) {
+      boolean negate = false;
 
-        boolean negative = false;
-        if (a < 0) {
-            negative = true;
-            a = -a;
-        }
+      if (x != x) {
+          return x;
+      }
 
-        double absTanh;
-        if (a > 0.074) {
-            final double twoA = 2 * a;
-            absTanh = FastMath.expm1(twoA) / (FastMath.exp(twoA) + 1);
-        } else {
-            final double a2 = a * a;
-            if (a > 0.016) {
-                absTanh = a * (1 - a2 * (1 - a2 * (2 - a2 * (17 - a2 * (62 - a2 * 1382 / 55 ) / 9) / 21) / 5) / 3);
-            } else {
-                absTanh = a * (1 - a2 * (1 - a2 * (2 - a2 * 17 / 21) / 5) / 3);
-            }
-        }
+      if (x > 20.0) {
+          return 1.0;
+      }
 
-        return negative ? -absTanh : absTanh;
+      if (x < -20) {
+          return -1.0;
+      }
 
+      if (x == 0) {
+          return x;
+      }
+
+      if (x < 0.0) {
+          x = -x;
+          negate = true;
+      }
+
+      double result;
+      if (x >= 0.5) {
+          double hiPrec[] = new double[2];
+          // tanh(x) = (exp(2x) - 1) / (exp(2x) + 1)
+          exp(x*2.0, 0.0, hiPrec);
+
+          double ya = hiPrec[0] + hiPrec[1];
+          double yb = -(ya - hiPrec[0] - hiPrec[1]);
+
+          /* Numerator */
+          double na = -1.0 + ya;
+          double nb = -(na + 1.0 - ya);
+          double temp = na + yb;
+          nb += -(temp - na - yb);
+          na = temp;
+
+          /* Denominator */
+          double da = 1.0 + ya;
+          double db = -(da - 1.0 - ya);
+          temp = da + yb;
+          db += -(temp - da - yb);
+          da = temp;
+
+          temp = da * HEX_40000000;
+          double daa = da + temp - temp;
+          double dab = da - daa;
+
+          // ratio = na/da
+          double ratio = na/da;
+          temp = ratio * HEX_40000000;
+          double ratioa = ratio + temp - temp;
+          double ratiob = ratio - ratioa;
+
+          // Correct for rounding in division
+          ratiob += (na - daa*ratioa - daa*ratiob - dab*ratioa - dab*ratiob) / da;
+
+          // Account for nb
+          ratiob += nb / da;
+          // Account for db
+          ratiob += -db * na / da / da;
+
+          result = ratioa + ratiob;
+      }
+      else {
+          double hiPrec[] = new double[2];
+          // tanh(x) = expm1(2x) / (expm1(2x) + 2)
+          expm1(x*2.0, hiPrec);
+
+          double ya = hiPrec[0] + hiPrec[1];
+          double yb = -(ya - hiPrec[0] - hiPrec[1]);
+
+          /* Numerator */
+          double na = ya;
+          double nb = yb;
+
+          /* Denominator */
+          double da = 2.0 + ya;
+          double db = -(da - 2.0 - ya);
+          double temp = da + yb;
+          db += -(temp - da - yb);
+          da = temp;
+
+          temp = da * HEX_40000000;
+          double daa = da + temp - temp;
+          double dab = da - daa;
+
+          // ratio = na/da
+          double ratio = na/da;
+          temp = ratio * HEX_40000000;
+          double ratioa = ratio + temp - temp;
+          double ratiob = ratio - ratioa;
+
+          // Correct for rounding in division
+          ratiob += (na - daa*ratioa - daa*ratiob - dab*ratioa - dab*ratiob) / da;
+
+          // Account for nb
+          ratiob += nb / da;
+          // Account for db
+          ratiob += -db * na / da / da;
+
+          result = ratioa + ratiob;
+      }
+
+      if (negate) {
+          result = -result;
+      }
+
+      return result;
     }
 
     /** Compute the inverse hyperbolic cosine of a number.
@@ -359,10 +634,19 @@ public class FastMath {
     /** Compute the signum of a number.
      * The signum is -1 for negative numbers, +1 for positive numbers and 0 otherwise
      * @param a number on which evaluation is done
-     * @return -1, 0, +1 or NaN depending on sign of a
+     * @return -1.0, -0.0, +0.0, +1.0 or NaN depending on sign of a
      */
     public static double signum(final double a) {
-        return (a < 0.0) ? -1.0 : ((a > 0.0) ? 1.0 : (Double.isNaN(a) ? Double.NaN : 0.0));
+        return (a < 0.0) ? -1.0 : ((a > 0.0) ? 1.0 : a); // return +0.0/-0.0/NaN depending on a
+    }
+
+    /** Compute the signum of a number.
+     * The signum is -1 for negative numbers, +1 for positive numbers and 0 otherwise
+     * @param a number on which evaluation is done
+     * @return -1.0, -0.0, +0.0, +1.0 or NaN depending on sign of a
+     */
+    public static float signum(final float a) {
+        return (a < 0.0f) ? -1.0f : ((a > 0.0f) ? 1.0f : a); // return +0.0/-0.0/NaN depending on a
     }
 
     /** Compute next number towards positive infinity.
@@ -373,7 +657,16 @@ public class FastMath {
         return nextAfter(a, Double.POSITIVE_INFINITY);
     }
 
+    /** Compute next number towards positive infinity.
+     * @param a number to which neighbor should be computed
+     * @return neighbor of a towards positive infinity
+     */
+    public static float nextUp(final float a) {
+        return nextAfter(a, Float.POSITIVE_INFINITY);
+    }
+
     /** Returns a pseudo-random number between 0.0 and 1.0.
+     * <p><b>Note:</b> this implementation currently delegates to {@link Math#random}
      * @return a random number between 0.0 and 1.0
      */
     public static double random() {
@@ -533,6 +826,15 @@ public class FastMath {
      * @return exp(x) - 1
      */
     public static double expm1(double x) {
+      return expm1(x, null);
+    }
+
+    /** Internal helper method for expm1
+     * @param x number to compute shifted exponential
+     * @param hiPrecOut receive high precision result for -1.0 < x < 1.0
+     * @return exp(x) - 1
+     */
+    private static double expm1(double x, double hiPrecOut[]) {
         if (x != x || x == 0.0) { // NaN or zero
             return x;
         }
@@ -571,7 +873,7 @@ public class FastMath {
             tempB = -(temp - tempA - tempB);
             tempA = temp;
 
-            temp = tempA * 1073741824.0;
+            temp = tempA * HEX_40000000;
             baseA = tempA + temp - temp;
             baseB = tempB + (tempA - baseA);
 
@@ -592,7 +894,7 @@ public class FastMath {
         zb = -(temp - za - zb);
         za = temp;
 
-        temp = za * 1073741824.0;
+        temp = za * HEX_40000000;
         temp = za + temp - temp;
         zb += za - temp;
         za = temp;
@@ -639,11 +941,11 @@ public class FastMath {
             double denomr = 1.0 / denom;
             double denomb = -(denom - 1.0 - ya) + yb;
             double ratio = ya * denomr;
-            temp = ratio * 1073741824.0;
+            temp = ratio * HEX_40000000;
             final double ra = ratio + temp - temp;
             double rb = ratio - ra;
 
-            temp = denom * 1073741824.0;
+            temp = denom * HEX_40000000;
             za = denom + temp - temp;
             zb = denom - za;
 
@@ -664,6 +966,11 @@ public class FastMath {
             // negate
             ya = -ra;
             yb = -rb;
+        }
+
+        if (hiPrecOut != null) {
+            hiPrecOut[0] = ya;
+            hiPrecOut[1] = yb;
         }
 
         return ya + yb;
@@ -712,12 +1019,12 @@ public class FastMath {
      */
     private static void split(final double d, final double split[]) {
         if (d < 8e298 && d > -8e298) {
-            final double a = d * 1073741824.0;
+            final double a = d * HEX_40000000;
             split[0] = (d + a) - a;
             split[1] = d - split[0];
         } else {
             final double a = d * 9.31322574615478515625E-10;
-            split[0] = (d + a - d) * 1073741824.0;
+            split[0] = (d + a - d) * HEX_40000000;
             split[1] = d - split[0];
         }
     }
@@ -731,12 +1038,12 @@ public class FastMath {
         final double d = -(c - a[0] - a[1]);
 
         if (c < 8e298 && c > -8e298) {
-            double z = c * 1073741824.0;
+            double z = c * HEX_40000000;
             a[0] = (c + z) - z;
             a[1] = c - a[0] + d;
         } else {
             double z = c * 9.31322574615478515625E-10;
-            a[0] = (c + z - c) * 1073741824.0;
+            a[0] = (c + z - c) * HEX_40000000;
             a[1] = c - a[0] + d;
         }
     }
@@ -931,6 +1238,9 @@ public class FastMath {
      * @return log(x)
      */
     private static double log(final double x, final double[] hiPrec) {
+        if (x==0) { // Handle special case of +0/-0
+            return Double.NEGATIVE_INFINITY;
+        }
         long bits = Double.doubleToLongBits(x);
 
         /* Handle special cases of negative input, and NaN */
@@ -984,7 +1294,7 @@ public class FastMath {
                /* Compute x - 1.0 and split it */
                 double xa = x - 1.0;
                 double xb = xa - x + 1.0;
-                double tmp = xa * 1073741824.0;
+                double tmp = xa * HEX_40000000;
                 double aa = xa + tmp - tmp;
                 double ab = xa - aa;
                 xa = aa;
@@ -998,7 +1308,7 @@ public class FastMath {
                     aa = ya * xa;
                     ab = ya * xb + yb * xa + yb * xb;
                     /* split, so now y = a */
-                    tmp = aa * 1073741824.0;
+                    tmp = aa * HEX_40000000;
                     ya = aa + tmp - tmp;
                     yb = aa - ya + ab;
 
@@ -1006,7 +1316,7 @@ public class FastMath {
                     aa = ya + LN_QUICK_COEF[i][0];
                     ab = yb + LN_QUICK_COEF[i][1];
                     /* Split y = a */
-                    tmp = aa * 1073741824.0;
+                    tmp = aa * HEX_40000000;
                     ya = aa + tmp - tmp;
                     yb = aa - ya + ab;
                 }
@@ -1015,7 +1325,7 @@ public class FastMath {
                 aa = ya * xa;
                 ab = ya * xb + yb * xa + yb * xb;
                 /* split, so now y = a */
-                tmp = aa * 1073741824.0;
+                tmp = aa * HEX_40000000;
                 ya = aa + tmp - tmp;
                 yb = aa - ya + ab;
 
@@ -1035,22 +1345,22 @@ public class FastMath {
         // y is the most significant 10 bits of the mantissa
         //double y = Double.longBitsToDouble(bits & 0xfffffc0000000000L);
         //double epsilon = (x - y) / y;
-        double epsilon = (double)(bits & 0x3ffffffffffL) / (4503599627370496.0 + (bits & 0x000ffc0000000000L));
+        double epsilon = (bits & 0x3ffffffffffL) / (TWO_POWER_52 + (bits & 0x000ffc0000000000L));
 
         double lnza = 0.0;
         double lnzb = 0.0;
 
         if (hiPrec != null) {
             /* split epsilon -> x */
-            double tmp = epsilon * 1073741824.0;
+            double tmp = epsilon * HEX_40000000;
             double aa = epsilon + tmp - tmp;
             double ab = epsilon - aa;
             double xa = aa;
             double xb = ab;
 
             /* Need a more accurate epsilon, so adjust the division. */
-            double numer = (double)(bits & 0x3ffffffffffL);
-            double denom = 4503599627370496.0 + (bits & 0x000ffc0000000000L);
+            double numer = (bits & 0x3ffffffffffL);
+            double denom = TWO_POWER_52 + (bits & 0x000ffc0000000000L);
             aa = numer - xa*denom - xb * denom;
             xb += aa / denom;
 
@@ -1063,7 +1373,7 @@ public class FastMath {
                 aa = ya * xa;
                 ab = ya * xb + yb * xa + yb * xb;
                 /* split, so now y = a */
-                tmp = aa * 1073741824.0;
+                tmp = aa * HEX_40000000;
                 ya = aa + tmp - tmp;
                 yb = aa - ya + ab;
 
@@ -1071,7 +1381,7 @@ public class FastMath {
                 aa = ya + LN_HI_PREC_COEF[i][0];
                 ab = yb + LN_HI_PREC_COEF[i][1];
                 /* Split y = a */
-                tmp = aa * 1073741824.0;
+                tmp = aa * HEX_40000000;
                 ya = aa + tmp - tmp;
                 yb = aa - ya + ab;
             }
@@ -1168,7 +1478,10 @@ public class FastMath {
         if (x>1e-6 || x<-1e-6) {
             double hiPrec[] = new double[2];
 
-            log(xpa, hiPrec);
+            final double lores = log(xpa, hiPrec);
+            if (Double.isInfinite(lores)){ // don't allow this to be converted to NaN
+                return lores;
+            }
 
             /* Do a taylor series expansion around xpa */
             /* f(x+y) = f(x) + f'(x)*y + f''(x)/2 y^2 */
@@ -1195,9 +1508,12 @@ public class FastMath {
     public static double log10(final double x) {
         final double hiPrec[] = new double[2];
 
-        log(x, hiPrec);
+        final double lores = log(x, hiPrec);
+        if (Double.isInfinite(lores)){ // don't allow this to be converted to NaN
+            return lores;
+        }
 
-        final double tmp = hiPrec[0] * 1073741824.0;
+        final double tmp = hiPrec[0] * HEX_40000000;
         final double lna = hiPrec[0] + tmp - tmp;
         final double lnb = hiPrec[0] - lna + hiPrec[1];
 
@@ -1317,7 +1633,7 @@ public class FastMath {
         /* Handle special case x<0 */
         if (x < 0) {
             // y is an even integer in this case
-            if (y >= 4503599627370496.0 || y <= -4503599627370496.0) {
+            if (y >= TWO_POWER_52 || y <= -TWO_POWER_52) {
                 return pow(-x, y);
             }
 
@@ -1333,23 +1649,27 @@ public class FastMath {
         double ya;
         double yb;
         if (y < 8e298 && y > -8e298) {
-            double tmp1 = y * 1073741824.0;
+            double tmp1 = y * HEX_40000000;
             ya = y + tmp1 - tmp1;
             yb = y - ya;
         } else {
             double tmp1 = y * 9.31322574615478515625E-10;
             double tmp2 = tmp1 * 9.31322574615478515625E-10;
-            ya = (tmp1 + tmp2 - tmp1) * 1073741824.0 * 1073741824.0;
+            ya = (tmp1 + tmp2 - tmp1) * HEX_40000000 * HEX_40000000;
             yb = y - ya;
         }
 
         /* Compute ln(x) */
-        log(x, lns);
+        final double lores = log(x, lns);
+        if (Double.isInfinite(lores)){ // don't allow this to be converted to NaN
+            return lores;
+        }
+
         double lna = lns[0];
         double lnb = lns[1];
 
         /* resplit lns */
-        double tmp1 = lna * 1073741824.0;
+        double tmp1 = lna * HEX_40000000;
         double tmp2 = lna + tmp1 - tmp1;
         lnb += lna - tmp2;
         lna = tmp2;
@@ -1665,7 +1985,7 @@ public class FastMath {
      */
     private static double sinQ(double xa, double xb) {
         int idx = (int) ((xa * 8.0) + 0.5);
-        final double epsilon = xa - EIGHTHES[idx]; //idx*0.125;
+        final double epsilon = xa - EIGHTHS[idx]; //idx*0.125;
 
         // Table lookups
         final double sintA = SINE_TABLE_A[idx];
@@ -1680,7 +2000,7 @@ public class FastMath {
         final double cosEpsB = polyCosine(epsilon);
 
         // Split epsilon   xa + xb = x
-        final double temp = sinEpsA * 1073741824.0;
+        final double temp = sinEpsA * HEX_40000000;
         double temp2 = (sinEpsA + temp) - temp;
         sinEpsB +=  sinEpsA - temp2;
         sinEpsA = temp2;
@@ -1809,7 +2129,7 @@ public class FastMath {
     private static double tanQ(double xa, double xb, boolean cotanFlag) {
 
         int idx = (int) ((xa * 8.0) + 0.5);
-        final double epsilon = xa - EIGHTHES[idx]; //idx*0.125;
+        final double epsilon = xa - EIGHTHS[idx]; //idx*0.125;
 
         // Table lookups
         final double sintA = SINE_TABLE_A[idx];
@@ -1824,7 +2144,7 @@ public class FastMath {
         final double cosEpsB = polyCosine(epsilon);
 
         // Split epsilon   xa + xb = x
-        double temp = sinEpsA * 1073741824.0;
+        double temp = sinEpsA * HEX_40000000;
         double temp2 = (sinEpsA + temp) - temp;
         sinEpsB +=  sinEpsA - temp2;
         sinEpsA = temp2;
@@ -1916,11 +2236,11 @@ public class FastMath {
         double est = sina/cosa;
 
         /* Split the estimate to get more accurate read on division rounding */
-        temp = est * 1073741824.0;
+        temp = est * HEX_40000000;
         double esta = (est + temp) - temp;
         double estb =  est - esta;
 
-        temp = cosa * 1073741824.0;
+        temp = cosa * HEX_40000000;
         double cosaa = (cosa + temp) - temp;
         double cosab =  cosa - cosaa;
 
@@ -2154,8 +2474,8 @@ public class FastMath {
         }
 
         /* Convert to double */
-        double tmpA = (prod2A >>> 12) / 4503599627370496.0;  // High order 52 bits
-        double tmpB = (((prod2A & 0xfffL) << 40) + (prod2B >>> 24)) / 4503599627370496.0 / 4503599627370496.0; // Low bits
+        double tmpA = (prod2A >>> 12) / TWO_POWER_52;  // High order 52 bits
+        double tmpB = (((prod2A & 0xfffL) << 40) + (prod2B >>> 24)) / TWO_POWER_52 / TWO_POWER_52; // Low bits
 
         double sumA = tmpA + tmpB;
         double sumB = -(sumA - tmpA - tmpB);
@@ -2467,11 +2787,15 @@ public class FastMath {
      * @param xa number from which arctangent is requested
      * @param xb extra bits for x (may be 0.0)
      * @param leftPlane if true, result angle must be put in the left half plane
-     * @return atan(xa + xb) (or angle shifted by &pi; if leftPlane is true)
+     * @return atan(xa + xb) (or angle shifted by {@code PI} if leftPlane is true)
      */
     private static double atan(double xa, double xb, boolean leftPlane) {
         boolean negate = false;
         int idx;
+
+        if (xa == 0.0) { // Matches +/- 0.0; return correct sign
+            return leftPlane ? copySign(Math.PI, xa) : xa;
+        }
 
         if (xa < 0) {
             // negative
@@ -2500,7 +2824,7 @@ public class FastMath {
         epsA = temp;
 
         /* Compute eps = eps / (1.0 + xa*tangent) */
-        temp = xa * 1073741824.0;
+        temp = xa * HEX_40000000;
         double ya = xa + temp - temp;
         double yb = xb + xa - ya;
         xa = ya;
@@ -2526,11 +2850,11 @@ public class FastMath {
             zb += xb * TANGENT_TABLE_B[idx];
             ya = epsA / za;
 
-            temp = ya * 1073741824.0;
+            temp = ya * HEX_40000000;
             final double yaa = (ya + temp) - temp;
             final double yab = ya - yaa;
 
-            temp = za * 1073741824.0;
+            temp = za * HEX_40000000;
             final double zaa = (za + temp) - temp;
             final double zab = za - zaa;
 
@@ -2579,8 +2903,8 @@ public class FastMath {
         double resultb;
 
         //result = yb + eighths[idx] + ya;
-        double za = EIGHTHES[idx] + ya;
-        double zb = -(za - EIGHTHES[idx] - ya);
+        double za = EIGHTHS[idx] + ya;
+        double zb = -(za - EIGHTHS[idx] - ya);
         temp = za + yb;
         zb += -(temp - za - yb);
         za = temp;
@@ -2613,7 +2937,7 @@ public class FastMath {
      * Two arguments arctangent function
      * @param y ordinate
      * @param x abscissa
-     * @return phase angle of point (x,y) between -&pi; and &pi;
+     * @return phase angle of point (x,y) between {@code -PI} and {@code PI}
      */
     public static double atan2(double y, double x) {
         if (x !=x || y != y) {
@@ -2627,14 +2951,10 @@ public class FastMath {
 
             if (invx == 0.0) { // X is infinite
                 if (x > 0) {
-                    return 0.0;
+                    return y; // return +/- 0.0
                 } else {
-                    return Math.PI;
+                    return copySign(Math.PI, y);
                 }
-            }
-
-            if (result != result) { // y must be infinite
-                return x/y;
             }
 
             if (x < 0.0 || invx < 0.0) {
@@ -2647,6 +2967,8 @@ public class FastMath {
                 return result;
             }
         }
+
+        // y cannot now be zero
 
         if (y == Double.POSITIVE_INFINITY) {
             if (x == Double.POSITIVE_INFINITY) {
@@ -2693,6 +3015,8 @@ public class FastMath {
             }
         }
 
+        // Neither y nor x can be infinite or NAN here
+
         if (x == 0) {
             if (y > 0.0 || 1/y > 0.0) {
                 return Math.PI/2.0;
@@ -2703,27 +3027,28 @@ public class FastMath {
             }
         }
 
-        if (x > 8e298 || x < -8e298) { // This would cause split of x to fail
-            x *= 9.31322574615478515625E-10;
-            y *= 9.31322574615478515625E-10;
+        // Compute ratio r = y/x
+        final double r = y/x;
+        if (Double.isInfinite(r)) { // bypass calculations that can create NaN
+            return atan(r, 0, x < 0);
         }
 
-        // Split y
-        double temp = x * 1073741824.0;
-        final double xa = x + temp - temp;
-        final double xb = x - xa;
-
-        // Compute ratio r = x/y
-        final double r = y/x;
-        temp = r * 1073741824.0;
-        double ra = r + temp - temp;
+        double ra = doubleHighPart(r);
         double rb = r - ra;
+
+        // Split x
+        final double xa = doubleHighPart(x);
+        final double xb = x - xa;
 
         rb += (y - ra * xa - ra * xb - rb * xa - rb * xb) / x;
 
-        temp = ra + rb;
+        double temp = ra + rb;
         rb = -(temp - ra - rb);
         ra = temp;
+
+        if (ra == 0 && (y < 0)) { // Fix up the sign so atan works correctly
+            ra = -0.0;
+        }
 
         // Call atan
         double result = atan(ra, rb, x < 0);
@@ -2752,10 +3077,14 @@ public class FastMath {
           return -Math.PI/2.0;
       }
 
+      if (x == 0.0) { // Matches +/- 0.0; return correct sign
+          return x;
+      }
+
       /* Compute asin(x) = atan(x/sqrt(1-x*x)) */
 
       /* Split x */
-      double temp = x * 1073741824.0;
+      double temp = x * HEX_40000000;
       final double xa = x + temp - temp;
       final double xb = x - xa;
 
@@ -2777,7 +3106,7 @@ public class FastMath {
       /* Square root */
       double y;
       y = sqrt(za);
-      temp = y * 1073741824.0;
+      temp = y * HEX_40000000;
       ya = y + temp - temp;
       yb = y - ya;
 
@@ -2789,7 +3118,7 @@ public class FastMath {
 
       // Compute ratio r = x/y
       double r = x/y;
-      temp = r * 1073741824.0;
+      temp = r * HEX_40000000;
       double ra = r + temp - temp;
       double rb = r - ra;
 
@@ -2831,7 +3160,7 @@ public class FastMath {
       /* Compute acos(x) = atan(sqrt(1-x*x)/x) */
 
       /* Split x */
-      double temp = x * 1073741824.0;
+      double temp = x * HEX_40000000;
       final double xa = x + temp - temp;
       final double xb = x - xa;
 
@@ -2852,7 +3181,7 @@ public class FastMath {
 
       /* Square root */
       double y = sqrt(za);
-      temp = y * 1073741824.0;
+      temp = y * HEX_40000000;
       ya = y + temp - temp;
       yb = y - ya;
 
@@ -2866,8 +3195,13 @@ public class FastMath {
 
       // Compute ratio r = y/x
       double r = y/x;
-      temp = r * 1073741824.0;
-      double ra = r + temp - temp;
+
+      // Did r overflow?
+      if (Double.isInfinite(r)) { // x is effectively zero
+          return Math.PI/2; // so return the appropriate value
+      }
+
+      double ra = doubleHighPart(r);
       double rb = r - ra;
 
       rb += (y - ra*xa - ra*xb - rb*xa - rb*xb) / x;  // Correct for rounding in division
@@ -2881,8 +3215,8 @@ public class FastMath {
     }
 
     /** Compute the cubic root of a number.
-     * @param a number on which evaluation is done
-     * @return cubic root of a
+     * @param x number on which evaluation is done
+     * @return cubic root of x
      */
     public static double cbrt(double x) {
       /* Convert input double to bits */
@@ -2911,12 +3245,12 @@ public class FastMath {
       int exp3 = exponent / 3;
 
       /* p2 will be the nearest power of 2 to x with its exponent divided by 3 */
-      double p2 = Double.longBitsToDouble((inbits & 0x8000000000000000L) | 
+      double p2 = Double.longBitsToDouble((inbits & 0x8000000000000000L) |
                                           (long)(((exp3 + 1023) & 0x7ff)) << 52);
 
       /* This will be a number between 1 and 2 */
       final double mant = Double.longBitsToDouble((inbits & 0x000fffffffffffffL) | 0x3ff0000000000000L);
-      
+
       /* Estimate the cube root of mant by polynomial */
       double est = -0.010714690733195933;
       est = est * mant + 0.0875862700108075;
@@ -2926,23 +3260,23 @@ public class FastMath {
 
       est *= CBRTTWO[exponent % 3 + 2];
 
-      // est should now be good to about 15 bits of precision.   Do 2 rounds of 
+      // est should now be good to about 15 bits of precision.   Do 2 rounds of
       // Newton's method to get closer,  this should get us full double precision
       // Scale down x for the purpose of doing newtons method.  This avoids over/under flows.
-      final double xs = x / (p2*p2*p2); 
+      final double xs = x / (p2*p2*p2);
       est += (xs - est*est*est) / (3*est*est);
       est += (xs - est*est*est) / (3*est*est);
 
       // Do one round of Newton's method in extended precision to get the last bit right.
-      double temp = est * 1073741824.0;
+      double temp = est * HEX_40000000;
       double ya = est + temp - temp;
       double yb = est - ya;
 
       double za = ya * ya;
       double zb = ya * yb * 2.0 + yb * yb;
-      temp = za * 1073741824.0;
+      temp = za * HEX_40000000;
       double temp2 = za + temp - temp;
-      zb += (za - temp2);
+      zb += za - temp2;
       za = temp2;
 
       zb = za * yb + ya * zb + zb * yb;
@@ -2971,14 +3305,22 @@ public class FastMath {
      */
     public static double toRadians(double x)
     {
+        if (Double.isInfinite(x) || x == 0.0) { // Matches +/- 0.0; return correct sign
+            return x;
+        }
+
+        // These are PI/180 split into high and low order bits
         final double facta = 0.01745329052209854;
         final double factb = 1.997844754509471E-9;
 
-        double temp = x * 1073741824.0;
-        double xa = x + temp - temp;
+        double xa = doubleHighPart(x);
         double xb = x - xa;
 
-        return xb * factb + xb * facta + xa * factb + xa * facta;
+        double result = xb * factb + xb * facta + xa * factb + xa * facta;
+        if (result == 0) {
+            result = result * x; // ensure correct sign if calculation underflows
+        }
+        return result;
     }
 
     /**
@@ -2988,11 +3330,15 @@ public class FastMath {
      */
     public static double toDegrees(double x)
     {
+        if (Double.isInfinite(x) || x == 0.0) { // Matches +/- 0.0; return correct sign
+            return x;
+        }
+
+        // These are 180/PI split into high and low order bits
         final double facta = 57.2957763671875;
         final double factb = 3.145894820876798E-6;
 
-        double temp = x * 1073741824.0;
-        double xa = x + temp - temp;
+        double xa = doubleHighPart(x);
         double xb = x - xa;
 
         return xb * factb + xb * facta + xa * factb + xa * facta;
@@ -3022,7 +3368,7 @@ public class FastMath {
      * @return abs(x)
      */
     public static float abs(final float x) {
-        return (x < 0.0f) ? -x : x;
+        return (x < 0.0f) ? -x : (x == 0.0f) ? 0.0f : x; // -0.0 => +0.0
     }
 
     /**
@@ -3031,7 +3377,7 @@ public class FastMath {
      * @return abs(x)
      */
     public static double abs(double x) {
-        return (x < 0.0) ? -x : x;
+        return (x < 0.0) ? -x : (x == 0.0) ? 0.0 : x; // -0.0 => +0.0
     }
 
     /**
@@ -3039,63 +3385,301 @@ public class FastMath {
      * @param x number from which ulp is requested
      * @return ulp(x)
      */
-
     public static double ulp(double x) {
+        if (Double.isInfinite(x)) {
+            return Double.POSITIVE_INFINITY;
+        }
         return abs(x - Double.longBitsToDouble(Double.doubleToLongBits(x) ^ 1));
+    }
+
+    /**
+     * Compute least significant bit (Unit in Last Position) for a number.
+     * @param x number from which ulp is requested
+     * @return ulp(x)
+     */
+    public static float ulp(float x) {
+        if (Float.isInfinite(x)) {
+            return Float.POSITIVE_INFINITY;
+        }
+        return abs(x - Float.intBitsToFloat(Float.floatToIntBits(x) ^ 1));
+    }
+
+    /**
+     * Multiply a double number by a power of 2.
+     * @param d number to multiply
+     * @param n power of 2
+     * @return d &times; 2<sup>n</sup>
+     */
+    public static double scalb(final double d, final int n) {
+
+        // first simple and fast handling when 2^n can be represented using normal numbers
+        if ((n > -1023) && (n < 1024)) {
+            return d * Double.longBitsToDouble(((long) (n + 1023)) << 52);
+        }
+
+        // handle special cases
+        if (Double.isNaN(d) || Double.isInfinite(d) || (d == 0)) {
+            return d;
+        }
+        if (n < -2098) {
+            return (d > 0) ? 0.0 : -0.0;
+        }
+        if (n > 2097) {
+            return (d > 0) ? Double.POSITIVE_INFINITY : Double.NEGATIVE_INFINITY;
+        }
+
+        // decompose d
+        final long bits = Double.doubleToLongBits(d);
+        final long sign = bits & 0x8000000000000000L;
+        int  exponent   = ((int) (bits >>> 52)) & 0x7ff;
+        long mantissa   = bits & 0x000fffffffffffffL;
+
+        // compute scaled exponent
+        int scaledExponent = exponent + n;
+
+        if (n < 0) {
+            // we are really in the case n <= -1023
+            if (scaledExponent > 0) {
+                // both the input and the result are normal numbers, we only adjust the exponent
+                return Double.longBitsToDouble(sign | (((long) scaledExponent) << 52) | mantissa);
+            } else if (scaledExponent > -53) {
+                // the input is a normal number and the result is a subnormal number
+
+                // recover the hidden mantissa bit
+                mantissa = mantissa | (1L << 52);
+
+                // scales down complete mantissa, hence losing least significant bits
+                final long mostSignificantLostBit = mantissa & (1L << (-scaledExponent));
+                mantissa = mantissa >>> (1 - scaledExponent);
+                if (mostSignificantLostBit != 0) {
+                    // we need to add 1 bit to round up the result
+                    mantissa++;
+                }
+                return Double.longBitsToDouble(sign | mantissa);
+
+            } else {
+                // no need to compute the mantissa, the number scales down to 0
+                return (sign == 0L) ? 0.0 : -0.0;
+            }
+        } else {
+            // we are really in the case n >= 1024
+            if (exponent == 0) {
+
+                // the input number is subnormal, normalize it
+                while ((mantissa >>> 52) != 1) {
+                    mantissa = mantissa << 1;
+                    --scaledExponent;
+                }
+                ++scaledExponent;
+                mantissa = mantissa & 0x000fffffffffffffL;
+
+                if (scaledExponent < 2047) {
+                    return Double.longBitsToDouble(sign | (((long) scaledExponent) << 52) | mantissa);
+                } else {
+                    return (sign == 0L) ? Double.POSITIVE_INFINITY : Double.NEGATIVE_INFINITY;
+                }
+
+            } else if (scaledExponent < 2047) {
+                return Double.longBitsToDouble(sign | (((long) scaledExponent) << 52) | mantissa);
+            } else {
+                return (sign == 0L) ? Double.POSITIVE_INFINITY : Double.NEGATIVE_INFINITY;
+            }
+        }
+
+    }
+
+    /**
+     * Multiply a float number by a power of 2.
+     * @param f number to multiply
+     * @param n power of 2
+     * @return f &times; 2<sup>n</sup>
+     */
+    public static float scalb(final float f, final int n) {
+
+        // first simple and fast handling when 2^n can be represented using normal numbers
+        if ((n > -127) && (n < 128)) {
+            return f * Float.intBitsToFloat((n + 127) << 23);
+        }
+
+        // handle special cases
+        if (Float.isNaN(f) || Float.isInfinite(f) || (f == 0f)) {
+            return f;
+        }
+        if (n < -277) {
+            return (f > 0) ? 0.0f : -0.0f;
+        }
+        if (n > 276) {
+            return (f > 0) ? Float.POSITIVE_INFINITY : Float.NEGATIVE_INFINITY;
+        }
+
+        // decompose f
+        final int bits = Float.floatToIntBits(f);
+        final int sign = bits & 0x80000000;
+        int  exponent  = (bits >>> 23) & 0xff;
+        int mantissa   = bits & 0x007fffff;
+
+        // compute scaled exponent
+        int scaledExponent = exponent + n;
+
+        if (n < 0) {
+            // we are really in the case n <= -127
+            if (scaledExponent > 0) {
+                // both the input and the result are normal numbers, we only adjust the exponent
+                return Float.intBitsToFloat(sign | (scaledExponent << 23) | mantissa);
+            } else if (scaledExponent > -24) {
+                // the input is a normal number and the result is a subnormal number
+
+                // recover the hidden mantissa bit
+                mantissa = mantissa | (1 << 23);
+
+                // scales down complete mantissa, hence losing least significant bits
+                final int mostSignificantLostBit = mantissa & (1 << (-scaledExponent));
+                mantissa = mantissa >>> (1 - scaledExponent);
+                if (mostSignificantLostBit != 0) {
+                    // we need to add 1 bit to round up the result
+                    mantissa++;
+                }
+                return Float.intBitsToFloat(sign | mantissa);
+
+            } else {
+                // no need to compute the mantissa, the number scales down to 0
+                return (sign == 0) ? 0.0f : -0.0f;
+            }
+        } else {
+            // we are really in the case n >= 128
+            if (exponent == 0) {
+
+                // the input number is subnormal, normalize it
+                while ((mantissa >>> 23) != 1) {
+                    mantissa = mantissa << 1;
+                    --scaledExponent;
+                }
+                ++scaledExponent;
+                mantissa = mantissa & 0x007fffff;
+
+                if (scaledExponent < 255) {
+                    return Float.intBitsToFloat(sign | (scaledExponent << 23) | mantissa);
+                } else {
+                    return (sign == 0) ? Float.POSITIVE_INFINITY : Float.NEGATIVE_INFINITY;
+                }
+
+            } else if (scaledExponent < 255) {
+                return Float.intBitsToFloat(sign | (scaledExponent << 23) | mantissa);
+            } else {
+                return (sign == 0) ? Float.POSITIVE_INFINITY : Float.NEGATIVE_INFINITY;
+            }
+        }
+
     }
 
     /**
      * Get the next machine representable number after a number, moving
      * in the direction of another number.
      * <p>
-     * If <code>direction</code> is greater than or equal to<code>d</code>,
-     * the smallest machine representable number strictly greater than
-     * <code>d</code> is returned; otherwise the largest representable number
-     * strictly less than <code>d</code> is returned.</p>
+     * The ordering is as follows (increasing):
+     * <ul>
+     * <li>-INFINITY</li>
+     * <li>-MAX_VALUE</li>
+     * <li>-MIN_VALUE</li>
+     * <li>-0.0</li>
+     * <li>+0.0</li>
+     * <li>+MIN_VALUE</li>
+     * <li>+MAX_VALUE</li>
+     * <li>+INFINITY</li>
+     * <li></li>
      * <p>
-     * If <code>d</code> is NaN or Infinite, it is returned unchanged.</p>
+     * If arguments compare equal, then the second argument is returned.
+     * <p>
+     * If {@code direction} is greater than {@code d},
+     * the smallest machine representable number strictly greater than
+     * {@code d} is returned; if less, then the largest representable number
+     * strictly less than {@code d} is returned.</p>
+     * <p>
+     * If {@code d} is infinite and direction does not
+     * bring it back to finite numbers, it is returned unchanged.</p>
      *
      * @param d base number
      * @param direction (the only important thing is whether
-     * direction is greater or smaller than d)
+     * {@code direction} is greater or smaller than {@code d})
      * @return the next machine representable number in the specified direction
      */
     public static double nextAfter(double d, double direction) {
 
         // handling of some important special cases
-        if (Double.isNaN(d) || Double.isInfinite(d)) {
-            return d;
+        if (Double.isNaN(d) || Double.isNaN(direction)) {
+            return Double.NaN;
+        } else if (d == direction) {
+            return direction;
+        } else if (Double.isInfinite(d)) {
+            return (d < 0) ? -Double.MAX_VALUE : Double.MAX_VALUE;
         } else if (d == 0) {
             return (direction < 0) ? -Double.MIN_VALUE : Double.MIN_VALUE;
         }
         // special cases MAX_VALUE to infinity and  MIN_VALUE to 0
         // are handled just as normal numbers
 
-        // split the double in raw components
-        long bits     = Double.doubleToLongBits(d);
-        long sign     = bits & 0x8000000000000000L;
-        long exponent = bits & 0x7ff0000000000000L;
-        long mantissa = bits & 0x000fffffffffffffL;
-
-        if (d * (direction - d) >= 0) {
-            // we should increase the mantissa
-            if (mantissa == 0x000fffffffffffffL) {
-                return Double.longBitsToDouble(sign |
-                                               (exponent + 0x0010000000000000L));
-            } else {
-                return Double.longBitsToDouble(sign |
-                                               exponent | (mantissa + 1));
-            }
+        final long bits = Double.doubleToLongBits(d);
+        final long sign = bits & 0x8000000000000000L;
+        if ((direction < d) ^ (sign == 0L)) {
+            return Double.longBitsToDouble(sign | ((bits & 0x7fffffffffffffffL) + 1));
         } else {
-            // we should decrease the mantissa
-            if (mantissa == 0L) {
-                return Double.longBitsToDouble(sign |
-                                               (exponent - 0x0010000000000000L) |
-                                               0x000fffffffffffffL);
-            } else {
-                return Double.longBitsToDouble(sign |
-                                               exponent | (mantissa - 1));
-            }
+            return Double.longBitsToDouble(sign | ((bits & 0x7fffffffffffffffL) - 1));
+        }
+
+    }
+
+    /**
+     * Get the next machine representable number after a number, moving
+     * in the direction of another number.
+     * <p>
+     * The ordering is as follows (increasing):
+     * <ul>
+     * <li>-INFINITY</li>
+     * <li>-MAX_VALUE</li>
+     * <li>-MIN_VALUE</li>
+     * <li>-0.0</li>
+     * <li>+0.0</li>
+     * <li>+MIN_VALUE</li>
+     * <li>+MAX_VALUE</li>
+     * <li>+INFINITY</li>
+     * <li></li>
+     * <p>
+     * If arguments compare equal, then the second argument is returned.
+     * <p>
+     * If {@code direction} is greater than {@code f},
+     * the smallest machine representable number strictly greater than
+     * {@code f} is returned; if less, then the largest representable number
+     * strictly less than {@code f} is returned.</p>
+     * <p>
+     * If {@code f} is infinite and direction does not
+     * bring it back to finite numbers, it is returned unchanged.</p>
+     *
+     * @param f base number
+     * @param direction (the only important thing is whether
+     * {@code direction} is greater or smaller than {@code f})
+     * @return the next machine representable number in the specified direction
+     */
+    public static float nextAfter(final float f, final double direction) {
+
+        // handling of some important special cases
+        if (Double.isNaN(f) || Double.isNaN(direction)) {
+            return Float.NaN;
+        } else if (f == direction) {
+            return (float) direction;
+        } else if (Float.isInfinite(f)) {
+            return (f < 0f) ? -Float.MAX_VALUE : Float.MAX_VALUE;
+        } else if (f == 0f) {
+            return (direction < 0) ? -Float.MIN_VALUE : Float.MIN_VALUE;
+        }
+        // special cases MAX_VALUE to infinity and  MIN_VALUE to 0
+        // are handled just as normal numbers
+
+        final int bits = Float.floatToIntBits(f);
+        final int sign = bits & 0x80000000;
+        if ((direction < f) ^ (sign == 0)) {
+            return Float.intBitsToFloat(sign | ((bits & 0x7fffffff) + 1));
+        } else {
+            return Float.intBitsToFloat(sign | ((bits & 0x7fffffff) - 1));
         }
 
     }
@@ -3111,7 +3695,7 @@ public class FastMath {
             return x;
         }
 
-        if (x >= 4503599627370496.0 || x <= -4503599627370496.0) {
+        if (x >= TWO_POWER_52 || x <= -TWO_POWER_52) {
             return x;
         }
 
@@ -3124,7 +3708,7 @@ public class FastMath {
             return x*y;
         }
 
-        return (double) y;
+        return y;
     }
 
     /** Get the smallest whole number larger than x.
@@ -3161,6 +3745,9 @@ public class FastMath {
         double d = x - y;
 
         if (d > 0.5) {
+            if (y == -1.0) {
+                return -0.0; // Preserve sign of operand
+            }
             return y+1.0;
         }
         if (d < 0.5) {
@@ -3185,7 +3772,7 @@ public class FastMath {
      * @return closest int to x
      */
     public static int round(final float x) {
-        return Math.round(x);
+        return (int) floor(x + 0.5f);
     }
 
     /** Compute the minimum of two values
@@ -3212,7 +3799,23 @@ public class FastMath {
      * @return a if a is lesser or equal to b, b otherwise
      */
     public static float min(final float a, final float b) {
-        return (a <= b) ? a : (Float.isNaN(a + b) ? Float.NaN : b);
+        if (a > b) {
+            return b;
+        }
+        if (a < b) {
+            return a;
+        }
+        /* if either arg is NaN, return NaN */
+        if (a != b) {
+            return Float.NaN;
+        }
+        /* min(+0.0,-0.0) == -0.0 */
+        /* 0x80000000 == Float.floatToRawIntBits(-0.0d) */
+        int bits = Float.floatToRawIntBits(a);
+        if (bits == 0x80000000) {
+            return a;
+        }
+        return b;
     }
 
     /** Compute the minimum of two values
@@ -3221,7 +3824,23 @@ public class FastMath {
      * @return a if a is lesser or equal to b, b otherwise
      */
     public static double min(final double a, final double b) {
-        return (a <= b) ? a : (Double.isNaN(a + b) ? Double.NaN : b);
+        if (a > b) {
+            return b;
+        }
+        if (a < b) {
+            return a;
+        }
+        /* if either arg is NaN, return NaN */
+        if (a != b) {
+            return Double.NaN;
+        }
+        /* min(+0.0,-0.0) == -0.0 */
+        /* 0x8000000000000000L == Double.doubleToRawLongBits(-0.0d) */
+        long bits = Double.doubleToRawLongBits(a);
+        if (bits == 0x8000000000000000L) {
+            return a;
+        }
+        return b;
     }
 
     /** Compute the maximum of two values
@@ -3248,7 +3867,23 @@ public class FastMath {
      * @return b if a is lesser or equal to b, a otherwise
      */
     public static float max(final float a, final float b) {
-        return (a <= b) ? b : (Float.isNaN(a + b) ? Float.NaN : b);
+        if (a > b) {
+            return a;
+        }
+        if (a < b) {
+            return b;
+        }
+        /* if either arg is NaN, return NaN */
+        if (a != b) {
+            return Float.NaN;
+        }
+        /* min(+0.0,-0.0) == -0.0 */
+        /* 0x80000000 == Float.floatToRawIntBits(-0.0d) */
+        int bits = Float.floatToRawIntBits(a);
+        if (bits == 0x80000000) {
+            return b;
+        }
+        return a;
     }
 
     /** Compute the maximum of two values
@@ -3257,7 +3892,156 @@ public class FastMath {
      * @return b if a is lesser or equal to b, a otherwise
      */
     public static double max(final double a, final double b) {
-        return (a <= b) ? b : (Double.isNaN(a + b) ? Double.NaN : a);
+        if (a > b) {
+            return a;
+        }
+        if (a < b) {
+            return b;
+        }
+        /* if either arg is NaN, return NaN */
+        if (a != b) {
+            return Double.NaN;
+        }
+        /* min(+0.0,-0.0) == -0.0 */
+        /* 0x8000000000000000L == Double.doubleToRawLongBits(-0.0d) */
+        long bits = Double.doubleToRawLongBits(a);
+        if (bits == 0x8000000000000000L) {
+            return b;
+        }
+        return a;
+    }
+
+    /**
+     * Returns the hypotenuse of a triangle with sides {@code x} and {@code y}
+     * - sqrt(<i>x</i><sup>2</sup>&nbsp;+<i>y</i><sup>2</sup>)<br/>
+     * avoiding intermediate overflow or underflow.
+     *
+     * <ul>
+     * <li> If either argument is infinite, then the result is positive infinity.</li>
+     * <li> else, if either argument is NaN then the result is NaN.</li>
+     * </ul>
+     *
+     * @param x a value
+     * @param y a value
+     * @return sqrt(<i>x</i><sup>2</sup>&nbsp;+<i>y</i><sup>2</sup>)
+     */
+    public static double hypot(final double x, final double y) {
+        if (Double.isInfinite(x) || Double.isInfinite(y)) {
+            return Double.POSITIVE_INFINITY;
+        } else if (Double.isNaN(x) || Double.isNaN(y)) {
+            return Double.NaN;
+        } else {
+
+            final int expX = getExponent(x);
+            final int expY = getExponent(y);
+            if (expX > expY + 27) {
+                // y is neglectible with respect to x
+                return abs(x);
+            } else if (expY > expX + 27) {
+                // x is neglectible with respect to y
+                return abs(y);
+            } else {
+
+                // find an intermediate scale to avoid both overflow and underflow
+                final int middleExp = (expX + expY) / 2;
+
+                // scale parameters without losing precision
+                final double scaledX = scalb(x, -middleExp);
+                final double scaledY = scalb(y, -middleExp);
+
+                // compute scaled hypotenuse
+                final double scaledH = sqrt(scaledX * scaledX + scaledY * scaledY);
+
+                // remove scaling
+                return scalb(scaledH, middleExp);
+
+            }
+
+        }
+    }
+
+    /**
+     * Computes the remainder as prescribed by the IEEE 754 standard.
+     * The remainder value is mathematically equal to {@code x - y*n}
+     * where {@code n} is the mathematical integer closest to the exact mathematical value
+     * of the quotient {@code x/y}.
+     * If two mathematical integers are equally close to {@code x/y} then
+     * {@code n} is the integer that is even.
+     * <p>
+     * <ul>
+     * <li>If either operand is NaN, the result is NaN.</li>
+     * <li>If the result is not NaN, the sign of the result equals the sign of the dividend.</li>
+     * <li>If the dividend is an infinity, or the divisor is a zero, or both, the result is NaN.</li>
+     * <li>If the dividend is finite and the divisor is an infinity, the result equals the dividend.</li>
+     * <li>If the dividend is a zero and the divisor is finite, the result equals the dividend.</li>
+     * </ul>
+     * <p><b>Note:</b> this implementation currently delegates to {@link StrictMath#IEEEremainder}
+     * @param dividend the number to be divided
+     * @param divisor the number by which to divide
+     * @return the remainder, rounded
+     */
+    public static double IEEEremainder(double dividend, double divisor) {
+        return StrictMath.IEEEremainder(dividend, divisor); // TODO provide our own implementation
+    }
+
+    /**
+     * Returns the first argument with the sign of the second argument.
+     * A NaN {@code sign} argument is treated as positive.
+     *
+     * @param magnitude the value to return
+     * @param sign the sign for the returned value
+     * @return the magnitude with the same sign as the {@code sign} argument
+     */
+    public static double copySign(double magnitude, double sign){
+        long m = Double.doubleToLongBits(magnitude);
+        long s = Double.doubleToLongBits(sign);
+        if ((m >= 0 && s >= 0) || (m < 0 && s < 0)) { // Sign is currently OK
+            return magnitude;
+        }
+        return -magnitude; // flip sign
+    }
+
+    /**
+     * Returns the first argument with the sign of the second argument.
+     * A NaN {@code sign} argument is treated as positive.
+     *
+     * @param magnitude the value to return
+     * @param sign the sign for the returned value
+     * @return the magnitude with the same sign as the {@code sign} argument
+     */
+    public static float copySign(float magnitude, float sign){
+        int m = Float.floatToIntBits(magnitude);
+        int s = Float.floatToIntBits(sign);
+        if ((m >= 0 && s >= 0) || (m < 0 && s < 0)) { // Sign is currently OK
+            return magnitude;
+        }
+        return -magnitude; // flip sign
+    }
+
+    /**
+     * Return the exponent of a double number, removing the bias.
+     * <p>
+     * For double numbers of the form 2<sup>x</sup>, the unbiased
+     * exponent is exactly x.
+     * </p>
+     * @param d number from which exponent is requested
+     * @return exponent for d in IEEE754 representation, without bias
+     */
+    public static int getExponent(final double d) {
+        return (int) ((Double.doubleToLongBits(d) >>> 52) & 0x7ff) - 1023;
+    }
+
+    /**
+     * Return the exponent of a float number, removing the bias.
+     * <p>
+     * For float numbers of the form 2<sup>x</sup>, the unbiased
+     * exponent is exactly x.
+     * </p>
+     * @param f number from which exponent is requested
+     * @return exponent for d in IEEE754 representation, without bias
+     */
+    public static int getExponent(final float f) {
+        return ((Float.floatToIntBits(f) >>> 23) & 0xff) - 127;
     }
 
 }

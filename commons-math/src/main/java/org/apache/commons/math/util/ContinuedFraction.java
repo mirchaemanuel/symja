@@ -18,7 +18,7 @@ package org.apache.commons.math.util;
 
 import org.apache.commons.math.ConvergenceException;
 import org.apache.commons.math.MathException;
-import org.apache.commons.math.MaxIterationsExceededException;
+import org.apache.commons.math.exception.MaxCountExceededException;
 import org.apache.commons.math.exception.util.LocalizedFormats;
 
 /**
@@ -33,7 +33,7 @@ import org.apache.commons.math.exception.util.LocalizedFormats;
  * </ul>
  * </p>
  *
- * @version $Revision: 990658 $ $Date: 2010-08-30 00:04:09 +0200 (Mo, 30 Aug 2010) $
+ * @version $Revision: 1040868 $ $Date: 2010-12-01 04:43:20 +0100 (Mi, 01 Dez 2010) $
  */
 public abstract class ContinuedFraction {
 
@@ -198,9 +198,8 @@ public abstract class ContinuedFraction {
         }
 
         if (n >= maxIterations) {
-            throw new MaxIterationsExceededException(maxIterations,
-                LocalizedFormats.NON_CONVERGENT_CONTINUED_FRACTION,
-                x);
+            throw new MaxCountExceededException(LocalizedFormats.NON_CONVERGENT_CONTINUED_FRACTION,
+                    maxIterations, x);
         }
 
         return c;

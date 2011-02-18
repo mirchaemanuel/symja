@@ -17,7 +17,7 @@
 
 package org.apache.commons.math.ode.sampling;
 
-import org.apache.commons.math.ode.DerivativeException;
+import org.apache.commons.math.exception.MathUserException;
 
 /**
  * This interface represents a handler that should be called after
@@ -35,7 +35,7 @@ import org.apache.commons.math.ode.DerivativeException;
  * @see org.apache.commons.math.ode.FirstOrderIntegrator
  * @see org.apache.commons.math.ode.SecondOrderIntegrator
  * @see StepInterpolator
- * @version $Revision: 811786 $ $Date: 2009-09-06 11:36:08 +0200 (So, 06 Sep 2009) $
+ * @version $Revision: 1037328 $ $Date: 2010-11-20 22:01:50 +0100 (Sa, 20 Nov 2010) $
  * @since 1.2
  */
 
@@ -70,9 +70,9 @@ public interface StepHandler {
    * Keeping only a reference to the interpolator and reusing it will
    * result in unpredictable behavior (potentially crashing the application).
    * @param isLast true if the step is the last one
-   * @throws DerivativeException this exception is propagated to the
-   * caller if the underlying user function triggers one
+   * @exception MathUserException if user code called from step interpolator
+   * finalization triggers one
    */
-  void handleStep(StepInterpolator interpolator, boolean isLast) throws DerivativeException;
+  void handleStep(StepInterpolator interpolator, boolean isLast) throws MathUserException;
 
 }

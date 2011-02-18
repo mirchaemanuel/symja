@@ -17,10 +17,10 @@
 
 package org.apache.commons.math.util;
 
-import java.util.Arrays;
 import org.apache.commons.math.exception.DimensionMismatchException;
 import org.apache.commons.math.exception.OutOfRangeException;
 import org.apache.commons.math.exception.NotStrictlyPositiveException;
+import org.apache.commons.math.util.MathUtils;
 
 /**
  * Converter between unidimensional storage structure and multidimensional
@@ -129,7 +129,7 @@ public class MultidimensionalCounter implements Iterable<Integer> {
          * @return the indices within the multidimensional counter.
          */
         public int[] getCounts() {
-            return Arrays.copyOf(counter, dimension);
+            return MathUtils.copyOf(counter);
         }
 
         /**
@@ -148,7 +148,7 @@ public class MultidimensionalCounter implements Iterable<Integer> {
         }
 
         /**
-         * @throws UnsupportedOperationException.
+         * @throws UnsupportedOperationException
          */
         public void remove() {
             throw new UnsupportedOperationException();
@@ -164,7 +164,7 @@ public class MultidimensionalCounter implements Iterable<Integer> {
      */
     public MultidimensionalCounter(int ... size) {
         dimension = size.length;
-        this.size = Arrays.copyOf(size, dimension);
+        this.size = MathUtils.copyOf(size);
 
         uniCounterOffset = new int[dimension];
 
@@ -286,12 +286,13 @@ public class MultidimensionalCounter implements Iterable<Integer> {
      * @return the sizes of the multidimensional counter in each dimension.
      */
     public int[] getSizes() {
-        return Arrays.copyOf(size, dimension);
+        return MathUtils.copyOf(size);
     }
 
     /**
      * {@inheritDoc}
      */
+    @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder();
         for (int i = 0; i < dimension; i++) {
