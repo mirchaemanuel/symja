@@ -63,7 +63,6 @@ public class MacroInfo {
 	    Object pack = Packages.get(className);
 	    if (pack == null) {
 		Class<?> cl = Class.forName(className);
-//		System.out.println(className); 
 		pack = cl.getConstructor(new Class[0]).newInstance(new Object[0]);
 		Packages.put(className, pack);
 	    }
@@ -84,7 +83,6 @@ public class MacroInfo {
 	    Object pack = Packages.get(className);
 	    if (pack == null) {
 		Class<?> cl = Class.forName(className);
-//		System.out.println(className); 
 		pack = cl.getConstructor(new Class[0]).newInstance(new Object[0]);
 		Packages.put(className, pack);
 	    }

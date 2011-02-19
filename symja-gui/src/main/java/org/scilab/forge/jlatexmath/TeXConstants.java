@@ -66,6 +66,11 @@ public class TeXConstants {
      * Alignment constant: extra space will be added above the formula
      */
     public static final int ALIGN_BOTTOM = 4;
+
+    /**
+     * Alignment constant: none
+     */
+    public static final int ALIGN_NONE = 5;
     
     public static final int THINMUSKIP = 1;
     public static final int MEDMUSKIP = 2; 
@@ -261,7 +266,7 @@ public class TeXConstants {
     public static final int UNIT_PIXEL = 2;
     
     /**
-     * Unit constant: point
+     * Unit constant: postscript point
      */
     public static final int UNIT_POINT = 3;
     
@@ -299,5 +304,32 @@ public class TeXConstants {
      * 1 in = 72 point
      */
    public static final int UNIT_IN = 8;
-    
+
+    /**
+     * Unit constant: sp
+     * <p>
+     * 1 sp = 65536 point
+     */
+   public static final int UNIT_SP = 9;
+
+    /**
+     * Unit constant: in
+     * <p>
+     * 1 in = 72.27 pt
+     */
+   public static final int UNIT_PT = 10;
+
+    /**
+     * Unit constant: in
+     * <p>
+     * 1 in = 72 point
+     */
+   public static final int UNIT_DD = 11;
+
+    /**
+     * Unit constant: in
+     * <p>
+     * 1 in = 72 point
+     */
+   public static final int UNIT_CC = 12;
 }

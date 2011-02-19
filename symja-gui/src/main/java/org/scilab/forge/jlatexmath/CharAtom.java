@@ -35,42 +35,60 @@ package org.scilab.forge.jlatexmath;
  */
 public class CharAtom extends CharSymbol {
 
-   // alphanumeric character
-   private final char c;
+    // alphanumeric character
+    private final char c;
+    
+    // text style (null means the default text style)
+    private String textStyle;
 
-   // text style (null means the default text style)
-   private final String textStyle;
+    /**
+     * Creates a CharAtom that will represent the given character in the given text style.
+     * Null for the text style means the default text style.
+     * 
+     * @param c the alphanumeric character
+     * @param textStyle the text style in which the character should be drawn
+     */
+    public CharAtom(char c, String textStyle) {
+	this.c = c;
+	this.textStyle = textStyle;
+    }
 
-   /**
-    * Creates a CharAtom that will represent the given character in the given text style.
-    * Null for the text style means the default text style.
-    * 
-    * @param c the alphanumeric character
-    * @param textStyle the text style in which the character should be drawn
-    */
-   public CharAtom(char c, String textStyle) {
-      this.c = c;
-      this.textStyle = textStyle;
-   }
+    public Box createBox(TeXEnvironment env) {
+	if (textStyle == null) {
+	    String ts = env.getTextStyle();
+	    if (ts != null) {
+		textStyle = ts;
+	    }
+	}
+	boolean smallCap = env.getSmallCap();
+	Char ch = getChar(env.getTeXFont(), env.getStyle(), smallCap);
+	Box box = new CharBox(ch);
+	if (smallCap && Character.isLowerCase(c)) {
+	    // We have a small capital
+	    box = new ScaleBox(box, 0.8f, 0.8f);
+	}
+	
+	return box;
+    }
 
-   public Box createBox(TeXEnvironment env) {
-      Char ch = getChar(env.getTeXFont(), env.getStyle());
-      return new CharBox(ch);
-   }
+    /*
+     * Get the Char-object representing this character ("c") in the right text style
+     */
+    private Char getChar(TeXFont tf, int style, boolean smallCap) {
+	char chr = c;
+	if (smallCap) {
+	    if (Character.isLowerCase(c)) {
+		chr = Character.toUpperCase(c);
+	    }
+	}
+	if (textStyle == null) {
+	    return tf.getDefaultChar(chr, style);
+	} else {
+	    return tf.getChar(chr, textStyle, style);
+	}
+    }
 
-   /*
-    * Get the Char-object representing this character ("c") in the right text style
-    */
-   private Char getChar(TeXFont tf, int style) {
-      if (textStyle == null) // default text style
-         return tf.getDefaultChar(c, style);
-      else
-         return tf.getChar(c, textStyle, style);
-   }
-
-   public CharFont getCharFont(TeXFont tf) {
-      // style doesn't matter here 
-      return getChar(tf, TeXConstants.STYLE_DISPLAY).getCharFont();
-   }
-
+    public CharFont getCharFont(TeXFont tf) {
+	return getChar(tf, TeXConstants.STYLE_DISPLAY, false).getCharFont();
+    }
 }

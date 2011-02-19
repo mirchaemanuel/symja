@@ -56,7 +56,7 @@ import java.util.List;
  */
 public abstract class Box {
     
-    public static boolean DEBUG = false;
+    public static boolean DEBUG = false;;
 
     /**
      * The foreground color of the whole box. Child boxes can override this color.
@@ -256,12 +256,33 @@ public abstract class Box {
 	    g2.setColor(prevColor); // old foreground color
 	else
 	    g2.setColor(foreground); // overriding foreground color
-	
+
+	drawDebug(g2, x, y);
+    }
+
+    protected void drawDebug(Graphics2D g2, float x, float y, boolean showDepth) {
 	if (DEBUG) {
 	    Stroke st = g2.getStroke();
-	    g2.setStroke(new BasicStroke((float) (1 / g2.getTransform().getScaleX()), BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
+	    g2.setStroke(new BasicStroke((float) (Math.abs(1 / g2.getTransform().getScaleX())), BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
+	    if (width < 0) {
+		x += width;
+		width = -width;
+	    }
 	    g2.draw(new Rectangle2D.Float(x, y - height, width, height + depth));
+	    if (showDepth) {
+		Color c = g2.getColor();
+		g2.setColor(Color.LIGHT_GRAY);
+		g2.fill(new Rectangle2D.Float(x, y, width, depth));
+		g2.setColor(c);
+		g2.draw(new Rectangle2D.Float(x, y, width, depth));
+	    }
 	    g2.setStroke(st);
+	}
+    }
+
+    protected void drawDebug(Graphics2D g2, float x, float y) {
+	if (DEBUG) {
+	    drawDebug(g2, x, y, false);
 	}
     }
     

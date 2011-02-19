@@ -42,16 +42,24 @@ import org.scilab.forge.jlatexmath.TeXFormula;
  */
 public class DynamicAtom extends Atom {
     
-    private static ExternalConverter converter;
+    private static ExternalConverterFactory ecFactory;
+    private ExternalConverter converter;
     private TeXFormula formula = new TeXFormula();
     private String externalCode;
     
     public DynamicAtom(String externalCode) {
 	this.externalCode = externalCode;
+	if (ecFactory != null) {
+	    this.converter = ecFactory.getExternalConverter();
+	}
     }
 
-    public static void setExternalConverter(ExternalConverter externalConverter) {
-	converter = externalConverter;
+    public static boolean hasAnExternalConverterFactory() {
+	return ecFactory != null;
+    }
+
+    public static void setExternalConverterFactory(ExternalConverterFactory factory) {
+	ecFactory = factory;
     }
 
     public Box createBox(TeXEnvironment env) {

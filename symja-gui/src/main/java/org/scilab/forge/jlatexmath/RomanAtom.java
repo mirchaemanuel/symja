@@ -44,6 +44,5 @@ public class RomanAtom extends Atom {
 	env.getTeXFont().setRoman(true);
 	Box box = base.createBox(env);
 	return box; 
-    }
-    
+    }   
 }

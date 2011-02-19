@@ -91,23 +91,6 @@ public class RowAtom extends Atom implements Row {
         }
     }
     
-    /**
-     * Only used while parsing MathML. An empty Mrow is not allowed, otherwise
-     * it's possible to create fractions with an empty numerator or denominator.
-     *
-     * @param l
-     *           list of objects of the type Formula
-     * @throws EmptyFormulaException
-     */
-    public RowAtom(List<TeXFormula> l) throws EmptyFormulaException {
-        for (TeXFormula f : l) {
-            if (f.root != null)
-                elements.add(f.root);
-        }
-        if (elements.equals(""))
-            throw new EmptyFormulaException();
-    }
-
     public Atom getLastAtom() {
 	if (elements.size() != 0) {
 	    return elements.removeLast();
@@ -145,8 +128,7 @@ public class RowAtom extends Atom implements Row {
     
     public Box createBox(TeXEnvironment env) {
         TeXFont tf = env.getTeXFont();
-        HorizontalBox hBox = new HorizontalBox(env.getColor(), env
-                .getBackground());
+        HorizontalBox hBox = new HorizontalBox(env.getColor(), env.getBackground());
         env.reset();
         
         // convert atoms to boxes and add to the horizontal box
@@ -165,14 +147,11 @@ public class RowAtom extends Atom implements Row {
             float kern = 0;
 	    // Calixte : I put a while to handle the case where there are
 	    // several ligatures as in ffi or ffl
-            while (it.hasNext() && atom.getRightType() == TeXConstants.TYPE_ORDINARY
-                    && atom.isCharSymbol()) {
+            while (it.hasNext() && atom.getRightType() == TeXConstants.TYPE_ORDINARY && atom.isCharSymbol()) {
                 Atom next = (Atom) it.next();
-                if (next instanceof CharSymbol
-                        && ligKernSet.get(next.getLeftType())) {
+                if (next instanceof CharSymbol && ligKernSet.get(next.getLeftType())) {
                     atom.markAsTextSymbol();
-                    CharFont l = atom.getCharFont(tf), r = ((CharSymbol) next)
-                    .getCharFont(tf);
+                    CharFont l = atom.getCharFont(tf), r = ((CharSymbol) next).getCharFont(tf);
                     CharFont lig = tf.getLigature(l, r);
                     if (lig == null) {
                         kern = tf.getKern(l, r, env.getStyle());
@@ -191,10 +170,10 @@ public class RowAtom extends Atom implements Row {
             
             // insert glue, unless it's the first element of the row
             // OR this element or the next is a Kern.
-            if (it.previousIndex() != 0 && previousAtom != null
-                    && !previousAtom.isKern() && !atom.isKern())
+            if (it.previousIndex() != 0 && previousAtom != null && !previousAtom.isKern() && !atom.isKern()) {
                 hBox.add(Glue.get(previousAtom.getRightType(), atom.getLeftType(), env));
-            
+	    }            
+
             // insert atom's box
             atom.setPreviousAtom(previousAtom);
             Box b = atom.createBox(env);
