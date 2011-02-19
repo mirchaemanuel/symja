@@ -72,7 +72,11 @@ public class TeXIcon implements Icon {
      * @param b the formula box to be painted 
      * @param size the point size
      */
-    public TeXIcon(Box b, float size) {
+    protected TeXIcon(Box b, float size) {
+	this(b, size, false);
+    }
+
+    protected TeXIcon(Box b, float size, boolean trueValues) {
 	box = b;
 	
 	if (defaultSize != -1) {
@@ -88,8 +92,10 @@ public class TeXIcon implements Icon {
 	/* I add this little value because it seems that tftopl calculates badly
 	   the height and the depth of certains characters.
 	*/
-	insets.top += (int)(0.18f * size);
-	insets.bottom += (int)(0.18f * size);
+	if (!trueValues) {
+	    insets.top += (int)(0.18f * size);
+	    insets.bottom += (int)(0.18f * size);
+	}
     }
 
     public void setForeground(Color fg) {
@@ -109,11 +115,23 @@ public class TeXIcon implements Icon {
      * Set the insets of the TeXIcon.
      * 
      * @param insets the insets
+     * @param trueValues true to force the true values
+     */
+    public void setInsets(Insets insets, boolean trueValues) {
+	this.insets = insets;
+	if (!trueValues) {
+	    this.insets.top += (int)(0.18f * size);
+	    this.insets.bottom += (int)(0.18f * size);
+	}
+    }
+
+    /**
+     * Set the insets of the TeXIcon.
+     * 
+     * @param insets the insets
      */
     public void setInsets(Insets insets) {
-	this.insets = insets;
-	this.insets.top += (int)(0.18f * size);
-	this.insets.bottom += (int)(0.18f * size);
+	setInsets(insets, false);
     }
     
     /**
@@ -151,8 +169,7 @@ public class TeXIcon implements Icon {
      * Get the total height of the TeXIcon. This also includes the insets.
      */
     public int getIconHeight() {
-	return (int) ((box.getHeight() + box.getDepth()) * size + 0.99
-		      + insets.top + insets.bottom);
+	return ((int) ((box.getHeight()) * size + 0.99 + insets.top)) +  ((int) ((box.getDepth()) * size + 0.99 + insets.bottom));
     }
 
     /**
@@ -211,12 +228,12 @@ public class TeXIcon implements Icon {
 			    RenderingHints.VALUE_RENDER_QUALITY);
 	g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
 			    RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+	
 	g2.scale(size, size); // the point size 
 	g2.setColor(c != null ? c.getForeground() : fg); // foreground will be used as default painting color 
 	
 	// draw formula box
-	box.draw(g2, (x + insets.left) / size, (y + insets.top) / size
-		 + box.getHeight());
+	box.draw(g2, (x + insets.left) / size, (y + insets.top) / size+ box.getHeight());
 	
 	// restore graphics settings
 	g2.setRenderingHints(oldHints);

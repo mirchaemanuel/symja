@@ -44,10 +44,6 @@ public class ArrayOfAtoms extends TeXFormula {
 	row = 0;
     }
     
-    public Atom getLastAtom() {
-	return array.peekLast().pollLast();
-    }
-
     public void addCol() {
 	array.get(row).add(root);
 	root = null;
@@ -89,7 +85,7 @@ public class ArrayOfAtoms extends TeXFormula {
 	    if (j != col && array.get(i).get(0) != null && array.get(i).get(0).type != TeXConstants.TYPE_INTERTEXT) {
 		LinkedList<Atom> r = array.get(i);
 		for(; j < col; j++) {
-		    r.add(new TeXFormula("").root);	
+		    r.add(null);	
 		}
 	    }
 	}

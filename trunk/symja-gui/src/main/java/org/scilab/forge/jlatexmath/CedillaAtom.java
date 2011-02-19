@@ -39,17 +39,6 @@ public class CedillaAtom extends Atom {
 	this.base = base;
     }
     
-    /*public Box createBox(TeXEnvironment env) {
-	Box b = base.createBox(env);
-	VerticalBox vb = new VerticalBox();
-	vb.add(b);
-	vb.add(cedilla.createBox(env));
-	float f = vb.getHeight() + vb.getDepth();
-	vb.setHeight(b.getHeight());
-	vb.setDepth(f - b.getHeight());
-	return vb;
-	} */
-
     public Box createBox(TeXEnvironment env) {
 	Box b = base.createBox(env);
 	VerticalBox vb = new VerticalBox();
@@ -65,7 +54,7 @@ public class CedillaAtom extends Atom {
             y = cedilla;
 
 	Box ce = new HorizontalBox(y, b.getWidth(), TeXConstants.ALIGN_CENTER);
-	float x = new SpaceAtom(TeXConstants.UNIT_MU, 0.4f, 0, 0).createBox(env).getWidth();
+	float x = 0.4f * SpaceAtom.getFactor(TeXConstants.UNIT_MU, env);
 	vb.add(new StrutBox(0, -x, 0, 0));
 	vb.add(ce);
 	float f = vb.getHeight() + vb.getDepth();

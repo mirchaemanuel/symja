@@ -126,8 +126,7 @@ public class AccentedAtom extends Atom {
         int style = env.getStyle();
         
 	// set base in cramped style
-        Box b = (base == null ? new StrutBox(0, 0, 0, 0) : base.createBox(env
-                .crampStyle()));
+        Box b = (base == null ? new StrutBox(0, 0, 0, 0) : base.createBox(env.crampStyle()));
         
         float u = b.getWidth();
         float s = 0;
@@ -145,7 +144,7 @@ public class AccentedAtom extends Atom {
         }
         
         // calculate delta
-	float ec = new SpaceAtom(TeXConstants.UNIT_MU, 0, -1, 0).createBox(env).getHeight();
+	float ec = -SpaceAtom.getFactor(TeXConstants.UNIT_MU, env);
         float delta = acc ? ec : Math.min(b.getHeight(), tf.getXHeight(style, ch.getFontCode()));
         
         // create vertical box

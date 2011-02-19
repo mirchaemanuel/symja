@@ -48,6 +48,9 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Insets;
 import java.awt.image.BufferedImage;
+import java.awt.GraphicsEnvironment;
+import java.awt.Image;
+import java.awt.Toolkit;
 import javax.imageio.ImageIO;
 import javax.imageio.stream.FileImageOutputStream;
 
@@ -76,7 +79,7 @@ import javax.imageio.stream.FileImageOutputStream;
  */
 public class TeXFormula {
     
-    public static final String VERSION = "0.9.2";
+    public static final String VERSION = "0.9.4";
 
     // table for putting delimiters over and under formula's,
     // indexed by constants from "TeXConstants"
@@ -94,6 +97,9 @@ public class TeXFormula {
         { "Vert", "Vert" }
     };
 
+    // point-to-pixel conversion
+    public static float PIXELS_PER_POINT = 1f;
+
     // used as second index in "delimiterNames" table (over or under)
     private static final int OVER_DEL = 0;
     private static final int UNDER_DEL = 1;
@@ -105,8 +111,9 @@ public class TeXFormula {
     public static Map<String,TeXFormula> predefinedTeXFormulas = new HashMap<String,TeXFormula>();
     
     // character-to-symbol and character-to-delimiter mappings
-    public static String[] symbolMappings;
-    public static Atom[] symbolFormulaMappings;
+    public static String[] symbolMappings = new String[65536];
+    public static String[] symbolTextMappings = new String[65536];
+    public static String[] symbolFormulaMappings = new String[65536];
     public List<MiddleAtom> middle = new LinkedList();
     
     private TeXParser parser;
@@ -114,7 +121,7 @@ public class TeXFormula {
     static {
         // character-to-symbol and character-to-delimiter mappings
         TeXFormulaSettingsParser parser = new TeXFormulaSettingsParser();
-        symbolMappings = parser.parseSymbolMappings();
+	parser.parseSymbolMappings(symbolMappings, symbolTextMappings);
         
         // predefined TeXFormula's
 	try {
@@ -124,12 +131,14 @@ public class TeXFormula {
 	    System.err.println(e.toString());
 	}
 
-	symbolFormulaMappings = parser.parseSymbolToFormulaMappings();
+	parser.parseSymbolToFormulaMappings(symbolFormulaMappings, symbolTextMappings);
 	
 	try {
 	    DefaultTeXFont.registerAlphabet((AlphabetRegistration) Class.forName("org.scilab.forge.jlatexmath.cyrillic.CyrillicRegistration").newInstance());
 	    DefaultTeXFont.registerAlphabet((AlphabetRegistration) Class.forName("org.scilab.forge.jlatexmath.greek.GreekRegistration").newInstance());
 	} catch (Exception e) { }
+	
+	//setDefaultDPI();
     }
 
     public static void addSymbolMappings(String file) throws ResourceParseException {
@@ -144,10 +153,27 @@ public class TeXFormula {
     
     public static void addSymbolMappings(InputStream in, String name) throws ResourceParseException {
 	TeXFormulaSettingsParser tfsp = new TeXFormulaSettingsParser(in, name);
-	tfsp.parseSymbolMappings(symbolMappings);
-	tfsp.parseSymbolToFormulaMappings(symbolFormulaMappings);
+	tfsp.parseSymbolMappings(symbolMappings, symbolTextMappings);
+	tfsp.parseSymbolToFormulaMappings(symbolFormulaMappings, symbolTextMappings);
     }
     
+    /**
+     * Set the DPI of target
+     * @param dpi the target DPI
+     */
+    public static void setDPITarget(float dpi) {
+	PIXELS_PER_POINT = dpi / 72f;
+    }
+
+    /**
+     * Set the default target DPI to the screen dpi (only if we're in non-headless mode)
+     */
+    public static void setDefaultDPI() {
+	if (!GraphicsEnvironment.isHeadless()) {
+	    setDPITarget((float) Toolkit.getDefaultToolkit().getScreenResolution());
+	}
+    }
+
     // the root atom of the "atom tree" that represents the formula
     public Atom root = null;
     
@@ -177,8 +203,7 @@ public class TeXFormula {
     public TeXFormula(String s, boolean firstpass) throws ParseException {
 	this.textStyle = null;
 	parser = new TeXParser(s, this, firstpass);
-        if (s != null && s.length() != 0)
-            parser.parse();
+        parser.parse();
     }
     
    /*
@@ -187,17 +212,14 @@ public class TeXFormula {
     */
     public TeXFormula(String s, String textStyle) throws ParseException {
         this.textStyle = textStyle;
-//        System.out.println(s); 
 	parser = new TeXParser(s, this);
-        if (s != null && s.length() != 0)
-            parser.parse();
+        parser.parse();
     }
 
     public TeXFormula(String s, String textStyle, boolean firstpass, boolean space) throws ParseException {
         this.textStyle = textStyle;
 	parser = new TeXParser(s, this, firstpass, space);
-        if (s != null && s.length() != 0)
-            parser.parse();
+        parser.parse();
     }
     
     /**
@@ -210,6 +232,91 @@ public class TeXFormula {
     public TeXFormula(TeXFormula f) {
         if (f != null)
             addImpl(f);
+    }
+
+
+    /**
+     * Creates an empty TeXFormula.
+     *
+     */
+    public TeXFormula(boolean isPartial) {
+	parser = new TeXParser(isPartial, "", this, false);
+    }
+
+    /**
+     * Creates a new TeXFormula by parsing the given string (using a primitive TeX parser).
+     *
+     * @param s the string to be parsed
+     * @throws ParseException if the string could not be parsed correctly
+     */
+    public TeXFormula(boolean isPartial, String s) throws ParseException {
+        this(isPartial, s, null);
+    }
+
+    public TeXFormula(boolean isPartial, String s, boolean firstpass) throws ParseException {
+	this.textStyle = null;
+	parser = new TeXParser(isPartial, s, this, firstpass);
+	if (isPartial) {
+	    try {
+		parser.parse();
+	    } catch (Exception e) { }
+	} else {
+	    parser.parse();
+	}
+    }
+    
+   /*
+    * Creates a TeXFormula by parsing the given string in the given text style.
+    * Used when a text style command was found in the parse string.
+    */
+    public TeXFormula(boolean isPartial, String s, String textStyle) throws ParseException {
+        this.textStyle = textStyle;
+	parser = new TeXParser(isPartial, s, this);
+	if (isPartial) {
+	    try {
+		parser.parse();
+	    } catch (Exception e) { }
+	} else {
+	    parser.parse();
+	}
+    }
+
+    public TeXFormula(boolean isPartial, String s, String textStyle, boolean firstpass, boolean space) throws ParseException {
+        this.textStyle = textStyle;
+	parser = new TeXParser(isPartial, s, this, firstpass, space);
+	if (isPartial) {
+	    try {
+		parser.parse();
+	    } catch (Exception e) { }
+	} else {
+	    parser.parse();
+	}
+    }
+
+    /**
+     * @param a formula
+     * @return a partial TeXFormula containing the valid part of formula
+     */
+    public static TeXFormula getPartialTeXFormula(String formula) {
+	TeXFormula f = new TeXFormula();
+	if (formula == null) {
+	    f.add(new EmptyAtom());
+	    return f;
+	}
+	TeXParser parser = new TeXParser(true, formula, f);
+	try {
+	    parser.parse();
+	} catch (Exception e) { }
+
+	return f;
+    }
+
+    /**
+     * @param b true if the fonts should be registered (Java 1.6 only) to be used
+     * with FOP.
+     */
+    public static void registerFonts(boolean b) {
+	DefaultTeXFontParser.registerFonts(b);
     }
     
     /**
@@ -260,8 +367,12 @@ public class TeXFormula {
     }
     
     public TeXFormula append(String s) throws ParseException {
+	return append(false, s);
+    }
+
+    public TeXFormula append(boolean isPartial, String s) throws ParseException {
 	if (s != null && s.length() != 0) {
-            TeXParser tp = new TeXParser(s, this);
+            TeXParser tp = new TeXParser(isPartial, s, this);
 	    tp.parse();
         }
         return this;
@@ -278,7 +389,7 @@ public class TeXFormula {
         return this;
     }
     
-    private void addImpl (TeXFormula f) {
+    private void addImpl(TeXFormula f) {
         if (f.root != null) {
             // special copy-treatment for Mrow as a root!!
             if (f.root instanceof RowAtom)
@@ -397,11 +508,19 @@ public class TeXFormula {
         return ti;
     }
 
+    public TeXIcon createTeXIcon(int style, float size, boolean trueValues) {
+	TeXEnvironment te = new TeXEnvironment(style, new DefaultTeXFont(size));
+	Box box = createBox(te);
+	TeXIcon ti = new TeXIcon(box, size, trueValues);
+	ti.isColored = te.isColored;
+        return ti;
+    }
+
     public TeXIcon createTeXIcon(int style, float size, int widthUnit, float textwidth, int align) {
 	TeXEnvironment te = new TeXEnvironment(style, new DefaultTeXFont(size), widthUnit, textwidth);
 	Box box = createBox(te);
 	HorizontalBox hb = new HorizontalBox(box, te.getTextwidth(), align);
-	TeXIcon ti = new TeXIcon(hb, size);
+	TeXIcon ti = new TeXIcon(hb, size, true);
 	ti.isColored = te.isColored;
         return ti;
     }
@@ -433,16 +552,69 @@ public class TeXFormula {
     }
     
     public void createPNG(int style, float size, String out, Color bg, Color fg) {
-        createImage("png", style, size, out, bg, fg, true);
+        createImage("png", style, size, out, bg, fg, bg == null);
     }
 
     public void createGIF(int style, float size, String out, Color bg, Color fg) {
-        createImage("gif", style, size, out, bg, fg, true);
+        createImage("gif", style, size, out, bg, fg, bg == null);
     }
 
     public void createJPEG(int style, float size, String out, Color bg, Color fg) {
         //There is a bug when a BufferedImage has a component alpha so we disabel it 
         createImage("jpeg", style, size, out, bg, fg, false);
+    }
+
+    /**
+     * @param formula the formula
+     * @param style the style
+     * @param size the size
+     * @param transparency, if true the background is transparent
+     * @return the generated image
+     */ 
+    public static Image createBufferedImage(String formula, int style, float size, Color fg, Color bg) throws ParseException {
+	TeXFormula f = new TeXFormula(formula);
+        TeXIcon icon = f.createTeXIcon(style, size);
+        icon.setInsets(new Insets(2, 2, 2, 2));
+        int w = icon.getIconWidth(), h = icon.getIconHeight();
+
+        BufferedImage image = new BufferedImage(w, h, bg == null ? BufferedImage.TYPE_INT_ARGB : BufferedImage.TYPE_INT_RGB);
+        Graphics2D g2 = image.createGraphics();
+        if (bg != null) {
+            g2.setColor(bg);
+	    g2.fillRect(0, 0, w, h);
+        }
+
+	icon.setForeground(fg == null ? Color.BLACK : fg);
+        icon.paintIcon(null, g2, 0, 0);
+	g2.dispose();
+	
+	return image;
+    }
+
+    /**
+     * @param formula the formula
+     * @param style the style
+     * @param size the size
+     * @param transparency, if true the background is transparent
+     * @return the generated image
+     */ static int toto=0;
+    public Image createBufferedImage(int style, float size, Color fg, Color bg) throws ParseException {
+	TeXIcon icon = createTeXIcon(style, size);
+        icon.setInsets(new Insets(2, 2, 2, 2));
+        int w = icon.getIconWidth(), h = icon.getIconHeight();
+
+        BufferedImage image = new BufferedImage(w, h, bg == null ? BufferedImage.TYPE_INT_ARGB : BufferedImage.TYPE_INT_RGB);
+        Graphics2D g2 = image.createGraphics();
+        if (bg != null) {
+            g2.setColor(bg);
+	    g2.fillRect(0, 0, w, h);
+        }
+
+	icon.setForeground(fg == null ? Color.BLACK : fg);
+        icon.paintIcon(null, g2, 0, 0);
+	g2.dispose();
+
+	return image;
     }
 
     public void setDEBUG(boolean b) {
