@@ -1,8 +1,10 @@
 package org.matheclipse.core.test;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.util.List;
 
 import org.matheclipse.basic.Config;
@@ -10,6 +12,7 @@ import org.matheclipse.core.convert.AST2Expr;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
+import org.matheclipse.core.interfaces.ISymbol;
 import org.matheclipse.parser.client.Parser;
 import org.matheclipse.parser.client.ast.ASTNode;
 
@@ -19,6 +22,8 @@ import org.matheclipse.parser.client.ast.ASTNode;
  * 
  */
 public class ConvertRubiFiles {
+	private static int NUMBER_OF_RULES_PER_FILE = 100;
+
 	public static List<ASTNode> parseFileToList(String fileName) {
 		try {
 			File file = new File(fileName);
@@ -42,35 +47,61 @@ public class ConvertRubiFiles {
 		return null;
 	}
 
-	public static String convert(ASTNode node) {
+	public static void writeFile(String fileName, StringBuffer buffer) {
+		try {
+			File file = new File(fileName);
+			final BufferedWriter f = new BufferedWriter(new FileWriter(file));
+			final StringBuffer buff = new StringBuffer(1024);
+			f.append(buffer);
+			f.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+			// assertEquals("", e.getMessage());
+		}
+	}
+
+	public static void convert(ASTNode node, StringBuffer buffer, boolean last) {
 		try {
 			// convert ASTNode to an IExpr node
-			final StringBuffer buffer = new StringBuffer();
-			
 
 			IExpr expr = AST2Expr.CONST.convert(node);
-			if (expr.isAST(F.SetDelayed, 3)) {
-				IAST ast = (IAST) expr;
-				buffer.append(ast.get(1).internalFormString(true, 0));
-				buffer.append(",\n");
-				buffer.append(ast.get(2).internalFormString(true, 0));
-				buffer.append(",\n");
-			} else if (expr.isAST(F.If, 4)) {
-				IAST ast = (IAST) expr;
-				expr = ast.get(3);
+
+			// TODO allow Module in future versions
+			ISymbol module = F.symbol("Module");
+			if (expr.isFree(module, true)) {
 				if (expr.isAST(F.SetDelayed, 3)) {
-					ast = (IAST) expr;
+					IAST ast = (IAST) expr;
+					buffer.append("SetDelayed(");
 					buffer.append(ast.get(1).internalFormString(true, 0));
-					buffer.append(",\n");
+					buffer.append(",\n    ");
 					buffer.append(ast.get(2).internalFormString(true, 0));
-					buffer.append(",\n");
+					if (last) {
+						buffer.append(")\n");
+					} else {
+						buffer.append("),\n");
+					}
+				} else if (expr.isAST(F.If, 4)) {
+					IAST ast = (IAST) expr;
+					// if (ast.get(1).toString().equals("ShowSteps")) {
+					expr = ast.get(3);
+					if (expr.isAST(F.SetDelayed, 3)) {
+						ast = (IAST) expr;
+						buffer.append("SetDelayed(");
+						buffer.append(ast.get(1).internalFormString(true, 0));
+						buffer.append(",\n    ");
+						buffer.append(ast.get(2).internalFormString(true, 0));
+						if (last) {
+							buffer.append(")\n");
+						} else {
+							buffer.append("),\n");
+						}
+					}
+					// }
 				}
 			}
-			return buffer.toString();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return "";
 	}
 
 	public static void main(String[] args) {
@@ -81,7 +112,7 @@ public class ConvertRubiFiles {
 		// "C:\\temp\\RationalFunctionIntegrationRules.m",
 		// "C:\\temp\\AlgebraicFunctionIntegrationRules.m",
 		// "C:\\temp\\ExponentialFunctionIntegrationRules.m",
-		"C:\\temp\\TrigFunctionIntegrationRules.m",
+		"C:\\temp\\Rubi\\TrigFunctionIntegrationRules.m",
 		// "C:\\temp\\HyperbolicFunctionIntegrationRules.m",
 		// "C:\\temp\\LogarithmFunctionIntegrationRules.m",
 		// "C:\\temp\\InverseTrigFunctionIntegrationRules.m",
@@ -96,17 +127,33 @@ public class ConvertRubiFiles {
 			System.out.println(">>>>> File name: " + fileNames[i]);
 			System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>");
 
+			StringBuffer buffer = new StringBuffer(100000);
 			List<ASTNode> list = parseFileToList(fileNames[i]);
 			if (list != null) {
-				System.out.println("private static IExpr[] RULES = {");
-				for (ASTNode astNode : list) {
-					// System.out.println("---");
-					// System.out.println(astNode);
-					String str = convert(astNode);
-					System.out.print(str);
+				int cnt = 0;
+				int fcnt = 0;
+
+				for (int j = 0; j < list.size(); j++) {
+					if (cnt == 0) {
+						buffer = new StringBuffer(100000);
+						buffer.append("public static IAST RULES = List( \n");
+					}
+					ASTNode astNode = list.get(j);
+					cnt++;
+					convert(astNode, buffer, cnt == NUMBER_OF_RULES_PER_FILE);
+
+					if (cnt == NUMBER_OF_RULES_PER_FILE) {
+						buffer.append(");");
+						writeFile("C:\\temp\\Rubi\\TrigFunctionIntegrationRules" + fcnt + ".java", buffer);
+						fcnt++;
+						cnt = 0;
+					}
 				}
-				System.out.println("};");
-				
+				if (cnt != 0) {
+					// System.out.println(");");
+					buffer.append(");");
+					writeFile("C:\\temp\\Rubi\\TrigFunctionIntegrationRules" + fcnt + ".java", buffer);
+				}
 				System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>");
 				System.out.println(">>>>> Number of entries: " + list.size());
 				System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>");

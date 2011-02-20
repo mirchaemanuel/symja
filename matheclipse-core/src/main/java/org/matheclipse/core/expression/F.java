@@ -708,9 +708,9 @@ public class F {
 		return unary(Fibonacci, a0);
 	}
 
-	public static IAST FreeQ(final IExpr a0) {
+	public static IAST FreeQ(final IExpr a0, final IExpr a1) {
 
-		return unary(FreeQ, a0);
+		return binary(FreeQ, a0, a1);
 	}
 
 	public static IAST Function(final IExpr a0) {
@@ -1167,9 +1167,8 @@ public class F {
 		return binary(Max, a0, a1);
 	}
 
-	public static IAST MemberQ(final IExpr a0) {
-
-		return unary(MemberQ, a0);
+	public static IAST MemberQ(final IExpr a0, final IExpr a1) {
+		return binary(MemberQ, a0, a1);
 	}
 
 	public static IAST Min() {

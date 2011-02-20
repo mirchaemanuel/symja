@@ -1150,4 +1150,18 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 		return buf.toString();
 	}
 
+	public void addRules(IAST ruleList) {
+		boolean oldPackageMode = isPackageMode();
+		boolean oldTraceMode = isTraceMode();
+		try {
+			setPackageMode(true);
+			setTraceMode(false);
+			for (IExpr rule : ruleList) {
+				evaluate(rule);
+			}
+		} finally {
+			setPackageMode(oldPackageMode);
+			setTraceMode(oldTraceMode);
+		}
+	}
 }

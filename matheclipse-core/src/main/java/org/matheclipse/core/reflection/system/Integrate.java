@@ -1,8 +1,8 @@
 package org.matheclipse.core.reflection.system;
 
 import static org.matheclipse.core.expression.F.ArcTan;
-import static org.matheclipse.core.expression.F.C1D2;
 import static org.matheclipse.core.expression.F.C1;
+import static org.matheclipse.core.expression.F.C1D2;
 import static org.matheclipse.core.expression.F.C2;
 import static org.matheclipse.core.expression.F.C4;
 import static org.matheclipse.core.expression.F.CN1;
@@ -29,6 +29,10 @@ import org.matheclipse.core.expression.F;
 import org.matheclipse.core.expression.IConstantHeaders;
 import org.matheclipse.core.generic.BinaryEval;
 import org.matheclipse.core.generic.Functors;
+import org.matheclipse.core.integrate.rubi.TrigFunctionIntegrationRules0;
+import org.matheclipse.core.integrate.rubi.TrigFunctionIntegrationRules1;
+import org.matheclipse.core.integrate.rubi.TrigFunctionIntegrationRules2;
+import org.matheclipse.core.integrate.rubi.TrigFunctionIntegrationRules3;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.IFraction;
@@ -483,6 +487,21 @@ public class Integrate extends AbstractFunctionEvaluator implements IConstantHea
 			}
 			gTimes.add(temp);
 		}
+	}
+
+	@Override
+	public IAST getRuleAST() {
+		// uncomment the following lines for activating Rubi rules, currently not
+		// working properly!
+
+		// IAST ast = F.ast(F.List, 10000, false);
+		// ast.addAll(TrigFunctionIntegrationRules0.RULES);
+		// ast.addAll(TrigFunctionIntegrationRules1.RULES);
+		// ast.addAll(TrigFunctionIntegrationRules2.RULES);
+		// ast.addAll(TrigFunctionIntegrationRules3.RULES);
+		// return ast;
+
+		return null;
 	}
 
 	@Override
