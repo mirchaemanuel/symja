@@ -40,7 +40,7 @@ public class List extends AbstractConverter {
 			buf.append(" \\end{pmatrix} ");
 		} else if ((ast.getEvalFlags() & IAST.IS_VECTOR) == IAST.IS_VECTOR) {
 			// create a LaTeX row vector
-			// \begin{pmatrix} x & y \\ u & v \end{pmatrix}
+			// \begin{pmatrix} x & y \end{pmatrix}
 			buf.append("\\begin{pmatrix} ");
 			if (ast.size() > 1) {
 				for (int j = 1; j < ast.size(); j++) {
