@@ -43,18 +43,7 @@ public abstract class AbstractFunctionEvaluator implements IFunctionEvaluator {
 		IAST ruleList;
 		final EvalEngine engine = EvalEngine.get();
 		if ((ruleList = getRuleAST()) != null) {
-			boolean oldPackageMode = engine.isPackageMode();
-			boolean oldTraceMode = engine.isTraceMode();
-			try {
-				engine.setPackageMode(true);
-				engine.setTraceMode(false);
-				for (IExpr rule : ruleList) {
-					engine.evaluate(rule);
-				}
-			} finally {
-				engine.setPackageMode(oldPackageMode);
-				engine.setTraceMode(oldTraceMode);
-			}
+			engine.addRules(ruleList);
 		}
 		String[] rules;
 		if ((rules = getRules()) != null) {
