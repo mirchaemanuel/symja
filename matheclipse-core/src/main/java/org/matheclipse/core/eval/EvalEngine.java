@@ -596,6 +596,7 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 				if ((evaledExpr = evalLoop(ast.get(1))) != null) {
 					if (resultList == null) {
 						resultList = ast.clone();
+						resultList.setEvalFlags(ast.getEvalFlags());
 					}
 					resultList.set(1, evaledExpr);
 					if (ast.size() == 2) {
@@ -609,6 +610,7 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 					if ((evaledExpr = evalLoop(ast.get(i))) != null) {
 						if (resultList == null) {
 							resultList = ast.clone();
+							resultList.setEvalFlags(ast.getEvalFlags());
 						}
 						resultList.set(i, evaledExpr);
 					}
