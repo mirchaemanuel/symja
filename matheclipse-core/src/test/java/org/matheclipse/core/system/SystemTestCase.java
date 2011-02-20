@@ -635,9 +635,15 @@ public class SystemTestCase extends AbstractTestCase {
 	}
 
 	public void testSystem091() {
-		check("HilbertMatrix[4]", "{{1,1/2,1/3,1/4}," + "{1/2,1/3,1/4,1/5}," + "{1/3,1/4,1/5,1/6}," + "{1/4,1/5,1/6,1/7}}");
-		check("HilbertMatrix[2,3]", "{{1,1/2,1/3},{1/2,1/3,1/4}}");
-		check("HilbertMatrix[3,2]", "{{1,1/2},{1/2,1/3},{1/3,1/4}}");
+		check("HilbertMatrix[4]", "{{1,1/2,1/3,1/4},\n" + 
+				" {1/2,1/3,1/4,1/5},\n" + 
+				" {1/3,1/4,1/5,1/6},\n" + 
+				" {1/4,1/5,1/6,1/7}}");
+		check("HilbertMatrix[2,3]", "{{1,1/2,1/3},\n" + 
+				" {1/2,1/3,1/4}}");
+		check("HilbertMatrix[3,2]", "{{1,1/2},\n" + 
+				" {1/2,1/3},\n" + 
+				" {1/3,1/4}}");
 	}
 
 	public void testSystem092() {
@@ -650,7 +656,10 @@ public class SystemTestCase extends AbstractTestCase {
 	}
 
 	public void testSystem094() {
-		check("VandermondeMatrix[{a,b,c,d}]", "{{1,a,a^2,a^3},{1,b,b^2,b^3},{1,c,c^2,c^3},{1,d,d^2,d^3}}");
+		check("VandermondeMatrix[{a,b,c,d}]", "{{1,a,a^2,a^3},\n" + 
+				" {1,b,b^2,b^3},\n" + 
+				" {1,c,c^2,c^3},\n" + 
+				" {1,d,d^2,d^3}}");
 	}
 
 	public void testSystem095() {
@@ -708,8 +717,13 @@ public class SystemTestCase extends AbstractTestCase {
 
 		// See http://issues.apache.org/jira/browse/MATH-320:
 		check("SingularValueDecomposition[{{1,2},{1,2}}]",
-				"{{{-0.7071067811865475,0.7071067811865475},{-0.7071067811865475,-0.7071067811865475}},\n" + "{{3.1622776601683795,0.0},\n"
-						+ " {0.0,0.0}},\n" + "{{-0.4472135954999579,0.8944271909999159},\n" + " {-0.8944271909999159,-0.4472135954999579}}}");
+				"{\n" + 
+				"{{-0.7071067811865475,0.7071067811865475},\n" + 
+				" {-0.7071067811865475,-0.7071067811865475}},\n" + 
+				"{{3.1622776601683795,0.0},\n" + 
+				" {0.0,0.0}},\n" + 
+				"{{-0.4472135954999579,0.8944271909999159},\n" + 
+				" {-0.8944271909999159,-0.4472135954999579}}}");
 	}
 
 	public void testSystem104() {
