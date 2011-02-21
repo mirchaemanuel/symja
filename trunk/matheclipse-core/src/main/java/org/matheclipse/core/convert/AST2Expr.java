@@ -91,11 +91,11 @@ public class AST2Expr { // extends Converter<ASTNode, IExpr> {
 				// special - convert on input
 				return F.CInfinity;
 			}
-			return F.symbol(node.getString());
+			return F.$s(node.getString());
 		}
 		if (node instanceof PatternNode) {
 			final PatternNode pn = (PatternNode) node;
-			return F.pattern((ISymbol) convert(pn.getSymbol()), convert(pn.getConstraint()), pn.isDefault());
+			return F.$p((ISymbol) convert(pn.getSymbol()), convert(pn.getConstraint()), pn.isDefault());
 		}
 		if (node instanceof IntegerNode) {
 			final IntegerNode integerNode = (IntegerNode) node;
@@ -120,6 +120,6 @@ public class AST2Expr { // extends Converter<ASTNode, IExpr> {
 			return F.num(node.getString());
 		}
 
-		return F.symbol(node.toString());
+		return F.$s(node.toString());
 	}
 }

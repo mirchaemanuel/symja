@@ -42,8 +42,8 @@ public class Sec extends AbstractTrigArg1 implements INumeric {
 	 * </pre>
 	 */
 	final static IAST RULES = List(
-			SetDelayed(Sec(Times(pattern("x",symbol("NumberQ")),pattern("y"))),Condition(Sec(Times(Times(CN1,symbol("x")),symbol("y"))),Less(SignCmp(symbol("x")),C0))),
-			SetDelayed(Sec(pattern("x",symbol("NumberQ"))),Condition(Sec(Times(CN1,symbol("x"))),Less(SignCmp(symbol("x")),C0)))				
+			SetDelayed(Sec(Times($p("x",$s("NumberQ")),$p("y"))),Condition(Sec(Times(Times(CN1,$s("x")),$s("y"))),Less(SignCmp($s("x")),C0))),
+			SetDelayed(Sec($p("x",$s("NumberQ"))),Condition(Sec(Times(CN1,$s("x"))),Less(SignCmp($s("x")),C0)))				
 	);
 
 	@Override

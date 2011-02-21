@@ -95,13 +95,13 @@ public class F {
 	public static ISymbol Continue;
 
 	public static ISymbol Cos;
-	
+
 	public static ISymbol Cot;
-	
+
 	public static ISymbol Cosh;
 
 	public static ISymbol Cross;
-	
+
 	public static ISymbol Csc;
 
 	public static ISymbol D;
@@ -257,7 +257,7 @@ public class F {
 	public static ISymbol RuleDelayed;
 
 	public static ISymbol Sec;
-	
+
 	public static ISymbol Set;
 
 	public static ISymbol SetAttributes;
@@ -568,7 +568,7 @@ public class F {
 	}
 
 	public static IAST ArcCot(final IExpr a0) {
-		return unary(symbol("ArcCot"), a0);
+		return unary($s("ArcCot"), a0);
 	}
 
 	public static IAST ArcTan(final IExpr a0) {
@@ -588,7 +588,7 @@ public class F {
 
 	public static IAST Binomial(final IExpr a0, final IExpr a1) {
 
-		return binary(symbol("Binomial"), a0, a1);
+		return binary($s("Binomial"), a0, a1);
 	}
 
 	public static IAST Ceiling(final IExpr a0) {
@@ -644,7 +644,7 @@ public class F {
 	}
 
 	public static IAST Derivative(final IExpr a0) {
-		return unary(symbol("Derivative"), a0);
+		return unary($s("Derivative"), a0);
 	}
 
 	public static IAST Det(final IExpr a0) {
@@ -714,7 +714,7 @@ public class F {
 	}
 
 	public static IAST Function(final IExpr a0) {
-		return unary(symbol("Function"), a0);
+		return unary($s("Function"), a0);
 	}
 
 	public static IAST FullForm(final IExpr a0) {
@@ -1095,7 +1095,7 @@ public class F {
 	}
 
 	public static IAST LinearSolve(final IExpr a0, final IExpr a1) {
-		return binary(symbol("LinearSolve"), a0, a1);
+		return binary($s("LinearSolve"), a0, a1);
 	}
 
 	public static IAST Limit(final IExpr a0, final IExpr a1) {
@@ -1261,7 +1261,7 @@ public class F {
 
 	public static IAST PowerExpand(final IExpr a0) {
 
-		return unary(symbol("PowerExpand"), a0);
+		return unary($s("PowerExpand"), a0);
 	}
 
 	public static IAST Prepend(final IExpr a0) {
@@ -1276,12 +1276,12 @@ public class F {
 
 	public static IAST Product(final IExpr a0, final IExpr a1) {
 
-		return binary(symbol("Product"), a0, a1);
+		return binary($s("Product"), a0, a1);
 	}
 
 	public static IAST Quotient(final IExpr a0, final IExpr a1) {
 
-		return binary(symbol("Quotient"), a0, a1);
+		return binary($s("Quotient"), a0, a1);
 	}
 
 	public static IAST ReplaceAll(final IExpr a0, final IExpr a1) {
@@ -1290,14 +1290,13 @@ public class F {
 	}
 
 	public static IAST Roots(final IExpr a0) {
-		return unary(symbol("Roots"), a0);
+		return unary($s("Roots"), a0);
 	}
 
 	public static IAST Round(final IExpr a0) {
-		return unary(symbol("Round"), a0);
+		return unary($s("Round"), a0);
 	}
 
-	
 	public static IAST Rule(final IExpr a0, final IExpr a1) {
 		return binary(Rule, a0, a1);
 	}
@@ -1330,7 +1329,7 @@ public class F {
 	}
 
 	public static IAST Simplify(final IExpr a0) {
-		return unary(symbol("Simplify"), a0);
+		return unary($s("Simplify"), a0);
 	}
 
 	public static IAST Sin(final IExpr a0) {
@@ -1371,7 +1370,7 @@ public class F {
 
 	public static IAST Sum(final IExpr a0, final IExpr a1) {
 
-		return binary(symbol("Sum"), a0, a1);
+		return binary($s("Sum"), a0, a1);
 	}
 
 	public static IAST SurfaceGraphics() {
@@ -1912,7 +1911,7 @@ public class F {
 	 * @see org.matheclipse.parser.client.IConstantHeaders
 	 */
 	public static IAST function(final String head) {
-		final IAST list = ast(symbol(head));
+		final IAST list = ast($s(head));
 		return list;
 	}
 
@@ -1926,7 +1925,7 @@ public class F {
 	 * @return IAST
 	 */
 	public static IAST function(final String head, final IExpr arg0) {
-		final IAST list = ast(symbol(head));
+		final IAST list = ast($s(head));
 		list.add(arg0);
 		return list;
 	}
@@ -1943,7 +1942,7 @@ public class F {
 	 * @return IAST
 	 */
 	public static IAST function(final String head, final IExpr arg0, final IExpr arg1) {
-		final IAST list = ast(symbol(head));
+		final IAST list = ast($s(head));
 		list.add(arg0);
 		list.add(arg1);
 		return list;
@@ -2035,7 +2034,7 @@ public class F {
 	 * @param symbol
 	 * @return IPattern
 	 */
-	public static IPattern pattern(final ISymbol symbol) {
+	public static IPattern $p(final ISymbol symbol) {
 		if (symbol == null) {
 			return Pattern.valueOf(null);
 		}
@@ -2053,7 +2052,7 @@ public class F {
 	 *          associated with the AST's head the pattern is used in.
 	 * @return IPattern
 	 */
-	public static IPattern pattern(final ISymbol symbol, final IExpr check, final boolean def) {
+	public static IPattern $p(final ISymbol symbol, final IExpr check, final boolean def) {
 		if (symbol == null) {
 			return Pattern.valueOf(null, check, def);
 		}
@@ -2068,7 +2067,7 @@ public class F {
 	 *          additional condition which should be checked in pattern-matching
 	 * @return IPattern
 	 */
-	public static IPattern pattern(final ISymbol symbol, final IExpr check) {
+	public static IPattern $p(final ISymbol symbol, final IExpr check) {
 		if (symbol == null) {
 			return Pattern.valueOf(null, check);
 		}
@@ -2081,11 +2080,11 @@ public class F {
 	 * @param symbolName
 	 * @return IPattern
 	 */
-	public static IPattern pattern(final String symbolName) {
+	public static IPattern $p(final String symbolName) {
 		if (symbolName == null) {
 			return Pattern.valueOf(null);
 		}
-		return Pattern.valueOf((Symbol) symbol(symbolName));
+		return Pattern.valueOf((Symbol) $s(symbolName));
 	}
 
 	/**
@@ -2096,11 +2095,11 @@ public class F {
 	 *          additional condition which should be checked in pattern-matching
 	 * @return IPattern
 	 */
-	public static IPattern pattern(final String symbolName, final IExpr check) {
+	public static IPattern $p(final String symbolName, final IExpr check) {
 		if (symbolName == null) {
 			return Pattern.valueOf(null, check);
 		}
-		return Pattern.valueOf((Symbol) symbol(symbolName), check);
+		return Pattern.valueOf((Symbol) $s(symbolName), check);
 	}
 
 	/**
@@ -2113,11 +2112,25 @@ public class F {
 	 *          use a default value for this pattern if necessary
 	 * @return IPattern
 	 */
-	public static IPattern pattern(final String symbolName, final IExpr check, boolean def) {
+	public static IPattern $p(final String symbolName, boolean def) {
+		return $p((Symbol) $s(symbolName), null, def);
+	}
+
+	/**
+	 * Create a pattern for pattern-matching and term rewriting
+	 * 
+	 * @param symbolName
+	 * @param check
+	 *          additional condition which should be checked in pattern-matching
+	 * @param def
+	 *          use a default value for this pattern if necessary
+	 * @return IPattern
+	 */
+	public static IPattern $p(final String symbolName, final IExpr check, boolean def) {
 		if (symbolName == null) {
 			return Pattern.valueOf(null, check, def);
 		}
-		return Pattern.valueOf((Symbol) symbol(symbolName), check, def);
+		return Pattern.valueOf((Symbol) $s(symbolName), check, def);
 	}
 
 	/**
@@ -2186,7 +2199,7 @@ public class F {
 	 * @param symbolName
 	 * @return
 	 */
-	public static ISymbol symbol(final String symbolName) {
+	public static ISymbol $s(final String symbolName) {
 		ISymbol symbol = PREDEFINED_SYMBOLS_MAP.get(symbolName);
 		if (symbol != null) {
 			return symbol;

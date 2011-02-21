@@ -66,11 +66,25 @@ public class ConvertRubiFiles {
 
 			IExpr expr = AST2Expr.CONST.convert(node);
 
-			// TODO allow Module in future versions
-			ISymbol module = F.symbol("Module");
-			if (expr.isFree(module, true)) {
+			ISymbol module = F.$s("Module");
+			// if (expr.isFree(module, true)) {
+			if (expr.isAST(F.SetDelayed, 3)) {
+				IAST ast = (IAST) expr;
+				buffer.append("SetDelayed(");
+				buffer.append(ast.get(1).internalFormString(true, 0));
+				buffer.append(",\n    ");
+				buffer.append(ast.get(2).internalFormString(true, 0));
+				if (last) {
+					buffer.append(")\n");
+				} else {
+					buffer.append("),\n");
+				}
+			} else if (expr.isAST(F.If, 4)) {
+				IAST ast = (IAST) expr;
+				// if (ast.get(1).toString().equals("ShowSteps")) {
+				expr = ast.get(3);
 				if (expr.isAST(F.SetDelayed, 3)) {
-					IAST ast = (IAST) expr;
+					ast = (IAST) expr;
 					buffer.append("SetDelayed(");
 					buffer.append(ast.get(1).internalFormString(true, 0));
 					buffer.append(",\n    ");
@@ -80,25 +94,10 @@ public class ConvertRubiFiles {
 					} else {
 						buffer.append("),\n");
 					}
-				} else if (expr.isAST(F.If, 4)) {
-					IAST ast = (IAST) expr;
-					// if (ast.get(1).toString().equals("ShowSteps")) {
-					expr = ast.get(3);
-					if (expr.isAST(F.SetDelayed, 3)) {
-						ast = (IAST) expr;
-						buffer.append("SetDelayed(");
-						buffer.append(ast.get(1).internalFormString(true, 0));
-						buffer.append(",\n    ");
-						buffer.append(ast.get(2).internalFormString(true, 0));
-						if (last) {
-							buffer.append(")\n");
-						} else {
-							buffer.append("),\n");
-						}
-					}
-					// }
 				}
+				// }
 			}
+			// }
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

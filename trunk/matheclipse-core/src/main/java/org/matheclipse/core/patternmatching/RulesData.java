@@ -299,7 +299,7 @@ public class RulesData {
 			fEqualRules = new HashMap<IExpr, Pair<ISymbol, IExpr>>();
 			for (int i = 0; i < len; i++) {
 				astString = stream.readUTF();
-				setSymbol = F.symbol(astString);
+				setSymbol = F.$s(astString);
 
 				astString = stream.readUTF();
 				key = engine.parse(astString);
@@ -320,7 +320,7 @@ public class RulesData {
 			fSimplePatternRules = ArrayListMultimap.create();
 			for (int i = 0; i < len; i++) {
 				astString = stream.readUTF();
-				setSymbol = F.symbol(astString);
+				setSymbol = F.$s(astString);
 
 				astString = stream.readUTF();
 				lhs = engine.parse(astString);
@@ -347,7 +347,7 @@ public class RulesData {
 			listLength = stream.read();
 			for (int j = 0; j < listLength; j++) {
 				astString = stream.readUTF();
-				setSymbol = F.symbol(astString);
+				setSymbol = F.$s(astString);
 
 				astString = stream.readUTF();
 				lhs = engine.parse(astString);

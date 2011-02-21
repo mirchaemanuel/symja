@@ -271,7 +271,7 @@ public class SourceGenerator {
 						// Try to create an instance of the object
 						Class.forName(pckgname + "." + classname).newInstance();
 						System.out.println("  f.createSymbol(\"" + classname + "\");");
-						F.symbol(classname);
+						F.$s(classname);
 					} catch (final ClassNotFoundException cnfex) {
 						System.err.println(cnfex);
 					} catch (final InstantiationException iex) {

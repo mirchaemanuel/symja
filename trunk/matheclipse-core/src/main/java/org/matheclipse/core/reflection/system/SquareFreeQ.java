@@ -47,7 +47,7 @@ public class SquareFreeQ extends AbstractFunctionEvaluator {
 			if (lst.get(1).isAtom()) {
 				return F.False;
 			}
-			eVar.add(F.symbol("x"));
+			eVar.add(F.$s("x"));
 		}
 		if (!eVar.isSize(1)) {
 			throw new WrongArgumentType(lst, lst.get(1), 1, "SquareFreeQ only implemented for univariate polynomials");

@@ -31,9 +31,8 @@ import static org.matheclipse.core.expression.F.Tanh;
 import static org.matheclipse.core.expression.F.Times;
 import static org.matheclipse.core.expression.F.Trunc;
 import static org.matheclipse.core.expression.F.fraction;
-import static org.matheclipse.core.expression.F.integer;
-import static org.matheclipse.core.expression.F.pattern;
-import static org.matheclipse.core.expression.F.symbol;
+import static org.matheclipse.core.expression.F.integer; 
+import static org.matheclipse.core.expression.F.$s;
 
 import org.matheclipse.core.eval.interfaces.AbstractTrigArg1;
 import org.matheclipse.core.eval.interfaces.INumeric;
@@ -71,8 +70,8 @@ public class Cot extends AbstractTrigArg1 implements INumeric {
 			Set(Cot(Times(fraction(1L, 8L), Pi)), Plus(Power(C2, C1D2), C1)),
 			Set(Cot(Times(fraction(1L,12L),Pi)),Plus(Power(C3,C1D2),C2)),
 			Set(Cot(C0), ComplexInfinity),
-			SetDelayed(Cot(pattern("x",symbol("NumberQ"))),Condition(Times(CN1,Cot(Times(CN1,symbol("x")))),Less(SignCmp(symbol("x")),C0))),
-			SetDelayed(Cot(Times(pattern("x",symbol("NumberQ")),pattern("y"))),Condition(Times(CN1,Cot(Times(Times(CN1,symbol("x")),symbol("y")))),Less(SignCmp(symbol("x")),C0)))
+			SetDelayed(Cot($p("x",$s("NumberQ"))),Condition(Times(CN1,Cot(Times(CN1,$s("x")))),Less(SignCmp($s("x")),C0))),
+			SetDelayed(Cot(Times($p("x",$s("NumberQ")),$p("y"))),Condition(Times(CN1,Cot(Times(Times(CN1,$s("x")),$s("y")))),Less(SignCmp($s("x")),C0)))
 			);
 
 	@Override

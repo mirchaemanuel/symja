@@ -67,7 +67,7 @@ public class MathScriptEngine extends AbstractScriptEngine {
 			final Bindings bindings = context.getBindings(ScriptContext.ENGINE_SCOPE);
 			ISymbol symbol;
 			for (Map.Entry<String, Object> currEntry : bindings.entrySet()) {
-				symbol = F.symbol( currEntry.getKey());
+				symbol = F.$s( currEntry.getKey());
 				symbol.pushLocalVariable(Object2Expr.CONST.convert(currEntry.getValue()));
 				list.add(symbol);
 			}

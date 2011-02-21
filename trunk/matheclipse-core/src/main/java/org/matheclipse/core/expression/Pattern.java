@@ -244,7 +244,7 @@ public class Pattern extends ExprImpl implements IPattern {
 	public String internalFormString(boolean symbolsAsFactoryMethod, int depth) {
 		if (symbolsAsFactoryMethod) {
 			final StringBuffer buffer = new StringBuffer();
-			buffer.append("pattern(");
+			buffer.append("$p(");
 			if (fSymbol == null) {
 				buffer.append("null");
 				if (fCondition != null) {
@@ -262,9 +262,9 @@ public class Pattern extends ExprImpl implements IPattern {
 					buffer.append("," + fCondition.internalFormString(symbolsAsFactoryMethod, 0));
 				}
 				if (fDefault) {
-					if (fCondition == null) {
-						buffer.append(",null");
-					}
+					// if (fCondition == null) {
+					// buffer.append(",null");
+					// }
 					buffer.append(",true");
 				}
 			}
