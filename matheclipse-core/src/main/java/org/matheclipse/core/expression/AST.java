@@ -1116,7 +1116,7 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 	@Override
 	public String toString() {
 		final StringBuffer buf = new StringBuffer();
-		if (size() > 0 && isAST(F.List)) {
+		if (size() > 0 && isList()) {
 			buf.append('{');
 			for (int i = 1; i < size(); i++) {
 				buf.append(get(i) == this ? "(this AST)" : String.valueOf(get(i)));

@@ -20,9 +20,6 @@ import org.matheclipse.core.interfaces.ISymbol;
  * 
  */
 public class UtilityFunctions {
-	private static String PACKAGE_NAME = "org.matheclipse.core.integrate.rubi";
-
-	private static String CLASS_NAME = "UtilityFunctions";
 
 	/**
 	 * Convert to Integrate[]
@@ -33,12 +30,6 @@ public class UtilityFunctions {
 	 */
 	public static IAST Int(final IExpr a0, final IExpr a1) {
 		return binary(Integrate, a0, a1);
-	}
-
-	public static ISymbol sym(String name, IAST ruleList) {
-		ISymbol sym = symbol(name);
-		EvalEngine.get().addRules(ruleList);
-		return sym;
 	}
 
 	public static IAST quad(final IExpr head, final IExpr a0, final IExpr a1, final IExpr a2, final IExpr a3) {
@@ -56,7 +47,7 @@ public class UtilityFunctions {
 
 	public static IAST ArcCoth(final IExpr a) {
 		// TODO fix this
-		return unary(symbol("ArcCoth"), a);
+		return unary($s("ArcCoth"), a);
 	}
 
 	public static IAST Or(final IExpr a0, final IExpr a1) {
@@ -64,204 +55,233 @@ public class UtilityFunctions {
 	}
 
 	public static IAST Block(final IExpr a0, final IExpr a1) {
-		return binary(symbol("Block"), a0, a1);
+		return binary($s("Block"), a0, a1);
 	}
 
 	public static IAST Cancel(final IExpr a) {
 		// TODO fix this
-		return unary(symbol("Cancel"), a);
+		return unary($s("Cancel"), a);
 	}
 
 	public static IAST Coefficient(final IExpr a0, final IExpr a1, final IExpr a2) {
-		return ternary(symbol("Coefficient"), a0, a1, a2);
+		return ternary($s("Coefficient"), a0, a1, a2);
 	}
 
 	public static IAST CosIntegral(final IExpr a) {
 		// TODO fix this
-		return unary(symbol("CosIntegral"), a);
+		return unary($s("CosIntegral"), a);
 	}
 
-	static IAST NUMERIC_FACTOR = List(SetDelayed(NumericFactor(pattern("u")), If(NumberQ(symbol("u")), If(ZeroQ(Im(symbol("u"))),
-			symbol("u"), If(ZeroQ(Re(symbol("u"))), Im(symbol("u")), C1)), If(PowerQ(symbol("u")), If(And(
-			RationalQ(Part(symbol("u"), C1)), FractionQ(Part(symbol("u"), C2))), If(Greater(Part(symbol("u"), C2), C0), Times(C1, Power(
-			Denominator(Part(symbol("u"), C1)), CN1)), Times(C1, Power(Denominator(Times(C1, Power(Part(symbol("u"), C1), CN1))), CN1))),
-			C1), If(ProductQ(symbol("u")), Times(NumericFactor(First(symbol("u"))), NumericFactor(Rest(symbol("u")))), C1)))));
+	static ISymbol Dist = new Symbol("Dist");
+	static ISymbol NumericFactor = new Symbol("NumericFactor");
+	static ISymbol Subst = new Symbol("Subst");
 
-	static ISymbol NumericFactor = sym("NumericFactor", NUMERIC_FACTOR);
+	public static void init() {
+	 
+//			Dist[0,v_] := 0, 
+//			Dist[1,v_] := v,
+//			Dist[u_,v_] := -Dist[-u,v] /;NumericFactor[u]<0,
+//			Dist[u_,v_]+Dist[w_,v_] := If[ZeroQ[u+w], 0, Dist[u+w,v]],
+//			Dist[u_,v_]-Dist[w_,v_] := If[ZeroQ[u-w], 0, Dist[u-w,v]],
+//			w_*Dist[u_,v_] := Dist[w*u,v] /; w=!=-1,
+//			Dist[u_,Dist[v_,w_]] := Dist[u*v,w],
+//			Dist[u_,v_] := Map[Function[Dist[u,#]],v] /; SumQ[v],
+//			Dist[u_,v_] := u*v /; FreeQ[v,Int],
+//			Dist[u_,v_*w_] := Dist[u*v,w] /; FreeQ[v,Int]
+ 
+		IAST DIST_RULES = List(
+				SetDelayed(Dist(C0,$p("v")),C0),
+				SetDelayed(Dist(C1,$p("v")),$s("v")),
+				SetDelayed(Dist($p("u"),$p("v")),Condition(Times(CN1,Dist(Times(CN1,$s("u")),$s("v"))),Less(NumericFactor($s("u")),C0))),
+				SetDelayed(Plus(Dist($p("u"),$p("v")),Dist($p("w"),$p("v"))),If(ZeroQ(Plus($s("u"),$s("w"))),C0,Dist(Plus($s("u"),$s("w")),$s("v")))),
+				SetDelayed(Plus(Dist($p("u"),$p("v")),Times(CN1,Dist($p("w"),$p("v")))),If(ZeroQ(Plus($s("u"),Times(CN1,$s("w")))),C0,Dist(Plus($s("u"),Times(CN1,$s("w"))),$s("v")))),
+				SetDelayed(Times($p("w"),Dist($p("u"),$p("v"))),Condition(Dist(Times($s("w"),$s("u")),$s("v")),UnsameQ($s("w"),CN1))),
+				SetDelayed(Dist($p("u"),Dist($p("v"),$p("w"))),Dist(Times($s("u"),$s("v")),$s("w"))),
+				SetDelayed(Dist($p("u"),$p("v")),Condition(Map(Function(Dist($s("u"),Slot1)),$s("v")),SumQ($s("v")))),
+				SetDelayed(Dist($p("u"),$p("v")),Condition(Times($s("u"),$s("v")),FreeQ($s("v"),$s("Int")))),
+				SetDelayed(Dist($p("u"),Times($p("v"),$p("w"))),Condition(Dist(Times($s("u"),$s("v")),$s("w")),FreeQ($s("v"),$s("Int"))))
+		);
+
+		IAST NUMERIC_FACTOR_RULES = List(SetDelayed(NumericFactor($p("u")), If(NumberQ($s("u")), If(ZeroQ(Im($s("u"))),
+				$s("u"), If(ZeroQ(Re($s("u"))), Im($s("u")), C1)), If(PowerQ($s("u")), If(And(RationalQ(Part($s("u"),
+				C1)), FractionQ(Part($s("u"), C2))), If(Greater(Part($s("u"), C2), C0), Times(C1, Power(Denominator(Part(
+				$s("u"), C1)), CN1)), Times(C1, Power(Denominator(Times(C1, Power(Part($s("u"), C1), CN1))), CN1))), C1), If(
+				ProductQ($s("u")), Times(NumericFactor(First($s("u"))), NumericFactor(Rest($s("u")))), C1)))));
+
+		IAST SUBST_RULES = List(SetDelayed(Subst($p("u"), $p("v"), $p("w")), Condition(If(
+				SameQ($s("u"), $s("v")), $s("w"), If(AtomQ($s("u")), $s("u"), If(PowerQ($s("u")), If(And(And(
+						PowerQ($s("v")), SameQ(Part($s("u"), C1), Part($s("v"), C1))), SumQ(Part($s("u"), C2))), Times(Subst(
+						Power(Part($s("u"), C1), First(Part($s("u"), C2))), $s("v"), $s("w")), Subst(Power(
+						Part($s("u"), C1), Rest(Part($s("u"), C2))), $s("v"), $s("w"))), Power(Subst(Part($s("u"), C1),
+						$s("v"), $s("w")), Subst(Part($s("u"), C2), $s("v"), $s("w")))), If(And(SubstQ($s("u")), Or(
+						SameQ(Part($s("u"), C2), $s("v")), FreeQ(Part($s("u"), C1), $s("v")))), Subst(Part($s("u"), C1),
+						Part($s("u"), C2), Subst(Part($s("u"), C3), $s("v"), $s("w"))), Map(Function(Subst(Slot1, $s("v"),
+						$s("w"))), $s("u")))))), Or(Or(AtomQ($s("u")), And(SubstQ($s("u")), Or(SameQ(Part($s("u"), C2),
+				$s("v")), FreeQ(Part($s("u"), C1), $s("v"))))), Not(Or(And(CalculusQ($s("u")), Not(FreeQ($s("v"), Part(
+				$s("u"), C2)))), MemberQ(List($s("Pattern"), $s("Defer"), $s("Hold"), $s("HoldForm")),
+				Head($s("u")))))))));
+		EvalEngine.get().addRules(DIST_RULES);
+		EvalEngine.get().addRules(NUMERIC_FACTOR_RULES);
+		EvalEngine.get().addRules(SUBST_RULES);
+	}
 
 	public static IAST NumericFactor(final IExpr a0) {
 		return unary(NumericFactor, a0);
 	}
 
 	public static IAST PowerQ(final IExpr a0) {
-		return unary(symbol("PowerQ"), a0);
+		return unary($s("PowerQ"), a0);
 	}
 
 	public static IAST ProductQ(final IExpr a0) {
-		return unary(symbol("ProductQ"), a0);
+		return unary($s("ProductQ"), a0);
 	}
 
 	public static IAST SumQ(final IExpr a0) {
-		return unary(symbol("SumQ"), a0);
+		return unary($s("SumQ"), a0);
 	}
 
 	public static IAST Re(final IExpr a0) {
-		return unary(symbol("Re"), a0);
+		return unary($s("Re"), a0);
 	}
 
 	public static IAST Im(final IExpr a0) {
-		return unary(symbol("Im"), a0);
+		return unary($s("Im"), a0);
 	}
 
 	public static IAST First(final IExpr a0) {
-		return unary(symbol("First"), a0);
+		return unary($s("First"), a0);
 	}
 
 	public static IAST Rest(final IExpr a0) {
-		return unary(symbol("Rest"), a0);
+		return unary($s("Rest"), a0);
 	}
 
 	public static IAST Part(final IExpr a0, final IExpr a1) {
-		return binary(symbol("Part"), a0, a1);
+		return binary($s("Part"), a0, a1);
 	}
-
-	static IAST DIST_RULES = List(List(SetDelayed(Dist(C1, pattern("v")), symbol("v")), SetDelayed(Dist(pattern("u"), pattern("v")),
-			Condition(Times(CN1, Dist(Times(CN1, symbol("u")), symbol("v"))), Less(NumericFactor(symbol("u")), C0))), SetDelayed(Plus(
-			Dist(pattern("u"), pattern("v")), Dist(pattern("w"), pattern("v"))), If(ZeroQ(Plus(symbol("u"), symbol("w"))), C0, Dist(Plus(
-			symbol("u"), symbol("w")), symbol("v")))), SetDelayed(Plus(Dist(pattern("u"), pattern("v")), Times(CN1, Dist(pattern("w"),
-			pattern("v")))), If(ZeroQ(Plus(symbol("u"), Times(CN1, symbol("w")))), C0, Dist(Plus(symbol("u"), Times(CN1, symbol("w"))),
-			symbol("v")))), SetDelayed(Times(pattern("w"), Dist(pattern("u"), pattern("v"))), Condition(Dist(Times(symbol("w"),
-			symbol("u")), symbol("v")), UnsameQ(symbol("w"), CN1))), SetDelayed(Dist(pattern("u"), Dist(pattern("v"), pattern("w"))),
-			Dist(Times(symbol("u"), symbol("v")), symbol("w"))), SetDelayed(Dist(pattern("u"), pattern("v")), Condition(Map(
-			Function(Dist(symbol("u"), Slot1)), symbol("v")), SumQ(symbol("v")))), SetDelayed(Dist(pattern("u"), pattern("v")),
-			Condition(Times(symbol("u"), symbol("v")),
-					Or(FreeQ(symbol("v"), symbol("Int")), UnsameQ(symbol("ShowSteps"), symbol("True"))))), SetDelayed(Dist(pattern("u"),
-			Times(pattern("v"), pattern("w"))), Condition(Dist(Times(symbol("u"), symbol("v")), symbol("w")), FreeQ(symbol("v"),
-			symbol("Int"))))));
-
-	static ISymbol Dist = sym("Dist", DIST_RULES);
 
 	public static IAST Dist(final IExpr a0, final IExpr a1) {
 		return binary(Dist, a0, a1);
 	}
 
 	public static IAST ExpnExpand(final IExpr a0, final IExpr a1) {
-		return binary(symbol("ExpnExpand"), a0, a1);
+		return binary($s("ExpnExpand"), a0, a1);
 	}
 
 	public static IAST EllipticE(final IExpr a0, final IExpr a1) {
-		return binary(symbol("EllipticE"), a0, a1);
+		return binary($s("EllipticE"), a0, a1);
 	}
 
 	public static IAST EllipticF(final IExpr a0, final IExpr a1) {
-		return binary(symbol("EllipticF"), a0, a1);
+		return binary($s("EllipticF"), a0, a1);
 	}
 
 	public static IAST Exponent(final IExpr a0, final IExpr a1) {
-		return binary(symbol("Exponent"), a0, a1);
+		return binary($s("Exponent"), a0, a1);
 	}
 
 	public static IAST EvenQ(final IExpr a) {
 		// TODO fix this
-		return unary(symbol("EvenQ"), a);
+		return unary($s("EvenQ"), a);
 	}
 
 	public static IAST FractionQ(final IExpr a) {
 		// TODO fix this
-		return unary(symbol("FractionQ"), a);
+		return unary($s("FractionQ"), a);
 	}
 
 	public static IAST FractionOrNegativeQ(final IExpr a) {
 		// TODO fix this
-		return unary(symbol("FractionOrNegativeQ"), a);
+		return unary($s("FractionOrNegativeQ"), a);
 	}
 
 	public static IAST FresnelC(final IExpr a) {
 		// TODO fix this
-		return unary(symbol("FresnelC"), a);
+		return unary($s("FresnelC"), a);
 	}
 
 	public static IAST FresnelS(final IExpr a) {
 		// TODO fix this
-		return unary(symbol("FresnelS"), a);
+		return unary($s("FresnelS"), a);
 	}
 
 	public static IAST FunctionOfQ(final IExpr a0, final IExpr a1, final IExpr a2, final IExpr a3) {
-		return quad(symbol("FunctionOfQ"), a0, a1, a2, a3);
+		return quad($s("FunctionOfQ"), a0, a1, a2, a3);
 	}
 
 	public static IAST FunctionOfTrig(final IExpr a0, final IExpr a1) {
-		return binary(symbol("FunctionOfTrig"), a0, a1);
+		return binary($s("FunctionOfTrig"), a0, a1);
 	}
 
 	public static IAST FunctionOfTrigQ(final IExpr a0, final IExpr a1, final IExpr a2) {
-		return ternary(symbol("FunctionOfTrigQ"), a0, a1, a2);
+		return ternary($s("FunctionOfTrigQ"), a0, a1, a2);
 	}
 
 	public static IAST HalfIntegerQ(final IExpr a) {
 		// TODO fix this
-		return unary(symbol("HalfIntegerQ"), a);
+		return unary($s("HalfIntegerQ"), a);
 	}
 
 	public static IAST IndependentQ(final IExpr a0, final IExpr a1) {
-		return binary(symbol("IndependentQ"), a0, a1);
+		return binary($s("IndependentQ"), a0, a1);
 	}
 
 	public static IAST IntegerQ(final IExpr a) {
 		// TODO fix this
-		return unary(symbol("IntegerQ"), a);
+		return unary($s("IntegerQ"), a);
 	}
 
 	public static IAST OddQ(final IExpr a) {
 		// TODO fix this
-		return unary(symbol("OddQ"), a);
+		return unary($s("OddQ"), a);
 	}
 
 	public static IAST MatchQ(final IExpr a0, final IExpr a1) {
 		// TODO fix this
-		return binary(symbol("MatchQ"), a0, a1);
+		return binary($s("MatchQ"), a0, a1);
 	}
 
 	public static IAST Module(final IExpr a0, final IExpr a1) {
-		return binary(symbol("Module"), a0, a1);
+		return binary($s("Module"), a0, a1);
 	}
 
 	public static IAST NegQ(final IExpr a) {
 		// TODO fix this
-		return unary(symbol("NegQ"), a);
+		return unary($s("NegQ"), a);
 	}
 
 	public static IAST NonzeroQ(final IExpr a) {
 		// TODO fix this
-		return unary(symbol("NonzeroQ"), a);
+		return unary($s("NonzeroQ"), a);
 	}
 
 	public static IAST Not(final IExpr a) {
 		// TODO fix this
-		return unary(symbol("NegQ"), a);
+		return unary($s("NegQ"), a);
 	}
 
 	public static IAST NotFalseQ(final IExpr u) {
-		return binary(symbol("UnsameQ"), u, False);
+		return binary($s("UnsameQ"), u, False);
 	}
 
 	public static IAST PosQ(final IExpr a) {
 		// TODO fix this
-		return unary(symbol("PosQ"), a);
+		return unary($s("PosQ"), a);
 	}
 
 	public static IAST PolynomialQ(final IExpr a0, final IExpr a1) {
-		return binary(symbol("PolynomialQ"), a0, a1);
+		return binary($s("PolynomialQ"), a0, a1);
 	}
 
 	public static IAST PositiveQ(final IExpr a) {
 		// TODO fix this
-		return unary(symbol("PositiveQ"), a);
+		return unary($s("PositiveQ"), a);
 	}
 
 	public static IAST RationalQ(final IExpr a) {
 		// TODO fix this
-		return unary(symbol("RationalQ"), a);
+		return unary($s("RationalQ"), a);
 	}
 
 	public static IExpr Regularize(final IExpr u, final IExpr x) {
@@ -270,62 +290,48 @@ public class UtilityFunctions {
 	}
 
 	public static IAST Rt(final IExpr a0, final IExpr a1) {
-		return binary(symbol("Rt"), a0, a1);
+		return binary($s("Rt"), a0, a1);
 	}
 
 	public static IAST Rt(final IExpr a0, final IExpr a1, final IExpr a2) {
-		return ternary(symbol("Rt"), a0, a1, a2);
+		return ternary($s("Rt"), a0, a1, a2);
 	}
 
 	public static IAST SameQ(final IExpr a0, final IExpr a1) {
-		return binary(symbol("SameQ"), a0, a1);
+		return binary($s("SameQ"), a0, a1);
 	}
 
 	public static IAST UnsameQ(final IExpr a0, final IExpr a1) {
-		return binary(symbol("UnsameQ"), a0, a1);
+		return binary($s("UnsameQ"), a0, a1);
 	}
 
 	public static IAST SinIntegral(final IExpr a) {
 		// TODO fix this
-		return unary(symbol("SinIntegral"), a);
+		return unary($s("SinIntegral"), a);
 	}
-
-	static IAST SUBST_RULES = List(SetDelayed(Subst(pattern("u"), pattern("v"), pattern("w")), Condition(If(SameQ(symbol("u"),
-			symbol("v")), symbol("w"), If(AtomQ(symbol("u")), symbol("u"), If(PowerQ(symbol("u")), If(And(And(PowerQ(symbol("v")), SameQ(
-			Part(symbol("u"), C1), Part(symbol("v"), C1))), SumQ(Part(symbol("u"), C2))), Times(Subst(Power(Part(symbol("u"), C1),
-			First(Part(symbol("u"), C2))), symbol("v"), symbol("w")), Subst(Power(Part(symbol("u"), C1), Rest(Part(symbol("u"), C2))),
-			symbol("v"), symbol("w"))), Power(Subst(Part(symbol("u"), C1), symbol("v"), symbol("w")), Subst(Part(symbol("u"), C2),
-			symbol("v"), symbol("w")))), If(And(SubstQ(symbol("u")), Or(SameQ(Part(symbol("u"), C2), symbol("v")), FreeQ(Part(
-			symbol("u"), C1), symbol("v")))), Subst(Part(symbol("u"), C1), Part(symbol("u"), C2), Subst(Part(symbol("u"), C3),
-			symbol("v"), symbol("w"))), Map(Function(Subst(Slot1, symbol("v"), symbol("w"))), symbol("u")))))), Or(Or(AtomQ(symbol("u")),
-			And(SubstQ(symbol("u")), Or(SameQ(Part(symbol("u"), C2), symbol("v")), FreeQ(Part(symbol("u"), C1), symbol("v"))))), Not(Or(
-			And(CalculusQ(symbol("u")), Not(FreeQ(symbol("v"), Part(symbol("u"), C2)))), MemberQ(List(symbol("Pattern"), symbol("Defer"),
-					symbol("Hold"), symbol("HoldForm")), Head(symbol("u")))))))));
-
-	static ISymbol Subst = sym("Subst", SUBST_RULES);
 
 	public static IAST AtomQ(final IExpr a) {
 		// TODO fix this
-		return unary(symbol("AtomQ"), a);
+		return unary($s("AtomQ"), a);
 	}
 
 	public static IAST CalculusQ(final IExpr a) {
 		// TODO fix this
-		return unary(symbol("CalculusQ"), a);
+		return unary($s("CalculusQ"), a);
 	}
 
 	public static IAST SubstQ(final IExpr a) {
 		// TODO fix this
-		return unary(symbol("SubstQ"), a);
+		return unary($s("SubstQ"), a);
 	}
 
 	public static IAST Head(final IExpr a) {
 		// TODO fix this
-		return unary(symbol("Head"), a);
+		return unary($s("Head"), a);
 	}
 
 	public static IAST Map(final IExpr a0, final IExpr a1) {
-		return binary(symbol("Map"), a0, a1);
+		return binary($s("Map"), a0, a1);
 	}
 
 	/**
@@ -385,19 +391,19 @@ public class UtilityFunctions {
 	 * @return
 	 */
 	public static IAST SubstFor(final IExpr v, final IExpr u, final IExpr x) {
-		return ternary(symbol("SubstFor"), v, u, x);
+		return ternary($s("SubstFor"), v, u, x);
 	}
 
 	public static IAST TryPureTanSubst(final IExpr a0, final IExpr a1) {
-		return binary(symbol("TryPureTanSubst"), a0, a1);
+		return binary($s("TryPureTanSubst"), a0, a1);
 	}
 
 	public static IAST Unequal(final IExpr a0, final IExpr a1) {
-		return binary(symbol("Unequal"), a0, a1);
+		return binary($s("Unequal"), a0, a1);
 	}
 
 	public static IAST ZeroQ(final IExpr a) {
 		// TODO fix this
-		return unary(symbol("ZeroQ"), a);
+		return unary($s("ZeroQ"), a);
 	}
 }

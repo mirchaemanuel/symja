@@ -14,10 +14,10 @@ public class Blank implements IFunctionEvaluator {
 
 	public IExpr evaluate(final IAST ast) {
 		if (ast.size() == 1) {
-			return F.pattern((ISymbol)null);
+			return F.$p((ISymbol)null);
 		}
 		if (ast.size() == 2) {
-			return F.pattern((ISymbol)null, ast.get(1));
+			return F.$p((ISymbol)null, ast.get(1));
 		}
 		return null;
 	}

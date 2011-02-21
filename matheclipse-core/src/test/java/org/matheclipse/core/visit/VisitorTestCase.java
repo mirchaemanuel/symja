@@ -1,11 +1,6 @@
 package org.matheclipse.core.visit;
 
-import static org.matheclipse.core.expression.F.C1;
-import static org.matheclipse.core.expression.F.C2;
-import static org.matheclipse.core.expression.F.Cos;
-import static org.matheclipse.core.expression.F.Power;
-import static org.matheclipse.core.expression.F.Sin;
-import static org.matheclipse.core.expression.F.pattern;
+import static org.matheclipse.core.expression.F.*;
 import junit.framework.TestCase;
 
 import org.matheclipse.core.expression.F;
@@ -35,7 +30,7 @@ public class VisitorTestCase extends TestCase {
 		assertEquals(hash, -1895901688);
 		
 		v.setUp();
-		expr = F.Power(F.Sin(F.pattern("x")), F.C2);
+		expr = F.Power(F.Sin(F.$p("x")), F.C2);
 		hash = expr.accept(v);
 		assertEquals(hash, -1895901688);
 		

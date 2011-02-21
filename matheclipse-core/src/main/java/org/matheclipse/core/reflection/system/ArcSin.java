@@ -64,8 +64,8 @@ public class ArcSin extends AbstractTrigArg1 implements INumeric {
 			Set(ArcSin(Times(C1D2,Power(Plus(Times(CN1,Power(C2,C1D2)),C2),C1D2))),Times(fraction(1L,8L),Pi)),
 			Set(ArcSin(C1),Times(C1D2,Pi)),
 			Set(ArcSin(C0),C0),
-			SetDelayed(ArcSin(Times(pattern("x",symbol("NumberQ")),pattern("y"))),Condition(Times(CN1,ArcSin(Times(Times(CN1,symbol("x")),symbol("y")))),Less(SignCmp(symbol("x")),C0))),
-			SetDelayed(ArcSin(pattern("x",symbol("NumberQ"))),Condition(Times(CN1,ArcSin(Times(CN1,symbol("x")))),Less(SignCmp(symbol("x")),C0)))
+			SetDelayed(ArcSin(Times($p("x",$s("NumberQ")),$p("y"))),Condition(Times(CN1,ArcSin(Times(Times(CN1,$s("x")),$s("y")))),Less(SignCmp($s("x")),C0))),
+			SetDelayed(ArcSin($p("x",$s("NumberQ"))),Condition(Times(CN1,ArcSin(Times(CN1,$s("x")))),Less(SignCmp($s("x")),C0)))
 			);
 	
 	@Override

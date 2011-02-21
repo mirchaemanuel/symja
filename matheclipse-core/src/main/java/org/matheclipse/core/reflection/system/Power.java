@@ -1,28 +1,6 @@
 package org.matheclipse.core.reflection.system;
 
-import static org.matheclipse.core.expression.F.C0;
-import static org.matheclipse.core.expression.F.C1;
-import static org.matheclipse.core.expression.F.CI;
-import static org.matheclipse.core.expression.F.CN1;
-import static org.matheclipse.core.expression.F.Condition;
-import static org.matheclipse.core.expression.F.Cos;
-import static org.matheclipse.core.expression.F.Cot;
-import static org.matheclipse.core.expression.F.Csc;
-import static org.matheclipse.core.expression.F.E;
-import static org.matheclipse.core.expression.F.Less;
-import static org.matheclipse.core.expression.F.List;
-import static org.matheclipse.core.expression.F.Log;
-import static org.matheclipse.core.expression.F.Pi;
-import static org.matheclipse.core.expression.F.Power;
-import static org.matheclipse.core.expression.F.Sec;
-import static org.matheclipse.core.expression.F.Set;
-import static org.matheclipse.core.expression.F.SetDelayed;
-import static org.matheclipse.core.expression.F.Sin;
-import static org.matheclipse.core.expression.F.Tan;
-import static org.matheclipse.core.expression.F.Times;
-import static org.matheclipse.core.expression.F.fraction;
-import static org.matheclipse.core.expression.F.pattern;
-import static org.matheclipse.core.expression.F.symbol;
+import static org.matheclipse.core.expression.F.*;
 
 import org.matheclipse.core.eval.EvalEngine;
 import org.matheclipse.core.eval.exception.DivisionByZero;
@@ -58,13 +36,13 @@ public class Power extends AbstractArg2 implements INumeric {
 	 */
 	final static IAST RULES = List( 
 			Set(Power(E,Times(CI,Pi)),CN1),
-			SetDelayed(Power(E,Log(pattern("x"))),symbol("x")),
-			SetDelayed(Power(Tan(pattern("x")),pattern("n",symbol("IntegerQ"))),Condition(Power(Cot(symbol("x")),Times(CN1,symbol("n"))),Less(symbol("n"),C0))),
-			SetDelayed(Power(Cot(pattern("x")),pattern("n",symbol("IntegerQ"))),Condition(Power(Tan(symbol("x")),Times(CN1,symbol("n"))),Less(symbol("n"),C0))),
-			SetDelayed(Power(Sec(pattern("x")),pattern("n",symbol("IntegerQ"))),Condition(Power(Cos(symbol("x")),Times(CN1,symbol("n"))),Less(symbol("n"),C0))),
-			SetDelayed(Power(Cos(pattern("x")),pattern("n",symbol("IntegerQ"))),Condition(Power(Sec(symbol("x")),Times(CN1,symbol("n"))),Less(symbol("n"),C0))),
-			SetDelayed(Power(Csc(pattern("x")),pattern("n",symbol("IntegerQ"))),Condition(Power(Sin(symbol("x")),Times(CN1,symbol("n"))),Less(symbol("n"),C0))),
-			SetDelayed(Power(Sin(pattern("x")),pattern("n",symbol("IntegerQ"))),Condition(Power(Csc(symbol("x")),Times(CN1,symbol("n"))),Less(symbol("n"),C0)))
+			SetDelayed(Power(E,Log($p("x"))),$s("x")),
+			SetDelayed(Power(Tan($p("x")),$p("n",$s("IntegerQ"))),Condition(Power(Cot($s("x")),Times(CN1,$s("n"))),Less($s("n"),C0))),
+			SetDelayed(Power(Cot($p("x")),$p("n",$s("IntegerQ"))),Condition(Power(Tan($s("x")),Times(CN1,$s("n"))),Less($s("n"),C0))),
+			SetDelayed(Power(Sec($p("x")),$p("n",$s("IntegerQ"))),Condition(Power(Cos($s("x")),Times(CN1,$s("n"))),Less($s("n"),C0))),
+			SetDelayed(Power(Cos($p("x")),$p("n",$s("IntegerQ"))),Condition(Power(Sec($s("x")),Times(CN1,$s("n"))),Less($s("n"),C0))),
+			SetDelayed(Power(Csc($p("x")),$p("n",$s("IntegerQ"))),Condition(Power(Sin($s("x")),Times(CN1,$s("n"))),Less($s("n"),C0))),
+			SetDelayed(Power(Sin($p("x")),$p("n",$s("IntegerQ"))),Condition(Power(Csc($s("x")),Times(CN1,$s("n"))),Less($s("n"),C0)))
 	);
 
 	@Override

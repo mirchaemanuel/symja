@@ -10,8 +10,7 @@ import static org.matheclipse.core.expression.F.SetDelayed;
 import static org.matheclipse.core.expression.F.SignCmp;
 import static org.matheclipse.core.expression.F.Tan;
 import static org.matheclipse.core.expression.F.Times;
-import static org.matheclipse.core.expression.F.pattern;
-import static org.matheclipse.core.expression.F.symbol;
+import static org.matheclipse.core.expression.F.$s;
 
 import org.matheclipse.core.eval.interfaces.AbstractTrigArg1;
 import org.matheclipse.core.eval.interfaces.INumeric;
@@ -39,8 +38,8 @@ public class Csc extends AbstractTrigArg1 implements INumeric {
 	 * </pre>
 	 */
 	final static IAST RULES = List(
-			SetDelayed(Csc(pattern("x",symbol("NumberQ"))),Condition(Times(CN1,Csc(Times(CN1,symbol("x")))),Less(SignCmp(symbol("x")),C0))),
-			SetDelayed(Csc(Times(pattern("x",symbol("NumberQ")),pattern("y"))),Condition(Times(CN1,Csc(Times(Times(CN1,symbol("x")),symbol("y")))),Less(SignCmp(symbol("x")),C0)))
+			SetDelayed(Csc($p("x",$s("NumberQ"))),Condition(Times(CN1,Csc(Times(CN1,$s("x")))),Less(SignCmp($s("x")),C0))),
+			SetDelayed(Csc(Times($p("x",$s("NumberQ")),$p("y"))),Condition(Times(CN1,Csc(Times(Times(CN1,$s("x")),$s("y")))),Less(SignCmp($s("x")),C0)))
 	);
 
 	@Override

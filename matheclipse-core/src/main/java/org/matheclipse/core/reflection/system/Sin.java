@@ -63,12 +63,12 @@ public class Sin extends AbstractTrigArg1 implements INumeric {
 				Set(Sin(Times(fraction(5L,12L),Pi)),Times(Times(C1D4,Plus(Times(C1D3,Power(C3,C1D2)),C1)),Power(integer(6L),C1D2))),
 				Set(Sin(CI),Times(CI,Sinh(C1))),
 				Set(Sin(C0),C0),
-				SetDelayed(Sin(ArcSin(pattern("x"))),symbol("x")),
-				SetDelayed(Sin(ArcCos(pattern("x"))),Power(Plus(C1,Times(CN1,Power(symbol("x"),C2))),C1D2)),
-				SetDelayed(Sin(ArcTan(pattern("x"))),Times(symbol("x"),Power(Plus(C1,Power(symbol("x"),C2)),Power(C1D2,CN1)))),
-				SetDelayed(Sin(Times(pattern("x",symbol("NumberQ")),pattern("y"))),Condition(Times(CN1,Sin(Times(Times(CN1,symbol("x")),symbol("y")))),Less(SignCmp(symbol("x")),C0))),
-				SetDelayed(Sin(Times(Pi,pattern("x",symbol("NumberQ")))),Condition(If(Less(symbol("x"),C1),Sin(Times(Plus(C1,Times(CN1,symbol("x"))),Pi)),If(Less(symbol("x"),C2),Times(CN1,Sin(Times(Plus(C2,Times(CN1,symbol("x"))),Pi))),Sin(Times(Plus(symbol("x"),Times(CN1,Times(C2,Quotient(Trunc(symbol("x")),C2)))),Pi)))),GreaterEqual(symbol("x"),C1D2))),
-				SetDelayed(Sin(pattern("x",symbol("NumberQ"))),Condition(Times(CN1,Sin(Times(CN1,symbol("x")))),Less(SignCmp(symbol("x")),C0)))
+				SetDelayed(Sin(ArcSin($p("x"))),$s("x")),
+				SetDelayed(Sin(ArcCos($p("x"))),Power(Plus(C1,Times(CN1,Power($s("x"),C2))),C1D2)),
+				SetDelayed(Sin(ArcTan($p("x"))),Times($s("x"),Power(Plus(C1,Power($s("x"),C2)),Power(C1D2,CN1)))),
+				SetDelayed(Sin(Times($p("x",$s("NumberQ")),$p("y"))),Condition(Times(CN1,Sin(Times(Times(CN1,$s("x")),$s("y")))),Less(SignCmp($s("x")),C0))),
+				SetDelayed(Sin(Times(Pi,$p("x",$s("NumberQ")))),Condition(If(Less($s("x"),C1),Sin(Times(Plus(C1,Times(CN1,$s("x"))),Pi)),If(Less($s("x"),C2),Times(CN1,Sin(Times(Plus(C2,Times(CN1,$s("x"))),Pi))),Sin(Times(Plus($s("x"),Times(CN1,Times(C2,Quotient(Trunc($s("x")),C2)))),Pi)))),GreaterEqual($s("x"),C1D2))),
+				SetDelayed(Sin($p("x",$s("NumberQ"))),Condition(Times(CN1,Sin(Times(CN1,$s("x")))),Less(SignCmp($s("x")),C0)))
 				);
 				
 	public Sin() {

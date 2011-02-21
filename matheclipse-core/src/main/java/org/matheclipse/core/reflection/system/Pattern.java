@@ -18,16 +18,16 @@ public class Pattern implements IFunctionEvaluator {
 			if (ast.get(2).isAST("Blank")) {
 				IAST blank = (IAST) ast.get(2);
 				if (blank.size() == 1) {
-					return F.pattern((ISymbol)ast.get(1));
+					return F.$p((ISymbol)ast.get(1));
 				}
 				if (blank.size() == 2) {
-					return F.pattern((ISymbol)ast.get(1), blank.get(1));
+					return F.$p((ISymbol)ast.get(1), blank.get(1));
 				}
 			}
 			if (ast.get(2) instanceof IPattern) {
 				IPattern blank = (IPattern) ast.get(2);
 				if (blank.isBlank()) {
-					return F.pattern((ISymbol)ast.get(1), blank.getCondition());
+					return F.$p((ISymbol)ast.get(1), blank.getCondition());
 				}
 			}
 		}

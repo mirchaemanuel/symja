@@ -67,8 +67,8 @@ public class ArcTan extends AbstractTrigArg1 implements INumeric {
 			Set(ArcTan(Times(C1D3,Power(C3,C1D2))),Times(fraction(1L,6L),Pi)),
 			Set(ArcTan(Times(Times(fraction(1L,5L),Power(C5,C1D2)),Power(Plus(Times(integer(-2L),Power(C5,C1D2)),C5),C1D2))),Times(fraction(1L,10L),Pi)),
 			Set(ArcTan(Times(Times(fraction(1L,5L),Power(C5,C1D2)),Power(Plus(Times(C2,Power(C5,C1D2)),C5),C1D2))),Times(fraction(3L,10L),Pi)),
-			SetDelayed(ArcTan(Times(pattern("x",symbol("NumberQ")),pattern("y"))),Condition(Times(CN1,ArcTan(Times(Times(CN1,symbol("x")),symbol("y")))),Less(SignCmp(symbol("x")),C0))),
-			SetDelayed(ArcTan(pattern("x",symbol("NumberQ"))),Condition(Times(CN1,ArcTan(Times(CN1,symbol("x")))),Less(SignCmp(symbol("x")),C0)))
+			SetDelayed(ArcTan(Times($p("x",$s("NumberQ")),$p("y"))),Condition(Times(CN1,ArcTan(Times(Times(CN1,$s("x")),$s("y")))),Less(SignCmp($s("x")),C0))),
+			SetDelayed(ArcTan($p("x",$s("NumberQ"))),Condition(Times(CN1,ArcTan(Times(CN1,$s("x")))),Less(SignCmp($s("x")),C0)))
 			);
 	
 	@Override

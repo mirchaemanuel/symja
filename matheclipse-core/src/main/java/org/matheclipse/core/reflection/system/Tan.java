@@ -79,13 +79,13 @@ public class Tan extends AbstractTrigArg1 implements INumeric {
 			Set(Tan(Times(fraction(1L,10L),Pi)),Times(Times(fraction(1L,5L),Power(C5,C1D2)),Power(Plus(Times(integer(-2L),Power(C5,C1D2)),C5),C1D2))),
 			Set(Tan(Times(fraction(1L,12L),Pi)),Plus(Times(CN1,Power(C3,C1D2)),C2)),
 			Set(Tan(Pi),C0),
-			SetDelayed(Tan(ArcSin(pattern("x"))),Times(symbol("x"),Power(Plus(Times(CN1,Power(symbol("x"),C2)),C1),Power(C1D2,CN1)))),
-			SetDelayed(Tan(Times(pattern("x",symbol("NumberQ")),pattern("y"))),Condition(Times(CN1,Tan(Times(Times(CN1,symbol("x")),symbol("y")))),Less(SignCmp(symbol("x")),C0))),
-			SetDelayed(Tan(Times(Pi,pattern("x",symbol("NumberQ")))),Condition(If(Less(symbol("x"),C1),Times(CN1,Tan(Times(Plus(Times(CN1,symbol("x")),C1),Pi))),If(Less(symbol("x"),C2),Tan(Times(Plus(CN1,symbol("x")),Pi)),Tan(Times(Plus(Times(integer(-2L),Quotient(Trunc(symbol("x")),C2)),symbol("x")),Pi)))),Greater(symbol("x"),C1D2))),
-			SetDelayed(Tan(ArcTan(pattern("x"))),symbol("x")),
-			SetDelayed(Tan(ArcCos(pattern("x"))),Times(Power(Plus(Times(CN1,Power(symbol("x"),C2)),C1),C1D2),Power(symbol("x"),CN1))),
-			SetDelayed(Tan(ArcCot(pattern("x"))),Power(symbol("x"),CN1)),
-			SetDelayed(Tan(pattern("x",symbol("NumberQ"))),Condition(Times(CN1,Tan(Times(CN1,symbol("x")))),Less(SignCmp(symbol("x")),C0)))
+			SetDelayed(Tan(ArcSin($p("x"))),Times($s("x"),Power(Plus(Times(CN1,Power($s("x"),C2)),C1),Power(C1D2,CN1)))),
+			SetDelayed(Tan(Times($p("x",$s("NumberQ")),$p("y"))),Condition(Times(CN1,Tan(Times(Times(CN1,$s("x")),$s("y")))),Less(SignCmp($s("x")),C0))),
+			SetDelayed(Tan(Times(Pi,$p("x",$s("NumberQ")))),Condition(If(Less($s("x"),C1),Times(CN1,Tan(Times(Plus(Times(CN1,$s("x")),C1),Pi))),If(Less($s("x"),C2),Tan(Times(Plus(CN1,$s("x")),Pi)),Tan(Times(Plus(Times(integer(-2L),Quotient(Trunc($s("x")),C2)),$s("x")),Pi)))),Greater($s("x"),C1D2))),
+			SetDelayed(Tan(ArcTan($p("x"))),$s("x")),
+			SetDelayed(Tan(ArcCos($p("x"))),Times(Power(Plus(Times(CN1,Power($s("x"),C2)),C1),C1D2),Power($s("x"),CN1))),
+			SetDelayed(Tan(ArcCot($p("x"))),Power($s("x"),CN1)),
+			SetDelayed(Tan($p("x",$s("NumberQ"))),Condition(Times(CN1,Tan(Times(CN1,$s("x")))),Less(SignCmp($s("x")),C0)))
 			);
 
 	@Override

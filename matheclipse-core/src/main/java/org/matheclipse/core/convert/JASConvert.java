@@ -382,7 +382,7 @@ public class JASConvert<C extends RingElem<C>> {
 		} else {
 			IAST result = F.Plus();
 			String symbolName = poly.factory().getVars()[0];
-			IExpr sym = F.symbol(symbolName);
+			IExpr sym = F.$s(symbolName);
 			for (Map.Entry<ExpVector, AlgebraicNumber<BigRational>> m : val.entrySet()) {
 				AlgebraicNumber<BigRational> c = m.getValue();
 

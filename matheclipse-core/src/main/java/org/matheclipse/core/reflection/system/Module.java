@@ -35,7 +35,7 @@ public class Module extends AbstractFunctionEvaluator {
 				for (int i = 1; i < lst.size(); i++) {
 					if (lst.get(i).isSymbol()) {
 						oldSymbol = (ISymbol) lst.get(i);
-						newSymbol = F.symbol(oldSymbol.toString() + varAppend);
+						newSymbol = F.$s(oldSymbol.toString() + varAppend);
 						variables.put(oldSymbol, newSymbol);
 						newSymbol.pushLocalVariable();
 					} else {
@@ -43,7 +43,7 @@ public class Module extends AbstractFunctionEvaluator {
 							final IAST setFun = (IAST) lst.get(i);
 							if (setFun.get(1).isSymbol()) {
 								oldSymbol = (ISymbol) setFun.get(1);
-								newSymbol = F.symbol(oldSymbol.toString() + varAppend);
+								newSymbol = F.$s(oldSymbol.toString() + varAppend);
 								variables.put(oldSymbol, newSymbol);
 								newSymbol.pushLocalVariable(engine.evaluate(setFun.get(2)));
 							}

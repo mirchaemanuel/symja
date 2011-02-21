@@ -423,7 +423,7 @@ public class Symbol extends ExprImpl implements ISymbol {
 					return "E";
 				}
 			}
-			return "symbol(\"" + fSymbolName + "\")";
+			return "$s(\"" + fSymbolName + "\")";
 		}
 		return fSymbolName;
 	}
@@ -478,6 +478,9 @@ public class Symbol extends ExprImpl implements ISymbol {
 
 	/** {@inheritDoc} */
 	public String definitionToString() throws IOException {
+		// dummy call to ensure, that the associated rules are loaded:
+		getEvaluator();
+
 		StringBufferWriter buf = new StringBufferWriter();
 		buf.setIgnoreNewLine(true);
 		List<IAST> list = definition();

@@ -33,6 +33,7 @@ import org.matheclipse.core.integrate.rubi.TrigFunctionIntegrationRules0;
 import org.matheclipse.core.integrate.rubi.TrigFunctionIntegrationRules1;
 import org.matheclipse.core.integrate.rubi.TrigFunctionIntegrationRules2;
 import org.matheclipse.core.integrate.rubi.TrigFunctionIntegrationRules3;
+import org.matheclipse.core.integrate.rubi.UtilityFunctions;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.IFraction;
@@ -493,15 +494,16 @@ public class Integrate extends AbstractFunctionEvaluator implements IConstantHea
 	public IAST getRuleAST() {
 		// uncomment the following lines for activating Rubi rules, currently not
 		// working properly!
+		
+//		UtilityFunctions.init();
+//		IAST ast = F.ast(F.List, 10000, false);
+//		ast.addAll(TrigFunctionIntegrationRules0.RULES);
+//		ast.addAll(TrigFunctionIntegrationRules1.RULES);
+//		ast.addAll(TrigFunctionIntegrationRules2.RULES);
+//		ast.addAll(TrigFunctionIntegrationRules3.RULES);
+//		return ast;
 
-		// IAST ast = F.ast(F.List, 10000, false);
-		// ast.addAll(TrigFunctionIntegrationRules0.RULES);
-		// ast.addAll(TrigFunctionIntegrationRules1.RULES);
-		// ast.addAll(TrigFunctionIntegrationRules2.RULES);
-		// ast.addAll(TrigFunctionIntegrationRules3.RULES);
-		// return ast;
-
-		return null;
+		 return null;
 	}
 
 	@Override
