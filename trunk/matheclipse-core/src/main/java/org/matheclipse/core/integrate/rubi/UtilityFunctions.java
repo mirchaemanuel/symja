@@ -20,6 +20,9 @@ import org.matheclipse.core.interfaces.ISymbol;
  * 
  */
 public class UtilityFunctions {
+	public final static String PACKAGE_NAME = "org.matheclipse.core.integrate.rubi";
+
+	public final static String CLASS_NAME = "UtilityFunctions";
 
 	/**
 	 * Convert to Integrate[]
@@ -73,55 +76,146 @@ public class UtilityFunctions {
 	}
 
 	static ISymbol Dist = new Symbol("Dist");
+	static ISymbol NegQ = new Symbol("NegQ");
 	static ISymbol NumericFactor = new Symbol("NumericFactor");
+	static ISymbol PosQ = new Symbol("PosQ");
 	static ISymbol Subst = new Symbol("Subst");
 
+	public static IExpr isPower(IAST ast) {
+		if (ast.size() > 1) {
+			return F.bool(ast.get(1).isPower());
+		}
+		return F.False;
+	}
+
+	public static IExpr isTimes(IAST ast) {
+		if (ast.size() > 1) {
+			return F.bool(ast.get(1).isTimes());
+		}
+		return F.False;
+	}
+
+	public static IExpr isPlus(IAST ast) {
+		if (ast.size() > 1) {
+			return F.bool(ast.get(1).isPlus());
+		}
+		return F.False;
+	}
+
+	public static IExpr isSubst(IAST ast) {
+		if (ast.size() > 1) {
+			return F.bool(ast.get(1).isAST(Subst));
+		}
+		return F.False;
+	}
+
+	public static IExpr isCalculus(IAST ast) {
+		// CalculusFunctions={D,Integrate,Sum,Product,Int,Dif,Subst};
+		IAST CalculusFunctions = F.List(D, Integrate, Sum, Product, Subst);
+		if (ast.size() > 1) {
+			IExpr head = ast.get(1).head();
+			return F.bool(org.matheclipse.core.reflection.system.MemberQ.isMember(CalculusFunctions, head));
+		}
+		return F.False;
+	}
+
+	static ISymbol PowerQ = F.method("PowerQ", PACKAGE_NAME, CLASS_NAME, "isPower");
+	static ISymbol ProductQ = F.method("ProductQ", PACKAGE_NAME, CLASS_NAME, "isTimes");
+	static ISymbol SumQ = F.method("SumQ", PACKAGE_NAME, CLASS_NAME, "isPlus");
+	static ISymbol SubstQ = F.method("SubstQ", PACKAGE_NAME, CLASS_NAME, "isSubst");
+	static ISymbol CalculusQ = F.method("CalculusQ", PACKAGE_NAME, CLASS_NAME, "isCalculus");
+
 	public static void init() {
-	 
-//			Dist[0,v_] := 0, 
-//			Dist[1,v_] := v,
-//			Dist[u_,v_] := -Dist[-u,v] /;NumericFactor[u]<0,
-//			Dist[u_,v_]+Dist[w_,v_] := If[ZeroQ[u+w], 0, Dist[u+w,v]],
-//			Dist[u_,v_]-Dist[w_,v_] := If[ZeroQ[u-w], 0, Dist[u-w,v]],
-//			w_*Dist[u_,v_] := Dist[w*u,v] /; w=!=-1,
-//			Dist[u_,Dist[v_,w_]] := Dist[u*v,w],
-//			Dist[u_,v_] := Map[Function[Dist[u,#]],v] /; SumQ[v],
-//			Dist[u_,v_] := u*v /; FreeQ[v,Int],
-//			Dist[u_,v_*w_] := Dist[u*v,w] /; FreeQ[v,Int]
- 
-		IAST DIST_RULES = List(
-				SetDelayed(Dist(C0,$p("v")),C0),
-				SetDelayed(Dist(C1,$p("v")),$s("v")),
-				SetDelayed(Dist($p("u"),$p("v")),Condition(Times(CN1,Dist(Times(CN1,$s("u")),$s("v"))),Less(NumericFactor($s("u")),C0))),
-				SetDelayed(Plus(Dist($p("u"),$p("v")),Dist($p("w"),$p("v"))),If(ZeroQ(Plus($s("u"),$s("w"))),C0,Dist(Plus($s("u"),$s("w")),$s("v")))),
-				SetDelayed(Plus(Dist($p("u"),$p("v")),Times(CN1,Dist($p("w"),$p("v")))),If(ZeroQ(Plus($s("u"),Times(CN1,$s("w")))),C0,Dist(Plus($s("u"),Times(CN1,$s("w"))),$s("v")))),
-				SetDelayed(Times($p("w"),Dist($p("u"),$p("v"))),Condition(Dist(Times($s("w"),$s("u")),$s("v")),UnsameQ($s("w"),CN1))),
-				SetDelayed(Dist($p("u"),Dist($p("v"),$p("w"))),Dist(Times($s("u"),$s("v")),$s("w"))),
-				SetDelayed(Dist($p("u"),$p("v")),Condition(Map(Function(Dist($s("u"),Slot1)),$s("v")),SumQ($s("v")))),
-				SetDelayed(Dist($p("u"),$p("v")),Condition(Times($s("u"),$s("v")),FreeQ($s("v"),$s("Int")))),
-				SetDelayed(Dist($p("u"),Times($p("v"),$p("w"))),Condition(Dist(Times($s("u"),$s("v")),$s("w")),FreeQ($s("v"),$s("Int"))))
-		);
+		// (* If u is not 0 and has a positive form, PosQ[u] returns True, else it
+		// returns False. *)
+		// PosQ[u_] :=
+		// If[PossibleZeroQ[u],
+		// False,
+		// If[NumericQ[u],
+		// If[NumberQ[u],
+		// If[PossibleZeroQ[Re[u]],
+		// Im[u]>0,
+		// Re[u]>0],
+		// Module[{v=N[u]},
+		// If[PossibleZeroQ[Re[v]],
+		// Im[v]>0,
+		// Re[v]>0]]],
+		// (*If[ProductQ[u],
+		// PosQ[First[u]], *)
+		// Module[{v=Simplify[u]},
+		// If[NumericQ[v],
+		// PosQ[v],
+		// If[PowerQ[v] && IntegerQ[v[[2]]],
+		// PosQ[v[[1]]],
+		// If[ProductQ[v],
+		// If[RationalQ[First[v]],
+		// If[First[v]>0,
+		// PosQ[Rest[v]],
+		// NegQ[Rest[v]]],
+		// PosQ[First[v]]],
+		// If[SumQ[v],
+		// PosQ[First[v]],
+		// Not[MatchQ[v,-_]]]]]]]]]
+		//
+		//
+		// NegQ[u_] :=
+		// If[PossibleZeroQ[u],
+		// False,
+		// Not[PosQ[u]]]
 
-		IAST NUMERIC_FACTOR_RULES = List(SetDelayed(NumericFactor($p("u")), If(NumberQ($s("u")), If(ZeroQ(Im($s("u"))),
-				$s("u"), If(ZeroQ(Re($s("u"))), Im($s("u")), C1)), If(PowerQ($s("u")), If(And(RationalQ(Part($s("u"),
-				C1)), FractionQ(Part($s("u"), C2))), If(Greater(Part($s("u"), C2), C0), Times(C1, Power(Denominator(Part(
-				$s("u"), C1)), CN1)), Times(C1, Power(Denominator(Times(C1, Power(Part($s("u"), C1), CN1))), CN1))), C1), If(
-				ProductQ($s("u")), Times(NumericFactor(First($s("u"))), NumericFactor(Rest($s("u")))), C1)))));
+		// Dist[0,v_] := 0,
+		// Dist[1,v_] := v,
+		// Dist[u_,v_] := -Dist[-u,v] /;NumericFactor[u]<0,
+		// Dist[u_,v_]+Dist[w_,v_] := If[ZeroQ[u+w], 0, Dist[u+w,v]],
+		// Dist[u_,v_]-Dist[w_,v_] := If[ZeroQ[u-w], 0, Dist[u-w,v]],
+		// w_*Dist[u_,v_] := Dist[w*u,v] /; w=!=-1,
+		// Dist[u_,Dist[v_,w_]] := Dist[u*v,w],
+		// Dist[u_,v_] := Map[Function[Dist[u,#]],v] /; SumQ[v],
+		// Dist[u_,v_] := u*v /; FreeQ[v,Int],
+		// Dist[u_,v_*w_] := Dist[u*v,w] /; FreeQ[v,Int]
 
-		IAST SUBST_RULES = List(SetDelayed(Subst($p("u"), $p("v"), $p("w")), Condition(If(
-				SameQ($s("u"), $s("v")), $s("w"), If(AtomQ($s("u")), $s("u"), If(PowerQ($s("u")), If(And(And(
-						PowerQ($s("v")), SameQ(Part($s("u"), C1), Part($s("v"), C1))), SumQ(Part($s("u"), C2))), Times(Subst(
-						Power(Part($s("u"), C1), First(Part($s("u"), C2))), $s("v"), $s("w")), Subst(Power(
-						Part($s("u"), C1), Rest(Part($s("u"), C2))), $s("v"), $s("w"))), Power(Subst(Part($s("u"), C1),
-						$s("v"), $s("w")), Subst(Part($s("u"), C2), $s("v"), $s("w")))), If(And(SubstQ($s("u")), Or(
-						SameQ(Part($s("u"), C2), $s("v")), FreeQ(Part($s("u"), C1), $s("v")))), Subst(Part($s("u"), C1),
-						Part($s("u"), C2), Subst(Part($s("u"), C3), $s("v"), $s("w"))), Map(Function(Subst(Slot1, $s("v"),
-						$s("w"))), $s("u")))))), Or(Or(AtomQ($s("u")), And(SubstQ($s("u")), Or(SameQ(Part($s("u"), C2),
-				$s("v")), FreeQ(Part($s("u"), C1), $s("v"))))), Not(Or(And(CalculusQ($s("u")), Not(FreeQ($s("v"), Part(
-				$s("u"), C2)))), MemberQ(List($s("Pattern"), $s("Defer"), $s("Hold"), $s("HoldForm")),
-				Head($s("u")))))))));
+		IAST DIST_RULES = List(SetDelayed(Dist(C0, $p("v")), C0), SetDelayed(Dist(C1, $p("v")), $s("v")), SetDelayed(Dist($p("u"),
+				$p("v")), Condition(Times(CN1, Dist(Times(CN1, $s("u")), $s("v"))), Less(NumericFactor($s("u")), C0))), SetDelayed(Plus(
+				Dist($p("u"), $p("v")), Dist($p("w"), $p("v"))), If(ZeroQ(Plus($s("u"), $s("w"))), C0,
+				Dist(Plus($s("u"), $s("w")), $s("v")))), SetDelayed(Plus(Dist($p("u"), $p("v")), Times(CN1, Dist($p("w"), $p("v")))), If(
+				ZeroQ(Plus($s("u"), Times(CN1, $s("w")))), C0, Dist(Plus($s("u"), Times(CN1, $s("w"))), $s("v")))), SetDelayed(Times(
+				$p("w"), Dist($p("u"), $p("v"))), Condition(Dist(Times($s("w"), $s("u")), $s("v")), UnsameQ($s("w"), CN1))), SetDelayed(
+				Dist($p("u"), Dist($p("v"), $p("w"))), Dist(Times($s("u"), $s("v")), $s("w"))), SetDelayed(Dist($p("u"), $p("v")),
+				Condition(Map(Function(Dist($s("u"), Slot1)), $s("v")), SumQ($s("v")))), SetDelayed(Dist($p("u"), $p("v")), Condition(
+				Times($s("u"), $s("v")), FreeQ($s("v"), $s("Int")))), SetDelayed(Dist($p("u"), Times($p("v"), $p("w"))), Condition(Dist(
+				Times($s("u"), $s("v")), $s("w")), FreeQ($s("v"), $s("Int")))));
+		
+		IAST NEG_RULES = List(SetDelayed(NegQ($p("u")), If(PossibleZeroQ($s("u")), $s("False"), Not(PosQ($s("u"))))));
+		
+		IAST NUMERIC_FACTOR_RULES = List(SetDelayed(NumericFactor($p("u")), If(NumberQ($s("u")), If(ZeroQ(Im($s("u"))), $s("u"), If(
+				ZeroQ(Re($s("u"))), Im($s("u")), C1)), If(PowerQ($s("u")), If(And(RationalQ(Part($s("u"), C1)),
+				FractionQ(Part($s("u"), C2))), If(Greater(Part($s("u"), C2), C0), Times(C1, Power(Denominator(Part($s("u"), C1)), CN1)),
+				Times(C1, Power(Denominator(Times(C1, Power(Part($s("u"), C1), CN1))), CN1))), C1), If(ProductQ($s("u")), Times(
+				NumericFactor(First($s("u"))), NumericFactor(Rest($s("u")))), C1)))));
+
+		IAST POSQ_RULES = List(SetDelayed(PosQ($p("u")), If(PossibleZeroQ($s("u")), $s("False"), If(NumericQ($s("u")), If(
+				NumberQ($s("u")), If(PossibleZeroQ(Re($s("u"))), Greater(Im($s("u")), C0), Greater(Re($s("u")), C0)), Module(List(Set(
+						$s("v"), N($s("u")))), If(PossibleZeroQ(Re($s("v"))), Greater(Im($s("v")), C0), Greater(Re($s("v")), C0)))), Module(
+				List(Set($s("v"), Simplify($s("u")))), If(NumericQ($s("v")), PosQ($s("v")), If(And(PowerQ($s("v")), IntegerQ(Part($s("v"),
+						C2))), PosQ(Part($s("v"), C1)), If(ProductQ($s("v")), If(RationalQ(First($s("v"))), If(Greater(First($s("v")), C0),
+						PosQ(Rest($s("v"))), NegQ(Rest($s("v")))), PosQ(First($s("v")))), If(SumQ($s("v")), PosQ(First($s("v"))), Not(MatchQ(
+						$s("v"), Times(CN1, $p((ISymbol) null)))))))))))));
+		
+		IAST SUBST_RULES = List(SetDelayed(Subst($p("u"), $p("v"), $p("w")), Condition(If(SameQ($s("u"), $s("v")), $s("w"), If(
+				AtomQ($s("u")), $s("u"), If(PowerQ($s("u")), If(And(And(PowerQ($s("v")), SameQ(Part($s("u"), C1), Part($s("v"), C1))),
+						SumQ(Part($s("u"), C2))), Times(Subst(Power(Part($s("u"), C1), First(Part($s("u"), C2))), $s("v"), $s("w")), Subst(
+						Power(Part($s("u"), C1), Rest(Part($s("u"), C2))), $s("v"), $s("w"))), Power(
+						Subst(Part($s("u"), C1), $s("v"), $s("w")), Subst(Part($s("u"), C2), $s("v"), $s("w")))), If(And(SubstQ($s("u")), Or(
+						SameQ(Part($s("u"), C2), $s("v")), FreeQ(Part($s("u"), C1), $s("v")))), Subst(Part($s("u"), C1), Part($s("u"), C2),
+						Subst(Part($s("u"), C3), $s("v"), $s("w"))), Map(Function(Subst(Slot1, $s("v"), $s("w"))), $s("u")))))), Or(Or(
+				AtomQ($s("u")), And(SubstQ($s("u")), Or(SameQ(Part($s("u"), C2), $s("v")), FreeQ(Part($s("u"), C1), $s("v"))))), Not(Or(
+				And(CalculusQ($s("u")), Not(FreeQ($s("v"), Part($s("u"), C2)))), MemberQ(List($s("Pattern"), $s("Defer"), $s("Hold"),
+						$s("HoldForm")), Head($s("u")))))))));
+
 		EvalEngine.get().addRules(DIST_RULES);
+		EvalEngine.get().addRules(NEG_RULES);
 		EvalEngine.get().addRules(NUMERIC_FACTOR_RULES);
+		EvalEngine.get().addRules(POSQ_RULES);
 		EvalEngine.get().addRules(SUBST_RULES);
 	}
 
@@ -129,16 +223,24 @@ public class UtilityFunctions {
 		return unary(NumericFactor, a0);
 	}
 
+	public static IAST NumericQ(final IExpr a0) {
+		return unary($s("NumericQ"), a0);
+	}
+
+	public static IAST PossibleZeroQ(final IExpr a0) {
+		return unary($s("PossibleZeroQ"), a0);
+	}
+
 	public static IAST PowerQ(final IExpr a0) {
-		return unary($s("PowerQ"), a0);
+		return unary(PowerQ, a0);
 	}
 
 	public static IAST ProductQ(final IExpr a0) {
-		return unary($s("ProductQ"), a0);
+		return unary(ProductQ, a0);
 	}
 
 	public static IAST SumQ(final IExpr a0) {
-		return unary($s("SumQ"), a0);
+		return unary(SumQ, a0);
 	}
 
 	public static IAST Re(final IExpr a0) {
@@ -248,7 +350,7 @@ public class UtilityFunctions {
 
 	public static IAST NegQ(final IExpr a) {
 		// TODO fix this
-		return unary($s("NegQ"), a);
+		return unary(NegQ, a);
 	}
 
 	public static IAST NonzeroQ(final IExpr a) {
@@ -258,7 +360,7 @@ public class UtilityFunctions {
 
 	public static IAST Not(final IExpr a) {
 		// TODO fix this
-		return unary($s("NegQ"), a);
+		return unary(Not, a);
 	}
 
 	public static IAST NotFalseQ(final IExpr u) {
@@ -267,7 +369,7 @@ public class UtilityFunctions {
 
 	public static IAST PosQ(final IExpr a) {
 		// TODO fix this
-		return unary($s("PosQ"), a);
+		return unary(PosQ, a);
 	}
 
 	public static IAST PolynomialQ(final IExpr a0, final IExpr a1) {
@@ -317,12 +419,12 @@ public class UtilityFunctions {
 
 	public static IAST CalculusQ(final IExpr a) {
 		// TODO fix this
-		return unary($s("CalculusQ"), a);
+		return unary(CalculusQ, a);
 	}
 
 	public static IAST SubstQ(final IExpr a) {
 		// TODO fix this
-		return unary($s("SubstQ"), a);
+		return unary(SubstQ, a);
 	}
 
 	public static IAST Head(final IExpr a) {
