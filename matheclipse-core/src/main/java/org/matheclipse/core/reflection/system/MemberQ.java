@@ -17,14 +17,27 @@ public class MemberQ implements IFunctionEvaluator {
 	public IExpr evaluate(final IAST ast) {
 		if ((ast.size() == 3) && (ast.get(1).isAST())) {
 			final IAST arg1 = (IAST) ast.get(1);
-			final PatternMatcher matcher = new PatternMatcher(ast.get(2));
-			for (int i = 1; i < arg1.size(); i++) {
-				if (matcher.apply(arg1.get(i))) {
-					return F.True;
-				}
-			}
+			final IExpr arg2 = ast.get(2);
+			return F.bool(isMember(arg1, arg2));
 		}
 		return F.False;
+	}
+
+	/**
+	 * Check if the given expression is a member of the given AST.
+	 * 
+	 * @param ast
+	 * @param expr
+	 * @return
+	 */
+	public static boolean isMember(final IAST ast, final IExpr expr) {
+		final PatternMatcher matcher = new PatternMatcher(expr);
+		for (int i = 1; i < ast.size(); i++) {
+			if (matcher.apply(ast.get(i))) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public IExpr numericEval(final IAST functionList) {
