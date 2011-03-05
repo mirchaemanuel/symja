@@ -35,14 +35,23 @@ public class Set implements IFunctionEvaluator, ICreatePatternMatcher {
 		final IExpr rightHandSide = ast.get(2);
 		Object[] result;
 		if (rightHandSide.isAST(F.Condition, 3)) {
-			result = createPatternMatcher(leftHandSide, ((IAST) rightHandSide).get(1), ((IAST) rightHandSide).get(2));
+			result = createPatternMatcher(leftHandSide, ((IAST) rightHandSide).get(1), ((IAST) rightHandSide).get(2), null);
+		} else if (rightHandSide.isAST(F.Module, 3)) {
+			IAST module = (IAST) rightHandSide;
+			if (module.get(2).isAST(F.Condition, 3)) {
+				IAST condition = (IAST) module.get(2);
+				result = createPatternMatcher(leftHandSide, condition.get(1), condition.get(2), module.get(1));
+			} else {
+				result = createPatternMatcher(leftHandSide, rightHandSide, null, null);
+			}
 		} else {
-			result = createPatternMatcher(leftHandSide, rightHandSide, null);
+			result = createPatternMatcher(leftHandSide, rightHandSide, null, null);
 		}
 		return (IExpr) result[1];
 	}
 
-	public Object[] createPatternMatcher(IExpr leftHandSide, IExpr rightHandSide, IExpr condition) throws RuleCreationError {
+	public Object[] createPatternMatcher(IExpr leftHandSide, IExpr rightHandSide, IExpr condition, IExpr moduleInitializer)
+			throws RuleCreationError {
 		final Object[] result = new Object[2];
 		final EvalEngine engine = EvalEngine.get();
 
@@ -63,14 +72,14 @@ public class Set implements IFunctionEvaluator, ICreatePatternMatcher {
 				lhsSymbol.set(rightHandSide);
 				return result;
 			} else {
-				result[0] = lhsSymbol.putDownRule(F.Set, true, leftHandSide, rightHandSide, condition);
+				result[0] = lhsSymbol.putDownRule(F.Set, true, leftHandSide, rightHandSide, condition, moduleInitializer);
 				return result;
 			}
 		}
 
 		if (leftHandSide instanceof IAST) {
 			final ISymbol lhsSymbol = ((IAST) leftHandSide).topHead();
-			result[0] = lhsSymbol.putDownRule(F.Set, false, leftHandSide, rightHandSide, condition);
+			result[0] = lhsSymbol.putDownRule(F.Set, false, leftHandSide, rightHandSide, condition, moduleInitializer);
 			return result;
 		}
 

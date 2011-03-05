@@ -125,7 +125,7 @@ public class HashedPatternRules {
 	public RulesData getRulesData() {
 		if (fRulesData == null) {
 			fRulesData = new RulesData();
-			fRulesData.putDownRule(F.SetDelayed, false, F.List(fLHSPattern1, fLHSPattern2), fRHS, fCondition, 0);
+			fRulesData.putDownRule(F.SetDelayed, false, F.List(fLHSPattern1, fLHSPattern2), fRHS, fCondition, null, 0);
 		}
 		return fRulesData;
 	}

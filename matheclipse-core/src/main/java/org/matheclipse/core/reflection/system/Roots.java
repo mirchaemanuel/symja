@@ -107,7 +107,7 @@ public class Roots extends AbstractFunctionEvaluator {
 					throw new ArithmeticException("Roots::Unexpected exponent value: " + lExp);
 				}
 			}
-			if (PossibleZeroQ.possibleZeroQ(a)) {
+			if (org.matheclipse.core.reflection.system.PossibleZeroQ.possibleZeroQ(a)) {
 				result.add(F.Divide(c, b));
 			} else {
 				IAST sqrt = Sqrt(Plus(Sqr(b), Times(integer(-4), a, c)));
@@ -116,7 +116,7 @@ public class Roots extends AbstractFunctionEvaluator {
 				result.add(Times(rev2a, Plus(b.negate(), sqrt.negative())));
 			}
 			return result;
-		}
+		} 
 		// else if (varDegree <= 3) {
 		// // ePoly = ePoly.monic();
 		// // solve Cubic equation: x^3 + a*x^2 + b*x + c = 0

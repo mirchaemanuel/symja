@@ -4,25 +4,24 @@ import static org.matheclipse.core.expression.F.*;
 
 import org.matheclipse.core.eval.EvalEngine;
 import org.matheclipse.core.expression.F;
-import org.matheclipse.core.expression.Pattern;
-import org.matheclipse.core.expression.Symbol;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
-import org.matheclipse.core.interfaces.ISignedNumber;
-import org.matheclipse.core.interfaces.IPattern;
+import org.matheclipse.core.interfaces.IFraction;
 import org.matheclipse.core.interfaces.ISymbol;
 
 /**
  * UtilityFunctions from the <a href="http://www.apmaths.uwo.ca/~arich/">Rubi -
  * rule-based integrator</a>.
  * 
- * TODO the functions are only placeholders at the moment.
+ * TODO a lot of functions are only placeholders at the moment.
  * 
  */
 public class UtilityFunctions {
 	public final static String PACKAGE_NAME = "org.matheclipse.core.integrate.rubi";
 
 	public final static String CLASS_NAME = "UtilityFunctions";
+
+	public final static String INTEGRATE_PREFIX = "Integrate::";
 
 	/**
 	 * Convert to Integrate[]
@@ -44,21 +43,9 @@ public class UtilityFunctions {
 		return ast;
 	}
 
-	public static IAST And(final IExpr a0, final IExpr a1) {
-		return binary(And, a0, a1);
-	}
-
 	public static IAST ArcCoth(final IExpr a) {
 		// TODO fix this
 		return unary($s("ArcCoth"), a);
-	}
-
-	public static IAST Or(final IExpr a0, final IExpr a1) {
-		return binary(Or, a0, a1);
-	}
-
-	public static IAST Block(final IExpr a0, final IExpr a1) {
-		return binary($s("Block"), a0, a1);
 	}
 
 	public static IAST Cancel(final IExpr a) {
@@ -75,11 +62,28 @@ public class UtilityFunctions {
 		return unary($s("CosIntegral"), a);
 	}
 
-	static ISymbol Dist = new Symbol("Dist");
-	static ISymbol NegQ = new Symbol("NegQ");
-	static ISymbol NumericFactor = new Symbol("NumericFactor");
-	static ISymbol PosQ = new Symbol("PosQ");
-	static ISymbol Subst = new Symbol("Subst");
+	static ISymbol Dist = predefinedSymbol(INTEGRATE_PREFIX + "Dist");
+	static ISymbol NegQ = predefinedSymbol(INTEGRATE_PREFIX + "NegQ");
+	static ISymbol NumericFactor = predefinedSymbol(INTEGRATE_PREFIX + "NumericFactor");
+	static ISymbol PosQ = predefinedSymbol(INTEGRATE_PREFIX + "PosQ");
+	static ISymbol Subst = predefinedSymbol(INTEGRATE_PREFIX + "Subst");
+
+	public static IExpr isFraction(IAST ast) {
+		if (ast.size() > 1) {
+			if (ast.get(1).isList()) {
+				IAST list = (IAST) ast.get(1);
+				// MapAnd
+				for (int i = 1; i < list.size(); i++) {
+					if (!(list.get(1) instanceof IFraction)) {
+						return F.False;
+					}
+				}
+				return F.True;
+			}
+			return F.bool(ast.get(1) instanceof IFraction);
+		}
+		return F.False;
+	}
 
 	public static IExpr isPower(IAST ast) {
 		if (ast.size() > 1) {
@@ -119,11 +123,12 @@ public class UtilityFunctions {
 		return F.False;
 	}
 
-	static ISymbol PowerQ = F.method("PowerQ", PACKAGE_NAME, CLASS_NAME, "isPower");
-	static ISymbol ProductQ = F.method("ProductQ", PACKAGE_NAME, CLASS_NAME, "isTimes");
-	static ISymbol SumQ = F.method("SumQ", PACKAGE_NAME, CLASS_NAME, "isPlus");
-	static ISymbol SubstQ = F.method("SubstQ", PACKAGE_NAME, CLASS_NAME, "isSubst");
-	static ISymbol CalculusQ = F.method("CalculusQ", PACKAGE_NAME, CLASS_NAME, "isCalculus");
+	static ISymbol FractionQ = F.method(INTEGRATE_PREFIX + "FractionQ", PACKAGE_NAME, CLASS_NAME, "isFraction");
+	static ISymbol PowerQ = F.method(INTEGRATE_PREFIX + "PowerQ", PACKAGE_NAME, CLASS_NAME, "isPower");
+	static ISymbol ProductQ = F.method(INTEGRATE_PREFIX + "ProductQ", PACKAGE_NAME, CLASS_NAME, "isTimes");
+	static ISymbol SumQ = F.method(INTEGRATE_PREFIX + "SumQ", PACKAGE_NAME, CLASS_NAME, "isPlus");
+	static ISymbol SubstQ = F.method(INTEGRATE_PREFIX + "SubstQ", PACKAGE_NAME, CLASS_NAME, "isSubst");
+	static ISymbol CalculusQ = F.method(INTEGRATE_PREFIX + "CalculusQ", PACKAGE_NAME, CLASS_NAME, "isCalculus");
 
 	public static void init() {
 		// (* If u is not 0 and has a positive form, PosQ[u] returns True, else it
@@ -166,27 +171,25 @@ public class UtilityFunctions {
 		// Dist[0,v_] := 0,
 		// Dist[1,v_] := v,
 		// Dist[u_,v_] := -Dist[-u,v] /;NumericFactor[u]<0,
-		// Dist[u_,v_]+Dist[w_,v_] := If[ZeroQ[u+w], 0, Dist[u+w,v]],
-		// Dist[u_,v_]-Dist[w_,v_] := If[ZeroQ[u-w], 0, Dist[u-w,v]],
-		// w_*Dist[u_,v_] := Dist[w*u,v] /; w=!=-1,
-		// Dist[u_,Dist[v_,w_]] := Dist[u*v,w],
 		// Dist[u_,v_] := Map[Function[Dist[u,#]],v] /; SumQ[v],
 		// Dist[u_,v_] := u*v /; FreeQ[v,Int],
 		// Dist[u_,v_*w_] := Dist[u*v,w] /; FreeQ[v,Int]
 
+		// TODO add the following rules - at the moment these rules will slow down
+		// evaluation too much!!!
+		// Dist[u_,v_]+Dist[w_,v_] := If[ZeroQ[u+w], 0, Dist[u+w,v]],
+		// Dist[u_,v_]-Dist[w_,v_] := If[ZeroQ[u-w], 0, Dist[u-w,v]],
+		// w_*Dist[u_,v_] := Dist[w*u,v] /; w=!=-1,
+		// Dist[u_,Dist[v_,w_]] := Dist[u*v,w],
 		IAST DIST_RULES = List(SetDelayed(Dist(C0, $p("v")), C0), SetDelayed(Dist(C1, $p("v")), $s("v")), SetDelayed(Dist($p("u"),
-				$p("v")), Condition(Times(CN1, Dist(Times(CN1, $s("u")), $s("v"))), Less(NumericFactor($s("u")), C0))), SetDelayed(Plus(
-				Dist($p("u"), $p("v")), Dist($p("w"), $p("v"))), If(ZeroQ(Plus($s("u"), $s("w"))), C0,
-				Dist(Plus($s("u"), $s("w")), $s("v")))), SetDelayed(Plus(Dist($p("u"), $p("v")), Times(CN1, Dist($p("w"), $p("v")))), If(
-				ZeroQ(Plus($s("u"), Times(CN1, $s("w")))), C0, Dist(Plus($s("u"), Times(CN1, $s("w"))), $s("v")))), SetDelayed(Times(
-				$p("w"), Dist($p("u"), $p("v"))), Condition(Dist(Times($s("w"), $s("u")), $s("v")), UnsameQ($s("w"), CN1))), SetDelayed(
-				Dist($p("u"), Dist($p("v"), $p("w"))), Dist(Times($s("u"), $s("v")), $s("w"))), SetDelayed(Dist($p("u"), $p("v")),
-				Condition(Map(Function(Dist($s("u"), Slot1)), $s("v")), SumQ($s("v")))), SetDelayed(Dist($p("u"), $p("v")), Condition(
-				Times($s("u"), $s("v")), FreeQ($s("v"), $s("Int")))), SetDelayed(Dist($p("u"), Times($p("v"), $p("w"))), Condition(Dist(
-				Times($s("u"), $s("v")), $s("w")), FreeQ($s("v"), $s("Int")))));
-		
+				$p("v")), Condition(Times(CN1, Dist(Times(CN1, $s("u")), $s("v"))), Less(NumericFactor($s("u")), C0))), SetDelayed(Dist(
+				$p("u"), Dist($p("v"), $p("w"))), Dist(Times($s("u"), $s("v")), $s("w"))), SetDelayed(Dist($p("u"), $p("v")), Condition(
+				Map(Function(Dist($s("u"), Slot1)), $s("v")), SumQ($s("v")))), SetDelayed(Dist($p("u"), $p("v")), Condition(Times($s("u"),
+				$s("v")), FreeQ($s("v"), $s("Int")))), SetDelayed(Dist($p("u"), Times($p("v"), $p("w"))), Condition(Dist(Times($s("u"),
+				$s("v")), $s("w")), FreeQ($s("v"), $s("Int")))));
+
 		IAST NEG_RULES = List(SetDelayed(NegQ($p("u")), If(PossibleZeroQ($s("u")), $s("False"), Not(PosQ($s("u"))))));
-		
+
 		IAST NUMERIC_FACTOR_RULES = List(SetDelayed(NumericFactor($p("u")), If(NumberQ($s("u")), If(ZeroQ(Im($s("u"))), $s("u"), If(
 				ZeroQ(Re($s("u"))), Im($s("u")), C1)), If(PowerQ($s("u")), If(And(RationalQ(Part($s("u"), C1)),
 				FractionQ(Part($s("u"), C2))), If(Greater(Part($s("u"), C2), C0), Times(C1, Power(Denominator(Part($s("u"), C1)), CN1)),
@@ -200,7 +203,7 @@ public class UtilityFunctions {
 						C2))), PosQ(Part($s("v"), C1)), If(ProductQ($s("v")), If(RationalQ(First($s("v"))), If(Greater(First($s("v")), C0),
 						PosQ(Rest($s("v"))), NegQ(Rest($s("v")))), PosQ(First($s("v")))), If(SumQ($s("v")), PosQ(First($s("v"))), Not(MatchQ(
 						$s("v"), Times(CN1, $p((ISymbol) null)))))))))))));
-		
+
 		IAST SUBST_RULES = List(SetDelayed(Subst($p("u"), $p("v"), $p("w")), Condition(If(SameQ($s("u"), $s("v")), $s("w"), If(
 				AtomQ($s("u")), $s("u"), If(PowerQ($s("u")), If(And(And(PowerQ($s("v")), SameQ(Part($s("u"), C1), Part($s("v"), C1))),
 						SumQ(Part($s("u"), C2))), Times(Subst(Power(Part($s("u"), C1), First(Part($s("u"), C2))), $s("v"), $s("w")), Subst(
@@ -223,14 +226,10 @@ public class UtilityFunctions {
 		return unary(NumericFactor, a0);
 	}
 
-	public static IAST NumericQ(final IExpr a0) {
-		return unary($s("NumericQ"), a0);
+	public static IAST FractionQ(final IExpr a) {
+		return unary(FractionQ, a);
 	}
-
-	public static IAST PossibleZeroQ(final IExpr a0) {
-		return unary($s("PossibleZeroQ"), a0);
-	}
-
+	
 	public static IAST PowerQ(final IExpr a0) {
 		return unary(PowerQ, a0);
 	}
@@ -259,10 +258,6 @@ public class UtilityFunctions {
 		return unary($s("Rest"), a0);
 	}
 
-	public static IAST Part(final IExpr a0, final IExpr a1) {
-		return binary($s("Part"), a0, a1);
-	}
-
 	public static IAST Dist(final IExpr a0, final IExpr a1) {
 		return binary(Dist, a0, a1);
 	}
@@ -281,16 +276,6 @@ public class UtilityFunctions {
 
 	public static IAST Exponent(final IExpr a0, final IExpr a1) {
 		return binary($s("Exponent"), a0, a1);
-	}
-
-	public static IAST EvenQ(final IExpr a) {
-		// TODO fix this
-		return unary($s("EvenQ"), a);
-	}
-
-	public static IAST FractionQ(final IExpr a) {
-		// TODO fix this
-		return unary($s("FractionQ"), a);
 	}
 
 	public static IAST FractionOrNegativeQ(final IExpr a) {
@@ -334,18 +319,9 @@ public class UtilityFunctions {
 		return unary($s("IntegerQ"), a);
 	}
 
-	public static IAST OddQ(final IExpr a) {
-		// TODO fix this
-		return unary($s("OddQ"), a);
-	}
-
 	public static IAST MatchQ(final IExpr a0, final IExpr a1) {
 		// TODO fix this
 		return binary($s("MatchQ"), a0, a1);
-	}
-
-	public static IAST Module(final IExpr a0, final IExpr a1) {
-		return binary($s("Module"), a0, a1);
 	}
 
 	public static IAST NegQ(final IExpr a) {

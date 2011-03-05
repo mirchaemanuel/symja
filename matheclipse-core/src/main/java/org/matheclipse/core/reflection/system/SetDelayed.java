@@ -1,7 +1,6 @@
 package org.matheclipse.core.reflection.system;
 
 import org.matheclipse.core.eval.EvalEngine;
-import org.matheclipse.core.eval.exception.ReturnException;
 import org.matheclipse.core.eval.exception.RuleCreationError;
 import org.matheclipse.core.eval.exception.Validate;
 import org.matheclipse.core.eval.interfaces.ICreatePatternMatcher;
@@ -20,15 +19,24 @@ public class SetDelayed implements IFunctionEvaluator, ICreatePatternMatcher {
 		Validate.checkSize(ast, 3);
 		final IExpr leftHandSide = ast.get(1);
 		final IExpr rightHandSide = ast.get(2);
-		if (rightHandSide.isAST("Condition", 3)) {
-			createPatternMatcher(leftHandSide, ((IAST) rightHandSide).get(1), ((IAST) rightHandSide).get(2));
+		if (rightHandSide.isAST(F.Condition, 3)) {
+			createPatternMatcher(leftHandSide, ((IAST) rightHandSide).get(1), ((IAST) rightHandSide).get(2), null);
+		} else if (rightHandSide.isAST(F.Module, 3)) {
+				IAST module = (IAST) rightHandSide;
+				if (module.get(2).isAST(F.Condition, 3)) {
+					IAST condition = (IAST) module.get(2);
+					 createPatternMatcher(leftHandSide, condition.get(1), condition.get(2), module.get(1));
+				} else {
+					  createPatternMatcher(leftHandSide, rightHandSide, null, null);
+				}
 		} else {
-			createPatternMatcher(leftHandSide, rightHandSide, null);
+			createPatternMatcher(leftHandSide, rightHandSide, null, null);
 		}
 		return F.Null;
 	}
 
-	public Object[] createPatternMatcher(IExpr leftHandSide, IExpr rightHandSide, IExpr condition) throws RuleCreationError {
+	public Object[] createPatternMatcher(IExpr leftHandSide, IExpr rightHandSide, IExpr condition, IExpr moduleInitializer)
+			throws RuleCreationError {
 		final Object[] result = new Object[2];
 		final EvalEngine engine = EvalEngine.get();
 
@@ -42,7 +50,7 @@ public class SetDelayed implements IFunctionEvaluator, ICreatePatternMatcher {
 				lhsSymbol.set(rightHandSide);
 				return result;
 			} else {
-				result[0] = lhsSymbol.putDownRule(F.SetDelayed, true, leftHandSide, rightHandSide, condition);
+				result[0] = lhsSymbol.putDownRule(F.SetDelayed, true, leftHandSide, rightHandSide, condition, moduleInitializer);
 				return result;
 			}
 		}
@@ -50,7 +58,7 @@ public class SetDelayed implements IFunctionEvaluator, ICreatePatternMatcher {
 		if (leftHandSide instanceof IAST) {
 			final ISymbol lhsSymbol = ((IAST) leftHandSide).topHead();
 
-			result[0] = lhsSymbol.putDownRule(F.SetDelayed, false, leftHandSide, rightHandSide, condition);
+			result[0] = lhsSymbol.putDownRule(F.SetDelayed, false, leftHandSide, rightHandSide, condition, moduleInitializer);
 			return result;
 		}
 

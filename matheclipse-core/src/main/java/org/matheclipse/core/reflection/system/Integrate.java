@@ -55,10 +55,8 @@ import edu.jas.ufd.SquarefreeFactory;
  * href="http://en.wikipedia.org/wiki/Integral">Integral</a>
  */
 public class Integrate extends AbstractFunctionEvaluator implements IConstantHeaders {
-	private static String[] RULES = {
-			"Integrate[y_ * x_,z_Symbol]:= y*Integrate[x,z] /; FreeQ[y,z]",
-			"Integrate[y_,x_Symbol]:=y*x /; FreeQ[y,x]",
-			"Integrate[x_,x_Symbol]:= x^2/2",
+	private static String[] RULES = { "Integrate[y_ * x_,z_Symbol]:= y*Integrate[x,z] /; FreeQ[y,z]",
+			"Integrate[y_,x_Symbol]:=y*x /; FreeQ[y,x]", "Integrate[x_,x_Symbol]:= x^2/2",
 			"Integrate[x_^n_NumberQ, x_Symbol]:=x^(n+1)/(n+1) /; n!=(-1)",
 			// "Integrate[x_^(-1), x_Symbol]:=Log[x]",
 			"Integrate[(a_+x_)^(-1), x_Symbol]:=Log[x+a] /; FreeQ[a,x]",
@@ -71,31 +69,34 @@ public class Integrate extends AbstractFunctionEvaluator implements IConstantHea
 			"Integrate[x_^n_IntegerQ * E_^(a_.*x_), x_Symbol]:=a^(-1)*x^n*E^(a*x)-n/a*Integrate[x^(n-1)*E^(a*x),x] /; Positive[n]&&FreeQ[a,x]",
 			// "Integrate[x_^n_IntegerQ * E_^x_, x_Symbol]:=x^n*E^x-n*Integrate[x^(n-1)*E^x,x] /; Positive[n]",
 			// "Integrate[Log[x_], x_Symbol]:=x*Log[x]-x",
-			"Integrate[Log[a_.*x_], x_Symbol]:=Log[a*x]*x-x /; FreeQ[a,x]",
-			"Integrate[Sinh[x_], x_Symbol]:=Cosh[x]",
-			"Integrate[Cosh[x_], x_Symbol]:=Sinh[x]",
-			"Integrate[ArcSinh[x_], x_Symbol]:=x*ArcSinh[x]-Sqrt[x^2+1]",
-			"Integrate[ArcCosh[x_], x_Symbol]:=x*ArcCosh[x]-Sqrt[x^2-1]",
-			"Integrate[ArcTanh[x_], x_Symbol]:=x*ArcTanh[x]+1/2*Log[1-x^2]",
-			// "Integrate[Sin[x_], x_Symbol]:= -Cos[x]",
-			// "Integrate[Sin[a_*x_], x_Symbol]:= -Cos[a*x]/a /; FreeQ[a,x]",
-			// "Integrate[Sin[x_]^n_, x_Symbol]:= (n-1)/n*Integrate[Sin[x]^(n-2),x]-Sin[x]^(n-1)*Cos[x]/n /; Positive[n]",
-			"Integrate[Sin[a_.*x_]^n_IntegerQ, x_Symbol]:= -Sin[a*x]^(n-1)*Cos[a*x]/(n*a)+(n-1)/n*Integrate[Sin[a*x]^(n-2),x]/;Positive[n]&&FreeQ[a,x]",
-			"Integrate[Sin[a_.+b_.*x_],x_Symbol] := -Cos[a+b*x]/b /; FreeQ[{a,b},x]",
-			"Integrate[Cos[x_], x_Symbol]:= Sin[x]",
-			"Integrate[Cos[a_*x_], x_Symbol]:= Sin[a*x]/a /; FreeQ[a,x]",
-			// "Integrate[Cos[x_]^n_IntegerQ, x_Symbol]:= Cos[x]^(n-1)*Sin[x]/n+(n-1)/n*Integrate[Cos[x]^(n-2),x] /; Positive[n]",
-			"Integrate[Cos[a_.*x_]^n_IntegerQ, x_Symbol]:= Cos[a*x]^(n-1)*Sin[a*x]/(n*a)+(n-1)/n*Integrate[Cos[a*x]^(n-2),x] /; Positive[n]&&FreeQ[a,x]",
-			"Integrate[Tan[x_], x_Symbol]:= -Log[Cos[x]]",
-			"Integrate[Tan[a_*x_], x_Symbol]:= -Log[Cos[a*x]]/a /; FreeQ[a,x]",
-			"Integrate[Tan[x_]^n_IntegerQ, x_Symbol]:= 1/(n-1)*Tan[x]^(n-1)-Integrate[Tan[x]^(n-2),x] /; Positive[n]",
-			"Integrate[Tan[a_*x_]^n_IntegerQ, x_Symbol]:= 1/(a*(n-1))*Tan[a*x]^(n-1)-Integrate[Tan[a*x]^(n-2),x] /; Positive[n]&&FreeQ[a,x]",
-			"Integrate[ArcSin[x_], x_Symbol]:=x*ArcSin[x]+Sqrt[1-x^2]",
-			"Integrate[ArcSin[a_*x_], x_Symbol]:= x*ArcSin[a*x]+Sqrt[1-a^2*x^2]/a /; FreeQ[a,x]",
-			"Integrate[ArcCos[x_], x_Symbol]:= x*ArcCos[x]-Sqrt[1-x^2]",
-			"Integrate[ArcCos[a_*x_], x_Symbol]:= x*ArcCos[a*x]-Sqrt[1-a^2*x^2]/a  /; FreeQ[a,x]",
-			"Integrate[ArcTan[x_], x_Symbol]:= x*ArcTan[x]-1/2*Log[1+x^2]",
-			"Integrate[ArcTan[a_*x_], x_Symbol]:= x*ArcTan[a*x]-1/2*Log[1+a^2*x^2]/a  /; FreeQ[a,x]"
+			"Integrate[Log[a_.*x_], x_Symbol]:=Log[a*x]*x-x /; FreeQ[a,x]"
+	// START commented for Rubi usage
+	// "Integrate[Sinh[x_], x_Symbol]:=Cosh[x]",
+	// "Integrate[Cosh[x_], x_Symbol]:=Sinh[x]",
+	// "Integrate[ArcSinh[x_], x_Symbol]:=x*ArcSinh[x]-Sqrt[x^2+1]",
+	// "Integrate[ArcCosh[x_], x_Symbol]:=x*ArcCosh[x]-Sqrt[x^2-1]",
+	// "Integrate[ArcTanh[x_], x_Symbol]:=x*ArcTanh[x]+1/2*Log[1-x^2]",
+	// "Integrate[Sin[a_.*x_]^n_IntegerQ, x_Symbol]:= -Sin[a*x]^(n-1)*Cos[a*x]/(n*a)+(n-1)/n*Integrate[Sin[a*x]^(n-2),x]/;Positive[n]&&FreeQ[a,x]",
+	// "Integrate[Sin[a_.+b_.*x_],x_Symbol] := -Cos[a+b*x]/b /; FreeQ[{a,b},x]",
+	// "Integrate[Cos[x_], x_Symbol]:= Sin[x]",
+	// "Integrate[Cos[a_*x_], x_Symbol]:= Sin[a*x]/a /; FreeQ[a,x]",
+	// "Integrate[Cos[a_.*x_]^n_IntegerQ, x_Symbol]:= Cos[a*x]^(n-1)*Sin[a*x]/(n*a)+(n-1)/n*Integrate[Cos[a*x]^(n-2),x] /; Positive[n]&&FreeQ[a,x]",
+	// "Integrate[Tan[x_], x_Symbol]:= -Log[Cos[x]]",
+	// "Integrate[Tan[a_*x_], x_Symbol]:= -Log[Cos[a*x]]/a /; FreeQ[a,x]",
+	// "Integrate[Tan[x_]^n_IntegerQ, x_Symbol]:= 1/(n-1)*Tan[x]^(n-1)-Integrate[Tan[x]^(n-2),x] /; Positive[n]",
+	// "Integrate[Tan[a_*x_]^n_IntegerQ, x_Symbol]:= 1/(a*(n-1))*Tan[a*x]^(n-1)-Integrate[Tan[a*x]^(n-2),x] /; Positive[n]&&FreeQ[a,x]",
+	// "Integrate[ArcSin[x_], x_Symbol]:=x*ArcSin[x]+Sqrt[1-x^2]",
+	// "Integrate[ArcSin[a_*x_], x_Symbol]:= x*ArcSin[a*x]+Sqrt[1-a^2*x^2]/a /; FreeQ[a,x]",
+	// "Integrate[ArcCos[x_], x_Symbol]:= x*ArcCos[x]-Sqrt[1-x^2]",
+	// "Integrate[ArcCos[a_*x_], x_Symbol]:= x*ArcCos[a*x]-Sqrt[1-a^2*x^2]/a  /; FreeQ[a,x]",
+	// "Integrate[ArcTan[x_], x_Symbol]:= x*ArcTan[x]-1/2*Log[1+x^2]",
+	// "Integrate[ArcTan[a_*x_], x_Symbol]:= x*ArcTan[a*x]-1/2*Log[1+a^2*x^2]/a  /; FreeQ[a,x]"
+	// END commented for Rubi usage
+
+	// "Integrate[Sin[x_], x_Symbol]:= -Cos[x]",
+	// "Integrate[Sin[a_*x_], x_Symbol]:= -Cos[a*x]/a /; FreeQ[a,x]",
+	// "Integrate[Sin[x_]^n_, x_Symbol]:= (n-1)/n*Integrate[Sin[x]^(n-2),x]-Sin[x]^(n-1)*Cos[x]/n /; Positive[n]",
+	// "Integrate[Cos[x_]^n_IntegerQ, x_Symbol]:= Cos[x]^(n-1)*Sin[x]/n+(n-1)/n*Integrate[Cos[x]^(n-2),x] /; Positive[n]",
 
 	};
 
@@ -492,18 +493,19 @@ public class Integrate extends AbstractFunctionEvaluator implements IConstantHea
 
 	@Override
 	public IAST getRuleAST() {
-		// uncomment the following lines for activating Rubi rules, currently not
-		// working properly!
-		
-//		UtilityFunctions.init();
-//		IAST ast = F.ast(F.List, 10000, false);
-//		ast.addAll(TrigFunctionIntegrationRules0.RULES);
-//		ast.addAll(TrigFunctionIntegrationRules1.RULES);
-//		ast.addAll(TrigFunctionIntegrationRules2.RULES);
-//		ast.addAll(TrigFunctionIntegrationRules3.RULES);
-//		return ast;
 
-		 return null;
+		// TODO Integrate[] is currently not working properly in all cases!
+
+		// comment the following lines for deactivating Rubi rules
+		UtilityFunctions.init();
+		IAST ast = F.ast(F.List, 10000, false);
+		ast.addAll(TrigFunctionIntegrationRules0.RULES);
+		ast.addAll(TrigFunctionIntegrationRules1.RULES);
+		ast.addAll(TrigFunctionIntegrationRules2.RULES);
+		ast.addAll(TrigFunctionIntegrationRules3.RULES);
+		return ast;
+
+		// return null;
 	}
 
 	@Override

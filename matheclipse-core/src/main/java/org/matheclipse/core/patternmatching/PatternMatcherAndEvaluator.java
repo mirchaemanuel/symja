@@ -1,10 +1,17 @@
 package org.matheclipse.core.patternmatching;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
+import org.matheclipse.core.eval.EvalEngine;
+import org.matheclipse.core.expression.F;
+import org.matheclipse.core.generic.Functors;
+import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.ISymbol;
 import org.matheclipse.core.list.algorithms.EvaluationSupport;
+import org.matheclipse.core.reflection.system.Module;
 
 public class PatternMatcherAndEvaluator extends PatternMatcher implements Serializable {
 
@@ -15,6 +22,19 @@ public class PatternMatcherAndEvaluator extends PatternMatcher implements Serial
 
 	private IExpr fRightHandSide;
 	private ISymbol fSetSymbol;
+	private IExpr fLastResult;
+	/**
+	 * Additional Module[] initializer for pattern-matching maybe
+	 * <code>null</code>
+	 * 
+	 */
+	protected IAST fModuleInitializer;
+
+	/**
+	 * Additional condition for pattern-matching maybe <code>null</code>
+	 * 
+	 */
+	protected IExpr fCondition;
 
 	/**
 	 * 
@@ -31,6 +51,9 @@ public class PatternMatcherAndEvaluator extends PatternMatcher implements Serial
 		super(leftHandSide);
 		fSetSymbol = setSymbol;
 		fRightHandSide = rightHandSide;
+		fLastResult = null;
+		fModuleInitializer = null;
+		fCondition = null;
 	}
 
 	@Override
@@ -39,6 +62,8 @@ public class PatternMatcherAndEvaluator extends PatternMatcher implements Serial
 		PatternMatcherAndEvaluator v = (PatternMatcherAndEvaluator) super.clone();
 		v.fRightHandSide = fRightHandSide;
 		v.fSetSymbol = fSetSymbol;
+		v.fCondition = fCondition;
+		v.fModuleInitializer = fModuleInitializer;
 		return v;
 		// } catch (CloneNotSupportedException e) {
 		// // this shouldn't happen, since we are Cloneable
@@ -47,22 +72,70 @@ public class PatternMatcherAndEvaluator extends PatternMatcher implements Serial
 	}
 
 	@Override
+	public boolean checkCondition() {
+		if (fCondition != null) {
+			if (fPatternValuesArray != null) {
+				// all patterns have values assigned?
+				for (int i = 0; i < fPatternValuesArray.length; i++) {
+					if (fPatternValuesArray[i] == null) {
+						return true;
+					}
+				}
+			}
+			final EvalEngine engine = EvalEngine.get();
+			boolean traceMode = false;
+			try {
+				traceMode = engine.isTraceMode();
+				engine.setTraceMode(false);
+
+				if (fModuleInitializer != null) {
+					final Map<IExpr, IExpr> rulesMap = new HashMap<IExpr, IExpr>();
+					for (int i = 0; i < fPatternSymbolsArray.size(); i++) {
+						rulesMap.put(fPatternSymbolsArray.get(i), fPatternValuesArray[i]);
+					}
+					fLastResult = Module
+							.evalModuleCondition(fModuleInitializer, fRightHandSide, fCondition, engine, Functors.rules(rulesMap));
+					return fLastResult != null;
+				}
+
+				final IExpr substConditon = EvaluationSupport.substituteLocalVariables(fCondition, fPatternSymbolsArray,
+						fPatternValuesArray);
+				return engine.evaluate(substConditon).equals(F.True);
+			} finally {
+				if (traceMode) {
+					engine.setTraceMode(true);
+				}
+			}
+		}
+		return true;
+	}
+
+	@Override
 	public boolean equals(final Object obj) {
 		if (this == obj) {
 			return true;
 		}
 		if (obj instanceof PatternMatcherAndEvaluator) {
+			PatternMatcherAndEvaluator pm = (PatternMatcherAndEvaluator) obj;
 			// don't compare fSetSymbol and fRightHandSide here
-			return super.equals(obj);
+			if (super.equals(obj)) {
+				if ((fCondition != null) && (pm.fCondition != null)) {
+					return fCondition.equals(pm.fCondition);
+				}
+				if ((fCondition != null) || (pm.fCondition != null)) {
+					return false;
+				}
+				return true;
+			}
 		}
 		return false;
 	}
 
 	@Override
 	public int hashCode() {
-		return super.hashCode()*53;
+		return super.hashCode() * 53;
 	}
-	
+
 	/**
 	 * Match the (left-hand-side) pattern with the given expression. If true
 	 * evaluate the right-hand-side for the determined values of the patterns
@@ -84,8 +157,12 @@ public class PatternMatcherAndEvaluator extends PatternMatcher implements Serial
 			return null;
 		}
 		initPattern();
+		IExpr rightHandSide = fRightHandSide;
 		if (matchExpr(fLeftHandSide, leftHandSide) && checkCondition()) {
-			return EvaluationSupport.substituteLocalVariables(fRightHandSide, fPatternSymbolsArray, fPatternValuesArray);
+			if (fLastResult != null) {
+				rightHandSide = fLastResult;
+			}
+			return EvaluationSupport.substituteLocalVariables(rightHandSide, fPatternSymbolsArray, fPatternValuesArray);
 		}
 		return null;
 	}
@@ -94,8 +171,28 @@ public class PatternMatcherAndEvaluator extends PatternMatcher implements Serial
 		return fRightHandSide;
 	}
 
+	public IExpr getCondition() {
+		return fCondition;
+	}
+
+	public IAST getInitializer() {
+		return fModuleInitializer;
+	}
+
 	public ISymbol getSetSymbol() {
 		return fSetSymbol;
+	}
+
+	/**
+	 * Sets an additional evaluation-condition for pattern-matching
+	 * 
+	 */
+	public void setCondition(final IExpr condition) {
+		fCondition = condition;
+	}
+
+	public void setInitializer(final IAST moduleInitializer) {
+		fModuleInitializer = moduleInitializer;
 	}
 
 }
