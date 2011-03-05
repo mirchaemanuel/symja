@@ -111,25 +111,21 @@ public class OutOfMemoryTest extends TestCase {
 	}
 
 	public void checkPattern(String patternString, String evalString, String resultString) {
-		checkPattern(patternString, evalString, null, resultString);
-	}
-
-	public void checkPattern(String patternString, String evalString, String conditionString, String resultString) {
 		try {
 			ASTNode node = fParser.parse(patternString);
 			IExpr pat = AST2Expr.CONST.convert(node);
 
 			node = fParser.parse(evalString);
 			IExpr eval = AST2Expr.CONST.convert(node);
-			IExpr condition;
-			if (conditionString == null) {
-				condition = null;
-			} else {
-				node = fParser.parse(conditionString);
-				condition = AST2Expr.CONST.convert(node);
-			}
+			// IExpr condition;
+			// if (conditionString == null) {
+			// condition = null;
+			// } else {
+			// node = fParser.parse(conditionString);
+			// condition = AST2Expr.CONST.convert(node);
+			// }
 			PatternMatcher matcher = new PatternMatcher(pat);
-			matcher.setCondition(condition);
+			// matcher.setCondition(condition);
 			if (matcher.apply(eval)) {
 				ArrayList<IExpr> resultList = new ArrayList<IExpr>();
 				matcher.getPatterns(resultList, pat);
@@ -165,13 +161,13 @@ public class OutOfMemoryTest extends TestCase {
 		// fParser.setFactory(ExpressionFactory.get());
 
 	}
-	
+
 	/**
 	 * Test system functions
 	 */
 	public void testSystem000() {
 		check("NumberPartitions[100]", "");
-		
+
 	}
 
 }

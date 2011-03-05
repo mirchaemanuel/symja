@@ -578,7 +578,8 @@ public class SystemTestCase extends AbstractTestCase {
 		check("Eigenvalues[{{0.0,1.0,-1.0},{1.0,1.0,0.0},{-1.0,0.0,1.0}}]",
 				"{1.9999999999999996,0.9999999999999999,-1.0000000000000002}");
 		check("Eigenvalues[{{1,0,0},{0,1,0},{0,0,1}}]", "{1.0,1.0,1.0}");
-		check("Eigenvalues[{{1,0,0},{-2,1,0},{0,0,1}}]", "non symmetric matrix: the difference between entries at (0,1) and (1,0) is larger than 0");
+		check("Eigenvalues[{{1,0,0},{-2,1,0},{0,0,1}}]",
+				"non symmetric matrix: the difference between entries at (0,1) and (1,0) is larger than 0");
 
 		check("Fit[{2,3,5,7,11,13},3,x]", "-0.08333333333333395*x^3.0+1.1071428571428645*x^2.0-1.9523809523809792*x+3.0000000000000293");
 		check("Fit[{{1,1},{2,4},{3,9},{4,16}},2,x]", "x^2.0");
@@ -635,15 +636,9 @@ public class SystemTestCase extends AbstractTestCase {
 	}
 
 	public void testSystem091() {
-		check("HilbertMatrix[4]", "{{1,1/2,1/3,1/4},\n" + 
-				" {1/2,1/3,1/4,1/5},\n" + 
-				" {1/3,1/4,1/5,1/6},\n" + 
-				" {1/4,1/5,1/6,1/7}}");
-		check("HilbertMatrix[2,3]", "{{1,1/2,1/3},\n" + 
-				" {1/2,1/3,1/4}}");
-		check("HilbertMatrix[3,2]", "{{1,1/2},\n" + 
-				" {1/2,1/3},\n" + 
-				" {1/3,1/4}}");
+		check("HilbertMatrix[4]", "{{1,1/2,1/3,1/4},\n" + " {1/2,1/3,1/4,1/5},\n" + " {1/3,1/4,1/5,1/6},\n" + " {1/4,1/5,1/6,1/7}}");
+		check("HilbertMatrix[2,3]", "{{1,1/2,1/3},\n" + " {1/2,1/3,1/4}}");
+		check("HilbertMatrix[3,2]", "{{1,1/2},\n" + " {1/2,1/3},\n" + " {1/3,1/4}}");
 	}
 
 	public void testSystem092() {
@@ -656,10 +651,7 @@ public class SystemTestCase extends AbstractTestCase {
 	}
 
 	public void testSystem094() {
-		check("VandermondeMatrix[{a,b,c,d}]", "{{1,a,a^2,a^3},\n" + 
-				" {1,b,b^2,b^3},\n" + 
-				" {1,c,c^2,c^3},\n" + 
-				" {1,d,d^2,d^3}}");
+		check("VandermondeMatrix[{a,b,c,d}]", "{{1,a,a^2,a^3},\n" + " {1,b,b^2,b^3},\n" + " {1,c,c^2,c^3},\n" + " {1,d,d^2,d^3}}");
 	}
 
 	public void testSystem095() {
@@ -716,14 +708,9 @@ public class SystemTestCase extends AbstractTestCase {
 				+ "{{0.8,0.6000000000000001},\n" + " {0.6000000000000001,-0.8}}}");
 
 		// See http://issues.apache.org/jira/browse/MATH-320:
-		check("SingularValueDecomposition[{{1,2},{1,2}}]",
-				"{\n" + 
-				"{{-0.7071067811865475,0.7071067811865475},\n" + 
-				" {-0.7071067811865475,-0.7071067811865475}},\n" + 
-				"{{3.1622776601683795,0.0},\n" + 
-				" {0.0,0.0}},\n" + 
-				"{{-0.4472135954999579,0.8944271909999159},\n" + 
-				" {-0.8944271909999159,-0.4472135954999579}}}");
+		check("SingularValueDecomposition[{{1,2},{1,2}}]", "{\n" + "{{-0.7071067811865475,0.7071067811865475},\n"
+				+ " {-0.7071067811865475,-0.7071067811865475}},\n" + "{{3.1622776601683795,0.0},\n" + " {0.0,0.0}},\n"
+				+ "{{-0.4472135954999579,0.8944271909999159},\n" + " {-0.8944271909999159,-0.4472135954999579}}}");
 	}
 
 	public void testSystem104() {
@@ -1074,8 +1061,10 @@ public class SystemTestCase extends AbstractTestCase {
 		check("Apart[2*x^2/(x^3+1)]", "(4/3*x-2/3)*(x^2-x+1)^(-1)+2/3*(x+1)^(-1)");
 
 		check("Integrate[2*x^2/(x^3+1),x]", "2*(1/3*Log[x^2-x+1]+1/3*Log[x+1])");
-		check("Integrate[Sin[x]^3,x]", "-1/3*Cos[x]*Sin[x]^2-2/3*Cos[x]");
-		check("Integrate[Cos[2x]^3,x]", "1/6*Cos[2*x]^2*Sin[2*x]+1/3*Sin[2*x]");
+		// check("Integrate[Sin[x]^3,x]", "-1/3*Cos[x]*Sin[x]^2-2/3*Cos[x]");
+		check("Integrate[Sin[x]^3,x]", "1/3*Cos[x]^3-Cos[x]");
+		// check("Integrate[Cos[2x]^3,x]", "1/6*Cos[2*x]^2*Sin[2*x]+1/3*Sin[2*x]");
+		check("Integrate[Cos[2x]^3,x]", "1/2*Sin[2*x]-1/6*Sin[2*x]^3");
 		check("Integrate[x,x]", "1/2*x^2");
 		check("Integrate[2x,x]", "x^2");
 		check("Integrate[h[x],x]", "Integrate[h[x],x]");
@@ -1097,10 +1086,16 @@ public class SystemTestCase extends AbstractTestCase {
 	}
 
 	public void testSystem172() {
-		check("Simplify[Integrate[(x^7 - 24*x^4 - 4*x^2 + 8*x - 8)/(x^8 + 6*x^6 + 12*x^4 + 8*x^2),x]]",
-				"(x+2)*(3*x^2+2*x+2)*x^(-1)*(x^2+2)^(-2)+Log[x]");
-		check("Simplify[Integrate[(x^7-24*x^4-4*x^2+8*x-8)*x^(-2)*(x^2+2)^(-3),x]]", "(x+2)*(3*x^2+2*x+2)*x^(-1)*(x^2+2)^(-2)+Log[x]");
-		check("Simplify[D[(x+2)*(3*x^2+2*x+2)*x^(-1)*(x^2+2)^(-2)+Log[x],x]]", "(x^7-24*x^4-4*x^2+8*x-8)*x^(-2)*(x^2+2)^(-3)");
+		check("Integrate[(x^7 - 24*x^4 - 4*x^2 + 8*x - 8)/(x^8 + 6*x^6 + 12*x^4 + 8*x^2),x]",
+				"3*(x^2+2)^(-1)-22*(1/4*x*(x^2+2)^(-1)+1/4*ArcTan[x*(1/2)^(1/2)]*(1/2)^(1/2))+48*(\n"
+						+ "1/8*x*(x^2+2)^(-2)+3/8*(1/4*x*(x^2+2)^(-1)+1/4*ArcTan[x*(1/2)^(1/2)]*(1/2)^(1/2)))+x^(\n"
+						+ "-1)+ArcTan[x*(1/2)^(1/2)]*(1/2)^(1/2)+Log[x]");
+		check("Integrate[(x^7-24*x^4-4*x^2+8*x-8)*x^(-2)*(x^2+2)^(-3),x]",
+				"3*(x^2+2)^(-1)-22*(1/4*x*(x^2+2)^(-1)+1/4*ArcTan[x*(1/2)^(1/2)]*(1/2)^(1/2))+48*(\n"
+						+ "1/8*x*(x^2+2)^(-2)+3/8*(1/4*x*(x^2+2)^(-1)+1/4*ArcTan[x*(1/2)^(1/2)]*(1/2)^(1/2)))+x^(\n"
+						+ "-1)+ArcTan[x*(1/2)^(1/2)]*(1/2)^(1/2)+Log[x]");
+		 check("Simplify[D[(x+2)*(3*x^2+2*x+2)*x^(-1)*(x^2+2)^(-2)+Log[x],x]]",
+		 "(x^7-24*x^4-4*x^2+8*x-8)*x^(-2)*(x^2+2)^(-3)");
 
 		check("Integrate[10/(x-3)^4,x]", "(-10/3)*(x-3)^(-3)");
 
@@ -1198,6 +1193,7 @@ public class SystemTestCase extends AbstractTestCase {
 	public void testSystem192() {
 		check("$blck=Block[{$i=0}, $i=$i+1; Return[$i]]", "1");
 		check("$blck=Module[{$i=0}, $i=$i+1; Return[$i]]", "1");
+		check("$y=$x^3;Module[{$x=42},$x+$y]", "$x^3+42");
 	}
 
 	public void testSystem193() {
@@ -2139,7 +2135,7 @@ public class SystemTestCase extends AbstractTestCase {
 	public void testSystem387a() {
 		// check("JavaForm[(1/2 * (m + n^(1/2))) ^ (1/3)]", "");
 
-		check("JavaForm[-1/4+ #2+b+c*3]", "\"Plus(CN1D4,b,Slot(C2),Times(C3,c))\"");
+		check("JavaForm[-1/4+ #2+b+c*3]", "\"Plus(CN1D4,b,Slot2,Times(C3,c))\"");
 		check("$a=1+I;JavaForm[$a]", "\"complex(1L,1L,1L,1L)\"");
 		check("JavaForm[1/3+I]", "\"complex(1L,3L,1L,1L)\"");
 		check("JavaForm[ff[x_*y_]]", "\"$(ff,Times(x_,y_))\"");
@@ -2233,12 +2229,12 @@ public class SystemTestCase extends AbstractTestCase {
 		check("Numerator[(x - 1)*(x - 2)/(x - 3)^2]", "(x-2)*(x-1)");
 		check("Numerator[1/3*(3*a-1/2*b)]", "-1/2*b+3*a");
 		check("Denominator[1/3*(3*a-1/2*b)]", "3");
-		
+
 		check("Denominator[Csc[x]]", "Sin[x]");
 		check("Denominator[Csc[x]^4]", "Sin[x]^4");
 		check("Denominator[42*Csc[x]]", "Sin[x]");
 		check("Denominator[42*Csc[x]^3]", "Sin[x]^3");
-		
+
 		check("Together[x+3/4*x^(-3)]", "1/4*(4*x^4+3)*x^(-3)");
 		check("Together[(x^2-2)^3/(x^2-2)+(x^2-2)^2/(x^2-2)]", "x^4-3*x^2+2");
 		check("Together[a/b+c/d]", "(a*d+b*c)*b^(-1)*d^(-1)");

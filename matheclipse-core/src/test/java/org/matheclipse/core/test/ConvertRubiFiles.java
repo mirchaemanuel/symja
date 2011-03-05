@@ -12,7 +12,6 @@ import org.matheclipse.core.convert.AST2Expr;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
-import org.matheclipse.core.interfaces.ISymbol;
 import org.matheclipse.parser.client.Parser;
 import org.matheclipse.parser.client.ast.ASTNode;
 
@@ -51,7 +50,6 @@ public class ConvertRubiFiles {
 		try {
 			File file = new File(fileName);
 			final BufferedWriter f = new BufferedWriter(new FileWriter(file));
-			final StringBuffer buff = new StringBuffer(1024);
 			f.append(buffer);
 			f.close();
 		} catch (Exception e) {
@@ -66,11 +64,25 @@ public class ConvertRubiFiles {
 
 			IExpr expr = AST2Expr.CONST.convert(node);
 
-			ISymbol module = F.$s("Module");
-			// TODO allow Module in future versions
-			if (expr.isFree(module, true)) {
+			// ISymbol module = F.$s("Module");
+			// if (expr.isFree(module, true)) {
+			if (expr.isAST(F.SetDelayed, 3)) {
+				IAST ast = (IAST) expr;
+				buffer.append("SetDelayed(");
+				buffer.append(ast.get(1).internalFormString(true, 0));
+				buffer.append(",\n    ");
+				buffer.append(ast.get(2).internalFormString(true, 0));
+				if (last) {
+					buffer.append(")\n");
+				} else {
+					buffer.append("),\n");
+				}
+			} else if (expr.isAST(F.If, 4)) {
+				IAST ast = (IAST) expr;
+				// if (ast.get(1).toString().equals("ShowSteps")) {
+				expr = ast.get(3);
 				if (expr.isAST(F.SetDelayed, 3)) {
-					IAST ast = (IAST) expr;
+					ast = (IAST) expr;
 					buffer.append("SetDelayed(");
 					buffer.append(ast.get(1).internalFormString(true, 0));
 					buffer.append(",\n    ");
@@ -80,25 +92,10 @@ public class ConvertRubiFiles {
 					} else {
 						buffer.append("),\n");
 					}
-				} else if (expr.isAST(F.If, 4)) {
-					IAST ast = (IAST) expr;
-					// if (ast.get(1).toString().equals("ShowSteps")) {
-					expr = ast.get(3);
-					if (expr.isAST(F.SetDelayed, 3)) {
-						ast = (IAST) expr;
-						buffer.append("SetDelayed(");
-						buffer.append(ast.get(1).internalFormString(true, 0));
-						buffer.append(",\n    ");
-						buffer.append(ast.get(2).internalFormString(true, 0));
-						if (last) {
-							buffer.append(")\n");
-						} else {
-							buffer.append("),\n");
-						}
-					}
-					// }
 				}
+				// }
 			}
+			// }
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
