@@ -4,7 +4,6 @@ import static org.matheclipse.core.expression.F.*;
 
 import java.util.HashMap;
 
-import org.matheclipse.core.eval.exception.Validate;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.generic.Functors;
 import org.matheclipse.core.interfaces.IAST;
@@ -21,18 +20,18 @@ import com.google.common.base.Predicate;
  */
 public class Sum extends Table {
 	// private static HashMap<IExpr, IExpr> MAP_1_N = new HashMap<IExpr, IExpr>();
-	private static HashMap<IExpr, IExpr> MAP_0_N = new HashMap<IExpr, IExpr>();
-	static {
-		// #^2 -> 1/6*(#+(#+1)*(2*#+1))
-		MAP_0_N.put(Power(Slot(C1), C2), Times(fraction(1L, 6L), Times(Times(Slot(C1), Plus(Slot(C1), C1)), Plus(Times(C2, Slot(C1)),
-				C1))));
-		// #^3 -> 1/4*(#*(#+1))^2
-		MAP_0_N.put(Power(Slot(C1), C3), Times(C1D4, Power(Times(Slot(C1), Plus(Slot(C1), C1)), C2)));
-		// Binomial[#2,#] -> 2^#
-		MAP_0_N.put(Binomial(Slot(C2), Slot(C1)), Power(C2, Slot(C1)));
-		// #*Binomial[#2,#] -> #*2^(#-1)
-		MAP_0_N.put(Times(Slot(C1), Binomial(Slot(C2), Slot(C1))), Times(Slot(C1), Power(C2, Plus(Slot(C1), Times(CN1, C1)))));
-	}
+//	private static HashMap<IExpr, IExpr> MAP_0_N = new HashMap<IExpr, IExpr>();
+//	static {
+//		// #^2 -> 1/6*(#+(#+1)*(2*#+1))
+//		MAP_0_N.put(Power(Slot(C1), C2), Times(fraction(1L, 6L), Times(Times(Slot(C1), Plus(Slot(C1), C1)), Plus(Times(C2, Slot(C1)),
+//				C1))));
+//		// #^3 -> 1/4*(#*(#+1))^2
+//		MAP_0_N.put(Power(Slot(C1), C3), Times(C1D4, Power(Times(Slot(C1), Plus(Slot(C1), C1)), C2)));
+//		// Binomial[#2,#] -> 2^#
+//		MAP_0_N.put(Binomial(Slot(C2), Slot(C1)), Power(C2, Slot(C1)));
+//		// #*Binomial[#2,#] -> #*2^(#-1)
+//		MAP_0_N.put(Times(Slot(C1), Binomial(Slot(C2), Slot(C1))), Times(Slot(C1), Power(C2, Plus(Slot(C1), Times(CN1, C1)))));
+//	}
 
 	public Sum() {
 	}
@@ -79,10 +78,10 @@ public class Sum extends Table {
 					if (from.equals(F.C0)) {
 						IExpr repl = ast.get(1).replaceAll(F.List(F.Rule(var, F.Slot(F.C1)), F.Rule(to, F.Slot(F.C2))));
 						if (repl != null) {
-							IExpr temp = MAP_0_N.get(repl);
-							if (temp != null) {
-								return temp.replaceAll(F.Rule(F.Slot(F.C1), to));
-							}
+//							IExpr temp = MAP_0_N.get(repl);
+//							if (temp != null) {
+//								return temp.replaceAll(F.Rule(F.Slot(F.C1), to));
+//							}
 						}
 					}
 				}

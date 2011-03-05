@@ -91,7 +91,7 @@ public class RulesData {
 	}
 
 	public PatternMatcher putDownRule(ISymbol setSymbol, final boolean equalRule, final IExpr leftHandSide,
-			final IExpr rightHandSide, final IExpr condition, final int priority) {
+			final IExpr rightHandSide, final IExpr condition, IAST moduleInitializer, final int priority) {
 		if (Config.DEBUG) {
 			if (rightHandSide.isAST("Condition")) {
 				throw new RuntimeException("Condition  not allowed in right-hand-side");
@@ -121,6 +121,7 @@ public class RulesData {
 		// System.out.println("condition");
 		// }
 		pmEvaluator.setCondition(condition);
+		pmEvaluator.setInitializer(moduleInitializer);
 		if (!isComplicatedPatternRule(leftHandSide)) {
 
 			fSimplePatternRules = getSimplePatternRules();

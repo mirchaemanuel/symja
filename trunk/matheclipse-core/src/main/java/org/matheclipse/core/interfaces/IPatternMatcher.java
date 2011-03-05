@@ -35,12 +35,7 @@ public abstract class IPatternMatcher<E> implements Predicate<E>, Cloneable {
 	 * @return
 	 */
 	public abstract boolean apply(E evalExpr);
-
-	/**
-	 * Sets an additional evaluation-condition for pattern-matching
-	 * 
-	 */
-	public abstract void setCondition(E condition);
+ 
 
 	/**
 	 * Match the given left-hand-side and return an evaluated expression

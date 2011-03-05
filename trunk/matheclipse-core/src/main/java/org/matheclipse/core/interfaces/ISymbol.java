@@ -241,11 +241,15 @@ public interface ISymbol extends IExpr { // Variable<IExpr>
 	 * @param rightHandSide
 	 * @param condition
 	 *          additional condition for rules containing patterns
+	 * @param moduleInitializer
+	 *          if the right-hand-side is a module, this is the initializer part
+	 * 
 	 * @return
 	 * 
 	 * @see ISymbol#DEFAULT_RULE_PRIORITY
 	 */
-	public IPatternMatcher putDownRule(ISymbol symbol, boolean equalRule, IExpr leftHandSide, IExpr rightHandSide, IExpr condition);
+	public IPatternMatcher putDownRule(ISymbol symbol, boolean equalRule, IExpr leftHandSide, IExpr rightHandSide, IExpr condition,
+			IExpr moduleInitializer);
 
 	/**
 	 * Associate a new rule with the given priority to this symbol.<br/>
@@ -256,12 +260,19 @@ public interface ISymbol extends IExpr { // Variable<IExpr>
 	 *          equality
 	 * @param leftHandSide
 	 * @param rightHandSide
+	 * @param condition
+	 *          additional condition for rules containing patterns
+	 * @param moduleInitializer
+	 *          if the right-hand-side is a module, this is the initializer part
+	 * @param priority
+	 *          the priority of the rule
+	 * 
 	 * @return
 	 * 
 	 * @see ISymbol#DEFAULT_RULE_PRIORITY
 	 */
 	public IPatternMatcher putDownRule(ISymbol symbol, boolean equalRule, IExpr leftHandSide, IExpr rightHandSide, IExpr condition,
-			int priority);
+			IExpr moduleInitializer, int priority);
 
 	/**
 	 * Associate a new rule, which invokes a method, to this symbol.

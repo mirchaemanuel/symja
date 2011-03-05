@@ -6,14 +6,12 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-import org.matheclipse.core.eval.EvalEngine;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.IPattern;
 import org.matheclipse.core.interfaces.IPatternMatcher;
 import org.matheclipse.core.interfaces.ISymbol;
-import org.matheclipse.core.list.algorithms.EvaluationSupport;
 import org.matheclipse.generic.combinatoric.KPartitionsIterable;
 import org.matheclipse.generic.combinatoric.KPermutationsIterable;
 
@@ -354,12 +352,6 @@ public class PatternMatcher extends IPatternMatcher<IExpr> implements Serializab
 	}
 
 	/**
-	 * Additional condition for pattern-matching maybe <code>null</code>
-	 * 
-	 */
-	protected IExpr fCondition = null;
-
-	/**
 	 * Counts the number of patterns in fPatternExpr
 	 */
 	transient protected int fPatternCounter = 0;
@@ -427,30 +419,32 @@ public class PatternMatcher extends IPatternMatcher<IExpr> implements Serializab
 	}
 
 	public boolean checkCondition() {
-		if (fCondition != null) {
-			if (fPatternValuesArray != null) {
-				// all patterns have values assigned?
-				for (int i = 0; i < fPatternValuesArray.length; i++) {
-
-					if (fPatternValuesArray[i] == null) {
-						return true;
-					}
-				}
-			}
-			final EvalEngine engine = EvalEngine.get();
-			boolean traceMode = false;
-			try {
-				final IExpr substConditon = EvaluationSupport.substituteLocalVariables(fCondition, fPatternSymbolsArray,
-						fPatternValuesArray);
-				traceMode = engine.isTraceMode();
-				engine.setTraceMode(false);
-				return engine.evaluate(substConditon).equals(F.True);
-			} finally {
-				if (traceMode) {
-					engine.setTraceMode(true);
-				}
-			}
-		}
+		// if (fCondition != null) {
+		// if (fPatternValuesArray != null) {
+		// // all patterns have values assigned?
+		// for (int i = 0; i < fPatternValuesArray.length; i++) {
+		// if (fPatternValuesArray[i] == null) {
+		// return true;
+		// }
+		// }
+		// }
+		// final EvalEngine engine = EvalEngine.get();
+		// boolean traceMode = false;
+		// try {
+		// traceMode = engine.isTraceMode();
+		// engine.setTraceMode(false);
+		//
+		// final IExpr substConditon =
+		// EvaluationSupport.substituteLocalVariables(fCondition,
+		// fPatternSymbolsArray,
+		// fPatternValuesArray);
+		// return engine.evaluate(substConditon).equals(F.True);
+		// } finally {
+		// if (traceMode) {
+		// engine.setTraceMode(true);
+		// }
+		// }
+		// }
 		return true;
 	}
 
@@ -568,8 +562,8 @@ public class PatternMatcher extends IPatternMatcher<IExpr> implements Serializab
 		}
 	}
 
-	public IExpr getCondition() {
-		return fCondition;
+	public IExpr getRightHandside() {
+		return null;
 	}
 
 	/**
@@ -824,11 +818,6 @@ public class PatternMatcher extends IPatternMatcher<IExpr> implements Serializab
 		return true;
 	}
 
-	@Override
-	public void setCondition(final IExpr condition) {
-		fCondition = condition;
-	}
-
 	public IExpr getLHS() {
 		return fLeftHandSide;
 	}
@@ -852,12 +841,12 @@ public class PatternMatcher extends IPatternMatcher<IExpr> implements Serializab
 				return fLeftHandSide.equals(pm.fLeftHandSide);
 			}
 			if (equivalent(fLeftHandSide, pm.fLeftHandSide)) {
-				if ((fCondition != null) && (pm.fCondition != null)) {
-					return fCondition.equals(pm.fCondition);
-				}
-				if ((fCondition != null) || (pm.fCondition != null)) {
-					return false;
-				}
+				// if ((fCondition != null) && (pm.fCondition != null)) {
+				// return fCondition.equals(pm.fCondition);
+				// }
+				// if ((fCondition != null) || (pm.fCondition != null)) {
+				// return false;
+				// }
 				return true;
 			}
 		}
@@ -873,7 +862,7 @@ public class PatternMatcher extends IPatternMatcher<IExpr> implements Serializab
 	public Object clone() {
 		// try {
 		PatternMatcher v = (PatternMatcher) super.clone();
-		v.fCondition = fCondition;
+		// v.fCondition = fCondition;
 		v.fPatternCounter = fPatternCounter;
 		v.fLeftHandSide = fLeftHandSide;
 		v.fPatternValuesArray = Arrays.copyOf(fPatternValuesArray, fPatternValuesArray.length);

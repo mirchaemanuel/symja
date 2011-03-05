@@ -31,11 +31,13 @@ public class MathScriptEngine extends AbstractScriptEngine {
 	// static {
 	// run the static groovy code for the MathEclipse domain specific language
 	// DSL groovyDSL = new DSL();
-	// }  
+	// }
 
 	public MathScriptEngine() {
 		// get the thread local evaluation engine
-		fUtility = new EvalUtilities(new EvalEngine(), false);
+		EvalEngine engine = new EvalEngine();
+		// engine.setIterationLimit(10);
+		fUtility = new EvalUtilities(engine, false);
 	}
 
 	public Bindings createBindings() {
@@ -67,7 +69,7 @@ public class MathScriptEngine extends AbstractScriptEngine {
 			final Bindings bindings = context.getBindings(ScriptContext.ENGINE_SCOPE);
 			ISymbol symbol;
 			for (Map.Entry<String, Object> currEntry : bindings.entrySet()) {
-				symbol = F.$s( currEntry.getKey());
+				symbol = F.$s(currEntry.getKey());
 				symbol.pushLocalVariable(Object2Expr.CONST.convert(currEntry.getValue()));
 				list.add(symbol);
 			}

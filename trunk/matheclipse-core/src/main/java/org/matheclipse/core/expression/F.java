@@ -1,5 +1,7 @@
 package org.matheclipse.core.expression;
 
+import static org.matheclipse.core.expression.F.unary;
+
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.InputStream;
@@ -81,7 +83,9 @@ public class F {
 	public static ISymbol AtomQ;
 
 	public static ISymbol Binomial;
-
+	
+	public static ISymbol	Block;
+	
 	public static ISymbol Break;
 
 	public static ISymbol Ceiling;
@@ -191,6 +195,8 @@ public class F {
 	public static ISymbol Min;
 
 	public static ISymbol Mod;
+	
+	public static ISymbol Module;
 
 	public static ISymbol N;
 
@@ -205,7 +211,9 @@ public class F {
 	// public static ISymbol NumberPartitions;
 
 	public static ISymbol NumberQ;
-
+	
+	public static ISymbol NumericQ;
+	
 	public static ISymbol OddQ;
 
 	public static ISymbol Or;
@@ -227,7 +235,9 @@ public class F {
 	public static ISymbol Plus;
 
 	public static ISymbol Positive;
-
+	
+	public static ISymbol PossibleZeroQ;
+	
 	public static ISymbol Power;
 
 	public static ISymbol Prepend;
@@ -533,6 +543,10 @@ public class F {
 		return unary(Abs, a0);
 	}
 
+	public static IAST And(final IExpr a0, final IExpr a1) {
+		return binary(And, a0, a1);
+	}
+	
 	public static IAST ArcCos(final IExpr a0) {
 
 		return unary(ArcCos, a0);
@@ -591,6 +605,11 @@ public class F {
 		return binary($s("Binomial"), a0, a1);
 	}
 
+
+	public static IAST Block(final IExpr a0, final IExpr a1) {
+		return binary(Block, a0, a1);
+	}
+	
 	public static IAST Ceiling(final IExpr a0) {
 
 		return unary(Ceiling, a0);
@@ -672,12 +691,14 @@ public class F {
 		return binary(Equal, a0, a1);
 	}
 
-	public static IAST Equal(final IExpr... a) {// , final IExpr a1, final IExpr
-		// a2) {
+	public static IAST Equal(final IExpr... a) {
 		return ast(a, Equal);
-		// return ternary(Equal, a0, a1, a2);
 	}
 
+	public static IAST EvenQ(final IExpr a) {
+		return unary(EvenQ, a);
+	}
+	
 	public static IAST Expand(final IExpr a0) {
 
 		return unary(Expand, a0);
@@ -897,6 +918,7 @@ public class F {
 			ArcTanh = predefinedSymbol("ArcTanh");
 			AtomQ = predefinedSymbol("AtomQ");
 			Binomial = predefinedSymbol("Binomial");
+			Block = predefinedSymbol("Block");
 			Break = predefinedSymbol("Break");
 			Csc = predefinedSymbol("Csc");
 			Ceiling = predefinedSymbol("Ceiling");
@@ -952,6 +974,7 @@ public class F {
 			MemberQ = predefinedSymbol("MemberQ");
 			Min = predefinedSymbol("Min");
 			Mod = predefinedSymbol("Mod");
+			Module = predefinedSymbol("Module");
 			N = predefinedSymbol("N");
 			Negative = predefinedSymbol("Negative");
 			NonNegative = predefinedSymbol("NonNegative");
@@ -959,6 +982,7 @@ public class F {
 			// NumberPartitions = predefinedSymbol("NumberPartitions", new
 			// NumberPartitions());
 			NumberQ = predefinedSymbol("NumberQ");
+			NumberQ = predefinedSymbol("NumericQ");
 			Numerator = predefinedSymbol("Numerator");
 			OddQ = predefinedSymbol("OddQ");
 			Or = predefinedSymbol("Or");
@@ -972,6 +996,7 @@ public class F {
 			Plus = predefinedSymbol("Plus");
 			Plus.setDefaultValue(C0);
 			Positive = predefinedSymbol("Positive");
+			PossibleZeroQ = predefinedSymbol("PossibleZeroQ"); 
 			Power = predefinedSymbol("Power");
 			Power.setDefaultValue(2, C1);
 			Prepend = predefinedSymbol("Prepend");
@@ -1010,7 +1035,7 @@ public class F {
 			CInfinity = function(DirectedInfinity, C1);
 			CNInfinity = function(DirectedInfinity, CN1);
 			Slot1 = function(Slot, C1);
-			Slot2 = function(Slot, C1);
+			Slot2 = function(Slot, C2);
 
 			if (symbolObserver != null) {
 				SYMBOL_OBSERVER = symbolObserver;
@@ -1178,7 +1203,11 @@ public class F {
 	public static IAST Min(final IExpr a0, final IExpr a1) {
 		return binary(Min, a0, a1);
 	}
-
+	
+	public static IAST Module(final IExpr a0, final IExpr a1) {
+		return binary(Module, a0, a1);
+	}
+	
 	/**
 	 * Evaluate the given expression in numeric mode
 	 * 
@@ -1211,11 +1240,26 @@ public class F {
 		return unary(NumberQ, a0);
 	}
 
+	public static IAST NumericQ(final IExpr a0) {
+		return unary(NumericQ, a0);
+	}
+	
+	public static IAST OddQ(final IExpr a) {
+		return unary(OddQ, a);
+	}
+	
 	public static IAST Options(final IExpr a0) {
 
 		return unary(Options, a0);
 	}
+	
+	public static IAST Or(final IExpr a0, final IExpr a1) {
+		return binary(Or, a0, a1);
+	}
 
+	public static IAST Part(final IExpr a0, final IExpr a1) {
+		return binary(Part, a0, a1);
+	}
 	// public static IAST Partition(final IExpr a0) {
 	//
 	// return unary(Partition, a0);
@@ -1246,6 +1290,11 @@ public class F {
 		// return ternary(Plus, a0, a1, a2);
 	}
 
+
+	public static IAST PossibleZeroQ(final IExpr a0) {
+		return unary(PossibleZeroQ, a0);
+	}
+	
 	public static IAST Power() {
 
 		return function(Power);
