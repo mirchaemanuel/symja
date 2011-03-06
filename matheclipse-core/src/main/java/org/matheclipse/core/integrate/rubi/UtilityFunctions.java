@@ -68,13 +68,33 @@ public class UtilityFunctions {
 	static ISymbol PosQ = predefinedSymbol(INTEGRATE_PREFIX + "PosQ");
 	static ISymbol Subst = predefinedSymbol(INTEGRATE_PREFIX + "Subst");
 
+	public static IExpr isRational(IAST ast) {
+		// TODO
+//		RationalQ[u_+m_*(n_+v_)] :=
+//		  RationalQ[m] && RationalQ[n] && RationalQ[u+m*v]
+		if (ast.size() > 1) {
+			if (ast.get(1).isList()) {
+				IAST list = (IAST) ast.get(1);
+				// MapAnd
+				for (int i = 1; i < list.size(); i++) {
+					if (!(list.get(i).isFraction()||list.get(i).isInteger())) {
+						return F.False;
+					}
+				}
+				return F.True;
+			}
+			return F.bool(ast.get(1).isFraction()||ast.get(1).isInteger());
+		}
+		return F.False;
+	}
+	
 	public static IExpr isFraction(IAST ast) {
 		if (ast.size() > 1) {
 			if (ast.get(1).isList()) {
 				IAST list = (IAST) ast.get(1);
 				// MapAnd
 				for (int i = 1; i < list.size(); i++) {
-					if (!(list.get(1) instanceof IFraction)) {
+					if (!(list.get(i) instanceof IFraction)) {
 						return F.False;
 					}
 				}
@@ -126,6 +146,7 @@ public class UtilityFunctions {
 	static ISymbol FractionQ = F.method(INTEGRATE_PREFIX + "FractionQ", PACKAGE_NAME, CLASS_NAME, "isFraction");
 	static ISymbol PowerQ = F.method(INTEGRATE_PREFIX + "PowerQ", PACKAGE_NAME, CLASS_NAME, "isPower");
 	static ISymbol ProductQ = F.method(INTEGRATE_PREFIX + "ProductQ", PACKAGE_NAME, CLASS_NAME, "isTimes");
+	static ISymbol RationalQ = F.method(INTEGRATE_PREFIX + "RationalQ", PACKAGE_NAME, CLASS_NAME, "isRational");
 	static ISymbol SumQ = F.method(INTEGRATE_PREFIX + "SumQ", PACKAGE_NAME, CLASS_NAME, "isPlus");
 	static ISymbol SubstQ = F.method(INTEGRATE_PREFIX + "SubstQ", PACKAGE_NAME, CLASS_NAME, "isSubst");
 	static ISymbol CalculusQ = F.method(INTEGRATE_PREFIX + "CalculusQ", PACKAGE_NAME, CLASS_NAME, "isCalculus");
@@ -330,8 +351,7 @@ public class UtilityFunctions {
 	}
 
 	public static IAST NonzeroQ(final IExpr a) {
-		// TODO fix this
-		return unary($s("NonzeroQ"), a);
+		return Not(unary($s("PossibleZeroQ"), a));
 	}
 
 	public static IAST Not(final IExpr a) {
@@ -358,8 +378,7 @@ public class UtilityFunctions {
 	}
 
 	public static IAST RationalQ(final IExpr a) {
-		// TODO fix this
-		return unary($s("RationalQ"), a);
+		return unary(RationalQ, a);
 	}
 
 	public static IExpr Regularize(final IExpr u, final IExpr x) {
@@ -481,7 +500,6 @@ public class UtilityFunctions {
 	}
 
 	public static IAST ZeroQ(final IExpr a) {
-		// TODO fix this
-		return unary($s("ZeroQ"), a);
+		return unary($s("PossibleZeroQ"), a);
 	}
 }

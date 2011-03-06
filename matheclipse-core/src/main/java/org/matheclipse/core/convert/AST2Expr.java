@@ -19,8 +19,8 @@ import org.matheclipse.parser.client.ast.StringNode;
 import org.matheclipse.parser.client.ast.SymbolNode;
 
 /**
- * Converts a parsed <code>org.matheclipse.parser.client.ast.ASTNode</code> expression into
- * an IExpr expression
+ * Converts a parsed <code>org.matheclipse.parser.client.ast.ASTNode</code>
+ * expression into an IExpr expression
  * 
  */
 public class AST2Expr { // extends Converter<ASTNode, IExpr> {
@@ -60,7 +60,10 @@ public class AST2Expr { // extends Converter<ASTNode, IExpr> {
 				ast.add(convert(functionNode.get(i)));
 			}
 			IExpr head = ast.head();
-			if (head.equals(F.PatternHead)) {
+			if (ast.isAST(F.Sqrt, 2)) {
+				// special - convert on input Sqrt[x_] => Power[x,1/2]
+				return F.Power(ast.get(1), F.C1D2);
+			} else if (head.equals(F.PatternHead)) {
 				final IExpr expr = Pattern.CONST.evaluate(ast);
 				if (expr != null) {
 					return expr;

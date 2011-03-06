@@ -18,19 +18,19 @@ public class Sign implements IFunctionEvaluator {
 	public Sign() {
 	}
 
-	public IExpr evaluate(final IAST functionList) {
-		if (functionList.size() != 2) {
+	public IExpr evaluate(final IAST ast) {
+		if (ast.size() != 2) {
 			return null;
 		}
-		if (functionList.get(1) instanceof ISignedNumber) {
-			final int signum = ((ISignedNumber) functionList.get(1)).sign();
+		if (ast.get(1) instanceof ISignedNumber) {
+			final int signum = ((ISignedNumber) ast.get(1)).sign();
 			return F.integer(signum);
 		}
 		return null;
 	}
 
-	public IExpr numericEval(final IAST functionList) {
-		return evaluate(functionList);
+	public IExpr numericEval(final IAST ast) {
+		return evaluate(ast);
 	}
 
 	public void setUp(final ISymbol symbol) {

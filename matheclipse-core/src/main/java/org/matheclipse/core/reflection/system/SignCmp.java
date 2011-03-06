@@ -19,19 +19,19 @@ public class SignCmp implements IFunctionEvaluator {
   }
 
 
-  public IExpr evaluate(final IAST functionList) {
-  	if (functionList.size()!=2) {
+  public IExpr evaluate(final IAST ast) {
+  	if (ast.size()!=2) {
   		return null;
   	}
-  	if (functionList.get(1) instanceof INumber) {
-  		final int signum = ((INumber)functionList.get(1)).complexSign();
+  	if (ast.get(1) instanceof INumber) {
+  		final int signum = ((INumber)ast.get(1)).complexSign();
   		return F.integer(signum);
   	}
   	return null;
   }
 
-  public IExpr numericEval(final IAST functionList) {
-		return evaluate(functionList);
+  public IExpr numericEval(final IAST ast) {
+		return evaluate(ast);
   }
 
   public void setUp(final ISymbol symbol) {
