@@ -854,6 +854,7 @@ public class SystemTestCase extends AbstractTestCase {
 
 	public void testSystem135() {
 		check("3<4<a<5<6", "4<a<5");
+		check("-1<1/2<1", "True");
 	}
 
 	public void testSystem136() {
@@ -1062,7 +1063,7 @@ public class SystemTestCase extends AbstractTestCase {
 
 		check("Integrate[2*x^2/(x^3+1),x]", "2*(1/3*Log[x^2-x+1]+1/3*Log[x+1])");
 		// check("Integrate[Sin[x]^3,x]", "-1/3*Cos[x]*Sin[x]^2-2/3*Cos[x]");
-		check("Integrate[Sin[x]^3,x]", "1/3*Cos[x]^3-Cos[x]");
+		check("Integrate[Sin[x]^3,x]", "(-1)*(-1/3*Cos[x]^3+Cos[x])");
 		// check("Integrate[Cos[2x]^3,x]", "1/6*Cos[2*x]^2*Sin[2*x]+1/3*Sin[2*x]");
 		check("Integrate[Cos[2x]^3,x]", "1/2*Sin[2*x]-1/6*Sin[2*x]^3");
 		check("Integrate[x,x]", "1/2*x^2");

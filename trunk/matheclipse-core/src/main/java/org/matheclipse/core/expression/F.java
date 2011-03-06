@@ -284,6 +284,8 @@ public class F {
 
 	public static ISymbol Sort;
 
+	public static ISymbol Sqrt;
+	
 	public static ISymbol Sum;
 
 	public static ISymbol Tan;
@@ -1017,6 +1019,7 @@ public class F {
 			Sin = predefinedSymbol("Sin");
 			Sinh = predefinedSymbol("Sinh");
 			Sort = predefinedSymbol("Sort");
+			Sqrt = predefinedSymbol("Sqrt");
 			Sum = predefinedSymbol("Sum");
 			Tan = predefinedSymbol("Tan");
 			Tanh = predefinedSymbol("Tanh");
