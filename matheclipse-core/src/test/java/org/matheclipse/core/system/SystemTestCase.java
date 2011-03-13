@@ -859,6 +859,13 @@ public class SystemTestCase extends AbstractTestCase {
 
 	public void testSystem136() {
 		check("4<=4<=a<=5<=6", "4<=a<=5");
+		check("0<1<=1", "True");
+		check("0<(1<2)", "True");
+		check("4<=4<5", "True");
+		check("0>1>=1", "False");
+		check("0>(3>2)", "False");
+		check("4>=4>3", "True");
+		check("4>3>=3", "True");
 	}
 
 	public void testSystem137() {

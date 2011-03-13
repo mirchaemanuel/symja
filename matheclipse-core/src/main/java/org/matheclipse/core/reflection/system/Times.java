@@ -17,9 +17,21 @@ import org.matheclipse.core.interfaces.INum;
 import org.matheclipse.core.interfaces.INumber;
 import org.matheclipse.core.interfaces.ISignedNumber;
 import org.matheclipse.core.interfaces.ISymbol;
+import org.matheclipse.core.patternmatching.HashedOrderlessMatcher;
 
 public class Times extends AbstractArgMultiple implements INumeric {
+	/**
+	 * Constructor for the singleton
+	 */
+	public final static Plus CONST = new Plus();
+	
+	private static HashedOrderlessMatcher ORDERLESS_MATCHER = new HashedOrderlessMatcher(true);
 
+	@Override
+	public HashedOrderlessMatcher getHashRuleMap() {
+		return ORDERLESS_MATCHER;
+	}
+	
 	public Times() {
 	}
 

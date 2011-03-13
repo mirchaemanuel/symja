@@ -75,7 +75,13 @@ public class MathScriptEngine extends AbstractScriptEngine {
 			}
 
 			// evaluate an expression
-			final IExpr result = fUtility.evaluate(script);
+			final Object stepwise = get("STEPWISE");
+			IExpr result;
+			if (Boolean.TRUE.equals(stepwise)){
+				result = fUtility.evalStepByStep(script);
+			} else {
+			  result = fUtility.evaluate(script);
+			}
 			final Object returnType = context.getAttribute("RETURN_OBJECT");
 			if ((returnType != null) && returnType.equals(Boolean.TRUE)) {
 				// return the object "as is"

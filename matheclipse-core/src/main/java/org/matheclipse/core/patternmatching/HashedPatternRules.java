@@ -7,7 +7,7 @@ import org.matheclipse.core.visit.HashValueVisitor;
 /**
  * Data structure for <code>HashedOrderlessMatcher</code>.
  * 
- * To set up a rule like <code>Sin[x]^2+Cos[x]^2 -> 1</code> use the method:
+ * To set up a rule like<br/> <code>Sin[x]^2+Cos[x]^2 -> 1</code> <bR/>use the method:<br/>
  * <code>setUpHashRule("Sin[x_]^2", "Cos[x_]^2", "1")</code>
  * 
  */
@@ -103,6 +103,8 @@ public class HashedPatternRules {
 	}
 
 	/**
+	 * Get the hash value for the first LHS expression.
+	 * 
 	 * @return the hash1
 	 */
 	public int getHash1() {
@@ -110,12 +112,17 @@ public class HashedPatternRules {
 	}
 
 	/**
+	 * Get the hash value for the second LHS expression.
+	 * 
 	 * @return the hash2
 	 */
 	public int getHash2() {
 		return hash2;
 	}
 
+	public boolean isPattern2() {
+		return fLHSPattern2.isPattern();
+	}
 	/**
 	 * Get (or create) the rule
 	 * <code>{&lt;first-left-hand-side&gt;, &lt;second-left-hand-side&gt;}:=&lt;right-hand-side&gt;</code>

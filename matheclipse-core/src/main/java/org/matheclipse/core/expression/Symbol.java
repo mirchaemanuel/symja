@@ -421,6 +421,10 @@ public class Symbol extends ExprImpl implements ISymbol {
 					return "Pi";
 				} else if (fSymbolName.equals("E")) {
 					return "E";
+				} else if (fSymbolName.equals("False")) {
+					return "False";
+				} else if (fSymbolName.equals("True")) {
+					return "True";
 				}
 			}
 			return "$s(\"" + fSymbolName + "\")";

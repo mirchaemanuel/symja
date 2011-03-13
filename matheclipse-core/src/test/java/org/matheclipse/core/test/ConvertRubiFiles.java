@@ -109,9 +109,9 @@ public class ConvertRubiFiles {
 		// "C:\\temp\\RationalFunctionIntegrationRules.m",
 		// "C:\\temp\\AlgebraicFunctionIntegrationRules.m",
 		// "C:\\temp\\ExponentialFunctionIntegrationRules.m",
-		"C:\\temp\\Rubi\\TrigFunctionIntegrationRules.m",
+//		"C:\\temp\\Rubi\\TrigFunctionIntegrationRules.m",
 		// "C:\\temp\\HyperbolicFunctionIntegrationRules.m",
-		// "C:\\temp\\LogarithmFunctionIntegrationRules.m",
+		 "C:\\temp\\Rubi\\\\LogarithmFunctionIntegrationRules.m",
 		// "C:\\temp\\InverseTrigFunctionIntegrationRules.m",
 		// "C:\\temp\\InverseHyperbolicFunctionIntegrationRules.m",
 		// "C:\\temp\\ErrorFunctionIntegrationRules.m",
@@ -141,7 +141,7 @@ public class ConvertRubiFiles {
 
 					if (cnt == NUMBER_OF_RULES_PER_FILE) {
 						buffer.append(");");
-						writeFile("C:\\temp\\Rubi\\TrigFunctionIntegrationRules" + fcnt + ".java", buffer);
+						writeFile("C:\\temp\\Rubi\\LogarithmFunctionIntegrationRules" + fcnt + ".java", buffer);
 						fcnt++;
 						cnt = 0;
 					}
@@ -149,7 +149,7 @@ public class ConvertRubiFiles {
 				if (cnt != 0) {
 					// System.out.println(");");
 					buffer.append(");");
-					writeFile("C:\\temp\\Rubi\\TrigFunctionIntegrationRules" + fcnt + ".java", buffer);
+					writeFile("C:\\temp\\Rubi\\LogarithmFunctionIntegrationRules" + fcnt + ".java", buffer);
 				}
 				System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>");
 				System.out.println(">>>>> Number of entries: " + list.size());
