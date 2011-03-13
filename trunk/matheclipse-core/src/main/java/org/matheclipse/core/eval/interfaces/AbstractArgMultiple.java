@@ -5,6 +5,7 @@ import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.ISymbol;
 import org.matheclipse.core.patternmatching.HashedOrderlessMatcher;
+import org.matheclipse.parser.client.SyntaxError;
 
 /**
  *
@@ -95,6 +96,40 @@ public class AbstractArgMultiple extends AbstractArg2 {
 			return null;
 		}
 		return hashRuleMap.evaluate(ast);
+	}
+	
+	/**
+	 * @param lhs1
+	 * @param lhs2
+	 * @param rhs
+	 * @param condition
+	 * @see org.matheclipse.core.patternmatching.HashedOrderlessMatcher#setUpHashRule(org.matheclipse.core.interfaces.IExpr, org.matheclipse.core.interfaces.IExpr, org.matheclipse.core.interfaces.IExpr, org.matheclipse.core.interfaces.IExpr)
+	 */
+	public void setUpHashRule(IExpr lhs1, IExpr lhs2, IExpr rhs, IExpr condition) {
+		getHashRuleMap().setUpHashRule(lhs1, lhs2, rhs, condition);
+	}
+
+	/**
+	 * @param lhs1Str
+	 * @param lhs2Str
+	 * @param rhsStr
+	 * @param conditionStr
+	 * @throws SyntaxError
+	 * @see org.matheclipse.core.patternmatching.HashedOrderlessMatcher#setUpHashRule(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
+	 */
+	public void setUpHashRule(String lhs1Str, String lhs2Str, String rhsStr, String conditionStr) throws SyntaxError {
+		getHashRuleMap().setUpHashRule(lhs1Str, lhs2Str, rhsStr, conditionStr);
+	}
+
+	/**
+	 * @param lhs1Str
+	 * @param lhs2Str
+	 * @param rhsStr
+	 * @throws SyntaxError
+	 * @see org.matheclipse.core.patternmatching.HashedOrderlessMatcher#setUpHashRule(java.lang.String, java.lang.String, java.lang.String)
+	 */
+	public void setUpHashRule(String lhs1Str, String lhs2Str, String rhsStr) throws SyntaxError {
+		getHashRuleMap().setUpHashRule(lhs1Str, lhs2Str, rhsStr);
 	}
 
 }

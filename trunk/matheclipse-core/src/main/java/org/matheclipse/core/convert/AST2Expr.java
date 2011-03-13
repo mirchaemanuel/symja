@@ -60,9 +60,18 @@ public class AST2Expr { // extends Converter<ASTNode, IExpr> {
 				ast.add(convert(functionNode.get(i)));
 			}
 			IExpr head = ast.head();
-			if (ast.isAST(F.Sqrt, 2)) {
-				// special - convert on input Sqrt[x_] => Power[x,1/2]
-				return F.Power(ast.get(1), F.C1D2);
+			if (ast.isASTSizeGE(F.GreaterEqual, 3)) {
+				ISymbol compareHead = F.Greater;
+				return rewriteLessGreaterAST(ast, compareHead);
+			} else if (ast.isASTSizeGE(F.Greater, 3)) {
+				ISymbol compareHead = F.GreaterEqual;
+				return rewriteLessGreaterAST(ast, compareHead);
+			} else if (ast.isASTSizeGE(F.LessEqual, 3)) {
+				ISymbol compareHead = F.Less;
+				return rewriteLessGreaterAST(ast, compareHead);
+			} else if (ast.isASTSizeGE(F.Less, 3)) {
+				ISymbol compareHead = F.LessEqual;
+				return rewriteLessGreaterAST(ast, compareHead);
 			} else if (head.equals(F.PatternHead)) {
 				final IExpr expr = Pattern.CONST.evaluate(ast);
 				if (expr != null) {
@@ -124,5 +133,34 @@ public class AST2Expr { // extends Converter<ASTNode, IExpr> {
 		}
 
 		return F.$s(node.toString());
+	}
+
+	/**
+	 * Convert less or greter relations on input. Example: convert expressions
+	 * like <code>a<b<=c</code> to <code>Less[a,b]&&LessEqual[b,c]</code>.
+	 * 
+	 * @param ast
+	 * @param compareHead
+	 * @return
+	 */
+	private IExpr rewriteLessGreaterAST(final IAST ast, ISymbol compareHead) {
+		IExpr temp;
+		boolean evaled = false;
+		IAST andAST = F.ast(F.And);
+		for (int i = 1; i < ast.size(); i++) {
+			temp = ast.get(i);
+			if (temp.isASTSizeGE(compareHead, 3)) {
+				IAST lt = (IAST) temp;
+				andAST.add(lt);
+				ast.set(i, lt.get(lt.size() - 1));
+				evaled = true;
+			}
+		}
+		if (evaled) {
+			andAST.add(ast);
+			return andAST;
+		} else {
+			return ast;
+		}
 	}
 }

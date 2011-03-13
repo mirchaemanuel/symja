@@ -65,29 +65,38 @@ public class UtilityFunctions {
 	static ISymbol Dist = predefinedSymbol(INTEGRATE_PREFIX + "Dist");
 	static ISymbol NegQ = predefinedSymbol(INTEGRATE_PREFIX + "NegQ");
 	static ISymbol NumericFactor = predefinedSymbol(INTEGRATE_PREFIX + "NumericFactor");
+	static ISymbol PositiveQ = predefinedSymbol(INTEGRATE_PREFIX + "PositiveQ");
 	static ISymbol PosQ = predefinedSymbol(INTEGRATE_PREFIX + "PosQ");
+	static ISymbol RealNumericQ = predefinedSymbol(INTEGRATE_PREFIX + "RealNumericQ");
 	static ISymbol Subst = predefinedSymbol(INTEGRATE_PREFIX + "Subst");
 
 	public static IExpr isRational(IAST ast) {
 		// TODO
-//		RationalQ[u_+m_*(n_+v_)] :=
-//		  RationalQ[m] && RationalQ[n] && RationalQ[u+m*v]
+		// RationalQ[u_+m_*(n_+v_)] :=
+		// RationalQ[m] && RationalQ[n] && RationalQ[u+m*v]
 		if (ast.size() > 1) {
 			if (ast.get(1).isList()) {
 				IAST list = (IAST) ast.get(1);
 				// MapAnd
 				for (int i = 1; i < list.size(); i++) {
-					if (!(list.get(i).isFraction()||list.get(i).isInteger())) {
+					if (!(list.get(i).isFraction() || list.get(i).isInteger())) {
 						return F.False;
 					}
 				}
 				return F.True;
 			}
-			return F.bool(ast.get(1).isFraction()||ast.get(1).isInteger());
+			return F.bool(ast.get(1).isFraction() || ast.get(1).isInteger());
 		}
 		return F.False;
 	}
-	
+
+	public static IExpr isFalseQ(IAST ast) {
+		if (ast.size() > 1) {
+			return F.bool(ast.get(1).isFalse());
+		}
+		return F.False;
+	}
+
 	public static IExpr isFraction(IAST ast) {
 		if (ast.size() > 1) {
 			if (ast.get(1).isList()) {
@@ -143,6 +152,7 @@ public class UtilityFunctions {
 		return F.False;
 	}
 
+	static ISymbol FalseQ = F.method(INTEGRATE_PREFIX + "FalseQ", PACKAGE_NAME, CLASS_NAME, "isFalseQ");
 	static ISymbol FractionQ = F.method(INTEGRATE_PREFIX + "FractionQ", PACKAGE_NAME, CLASS_NAME, "isFraction");
 	static ISymbol PowerQ = F.method(INTEGRATE_PREFIX + "PowerQ", PACKAGE_NAME, CLASS_NAME, "isPower");
 	static ISymbol ProductQ = F.method(INTEGRATE_PREFIX + "ProductQ", PACKAGE_NAME, CLASS_NAME, "isTimes");
@@ -194,28 +204,32 @@ public class UtilityFunctions {
 		// Dist[u_,v_] := -Dist[-u,v] /;NumericFactor[u]<0,
 		// Dist[u_,v_] := Map[Function[Dist[u,#]],v] /; SumQ[v],
 		// Dist[u_,v_] := u*v /; FreeQ[v,Int],
-		// Dist[u_,v_*w_] := Dist[u*v,w] /; FreeQ[v,Int]
+		// Dist[u_,v_*w_] := Dist[u*v,w] /; FreeQ[v,Int],
+		// Dist[u_,Dist[v_,w_]] := Dist[u*v,w]
 
-		// TODO add the following rules - at the moment these rules will slow down
-		// evaluation too much!!!
+		// these rule must be defined in a special way because otherwise they slow
+		// down evaluation too much
 		// Dist[u_,v_]+Dist[w_,v_] := If[ZeroQ[u+w], 0, Dist[u+w,v]],
 		// Dist[u_,v_]-Dist[w_,v_] := If[ZeroQ[u-w], 0, Dist[u-w,v]],
 		// w_*Dist[u_,v_] := Dist[w*u,v] /; w=!=-1,
-		// Dist[u_,Dist[v_,w_]] := Dist[u*v,w],
+
 		IAST DIST_RULES = List(SetDelayed(Dist(C0, $p("v")), C0), SetDelayed(Dist(C1, $p("v")), $s("v")), SetDelayed(Dist($p("u"),
 				$p("v")), Condition(Times(CN1, Dist(Times(CN1, $s("u")), $s("v"))), Less(NumericFactor($s("u")), C0))), SetDelayed(Dist(
-				$p("u"), Dist($p("v"), $p("w"))), Dist(Times($s("u"), $s("v")), $s("w"))), SetDelayed(Dist($p("u"), $p("v")), Condition(
-				Map(Function(Dist($s("u"), Slot1)), $s("v")), SumQ($s("v")))), SetDelayed(Dist($p("u"), $p("v")), Condition(Times($s("u"),
-				$s("v")), FreeQ($s("v"), $s("Int")))), SetDelayed(Dist($p("u"), Times($p("v"), $p("w"))), Condition(Dist(Times($s("u"),
-				$s("v")), $s("w")), FreeQ($s("v"), $s("Int")))));
+				$p("u"), $p("v")), Condition(Map(Function(Dist($s("u"), Slot1)), $s("v")), SumQ($s("v")))), SetDelayed(Dist($p("u"),
+				$p("v")), Condition(Times($s("u"), $s("v")), FreeQ($s("v"), $s("Int")))), SetDelayed(
+				Dist($p("u"), Times($p("v"), $p("w"))), Condition(Dist(Times($s("u"), $s("v")), $s("w")), FreeQ($s("v"), $s("Int")))),
+				SetDelayed(Dist($p("u"), Dist($p("v"), $p("w"))), Dist(Times($s("u"), $s("v")), $s("w"))));
 
-		IAST NEG_RULES = List(SetDelayed(NegQ($p("u")), If(PossibleZeroQ($s("u")), $s("False"), Not(PosQ($s("u"))))));
+		IAST NEGQ_RULES = List(SetDelayed(NegQ($p("u")), If(PossibleZeroQ($s("u")), $s("False"), Not(PosQ($s("u"))))));
 
-		IAST NUMERIC_FACTOR_RULES = List(SetDelayed(NumericFactor($p("u")), If(NumberQ($s("u")), If(ZeroQ(Im($s("u"))), $s("u"), If(
+		IAST NUMERICFACTOR_RULES = List(SetDelayed(NumericFactor($p("u")), If(NumberQ($s("u")), If(ZeroQ(Im($s("u"))), $s("u"), If(
 				ZeroQ(Re($s("u"))), Im($s("u")), C1)), If(PowerQ($s("u")), If(And(RationalQ(Part($s("u"), C1)),
 				FractionQ(Part($s("u"), C2))), If(Greater(Part($s("u"), C2), C0), Times(C1, Power(Denominator(Part($s("u"), C1)), CN1)),
 				Times(C1, Power(Denominator(Times(C1, Power(Part($s("u"), C1), CN1))), CN1))), C1), If(ProductQ($s("u")), Times(
 				NumericFactor(First($s("u"))), NumericFactor(Rest($s("u")))), C1)))));
+
+		IAST POSITIVEQ_RULES = List(SetDelayed(PositiveQ($p("u")), Module(List(Set($s("v"), Simplify($s("u")))), And(
+				RealNumericQ($s("v")), Greater(Re(N($s("v"))), C0)))));
 
 		IAST POSQ_RULES = List(SetDelayed(PosQ($p("u")), If(PossibleZeroQ($s("u")), $s("False"), If(NumericQ($s("u")), If(
 				NumberQ($s("u")), If(PossibleZeroQ(Re($s("u"))), Greater(Im($s("u")), C0), Greater(Re($s("u")), C0)), Module(List(Set(
@@ -224,6 +238,8 @@ public class UtilityFunctions {
 						C2))), PosQ(Part($s("v"), C1)), If(ProductQ($s("v")), If(RationalQ(First($s("v"))), If(Greater(First($s("v")), C0),
 						PosQ(Rest($s("v"))), NegQ(Rest($s("v")))), PosQ(First($s("v")))), If(SumQ($s("v")), PosQ(First($s("v"))), Not(MatchQ(
 						$s("v"), Times(CN1, $p((ISymbol) null)))))))))))));
+
+		IAST REALNUMERICQ_RULES = List(SetDelayed(RealNumericQ($p("u")), And(NumericQ($s("u")), PossibleZeroQ(Im(N($s("u")))))));
 
 		IAST SUBST_RULES = List(SetDelayed(Subst($p("u"), $p("v"), $p("w")), Condition(If(SameQ($s("u"), $s("v")), $s("w"), If(
 				AtomQ($s("u")), $s("u"), If(PowerQ($s("u")), If(And(And(PowerQ($s("v")), SameQ(Part($s("u"), C1), Part($s("v"), C1))),
@@ -237,9 +253,21 @@ public class UtilityFunctions {
 						$s("HoldForm")), Head($s("u")))))))));
 
 		EvalEngine.get().addRules(DIST_RULES);
-		EvalEngine.get().addRules(NEG_RULES);
-		EvalEngine.get().addRules(NUMERIC_FACTOR_RULES);
+		// Dist[u_,v_]+Dist[w_,v_] := If[ZeroQ[u+w], 0, Dist[u+w,v]],
+		org.matheclipse.core.reflection.system.Plus.CONST.setUpHashRule(Dist($p("u"), $p("v")), Dist($p("w"), $p("v")), If(ZeroQ(Plus(
+				$s("u"), $s("w"))), C0, Dist(Plus($s("u"), $s("w")), $s("v"))), null);
+		// Dist[u_,v_]-Dist[w_,v_] := If[ZeroQ[u-w], 0, Dist[u-w,v]],
+		org.matheclipse.core.reflection.system.Plus.CONST.setUpHashRule(Dist($p("u"), $p("v")), Times(CN1, Dist($p("w"), $p("v"))), If(
+				ZeroQ(Plus($s("u"), Times(CN1, $s("w")))), C0, Dist(Plus($s("u"), Times(CN1, $s("w"))), $s("v"))), null);
+		// Dist[u_,v_]*w_ := Dist[w*u,v] /; w=!=-1
+		org.matheclipse.core.reflection.system.Times.CONST.setUpHashRule(Dist($p("u"), $p("v")), $p("w"), Dist(Times($s("w"), $s("u")),
+				$s("v")), UnsameQ($s("w"), CN1));
+
+		EvalEngine.get().addRules(NEGQ_RULES);
+		EvalEngine.get().addRules(NUMERICFACTOR_RULES);
+		EvalEngine.get().addRules(POSITIVEQ_RULES);
 		EvalEngine.get().addRules(POSQ_RULES);
+		EvalEngine.get().addRules(REALNUMERICQ_RULES);
 		EvalEngine.get().addRules(SUBST_RULES);
 	}
 
@@ -250,7 +278,7 @@ public class UtilityFunctions {
 	public static IAST FractionQ(final IExpr a) {
 		return unary(FractionQ, a);
 	}
-	
+
 	public static IAST PowerQ(final IExpr a0) {
 		return unary(PowerQ, a0);
 	}
@@ -261,22 +289,6 @@ public class UtilityFunctions {
 
 	public static IAST SumQ(final IExpr a0) {
 		return unary(SumQ, a0);
-	}
-
-	public static IAST Re(final IExpr a0) {
-		return unary($s("Re"), a0);
-	}
-
-	public static IAST Im(final IExpr a0) {
-		return unary($s("Im"), a0);
-	}
-
-	public static IAST First(final IExpr a0) {
-		return unary($s("First"), a0);
-	}
-
-	public static IAST Rest(final IExpr a0) {
-		return unary($s("Rest"), a0);
 	}
 
 	public static IAST Dist(final IExpr a0, final IExpr a1) {
@@ -335,28 +347,13 @@ public class UtilityFunctions {
 		return binary($s("IndependentQ"), a0, a1);
 	}
 
-	public static IAST IntegerQ(final IExpr a) {
-		// TODO fix this
-		return unary($s("IntegerQ"), a);
-	}
-
-	public static IAST MatchQ(final IExpr a0, final IExpr a1) {
-		// TODO fix this
-		return binary($s("MatchQ"), a0, a1);
-	}
-
 	public static IAST NegQ(final IExpr a) {
 		// TODO fix this
 		return unary(NegQ, a);
 	}
 
 	public static IAST NonzeroQ(final IExpr a) {
-		return Not(unary($s("PossibleZeroQ"), a));
-	}
-
-	public static IAST Not(final IExpr a) {
-		// TODO fix this
-		return unary(Not, a);
+		return Not(unary(PossibleZeroQ, a));
 	}
 
 	public static IAST NotFalseQ(final IExpr u) {
@@ -373,8 +370,11 @@ public class UtilityFunctions {
 	}
 
 	public static IAST PositiveQ(final IExpr a) {
-		// TODO fix this
-		return unary($s("PositiveQ"), a);
+		return unary(PositiveQ, a);
+	}
+
+	public static IAST RealNumericQ(final IExpr a) {
+		return unary(RealNumericQ, a);
 	}
 
 	public static IAST RationalQ(final IExpr a) {
@@ -500,6 +500,43 @@ public class UtilityFunctions {
 	}
 
 	public static IAST ZeroQ(final IExpr a) {
-		return unary($s("PossibleZeroQ"), a);
+		return unary(PossibleZeroQ, a);
 	}
+
+	//
+	// functions for logarithmic Integrals
+	//
+
+	public static IAST AlgebraicFunctionQ(final IExpr a0, final IExpr a1) {
+		return binary($s("AlgebraicFunctionQ"), a0, a1);
+	}
+	
+	public static IAST FalseQ(final IExpr a) {
+		return unary(FalseQ, a);
+	}
+	public static IAST FunctionOfLog(final IExpr a0, final IExpr a1) {
+		return binary($s("FunctionOfLog"), a0, a1);
+	}
+	public static IAST Erf(final IExpr a) {
+		return unary($s("Erf"), a);
+	}
+	public static IAST Erfi(final IExpr a) {
+		return unary($s("Erfi"), a);
+	}
+	public static IAST ExpIntegralEi(final IExpr a) {
+		return unary($s("ExpIntegralEi"), a);
+	}
+	public static IAST Gamma(final IExpr a0, final IExpr a1) {
+		return binary($s("Gamma"), a0, a1);
+	}
+	public static IAST LogIntegral(final IExpr a) {
+		return unary($s("LogIntegral"), a);
+	}
+	
+	public static IAST NonsumQ(final IExpr a) {
+		return unary($s("NonsumQ"), a);
+	}
+	public static IAST PolyLog(final IExpr a0, final IExpr a1) {
+		return binary($s("PolyLog"), a0, a1);
+	} 
 }

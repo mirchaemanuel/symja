@@ -1,5 +1,6 @@
 package org.matheclipse.core.system;
 
+import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 
@@ -39,7 +40,7 @@ public abstract class AbstractTestCase extends TestCase {
 			if (evalString.length() == 0 && expectedResult.length() == 0) {
 				return;
 			}
-
+//			scriptEngine.put("STEPWISE",Boolean.TRUE);
 			String evaledResult = (String) scriptEngine.eval(evalString);
 
 			assertEquals(evaledResult, expectedResult);

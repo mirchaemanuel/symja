@@ -6,6 +6,8 @@ import java.util.Iterator;
 import java.util.ListIterator;
 import java.util.NoSuchElementException;
 
+import org.matheclipse.basic.Config;
+
 /**
  * Resizable-array implementation (a wrapper for
  * <code>java.util.ArrayList</code>).<br/>

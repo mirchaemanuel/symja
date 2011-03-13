@@ -41,6 +41,23 @@ public class EvalUtilities extends MathMLUtilities {
 		}
 		return null;
 	}
+	
+	public IExpr evalStepByStep(final String inputExpression) throws Exception {
+		IExpr parsedExpression = null;
+		if (inputExpression != null) {
+			// try {
+			startRequest();
+			fEvalEngine.reset();
+			parsedExpression = fEvalEngine.parse(inputExpression);
+			if (parsedExpression != null) {
+				fEvalEngine.reset();
+				IExpr temp = fEvalEngine.evalStepByStep(parsedExpression);
+				fEvalEngine.addOut(temp);
+				return temp;
+			}
+		}
+		return null;
+	}
 
 	public IExpr evaluate(final IExpr parsedExpression) throws RuntimeException {
 		if (parsedExpression != null) {

@@ -1,5 +1,8 @@
 package org.matheclipse.core.expression;
 
+import static org.matheclipse.core.expression.F.$s;
+import static org.matheclipse.core.expression.F.Not;
+import static org.matheclipse.core.expression.F.binary;
 import static org.matheclipse.core.expression.F.unary;
 
 import java.io.FileNotFoundException;
@@ -138,6 +141,8 @@ public class F {
 
 	public static ISymbol FindRoot;
 
+	public static ISymbol First;
+	
 	public static ISymbol Floor;
 
 	public static ISymbol FreeQ;
@@ -160,6 +165,8 @@ public class F {
 
 	public static ISymbol If;
 
+	public static ISymbol Im;
+	
 	public static ISymbol IntegerQ;
 
 	public static ISymbol Integrate;
@@ -186,6 +193,8 @@ public class F {
 
 	public static ISymbol MapAll;
 
+	public static ISymbol MatchQ;
+	
 	public static ISymbol MatrixPower;
 
 	public static ISymbol Max;
@@ -251,13 +260,17 @@ public class F {
 	public static ISymbol Quotient;
 
 	public static ISymbol Rational;
-
-	public static ISymbol RootOf;
-
+	
+	public static ISymbol Re;
+	
+	public static ISymbol Rest;
+	
 	public static ISymbol ReplaceAll;
 
 	public static ISymbol Reverse;
 
+	public static ISymbol RootOf;
+	
 	public static ISymbol RotateLeft;
 
 	public static ISymbol RotateRight;
@@ -730,7 +743,12 @@ public class F {
 
 		return unary(Fibonacci, a0);
 	}
+	
 
+	public static IAST First(final IExpr a0) {
+		return unary(First, a0);
+	}
+	
 	public static IAST FreeQ(final IExpr a0, final IExpr a1) {
 
 		return binary(FreeQ, a0, a1);
@@ -764,6 +782,22 @@ public class F {
 		return ternary(If, a0, a1, a2);
 	}
 
+	public static IAST Im(final IExpr a0) {
+		return unary(Im, a0);
+	}
+	
+	public static IAST IntegerQ(final IExpr a) {
+		return unary(IntegerQ, a);
+	}
+
+	public static IAST MatchQ(final IExpr a0, final IExpr a1) {
+		return binary(MatchQ, a0, a1);
+	}
+	
+	public static IAST Not(final IExpr a) {
+		return unary(Not, a);
+	}
+	
 	public static IAST Numerator(final IExpr a0) {
 		return unary(Numerator, a0);
 	}
@@ -945,6 +979,7 @@ public class F {
 			FactorInteger = predefinedSymbol("FactorInteger");
 			Fibonacci = predefinedSymbol("Fibonacci");
 			FindRoot = predefinedSymbol("FindRoot");
+			First = predefinedSymbol("First");
 			Floor = predefinedSymbol("Floor");
 			FreeQ = predefinedSymbol("FreeQ");
 			FullForm = predefinedSymbol("FullForm");
@@ -956,6 +991,7 @@ public class F {
 			Head = predefinedSymbol("Head");
 			Hold = predefinedSymbol("Hold");
 			If = predefinedSymbol("If");
+			Im = predefinedSymbol("Im");
 			IntegerQ = predefinedSymbol("IntegerQ");
 			Integrate = predefinedSymbol("Integrate");
 			Inverse = predefinedSymbol("Inverse");
@@ -971,6 +1007,7 @@ public class F {
 			Limit = predefinedSymbol("Limit");
 			Map = predefinedSymbol("Map");
 			MapAll = predefinedSymbol("MapAll");
+			MatchQ = predefinedSymbol("MatchQ");
 			MatrixPower = predefinedSymbol("MatrixPower");
 			Max = predefinedSymbol("Max");
 			MemberQ = predefinedSymbol("MemberQ");
@@ -984,7 +1021,7 @@ public class F {
 			// NumberPartitions = predefinedSymbol("NumberPartitions", new
 			// NumberPartitions());
 			NumberQ = predefinedSymbol("NumberQ");
-			NumberQ = predefinedSymbol("NumericQ");
+			NumericQ = predefinedSymbol("NumericQ");
 			Numerator = predefinedSymbol("Numerator");
 			OddQ = predefinedSymbol("OddQ");
 			Or = predefinedSymbol("Or");
@@ -1006,6 +1043,8 @@ public class F {
 			Print = predefinedSymbol("Print");
 			Product = predefinedSymbol("Product");
 			Quotient = predefinedSymbol("Quotient");
+			Re = predefinedSymbol("Re");
+			Rest = predefinedSymbol("Rest");
 			Reverse = predefinedSymbol("Reverse");
 			RootOf = predefinedSymbol("RootOf");
 			RotateLeft = predefinedSymbol("RotateLeft");
@@ -1335,7 +1374,15 @@ public class F {
 
 		return binary($s("Quotient"), a0, a1);
 	}
-
+	
+	public static IAST Re(final IExpr a0) {
+		return unary(Re, a0);
+	}
+	
+	public static IAST Rest(final IExpr a0) {
+		return unary(Rest, a0);
+	}
+	
 	public static IAST ReplaceAll(final IExpr a0, final IExpr a1) {
 
 		return binary(ReplaceAll, a0, a1);

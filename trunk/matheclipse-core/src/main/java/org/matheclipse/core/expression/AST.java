@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 
+import org.matheclipse.basic.Config;
 import org.matheclipse.core.eval.exception.WrongArgumentType;
 import org.matheclipse.core.generic.IsUnaryVariableOrPattern;
 import org.matheclipse.core.generic.UnaryVariable2Slot;
@@ -633,6 +634,10 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 		return false;
 	}
 
+	public boolean isPattern() {
+		return false;
+	}
+
 	public boolean isSymbol() {
 		return false;
 	}
@@ -1047,14 +1052,23 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 
 	public String fullFormString() {
 		final String sep = ", ";
-		final IExpr temp = head();
+		IExpr temp = head();
 		StringBuffer text = new StringBuffer();
-		text.append(temp.fullFormString());
+		if (temp == null) {
+			text.append("<null-head>");
+		} else {
+			text.append(temp.fullFormString());
+		}
 		text.append('[');
 		for (int i = 1; i < size(); i++) {
-			text.append(get(i).fullFormString());
-			if (i < size() - 1) {
-				text.append(sep);
+			temp = get(i);
+			if (temp == null) {
+				text.append("<null-arg>");
+			} else {
+				text.append(get(i).fullFormString());
+				if (i < size() - 1) {
+					text.append(sep);
+				}
 			}
 		}
 		text.append(']');
@@ -1115,35 +1129,42 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 
 	@Override
 	public String toString() {
-		final StringBuffer buf = new StringBuffer();
-		if (size() > 0 && isList()) {
-			buf.append('{');
-			for (int i = 1; i < size(); i++) {
-				buf.append(get(i) == this ? "(this AST)" : String.valueOf(get(i)));
-				if (i < size() - 1) {
-					buf.append(", ");
+		try {
+			final StringBuffer buf = new StringBuffer();
+			if (size() > 0 && isList()) {
+				buf.append('{');
+				for (int i = 1; i < size(); i++) {
+					buf.append(get(i) == this ? "(this AST)" : String.valueOf(get(i)));
+					if (i < size() - 1) {
+						buf.append(", ");
+					}
 				}
-			}
-			buf.append('}');
-			return buf.toString();
+				buf.append('}');
+				return buf.toString();
 
-		} else if (isAST(F.Slot, 2) && (get(1) instanceof IInteger)) {
-			try {
-				final int slot = ((IInteger) get(1)).toInt();
-				if (slot <= 0) {
-					return super.toString();
+			} else if (isAST(F.Slot, 2) && (get(1) instanceof IInteger)) {
+				try {
+					final int slot = ((IInteger) get(1)).toInt();
+					if (slot <= 0) {
+						return super.toString();
+					}
+					if (slot == 1) {
+						return "#";
+					}
+					return "#" + slot;
+				} catch (final ArithmeticException e) {
+					// fall through
 				}
-				if (slot == 1) {
-					return "#";
-				}
-				return "#" + slot;
-			} catch (final ArithmeticException e) {
-				// fall through
-			}
-			return super.toString();
+				return super.toString();
 
-		} else {
-			return super.toString();
+			} else {
+				return super.toString();
+			}
+		} catch (NullPointerException e) {
+			if (Config.SHOW_STACKTRACE) {
+				System.out.println(fullFormString());
+			}
+			throw e;
 		}
 	}
 

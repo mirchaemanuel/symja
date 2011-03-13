@@ -12,6 +12,7 @@ import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.IFraction;
 import org.matheclipse.core.interfaces.IInteger;
 import org.matheclipse.core.interfaces.INumber;
+import org.matheclipse.core.interfaces.IPattern;
 import org.matheclipse.core.interfaces.ISignedNumber;
 import org.matheclipse.core.interfaces.ISymbol;
 import org.matheclipse.core.patternmatching.PatternMatcher;
@@ -273,6 +274,10 @@ public abstract class ExprImpl implements IExpr {
 		return !AST.COPY.some(this, predicate, 1);
 	}
 
+	public boolean isPattern() {
+		return this instanceof IPattern;
+	}
+	
 	public boolean isSymbol() {
 		return this instanceof ISymbol;
 	}

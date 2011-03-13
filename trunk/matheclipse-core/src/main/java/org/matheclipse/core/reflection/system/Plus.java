@@ -21,9 +21,14 @@ import org.matheclipse.core.interfaces.ISymbol;
 import org.matheclipse.core.patternmatching.HashedOrderlessMatcher;
 
 public class Plus extends AbstractArgMultiple implements INumeric {
-
+	/**
+	 * Constructor for the singleton
+	 */
+	public final static Plus CONST = new Plus();
+	
 	private static HashedOrderlessMatcher ORDERLESS_MATCHER = new HashedOrderlessMatcher(true);
 
+	@Override
 	public HashedOrderlessMatcher getHashRuleMap() {
 		return ORDERLESS_MATCHER;
 	}

@@ -29,6 +29,7 @@ import org.matheclipse.core.expression.F;
 import org.matheclipse.core.expression.IConstantHeaders;
 import org.matheclipse.core.generic.BinaryEval;
 import org.matheclipse.core.generic.Functors;
+import org.matheclipse.core.integrate.rubi.LogarithmFunctionIntegrationRules0;
 import org.matheclipse.core.integrate.rubi.TrigFunctionIntegrationRules0;
 import org.matheclipse.core.integrate.rubi.TrigFunctionIntegrationRules1;
 import org.matheclipse.core.integrate.rubi.TrigFunctionIntegrationRules2;
@@ -185,12 +186,14 @@ public class Integrate extends AbstractFunctionEvaluator implements IConstantHea
 								}
 								return apartPlus;
 							}
-							if (arg1.isTimes()) {
-								IExpr result = integratePolynomialByParts(arg1, symbol);
-								if (result != null) {
-									return result;
-								}
-							}
+							
+							// if (arg1.isTimes()) {
+							// IExpr result = integratePolynomialByParts(arg1, symbol);
+							// if (result != null) {
+							// return result;
+							// }
+							// }
+
 							// try {
 							// ArrayList<IExpr> varList = new ArrayList<IExpr>();
 							// varList.add(symbol);
@@ -411,6 +414,15 @@ public class Integrate extends AbstractFunctionEvaluator implements IConstantHea
 		return null;
 	}
 
+	/**
+	 * See <a href="http://en.wikipedia.org/wiki/Integration_by_parts">Wikipedia-
+	 * Integration by parts</a>
+	 * 
+	 * @param f
+	 * @param g
+	 * @param symbol
+	 * @return
+	 */
 	private static IExpr integratePolynomialByParts(final IAST arg1, ISymbol symbol) {
 		IAST fTimes = F.Times();
 		IAST gTimes = F.Times();
@@ -503,6 +515,7 @@ public class Integrate extends AbstractFunctionEvaluator implements IConstantHea
 		ast.addAll(TrigFunctionIntegrationRules1.RULES);
 		ast.addAll(TrigFunctionIntegrationRules2.RULES);
 		ast.addAll(TrigFunctionIntegrationRules3.RULES);
+		ast.addAll(LogarithmFunctionIntegrationRules0.RULES);
 		return ast;
 
 		// return null;

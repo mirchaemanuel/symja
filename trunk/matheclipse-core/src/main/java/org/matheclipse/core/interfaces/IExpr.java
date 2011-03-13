@@ -368,6 +368,12 @@ public interface IExpr extends Comparable<IExpr>, RingElem<IExpr>, INestedListEl
 	public boolean isPlus();
 
 	/**
+	 * Test if this expression is a pattern object
+	 * 
+	 */
+	public boolean isPattern();
+
+	/**
 	 * Test if this expression is the function
 	 * <code>Power[&lt;arg1&gt;, &lt;arg2&gt;]</code>
 	 * 

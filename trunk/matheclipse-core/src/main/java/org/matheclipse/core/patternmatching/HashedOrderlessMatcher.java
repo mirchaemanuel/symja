@@ -28,6 +28,15 @@ public class HashedOrderlessMatcher {
 		this.hashRuleMap = ArrayListMultimap.create();
 	}
 
+	/**
+	 * Define the rule for the <code>Orderless</code> operator <b>OP</b>.
+	 * <code>OP[lhs1Str, rhsStr, ....] := OP[rhsStr, ...]</code>
+	 * 
+	 * @param lhs1Str
+	 * @param lhs2Str
+	 * @param rhsStr
+	 * @throws SyntaxError
+	 */
 	public void setUpHashRule(final String lhs1Str, final String lhs2Str, final String rhsStr) throws SyntaxError {
 		setUpHashRule(lhs1Str, lhs2Str, rhsStr, null);
 	}
@@ -49,7 +58,16 @@ public class HashedOrderlessMatcher {
 		setUpHashRule(lhs1, lhs2, rhs, condition);
 	}
 
-	private void setUpHashRule(final IExpr lhs1, final IExpr lhs2, final IExpr rhs, final IExpr condition) {
+	/**
+	 * Define the rule for the <code>Orderless</code> operator <b>OP</b>.
+	 * <code>OP[lhs1Str, rhsStr, ....] := OP[rhsStr, ...] /; condition</code>
+	 * 
+	 * @param lhs1
+	 * @param lhs2
+	 * @param rhs
+	 * @param condition
+	 */
+	public void setUpHashRule(final IExpr lhs1, final IExpr lhs2, final IExpr rhs, final IExpr condition) {
 		HashedPatternRules hashRule = new HashedPatternRules(lhs1, lhs2, rhs, condition, fDefaultHashCode);
 		hashRuleMap.put(hashRule.getHash1(), hashRule);
 	}
@@ -92,9 +110,11 @@ public class HashedOrderlessMatcher {
 				evaled: for (HashedPatternRules hashRule : hashRuleList) {
 
 					for (int j = 0; j < hashValues.length; j++) {
-						if (hashValues[j] != hashRule.getHash2() || j == i) {
-							// hash code of both entries isn't matching
-							continue;
+						if (!hashRule.isPattern2()) {
+							if (hashValues[j] != hashRule.getHash2() || j == i) {
+								// hash code of both entries aren't matching
+								continue;
+							}
 						}
 						RulesData rulesData = hashRule.getRulesData();
 						if ((temp = rulesData.evalDownRule(F.List(orderlessAST.get(i + 1), orderlessAST.get(j + 1)))) != null) {
