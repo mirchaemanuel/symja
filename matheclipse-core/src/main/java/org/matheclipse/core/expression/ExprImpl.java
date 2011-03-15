@@ -285,15 +285,28 @@ public abstract class ExprImpl implements IExpr {
 	public boolean isComplex() {
 		return this instanceof IComplex;
 	}
-
+	
+	/**
+	 * {@inheritDoc}
+	 */
 	public boolean isFraction() {
 		return this instanceof IFraction;
 	}
-
+	
+	/**
+	 * {@inheritDoc}
+	 */
 	public boolean isInteger() {
 		return this instanceof IInteger;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	public boolean isRational() {
+		return (this instanceof IInteger)||(this instanceof IFraction);
+	}
+	
 	public boolean isSignedNumber() {
 		return this instanceof ISignedNumber;
 	}

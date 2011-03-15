@@ -236,7 +236,7 @@ public interface IExpr extends Comparable<IExpr>, RingElem<IExpr>, INestedListEl
 	public boolean isFalse();
 
 	/**
-	 * Test if this expression is a fractional number
+	 * Test if this expression is a fractional number, but no integer number.
 	 * 
 	 */
 	public boolean isFraction();
@@ -379,6 +379,13 @@ public interface IExpr extends Comparable<IExpr>, RingElem<IExpr>, INestedListEl
 	 * 
 	 */
 	public boolean isPower();
+
+	/**
+	 * Test if this expression is a rational number, i.e. integer or fraction
+	 * number.
+	 * 
+	 */
+	public boolean isRational();
 
 	/**
 	 * Test if this expression is of the form

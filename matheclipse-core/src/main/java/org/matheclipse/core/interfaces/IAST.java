@@ -76,6 +76,12 @@ public interface IAST extends IExpr, INestedList<IExpr> {
 	public final int IS_VECTOR = 0x0040;
 
 	/**
+	 * This expression represents a matrix or vector if one of the following bits
+	 * is set.
+	 */
+	public final int IS_MATRIX_OR_VECTOR = 0x0060;
+
+	/**
 	 * This expression represents an already decomposed partial fraction
 	 * 
 	 * @see Apart

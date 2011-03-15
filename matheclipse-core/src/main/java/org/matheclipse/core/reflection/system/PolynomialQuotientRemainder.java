@@ -3,6 +3,7 @@ package org.matheclipse.core.reflection.system;
 import org.matheclipse.basic.Config;
 import org.matheclipse.core.convert.ExprVariables;
 import org.matheclipse.core.convert.JASConvert;
+import org.matheclipse.core.eval.exception.Validate;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
 import org.matheclipse.core.expression.ASTRange;
 import org.matheclipse.core.expression.F;
@@ -27,11 +28,9 @@ public class PolynomialQuotientRemainder extends AbstractFunctionEvaluator {
   }
 
   @Override
-  public IExpr evaluate(final IAST lst) {
-    if (lst.size() != 3) {
-      return null;
-    }
-    IExpr[] result = quotientRemainder(lst);
+  public IExpr evaluate(final IAST ast) {
+  	Validate.checkSize(ast, 3);
+    IExpr[] result = quotientRemainder(ast);
     if (result == null) {
       return null;
     }

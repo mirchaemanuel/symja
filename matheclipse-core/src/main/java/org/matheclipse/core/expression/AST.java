@@ -649,7 +649,11 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 	public boolean isInteger() {
 		return false;
 	}
-
+	
+	public boolean isRational() {
+		return false;
+	}
+	
 	public boolean isSignedNumber() {
 		return false;
 	}

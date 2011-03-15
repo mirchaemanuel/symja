@@ -3,6 +3,7 @@ package org.matheclipse.core.reflection.system;
 import org.matheclipse.basic.Config;
 import org.matheclipse.core.convert.ExprVariables;
 import org.matheclipse.core.convert.JASConvert;
+import org.matheclipse.core.eval.exception.Validate;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
 import org.matheclipse.core.eval.util.Options;
 import org.matheclipse.core.expression.ASTRange;
@@ -29,19 +30,17 @@ public class PolynomialGCD extends AbstractFunctionEvaluator {
 	}
 
 	@Override
-	public IExpr evaluate(final IAST lst) {
-		if (lst.size() < 3) {
-			return null;
-		}
-		ExprVariables eVar = new ExprVariables(lst.get(1));
+	public IExpr evaluate(final IAST ast) {
+		Validate.checkRange(ast, 3);
+		ExprVariables eVar = new ExprVariables(ast.get(1));
 		if (!eVar.isSize(1)) {
 			// gcd only possible for univariate polynomials
 			return null;
 		}
 		ASTRange r = new ASTRange(eVar.getVarList(), 1);
-		IExpr expr = F.evalExpandAll(lst.get(1));
-		if (lst.size() > 3) {
-			final Options options = new Options(lst.topHead(), lst, lst.size() - 1);
+		IExpr expr = F.evalExpandAll(ast.get(1));
+		if (ast.size() > 3) {
+			final Options options = new Options(ast.topHead(), ast, ast.size() - 1);
 			IExpr option = options.getOption("Modulus");
 			if (option != null && option instanceof IInteger) {
 				try {
@@ -52,13 +51,13 @@ public class PolynomialGCD extends AbstractFunctionEvaluator {
 					JASConvert<ModInteger> jas = new JASConvert<ModInteger>(r.toList(), modIntegerRing);
 					GenPolynomial<ModInteger> poly = jas.expr2Poly(expr);
 					GenPolynomial<ModInteger> temp;
-					for (int i = 2; i < lst.size() - 1; i++) {
-						eVar = new ExprVariables(lst.get(i));
+					for (int i = 2; i < ast.size() - 1; i++) {
+						eVar = new ExprVariables(ast.get(i));
 						if (!eVar.isSize(1)) {
 							// gcd only possible for univariate polynomials
 							return null;
 						}
-						expr = F.evalExpandAll(lst.get(i));
+						expr = F.evalExpandAll(ast.get(i));
 						temp = jas.expr2Poly(expr);
 						poly = poly.gcd(temp);
 					}
@@ -76,13 +75,13 @@ public class PolynomialGCD extends AbstractFunctionEvaluator {
 			JASConvert<BigRational> jas = new JASConvert<BigRational>(r.toList(), BigRational.ZERO);
 			GenPolynomial<BigRational> poly = jas.expr2Poly(expr);
 			GenPolynomial<BigRational> temp;
-			for (int i = 2; i < lst.size(); i++) {
-				eVar = new ExprVariables(lst.get(i));
+			for (int i = 2; i < ast.size(); i++) {
+				eVar = new ExprVariables(ast.get(i));
 				if (!eVar.isSize(1)) {
 					// gcd only possible for univariate polynomials
 					return null;
 				}
-				expr = F.evalExpandAll(lst.get(i));
+				expr = F.evalExpandAll(ast.get(i));
 				temp = jas.expr2Poly(expr);
 				poly = poly.gcd(temp);
 			}

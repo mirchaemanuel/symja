@@ -48,11 +48,6 @@ public class UtilityFunctions {
 		return unary($s("ArcCoth"), a);
 	}
 
-	public static IAST Cancel(final IExpr a) {
-		// TODO fix this
-		return unary($s("Cancel"), a);
-	}
-
 	public static IAST Coefficient(final IExpr a0, final IExpr a1, final IExpr a2) {
 		return ternary($s("Coefficient"), a0, a1, a2);
 	}
@@ -79,13 +74,13 @@ public class UtilityFunctions {
 				IAST list = (IAST) ast.get(1);
 				// MapAnd
 				for (int i = 1; i < list.size(); i++) {
-					if (!(list.get(i).isFraction() || list.get(i).isInteger())) {
+					if (!(list.get(i).isRational())) {
 						return F.False;
 					}
 				}
 				return F.True;
 			}
-			return F.bool(ast.get(1).isFraction() || ast.get(1).isInteger());
+			return F.bool(ast.get(1).isRational());
 		}
 		return F.False;
 	}
@@ -387,11 +382,12 @@ public class UtilityFunctions {
 	}
 
 	public static IAST Rt(final IExpr a0, final IExpr a1) {
-		return binary($s("Rt"), a0, a1);
+	// TODO fix this
+		return binary($s(INTEGRATE_PREFIX+"Rt"), a0, a1);
 	}
 
 	public static IAST Rt(final IExpr a0, final IExpr a1, final IExpr a2) {
-		return ternary($s("Rt"), a0, a1, a2);
+		return ternary($s(INTEGRATE_PREFIX+"Rt"), a0, a1, a2);
 	}
 
 	public static IAST SameQ(final IExpr a0, final IExpr a1) {
