@@ -175,10 +175,14 @@ public class RulesData {
 	}
 
 	private boolean isComplicatedPatternRule(final IExpr patternExpr) {
-		if (patternExpr instanceof IAST) {
+		if (patternExpr.isAST()) {
 			final IAST ast = ((IAST) patternExpr);
 			if (ast.size() > 1) {
-				if ((ast.get(1) instanceof IPattern)) {
+				if (ast.get(1).isAST()) {
+					if (isComplicatedPatternRule((IAST) ast.get(1))) {
+						return true;
+					}
+				} else if (ast.get(1).isPattern()) {
 					return true;
 				}
 				final int attr = ast.topHead().getAttributes();
@@ -186,12 +190,18 @@ public class RulesData {
 					return true;
 				}
 				for (int i = 2; i < ast.size(); i++) {
-					if (ast.get(i) instanceof IPattern && ((IPattern) ast.get(i)).isDefault()) {
-						return true;
+					if (ast.get(i).isAST()) {
+						if (isComplicatedPatternRule((IAST) ast.get(i))) {
+							return true;
+						}
+					} else {
+						if (ast.get(i).isPattern() && ((IPattern) ast.get(i)).isDefault()) {
+							return true;
+						}
 					}
 				}
 			}
-		} else if (patternExpr instanceof IPattern) {
+		} else if (patternExpr.isPattern()) {
 			return true;
 		}
 		return false;

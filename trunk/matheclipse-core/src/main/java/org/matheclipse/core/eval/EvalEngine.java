@@ -115,7 +115,8 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 	}
 
 	/**
-	 * @param reapList the reapList to set
+	 * @param reapList
+	 *          the reapList to set
 	 */
 	public void setReapList(IAST reapList) {
 		this.reapList = reapList;
@@ -596,7 +597,7 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 				if ((evaledExpr = evalLoop(ast.get(1))) != null) {
 					if (resultList == null) {
 						resultList = ast.clone();
-						resultList.setEvalFlags(ast.getEvalFlags());
+						resultList.setEvalFlags(ast.getEvalFlags() & IAST.IS_MATRIX_OR_VECTOR);
 					}
 					resultList.set(1, evaledExpr);
 					if (ast.size() == 2) {
@@ -610,7 +611,7 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 					if ((evaledExpr = evalLoop(ast.get(i))) != null) {
 						if (resultList == null) {
 							resultList = ast.clone();
-							resultList.setEvalFlags(ast.getEvalFlags());
+							resultList.setEvalFlags(ast.getEvalFlags() & IAST.IS_MATRIX_OR_VECTOR);
 						}
 						resultList.set(i, evaledExpr);
 					}
@@ -654,11 +655,11 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 				// the HoldFirst attribute isn't set here
 				if (ast.size() > 1 && ast.get(1) instanceof IAST) {
 					IAST temp = (IAST) ast.get(1);
-//					if (temp.isFree(isPattern, true)) {
-						resultList.set(1, evaluate(temp));
-//					} else {
-//						resultList.set(1, evalSetAttributes(temp));
-//					}
+					// if (temp.isFree(isPattern, true)) {
+					resultList.set(1, evaluate(temp));
+					// } else {
+					// resultList.set(1, evalSetAttributes(temp));
+					// }
 				}
 			}
 			if ((ISymbol.HOLDREST & attr) == ISymbol.NOATTRIBUTE) {
@@ -666,11 +667,11 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 				for (int i = 2; i < ast.size(); i++) {
 					if (ast.get(i) instanceof IAST) {
 						IAST temp = (IAST) ast.get(i);
-//						if (temp.isFree(isPattern, true)) {
-							resultList.set(i, evaluate(temp));
-//						} else {
-//							resultList.set(i, evalSetAttributes(temp));
-//						}
+						// if (temp.isFree(isPattern, true)) {
+						resultList.set(i, evaluate(temp));
+						// } else {
+						// resultList.set(i, evalSetAttributes(temp));
+						// }
 					}
 				}
 			}

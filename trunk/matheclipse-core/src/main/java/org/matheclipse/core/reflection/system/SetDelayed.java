@@ -22,13 +22,13 @@ public class SetDelayed implements IFunctionEvaluator, ICreatePatternMatcher {
 		if (rightHandSide.isAST(F.Condition, 3)) {
 			createPatternMatcher(leftHandSide, ((IAST) rightHandSide).get(1), ((IAST) rightHandSide).get(2), null);
 		} else if (rightHandSide.isAST(F.Module, 3)) {
-				IAST module = (IAST) rightHandSide;
-				if (module.get(2).isAST(F.Condition, 3)) {
-					IAST condition = (IAST) module.get(2);
-					 createPatternMatcher(leftHandSide, condition.get(1), condition.get(2), module.get(1));
-				} else {
-					  createPatternMatcher(leftHandSide, rightHandSide, null, null);
-				}
+			IAST module = (IAST) rightHandSide;
+			if (module.get(2).isAST(F.Condition, 3)) {
+				IAST condition = (IAST) module.get(2);
+				createPatternMatcher(leftHandSide, condition.get(1), condition.get(2), module.get(1));
+			} else {
+				createPatternMatcher(leftHandSide, rightHandSide, null, null);
+			}
 		} else {
 			createPatternMatcher(leftHandSide, rightHandSide, null, null);
 		}

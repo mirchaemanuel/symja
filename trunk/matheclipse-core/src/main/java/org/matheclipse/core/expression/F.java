@@ -91,6 +91,8 @@ public class F {
 	
 	public static ISymbol Break;
 
+	public static ISymbol Cancel;
+	
 	public static ISymbol Ceiling;
 
 	public static ISymbol Complex;
@@ -625,6 +627,10 @@ public class F {
 		return binary(Block, a0, a1);
 	}
 	
+	public static IAST Cancel(final IExpr a) {
+		return unary(Cancel, a);
+	}
+	
 	public static IAST Ceiling(final IExpr a0) {
 
 		return unary(Ceiling, a0);
@@ -956,6 +962,7 @@ public class F {
 			Binomial = predefinedSymbol("Binomial");
 			Block = predefinedSymbol("Block");
 			Break = predefinedSymbol("Break");
+			Cancel = predefinedSymbol("Cancel");
 			Csc = predefinedSymbol("Csc");
 			Ceiling = predefinedSymbol("Ceiling");
 			CompoundExpression = predefinedSymbol("CompoundExpression");
