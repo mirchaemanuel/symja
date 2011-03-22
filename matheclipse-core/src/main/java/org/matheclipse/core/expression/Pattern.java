@@ -246,7 +246,7 @@ public class Pattern extends ExprImpl implements IPattern {
 			final StringBuffer buffer = new StringBuffer();
 			buffer.append("$p(");
 			if (fSymbol == null) {
-				buffer.append("null");
+				buffer.append("(ISymbol)null");
 				if (fCondition != null) {
 					buffer.append("," + fCondition.internalFormString(symbolsAsFactoryMethod, 0));
 				}

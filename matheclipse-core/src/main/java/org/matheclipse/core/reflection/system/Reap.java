@@ -34,6 +34,6 @@ public class Reap extends AbstractFunctionEvaluator {
 	}
 
 	public void setUp(final ISymbol symbol) {
-		symbol.setAttributes(ISymbol.HOLDALL | ISymbol.LISTABLE);
+		symbol.setAttributes(ISymbol.HOLDFIRST | ISymbol.LISTABLE);
 	}
 }

@@ -16,7 +16,12 @@ import com.google.common.base.Function;
  * 
  */
 public interface ISymbol extends IExpr { // Variable<IExpr>
-
+	/**
+	 * ISymbol attribute to indicate that a symbols evaluation should be printed
+	 * to Console with System.out.println();
+	 */
+	public final static int CONSOLE_OUTPUT = 0x1000;
+	
 	/**
 	 * ISymbol attribute to indicate that a symbol has a constant value
 	 */

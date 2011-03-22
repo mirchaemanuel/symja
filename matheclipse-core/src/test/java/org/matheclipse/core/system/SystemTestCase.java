@@ -304,13 +304,14 @@ public class SystemTestCase extends AbstractTestCase {
 		check("D[Sin[x]^Cos[x],x]", "(-Log[Sin[x]]*Sin[x]+Csc[x]*Cos[x]^2)*Sin[x]^Cos[x]");
 		check(
 				"Trace[D[Sin[x]^Cos[x],x]]",
-				"{D[Sin[x]^Cos[x],x],Sin[x]^Cos[x]*(Log[Sin[x]]*D[Cos[x],x]+Cos[x]*D[Sin[x],x]*Sin[x]^(\n"
-						+ "-1)),{Derivative[Sin],Cos[#1]&},{x&,Cos[x]},{D[Sin[x],x],Cos[x]*D[x,x],{D[x,x],1},\n"
-						+ "1*Cos[x],Cos[x]},{Sin[x]^(-1),Csc[x]^((-1)*(-1)),{(-1)*(-1),(-1)^2,1},Csc[x]^1,Csc[x]},{Cos[x]*D[Sin[x],x]*Sin[x]^(\n"
-						+ "-1),Cos[x]*Cos[x]*Csc[x],Csc[x]*Cos[x]^2},{Derivative[Cos],(-1)*Sin[#1]&},{x&,(\n"
-						+ "-1)*Sin[x]},{D[Cos[x],x],(-1)*Sin[x]*D[x,x],(-1)*Sin[x]*D[x,x],{D[x,x],1},(-1)*1*Sin[x],(\n"
-						+ "-1)*Sin[x]},{Log[Sin[x]]*D[Cos[x],x],Log[Sin[x]]*(-1)*Sin[x],(-1)*Log[Sin[x]]*Sin[x]},{Log[Sin[x]]*D[Cos[x],x]+Cos[x]*D[Sin[x],x]*Sin[x]^(\n"
-						+ "-1),-Log[Sin[x]]*Sin[x]+Csc[x]*Cos[x]^2},(-Log[Sin[x]]*Sin[x]+Csc[x]*Cos[x]^2)*Sin[x]^Cos[x]}");
+				"{D[Sin[x]^Cos[x],x],Sin[x]^Cos[x]*(Log[Sin[x]]*D[Cos[x],x]+Cos[x]*D[Sin[x],x]*Sin[x]^(\n" + 
+				"-1)),{Derivative[Sin],Cos[#1]&},{x&,Cos[x]},{D[Sin[x],x],Cos[x]*D[x,x],{D[x,x],1},\n" + 
+				"1*Cos[x],Cos[x]},{(-1)*(-1),(-1)^2,1},{Csc[x]^((-1)*(-1)),Csc[x]^1,Csc[x]},{Sin[x]^(\n" + 
+				"-1),Csc[x]},{Cos[x]*D[Sin[x],x]*Sin[x]^(-1),Cos[x]*Cos[x]*Csc[x],Csc[x]*Cos[x]^2},{Derivative[Cos],(\n" + 
+				"-1)*Sin[#1]&},{x&,(-1)*Sin[x]},{D[Cos[x],x],(-1)*Sin[x]*D[x,x],(-1)*Sin[x]*D[x,x],{D[x,x],\n" + 
+				"1},(-1)*1*Sin[x],(-1)*Sin[x]},{Log[Sin[x]]*D[Cos[x],x],Log[Sin[x]]*(-1)*Sin[x],(\n" + 
+				"-1)*Log[Sin[x]]*Sin[x]},{Log[Sin[x]]*D[Cos[x],x]+Cos[x]*D[Sin[x],x]*Sin[x]^(-1),-Log[Sin[x]]*Sin[x]+Csc[x]*Cos[x]^\n" + 
+				"2},(-Log[Sin[x]]*Sin[x]+Csc[x]*Cos[x]^2)*Sin[x]^Cos[x]}");
 		check("Trace[NumberQ[1/3]]", "{NumberQ[1/3],True}");
 	}
 
@@ -1023,10 +1024,12 @@ public class SystemTestCase extends AbstractTestCase {
 				+ "360*a^2*b^7*c+840*a^3*b^6*c+1260*a^4*b^5*c+1260*a^5*b^4*c+840*a^6*b^3*c+360*a^7*b^\n"
 				+ "2*c+90*a^8*b*c+10*a^9*c+b^10+10*a*b^9+45*a^2*b^8+120*a^3*b^7+210*a^4*b^6+252*a^5*b^\n"
 				+ "5+210*a^6*b^4+120*a^7*b^3+45*a^8*b^2+10*a^9*b+a^10");
+		check("Expand[x*(x+1)]", "x^2+x");
 	}
 
 	public void testSystem168() {
-		check("Expand[x*(x+1)]", "x^2+x");
+		check("Exponent[Cos[a+b*x]^2+Cos[a+b*x]^ex,Cos[a+b*x]]", "Max[2,ex]");
+		check("Exponent[Cos[a+b*x]^2+Cos[a+b*x]^(-1/2),Cos[a+b*x]]", "2");
 	}
 
 	public void testSystem169() {
@@ -1041,85 +1044,71 @@ public class SystemTestCase extends AbstractTestCase {
 		check("Cross[{1, 2, 3}, {a, b, c}]", "{2*c-3*b,-c+3*a,b-2*a}");
 	}
 
-	public void testSystem171() {
-		check("Integrate[x^(-1),x]", "Log[x]");
-		check("Integrate[x^a,x]", "Integrate[x^a,x]");
-		check("Integrate[x^10,x]", "1/11*x^11");
-		check("Simplify[1/2*(2*x+2)]", "x+1");
-		check("Simplify[1/2*(2*x+2)*(1/2)^(1/2)]", "(x+1)*(1/2)^(1/2)");
-		check("Simplify[Integrate[(8*x+1)/(x^2+x+1)^2,x]]", "(-2*x-5)*(x^2+x+1)^(-1)-4*ArcTan[(2*x+1)*3^(-1/2)]*3^(-1/2)");
+	// public void testSystem171() {
+	// check("Integrate[x^(-1),x]", "Log[x]");
+	// check("Integrate[x^a,x]", "Integrate[x^a,x]");
+	// check("Integrate[x^10,x]", "1/11*x^11");
+	// check("Simplify[1/2*(2*x+2)]", "x+1");
+	// check("Simplify[1/2*(2*x+2)*(1/2)^(1/2)]", "(x+1)*(1/2)^(1/2)");
+	// check("Simplify[Integrate[(8*x+1)/(x^2+x+1)^2,x]]",
+	// "(-2*x-5)*(x^2+x+1)^(-1)-4*ArcTan[(2*x+1)*3^(-1/2)]*3^(-1/2)");
+	//
+	// check("Apart[1/(x^3+1)]", "(-1/3*x+2/3)*(x^2-x+1)^(-1)+1/3*(x+1)^(-1)");
+	// check("Integrate[1/(x^5+x-7),x]", "Integrate[(x^5+x-7)^(-1),x]");
+	// check("Integrate[1/(x-2),x]", "Log[x-2]");
+	// check("Integrate[(x-2)^(-2),x]", "(-1)*(x-2)^(-1)");
+	// check("Integrate[(x-2)^(-3),x]", "(-1/2)*(x-2)^(-2)");
+	// check("Integrate[(x^2+2*x+3)^(-1),x]",
+	// "ArcTan[1/2*(2*x+2)*(1/2)^(1/2)]*(1/2)^(1/2)");
+	// check("Integrate[1/(x^2+1),x]", "ArcTan[x]");
+	// check("Integrate[(2*x+5)/(x^2-2*x+5),x]",
+	// "7/2*ArcTan[1/4*(2*x-2)]+Log[x^2-2*x+5]");
+	// check("Integrate[(8*x+1)/(x^2+2*x+1),x]", "7*(x+1)^(-1)+8*Log[x+1]");
+	//
+	// check("Integrate[1/(x^3+1),x]",
+	// "ArcTan[(2*x-1)*3^(-1/2)]*3^(-1/2)-1/6*Log[x^2-x+1]+1/3*Log[x+1]");
+	// check("Simplify[Integrate[1/3*(2-x)*(x^2-x+1)^(-1),x]]",
+	// "ArcTan[(2*x-1)*3^(-1/2)]*3^(-1/2)-1/6*Log[x^2-x+1]");
+	// check("Integrate[1/3*(2-x)*(x^2-x+1)^(-1)+1/3*(x+1)^(-1),x]",
+	// "ArcTan[(2*x-1)*3^(-1/2)]*3^(-1/2)-1/6*Log[x^2-x+1]+1/3*Log[x+1]");
+	// check("Integrate[E^x*(2-x^2),x]", "2*E^x-(E^x*x^2-2*(x-1)*E^x)");
+	// check("Integrate[(x^2+1)Log[x],x]", "1/3*Log[x]*x^3-1/9*x^3+x*Log[x]-x");
+	// check("Integrate[x*Log[x],x]", "1/2*Log[x]*x^2-1/4*x^2");
+	//
+	// check("Apart[2*x^2/(x^3+1)]", "(4/3*x-2/3)*(x^2-x+1)^(-1)+2/3*(x+1)^(-1)");
+	//
+	// check("Integrate[2*x^2/(x^3+1),x]", "2*(1/3*Log[x^2-x+1]+1/3*Log[x+1])");
+	// // check("Integrate[Sin[x]^3,x]", "-1/3*Cos[x]*Sin[x]^2-2/3*Cos[x]");
+	// check("Integrate[Sin[x]^3,x]", "(-1)*(-1/3*Cos[x]^3+Cos[x])");
+	// // check("Integrate[Cos[2x]^3,x]", "1/6*Cos[2*x]^2*Sin[2*x]+1/3*Sin[2*x]");
+	// check("Integrate[Cos[2x]^3,x]", "1/2*Sin[2*x]-1/6*Sin[2*x]^3");
+	// check("Integrate[x,x]", "1/2*x^2");
+	// check("Integrate[2x,x]", "x^2");
+	// check("Integrate[h[x],x]", "Integrate[h[x],x]");
+	// check("Integrate[f[x]+g[x]+h[x],x]",
+	// "Integrate[h[x],x]+Integrate[g[x],x]+Integrate[f[x],x]");
+	// check("Integrate[Sin[x],x]", "(-1)*Cos[x]");
+	// check("Integrate[Sin[10*x],x]", "(-1/10)*Cos[10*x]");
+	// check("Integrate[Sin[Pi+10*x],x]", "(-1/10)*Cos[10*x+Pi]");
+	// check("Integrate[E^(a*x),x]", "E^(a*x)*a^(-1)");
+	// check("Integrate[x*E^(a*x),x]", "(a*x-1)*E^(a*x)*a^(-2)");
+	// check("Integrate[x*E^x,x]", "(x-1)*E^x");
+	// check("Integrate[x^2*E^x,x]", "E^x*x^2-2*(x-1)*E^x");
+	// check("Integrate[x^2*E^(a*x),x]",
+	// "E^(a*x)*a^(-1)*x^2-2*(a*x-1)*E^(a*x)*a^(-3)");
+	// check("Integrate[x^3*E^(a*x),x]",
+	// "E^(a*x)*a^(-1)*x^3-3*(E^(a*x)*a^(-1)*x^2-2*(a*x-1)*E^(a*x)*a^(-3))*a^(-1)");
+	// check("(-1.0)/48", "-0.020833333333333332");
+	// check("NIntegrate[(x-1)*(x-0.5)*x*(x+0.5)*(x+1),{x,0,1}]",
+	// "-0.020833327124516472");
+	// check("NIntegrate[(x-1)*(x-0.5)*x*(x+0.5)*(x+1),{x,0,1},Simpson]",
+	// "-0.0208333320915699");
+	// check("NIntegrate[(x-1)*(x-0.5)*x*(x+0.5)*(x+1),{x,0,1},Romberg]",
+	// "-0.020833333333333332");
+	// check("NIntegrate[(x-1)*(x-0.5)*x*(x+0.5)*(x+1),{x,0,1},LegendreGauss]",
+	// "-0.020833333333333336");
+	// }
 
-		check("Apart[1/(x^3+1)]", "(-1/3*x+2/3)*(x^2-x+1)^(-1)+1/3*(x+1)^(-1)");
-		check("Integrate[1/(x^5+x-7),x]", "Integrate[(x^5+x-7)^(-1),x]");
-		check("Integrate[1/(x-2),x]", "Log[x-2]");
-		check("Integrate[(x-2)^(-2),x]", "(-1)*(x-2)^(-1)");
-		check("Integrate[(x-2)^(-3),x]", "(-1/2)*(x-2)^(-2)");
-		check("Integrate[(x^2+2*x+3)^(-1),x]", "ArcTan[1/2*(2*x+2)*(1/2)^(1/2)]*(1/2)^(1/2)");
-		check("Integrate[1/(x^2+1),x]", "ArcTan[x]");
-		check("Integrate[(2*x+5)/(x^2-2*x+5),x]", "7/2*ArcTan[1/4*(2*x-2)]+Log[x^2-2*x+5]");
-		check("Integrate[(8*x+1)/(x^2+2*x+1),x]", "7*(x+1)^(-1)+8*Log[x+1]");
-
-		check("Integrate[1/(x^3+1),x]", "ArcTan[(2*x-1)*3^(-1/2)]*3^(-1/2)-1/6*Log[x^2-x+1]+1/3*Log[x+1]");
-		check("Simplify[Integrate[1/3*(2-x)*(x^2-x+1)^(-1),x]]", "ArcTan[(2*x-1)*3^(-1/2)]*3^(-1/2)-1/6*Log[x^2-x+1]");
-		check("Integrate[1/3*(2-x)*(x^2-x+1)^(-1)+1/3*(x+1)^(-1),x]", "ArcTan[(2*x-1)*3^(-1/2)]*3^(-1/2)-1/6*Log[x^2-x+1]+1/3*Log[x+1]");
-		check("Integrate[E^x*(2-x^2),x]", "2*E^x-(E^x*x^2-2*(x-1)*E^x)");
-		check("Integrate[(x^2+1)Log[x],x]", "1/3*Log[x]*x^3-1/9*x^3+x*Log[x]-x");
-		check("Integrate[x*Log[x],x]", "1/2*Log[x]*x^2-1/4*x^2");
-
-		check("Apart[2*x^2/(x^3+1)]", "(4/3*x-2/3)*(x^2-x+1)^(-1)+2/3*(x+1)^(-1)");
-
-		check("Integrate[2*x^2/(x^3+1),x]", "2*(1/3*Log[x^2-x+1]+1/3*Log[x+1])");
-		// check("Integrate[Sin[x]^3,x]", "-1/3*Cos[x]*Sin[x]^2-2/3*Cos[x]");
-		check("Integrate[Sin[x]^3,x]", "(-1)*(-1/3*Cos[x]^3+Cos[x])");
-		// check("Integrate[Cos[2x]^3,x]", "1/6*Cos[2*x]^2*Sin[2*x]+1/3*Sin[2*x]");
-		check("Integrate[Cos[2x]^3,x]", "1/2*Sin[2*x]-1/6*Sin[2*x]^3");
-		check("Integrate[x,x]", "1/2*x^2");
-		check("Integrate[2x,x]", "x^2");
-		check("Integrate[h[x],x]", "Integrate[h[x],x]");
-		check("Integrate[f[x]+g[x]+h[x],x]", "Integrate[h[x],x]+Integrate[g[x],x]+Integrate[f[x],x]");
-		check("Integrate[Sin[x],x]", "(-1)*Cos[x]");
-		check("Integrate[Sin[10*x],x]", "(-1/10)*Cos[10*x]");
-		check("Integrate[Sin[Pi+10*x],x]", "(-1/10)*Cos[10*x+Pi]");
-		check("Integrate[E^(a*x),x]", "E^(a*x)*a^(-1)");
-		check("Integrate[x*E^(a*x),x]", "(a*x-1)*E^(a*x)*a^(-2)");
-		check("Integrate[x*E^x,x]", "(x-1)*E^x");
-		check("Integrate[x^2*E^x,x]", "E^x*x^2-2*(x-1)*E^x");
-		check("Integrate[x^2*E^(a*x),x]", "E^(a*x)*a^(-1)*x^2-2*(a*x-1)*E^(a*x)*a^(-3)");
-		check("Integrate[x^3*E^(a*x),x]", "E^(a*x)*a^(-1)*x^3-3*(E^(a*x)*a^(-1)*x^2-2*(a*x-1)*E^(a*x)*a^(-3))*a^(-1)");
-		check("(-1.0)/48", "-0.020833333333333332");
-		check("NIntegrate[(x-1)*(x-0.5)*x*(x+0.5)*(x+1),{x,0,1}]", "-0.020833327124516472");
-		check("NIntegrate[(x-1)*(x-0.5)*x*(x+0.5)*(x+1),{x,0,1},Simpson]", "-0.0208333320915699");
-		check("NIntegrate[(x-1)*(x-0.5)*x*(x+0.5)*(x+1),{x,0,1},Romberg]", "-0.020833333333333332");
-		check("NIntegrate[(x-1)*(x-0.5)*x*(x+0.5)*(x+1),{x,0,1},LegendreGauss]", "-0.020833333333333336");
-	}
-
-	public void testSystem172() {
-		check("Integrate[(x^7 - 24*x^4 - 4*x^2 + 8*x - 8)/(x^8 + 6*x^6 + 12*x^4 + 8*x^2),x]",
-				"3*(x^2+2)^(-1)-22*(1/4*x*(x^2+2)^(-1)+1/4*ArcTan[x*(1/2)^(1/2)]*(1/2)^(1/2))+48*(\n"
-						+ "1/8*x*(x^2+2)^(-2)+3/8*(1/4*x*(x^2+2)^(-1)+1/4*ArcTan[x*(1/2)^(1/2)]*(1/2)^(1/2)))+x^(\n"
-						+ "-1)+ArcTan[x*(1/2)^(1/2)]*(1/2)^(1/2)+Log[x]");
-		check("Integrate[(x^7-24*x^4-4*x^2+8*x-8)*x^(-2)*(x^2+2)^(-3),x]",
-				"3*(x^2+2)^(-1)-22*(1/4*x*(x^2+2)^(-1)+1/4*ArcTan[x*(1/2)^(1/2)]*(1/2)^(1/2))+48*(\n"
-						+ "1/8*x*(x^2+2)^(-2)+3/8*(1/4*x*(x^2+2)^(-1)+1/4*ArcTan[x*(1/2)^(1/2)]*(1/2)^(1/2)))+x^(\n"
-						+ "-1)+ArcTan[x*(1/2)^(1/2)]*(1/2)^(1/2)+Log[x]");
-		 check("Simplify[D[(x+2)*(3*x^2+2*x+2)*x^(-1)*(x^2+2)^(-2)+Log[x],x]]",
-		 "(x^7-24*x^4-4*x^2+8*x-8)*x^(-2)*(x^2+2)^(-3)");
-
-		check("Integrate[10/(x-3)^4,x]", "(-10/3)*(x-3)^(-3)");
-
-		check("Integrate[(-1+x)*(1+x)*(1+x^2)*(1+x^4)*(1+x^8),x]", "1/17*x^17-x");
-		check("Integrate[(10 x^2 - 63 x + 29)/(x^3 - 11 x^2 + 40 x -48),x]", "63*(x-4)^(-1)-70*Log[x-3]+80*Log[x-4]");
-
-		check("Apart[(x^7 - 24*x^4 - 4*x^2 + 8*x - 8)/(x^8 + 6*x^6 + 12*x^4 + 8*x^2)]",
-				"(x^2+2)^(-1)+(-6*x-22)*(x^2+2)^(-2)+48*(x^2+2)^(-3)+x^(-1)-x^(-2)");
-		check("Integrate[(x^2+2)^(-1),x]", "ArcTan[x*(1/2)^(1/2)]*(1/2)^(1/2)");
-		check("Integrate[(-6*x-22)*(x^2+2)^(-2),x]", "3*(x^2+2)^(-1)-22*(1/4*x*(x^2+2)^(-1)+1/4*ArcTan[x*(1/2)^(1/2)]*(1/2)^(1/2))");
-		check("Integrate[48*(x^2+2)^(-3),x]", "48*(1/8*x*(x^2+2)^(-2)+3/8*(1/4*x*(x^2+2)^(-1)+1/4*ArcTan[x*(1/2)^(1/2)]*(1/2)^(\n"
-				+ "1/2)))");
-		check("Integrate[-x^(-2),x]", "x^(-1)");
-		check("Integrate[x^(-1),x]", "Log[x]");
-
-	}
 
 	public void testSystem173() {
 		check("N[1.0]", "1.0");

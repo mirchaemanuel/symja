@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.matheclipse.core.eval.EvalEngine;
+import org.matheclipse.core.eval.exception.ReturnException;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.generic.Functors;
 import org.matheclipse.core.interfaces.IAST;
@@ -93,8 +94,12 @@ public class PatternMatcherAndEvaluator extends PatternMatcher implements Serial
 					for (int i = 0; i < fPatternSymbolsArray.size(); i++) {
 						rulesMap.put(fPatternSymbolsArray.get(i), fPatternValuesArray[i]);
 					}
-					fLastResult = Module
-							.evalModuleCondition(fModuleInitializer, fRightHandSide, fCondition, engine, Functors.rules(rulesMap));
+					try {
+						fLastResult = Module.evalModuleCondition(fModuleInitializer, fRightHandSide, fCondition, engine, Functors
+								.rules(rulesMap));
+					} catch (final ReturnException e) {
+						fLastResult = e.getValue();
+					}
 					return fLastResult != null;
 				}
 
@@ -152,7 +157,16 @@ public class PatternMatcherAndEvaluator extends PatternMatcher implements Serial
 		if (fPatternCounter == 0) {
 			// no patterns found match equally:
 			if (fLeftHandSide.equals(leftHandSide)) {
-				return fRightHandSide;
+				IExpr result = fRightHandSide;
+				try {
+				  IExpr temp = F.eval(result);
+				  if (temp!=null){
+				  	return temp;
+				  }
+				  return result;
+				} catch (final ReturnException e) {
+					return e.getValue();
+				}
 			}
 			return null;
 		}
@@ -162,7 +176,16 @@ public class PatternMatcherAndEvaluator extends PatternMatcher implements Serial
 			if (fLastResult != null) {
 				rightHandSide = fLastResult;
 			}
-			return EvaluationSupport.substituteLocalVariables(rightHandSide, fPatternSymbolsArray, fPatternValuesArray);
+			IExpr result = EvaluationSupport.substituteLocalVariables(rightHandSide, fPatternSymbolsArray, fPatternValuesArray);
+			try {
+			  IExpr temp = F.eval(result);
+			  if (temp!=null){
+			  	return temp;
+			  }
+			  return result;
+			} catch (final ReturnException e) {
+				return e.getValue();
+			}
 		}
 		return null;
 	}

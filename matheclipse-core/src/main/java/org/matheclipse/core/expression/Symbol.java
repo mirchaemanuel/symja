@@ -417,15 +417,22 @@ public class Symbol extends ExprImpl implements ISymbol {
 	public String internalFormString(boolean symbolsAsFactoryMethod, int depth) {
 		if (symbolsAsFactoryMethod) {
 			if (Character.isUpperCase(fSymbolName.charAt(0))) {
-				if (fSymbolName.equals("Pi")) {
-					return "Pi";
-				} else if (fSymbolName.equals("E")) {
-					return "E";
-				} else if (fSymbolName.equals("False")) {
-					return "False";
-				} else if (fSymbolName.equals("True")) {
-					return "True";
+				String alias = F.PREDEFINED_INTERNAL_STRINGS.get(fSymbolName);
+				if (alias!=null){
+					if (alias.contains("::")){
+						return "$s(\"" + alias + "\")";
+					}
+					return alias;
 				}
+//				if (fSymbolName.equals("Pi")) {
+//					return "Pi";
+//				} else if (fSymbolName.equals("E")) {
+//					return "E";
+//				} else if (fSymbolName.equals("False")) {
+//					return "False";
+//				} else if (fSymbolName.equals("True")) {
+//					return "True";
+//				}
 			}
 			return "$s(\"" + fSymbolName + "\")";
 		}

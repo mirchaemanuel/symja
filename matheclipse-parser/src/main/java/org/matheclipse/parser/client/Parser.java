@@ -697,26 +697,28 @@ public class Parser extends Scanner {
 		FunctionNode function = null;
 
 		do {
-			if (function == null) {
-				function = fFactory.createFunction(fFactory.createSymbol(IConstantOperators.Part));
-				function.add(temp);
-			} else {
-				function = fFactory.createFunction(fFactory.createSymbol(IConstantOperators.Part), function);
-			}
-
-			getNextToken();
-
-			if (fRelaxedSyntax) {
-				if (fToken == TT_ARGUMENTS_CLOSE) {
-					throwSyntaxError("Statement (i.e. index) expected in [ ].");
+			do {
+				if (function == null) {
+					function = fFactory.createFunction(fFactory.createSymbol(IConstantOperators.Part));
+					function.add(temp);
+				} else {
+					function = fFactory.createFunction(fFactory.createSymbol(IConstantOperators.Part), function);
 				}
-			} else {
-				if (fToken == TT_ARGUMENTS_CLOSE) {
-					throwSyntaxError("Statement (i.e. index) expected in [[ ]].");
-				}
-			}
 
-			function.add(parseOperators(parsePrimary(), 0));
+				getNextToken();
+
+				if (fRelaxedSyntax) {
+					if (fToken == TT_ARGUMENTS_CLOSE) {
+						throwSyntaxError("Statement (i.e. index) expected in [ ].");
+					}
+				} else {
+					if (fToken == TT_PARTCLOSE) {
+						throwSyntaxError("Statement (i.e. index) expected in [[ ]].");
+					}
+				}
+
+				function.add(parseOperators(parsePrimary(), 0));
+			} while (fToken == TT_COMMA);
 
 			if (fRelaxedSyntax) {
 				// no action

@@ -344,7 +344,17 @@ public class StringX extends ExprImpl implements IStringX {
 	public String intern() {
 		return fString.intern();
 	}
-
+	@Override
+	public String internalFormString(boolean symbolsAsFactoryMethod, int depth) {
+		if (symbolsAsFactoryMethod) {
+			final StringBuffer buffer = new StringBuffer();
+			buffer.append("stringx(\"");
+			buffer.append(fString);
+			buffer.append("\")");
+			return buffer.toString();
+		}
+		return "\""+fString+"\"";
+	}
 	/**
 	 * @param ch
 	 * @return

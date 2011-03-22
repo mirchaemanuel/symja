@@ -38,13 +38,18 @@ public class Apart extends AbstractFunctionEvaluator {
 
 	@Override
 	public IExpr evaluate(final IAST ast) {
-		Validate.checkSize(ast, 2);
-		ExprVariables eVar = new ExprVariables(ast.get(1));
-		if (!eVar.isSize(1)) {
-			// partial fraction only possible for univariate polynomials
-			return null;
+		Validate.checkRange(ast, 2, 3);
+		IAST variableList = null;
+		if (ast.size() == 3) {
+			variableList = Validate.checkSymbolOrSymbolList(ast, 2);
+		} else {
+			ExprVariables eVar = new ExprVariables(ast.get(1));
+			if (!eVar.isSize(1)) {
+				// partial fraction only possible for univariate polynomials
+				return null;
+			}
+			variableList = eVar.getVarList();
 		}
-		IAST variableList = eVar.getVarList();
 
 		final IExpr header = ast.get(1).head();
 		if (header == F.Times || header == F.Power) {

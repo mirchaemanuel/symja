@@ -10,6 +10,7 @@ import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.ISymbol;
+import org.matheclipse.core.list.algorithms.EvaluationSupport;
 
 public class Set implements IFunctionEvaluator, ICreatePatternMatcher {
 	public static IExpr evalLeftHandSide(IExpr leftHandSide) {
@@ -32,7 +33,19 @@ public class Set implements IFunctionEvaluator, ICreatePatternMatcher {
 	public IExpr evaluate(final IAST ast) {
 		Validate.checkSize(ast, 3);
 		final IExpr leftHandSide = ast.get(1);
-		final IExpr rightHandSide = ast.get(2);
+		IExpr rightHandSide = ast.get(2);
+		if (leftHandSide.isList()) {
+			// thread over lists
+			try {
+				rightHandSide = F.eval(rightHandSide);
+			} catch (final ReturnException e) {
+				rightHandSide = e.getValue();
+			}
+			IExpr temp = EvalEngine.theadASTListArgs(F.Set(leftHandSide, rightHandSide));
+			if (temp != null) {
+				return F.eval(temp);
+			}
+		}
 		Object[] result;
 		if (rightHandSide.isAST(F.Condition, 3)) {
 			result = createPatternMatcher(leftHandSide, ((IAST) rightHandSide).get(1), ((IAST) rightHandSide).get(2), null);

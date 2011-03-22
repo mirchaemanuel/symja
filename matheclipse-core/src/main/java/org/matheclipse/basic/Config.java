@@ -47,6 +47,13 @@ public class Config {
 	public final static boolean SHOW_STACKTRACE = true;
 
 	/**
+	 * Show the console output, if an expression has a head symbol with attribute
+	 * <code>ISymbol.CONSOLE_OUTPUT</code>.
+	 * 
+	 */
+	public final static boolean SHOW_CONSOLE = false;
+
+	/**
 	 * Version string for console application
 	 * 
 	 */
