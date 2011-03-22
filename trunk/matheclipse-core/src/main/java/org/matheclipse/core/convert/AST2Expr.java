@@ -14,6 +14,8 @@ import org.matheclipse.parser.client.ast.FloatNode;
 import org.matheclipse.parser.client.ast.FractionNode;
 import org.matheclipse.parser.client.ast.FunctionNode;
 import org.matheclipse.parser.client.ast.IntegerNode;
+import org.matheclipse.parser.client.ast.Pattern2Node;
+import org.matheclipse.parser.client.ast.Pattern3Node;
 import org.matheclipse.parser.client.ast.PatternNode;
 import org.matheclipse.parser.client.ast.StringNode;
 import org.matheclipse.parser.client.ast.SymbolNode;
@@ -52,6 +54,12 @@ public class AST2Expr { // extends Converter<ASTNode, IExpr> {
 	public IExpr convert(ASTNode node) throws ConversionException {
 		if (node == null) {
 			return null;
+		}
+		if (node instanceof Pattern2Node) {
+			throw new UnsupportedOperationException("'__' pattern-matching expression not implemented");
+		}
+		if (node instanceof Pattern3Node) {
+			throw new UnsupportedOperationException("'___' pattern-matching expression not implemented");
 		}
 		if (node instanceof FunctionNode) {
 			final FunctionNode functionNode = (FunctionNode) node;

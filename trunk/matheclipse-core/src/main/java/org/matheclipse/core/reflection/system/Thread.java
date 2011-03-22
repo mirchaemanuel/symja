@@ -1,5 +1,6 @@
 package org.matheclipse.core.reflection.system;
 
+import org.matheclipse.core.eval.exception.Validate;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IAST;
@@ -13,11 +14,10 @@ public class Thread extends AbstractFunctionEvaluator {
   }
 
   @Override
-  public IExpr evaluate(final IAST functionList) {
-    if (functionList.size() != 2 && functionList.size() != 3) {
-      return null;
-    }
-    if (!(functionList.get(1) instanceof IAST)) {
+  public IExpr evaluate(final IAST ast) {
+  	Validate.checkRange(ast, 2, 3);
+   
+    if (!(ast.get(1).isAST())) {
       return null;
     }
     // LevelSpec level = null;
@@ -27,10 +27,10 @@ public class Thread extends AbstractFunctionEvaluator {
     // level = new LevelSpec(1);
     // }
     IExpr head = F.List;
-    if (functionList.size() == 3) {
-      head = functionList.get(2);
+    if (ast.size() == 3) {
+      head = ast.get(2);
     }
-    final IAST list = (IAST) functionList.get(1);
+    final IAST list = (IAST) ast.get(1);
     if (list.size() > 1) {
       return threadList(list, head, list.head(), 1);
     }

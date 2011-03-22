@@ -29,12 +29,29 @@ import org.matheclipse.core.expression.F;
 import org.matheclipse.core.expression.IConstantHeaders;
 import org.matheclipse.core.generic.BinaryEval;
 import org.matheclipse.core.generic.Functors;
-import org.matheclipse.core.integrate.rubi.LogarithmFunctionIntegrationRules0;
-import org.matheclipse.core.integrate.rubi.TrigFunctionIntegrationRules0;
-import org.matheclipse.core.integrate.rubi.TrigFunctionIntegrationRules1;
-import org.matheclipse.core.integrate.rubi.TrigFunctionIntegrationRules2;
-import org.matheclipse.core.integrate.rubi.TrigFunctionIntegrationRules3;
+import org.matheclipse.core.integrate.rubi.IndefiniteIntegrationRules0;
+import org.matheclipse.core.integrate.rubi.IndefiniteIntegrationRules1;
+import org.matheclipse.core.integrate.rubi.IndefiniteIntegrationRules10;
+import org.matheclipse.core.integrate.rubi.IndefiniteIntegrationRules11;
+import org.matheclipse.core.integrate.rubi.IndefiniteIntegrationRules12;
+import org.matheclipse.core.integrate.rubi.IndefiniteIntegrationRules13;
+import org.matheclipse.core.integrate.rubi.IndefiniteIntegrationRules14;
+import org.matheclipse.core.integrate.rubi.IndefiniteIntegrationRules15;
+import org.matheclipse.core.integrate.rubi.IndefiniteIntegrationRules16;
+import org.matheclipse.core.integrate.rubi.IndefiniteIntegrationRules2;
+import org.matheclipse.core.integrate.rubi.IndefiniteIntegrationRules3;
+import org.matheclipse.core.integrate.rubi.IndefiniteIntegrationRules4;
+import org.matheclipse.core.integrate.rubi.IndefiniteIntegrationRules5;
+import org.matheclipse.core.integrate.rubi.IndefiniteIntegrationRules6;
+import org.matheclipse.core.integrate.rubi.IndefiniteIntegrationRules7;
+import org.matheclipse.core.integrate.rubi.IndefiniteIntegrationRules8;
+import org.matheclipse.core.integrate.rubi.IndefiniteIntegrationRules9;
 import org.matheclipse.core.integrate.rubi.UtilityFunctions;
+import org.matheclipse.core.integrate.rubi.UtilityFunctions0;
+import org.matheclipse.core.integrate.rubi.UtilityFunctions1;
+import org.matheclipse.core.integrate.rubi.UtilityFunctions2;
+import org.matheclipse.core.integrate.rubi.UtilityFunctions3;
+import org.matheclipse.core.integrate.rubi.UtilityFunctions4;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.IFraction;
@@ -56,50 +73,6 @@ import edu.jas.ufd.SquarefreeFactory;
  * href="http://en.wikipedia.org/wiki/Integral">Integral</a>
  */
 public class Integrate extends AbstractFunctionEvaluator implements IConstantHeaders {
-	private static String[] RULES = { "Integrate[y_ * x_,z_Symbol]:= y*Integrate[x,z] /; FreeQ[y,z]",
-			"Integrate[y_,x_Symbol]:=y*x /; FreeQ[y,x]", "Integrate[x_,x_Symbol]:= x^2/2",
-			"Integrate[x_^n_NumberQ, x_Symbol]:=x^(n+1)/(n+1) /; n!=(-1)",
-			// "Integrate[x_^(-1), x_Symbol]:=Log[x]",
-			"Integrate[(a_+x_)^(-1), x_Symbol]:=Log[x+a] /; FreeQ[a,x]",
-			// "Integrate[(x_+b_)^n_NumberQ,x_Symbol]:= (x+b)^(n+1)/(n+1) /; n!=(-1)&&FreeQ[a,x]",
-			"Integrate[(a_.*x_+b_)^n_NumberQ,x_Symbol]:= (a*x+b)^(n+1)/(a*(n+1)) /; (n!=(-1))&&FreeQ[{a,b},x]",
-			// "Integrate[E_^x_, x_Symbol]:=E^x",
-			"Integrate[E_^(a_.*x_), x_Symbol]:=a^(-1)*E^(a*x) /; FreeQ[a,x]",
-			"Integrate[x_ * E_^(a_.*x_), x_Symbol]:=a^(-2)*E^(a*x)*(a*x-1) /; FreeQ[a,x]",
-			// "Integrate[x_ * E_^x_, x_Symbol]:=E^x*(x-1)",
-			"Integrate[x_^n_IntegerQ * E_^(a_.*x_), x_Symbol]:=a^(-1)*x^n*E^(a*x)-n/a*Integrate[x^(n-1)*E^(a*x),x] /; Positive[n]&&FreeQ[a,x]",
-			// "Integrate[x_^n_IntegerQ * E_^x_, x_Symbol]:=x^n*E^x-n*Integrate[x^(n-1)*E^x,x] /; Positive[n]",
-			// "Integrate[Log[x_], x_Symbol]:=x*Log[x]-x",
-			"Integrate[Log[a_.*x_], x_Symbol]:=Log[a*x]*x-x /; FreeQ[a,x]"
-	// START commented for Rubi usage
-	// "Integrate[Sinh[x_], x_Symbol]:=Cosh[x]",
-	// "Integrate[Cosh[x_], x_Symbol]:=Sinh[x]",
-	// "Integrate[ArcSinh[x_], x_Symbol]:=x*ArcSinh[x]-Sqrt[x^2+1]",
-	// "Integrate[ArcCosh[x_], x_Symbol]:=x*ArcCosh[x]-Sqrt[x^2-1]",
-	// "Integrate[ArcTanh[x_], x_Symbol]:=x*ArcTanh[x]+1/2*Log[1-x^2]",
-	// "Integrate[Sin[a_.*x_]^n_IntegerQ, x_Symbol]:= -Sin[a*x]^(n-1)*Cos[a*x]/(n*a)+(n-1)/n*Integrate[Sin[a*x]^(n-2),x]/;Positive[n]&&FreeQ[a,x]",
-	// "Integrate[Sin[a_.+b_.*x_],x_Symbol] := -Cos[a+b*x]/b /; FreeQ[{a,b},x]",
-	// "Integrate[Cos[x_], x_Symbol]:= Sin[x]",
-	// "Integrate[Cos[a_*x_], x_Symbol]:= Sin[a*x]/a /; FreeQ[a,x]",
-	// "Integrate[Cos[a_.*x_]^n_IntegerQ, x_Symbol]:= Cos[a*x]^(n-1)*Sin[a*x]/(n*a)+(n-1)/n*Integrate[Cos[a*x]^(n-2),x] /; Positive[n]&&FreeQ[a,x]",
-	// "Integrate[Tan[x_], x_Symbol]:= -Log[Cos[x]]",
-	// "Integrate[Tan[a_*x_], x_Symbol]:= -Log[Cos[a*x]]/a /; FreeQ[a,x]",
-	// "Integrate[Tan[x_]^n_IntegerQ, x_Symbol]:= 1/(n-1)*Tan[x]^(n-1)-Integrate[Tan[x]^(n-2),x] /; Positive[n]",
-	// "Integrate[Tan[a_*x_]^n_IntegerQ, x_Symbol]:= 1/(a*(n-1))*Tan[a*x]^(n-1)-Integrate[Tan[a*x]^(n-2),x] /; Positive[n]&&FreeQ[a,x]",
-	// "Integrate[ArcSin[x_], x_Symbol]:=x*ArcSin[x]+Sqrt[1-x^2]",
-	// "Integrate[ArcSin[a_*x_], x_Symbol]:= x*ArcSin[a*x]+Sqrt[1-a^2*x^2]/a /; FreeQ[a,x]",
-	// "Integrate[ArcCos[x_], x_Symbol]:= x*ArcCos[x]-Sqrt[1-x^2]",
-	// "Integrate[ArcCos[a_*x_], x_Symbol]:= x*ArcCos[a*x]-Sqrt[1-a^2*x^2]/a  /; FreeQ[a,x]",
-	// "Integrate[ArcTan[x_], x_Symbol]:= x*ArcTan[x]-1/2*Log[1+x^2]",
-	// "Integrate[ArcTan[a_*x_], x_Symbol]:= x*ArcTan[a*x]-1/2*Log[1+a^2*x^2]/a  /; FreeQ[a,x]"
-	// END commented for Rubi usage
-
-	// "Integrate[Sin[x_], x_Symbol]:= -Cos[x]",
-	// "Integrate[Sin[a_*x_], x_Symbol]:= -Cos[a*x]/a /; FreeQ[a,x]",
-	// "Integrate[Sin[x_]^n_, x_Symbol]:= (n-1)/n*Integrate[Sin[x]^(n-2),x]-Sin[x]^(n-1)*Cos[x]/n /; Positive[n]",
-	// "Integrate[Cos[x_]^n_IntegerQ, x_Symbol]:= Cos[x]^(n-1)*Sin[x]/n+(n-1)/n*Integrate[Cos[x]^(n-2),x] /; Positive[n]",
-
-	};
 
 	public Integrate() {
 	}
@@ -149,90 +122,58 @@ public class Integrate extends AbstractFunctionEvaluator implements IConstantHea
 			}
 		}
 
-		// PatternMatcher matcher = new PatternMatcher((IExpr) lst.get(2));
-		// if (FreeQ.freeQ(matcher, (IExpr) lst.get(1))) {
-		// return C0;
-		// }
-		if (ast.get(1) instanceof INumber) {
-			// Integrate[x_NumberQ,y_] -> x*y
-			return Times(ast.get(1), arg2);
+		if (ast.get(1).isPlus()) {
+			// Integrate[a_+b_+...,x_] -> Integrate[a,x]+Integrate[b,x]+...
+			return ((IAST) ast.get(1)).map(Functors.replace1st(F.Integrate(F.Null, ast.get(2))));
 		}
-		if (ast.get(1).equals(arg2)) {
-			// Integrate[x_,x_] -> x^2 / 2
-			return Times(F.C1D2, Power(ast.get(1), F.C2));
-		}
-		if (ast.get(1) instanceof IAST) {
-			IExpr arg = F.evalExpandAll(ast.get(1));
-			if (!ast.get(1).equals(arg)) {
-				IAST clon = ast.clone();
-				clon.set(1, arg);
-				return clon;
+		if (arg2.isSymbol()) {
+			if (ast.get(1) instanceof INumber) {
+				// Integrate[x_NumberQ,y_] -> x*y
+				return Times(ast.get(1), arg2);
 			}
-			final IAST arg1 = (IAST) ast.get(1);
-			final IExpr header = arg1.head();
-			if (arg1.size() >= 3) {
-				if (header == F.Plus) {
-					// Integrate[a_+b_+...,x_] -> Integrate[a,x]+Integrate[b,x]+...
-					return arg1.map(Functors.replace1st(F.Integrate(F.Null, ast.get(2))));
-				} else if (header == F.Times || header == F.Power) {
-					if (!arg1.isEvalFlagOn(IAST.IS_DECOMPOSED_PARTIAL_FRACTION) && ast.get(2) instanceof ISymbol) {
-						ISymbol symbol = (ISymbol) ast.get(2);
-						IExpr[] parts = Apart.getFractionalParts(arg1);
-						if (parts != null) {
-							IAST apartPlus = integrateByPartialFractions(parts, symbol);
-							if (apartPlus != null && apartPlus.size() > 1) {
-								if (apartPlus.size() == 2) {
-									return apartPlus.get(1);
+			if (ast.get(1).isFree(arg2, false)) {
+				// Integrate[x_,y_] -> x*y /; FreeQ[x,y]
+				return Times(ast.get(1), arg2);
+			}
+			if (ast.get(1).equals(arg2)) {
+				// Integrate[x_,x_] -> x^2 / 2
+				return Times(F.C1D2, Power(ast.get(1), F.C2));
+			}
+			if (ast.get(1) instanceof IAST) {
+				IExpr arg = F.evalExpandAll(ast.get(1));
+				if (!ast.get(1).equals(arg)) {
+					IAST clon = ast.clone();
+					clon.set(1, arg);
+					return clon;
+				}
+				final IAST arg1 = (IAST) ast.get(1);
+				final IExpr header = arg1.head();
+				if (arg1.size() >= 3) {
+					if (header == F.Times || header == F.Power) {
+						if (!arg1.isEvalFlagOn(IAST.IS_DECOMPOSED_PARTIAL_FRACTION) && ast.get(2) instanceof ISymbol) {
+							ISymbol symbol = (ISymbol) ast.get(2);
+							IExpr[] parts = Apart.getFractionalParts(arg1);
+							if (parts != null) {
+								IAST apartPlus = integrateByPartialFractions(parts, symbol);
+								if (apartPlus != null && apartPlus.size() > 1) {
+									if (apartPlus.size() == 2) {
+										return apartPlus.get(1);
+									}
+									return apartPlus;
 								}
-								return apartPlus;
+								// if (arg1.isTimes()) {
+								// IExpr result = integratePolynomialByParts(arg1, symbol);
+								// if (result != null) {
+								// return result;
+								// }
+								// }
 							}
-							
-							// if (arg1.isTimes()) {
-							// IExpr result = integratePolynomialByParts(arg1, symbol);
-							// if (result != null) {
-							// return result;
-							// }
-							// }
-
-							// try {
-							// ArrayList<IExpr> varList = new ArrayList<IExpr>();
-							// varList.add(symbol);
-							// String[] varListStr = new String[1];
-							// varListStr[0] = symbol.toString();
-							// JASConvert<BigRational> jas = new
-							// JASConvert<BigRational>(varList);
-							// GenPolynomial<BigRational> numerator =
-							// jas.expr2Poly(parts[0]);
-							// GenPolynomial<BigRational> denominator =
-							// jas.expr2Poly(parts[1]);
-							// QuotientRing<BigRational> qfac = new
-							// QuotientRing<BigRational>(jas.getPolynomialRingFactory());
-							// Quotient<BigRational> q = new Quotient<BigRational>(qfac,
-							// numerator, denominator);
-							// ElementaryIntegration<BigRational> eIntegrator = new
-							// ElementaryIntegration<BigRational>(BigRational.ZERO);
-							// QuotIntegral<BigRational> integral =
-							// eIntegrator.integrate(q);
-							// // if (Config.SHOW_STACKTRACE) {
-							// // System.out.println("Result: " + integral);
-							// // }
-							// return jas.quotIntegral2Expr(integral);
-							// } catch (UnsupportedOperationException uoe) {
-							// // JASConvert#logIntegral2Expr() method throws this exception
-							// if (Config.DEBUG) {
-							// System.out.println("Integrate: UnsupportedOperationException in JASConvert");
-							// }
-							// } catch (RuntimeException re) {
-							// // in case the expression couldn't be converted to JAS format
-							// if (Config.DEBUG) {
-							// re.printStackTrace();
-							// }
-							// }
 						}
 					}
 				}
-			}
 
+				return F.Integrate.evalDownRule(EvalEngine.get(), ast);
+			}
 		}
 
 		return null;
@@ -350,7 +291,8 @@ public class Integrate extends AbstractFunctionEvaluator implements IConstantHea
 									IFraction A = F.fraction(numer[1].numerator(), numer[1].denominator());
 									IFraction B = F.fraction(numer[0].numerator(), numer[0].denominator());
 									isQuadratic(D.get(i - 1), denom);
-									IFraction a = F.fraction(denom[2].numerator(), denom[2].denominator());
+									// IFraction a = F.fraction(denom[2].numerator(),
+									// denom[2].denominator());
 									IFraction p = F.fraction(denom[1].numerator(), denom[1].denominator());
 									IFraction q = F.fraction(denom[0].numerator(), denom[0].denominator());
 									if (A.isZero()) {
@@ -508,22 +450,39 @@ public class Integrate extends AbstractFunctionEvaluator implements IConstantHea
 
 		// TODO Integrate[] is currently not working properly in all cases!
 
-		// comment the following lines for deactivating Rubi rules
-		UtilityFunctions.init();
+		// long start = System.currentTimeMillis();
+
 		IAST ast = F.ast(F.List, 10000, false);
-		ast.addAll(TrigFunctionIntegrationRules0.RULES);
-		ast.addAll(TrigFunctionIntegrationRules1.RULES);
-		ast.addAll(TrigFunctionIntegrationRules2.RULES);
-		ast.addAll(TrigFunctionIntegrationRules3.RULES);
-		ast.addAll(LogarithmFunctionIntegrationRules0.RULES);
+
+		ast.addAll(UtilityFunctions0.RULES);
+		ast.addAll(UtilityFunctions1.RULES);
+		ast.addAll(UtilityFunctions2.RULES);
+		ast.addAll(UtilityFunctions3.RULES);
+		ast.addAll(UtilityFunctions4.RULES);
+		ast.addAll(IndefiniteIntegrationRules0.RULES);
+		ast.addAll(IndefiniteIntegrationRules1.RULES);
+		ast.addAll(IndefiniteIntegrationRules2.RULES);
+		ast.addAll(IndefiniteIntegrationRules3.RULES);
+		ast.addAll(IndefiniteIntegrationRules4.RULES);
+		ast.addAll(IndefiniteIntegrationRules5.RULES);
+		ast.addAll(IndefiniteIntegrationRules6.RULES);
+		ast.addAll(IndefiniteIntegrationRules7.RULES);
+		ast.addAll(IndefiniteIntegrationRules8.RULES);
+		ast.addAll(IndefiniteIntegrationRules9.RULES);
+		ast.addAll(IndefiniteIntegrationRules10.RULES);
+		ast.addAll(IndefiniteIntegrationRules11.RULES);
+		ast.addAll(IndefiniteIntegrationRules12.RULES);
+		ast.addAll(IndefiniteIntegrationRules13.RULES);
+		ast.addAll(IndefiniteIntegrationRules14.RULES);
+		ast.addAll(IndefiniteIntegrationRules15.RULES);
+		ast.addAll(IndefiniteIntegrationRules16.RULES);
+		UtilityFunctions.init();
+		// if (Config.SHOW_STACKTRACE) {
+		// long end = System.currentTimeMillis();
+		// System.out.println(end - start);
+		// }
 		return ast;
 
-		// return null;
-	}
-
-	@Override
-	public String[] getRules() {
-		return RULES;
 	}
 
 }

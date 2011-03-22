@@ -524,23 +524,9 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 
 			if ((ISymbol.LISTABLE & attr) == ISymbol.LISTABLE) {
 				// thread over the lists
-				int listLength = 0;
-
-				for (int i = 0; i < ast.size(); i++) {
-					if ((ast.get(i) instanceof IAST) && (((IAST) ast.get(i)).head().equals(F.List))) {
-						if (listLength == 0) {
-							listLength = ((IAST) ast.get(i)).size() - 1;
-						} else {
-							if (listLength != ((IAST) ast.get(i)).size() - 1) {
-								listLength = 0;
-								break;
-								// for loop
-							}
-						}
-					}
-				}
-				if ((listLength != 0) && ((result = EvaluationSupport.threadList(ast, listLength, 1)) != null)) {
-					return result;
+				resultList = theadASTListArgs(ast);
+				if (resultList != null) {
+					return resultList;
 				}
 			}
 
@@ -553,6 +539,29 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 		return evalASTBuiltinFunction(symbol, ast);
 	}
 
+	public static IAST theadASTListArgs(final IAST ast) {
+		IAST result;
+		int listLength = 0;
+
+		for (int i = 1; i < ast.size(); i++) {
+			if ((ast.get(i) instanceof IAST) && (((IAST) ast.get(i)).head().equals(F.List))) {
+				if (listLength == 0) {
+					listLength = ((IAST) ast.get(i)).size() - 1;
+				} else {
+					if (listLength != ((IAST) ast.get(i)).size() - 1) {
+						listLength = 0;
+						break;
+						// for loop
+					}
+				}
+			}
+		}
+		if ((listLength != 0) && ((result = EvaluationSupport.threadList(ast, listLength, 1)) != null)) {
+			return result;
+		}
+		return null;
+	}
+
 	/**
 	 * 
 	 * @param symbol
@@ -561,8 +570,10 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 	 */
 	private IExpr evalASTBuiltinFunction(final ISymbol symbol, final IAST ast) {
 		IExpr result;
-		if ((result = symbol.evalDownRule(this, ast)) != null) {
-			return result;
+		if (!symbol.equals(F.Integrate)) {
+			if ((result = symbol.evalDownRule(this, ast)) != null) {
+				return result;
+			}
 		}
 
 		if (symbol instanceof MethodSymbol) {
@@ -782,7 +793,16 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 		}
 		Util.checkCanceled();
 		if (obj.isAST()) {
-			return evalAST((IAST) obj);
+			IExpr temp = evalAST((IAST) obj);
+			if (Config.SHOW_CONSOLE) {
+				if ((obj.topHead().getAttributes() & ISymbol.CONSOLE_OUTPUT) == ISymbol.CONSOLE_OUTPUT) {
+					if (temp != null) {
+						System.out.println(obj.toString());
+						System.out.println(" => " + temp.toString());
+					}
+				}
+			}
+			return temp;
 		}
 
 		if (obj instanceof INumber) {

@@ -2,6 +2,7 @@ package org.matheclipse.core.expression;
 
 import static org.matheclipse.core.expression.F.$s;
 import static org.matheclipse.core.expression.F.Not;
+import static org.matheclipse.core.expression.F.ast;
 import static org.matheclipse.core.expression.F.binary;
 import static org.matheclipse.core.expression.F.unary;
 
@@ -43,6 +44,12 @@ import apache.harmony.math.Rational;
  * </a>
  */
 public class F {
+	/**
+	 * The map for predefined strings for the
+	 * {@link IExpr#internalFormString(boolean, int)} method.
+	 */
+	public final static Map<String, String> PREDEFINED_INTERNAL_STRINGS = new HashMap<String, String>(61);
+
 	/**
 	 * The map for predefined symbols
 	 */
@@ -86,13 +93,13 @@ public class F {
 	public static ISymbol AtomQ;
 
 	public static ISymbol Binomial;
-	
-	public static ISymbol	Block;
-	
+
+	public static ISymbol Block;
+
 	public static ISymbol Break;
 
 	public static ISymbol Cancel;
-	
+
 	public static ISymbol Ceiling;
 
 	public static ISymbol Complex;
@@ -144,7 +151,7 @@ public class F {
 	public static ISymbol FindRoot;
 
 	public static ISymbol First;
-	
+
 	public static ISymbol Floor;
 
 	public static ISymbol FreeQ;
@@ -168,7 +175,7 @@ public class F {
 	public static ISymbol If;
 
 	public static ISymbol Im;
-	
+
 	public static ISymbol IntegerQ;
 
 	public static ISymbol Integrate;
@@ -181,7 +188,7 @@ public class F {
 	//
 	// public static ISymbol KSubsets;
 	//
-	// public static ISymbol LeafCount;
+	public static ISymbol LeafCount;
 
 	public static ISymbol Length;
 
@@ -196,7 +203,7 @@ public class F {
 	public static ISymbol MapAll;
 
 	public static ISymbol MatchQ;
-	
+
 	public static ISymbol MatrixPower;
 
 	public static ISymbol Max;
@@ -206,7 +213,7 @@ public class F {
 	public static ISymbol Min;
 
 	public static ISymbol Mod;
-	
+
 	public static ISymbol Module;
 
 	public static ISymbol N;
@@ -222,9 +229,9 @@ public class F {
 	// public static ISymbol NumberPartitions;
 
 	public static ISymbol NumberQ;
-	
+
 	public static ISymbol NumericQ;
-	
+
 	public static ISymbol OddQ;
 
 	public static ISymbol Or;
@@ -246,9 +253,9 @@ public class F {
 	public static ISymbol Plus;
 
 	public static ISymbol Positive;
-	
+
 	public static ISymbol PossibleZeroQ;
-	
+
 	public static ISymbol Power;
 
 	public static ISymbol Prepend;
@@ -262,17 +269,17 @@ public class F {
 	public static ISymbol Quotient;
 
 	public static ISymbol Rational;
-	
+
 	public static ISymbol Re;
-	
+
 	public static ISymbol Rest;
-	
+
 	public static ISymbol ReplaceAll;
 
 	public static ISymbol Reverse;
 
 	public static ISymbol RootOf;
-	
+
 	public static ISymbol RotateLeft;
 
 	public static ISymbol RotateRight;
@@ -300,7 +307,7 @@ public class F {
 	public static ISymbol Sort;
 
 	public static ISymbol Sqrt;
-	
+
 	public static ISymbol Sum;
 
 	public static ISymbol Tan;
@@ -563,7 +570,7 @@ public class F {
 	public static IAST And(final IExpr a0, final IExpr a1) {
 		return binary(And, a0, a1);
 	}
-	
+
 	public static IAST ArcCos(final IExpr a0) {
 
 		return unary(ArcCos, a0);
@@ -574,14 +581,17 @@ public class F {
 		return unary(ArcCosh, a0);
 	}
 
-	public static IAST Append(final IExpr a0) {
+	public static IAST Append(final IExpr a0, final IExpr a1) {
 
-		return unary(Append, a0);
+		return binary(Append, a0, a1);
 	}
 
 	public static IAST Apart(final IExpr a0) {
-
 		return unary(Apart, a0);
+	}
+
+	public static IAST Apart(final IExpr a0, final IExpr a1) {
+		return binary(Apart, a0, a1);
 	}
 
 	public static IAST Apply(final IExpr a0, final IExpr a1) {
@@ -622,15 +632,14 @@ public class F {
 		return binary($s("Binomial"), a0, a1);
 	}
 
-
 	public static IAST Block(final IExpr a0, final IExpr a1) {
 		return binary(Block, a0, a1);
 	}
-	
+
 	public static IAST Cancel(final IExpr a) {
 		return unary(Cancel, a);
 	}
-	
+
 	public static IAST Ceiling(final IExpr a0) {
 
 		return unary(Ceiling, a0);
@@ -638,6 +647,10 @@ public class F {
 
 	public static IAST CNInfinity() {
 		return binary(Times, CN1, Infinity);
+	}
+
+	public static IAST CompoundExpression(final IExpr... a) {
+		return ast(a, CompoundExpression);
 	}
 
 	public static IAST Condition(final IExpr a0, final IExpr a1) {
@@ -719,10 +732,19 @@ public class F {
 	public static IAST EvenQ(final IExpr a) {
 		return unary(EvenQ, a);
 	}
-	
+
+	public static IAST Exp(final IExpr a0) {
+		return binary(Power, E, a0);
+	}
+
 	public static IAST Expand(final IExpr a0) {
 
 		return unary(Expand, a0);
+	}
+
+	public static IAST Expand(final IExpr a0, final IExpr a1) {
+
+		return binary(Expand, a0, a1);
 	}
 
 	public static IAST ExpandAll(final IExpr a0) {
@@ -749,12 +771,11 @@ public class F {
 
 		return unary(Fibonacci, a0);
 	}
-	
 
 	public static IAST First(final IExpr a0) {
 		return unary(First, a0);
 	}
-	
+
 	public static IAST FreeQ(final IExpr a0, final IExpr a1) {
 
 		return binary(FreeQ, a0, a1);
@@ -783,15 +804,18 @@ public class F {
 		return unary(Hold, a0);
 	}
 
-	public static IAST If(final IExpr a0, final IExpr a1, final IExpr a2) {
+	public static IAST If(final IExpr a0, final IExpr a1) {
+		return binary(If, a0, a1);
+	}
 
+	public static IAST If(final IExpr a0, final IExpr a1, final IExpr a2) {
 		return ternary(If, a0, a1, a2);
 	}
 
 	public static IAST Im(final IExpr a0) {
 		return unary(Im, a0);
 	}
-	
+
 	public static IAST IntegerQ(final IExpr a) {
 		return unary(IntegerQ, a);
 	}
@@ -799,11 +823,11 @@ public class F {
 	public static IAST MatchQ(final IExpr a0, final IExpr a1) {
 		return binary(MatchQ, a0, a1);
 	}
-	
+
 	public static IAST Not(final IExpr a) {
 		return unary(Not, a);
 	}
-	
+
 	public static IAST Numerator(final IExpr a0) {
 		return unary(Numerator, a0);
 	}
@@ -1006,7 +1030,7 @@ public class F {
 			// KOrderlessPartitions());
 			// KPartitions = predefinedSymbol("KPartitions", new KPartitions());
 			// KSubsets = predefinedSymbol("KSubsets", new KSubsets());
-			// LeafCount = predefinedSymbol("LeafCount", new LeafCount());
+			LeafCount = predefinedSymbol("LeafCount");
 			Length = predefinedSymbol("Length");
 			Less = predefinedSymbol("Less");
 			LessEqual = predefinedSymbol("LessEqual");
@@ -1042,7 +1066,7 @@ public class F {
 			Plus = predefinedSymbol("Plus");
 			Plus.setDefaultValue(C0);
 			Positive = predefinedSymbol("Positive");
-			PossibleZeroQ = predefinedSymbol("PossibleZeroQ"); 
+			PossibleZeroQ = predefinedSymbol("PossibleZeroQ");
 			Power = predefinedSymbol("Power");
 			Power.setDefaultValue(2, C1);
 			Prepend = predefinedSymbol("Prepend");
@@ -1109,6 +1133,11 @@ public class F {
 					Package.loadPackage(EvalEngine.get(), reader);
 				}
 			}
+			PREDEFINED_INTERNAL_STRINGS.put("Pi","Pi");
+			PREDEFINED_INTERNAL_STRINGS.put("E","E");
+			PREDEFINED_INTERNAL_STRINGS.put("False","False");
+			PREDEFINED_INTERNAL_STRINGS.put("True","True");
+			
 			// long end = System.currentTimeMillis();
 			// System.out.println("Init time: " + (end - start));
 		}
@@ -1139,10 +1168,9 @@ public class F {
 	// return unary(KSubsets, a0);
 	// }
 	//
-	// public static IAST LeafCount(final IExpr a0) {
-	//
-	// return unary(LeafCount, a0);
-	// }
+	public static IAST LeafCount(final IExpr a0) {
+		return unary(LeafCount, a0);
+	}
 
 	public static IAST Less(final IExpr a0, final IExpr a1) {
 
@@ -1252,11 +1280,15 @@ public class F {
 	public static IAST Min(final IExpr a0, final IExpr a1) {
 		return binary(Min, a0, a1);
 	}
-	
+
+	public static IExpr Mod(final IExpr a0, final IExpr a1) {
+		return binary(Mod, a0, a1);
+	}
+
 	public static IAST Module(final IExpr a0, final IExpr a1) {
 		return binary(Module, a0, a1);
 	}
-	
+
 	/**
 	 * Evaluate the given expression in numeric mode
 	 * 
@@ -1292,16 +1324,16 @@ public class F {
 	public static IAST NumericQ(final IExpr a0) {
 		return unary(NumericQ, a0);
 	}
-	
+
 	public static IAST OddQ(final IExpr a) {
 		return unary(OddQ, a);
 	}
-	
+
 	public static IAST Options(final IExpr a0) {
 
 		return unary(Options, a0);
 	}
-	
+
 	public static IAST Or(final IExpr a0, final IExpr a1) {
 		return binary(Or, a0, a1);
 	}
@@ -1309,6 +1341,7 @@ public class F {
 	public static IAST Part(final IExpr a0, final IExpr a1) {
 		return binary(Part, a0, a1);
 	}
+
 	// public static IAST Partition(final IExpr a0) {
 	//
 	// return unary(Partition, a0);
@@ -1339,11 +1372,10 @@ public class F {
 		// return ternary(Plus, a0, a1, a2);
 	}
 
-
 	public static IAST PossibleZeroQ(final IExpr a0) {
 		return unary(PossibleZeroQ, a0);
 	}
-	
+
 	public static IAST Power() {
 
 		return function(Power);
@@ -1362,9 +1394,9 @@ public class F {
 		return unary($s("PowerExpand"), a0);
 	}
 
-	public static IAST Prepend(final IExpr a0) {
+	public static IAST Prepend(final IExpr a0, final IExpr a1) {
 
-		return unary(Prepend, a0);
+		return binary(Prepend, a0, a1);
 	}
 
 	public static IAST PrimeQ(final IExpr a0) {
@@ -1381,15 +1413,15 @@ public class F {
 
 		return binary($s("Quotient"), a0, a1);
 	}
-	
+
 	public static IAST Re(final IExpr a0) {
 		return unary(Re, a0);
 	}
-	
+
 	public static IAST Rest(final IExpr a0) {
 		return unary(Rest, a0);
 	}
-	
+
 	public static IAST ReplaceAll(final IExpr a0, final IExpr a1) {
 
 		return binary(ReplaceAll, a0, a1);
@@ -1650,6 +1682,37 @@ public class F {
 		ast.add(a0);
 		ast.add(a1);
 		ast.add(a2);
+		return ast;
+	}
+
+	public static IAST quaternary(final IExpr head, final IExpr a0, final IExpr a1, final IExpr a2, final IExpr a3) {
+		final IAST ast = ast(head);
+		ast.add(a0);
+		ast.add(a1);
+		ast.add(a2);
+		ast.add(a3);
+		return ast;
+	}
+
+	public static IAST quinary(final IExpr head, final IExpr a0, final IExpr a1, final IExpr a2, final IExpr a3, final IExpr a4) {
+		final IAST ast = ast(head);
+		ast.add(a0);
+		ast.add(a1);
+		ast.add(a2);
+		ast.add(a3);
+		ast.add(a4);
+		return ast;
+	}
+
+	public static IAST senary(final IExpr head, final IExpr a0, final IExpr a1, final IExpr a2, final IExpr a3, final IExpr a4,
+			final IExpr a5) {
+		final IAST ast = ast(head);
+		ast.add(a0);
+		ast.add(a1);
+		ast.add(a2);
+		ast.add(a3);
+		ast.add(a4);
+		ast.add(a5);
 		return ast;
 	}
 

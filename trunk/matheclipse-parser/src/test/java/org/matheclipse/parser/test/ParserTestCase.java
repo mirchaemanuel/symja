@@ -15,7 +15,7 @@ public class ParserTestCase extends TestCase {
 	}
 
 	public void testParser() {
-		try { 
+		try {
 			Parser p = new Parser();
 			ASTNode obj = p.parse("-a-b*c!!+d");
 			assertEquals(obj.toString(), "Plus[Plus[Times[-1, a], Times[-1, Times[b, Factorial2[c]]]], d]");
@@ -108,12 +108,11 @@ public class ParserTestCase extends TestCase {
 			ASTNode obj = p.parse("a+%%%+%3*:=4!");
 			fail("A SyntaxError exception should occur here");
 		} catch (Exception e) {
-			assertEquals("Syntax error in line: 1 - Operator: := is no prefix operator.\n" + 
-					"a+%%%+%3*:=4!\n" + 
-					"          ^", e.getMessage());
+			assertEquals("Syntax error in line: 1 - Operator: := is no prefix operator.\n" + "a+%%%+%3*:=4!\n" + "          ^", e
+					.getMessage());
 		}
 	}
-	
+
 	public void testParser8() {
 		try {
 			Parser p = new Parser();
@@ -124,7 +123,7 @@ public class ParserTestCase extends TestCase {
 			assertEquals("", e.getMessage());
 		}
 	}
-	
+
 	public void testParser9() {
 		try {
 			Parser p = new Parser();
@@ -135,7 +134,7 @@ public class ParserTestCase extends TestCase {
 			assertEquals("", e.getMessage());
 		}
 	}
-	
+
 	public void testParser10() {
 		try {
 			Parser p = new Parser();
@@ -146,7 +145,7 @@ public class ParserTestCase extends TestCase {
 			assertEquals("", e.getMessage());
 		}
 	}
-	
+
 	public void testParser11() {
 		try {
 			Parser p = new Parser();
@@ -157,7 +156,7 @@ public class ParserTestCase extends TestCase {
 			assertEquals("", e.getMessage());
 		}
 	}
-	
+
 	public void testParser12() {
 		try {
 			Parser p = new Parser();
@@ -168,7 +167,7 @@ public class ParserTestCase extends TestCase {
 			assertEquals("", e.getMessage());
 		}
 	}
-	
+
 	public void testParser13() {
 		try {
 			Parser p = new Parser();
@@ -179,24 +178,44 @@ public class ParserTestCase extends TestCase {
 			assertEquals("", e.getMessage());
 		}
 	}
-	
+
 	public void testParser14() {
-		try { 
+		try {
 			Parser p = new Parser();
 			ASTNode obj = p.parse("-a-b*c!!+d");
-			assertEquals(obj.dependsOn("d"),true);
-			assertEquals(obj.dependsOn("x"),false);
+			assertEquals(obj.dependsOn("d"), true);
+			assertEquals(obj.dependsOn("x"), false);
 		} catch (Exception e) {
 			e.printStackTrace();
 			assertEquals("", e.getMessage());
 		}
 	}
-	
+
 	public void testParser15() {
-		try { 
+		try {
 			Parser p = new Parser();
-			ASTNode obj = p.parse("Integrate[Sin[a_.*x_]^n_IntegerQ, x_Symbol]:= -Sin[a*x]^(n-1)*Cos[a*x]/(n*a)+(n-1)/n*Integrate[Sin[a*x]^(n-2),x]/;Positive[n]&&FreeQ[a,x]");
-			assertEquals(obj.toString(),"SetDelayed[Integrate[Power[Sin[Times[a_., x_]], n_IntegerQ], x_Symbol], Condition[Plus[Times[Times[-1, Power[Sin[Times[a, x]], Plus[n, Times[-1, 1]]]], Times[Cos[Times[a, x]], Power[Times[n, a], -1]]], Times[Times[Plus[n, Times[-1, 1]], Power[n, -1]], Integrate[Power[Sin[Times[a, x]], Plus[n, Times[-1, 2]]], x]]], And[Positive[n], FreeQ[a, x]]]]");
+			ASTNode obj = p
+					.parse("Integrate[Sin[a_.*x_]^n_IntegerQ, x_Symbol]:= -Sin[a*x]^(n-1)*Cos[a*x]/(n*a)+(n-1)/n*Integrate[Sin[a*x]^(n-2),x]/;Positive[n]&&FreeQ[a,x]");
+			assertEquals(
+					obj.toString(),
+					"SetDelayed[Integrate[Power[Sin[Times[a_., x_]], n_IntegerQ], x_Symbol], Condition[Plus[Times[Times[-1, Power[Sin[Times[a, x]], Plus[n, Times[-1, 1]]]], Times[Cos[Times[a, x]], Power[Times[n, a], -1]]], Times[Times[Plus[n, Times[-1, 1]], Power[n, -1]], Integrate[Power[Sin[Times[a, x]], Plus[n, Times[-1, 2]]], x]]], And[Positive[n], FreeQ[a, x]]]]");
+		} catch (Exception e) {
+			e.printStackTrace();
+			assertEquals("", e.getMessage());
+		}
+	}
+
+	public void testParser16() {
+		try {
+			Parser p = new Parser();
+			ASTNode obj = p.parse("f[[1,2]]");
+			assertEquals(obj.toString(), "Part[Part[f, 1], 2]");
+			obj = p.parse("f[[1]][[2]]");
+			assertEquals(obj.toString(), "Part[Part[f, 1], 2]");
+			obj = p.parse("f[[1,2,f[x]]]");
+			assertEquals(obj.toString(), "Part[Part[Part[f, 1], 2], f[x]]");
+			obj = p.parse("f[[1]][[2]][[f[x]]]");
+			assertEquals(obj.toString(), "Part[Part[Part[f, 1], 2], f[x]]");
 		} catch (Exception e) {
 			e.printStackTrace();
 			assertEquals("", e.getMessage());

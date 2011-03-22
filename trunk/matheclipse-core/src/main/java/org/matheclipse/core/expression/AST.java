@@ -649,11 +649,11 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 	public boolean isInteger() {
 		return false;
 	}
-	
+
 	public boolean isRational() {
 		return false;
 	}
-	
+
 	public boolean isSignedNumber() {
 		return false;
 	}
@@ -1095,7 +1095,7 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 			return "Slot2";
 		}
 		StringBuffer text = new StringBuffer(size() * 10);
-		if (temp instanceof ISymbol) {
+		if (temp.isSymbol()) {
 			ISymbol sym = (ISymbol) temp;
 			if (!Character.isUpperCase(sym.toString().charAt(0))) {
 				text.append("$(");
@@ -1108,6 +1108,16 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 				text.append(')');
 				return text.toString();
 			}
+		} else if (temp.isPattern()||temp.isAST()) {
+			text.append("$(");
+			for (int i = 0; i < size(); i++) {
+				text.append(get(i).internalFormString(symbolsAsFactoryMethod, depth + 1));
+				if (i < size() - 1) {
+					text.append(sep);
+				}
+			}
+			text.append(')');
+			return text.toString();
 		}
 
 		text.append(temp.internalFormString(false, 0));
