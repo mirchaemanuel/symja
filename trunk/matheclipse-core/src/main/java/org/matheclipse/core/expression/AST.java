@@ -1108,7 +1108,7 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 				text.append(')');
 				return text.toString();
 			}
-		} else if (temp.isPattern()||temp.isAST()) {
+		} else if (temp.isPattern() || temp.isAST()) {
 			text.append("$(");
 			for (int i = 0; i < size(); i++) {
 				text.append(get(i).internalFormString(symbolsAsFactoryMethod, depth + 1));
