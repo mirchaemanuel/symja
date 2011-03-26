@@ -35,44 +35,50 @@ public class UtilityFunctions {
 		return binary(Integrate, a0, a1);
 	}
 	
+	public static ISymbol $sDBG(final String symbolName) {
+		ISymbol sym =  $s(symbolName);
+		sym.setAttributes(ISymbol.CONSOLE_OUTPUT);
+		return sym;
+	}
+	
 	public static IAST IntegrateMonomialSum(final IExpr a0, final IExpr a1) {
 		// TODO
-		return binary($s(INTEGRATE_PREFIX+"IntegrateMonomialSum"), a0, a1);
+		return binary($sDBG(INTEGRATE_PREFIX+"IntegrateMonomialSum"), a0, a1);
 	}
 	
 	public static IAST SplitFreeIntegrate(final IExpr a0, final IExpr a1) {
 		// TODO
-		return binary($s(INTEGRATE_PREFIX+"SplitFreeIntegrate"), a0, a1);
+		return binary($sDBG(INTEGRATE_PREFIX+"SplitFreeIntegrate"), a0, a1);
 	}
 	
 	public static IAST TryTanSubst(final IExpr a0, final IExpr a1) {
 		// TODO
-		return binary($s(INTEGRATE_PREFIX+"TryTanSubst"), a0, a1);
+		return binary($sDBG(INTEGRATE_PREFIX+"TryTanSubst"), a0, a1);
 	}
 	
 	public static IAST TryTanhSubst(final IExpr a0, final IExpr a1) {
 		// TODO
-		return binary($s(INTEGRATE_PREFIX+"TryTanhSubst"), a0, a1);
+		return binary($sDBG(INTEGRATE_PREFIX+"TryTanhSubst"), a0, a1);
 	}
 	
 	public static IAST TryPureTanSubst(final IExpr a0, final IExpr a1) {
 		// TODO
-		return binary($s(INTEGRATE_PREFIX+"TryPureTanSubst"), a0, a1);
+		return binary($sDBG(INTEGRATE_PREFIX+"TryPureTanSubst"), a0, a1);
 	}
 	
 	public static IAST TryPureTanhSubst(final IExpr a0, final IExpr a1) {
 		// TODO
-		return binary($s(INTEGRATE_PREFIX+"TryPureTanhSubst"), a0, a1);
+		return binary($sDBG(INTEGRATE_PREFIX+"TryPureTanhSubst"), a0, a1);
 	}
 	
 	public static IAST LinearSinCosQ(final IExpr a0, final IExpr a1) {
 		// TODO
-		return binary($s(INTEGRATE_PREFIX+"LinearSinCosQ"), a0, a1);
+		return binary($sDBG(INTEGRATE_PREFIX+"LinearSinCosQ"), a0, a1);
 	}
 	
 	public static IAST LinearSinhCoshQ(final IExpr a0, final IExpr a1) {
 		// TODO
-		return binary($s(INTEGRATE_PREFIX+"LinearSinhCoshQ"), a0, a1);
+		return binary($sDBG(INTEGRATE_PREFIX+"LinearSinhCoshQ"), a0, a1);
 	}
 	
 	public static IExpr isList(IAST ast) {

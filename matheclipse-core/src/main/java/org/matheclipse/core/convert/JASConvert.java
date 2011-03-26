@@ -370,6 +370,45 @@ public class JASConvert<C extends RingElem<C>> {
 		return result;
 	}
 
+	/**
+	 * Converts a <a href="http://krum.rz.uni-mannheim.de/jas/">JAS</a> polynomial
+	 * to a MathEclipse AST with head <code>Plus</code>
+	 * 
+	 * @param poly
+	 *          a JAS polynomial
+	 * @param variable
+	 * @return
+	 * @throws ArithmeticException
+	 * @throws ClassCastException
+	 */
+	public IAST exprPoly2Expr(final GenPolynomial<IExpr> poly, IExpr variable) throws ArithmeticException, ClassCastException {
+		if (poly.length() == 0) {
+			return F.Plus(F.C0);
+		}
+
+		boolean getVar = variable == null;
+		IAST result = F.Plus();
+		for (Monomial<IExpr> monomial : poly) {
+			IExpr coeff = monomial.coefficient();
+			ExpVector exp = monomial.exponent();
+			// IFraction coeffValue = F.fraction(coeff.numerator(),
+			// coeff.denominator());
+			IAST monomTimes = F.Times(coeff);
+			long lExp;
+			for (int i = 0; i < exp.length(); i++) {
+				lExp = exp.getVal(i);
+				if (lExp != 0) {
+					if (getVar) {
+						variable = fVariables.get(i);
+					}
+					monomTimes.add(F.Power(variable, F.integer(lExp)));
+				}
+			}
+			result.add(monomTimes);
+		}
+		return result;
+	}
+
 	public IAST polyAlgebraicNumber2Expr(final GenPolynomial<AlgebraicNumber<BigRational>> poly) throws ArithmeticException,
 			ClassCastException {
 		if (poly.length() == 0) {
