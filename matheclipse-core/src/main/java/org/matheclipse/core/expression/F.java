@@ -1133,11 +1133,11 @@ public class F {
 					Package.loadPackage(EvalEngine.get(), reader);
 				}
 			}
-			PREDEFINED_INTERNAL_STRINGS.put("Pi","Pi");
-			PREDEFINED_INTERNAL_STRINGS.put("E","E");
-			PREDEFINED_INTERNAL_STRINGS.put("False","False");
-			PREDEFINED_INTERNAL_STRINGS.put("True","True");
-			
+			PREDEFINED_INTERNAL_STRINGS.put("Pi", "Pi");
+			PREDEFINED_INTERNAL_STRINGS.put("E", "E");
+			PREDEFINED_INTERNAL_STRINGS.put("False", "False");
+			PREDEFINED_INTERNAL_STRINGS.put("True", "True");
+
 			// long end = System.currentTimeMillis();
 			// System.out.println("Init time: " + (end - start));
 		}
@@ -1598,6 +1598,21 @@ public class F {
 	/**
 	 * Create a new abstract syntax tree (AST).
 	 * 
+	 * @param intialArgumentsCapacity
+	 *          the initial capacity of arguments of the AST.
+	 * @param head
+	 *          the header expression of the function. If the ast represents a
+	 *          function like <code>f[x,y], Sin[x],...</code>, the
+	 *          <code>head</code> will be an instance of type ISymbol.
+	 * @return
+	 */
+	public static IAST newInstance(final int intialArgumentsCapacity, final IExpr head) {
+		return AST.newInstance(intialArgumentsCapacity, head);
+	}
+
+	/**
+	 * Create a new abstract syntax tree (AST).
+	 * 
 	 * @param head
 	 *          the header expression of the function. If the ast represents a
 	 *          function like <code>f[x,y], Sin[x],...</code>, the
@@ -1630,6 +1645,8 @@ public class F {
 	 *          function like <code>f[x,y], Sin[x],...</code>, the
 	 *          <code>head</code> will be an instance of type ISymbol.
 	 * @param initialCapacity
+	 *          the initial capacity (i.e. number of arguments without the header
+	 *          element) of the list.
 	 * @param initNull
 	 *          initialize all elements with <code>null</code>.
 	 * @return
@@ -1671,14 +1688,14 @@ public class F {
 	 * @return
 	 */
 	public static IAST binary(final IExpr head, final IExpr a0, final IExpr a1) {
-		final IAST ast = ast(head);
+		final IAST ast = ast(head, 2, false);
 		ast.add(a0);
 		ast.add(a1);
 		return ast;
 	}
 
 	public static IAST ternary(final IExpr head, final IExpr a0, final IExpr a1, final IExpr a2) {
-		final IAST ast = ast(head);
+		final IAST ast = ast(head, 3, false);
 		ast.add(a0);
 		ast.add(a1);
 		ast.add(a2);
@@ -1686,7 +1703,7 @@ public class F {
 	}
 
 	public static IAST quaternary(final IExpr head, final IExpr a0, final IExpr a1, final IExpr a2, final IExpr a3) {
-		final IAST ast = ast(head);
+		final IAST ast = ast(head, 4, false);
 		ast.add(a0);
 		ast.add(a1);
 		ast.add(a2);
@@ -1695,7 +1712,7 @@ public class F {
 	}
 
 	public static IAST quinary(final IExpr head, final IExpr a0, final IExpr a1, final IExpr a2, final IExpr a3, final IExpr a4) {
-		final IAST ast = ast(head);
+		final IAST ast = ast(head, 5, false);
 		ast.add(a0);
 		ast.add(a1);
 		ast.add(a2);
@@ -1706,7 +1723,7 @@ public class F {
 
 	public static IAST senary(final IExpr head, final IExpr a0, final IExpr a1, final IExpr a2, final IExpr a3, final IExpr a4,
 			final IExpr a5) {
-		final IAST ast = ast(head);
+		final IAST ast = ast(head, 6, false);
 		ast.add(a0);
 		ast.add(a1);
 		ast.add(a2);
@@ -1724,10 +1741,7 @@ public class F {
 	 * @return
 	 */
 	public static ISymbol bool(final boolean value) {
-		if (value) {
-			return True;
-		}
-		return False;
+		return value ? True : False;
 	}
 
 	/**

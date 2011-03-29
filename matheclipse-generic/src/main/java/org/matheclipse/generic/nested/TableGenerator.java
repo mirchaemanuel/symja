@@ -41,52 +41,26 @@ public class TableGenerator<T extends INestedListElement, L extends List<T> & IN
 		fDefaultValue = defaultValue;
 	}
 
-	// public T tableEvaluate() {
-	// if (fIndex < fIterList.size()) {
-	// final IIterator<T> iter = fIterList.get(fIndex);
-	// try {
-	// iter.setUp();
-	// final int index = fIndex++;
-	// L result = fCopier.clone(fPrototypeList);
-	// L temp;
-	// while (iter.hasNext()) {
-	// fCurrentIndex[index] = iter.next();
-	// result.add(tableEvaluate());
-	// temp = fCopier.evaluate(result);
-	// if (temp != null) {
-	// result = temp;
-	// }
-	// }
-	// return fCopier.castList(result);
-	// } finally {
-	// --fIndex;
-	// iter.tearDown();
-	// }
-	// }
-	// return fFunction.evaluate(fCurrentIndex);
-	// }
-
 	public T table() {
 		if (fIndex < fIterList.size()) {
 			final IIterator<T> iter = fIterList.get(fIndex);
-			try {
-				if (iter.setUp()) {
-					try {
-						final int index = fIndex++;
-						final L result = fCopier.clone(fPrototypeList);
-						while (iter.hasNext()) {
-							fCurrentIndex[index] = iter.next();
-							result.add(table());
-						}
-						return fCopier.castList(result);
-					} finally {
-						iter.tearDown();
+
+			if (iter.setUp()) {
+				try {
+					final int index = fIndex++;
+					final L result = fCopier.clone(fPrototypeList);
+					while (iter.hasNext()) {
+						fCurrentIndex[index] = iter.next();
+						result.add(table());
 					}
+					return fCopier.castList(result);
+				} finally {
+					--fIndex;
+					iter.tearDown();
 				}
-				return fDefaultValue;
-			} finally {
-				--fIndex;
 			}
+			return fDefaultValue;
+
 		}
 		return fFunction.evaluate(fCurrentIndex);
 	}

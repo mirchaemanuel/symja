@@ -236,7 +236,7 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 	 * Constructs an empty list with the specified initial capacity.
 	 * 
 	 * @param initialCapacity
-	 *          the initial capacity (i.e. number of arguments without the heade
+	 *          the initial capacity (i.e. number of arguments without the header
 	 *          element) of the list.
 	 * @param setLength
 	 *          if <code>true</code>, sets the array's size to initialCapacity.
@@ -1237,14 +1237,14 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 		return new ASTRange(this, start, end);
 	}
 
-	// public IExpr save() {
-	// return (IExpr) super.export();
-	// }
-	//
-	// public IExpr saveHeap() {
-	// return (IExpr) super.moveHeap();
-	// }
-
+	/**
+	 * 
+	 * @param intialCapacity
+	 *          the initial capacity (i.e. number of arguments without the header
+	 *          element) of the list.
+	 * @param head
+	 * @return
+	 */
 	public static AST newInstance(final int intialCapacity, final IExpr head) {
 		AST ast = new AST(intialCapacity + 1, false);
 		ast.add(head);
