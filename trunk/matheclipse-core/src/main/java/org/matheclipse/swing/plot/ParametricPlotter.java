@@ -22,7 +22,6 @@ package org.matheclipse.swing.plot;
 import static org.matheclipse.core.expression.F.N;
 
 import java.awt.Color;
-import java.awt.EventQueue;
 import java.awt.Graphics2D;
 import java.util.LinkedList;
 import java.util.List;

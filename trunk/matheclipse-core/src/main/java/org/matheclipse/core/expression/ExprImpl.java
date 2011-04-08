@@ -23,6 +23,7 @@ import apache.harmony.math.BigInteger;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 
+import edu.jas.poly.ExpVector;
 import edu.jas.structure.ElemFactory;
 
 /**
@@ -277,7 +278,7 @@ public abstract class ExprImpl implements IExpr {
 	public boolean isPattern() {
 		return this instanceof IPattern;
 	}
-	
+
 	public boolean isSymbol() {
 		return this instanceof ISymbol;
 	}
@@ -285,14 +286,14 @@ public abstract class ExprImpl implements IExpr {
 	public boolean isComplex() {
 		return this instanceof IComplex;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
 	public boolean isFraction() {
 		return this instanceof IFraction;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -304,9 +305,9 @@ public abstract class ExprImpl implements IExpr {
 	 * {@inheritDoc}
 	 */
 	public boolean isRational() {
-		return (this instanceof IInteger)||(this instanceof IFraction);
+		return (this instanceof IInteger) || (this instanceof IFraction);
 	}
-	
+
 	public boolean isSignedNumber() {
 		return this instanceof ISignedNumber;
 	}
@@ -453,10 +454,22 @@ public abstract class ExprImpl implements IExpr {
 	public boolean isZERO() {
 		return isZero();
 	}
-
+	
+	/**
+	 * Signum functionality is used in JAS toString() method, don't use it as math
+	 * signum function.
+	 * 
+	 * @deprecated
+	 */
 	@Override
 	public int signum() {
-		throw new UnsupportedOperationException(toString());
+		if (isZERO()) {
+			return 0;
+		}
+		if (isSignedNumber()) {
+			return ((ISignedNumber) this).sign();
+		}
+		return 1;
 	}
 
 	@Override

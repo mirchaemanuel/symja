@@ -1585,9 +1585,21 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 		return isZero();
 	}
 
+	/**
+	 * Signum functionality is used in JAS toString() method, don't use it as math
+	 * signum function.
+	 * 
+	 * @deprecated
+	 */
 	@Override
 	public int signum() {
-		throw new UnsupportedOperationException();
+		if (isTimes()) {
+			IExpr temp = get(1);
+			if (temp.isSignedNumber() && ((ISignedNumber) temp).isNegative()) {
+				return -1;
+			}
+		}
+		return 1;
 	}
 
 	@Override

@@ -14,8 +14,6 @@ import org.matheclipse.core.interfaces.IExpr;
  */
 public class IndefiniteIntegrationRules16 { 
   public static IAST RULES = List( 
-SetDelayed(Int(Times($p("u",true),Power(Times(Power($p("v"),$p("m",true)),Power($p("w"),$p("n",true))),$p("p"))),$p("x",$s("Symbol"))),
-    Condition(Module(List(Set($s("r"),Simplify(Times(Power(Times(Power($s("v"),$s("m")),Power($s("w"),$s("n"))),$s("p")),Power(Times(Power($s("v"),Times($s("m"),$s("p"))),Power($s("w"),Times($s("n"),$s("p")))),CN1)))),$s("lst")),Condition(CompoundExpression(Set($s("lst"),SplitFreeFactors(Times(Power($s("v"),Times($s("m"),$s("p"))),Power($s("w"),Times($s("n"),$s("p")))),$s("x"))),Times(Times($s("r"),Part($s("lst"),C1)),Int(Regularize(Times($s("u"),Part($s("lst"),C2)),$s("x")),$s("x")))),NonzeroQ(Plus($s("r"),Times(CN1,C1))))),And(And(FreeQ($s("p"),$s("x")),Not(PowerQ($s("v")))),Not(PowerQ($s("w")))))),
 SetDelayed(Int(Times(Times($p("u",true),Power($p("v"),$p("m"))),Power($p("w"),$p("n"))),$p("x",$s("Symbol"))),
     Condition(Module(List(Set($s("q"),Cancel(Times($s("v"),Power($s("w"),CN1))))),Condition(Times(Times(Times(Power($s("v"),$s("m")),Power($s("w"),$s("n"))),Power(Power($s("q"),$s("m")),CN1)),Int(Times($s("u"),Power($s("q"),$s("m"))),$s("x"))),PolynomialQ($s("q"),$s("x")))),And(And(FractionQ(List($s("m"),$s("n"))),Equal(Plus($s("m"),$s("n")),C0)),PolynomialQ(List($s("v"),$s("w")),$s("x"))))),
 SetDelayed(Int($p("u"),$p("x",$s("Symbol"))),

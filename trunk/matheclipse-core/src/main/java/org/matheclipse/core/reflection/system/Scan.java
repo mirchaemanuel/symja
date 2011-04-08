@@ -1,8 +1,6 @@
 package org.matheclipse.core.reflection.system;
 
 import org.matheclipse.core.eval.exception.ReturnException;
-import org.matheclipse.core.eval.exception.ThrowException;
-import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
 
@@ -17,11 +15,11 @@ public class Scan extends Map {
 	@Override
 	public IExpr evaluate(final IAST ast) {
 		try {
-			super.evaluate(ast);
+			return super.evaluate(ast);
 		} catch (final ReturnException e) {
-		} catch (final ThrowException e) {
+			return e.getValue();
+			// don't catch Throw[] here !
 		}
-		return F.Null;
 	}
 
 }

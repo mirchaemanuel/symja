@@ -2,7 +2,6 @@ package org.matheclipse.core.generic;
 
 import org.matheclipse.basic.Alloc;
 import org.matheclipse.core.eval.EvalDouble;
-import org.matheclipse.core.expression.AST;
 import org.matheclipse.core.expression.ComplexNum;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.expression.Num;
@@ -28,8 +27,10 @@ public class BinaryNumerical extends BinaryFunctorImpl<IExpr> {
 	}
 
 	public IExpr apply(final IExpr firstArg, final IExpr secondArg) {
-		final IExpr temp = AST.COPY.substitute(fun, variable1, firstArg, 1);
-		return F.evaln(AST.COPY.substitute(temp, variable2, secondArg, 1));
+		final IExpr temp = fun.replaceAll(F.List(F.Rule(variable1, firstArg), F.Rule(variable2, secondArg)));
+		return F.evaln(temp);
+		// AST.COPY.substitute(fun, variable1, firstArg, 1);
+		// return F.evaln(AST.COPY.substitute(temp, variable2, secondArg, 1));
 	}
 
 	public double value(double x, double y) {
