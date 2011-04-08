@@ -3,7 +3,7 @@
 
 <wiki:toc max_depth="1" />
 
-*Note the following implementation is currently only available through SVN*
+*Note:* the following implementation is currently only available through SVN.
 
 = The Rubi rule-based integrator library =
 Description of implementation of the rules from the [http://www.apmaths.uwo.ca/~arich/">Rubi  rule-based integrator].
