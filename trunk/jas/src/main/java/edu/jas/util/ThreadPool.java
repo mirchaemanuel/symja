@@ -1,5 +1,5 @@
 /*
- * $Id: ThreadPool.java 3405 2010-12-12 21:34:20Z kredel $
+ * $Id: ThreadPool.java 3571 2011-03-18 22:02:51Z kredel $
  */
 
 // package edu.unima.ky.parallel;
@@ -132,7 +132,7 @@ public class ThreadPool {
     @Override
     public String toString() {
         return "ThreadPool( size=" + getNumber() + ", idle=" + idleworkers + ", " + getStrategy() + ", jobs="
-            + jobstack.size() + ")";
+                        + jobstack.size() + ")";
     }
 
 
@@ -190,11 +190,11 @@ public class ThreadPool {
             synchronized (this) {
                 logger.info("jobs canceled: " + jobstack);
                 jobstack.clear();
-	    }
+            }
         }
         int re = 0;
         for (int i = 0; i < workers.length; i++) {
-            if (workers[i] == null ) {
+            if (workers[i] == null) {
                 continue;
             }
             try {
@@ -251,9 +251,8 @@ public class ThreadPool {
         // is expressed using strategy enumeration
         if (strategy == StrategyEnumeration.LIFO) {
             return jobstack.removeLast(); // LIFO
-        } else {
-            return jobstack.removeFirst(); // FIFO
         }
+        return jobstack.removeFirst(); // FIFO
     }
 
 
@@ -265,7 +264,7 @@ public class ThreadPool {
             return true;
         }
         for (int i = 0; i < workers.length; i++) {
-            if (workers[i] == null ) {
+            if (workers[i] == null) {
                 continue;
             }
             if (workers[i].isWorking) {
@@ -290,7 +289,7 @@ public class ThreadPool {
         // ( ( j > 0 && ( j+workers.length > n ) ) || ( j > n )
         int x = 0;
         for (int i = 0; i < workers.length; i++) {
-            if (workers[i] == null ) {
+            if (workers[i] == null) {
                 continue;
             }
             if (workers[i].isWorking) {

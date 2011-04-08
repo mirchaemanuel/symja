@@ -1,5 +1,5 @@
 /*
- * $Id: RealRootAbstract.java 3056 2010-03-27 10:34:49Z kredel $
+ * $Id: RealRootAbstract.java 3579 2011-03-26 10:32:37Z kredel $
  */
 
 package edu.jas.root;
@@ -170,6 +170,18 @@ public abstract class RealRootAbstract<C extends RingElem<C>& Rational> implemen
     public List<Interval<C>> realRoots(GenPolynomial<C> f, C eps) {
         List<Interval<C>> iv = realRoots(f);
         return refineIntervals(iv, f, eps);
+    }
+
+
+    /**
+     * Isolating intervals for the real roots.
+     * @param f univariate polynomial.
+     * @param eps requested intervals length.
+     * @return a list of isolating intervals v such that |v| &lt; eps.
+     */
+    public List<Interval<C>> realRoots(GenPolynomial<C> f, BigRational eps) {
+        C e = f.ring.coFac.parse(eps.toString());
+        return realRoots(f,e);
     }
 
 
@@ -367,10 +379,9 @@ public abstract class RealRootAbstract<C extends RingElem<C>& Rational> implemen
      *            with iv such that |g(a) - g(b)| &lt; eps for a, b in iv.
      * @param f univariate polynomial, non-zero.
      * @param g univariate polynomial, gcd(f,g) == 1.
-     * @param eps length limit for interval length.
      * @return g(iv) .
      */
-    public C realIntervalMagnitude(Interval<C> iv, GenPolynomial<C> f, GenPolynomial<C> g, C eps) {
+    public C realIntervalMagnitude(Interval<C> iv, GenPolynomial<C> f, GenPolynomial<C> g) {
         if (g.isZERO() || g.isConstant()) {
             return g.leadingBaseCoefficient();
         }
@@ -396,7 +407,7 @@ public abstract class RealRootAbstract<C extends RingElem<C>& Rational> implemen
             return g.leadingBaseCoefficient();
         }
         Interval<C> v = invariantMagnitudeInterval(iv, f, g, eps);
-        return realIntervalMagnitude(v, f, g, eps);
+        return realIntervalMagnitude(v, f, g);
     }
 
 

@@ -1,5 +1,5 @@
 /*
- * $Id: GroebnerBaseAbstract.java 3446 2010-12-25 21:57:09Z kredel $
+ * $Id: GroebnerBaseAbstract.java 3569 2011-03-18 21:48:58Z kredel $
  */
 
 package edu.jas.gb;
@@ -143,6 +143,12 @@ public abstract class GroebnerBaseAbstract<C extends RingElem<C>>
         //int uht = 0;
         Set<Integer> v = new HashSet<Integer>(); // for non reduced GBs
         for (GenPolynomial<C> p : F) {
+            if ( p.isZERO() ) {
+                continue;
+            }
+            if ( p.isConstant() ) { // for non-monic lists
+                return -1;
+            }
             ExpVector e = p.leadingExpVector();
             if (e == null) {
                 continue;

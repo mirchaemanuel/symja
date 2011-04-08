@@ -1,5 +1,5 @@
 /*
- * $Id: KsubSet.java 3282 2010-08-22 17:15:02Z kredel $
+ * $Id: KsubSet.java 3571 2011-03-18 22:02:51Z kredel $
  */
 
 package edu.jas.util;
@@ -150,9 +150,8 @@ class KsubSetIterator<E> implements Iterator<List<E>> {
                 recIter = new KsubSetIterator<E>(rest, k - 1);
             }
             return this.next(); // retry
-        } else {
-            throw new NoSuchElementException("invalid call of next()");
         }
+        throw new NoSuchElementException("invalid call of next()");
     }
 
 
