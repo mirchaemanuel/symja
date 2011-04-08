@@ -1,5 +1,5 @@
 /*
- * $Id: ComplexAlgebraicRing.java 3364 2010-10-24 12:56:06Z kredel $
+ * $Id: ComplexAlgebraicRing.java 3592 2011-04-02 18:49:49Z kredel $
  */
 
 package edu.jas.root;
@@ -11,8 +11,12 @@ import java.util.List;
 import java.util.Random;
 
 import edu.jas.arith.Rational;
+import edu.jas.arith.BigRational;
+import edu.jas.arith.BigDecimal;
+import edu.jas.poly.AlgebraicNumber;
 import edu.jas.poly.AlgebraicNumberRing;
 import edu.jas.poly.Complex;
+import edu.jas.poly.ComplexRing;
 import edu.jas.poly.GenPolynomial;
 import edu.jas.structure.GcdRingElem;
 import edu.jas.structure.Power;
@@ -20,7 +24,7 @@ import edu.jas.structure.RingFactory;
 
 
 /**
- * Complex algebraic number factory class based on GenPolynomial with RingElem
+ * Complex algebraic number factory class based on AlgebraicNumberRing with RingElem
  * interface. Objects of this class are immutable with the exception of the
  * isolating intervals.
  * @author Heinz Kredel
@@ -45,9 +49,15 @@ implements RingFactory<ComplexAlgebraicNumber<C>> {
 
 
     /**
+     * Epsilon of the isolating rectangle for a complex root.
+     */
+    protected C eps;
+
+
+    /**
      * Precision of the isolating rectangle for a complex root.
      */
-    public final Complex<C> eps;
+    public final int PRECISION = 9; //BigDecimal.DEFAULT_PRECISION;
 
 
     /**
@@ -69,10 +79,9 @@ implements RingFactory<ComplexAlgebraicNumber<C>> {
         if (m.ring.characteristic().signum() > 0) {
             throw new IllegalArgumentException("characteristic not zero");
         }
-        Complex<C> e = m.ring.coFac.fromInteger(10L);
+        C e = m.ring.coFac.fromInteger(10L).getRe();
         e = e.inverse();
-        // e = Power.positivePower(e,BigDecimal.DEFAULT_PRECISION);
-        e = Power.positivePower(e, 9); //BigDecimal.DEFAULT_PRECISION);
+        e = Power.positivePower(e, PRECISION);
         eps = e;
     }
 
@@ -91,14 +100,14 @@ implements RingFactory<ComplexAlgebraicNumber<C>> {
         if (m.ring.characteristic().signum() > 0) {
             throw new IllegalArgumentException("characteristic not zero");
         }
-        Complex<C> e = m.ring.coFac.fromInteger(10L);
+        C e = m.ring.coFac.fromInteger(10L).getRe();
         e = e.inverse();
-        e = Power.positivePower(e, 9); //BigDecimal.DEFAULT_PRECISION);
+        e = Power.positivePower(e, PRECISION);
         eps = e;
     }
 
 
-    /**
+    /*
      * Get the module part.
      * @return modul. public GenPolynomial<C> getModul() { return
      *         algebraic.modul; }
@@ -113,6 +122,42 @@ implements RingFactory<ComplexAlgebraicNumber<C>> {
     public synchronized void setRoot(Rectangle<C> v) {
         // assert v is contained in root
         this.root = v;
+    }
+
+
+    /**
+     * Get rectangle for the complex root.
+     * @return v rectangle.
+     */
+    public synchronized Rectangle<C> getRoot() {
+        return this.root;
+    }
+
+
+    /**
+     * Get epsilon. 
+     * @return epsilon.
+     */
+    public synchronized C getEps() {
+        return this.eps;
+    }
+
+
+    /**
+     * Set a new epsilon. 
+     * @param e epsilon.
+     */
+    public synchronized void setEps(C e) {
+        this.eps = e;
+    }
+
+
+    /**
+     * Set a new epsilon. 
+     * @param e epsilon.
+     */
+    public synchronized void setEps(BigRational e) {
+        this.eps = algebraic.ring.coFac.parse(e.toString()).getRe();
     }
 
 
@@ -155,6 +200,17 @@ implements RingFactory<ComplexAlgebraicNumber<C>> {
 
 
     /**
+     * Get the i element.
+     * @return i as ComplexAlgebraicNumber.
+     */
+    public ComplexAlgebraicNumber<C> getIMAG() {
+        ComplexRing<C> cr = (ComplexRing<C>) algebraic.ring.coFac;
+        Complex<C> I = cr.getIMAG(); 
+        return new ComplexAlgebraicNumber<C>(this, algebraic.getZERO().sum(I));
+    }
+
+
+    /**
      * Get the generating element.
      * @return alpha as ComplexAlgebraicNumber.
      */
@@ -169,9 +225,11 @@ implements RingFactory<ComplexAlgebraicNumber<C>> {
      * @see edu.jas.structure.ElemFactory#generators()
      */
     public List<ComplexAlgebraicNumber<C>> generators() {
-        List<ComplexAlgebraicNumber<C>> gens = new ArrayList<ComplexAlgebraicNumber<C>>(2);
-        gens.add(getONE());
-        gens.add(getGenerator());
+        List<AlgebraicNumber<Complex<C>>> agens = algebraic.generators();
+        List<ComplexAlgebraicNumber<C>> gens = new ArrayList<ComplexAlgebraicNumber<C>>(agens.size());
+        for (AlgebraicNumber<Complex<C>> a : agens) {
+            gens.add(getZERO().sum(a.getVal()));
+        }
         return gens;
     }
 

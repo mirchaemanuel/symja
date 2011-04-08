@@ -1,5 +1,5 @@
 /*
- * $Id: Rectangle.java 3364 2010-10-24 12:56:06Z kredel $
+ * $Id: Rectangle.java 3548 2011-02-27 15:24:49Z kredel $
  */
 
 package edu.jas.root;
@@ -46,6 +46,27 @@ public class Rectangle<C extends RingElem<C> & Rational > {
         if (corners[4] == null) {
             corners[4] = corners[0];
         }
+    }
+
+
+    /**
+     * Constructor.
+     * @param mid corner.
+     */
+    @SuppressWarnings("unchecked")
+    public Rectangle(Complex<C> mid) {
+        this(mid, mid);
+    }
+
+
+    /**
+     * Constructor.
+     * @param sw corner.
+     * @param ne corner.
+     */
+    @SuppressWarnings("unchecked")
+    public Rectangle(Complex<C> sw, Complex<C> ne) {
+        this( new Complex<C>(sw.ring,sw.getRe(),ne.getIm()), sw, new Complex<C>(sw.ring,ne.getRe(),sw.getIm()), ne );
     }
 
 

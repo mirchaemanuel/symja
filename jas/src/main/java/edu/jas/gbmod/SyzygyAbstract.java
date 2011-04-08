@@ -1,5 +1,5 @@
 /*
- * $Id: SyzygyAbstract.java 3446 2010-12-25 21:57:09Z kredel $
+ * $Id: SyzygyAbstract.java 3584 2011-03-26 11:39:39Z kredel $
  */
 
 package edu.jas.gbmod;
@@ -249,7 +249,7 @@ public class SyzygyAbstract<C extends GcdRingElem<C>> implements Syzygy<C> {
             return true;
         }
         for (List<GenPolynomial<C>> row : Z.list) {
-            List<GenPolynomial<C>> zr = blas.scalarProduct(row, F.list);
+            List<GenPolynomial<C>> zr = blas.leftScalarProduct(row, F.list);
             if (!blas.isZero(zr)) {
                 logger.info("is not ZeroRelation (" + zr.size() + ") = " + zr);
                 return false;

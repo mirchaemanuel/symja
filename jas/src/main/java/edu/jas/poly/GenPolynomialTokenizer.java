@@ -1,5 +1,5 @@
 /*
- * $Id: GenPolynomialTokenizer.java 3535 2011-02-17 21:26:00Z kredel $
+ * $Id: GenPolynomialTokenizer.java 3585 2011-03-26 22:40:36Z kredel $
  */
 
 package edu.jas.poly;
@@ -11,8 +11,11 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StreamTokenizer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.Scanner;
 
 import org.apache.log4j.Logger;
@@ -24,7 +27,6 @@ import edu.jas.arith.BigQuaternion;
 import edu.jas.arith.BigRational;
 import edu.jas.arith.ModInteger;
 import edu.jas.arith.ModIntegerRing;
-import edu.jas.arith.ModLong;
 import edu.jas.arith.ModLongRing;
 import edu.jas.structure.Power;
 import edu.jas.structure.RingElem;
@@ -32,12 +34,12 @@ import edu.jas.structure.RingFactory;
 
 
 /**
- * GenPolynomial Tokenizer. Used to read rational polynomials and
- * lists of polynomials from input streams. Arbitrary polynomial rings
- * and coefficient rings can be read with RingFactoryTokenizer.
- * <b>Note:</b> Can no more read QuotientRing since end of 2010,
- * revision 3441.  Quotient coefficients and others can still be read
- * if the respective factory is provided via the constructor.
+ * GenPolynomial Tokenizer. Used to read rational polynomials and lists of
+ * polynomials from input streams. Arbitrary polynomial rings and coefficient
+ * rings can be read with RingFactoryTokenizer. <b>Note:</b> Can no more read
+ * QuotientRing since end of 2010, revision 3441. Quotient coefficients and
+ * others can still be read if the respective factory is provided via the
+ * constructor.
  * @see edu.jas.application.RingFactoryTokenizer
  * @author Heinz Kredel
  */
@@ -313,12 +315,18 @@ public class GenPolynomialTokenizer {
                 break;
             switch (tt) {
             // case '_': removed 
-            case '{':
+            case '}':
+                throw new InvalidExpressionException("mismatch of braces after " + a + ", error at " + b);
+            case '{': // recursion
                 StringBuffer rf = new StringBuffer();
                 int level = 0;
                 do {
                     tt = tok.nextToken();
                     //System.out.println("token { = " + ((char)tt) + ", " + tt + ", level = " + level);
+                    if (tt == StreamTokenizer.TT_EOF) {
+                        throw new InvalidExpressionException("mismatch of braces after " + a + ", error at "
+                                        + b);
+                    }
                     if (tt == '{') {
                         level++;
                     }
@@ -336,9 +344,13 @@ public class GenPolynomialTokenizer {
                     } else {
                         rf.append((char) tt);
                     }
-                } while (level >= 0); // || tt != '}' 
+                } while (level >= 0);
                 //System.out.println("coeff{} = " + rf.toString() );
-                r = (RingElem) fac.parse(rf.toString());
+                try {
+                    r = (RingElem) fac.parse(rf.toString());
+                } catch (NumberFormatException re) {
+                    throw new InvalidExpressionException("not a number " + rf, re);
+                }
                 if (debug)
                     logger.debug("coeff " + r);
                 ie = nextExponent();
@@ -379,7 +391,11 @@ public class GenPolynomialTokenizer {
                     } else {
                         tok.pushBack();
                     }
-                    r = (RingElem) fac.parse(df.toString());
+                    try {
+                        r = (RingElem) fac.parse(df.toString());
+                    } catch (NumberFormatException re) {
+                        throw new InvalidExpressionException("not a number " + df, re);
+                    }
                     if (debug)
                         logger.debug("coeff " + r);
                     //System.out.println("r = " + r.toScriptFactory());
@@ -399,20 +415,35 @@ public class GenPolynomialTokenizer {
                     break;
                 if (tok.sval == null)
                     break;
-                // read monomial 
+                // read monomial or recursion 
                 first = tok.sval.charAt(0);
                 if (letter(first)) {
                     ix = leer.indexVar(tok.sval, vars); //indexVar( tok.sval );
-                    if (ix < 0) {
-                        logger.error("Unknown varibable " + tok.sval);
-                        done = true;
-                        break;
+                    if (ix < 0) { // not found
+                        try {
+                            r = (RingElem) fac.parse(tok.sval);
+                        } catch (NumberFormatException re) {
+                            throw new InvalidExpressionException("recursively unknown variable " + tok.sval);
+                        }
+                        if (debug)
+                            logger.info("coeff " + r);
+                        if (r.isONE() || r.isZERO()) {
+                            //logger.error("Unknown varibable " + tok.sval);
+                            //done = true;
+                            //break;
+                            throw new InvalidExpressionException("recursively unknown variable " + tok.sval);
+                        }
+                        ie = nextExponent();
+                        //  System.out.println("ie: " + ie);
+                        r = Power.<RingElem> positivePower(r, ie);
+                        b = b.multiply(r);
+                    } else { // found
+                        //  System.out.println("ix: " + ix);
+                        ie = nextExponent();
+                        //  System.out.println("ie: " + ie);
+                        e = ExpVector.create(vars.length, ix, ie);
+                        b = b.multiply(e);
                     }
-                    //  System.out.println("ix: " + ix);
-                    ie = nextExponent();
-                    //  System.out.println("ie: " + ie);
-                    e = ExpVector.create(vars.length, ix, ie);
-                    b = b.multiply(e);
                     tt = tok.nextToken();
                     if (debug)
                         logger.debug("tt,letter = " + tok);
@@ -598,9 +629,9 @@ public class GenPolynomialTokenizer {
 
 
     /**
-     * Parsing method for coefficient ring. syntax: Rat | Q | Int | Z
-     * | Mod modul | Complex | C | D | Quat | AN[ (var) ( poly ) | AN[
-     * modul (var) ( poly ) ] | IntFunc (var_list)
+     * Parsing method for coefficient ring. syntax: Rat | Q | Int | Z | Mod
+     * modul | Complex | C | D | Quat | AN[ (var) ( poly ) | AN[ modul (var) (
+     * poly ) ] | IntFunc (var_list)
      * @return the next coefficient factory.
      * @throws IOException
      */
@@ -646,11 +677,11 @@ public class GenPolynomialTokenizer {
                     if (digit(tok.sval.charAt(0))) {
                         BigInteger mo = new BigInteger(tok.sval);
                         BigInteger lm = new BigInteger(Long.MAX_VALUE);
-                        if ( mo.compareTo(lm) < 0 ) {
+                        if (mo.compareTo(lm) < 0) {
                             coeff = new ModLongRing(mo.getVal());
-			} else {
+                        } else {
                             coeff = new ModIntegerRing(mo.getVal());
-			}
+                        }
                         //System.out.println("coeff = " + coeff + " :: " + coeff.getClass());
                         ct = coeffType.ModInt;
                     } else {
@@ -663,8 +694,9 @@ public class GenPolynomialTokenizer {
                     tt = tok.nextToken();
                 }
             } else if (tok.sval.equalsIgnoreCase("RatFunc") || tok.sval.equalsIgnoreCase("ModFunc")) {
-                logger.error("RatFunc and ModFunc can no more be read, see edu.jas.application.RingFactoryTokenizer.");
-                throw new IOException("RatFunc and ModFunc can no more be read, see edu.jas.application.RingFactoryTokenizer.");
+                //logger.error("RatFunc and ModFunc can no more be read, see edu.jas.application.RingFactoryTokenizer.");
+                throw new InvalidExpressionException(
+                                "RatFunc and ModFunc can no more be read, see edu.jas.application.RingFactoryTokenizer.");
             } else if (tok.sval.equalsIgnoreCase("IntFunc")) {
                 String[] rfv = nextVariableList();
                 //System.out.println("rfv = " + rfv.length + " " + rfv[0]);
@@ -694,7 +726,9 @@ public class GenPolynomialTokenizer {
                     //System.out.println("anv = " + anv.length + " " + anv[0]);
                     int vs = anv.length;
                     if (vs != 1) {
-                        logger.error("AlgebraicNumber only for univariate polynomials");
+                        throw new InvalidExpressionException(
+                                        "AlgebraicNumber only for univariate polynomials "
+                                                        + Arrays.toString(anv));
                     }
                     String[] ovars = vars;
                     vars = anv;
@@ -957,9 +991,8 @@ public class GenPolynomialTokenizer {
         int s = nextSplitIndex();
         if (s <= 0) {
             return new TermOrder(evord);
-        } else {
-            return new TermOrder(evord, evord, vars.length, s);
         }
+        return new TermOrder(evord, evord, vars.length, s);
     }
 
 
@@ -1334,17 +1367,17 @@ public class GenPolynomialTokenizer {
 
 
     // must also allow +/- // does not work with tokenizer
-    private boolean number(char x) {
+    private static boolean number(char x) {
         return digit(x) || x == '-' || x == '+';
     }
 
 
-    private boolean digit(char x) {
+    private static boolean digit(char x) {
         return '0' <= x && x <= '9';
     }
 
 
-    private boolean letter(char x) {
+    private static boolean letter(char x) {
         return ('a' <= x && x <= 'z') || ('A' <= x && x <= 'Z');
     }
 
@@ -1362,7 +1395,7 @@ public class GenPolynomialTokenizer {
 
     /**
      * Parse variable list from String.
-     * @param s String. Syntax: (n1,...,nk) or (n1 ... nk), brackest are also
+     * @param s String. Syntax: (n1,...,nk) or (n1 ... nk), parenthesis are also
      *            optional.
      * @return array of variable names found in s.
      */
@@ -1386,6 +1419,70 @@ public class GenPolynomialTokenizer {
         Scanner sc = new Scanner(st);
         while (sc.hasNext()) {
             String sn = sc.next();
+            sl.add(sn);
+        }
+        vl = new String[sl.size()];
+        int i = 0;
+        for (String si : sl) {
+            vl[i] = si;
+            i++;
+        }
+        return vl;
+    }
+
+
+    /**
+     * Extract variable list from expression.
+     * @param s String. Syntax: any polynomial expression.
+     * @return array of variable names found in s.
+     */
+    public static String[] expressionVariables(String s) {
+        String[] vl = null;
+        if (s == null) {
+            return vl;
+        }
+        String st = s.trim();
+        if (st.length() == 0) {
+            return new String[0];
+        }
+        st = st.replaceAll(",", " ");
+        st = st.replaceAll("\\+", " ");
+        st = st.replaceAll("-", " ");
+        st = st.replaceAll("\\*", " ");
+        st = st.replaceAll("/", " ");
+        st = st.replaceAll("\\(", " ");
+        st = st.replaceAll("\\)", " ");
+        st = st.replaceAll("\\{", " ");
+        st = st.replaceAll("\\}", " ");
+        st = st.replaceAll("\\[", " ");
+        st = st.replaceAll("\\]", " ");
+        st = st.replaceAll("\\^", " ");
+        //System.out.println("st = " + st);
+
+        Set<String> sl = new TreeSet<String>();
+        Scanner sc = new Scanner(st);
+        while (sc.hasNext()) {
+            String sn = sc.next();
+            if ( sn == null || sn.length() == 0 ) {
+                continue;
+            }
+            //System.out.println("sn = " + sn);
+            int i = 0;
+            while ( digit(sn.charAt(i)) && i < sn.length()-1 ) {
+                i++;
+            }
+            //System.out.println("sn = " + sn + ", i = " + i);
+            if ( i > 0 ) {
+                sn = sn.substring(i,sn.length());
+            }
+            //System.out.println("sn = " + sn);
+            if ( sn.length() == 0 ) {
+                continue;
+            }
+            if ( ! letter(sn.charAt(0)) ) {
+                continue;
+            }
+            //System.out.println("sn = " + sn);
             sl.add(sn);
         }
         vl = new String[sl.size()];

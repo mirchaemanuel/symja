@@ -1,5 +1,5 @@
 /*
- * $Id: RealAlgebraicRing.java 3211 2010-07-05 12:54:22Z kredel $
+ * $Id: RealAlgebraicRing.java 3576 2011-03-25 13:25:18Z kredel $
  */
 
 package edu.jas.root;
@@ -11,6 +11,9 @@ import java.util.List;
 import java.util.Random;
 
 import edu.jas.arith.Rational;
+import edu.jas.arith.BigDecimal;
+import edu.jas.arith.BigRational;
+import edu.jas.poly.AlgebraicNumber;
 import edu.jas.poly.AlgebraicNumberRing;
 import edu.jas.poly.GenPolynomial;
 import edu.jas.structure.GcdRingElem;
@@ -19,7 +22,7 @@ import edu.jas.structure.RingFactory;
 
 
 /**
- * Real algebraic number factory class based on GenPolynomial with RingElem
+ * Real algebraic number factory class based on AlgebraicNumberRing with RingElem
  * interface. Objects of this class are immutable with the exception of the
  * isolating intervals.
  * @author Heinz Kredel
@@ -46,7 +49,7 @@ public class RealAlgebraicRing<C extends GcdRingElem<C> & Rational>
     /**
      * Precision of the isolating interval for a real root.
      */
-    public final C eps;
+    protected C eps;
 
 
     /**
@@ -70,8 +73,8 @@ public class RealAlgebraicRing<C extends GcdRingElem<C> & Rational>
         }
         C e = m.ring.coFac.fromInteger(10L);
         e = e.inverse();
-        // e = Power.positivePower(e,BigDecimal.DEFAULT_PRECISION);
-        e = Power.positivePower(e, 9); //BigDecimal.DEFAULT_PRECISION);
+        C x = Power.positivePower(e,BigDecimal.DEFAULT_PRECISION);
+        e = Power.positivePower(e, 9); // better not too much for speed
         eps = e;
     }
 
@@ -122,6 +125,33 @@ public class RealAlgebraicRing<C extends GcdRingElem<C> & Rational>
     public synchronized void setRoot(Interval<C> v) {
         // assert v is contained in root
         this.root = v;
+    }
+
+
+    /**
+     * Get the epsilon. 
+     * @return eps.
+     */
+    public synchronized C getEps() {
+        return this.eps;
+    }
+
+
+    /**
+     * Set a new epsilon. 
+     * @param e epsilon.
+     */
+    public synchronized void setEps(C e) {
+        this.eps = e;
+    }
+
+
+    /**
+     * Set a new epsilon. 
+     * @param e epsilon.
+     */
+    public synchronized void setEps(BigRational e) {
+        this.eps = algebraic.ring.coFac.parse(e.toString());
     }
 
 
@@ -178,9 +208,11 @@ public class RealAlgebraicRing<C extends GcdRingElem<C> & Rational>
      * @see edu.jas.structure.ElemFactory#generators()
      */
     public List<RealAlgebraicNumber<C>> generators() {
-        List<RealAlgebraicNumber<C>> gens = new ArrayList<RealAlgebraicNumber<C>>(2);
-        gens.add(getONE());
-        gens.add(getGenerator());
+        List<AlgebraicNumber<C>> agens = algebraic.generators();
+        List<RealAlgebraicNumber<C>> gens = new ArrayList<RealAlgebraicNumber<C>>(agens.size());
+        for (AlgebraicNumber<C> a : agens) {
+            gens.add(getZERO().sum(a.getVal()));
+        }
         return gens;
     }
 

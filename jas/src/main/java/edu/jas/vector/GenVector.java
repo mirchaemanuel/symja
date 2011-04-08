@@ -1,5 +1,5 @@
 /*
- * $Id: GenVector.java 3295 2010-08-26 17:01:10Z kredel $
+ * $Id: GenVector.java 3571 2011-03-18 22:02:51Z kredel $
  */
 
 package edu.jas.vector;
@@ -259,9 +259,8 @@ public class GenVector<C extends RingElem<C>> implements ModulElem<GenVector<C>,
     public GenVector<C> abs() {
         if (signum() < 0) {
             return negate();
-        } else {
-            return this;
         }
+        return this;
     }
 
 

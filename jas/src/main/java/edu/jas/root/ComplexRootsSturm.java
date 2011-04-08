@@ -1,5 +1,5 @@
 /*
- * $Id: ComplexRootsSturm.java 3449 2010-12-26 10:15:47Z kredel $
+ * $Id: ComplexRootsSturm.java 3579 2011-03-26 10:32:37Z kredel $
  */
 
 package edu.jas.root;
@@ -12,6 +12,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 import edu.jas.arith.Rational;
+import edu.jas.arith.BigRational;
 import edu.jas.poly.Complex;
 import edu.jas.poly.ComplexRing;
 import edu.jas.poly.GenPolynomial;
@@ -194,6 +195,8 @@ public class ComplexRootsSturm<C extends RingElem<C> & Rational> extends Complex
         long n = windingNumber(rect, a);
         if (n < 0) { // can this happen?
             throw new RuntimeException("negative winding number " + n);
+            //System.out.println("negative winding number " + n);
+            //return roots;
         }
         if (n == 0) {
             return roots;
@@ -229,6 +232,10 @@ public class ComplexRootsSturm<C extends RingElem<C> & Rational> extends Complex
                 List<Rectangle<C>> nwr = complexRoots(nw, a);
                 //System.out.println("#nwr = " + nwr.size()); 
                 roots.addAll(nwr);
+                if ( roots.size() == a.degree(0) ) {
+                    work = false;
+                    break;
+		}
 
                 cp = (Complex<C>[]) copyOfComplex(rect.corners, 4);
                 cp[0] = new Complex<C>(cr, cp[0].getRe(), center.getIm());
@@ -240,6 +247,10 @@ public class ComplexRootsSturm<C extends RingElem<C> & Rational> extends Complex
                 List<Rectangle<C>> swr = complexRoots(sw, a);
                 //System.out.println("#swr = " + swr.size()); 
                 roots.addAll(swr);
+                if ( roots.size() == a.degree(0) ) {
+                    work = false;
+                    break;
+		}
 
                 cp = (Complex<C>[]) copyOfComplex(rect.corners, 4);
                 cp[0] = center;
@@ -251,6 +262,10 @@ public class ComplexRootsSturm<C extends RingElem<C> & Rational> extends Complex
                 List<Rectangle<C>> ser = complexRoots(se, a);
                 //System.out.println("#ser = " + ser.size()); 
                 roots.addAll(ser);
+                if ( roots.size() == a.degree(0) ) {
+                    work = false;
+                    break;
+		}
 
                 cp = (Complex<C>[]) copyOfComplex(rect.corners, 4);
                 cp[0] = new Complex<C>(cr, center.getRe(), cp[0].getIm());
@@ -271,6 +286,55 @@ public class ComplexRootsSturm<C extends RingElem<C> & Rational> extends Complex
             }
         }
         return roots;
+    }
+
+
+    /**
+     * Invariant rectangle for algebraic number.
+     * @param rect root isolating rectangle for f which contains exactly one root.
+     * @param f univariate polynomial, non-zero.
+     * @param g univariate polynomial, gcd(f,g) == 1.
+     * @return v a new rectangle contained in rect such that g(w) != 0 for w in v.
+     */
+    @Override
+    public Rectangle<C> invariantRectangle(Rectangle<C> rect, 
+                                           GenPolynomial<Complex<C>> f, 
+                                           GenPolynomial<Complex<C>> g) 
+                        throws InvalidBoundaryException {
+        Rectangle<C> v = rect;
+        if (g == null || g.isZERO()) {
+            return v;
+        }
+        if (g.isConstant()) {
+            return v;
+        }
+        if (f == null || f.isZERO() || f.isConstant()) { // ?
+            return v;
+        }
+        BigRational len = v.rationalLength();
+        BigRational half = new BigRational(1,2);
+        while (true) {
+            long n = windingNumber(v, g);
+            //System.out.println("n = " + n);
+            if (n < 0) { // can this happen?
+                throw new RuntimeException("negative winding number " + n);
+            }
+            if (n == 0) {
+                return v;
+            }
+            len = len.multiply(half);
+            Rectangle<C> v1 = v;
+            v = complexRootRefinement(v,f,len);
+            if ( v.equals(v1) ) {
+                //System.out.println("len = " + len);
+                if ( !f.gcd(g).isONE() ) {
+                    System.out.println("f.gcd(g) = " + f.gcd(g));
+                    throw new RuntimeException("no convergence " + v);
+                }
+                //break; // no convergence
+	    }
+        }
+        //return v;
     }
 
 }

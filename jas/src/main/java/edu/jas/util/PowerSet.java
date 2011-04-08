@@ -1,5 +1,5 @@
 /*
- * $Id: PowerSet.java 3248 2010-08-07 10:25:22Z kredel $
+ * $Id: PowerSet.java 3571 2011-03-18 22:02:51Z kredel $
  */
 
 package edu.jas.util;
@@ -129,11 +129,10 @@ class PowerSetIterator<E> implements Iterator<List<E>> {
         if (mode == Mode.copy) {
             if (recIter.hasNext()) {
                 return recIter.next();
-            } else {
-                mode = Mode.extend;
-                recIter = new PowerSetIterator<E>(rest);
-                return this.next();
             }
+            mode = Mode.extend;
+            recIter = new PowerSetIterator<E>(rest);
+            return this.next();
         }
         return null;
     }

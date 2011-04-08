@@ -1,5 +1,5 @@
 /*
- * $Id: RealAlgebraicNumber.java 3211 2010-07-05 12:54:22Z kredel $
+ * $Id: RealAlgebraicNumber.java 3592 2011-04-02 18:49:49Z kredel $
  */
 
 package edu.jas.root;
@@ -7,6 +7,7 @@ package edu.jas.root;
 
 //import edu.jas.structure.RingElem;
 import edu.jas.arith.BigRational;
+import edu.jas.arith.BigDecimal;
 import edu.jas.arith.Rational;
 import edu.jas.kern.PrettyPrint;
 import edu.jas.poly.AlgebraicNumber;
@@ -185,7 +186,7 @@ public class RealAlgebraicNumber<C extends GcdRingElem<C> & Rational>
         if (s != 0) {
             return s;
         }
-        s = this.subtract(b).signum();
+        s = this.subtract(b).signum(); // TODO
         //System.out.println("s_real = " + s);
         return s;
     }
@@ -313,13 +314,22 @@ public class RealAlgebraicNumber<C extends GcdRingElem<C> & Rational>
                 ring.eps);
         ring.setRoot(v);
         //System.out.println("new v = " + v);
-        C ev = ring.engine.realIntervalMagnitude(v, ring.algebraic.modul, number.val, ring.eps);
-        if ((Object) ev instanceof BigRational) {
-            BigRational er = (BigRational) (Object) ev;
+        C ev = ring.engine.realIntervalMagnitude(v, ring.algebraic.modul, number.val); //, ring.eps);
+        if ((Object) ev instanceof Rational) { // always true by type parameter
+            BigRational er = ev.getRational();
             return er;
         } else {
-            throw new RuntimeException("BigRational expected, but was " + ev.getClass());
+            throw new RuntimeException("Rational expected, but was " + ev.getClass());
         }
+    }
+
+
+    /**
+     * RealAlgebraicNumber magnitude.
+     * @return |this| as big decimal.
+     */
+    public BigDecimal decimalMagnitude() {
+        return new BigDecimal(magnitude());
     }
 
 

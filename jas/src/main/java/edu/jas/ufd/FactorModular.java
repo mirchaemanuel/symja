@@ -1,5 +1,5 @@
 /*
- * $Id: FactorModular.java 3355 2010-10-23 16:01:52Z kredel $
+ * $Id: FactorModular.java 3571 2011-03-18 22:02:51Z kredel $
  */
 
 package edu.jas.ufd;
@@ -44,6 +44,7 @@ public class FactorModular<MOD extends GcdRingElem<MOD> & Modular> extends Facto
     /**
      * No argument constructor, do not use.
      */
+    @SuppressWarnings("unused")
     private FactorModular() {
         this((RingFactory<MOD>) (Object) new ModLongRing(13, true)); // hack, 13 unimportant
     }

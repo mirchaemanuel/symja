@@ -1,5 +1,5 @@
 /*
- * $Id: PolynomialComparator.java 3295 2010-08-26 17:01:10Z kredel $
+ * $Id: PolynomialComparator.java 3571 2011-03-18 22:02:51Z kredel $
  */
 
 package edu.jas.poly;
@@ -17,7 +17,7 @@ import edu.jas.structure.RingElem;
  * @author Heinz Kredel.
  */
 public class PolynomialComparator<C extends RingElem<C>> implements Serializable,
-        Comparator<GenPolynomial<C>> {
+                Comparator<GenPolynomial<C>> {
 
 
     public final TermOrder tord;
@@ -49,9 +49,8 @@ public class PolynomialComparator<C extends RingElem<C>> implements Serializable
         //System.out.println("p1.compareTo(p2) = " + s);
         if (reverse) {
             return -s;
-        } else {
-            return s;
         }
+        return s;
     }
 
 
