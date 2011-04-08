@@ -10,3 +10,8 @@ Description of implementation of the rules from the [http://www.apmaths.uwo.ca/~
 
 The Rubi *{{{IndefiniteIntegrationRules}}}* and *{{{UtilityFunctions}}}* rules are converted to Java files in the package:
 [http://code.google.com/p/symja/source/browse/trunk/matheclipse-core/src/main/java/org/matheclipse/core/integrate/rubi org.matheclipse.core.integrate/rubi]
+
+
+= Notes =
+  * the pattern-matching evaluation is disabled for the Integrate function in the {{{org.matheclipse.core.eval.EvalEngine#evalASTBuiltinFunction()}}}
+  * the pattern-matching evaluation is called again after some basic AST manipulations in the {{{org.matheclipse.core.reflection.system.Integrate}}} class
