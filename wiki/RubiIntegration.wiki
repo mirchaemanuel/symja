@@ -12,8 +12,8 @@ The Rubi *{{{IndefiniteIntegrationRules}}}* and *{{{UtilityFunctions}}}* rules a
 [http://code.google.com/p/symja/source/browse/trunk/matheclipse-core/src/main/java/org/matheclipse/core/integrate/rubi org.matheclipse.core.integrate/rubi]
 
 The rules were converted to Java files with the following classes:
-  * {http://code.google.com/p/symja/source/browse/trunk/matheclipse-core/src/test/java/org/matheclipse/core/test/ConvertRubiFiles.java ConvertRubiFiles.java]
-  * {http://code.google.com/p/symja/source/browse/trunk/matheclipse-core/src/test/java/org/matheclipse/core/test/ConvertRubiUtilityFunctions.java ConvertRubiUtilityFunctions.java]
+  * [http://code.google.com/p/symja/source/browse/trunk/matheclipse-core/src/test/java/org/matheclipse/core/test/ConvertRubiFiles.java ConvertRubiFiles.java]
+  * [http://code.google.com/p/symja/source/browse/trunk/matheclipse-core/src/test/java/org/matheclipse/core/test/ConvertRubiUtilityFunctions.java ConvertRubiUtilityFunctions.java]
 
 
 = Notes =
