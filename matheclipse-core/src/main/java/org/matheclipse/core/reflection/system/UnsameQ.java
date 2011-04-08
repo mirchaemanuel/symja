@@ -28,7 +28,7 @@ public class UnsameQ extends AbstractFunctionEvaluator {
 			return F.True;
 
 		}
-		return null;
+		return F.False;
 	}
 
 	@Override

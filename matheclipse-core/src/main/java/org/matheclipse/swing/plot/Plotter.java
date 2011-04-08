@@ -22,7 +22,6 @@ package org.matheclipse.swing.plot;
 import static org.matheclipse.core.expression.F.N;
 
 import java.awt.Color;
-import java.awt.EventQueue;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,8 +30,8 @@ import org.matheclipse.core.eval.EvalEngine;
 import org.matheclipse.core.expression.AST;
 import org.matheclipse.core.generic.UnaryNumerical;
 import org.matheclipse.core.interfaces.IAST;
-import org.matheclipse.core.interfaces.INum;
 import org.matheclipse.core.interfaces.IExpr;
+import org.matheclipse.core.interfaces.INum;
 import org.matheclipse.core.interfaces.ISymbol;
 /**
  * Plots functions in 2D.

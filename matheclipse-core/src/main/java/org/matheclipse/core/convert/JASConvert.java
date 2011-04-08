@@ -1,6 +1,7 @@
 package org.matheclipse.core.convert;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
@@ -58,6 +59,21 @@ public class JASConvert<C extends RingElem<C>> {
 	// TermOrder(TermOrder.INVLEX));
 	// };
 
+	public JASConvert(IExpr variable, RingFactory<C> ringFactory) {
+		List<IExpr> varList= new ArrayList<IExpr>();
+		varList.add(variable);
+		this.fRingFactory = ringFactory;
+		this.fVariables = varList;
+		String[] vars = new String[fVariables.size()];
+		for (int i = 0; i < fVariables.size(); i++) {
+			vars[i] = fVariables.get(i).toString();
+		}
+		this.fTermOrder = new TermOrder(TermOrder.INVLEX);
+		this.fPolyFactory = new GenPolynomialRing<C>(fRingFactory, fVariables.size(), fTermOrder, vars);
+		this.fBigIntegerPolyFactory = new GenPolynomialRing<edu.jas.arith.BigInteger>(edu.jas.arith.BigInteger.ZERO, fVariables.size(),
+				fTermOrder, vars);
+	}
+	
 	public JASConvert(final List<? extends IExpr> variablesList, RingFactory<C> ringFactory) {
 		this(variablesList, ringFactory, new TermOrder(TermOrder.INVLEX));
 	}
@@ -144,6 +160,7 @@ public class JASConvert<C extends RingElem<C>> {
 		if (exprPoly.isFree(Predicates.in(fVariables), true)) {
 			return new GenPolynomial(fPolyFactory, exprPoly);
 		}
+		// TODO replace by own exception
 		throw new ClassCastException(exprPoly.toString());
 	}
 

@@ -1,14 +1,13 @@
 package org.matheclipse.core.reflection.system;
 
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
-import org.matheclipse.core.expression.IConstantHeaders;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.ISymbol;
 
 import com.google.common.base.Function;
 
-public class AppendTo extends AbstractFunctionEvaluator implements IConstantHeaders {
+public class AppendTo extends AbstractFunctionEvaluator {
 
 	class AppendToFunction implements Function<IExpr, IExpr> {
 		private final IExpr value;

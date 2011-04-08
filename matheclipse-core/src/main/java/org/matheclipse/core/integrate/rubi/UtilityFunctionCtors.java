@@ -21,9 +21,14 @@ public class UtilityFunctionCtors {
 	public final static String INTEGRATE_PREFIX = "Integrate::";
 	public static ISymbol $sDBG(final String symbolName) {
 		ISymbol sym =  $s(symbolName);
-		sym.setAttributes(ISymbol.CONSOLE_OUTPUT);
+//		sym.setAttributes(ISymbol.CONSOLE_OUTPUT);
 		return sym;
 	}
+//	public static ISymbol $sDBG_2(final String symbolName) {
+//		ISymbol sym =  $s(symbolName);
+//		sym.setAttributes(ISymbol.CONSOLE_OUTPUT);
+//		return sym;
+//	}
   public static IAST AlgebraicFunctionQ(final IExpr a0, final IExpr a1) {
     return binary($sDBG(INTEGRATE_PREFIX+"AlgebraicFunctionQ"), a0, a1);
   }
@@ -286,10 +291,6 @@ public class UtilityFunctionCtors {
 
   public static IAST FunctionOfProductLog(final IExpr a0, final IExpr a1, final IExpr a2, final IExpr a3) {
     return quaternary($sDBG(INTEGRATE_PREFIX+"FunctionOfProductLog"), a0, a1, a2, a3);
-  }
-
-  public static IAST FunctionOfQ(final IExpr a0, final IExpr a1, final IExpr a2) {
-    return ternary($sDBG(INTEGRATE_PREFIX+"FunctionOfQ"), a0, a1, a2);
   }
 
   public static IAST FunctionOfQ(final IExpr a0, final IExpr a1, final IExpr a2, final IExpr a3) {

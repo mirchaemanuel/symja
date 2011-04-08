@@ -16,13 +16,13 @@ public class Part implements IFunctionEvaluator {
 	public IExpr evaluate(final IAST ast) {
 		if (ast.size() == 3) {
 			if (ast.get(1) instanceof IAST) {
-				final IAST arg0 = (IAST) ast.get(1);
-				final IExpr arg1 = ast.get(2);
+				final IAST arg1 = (IAST) ast.get(1);
+				final IExpr arg2 = ast.get(2);
 
-				if (arg1 instanceof IInteger) {
+				if (arg2 instanceof IInteger) {
 					try {
 						final int indx = Validate.checkIntType(ast, 2);
-						return getIndex(arg0, indx); // (IInteger) arg1);
+						return getIndex(arg1, indx); // (IInteger) arg1);
 					} catch (final IndexOutOfBoundsException e) {
 						if (Config.DEBUG) {
 							e.printStackTrace();
@@ -30,8 +30,8 @@ public class Part implements IFunctionEvaluator {
 						return null;
 					}
 				}
-				if (arg1.isList()) {
-					final IAST lst = (IAST) arg1;
+				if (arg2.isList()) {
+					final IAST lst = (IAST) arg2;
 					final IAST result = F.ast(F.List);
 
 					for (int i = 1; i < lst.size(); i++) {
@@ -41,7 +41,7 @@ public class Part implements IFunctionEvaluator {
 							IExpr ires = null;
 
 							final int indx = Validate.checkIntType(lst, i);
-							ires = getIndex(arg0, indx);// (IInteger) expr);
+							ires = getIndex(arg1, indx);// (IInteger) expr);
 
 							if (ires == null) {
 								return null;

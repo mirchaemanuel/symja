@@ -1,5 +1,6 @@
 package org.matheclipse.core.eval.exception;
 
+import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IExpr;
 
 public class ReturnException extends FlowControlException {
@@ -10,7 +11,7 @@ public class ReturnException extends FlowControlException {
 	final private IExpr value;
 
 	public ReturnException() {
-		this(null);
+		this(F.Null);
 	}
 
 	public ReturnException(final IExpr val) {

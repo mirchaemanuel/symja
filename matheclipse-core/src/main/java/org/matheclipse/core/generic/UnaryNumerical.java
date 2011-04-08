@@ -5,7 +5,6 @@ import org.apache.commons.math.analysis.UnivariateRealFunction;
 import org.matheclipse.basic.Alloc;
 import org.matheclipse.core.eval.EvalDouble;
 import org.matheclipse.core.eval.EvalEngine;
-import org.matheclipse.core.expression.AST;
 import org.matheclipse.core.expression.ComplexNum;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.expression.Num;
@@ -34,7 +33,7 @@ public class UnaryNumerical implements Function<IExpr, IExpr>, DifferentiableUni
 	}
 
 	public IExpr apply(final IExpr firstArg) {
-		return F.evaln(AST.COPY.substitute(fFunction, fVariable, firstArg, 1));
+		return F.evaln(fFunction.replaceAll(F.Rule(fVariable, firstArg)));
 	}
 
 	public double value(double x) {

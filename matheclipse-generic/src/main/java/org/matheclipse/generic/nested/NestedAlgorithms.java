@@ -834,38 +834,40 @@ public abstract class NestedAlgorithms<T extends INestedListElement, L extends L
 	 * <code>expr</code> with the corresponding elements in the <code>to</code>
 	 * list. If no replacement is found return the original input expression.
 	 */
-	public T substitute(final T expr, final L from, final L to) {
-		return substitute(expr, from, to, 0);
-	}
+	// public T substitute(final T expr, final L from, final L to) {
+	// return substitute(expr, from, to, 0);
+	// }
 
 	/**
 	 * Replace all elements in the <code>from</code> list, found in expression
 	 * <code>expr</code> with the corresponding elements in the <code>to</code>
 	 * list. If no replacement is found return the original input expression.
 	 */
-	public T substitute(final T expr, final L from, final L to, final int headOffset) {
-		final T result = replaceAll(expr, from, to, headOffset);
-		return (result == null) ? expr : result;
-	}
+	// public T substitute(final T expr, final L from, final L to, final int
+	// headOffset) {
+	// final T result = replaceAll(expr, from, to, headOffset);
+	// return (result == null) ? expr : result;
+	// }
 
 	/**
 	 * Replace all elements which are equal to <code>from</code>, found in
 	 * expression <code>expr</code> with the <code>to</code> object. If no
 	 * replacement is found return the original input expression.
 	 */
-	public T substitute(final T expr, final T from, final T to) {
-		return substitute(expr, from, to, 0);
-	}
+	// public T substitute(final T expr, final T from, final T to) {
+	// return substitute(expr, from, to, 0);
+	// }
 
 	/**
 	 * Replace all elements which are equal to <code>from</code>, found in
 	 * expression <code>expr</code> with the <code>to</code> object. If no
 	 * replacement is found return the original input expression.
 	 */
-	public T substitute(final T expr, final T from, final T to, final int headOffset) {
-		final T result = replace(expr, from, to, headOffset);
-		return (result == null) ? expr : result;
-	}
+	// public T substitute(final T expr, final T from, final T to, final int
+	// headOffset) {
+	// final T result = replace(expr, from, to, headOffset);
+	// return (result == null) ? expr : result;
+	// }
 
 	public L take(final L list, final int level, final ISequence[] sequ) {
 		sequ[level].setListSize(list.size());

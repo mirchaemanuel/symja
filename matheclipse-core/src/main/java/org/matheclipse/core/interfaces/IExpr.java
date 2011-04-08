@@ -550,6 +550,15 @@ public interface IExpr extends Comparable<IExpr>, RingElem<IExpr>, INestedListEl
 	public IExpr replaceRepeated(final IAST astRules);
 
 	/**
+	 * Signum functionality is used in JAS toString() method, don't use it as math
+	 * signum function.
+	 * 
+	 * @deprecated
+	 */
+	@Override
+	public int signum();
+
+	/**
 	 * Returns the product of this object with the one specified.
 	 * 
 	 * @param that
