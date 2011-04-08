@@ -1,7 +1,6 @@
 #summary Integration of the Rubi libraries
 #sidebar TableOfContents
-
-<wiki:toc max_depth="1" />
+ 
 
 *Note:* the following implementation is currently only available through SVN.
 
