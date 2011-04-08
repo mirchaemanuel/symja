@@ -19,3 +19,4 @@ The rules were converted to Java files with the following classes:
 = Notes =
   * the pattern-matching evaluation is disabled for the Integrate function in the {{{org.matheclipse.core.eval.EvalEngine#evalASTBuiltinFunction()}}}
   * the pattern-matching evaluation is called again after some basic AST manipulations in the {{{org.matheclipse.core.reflection.system.Integrate}}} class
+  * if you set {{{SHOW_CONSOLE = true;}}} in the {{{org.matheclipse.basic.Config}}} class, the evaluation trace of the Rubi functions is printed to the Java console.
