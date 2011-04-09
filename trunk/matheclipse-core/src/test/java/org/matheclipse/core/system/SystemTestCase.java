@@ -61,6 +61,8 @@ public class SystemTestCase extends AbstractTestCase {
 		check("Cos[x]^(-2)", "Sec[x]^2");
 		check("Csc[x]^(-2)", "Sin[x]^2");
 		check("Sin[x]^(-2)", "Csc[x]^2");
+
+		check("x - (11 + (7 - x))", "2*x-18");
 	}
 
 	public void testSystem000a() {
@@ -302,16 +304,14 @@ public class SystemTestCase extends AbstractTestCase {
 	public void testSystem038() {
 		check("Trace[D[Sin[x],x]]", "{{Derivative[Sin],Cos[#1]&},{x&,Cos[x]},{D[Sin[x],x],Cos[x]*D[x,x],{D[x,x],1},1*Cos[x],Cos[x]}}");
 		check("D[Sin[x]^Cos[x],x]", "(-Log[Sin[x]]*Sin[x]+Csc[x]*Cos[x]^2)*Sin[x]^Cos[x]");
-		check(
-				"Trace[D[Sin[x]^Cos[x],x]]",
-				"{D[Sin[x]^Cos[x],x],Sin[x]^Cos[x]*(Log[Sin[x]]*D[Cos[x],x]+Cos[x]*D[Sin[x],x]*Sin[x]^(\n" + 
-				"-1)),{Derivative[Sin],Cos[#1]&},{x&,Cos[x]},{D[Sin[x],x],Cos[x]*D[x,x],{D[x,x],1},\n" + 
-				"1*Cos[x],Cos[x]},{(-1)*(-1),(-1)^2,1},{Csc[x]^((-1)*(-1)),Csc[x]^1,Csc[x]},{Sin[x]^(\n" + 
-				"-1),Csc[x]},{Cos[x]*D[Sin[x],x]*Sin[x]^(-1),Cos[x]*Cos[x]*Csc[x],Csc[x]*Cos[x]^2},{Derivative[Cos],(\n" + 
-				"-1)*Sin[#1]&},{x&,(-1)*Sin[x]},{D[Cos[x],x],(-1)*Sin[x]*D[x,x],(-1)*Sin[x]*D[x,x],{D[x,x],\n" + 
-				"1},(-1)*1*Sin[x],(-1)*Sin[x]},{Log[Sin[x]]*D[Cos[x],x],Log[Sin[x]]*(-1)*Sin[x],(\n" + 
-				"-1)*Log[Sin[x]]*Sin[x]},{Log[Sin[x]]*D[Cos[x],x]+Cos[x]*D[Sin[x],x]*Sin[x]^(-1),-Log[Sin[x]]*Sin[x]+Csc[x]*Cos[x]^\n" + 
-				"2},(-Log[Sin[x]]*Sin[x]+Csc[x]*Cos[x]^2)*Sin[x]^Cos[x]}");
+		check("Trace[D[Sin[x]^Cos[x],x]]", "{D[Sin[x]^Cos[x],x],Sin[x]^Cos[x]*(Log[Sin[x]]*D[Cos[x],x]+Cos[x]*D[Sin[x],x]*Sin[x]^(\n"
+				+ "-1)),{Derivative[Sin],Cos[#1]&},{x&,Cos[x]},{D[Sin[x],x],Cos[x]*D[x,x],{D[x,x],1},\n"
+				+ "1*Cos[x],Cos[x]},{(-1)*(-1),(-1)^2,1},{Csc[x]^((-1)*(-1)),Csc[x]^1,Csc[x]},{Sin[x]^(\n"
+				+ "-1),Csc[x]},{Cos[x]*D[Sin[x],x]*Sin[x]^(-1),Cos[x]*Cos[x]*Csc[x],Csc[x]*Cos[x]^2},{Derivative[Cos],(\n"
+				+ "-1)*Sin[#1]&},{x&,(-1)*Sin[x]},{D[Cos[x],x],(-1)*Sin[x]*D[x,x],(-1)*Sin[x]*D[x,x],{D[x,x],\n"
+				+ "1},(-1)*1*Sin[x],(-1)*Sin[x]},{Log[Sin[x]]*D[Cos[x],x],Log[Sin[x]]*(-1)*Sin[x],(\n"
+				+ "-1)*Log[Sin[x]]*Sin[x]},{Log[Sin[x]]*D[Cos[x],x]+Cos[x]*D[Sin[x],x]*Sin[x]^(-1),-Log[Sin[x]]*Sin[x]+Csc[x]*Cos[x]^\n"
+				+ "2},(-Log[Sin[x]]*Sin[x]+Csc[x]*Cos[x]^2)*Sin[x]^Cos[x]}");
 		check("Trace[NumberQ[1/3]]", "{NumberQ[1/3],True}");
 	}
 
@@ -1108,7 +1108,6 @@ public class SystemTestCase extends AbstractTestCase {
 	// check("NIntegrate[(x-1)*(x-0.5)*x*(x+0.5)*(x+1),{x,0,1},LegendreGauss]",
 	// "-0.020833333333333336");
 	// }
-
 
 	public void testSystem173() {
 		check("N[1.0]", "1.0");
@@ -2081,7 +2080,7 @@ public class SystemTestCase extends AbstractTestCase {
 						+ "$zj=0;\n"
 						+ "$sz=1;\n"
 						+ "FindRoot[(($K*(1+p-$g)^($n/$Z))/(1+$AA))+(Sum[(($R*(1+$d)^(Floor[i/$Z]))/(1+$AA))*(1+p-$g)^(($n-i-$vn)/$Z),{i,0,$n-1}])+(Sum[($EAj*(1+p-$g)^(($n-$zj)/$Z))/(1+$AA),{j,1,$sz}]) - 30199, {p, 0, 0.1}]",
-				"{p->0.049997093938224026}");
+				"{p->0.049997093938224005}");
 		check("$K=10000;\n" + "$g=0.0;\n" + "$n=10*12;\n" + "$Z=12;\n" + "$AA=0.0526;\n" + "$res=15474;\n"
 				+ "FindRoot[(($K*(1+p-$g)^($n/$Z))/(1+$AA)) - $res, {p, 0, 0.1}]", "{p->0.04999346433486659}");
 	}
@@ -2141,10 +2140,10 @@ public class SystemTestCase extends AbstractTestCase {
 		check("JavaForm[B*Log[p*x+q]/p]", "\"Times(B,Log(Plus(q,Times(p,x))),Power(p,CN1))\"");
 		check(
 				"JavaForm[B*((2*a*x+b)/((k-1)*(4*a*c-b^2)*(a*x^2+b*x+c)^(k-1))+ (4*k*a-6*a)/((k-1)*(4*a*c-b^2))*Integrate[(a*x^2+b*x+c)^(-k+1),x])]",
-				"\"Times(B,Plus(Times(Integrate(Power(Plus(c,Times(b,x),Times(a,Power(x,C2))),Plus(C1,Times(CN1,k))),x),Plus(Times(integer(-6L),a),Times(C4,a,k)),Power(Plus(CN1,k),CN1),Power(Plus(Times(CN1,Power(b,C2)),Times(C4,a,c)),CN1)),Times(Plus(b,Times(C2,a,x)),Power(Plus(CN1,k),CN1),Power(Plus(Times(CN1,Power(b,C2)),Times(C4,a,c)),CN1),Power(Plus(c,Times(b,x),Times(a,Power(x,C2))),Times(CN1,Plus(CN1,k))))))\"");
+				"\"Times(B,Plus(Times(Integrate(Power(Plus(c,Times(b,x),Times(a,Power(x,C2))),Plus(C1,Times(CN1,k))),x),Plus(Times(integer(-6L),a),Times(C4,a,k)),Power(Plus(CN1,k),CN1),Power(Plus(Times(CN1,Power(b,C2)),Times(C4,a,c)),CN1)),Times(Plus(b,Times(C2,a,x)),Power(Plus(CN1,k),CN1),Power(Plus(Times(CN1,Power(b,C2)),Times(C4,a,c)),CN1),Power(Plus(c,Times(b,x),Times(a,Power(x,C2))),Plus(C1,Times(CN1,k))))))\"");
 		check(
 				"JavaForm[(-A)/(2*a*(k-1)*(a*x^2+b*x+c)^(k-1))+(B-A*b/(2*a))*Integrate[(a*x^2+b*x+c)^(-k),x]]",
-				"\"Plus(Times(Integrate(Power(Plus(c,Times(b,x),Times(a,Power(x,C2))),Times(CN1,k)),x),Plus(B,Times(CN1D2,A,Power(a,CN1),b))),Times(CN1D2,A,Power(a,CN1),Power(Plus(CN1,k),CN1),Power(Plus(c,Times(b,x),Times(a,Power(x,C2))),Times(CN1,Plus(CN1,k)))))\"");
+				"\"Plus(Times(Integrate(Power(Plus(c,Times(b,x),Times(a,Power(x,C2))),Times(CN1,k)),x),Plus(B,Times(CN1D2,A,Power(a,CN1),b))),Times(CN1D2,A,Power(a,CN1),Power(Plus(CN1,k),CN1),Power(Plus(c,Times(b,x),Times(a,Power(x,C2))),Plus(C1,Times(CN1,k)))))\"");
 		check(
 				"JavaForm[A/2*Log[x^2+p*x+q]+(2*B-A*p)/(4*q-p^2)^(1/2)*ArcTan[(2*x+p)/(4*q-p^2)^(1/2)]]",
 				"\"Plus(Times(C1D2,A,Log(Plus(q,Times(p,x),Power(x,C2)))),Times(ArcTan(Times(Plus(p,Times(C2,x)),Power(Plus(Times(CN1,Power(p,C2)),Times(C4,q)),CN1D2))),Plus(Times(C2,B),Times(CN1,A,p)),Power(Plus(Times(CN1,Power(p,C2)),Times(C4,q)),CN1D2)))\"");
@@ -2592,7 +2591,7 @@ public class SystemTestCase extends AbstractTestCase {
 	}
 
 	public void testSystem996() {
-		check("FactorTerms[3+3*x^3]", "3*(x^3+1)");
+		check("FactorTerms[3+3*x^3]", "3*x^3+3");
 		check("FactorTerms[3+3/4*x^3+12/17*x^2,x]", "3/68*(17*x^3+16*x^2+68)");
 	}
 
@@ -2622,7 +2621,7 @@ public class SystemTestCase extends AbstractTestCase {
 		// check("Factor[1+x^2,GaussianIntegers->True]", "");
 		check("Roots[x^3-3*x-2]", "{2,-1}");
 		check("Roots[x^3-4*x^2+x+6]", "{3,2,-1}");
-		check("Factor[3*x^2+6]", "3*(x^2+2)");
+		check("Factor[3*x^2+6]", "3*x^2+6");
 		check("Factor[3/4*x^2+9/16]", "3/16*(4*x^2+3)");
 		check("Factor[3/4*x^2+9/16+7]", "1/16*(12*x^2+121)");
 		check("Factor[3/4*x^2+9/16*x+7]", "1/16*(12*x^2+9*x+112)");
