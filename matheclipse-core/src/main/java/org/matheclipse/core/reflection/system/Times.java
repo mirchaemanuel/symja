@@ -7,6 +7,7 @@ import org.matheclipse.core.eval.EvalEngine;
 import org.matheclipse.core.eval.interfaces.AbstractArgMultiple;
 import org.matheclipse.core.eval.interfaces.INumeric;
 import org.matheclipse.core.expression.F;
+import org.matheclipse.core.generic.Functors;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IComplex;
 import org.matheclipse.core.interfaces.IComplexNum;
@@ -24,14 +25,14 @@ public class Times extends AbstractArgMultiple implements INumeric {
 	 * Constructor for the singleton
 	 */
 	public final static Plus CONST = new Plus();
-	
+
 	private static HashedOrderlessMatcher ORDERLESS_MATCHER = new HashedOrderlessMatcher(true);
 
 	@Override
 	public HashedOrderlessMatcher getHashRuleMap() {
 		return ORDERLESS_MATCHER;
 	}
-	
+
 	public Times() {
 	}
 
@@ -90,7 +91,7 @@ public class Times extends AbstractArgMultiple implements INumeric {
 		if (o0.equals(F.Indeterminate) || o1.equals(F.Indeterminate)) {
 			return F.Indeterminate;
 		}
-		
+
 		if (o0.equals(F.C0)) {
 			if (o1.isAST(F.DirectedInfinity, 2)) {
 				return F.Indeterminate;
@@ -125,7 +126,7 @@ public class Times extends AbstractArgMultiple implements INumeric {
 		if (temp != null) {
 			return temp;
 		}
-		
+
 		if (o0.isAST(F.Power, 3)) {
 			final IAST f0 = (IAST) o0;
 			if (f0.get(2) instanceof INumber) {
@@ -191,45 +192,38 @@ public class Times extends AbstractArgMultiple implements INumeric {
 	}
 
 	@Override
-	public IExpr evaluate(final IAST functionList) {
-		if (functionList.size() == 3) {
-			// following normalization conflicts with FactorTerms:
-			// if ((functionList.get(1) instanceof ISignedNumber) &&
-			// (functionList.get(2) instanceof IAST)
-			// && ((IAST) functionList.get(2)).getHeader().equals(F.Plus)) {
-			// final IAST arg2 = (IAST) functionList.get(2);
-			// final IAST result = F.function(F.Plus);
-			// for (int i = 1; i < arg2.size(); i++) {
-			// checkCanceled();
-			// result.add(F.function(F.Times, functionList.get(1), arg2.get(i)));
-			// }
-			// return result;
-			// }
-			return binaryOperator(functionList.get(1), functionList.get(2));
+	public IExpr evaluate(final IAST ast) {
+		if (ast.size() == 3) {
+			if ((ast.get(1).isSignedNumber() && !ast.get(1).isFraction()) && ast.get(2).isPlus()) {
+				// distribute the number over the sum:
+				final IAST arg2 = (IAST) ast.get(2);
+				return arg2.map(Functors.replace2nd(F.Times(ast.get(1), F.Null)));
+			}
+			return binaryOperator(ast.get(1), ast.get(2));
 		}
 
-		if (functionList.size() > 3) {
-			final ISymbol sym = functionList.topHead();
+		if (ast.size() > 3) {
+			final ISymbol sym = ast.topHead();
 			final IAST result = F.function(sym);
 			IExpr tres;
-			IExpr temp = functionList.get(1);
+			IExpr temp = ast.get(1);
 			boolean evaled = false;
 			int i = 2;
 
-			while (i < functionList.size()) {
+			while (i < ast.size()) {
 
-				tres = binaryOperator(temp, functionList.get(i));
+				tres = binaryOperator(temp, ast.get(i));
 
 				if (tres == null) {
 
-					for (int j = i + 1; j < functionList.size(); j++) {
-						tres = binaryOperator(temp, functionList.get(j));
+					for (int j = i + 1; j < ast.size(); j++) {
+						tres = binaryOperator(temp, ast.get(j));
 
 						if (tres != null) {
 							evaled = true;
 							temp = tres;
 
-							functionList.remove(j);
+							ast.remove(j);
 
 							break;
 						}
@@ -237,10 +231,10 @@ public class Times extends AbstractArgMultiple implements INumeric {
 
 					if (tres == null) {
 						result.add(temp);
-						if (i == functionList.size() - 1) {
-							result.add(functionList.get(i));
+						if (i == ast.size() - 1) {
+							result.add(ast.get(i));
 						} else {
-							temp = functionList.get(i);
+							temp = ast.get(i);
 						}
 						i++;
 					}
@@ -249,7 +243,7 @@ public class Times extends AbstractArgMultiple implements INumeric {
 					evaled = true;
 					temp = tres;
 
-					if (i == (functionList.size() - 1)) {
+					if (i == (ast.size() - 1)) {
 						result.add(temp);
 					}
 
