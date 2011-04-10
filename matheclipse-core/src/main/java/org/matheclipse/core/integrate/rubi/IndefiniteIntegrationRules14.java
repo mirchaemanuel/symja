@@ -14,6 +14,8 @@ import org.matheclipse.core.interfaces.IExpr;
  */
 public class IndefiniteIntegrationRules14 { 
   public static IAST RULES = List( 
+SetDelayed(Int(CosIntegral(Plus($p("a",true),Times($p("b",true),$p("x")))),$p("x",$s("Symbol"))),
+    Condition(Plus(Times(Plus($s("a"),Times($s("b"),$s("x"))),Times(CosIntegral(Plus($s("a"),Times($s("b"),$s("x")))),Power($s("b"),CN1))),Times(CN1,Times(Sin(Plus($s("a"),Times($s("b"),$s("x")))),Power($s("b"),CN1)))),FreeQ(List($s("a"),$s("b")),$s("x")))),
 SetDelayed(Int(Power(CosIntegral(Plus($p("a",true),Times($p("b",true),$p("x")))),C2),$p("x",$s("Symbol"))),
     Condition(Plus(Times(Plus($s("a"),Times($s("b"),$s("x"))),Times(Power(CosIntegral(Plus($s("a"),Times($s("b"),$s("x")))),C2),Power($s("b"),CN1))),Times(CN1,Dist(C2,Int(Times(Cos(Plus($s("a"),Times($s("b"),$s("x")))),CosIntegral(Plus($s("a"),Times($s("b"),$s("x"))))),$s("x"))))),FreeQ(List($s("a"),$s("b")),$s("x")))),
 SetDelayed(Int(Times(Power($p("x"),$p("m",true)),CosIntegral(Plus($p("a",true),Times($p("b",true),$p("x"))))),$p("x",$s("Symbol"))),
@@ -211,8 +213,6 @@ SetDelayed(Int(Times(Power($p("x"),$p("m",true)),Times(Power(ProductLog(Times($p
 SetDelayed(Int(Times(Power($p("x"),$p("m",true)),Times(Power(ProductLog(Times($p("a",true),Power($p("x"),$p("n")))),$p("p",true)),Power(Plus(C1,ProductLog(Times($p("a",true),Power($p("x"),$p("n"))))),CN1))),$p("x",$s("Symbol"))),
     Condition(Times(Power($s("a"),$s("p")),Times(ExpIntegralEi(Times(Times(CN1,$s("p")),ProductLog(Times($s("a"),Power($s("x"),$s("n")))))),Power($s("n"),CN1))),And(And(FreeQ(List($s("a"),$s("m"),$s("n")),$s("x")),IntegerQ($s("p"))),ZeroQ(Plus(Plus($s("m"),Times($s("n"),$s("p"))),C1))))),
 SetDelayed(Int(Times(Power($p("x"),$p("m",true)),Times(Power(ProductLog(Times($p("a",true),Power($p("x"),$p("n")))),$p("p")),Power(Plus(C1,ProductLog(Times($p("a",true),Power($p("x"),$p("n"))))),CN1))),$p("x",$s("Symbol"))),
-    Condition(Times(Times(Power($s("a"),Plus($s("p"),Times(CN1,C1D2))),Sqrt(Times(Pi,Power(Plus($s("p"),Times(CN1,C1D2)),CN1)))),Times(Erf(Sqrt(Times(Plus($s("p"),Times(CN1,C1D2)),ProductLog(Times($s("a"),Power($s("x"),$s("n"))))))),Power($s("n"),CN1))),And(And(And(FreeQ(List($s("a"),$s("m"),$s("n")),$s("x")),IntegerQ(Plus($s("p"),Times(CN1,C1D2)))),Greater($s("p"),C1)),ZeroQ(Plus(Plus($s("m"),Times($s("n"),Plus($s("p"),Times(CN1,C1D2)))),C1))))),
-SetDelayed(Int(Times(Power($p("x"),$p("m",true)),Times(Power(ProductLog(Times($p("a",true),Power($p("x"),$p("n")))),$p("p")),Power(Plus(C1,ProductLog(Times($p("a",true),Power($p("x"),$p("n"))))),CN1))),$p("x",$s("Symbol"))),
-    Condition(Times(Times(Power($s("a"),Plus($s("p"),Times(CN1,C1D2))),Sqrt(Times(Times(CN1,Pi),Power(Plus($s("p"),Times(CN1,C1D2)),CN1)))),Times(Erfi(Sqrt(Times(Times(CN1,Plus($s("p"),Times(CN1,C1D2))),ProductLog(Times($s("a"),Power($s("x"),$s("n"))))))),Power($s("n"),CN1))),And(And(And(FreeQ(List($s("a"),$s("m"),$s("n")),$s("x")),IntegerQ(Plus($s("p"),Times(CN1,C1D2)))),Less($s("p"),C0)),ZeroQ(Plus(Plus($s("m"),Times($s("n"),Plus($s("p"),Times(CN1,C1D2)))),C1)))))
+    Condition(Times(Times(Power($s("a"),Plus($s("p"),Times(CN1,C1D2))),Sqrt(Times(Pi,Power(Plus($s("p"),Times(CN1,C1D2)),CN1)))),Times(Erf(Sqrt(Times(Plus($s("p"),Times(CN1,C1D2)),ProductLog(Times($s("a"),Power($s("x"),$s("n"))))))),Power($s("n"),CN1))),And(And(And(FreeQ(List($s("a"),$s("m"),$s("n")),$s("x")),IntegerQ(Plus($s("p"),Times(CN1,C1D2)))),Greater($s("p"),C1)),ZeroQ(Plus(Plus($s("m"),Times($s("n"),Plus($s("p"),Times(CN1,C1D2)))),C1)))))
   );
 }

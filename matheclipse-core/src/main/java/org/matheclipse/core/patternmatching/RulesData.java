@@ -178,27 +178,32 @@ public class RulesData {
 		if (patternExpr.isAST()) {
 			final IAST ast = ((IAST) patternExpr);
 			if (ast.size() > 1) {
-				if (ast.get(1).isAST()) {
-					if (isComplicatedPatternRule((IAST) ast.get(1))) {
-						return true;
-					}
-				} else if (ast.get(1).isPattern()) {
-					return true;
-				}
 				final int attr = ast.topHead().getAttributes();
 				if ((ISymbol.ORDERLESS & attr) == ISymbol.ORDERLESS) {
 					return true;
 				}
-				for (int i = 2; i < ast.size(); i++) {
-					if (ast.get(i).isAST()) {
-						if (isComplicatedPatternRule((IAST) ast.get(i))) {
-							return true;
-						}
-					} else {
-						if (ast.get(i).isPattern() && ((IPattern) ast.get(i)).isDefault()) {
+				if (ast.get(1).isAST()) {
+					// the left hand side is associated with the first argument
+					// see if the first argument is complicated
+					IAST arg1 = (IAST) ast.get(1);
+					for (int i = 2; i < arg1.size(); i++) {
+						if (arg1.get(i).isPattern() && ((IPattern) arg1.get(i)).isDefault()) {
 							return true;
 						}
 					}
+				} else if (ast.get(1).isPattern()) {
+					return true;
+				}
+				for (int i = 2; i < ast.size(); i++) {
+					// if (ast.get(i).isAST()) {
+					// if (isComplicatedPatternRule((IAST) ast.get(i))) {
+					// return true;
+					// }
+					// } else {
+					if (ast.get(i).isPattern() && ((IPattern) ast.get(i)).isDefault()) {
+						return true;
+					}
+					// }
 				}
 			}
 		} else if (patternExpr.isPattern()) {

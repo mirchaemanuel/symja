@@ -3,25 +3,20 @@ package org.matheclipse.core.reflection.system;
 import org.matheclipse.basic.Config;
 import org.matheclipse.core.convert.ExprVariables;
 import org.matheclipse.core.convert.JASConvert;
+import org.matheclipse.core.eval.exception.JASConversionException;
 import org.matheclipse.core.eval.exception.Validate;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
-import org.matheclipse.core.eval.util.Options;
 import org.matheclipse.core.expression.ASTRange;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.IInteger;
-import org.matheclipse.core.interfaces.INumber;
 import org.matheclipse.core.interfaces.ISymbol;
 import org.matheclipse.parser.client.SyntaxError;
-
-import apache.harmony.math.BigInteger;
 
 import com.google.common.base.Predicate;
 
 import edu.jas.arith.BigRational;
-import edu.jas.arith.ModInteger;
-import edu.jas.arith.ModIntegerRing;
 import edu.jas.poly.GenPolynomial;
 
 /**
@@ -76,20 +71,26 @@ public class Cancel extends AbstractFunctionEvaluator {
 	public IExpr evaluate(final IAST ast) {
 		Validate.checkRange(ast, 2, 3);
 		IExpr arg = F.evalExpandAll(ast.get(1));
-		final IExpr header = arg.head();
-		if (header == F.Times || header == F.Power) {
-			IExpr[] parts = Apart.getFractionalParts(ast.get(1));
-			if (parts != null) {
-				if (parts[0].isPlus() && parts[1].isPlus()) {
-					IAST[] numParts = ((IAST) parts[0]).split(new PolynomialPredicate());
-					IAST[] denParts = ((IAST) parts[1]).split(new PolynomialPredicate());
-					if (!denParts[0].equals(F.C1)) {
-						IExpr[] result = Cancel.cancelGCD(numParts[0], denParts[0]);
-						if (result != null) {
-							return F.Times(result[0], numParts[1], F.Power(F.Times(result[1], denParts[1]), F.CN1));
+		try {
+			final IExpr header = arg.head();
+			if (header == F.Times || header == F.Power) {
+				IExpr[] parts = Apart.getFractionalParts(ast.get(1));
+				if (parts != null) {
+					if (parts[0].isPlus() && parts[1].isPlus()) {
+						IAST[] numParts = ((IAST) parts[0]).split(new PolynomialPredicate());
+						IAST[] denParts = ((IAST) parts[1]).split(new PolynomialPredicate());
+						if (!denParts[0].equals(F.C1)) {
+							IExpr[] result = Cancel.cancelGCD(numParts[0], denParts[0]);
+							if (result != null) {
+								return F.Times(result[0], numParts[1], F.Power(F.Times(result[1], denParts[1]), F.CN1));
+							}
 						}
 					}
 				}
+			}
+		} catch (JASConversionException jce) {
+			if (Config.DEBUG) {
+				jce.printStackTrace();
 			}
 		}
 		return arg;
@@ -98,8 +99,8 @@ public class Cancel extends AbstractFunctionEvaluator {
 	/**
 	 * Calculate the result array
 	 * <code>[ poly1.divide(gcd(poly1, poly2)), poly2.divide(gcd(poly1, poly2)) ]</code>
-	 * if the given expressions <code>poly1</code> and <code>poly2</code> are univariate polynomials with
-	 * equal variable name.
+	 * if the given expressions <code>poly1</code> and <code>poly2</code> are
+	 * univariate polynomials with equal variable name.
 	 * 
 	 * 
 	 * @param poly1
@@ -109,7 +110,7 @@ public class Cancel extends AbstractFunctionEvaluator {
 	 * @return <code>null</code> if the expressions couldn't be converted to JAS
 	 *         polynomials
 	 */
-	public static IExpr[] cancelGCD(IExpr poly1, IExpr poly2) {
+	public static IExpr[] cancelGCD(IExpr poly1, IExpr poly2) throws JASConversionException {
 
 		try {
 			ExprVariables eVar = new ExprVariables(poly1);
@@ -121,8 +122,8 @@ public class Cancel extends AbstractFunctionEvaluator {
 
 			ASTRange r = new ASTRange(eVar.getVarList(), 1);
 			JASConvert<BigRational> jas = new JASConvert<BigRational>(r.toList(), BigRational.ZERO);
-			GenPolynomial<BigRational> p1 = jas.expr2Poly(poly1);
-			GenPolynomial<BigRational> p2 = jas.expr2Poly(poly2);
+			GenPolynomial<BigRational> p1 = jas.expr2JAS(poly1);
+			GenPolynomial<BigRational> p2 = jas.expr2JAS(poly2);
 			GenPolynomial<BigRational> gcd = p1.gcd(p2);
 			IExpr[] result = new IExpr[2];
 			if (gcd.isONE()) {

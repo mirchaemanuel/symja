@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.matheclipse.basic.Config;
 import org.matheclipse.core.convert.ExprVariables;
+import org.matheclipse.core.eval.exception.JASConversionException;
 import org.matheclipse.core.eval.exception.WrongArgumentType;
 import org.matheclipse.core.expression.ASTRange;
 import org.matheclipse.core.expression.F;
@@ -39,9 +40,10 @@ public class FactorSquareFree extends Factor {
 			}
 			return factor(expr, varList, true);
 
-		} catch (Exception e) {
+		} catch (JASConversionException jce) {
+			// toInt() conversion failed
 			if (Config.DEBUG) {
-				e.printStackTrace();
+				jce.printStackTrace();
 			}
 		}
 		return null;

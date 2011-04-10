@@ -6,6 +6,7 @@ import java.util.SortedMap;
 import org.matheclipse.basic.Config;
 import org.matheclipse.core.convert.ExprVariables;
 import org.matheclipse.core.convert.JASConvert;
+import org.matheclipse.core.eval.exception.JASConversionException;
 import org.matheclipse.core.eval.exception.WrongArgumentType;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
 import org.matheclipse.core.eval.util.Options;
@@ -52,7 +53,7 @@ public class Factor extends AbstractFunctionEvaluator {
 			}
 			return factor(expr, varList, false);
 
-		} catch (Exception e) {
+		} catch (JASConversionException e) {
 			if (Config.DEBUG) {
 				e.printStackTrace();
 			}
@@ -60,9 +61,9 @@ public class Factor extends AbstractFunctionEvaluator {
 		return null;
 	}
 
-	public static IExpr factor(IExpr expr, List<IExpr> varList, boolean factorSquareFree) {
+	public static IExpr factor(IExpr expr, List<IExpr> varList, boolean factorSquareFree) throws JASConversionException {
 		JASConvert<BigRational> jas = new JASConvert<BigRational>(varList, BigRational.ZERO);
-		GenPolynomial<BigRational> polyRat = jas.expr2Poly(expr);
+		GenPolynomial<BigRational> polyRat = jas.expr2JAS(expr);
 		Object[] objects = jas.factorTerms(polyRat);
 		java.math.BigInteger gcd = (java.math.BigInteger) objects[0];
 		java.math.BigInteger lcm = (java.math.BigInteger) objects[1];
@@ -84,7 +85,8 @@ public class Factor extends AbstractFunctionEvaluator {
 		return result;
 	}
 
-	public static IExpr factorWithOption(final IAST ast, IExpr expr, List<IExpr> varList, boolean factorSquareFree) {
+	public static IExpr factorWithOption(final IAST ast, IExpr expr, List<IExpr> varList, boolean factorSquareFree)
+			throws JASConversionException {
 		final Options options = new Options(ast.topHead(), ast, 2);
 		IExpr option = options.getOption("Modulus");
 		if (option != null && option instanceof IInteger) {
@@ -94,7 +96,7 @@ public class Factor extends AbstractFunctionEvaluator {
 				int intValue = ((IInteger) option).toInt();
 				ModIntegerRing modIntegerRing = new ModIntegerRing(intValue, value.isProbablePrime(32));
 				JASConvert<ModInteger> jas = new JASConvert<ModInteger>(varList, modIntegerRing);
-				GenPolynomial<ModInteger> poly = jas.expr2Poly(expr);
+				GenPolynomial<ModInteger> poly = jas.expr2JAS(expr);
 
 				FactorAbstract<ModInteger> factorAbstract = FactorFactory.getImplementation(modIntegerRing);
 				SortedMap<GenPolynomial<ModInteger>, Long> map;

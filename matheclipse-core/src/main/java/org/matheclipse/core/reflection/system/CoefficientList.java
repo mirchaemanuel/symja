@@ -2,7 +2,9 @@ package org.matheclipse.core.reflection.system;
 
 import java.util.List;
 
+import org.matheclipse.basic.Config;
 import org.matheclipse.core.convert.JASConvert;
+import org.matheclipse.core.eval.exception.JASConversionException;
 import org.matheclipse.core.eval.exception.Validate;
 import org.matheclipse.core.eval.exception.WrongArgumentType;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
@@ -12,7 +14,6 @@ import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.ISymbol;
 
-import edu.jas.arith.BigRational;
 import edu.jas.poly.ExpVectorLong;
 import edu.jas.poly.GenPolynomial;
 import edu.jas.poly.PolyUtil;
@@ -34,12 +35,21 @@ public class CoefficientList extends AbstractFunctionEvaluator {
 			// TODO allow multinomials
 			return null;
 		}
-		IAST result = F.List();
-		long degree = univariateCoefficientList(expr, (ISymbol) arg2, result);
-		if (degree >= Short.MAX_VALUE) {
-			throw new WrongArgumentType(ast, ast.get(1), 1, "Polynomial degree" + degree + " is larger than: " + " - " + Short.MAX_VALUE);
+		try {
+			IAST result = F.List();
+			long degree = univariateCoefficientList(expr, (ISymbol) arg2, result);
+			if (degree >= Short.MAX_VALUE) {
+				throw new WrongArgumentType(ast, ast.get(1), 1, "Polynomial degree" + degree + " is larger than: " + " - "
+						+ Short.MAX_VALUE);
+			}
+			return result;
+		} catch (JASConversionException jce) {
+			// toInt() conversion failed
+			if (Config.DEBUG) {
+				jce.printStackTrace();
+			}
 		}
-		return result;
+		return null;
 	}
 
 	/**
@@ -53,9 +63,10 @@ public class CoefficientList extends AbstractFunctionEvaluator {
 	 *         <code>degree >= Short.MAX_VALUE</code>, the result list will be
 	 *         empty.
 	 */
-	public static long univariateCoefficientList(IExpr polynomial, final ISymbol variable, List<IExpr> resultList) {
+	public static long univariateCoefficientList(IExpr polynomial, final ISymbol variable, List<IExpr> resultList)
+			throws JASConversionException {
 		JASConvert<IExpr> jas = new JASConvert<IExpr>(variable, new ExprRingFactory());
-		GenPolynomial<IExpr> polyExpr = jas.expr2Poly(polynomial);
+		GenPolynomial<IExpr> polyExpr = jas.expr2JAS(polynomial);
 		long degree = polyExpr.degree();
 		if (degree >= Short.MAX_VALUE) {
 			return degree;
@@ -81,9 +92,9 @@ public class CoefficientList extends AbstractFunctionEvaluator {
 	 *         empty.
 	 */
 	public static long univariateCoefficientList(IExpr polynomial, ISymbol variable, List<IExpr> resultList,
-			List<IExpr> resultListDiff) {
+			List<IExpr> resultListDiff) throws JASConversionException {
 		JASConvert<IExpr> jas = new JASConvert<IExpr>(variable, new ExprRingFactory());
-		GenPolynomial<IExpr> polyExpr = jas.expr2Poly(polynomial);
+		GenPolynomial<IExpr> polyExpr = jas.expr2JAS(polynomial);
 		// derivative of the given polynomial
 		GenPolynomial<IExpr> polyExprDiff = PolyUtil.<IExpr> baseDeriviative(polyExpr);
 

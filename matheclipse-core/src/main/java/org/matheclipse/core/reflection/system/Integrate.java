@@ -22,6 +22,7 @@ import java.util.SortedMap;
 import org.matheclipse.basic.Config;
 import org.matheclipse.core.convert.JASConvert;
 import org.matheclipse.core.eval.EvalEngine;
+import org.matheclipse.core.eval.exception.JASConversionException;
 import org.matheclipse.core.eval.exception.RecursionLimitExceeded;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
 import org.matheclipse.core.expression.ASTRange;
@@ -224,8 +225,8 @@ public class Integrate extends AbstractFunctionEvaluator implements IConstantHea
 			String[] varListStr = new String[1];
 			varListStr[0] = variableList.get(1).toString();
 			JASConvert<BigRational> jas = new JASConvert<BigRational>(varList, BigRational.ZERO);
-			GenPolynomial<BigRational> numerator = jas.expr2Poly(exprNumerator);
-			GenPolynomial<BigRational> denominator = jas.expr2Poly(exprDenominator);
+			GenPolynomial<BigRational> numerator = jas.expr2JAS(exprNumerator);
+			GenPolynomial<BigRational> denominator = jas.expr2JAS(exprDenominator);
 
 			// get factors
 			FactorAbstract<BigRational> factorAbstract = FactorFactory.getImplementation(BigRational.ZERO);
@@ -346,10 +347,8 @@ public class Integrate extends AbstractFunctionEvaluator implements IConstantHea
 				}
 				return result;
 			}
-		} catch (ClassCastException cce) {
-			// expressions couldn't be converted to JAS polynomials
-		} catch (Exception e) {
-			if (Config.SHOW_STACKTRACE) {
+		} catch (JASConversionException e) {
+			if (Config.DEBUG) {
 				e.printStackTrace();
 			}
 		}

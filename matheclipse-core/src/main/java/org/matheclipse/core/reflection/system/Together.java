@@ -1,5 +1,7 @@
 package org.matheclipse.core.reflection.system;
 
+import org.matheclipse.basic.Config;
+import org.matheclipse.core.eval.exception.JASConversionException;
 import org.matheclipse.core.eval.exception.Validate;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
 import org.matheclipse.core.expression.F;
@@ -8,7 +10,6 @@ import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.ISymbol;
 import org.matheclipse.core.visit.VisitorExpr;
 import org.matheclipse.parser.client.SyntaxError;
-
 
 /**
  * 
@@ -78,9 +79,15 @@ public class Together extends AbstractFunctionEvaluator {
 			}
 			IExpr exprDenominator = F.evalExpandAll(denom);
 			if (!exprDenominator.equals(F.C1)) {
-				IExpr[] result = Cancel.cancelGCD(exprNumerator, exprDenominator);
-				if (result != null) {
-					return F.Times(result[0], F.Power(result[1], F.CN1));
+				try {
+					IExpr[] result = Cancel.cancelGCD(exprNumerator, exprDenominator);
+					if (result != null) {
+						return F.Times(result[0], F.Power(result[1], F.CN1));
+					}
+				} catch (JASConversionException jce) {
+					if (Config.DEBUG) {
+						jce.printStackTrace();
+					}
 				}
 			}
 			return F.Times(exprNumerator, F.Power(exprDenominator, F.CN1));
@@ -93,12 +100,14 @@ public class Together extends AbstractFunctionEvaluator {
 	@Override
 	public IExpr evaluate(final IAST ast) {
 		Validate.checkSize(ast, 2);
+
 		if (ast.get(1).isAST()) {
 			IExpr expr = ast.get(1).accept(new TogetherVisitor());
 			if (expr != null) {
 				return expr;
 			}
 		}
+
 		return ast.get(1);
 	}
 

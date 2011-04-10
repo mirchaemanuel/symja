@@ -4,85 +4,14 @@ import org.matheclipse.core.eval.exception.Validate;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IAST;
-import org.matheclipse.core.interfaces.IComplex;
-import org.matheclipse.core.interfaces.IComplexNum;
 import org.matheclipse.core.interfaces.IExpr;
-import org.matheclipse.core.interfaces.IFraction;
-import org.matheclipse.core.interfaces.IInteger;
-import org.matheclipse.core.interfaces.INum;
-import org.matheclipse.core.interfaces.IPattern;
-import org.matheclipse.core.interfaces.IStringX;
 import org.matheclipse.core.interfaces.ISymbol;
 import org.matheclipse.core.patternmatching.PatternMatcher;
-import org.matheclipse.core.visit.IVisitorBoolean;
-
-import com.google.common.base.Predicate;
 
 /**
  *  
  */
 public class Exponent extends AbstractFunctionEvaluator {
-	public class PowerVisitorPredicate implements IVisitorBoolean {
-		int fHeadOffset;
-
-		final Predicate<IExpr> fMatcher;
-		IAST fCollector;
-
-		public PowerVisitorPredicate(IAST collector, final Predicate<IExpr> matcher) {
-			this(1, collector,matcher);
-		}
-
-		public PowerVisitorPredicate(int hOffset, IAST collector, final Predicate<IExpr> matcher) {
-			fHeadOffset = hOffset;
-			fCollector = collector;
-			fMatcher = matcher;
-		}
-
-		public boolean visit(IInteger element) {
-			return false;
-		}
-
-		public boolean visit(IFraction element) {
-			return false;
-		}
-
-		public boolean visit(IComplex element) {
-			return false;
-		}
-
-		public boolean visit(INum element) {
-			return false;
-		}
-
-		public boolean visit(IComplexNum element) {
-			return false;
-		}
-
-		public boolean visit(ISymbol element) {
-			return false;
-		}
-
-		public boolean visit(IPattern element) {
-			return false;
-		}
-
-		public boolean visit(IStringX element) {
-			return false;
-		}
-
-		public boolean visit(IAST ast) {
-			if (ast.isPower()) {
-				if (fMatcher.apply(ast.get(1))) {
-					fCollector.add(ast.get(2));
-					return true;
-				}
-			}
-			for (int i = fHeadOffset; i < ast.size(); i++) {
-				 ast.get(i).accept(this);
-			}
-			return false;
-		}
-	}
 
 	public Exponent() {
 	}
@@ -90,23 +19,79 @@ public class Exponent extends AbstractFunctionEvaluator {
 	@Override
 	public IExpr evaluate(final IAST ast) {
 		Validate.checkRange(ast, 3, 4);
-		IAST collector = F.Max();
-		IExpr expnd = F.evalExpandAll(ast.get(1));
-		if (expnd.isAST()) {
-			IAST result = (IAST) expnd;
-			IExpr form = ast.get(2);
-			if (ast.size() == 4) {
-				ISymbol sym = Validate.checkSymbolType(ast, 3);
-				collector = F.ast(sym);
-			}
-			
-			final PatternMatcher matcher = new PatternMatcher(form);
-			result.accept(new PowerVisitorPredicate(collector,matcher));
-			if (collector.size() > 1) {
-				return collector;
-			}
+
+		IExpr form = ast.get(2);
+		ISymbol sym = F.Max;
+		if (ast.size() == 4) {
+			sym = Validate.checkSymbolType(ast, 3);
 		}
-		return F.CNInfinity;
+		IAST collector = F.ast(sym);
+
+		IExpr expr = F.evalExpandAll(ast.get(1));
+		if (expr.equals(F.C0)) {
+			collector.add(F.CNInfinity);
+		} else if (expr.isAST()) {
+			IAST arg1 = (IAST) expr;
+			final PatternMatcher matcher = new PatternMatcher(form);
+
+			if (arg1.isPower()) {
+				if (matcher.apply(arg1.get(1))) {
+					collector.add(arg1.get(2));
+				} else {
+					collector.add(F.C0);
+				}
+			} else if (arg1.isPlus()) {
+				for (int i = 1; i < arg1.size(); i++) {
+					if (arg1.get(i).isAtom()) {
+						collector.add(F.C0);
+					} else if (arg1.get(i).isPower()) {
+						IAST pow = (IAST) arg1.get(i);
+						if (matcher.apply(pow.get(1))) {
+							collector.add(pow.get(2));
+						} else {
+							collector.add(F.C0);
+						}
+					} else if (arg1.get(i).isTimes()) {
+						IAST times = (IAST) arg1.get(i);
+						boolean evaled = false;
+						for (int j = 1; j < times.size(); j++) {
+							if (times.get(j).isPower()) {
+								IAST pow = (IAST) times.get(j);
+								if (matcher.apply(pow.get(1))) {
+									collector.add(pow.get(2));
+									evaled = true;
+									break;
+								}
+							}
+						}
+						if (!evaled) {
+							collector.add(F.C0);
+						}
+					} else {
+						collector.add(F.C0);
+					}
+				}
+			} else if (arg1.isTimes()) {
+				boolean evaled = false;
+				for (int i = 1; i < arg1.size(); i++) {
+					if (arg1.get(i).isPower()) {
+						IAST pow = (IAST) arg1.get(i);
+						if (matcher.apply(pow.get(1))) {
+							collector.add(pow.get(2));
+							evaled = true;
+							break;
+						}
+					}
+				}
+				if (!evaled) {
+					collector.add(F.C0);
+				}
+			}
+
+		} else {
+			collector.add(F.C0);
+		}
+		return collector;
 	}
 
 }

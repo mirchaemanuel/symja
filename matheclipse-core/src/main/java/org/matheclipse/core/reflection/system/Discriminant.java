@@ -1,5 +1,7 @@
 package org.matheclipse.core.reflection.system;
 
+import org.matheclipse.basic.Config;
+import org.matheclipse.core.eval.exception.JASConversionException;
 import org.matheclipse.core.eval.exception.Validate;
 import org.matheclipse.core.eval.exception.WrongArgumentType;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
@@ -29,27 +31,35 @@ public class Discriminant extends AbstractFunctionEvaluator {
 		}
 		IAST result = F.List();
 		IAST resultListDiff = F.List();
-		long degree = CoefficientList.univariateCoefficientList(expr, (ISymbol) arg2, result, resultListDiff);
-		if (degree >= Short.MAX_VALUE) {
-			throw new WrongArgumentType(ast, ast.get(1), 1, "Polynomial degree" + degree + " is larger than: " + " - " + Short.MAX_VALUE);
+		try {
+			long degree = CoefficientList.univariateCoefficientList(expr, (ISymbol) arg2, result, resultListDiff);
+			if (degree >= Short.MAX_VALUE) {
+				throw new WrongArgumentType(ast, ast.get(1), 1, "Polynomial degree" + degree + " is larger than: " + " - "
+						+ Short.MAX_VALUE);
+			}
+			IExpr resultant = Resultant.resultant(result, resultListDiff);
+			IExpr disc;
+			degree *= (degree - 1);
+			degree /= 2;
+			IExpr factor = F.Power(result.get(result.size() - 1), F.CN1);
+			if (degree % 2L != 0L) {
+				factor = F.Times(F.CN1, factor);
+			}
+			if (resultant.isPlus()) {
+				IAST res = (IAST) resultant;
+				// distribute the factor over the sum
+				res = res.map(Functors.replace1st(F.Times(F.Null, factor)));
+				disc = F.eval(res);
+			} else {
+				disc = F.eval(F.Times(resultant, factor));
+			}
+			return disc;
+		} catch (JASConversionException jce) {
+			if (Config.DEBUG) {
+				jce.printStackTrace();
+			}
 		}
-		IExpr resultant = Resultant.resultant(result, resultListDiff);
-		IExpr disc;
-		degree *= (degree - 1);
-		degree /= 2;
-		IExpr factor = F.Power(result.get(result.size() - 1), F.CN1);
-		if (degree % 2L != 0L) {
-			factor = F.Times(F.CN1, factor);
-		}
-		if (resultant.isPlus()) {
-			IAST res = (IAST) resultant;
-			// distribute the factor over the sum
-			res = res.map(Functors.replace1st(F.Times(F.Null, factor)));
-			disc = F.eval(res);
-		} else {
-			disc = F.eval(F.Times(resultant, factor));
-		}
-		return disc;
+		return null;
 	}
 
 	@Override

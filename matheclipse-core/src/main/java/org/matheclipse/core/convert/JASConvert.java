@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
 
+import org.matheclipse.core.eval.exception.JASConversionException;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IComplex;
@@ -60,7 +61,7 @@ public class JASConvert<C extends RingElem<C>> {
 	// };
 
 	public JASConvert(IExpr variable, RingFactory<C> ringFactory) {
-		List<IExpr> varList= new ArrayList<IExpr>();
+		List<IExpr> varList = new ArrayList<IExpr>();
 		varList.add(variable);
 		this.fRingFactory = ringFactory;
 		this.fVariables = varList;
@@ -73,7 +74,7 @@ public class JASConvert<C extends RingElem<C>> {
 		this.fBigIntegerPolyFactory = new GenPolynomialRing<edu.jas.arith.BigInteger>(edu.jas.arith.BigInteger.ZERO, fVariables.size(),
 				fTermOrder, vars);
 	}
-	
+
 	public JASConvert(final List<? extends IExpr> variablesList, RingFactory<C> ringFactory) {
 		this(variablesList, ringFactory, new TermOrder(TermOrder.INVLEX));
 	}
@@ -91,6 +92,14 @@ public class JASConvert<C extends RingElem<C>> {
 				fTermOrder, vars);
 	}
 
+	public GenPolynomial<C> expr2JAS(final IExpr exprPoly) throws JASConversionException {
+		try {
+			return expr2Poly(exprPoly);
+		} catch (Exception ae) {
+			throw new JASConversionException();
+		}
+	}
+
 	/**
 	 * Convert the given expression into a <a
 	 * href="http://krum.rz.uni-mannheim.de/jas/">JAS</a> polynomial
@@ -100,7 +109,7 @@ public class JASConvert<C extends RingElem<C>> {
 	 * @throws ArithmeticException
 	 * @throws ClassCastException
 	 */
-	public GenPolynomial<C> expr2Poly(final IExpr exprPoly) throws ArithmeticException, ClassCastException {
+	private GenPolynomial<C> expr2Poly(final IExpr exprPoly) throws ArithmeticException, ClassCastException {
 		if (exprPoly instanceof IAST) {
 			final IAST ast = (IAST) exprPoly;
 			GenPolynomial<C> result = fPolyFactory.getZERO();
@@ -127,10 +136,12 @@ public class JASConvert<C extends RingElem<C>> {
 				final IExpr expr = ast.get(1);
 				for (int i = 0; i < fVariables.size(); i++) {
 					if (fVariables.get(i).equals(expr)) {
+						// TODO replace by own exception
+						// the following may throw ClassCastExcepion or ArithmeticException
 						if (((IInteger) ast.get(2)).isNegative()) {
 							throw new ArithmeticException("JASConvert:expr2Poly - negative exponent: " + ast.get(2).toString());
 						}
-						// may throw ClassCastExcepion or ArithmeticException
+
 						ExpVector e = ExpVector.create(fVariables.size(), i, ((IInteger) ast.get(2)).toInt());
 						return fPolyFactory.getONE().multiply(e);
 					}

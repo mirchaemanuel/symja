@@ -1,5 +1,7 @@
 package org.matheclipse.core.reflection.system;
 
+import org.matheclipse.basic.Config;
+import org.matheclipse.core.eval.exception.JASConversionException;
 import org.matheclipse.core.eval.exception.Validate;
 import org.matheclipse.core.eval.exception.WrongArgumentType;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
@@ -27,17 +29,27 @@ public class Resultant extends AbstractFunctionEvaluator {
 			// TODO allow multinomials
 			return null;
 		}
-		IAST result = F.List();
-		long degree1 = CoefficientList.univariateCoefficientList(arg1, (ISymbol) arg3, result);
-		if (degree1 >= Short.MAX_VALUE) {
-			throw new WrongArgumentType(ast, ast.get(1), 1, "Polynomial degree" + degree1 + " is larger than: " + " - " + Short.MAX_VALUE);
+		try {
+			IAST result = F.List();
+			long degree1 = CoefficientList.univariateCoefficientList(arg1, (ISymbol) arg3, result);
+			if (degree1 >= Short.MAX_VALUE) {
+				throw new WrongArgumentType(ast, ast.get(1), 1, "Polynomial degree" + degree1 + " is larger than: " + " - "
+						+ Short.MAX_VALUE);
+			}
+			IAST resultListDiff = F.List();
+			long degree2 = CoefficientList.univariateCoefficientList(arg2, (ISymbol) arg3, resultListDiff);
+			if (degree2 >= Short.MAX_VALUE) {
+				throw new WrongArgumentType(ast, ast.get(1), 1, "Polynomial degree" + degree2 + " is larger than: " + " - "
+						+ Short.MAX_VALUE);
+			}
+			return resultant(result, resultListDiff);
+		} catch (JASConversionException jce) {
+			// toInt() conversion failed
+			if (Config.DEBUG) {
+				jce.printStackTrace();
+			}
 		}
-		IAST resultListDiff = F.List();
-		long degree2 = CoefficientList.univariateCoefficientList(arg2, (ISymbol) arg3, resultListDiff);
-		if (degree2 >= Short.MAX_VALUE) {
-			throw new WrongArgumentType(ast, ast.get(1), 1, "Polynomial degree" + degree2 + " is larger than: " + " - " + Short.MAX_VALUE);
-		}
-		return resultant(result, resultListDiff);
+		return null;
 	}
 
 	public static IExpr resultant(IAST result, IAST resultListDiff) {

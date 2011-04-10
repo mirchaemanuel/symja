@@ -8,6 +8,7 @@ import java.util.SortedMap;
 import org.matheclipse.basic.Config;
 import org.matheclipse.core.convert.ExprVariables;
 import org.matheclipse.core.convert.JASConvert;
+import org.matheclipse.core.eval.exception.JASConversionException;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
 import org.matheclipse.core.expression.ASTRange;
 import org.matheclipse.core.expression.ExprRingFactory;
@@ -62,16 +63,16 @@ public class Roots extends AbstractFunctionEvaluator {
 		List<IExpr> varList = r.toList();
 		try {
 			JASConvert<BigRational> jas = new JASConvert<BigRational>(varList, BigRational.ZERO);
-			GenPolynomial<BigRational> rPoly = jas.expr2Poly(expr);
+			GenPolynomial<BigRational> rPoly = jas.expr2JAS(expr);
 
 			return rootsOfPolynomial(rPoly, jas);
 
-		} catch (Exception e) {
+		} catch (JASConversionException e) {
 			try {
 				JASConvert<IExpr> eJas = new JASConvert<IExpr>(varList, new ExprRingFactory());
-				GenPolynomial<IExpr> ePoly = eJas.expr2Poly(expr);
+				GenPolynomial<IExpr> ePoly = eJas.expr2JAS(expr);
 				return rootsOfPolynomial(ePoly);
-			} catch (Exception e2) {
+			} catch (JASConversionException e2) {
 				if (Config.SHOW_STACKTRACE) {
 					e2.printStackTrace();
 				}
@@ -116,7 +117,7 @@ public class Roots extends AbstractFunctionEvaluator {
 				result.add(Times(rev2a, Plus(b.negate(), sqrt.negative())));
 			}
 			return result;
-		} 
+		}
 		// else if (varDegree <= 3) {
 		// // ePoly = ePoly.monic();
 		// // solve Cubic equation: x^3 + a*x^2 + b*x + c = 0
@@ -237,8 +238,8 @@ public class Roots extends AbstractFunctionEvaluator {
 					if (discriminant.isNegative()) {
 						// 2 complex roots
 						IAST sqrt = Times(CI, Sqrt(discriminant.negate()));
-						result.add(Times(rev2a,Plus(b.negate(), sqrt)));
-						result.add(Times(rev2a,Subtract(b.negate(), sqrt)));
+						result.add(Times(rev2a, Plus(b.negate(), sqrt)));
+						result.add(Times(rev2a, Subtract(b.negate(), sqrt)));
 					} else {
 						// 2 real roots
 						IAST sqrt = Sqrt(discriminant);

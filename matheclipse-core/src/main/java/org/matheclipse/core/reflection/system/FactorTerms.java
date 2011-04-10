@@ -3,6 +3,7 @@ package org.matheclipse.core.reflection.system;
 import org.matheclipse.basic.Config;
 import org.matheclipse.core.convert.ExprVariables;
 import org.matheclipse.core.convert.JASConvert;
+import org.matheclipse.core.eval.exception.JASConversionException;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
 import org.matheclipse.core.expression.ASTRange;
 import org.matheclipse.core.expression.F;
@@ -49,7 +50,7 @@ public class FactorTerms extends AbstractFunctionEvaluator {
 			IExpr expr = F.evalExpandAll(lst.get(1));
 			ASTRange r = new ASTRange(variableList, 1);
 			JASConvert<BigRational> jas = new JASConvert<BigRational>(r.toList(), BigRational.ZERO);
-			GenPolynomial<BigRational> poly = jas.expr2Poly(expr);
+			GenPolynomial<BigRational> poly = jas.expr2JAS(expr);
 			Object[] objects = jas.factorTerms(poly);
 			java.math.BigInteger gcd = (java.math.BigInteger) objects[0];
 			java.math.BigInteger lcm = (java.math.BigInteger) objects[1];
@@ -62,7 +63,7 @@ public class FactorTerms extends AbstractFunctionEvaluator {
 			result.add(F.fraction(gcd, lcm));
 			result.add(jas.integerPoly2Expr(iPoly));
 			return result;
-		} catch (Exception e) {
+		} catch (JASConversionException e) {
 			if (Config.DEBUG) {
 				e.printStackTrace();
 			}

@@ -41,6 +41,7 @@ public class WrongArgumentType extends MathException {
 	 * @param position
 	 */
 	public WrongArgumentType(final IAST expr, final IExpr arg, final int position, String message) {
+		super();
 		fPosition = position;
 		fArg = arg;
 		fExpr = expr;

@@ -5,6 +5,7 @@ import java.util.List;
 import org.matheclipse.basic.Config;
 import org.matheclipse.core.convert.ExprVariables;
 import org.matheclipse.core.convert.JASConvert;
+import org.matheclipse.core.eval.exception.JASConversionException;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
 import org.matheclipse.core.eval.util.Options;
 import org.matheclipse.core.expression.ASTRange;
@@ -60,8 +61,8 @@ public class PolynomialExtendedGCD extends AbstractFunctionEvaluator {
 					int intValue = ((IInteger) option).toInt();
 					ModIntegerRing modIntegerRing = new ModIntegerRing(intValue, value.isProbablePrime(32));
 					JASConvert<ModInteger> jas = new JASConvert<ModInteger>(varList, modIntegerRing);
-					GenPolynomial<ModInteger> poly1 = jas.expr2Poly(expr1);
-					GenPolynomial<ModInteger> poly2 = jas.expr2Poly(expr2);
+					GenPolynomial<ModInteger> poly1 = jas.expr2JAS(expr1);
+					GenPolynomial<ModInteger> poly2 = jas.expr2JAS(expr2);
 					GenPolynomial<ModInteger>[] result = poly1.egcd(poly2);
 					IAST list = F.List();
 					list.add(jas.modIntegerPoly2Expr(result[0]));
@@ -70,20 +71,19 @@ public class PolynomialExtendedGCD extends AbstractFunctionEvaluator {
 					subList.add(jas.modIntegerPoly2Expr(result[2]));
 					list.add(subList);
 					return list;
-				} catch (ArithmeticException ae) {
-					// toInt() conversion failed
-					if (Config.DEBUG) {
-						ae.printStackTrace();
-					}
-					return null; // no evaluation
-				}
+				} catch (JASConversionException e) {
+	        if (Config.DEBUG) {
+	          e.printStackTrace();
+	        }
+	      }
+				return null;
 			}
 		}
 
 		try {
 			JASConvert<BigRational> jas = new JASConvert<BigRational>(r.toList(), BigRational.ZERO);
-			GenPolynomial<BigRational> poly1 = jas.expr2Poly(expr1);
-			GenPolynomial<BigRational> poly2 = jas.expr2Poly(expr2);
+			GenPolynomial<BigRational> poly1 = jas.expr2JAS(expr1);
+			GenPolynomial<BigRational> poly2 = jas.expr2JAS(expr2);
 			GenPolynomial<BigRational>[] result = poly1.egcd(poly2);
 			IAST list = F.List();
 			list.add(jas.rationalPoly2Expr(result[0]));
@@ -92,7 +92,7 @@ public class PolynomialExtendedGCD extends AbstractFunctionEvaluator {
 			subList.add(jas.rationalPoly2Expr(result[2]));
 			list.add(subList);
 			return list;
-		} catch (Exception e) {
+		} catch (JASConversionException e) {
 			if (Config.DEBUG) {
 				e.printStackTrace();
 			}

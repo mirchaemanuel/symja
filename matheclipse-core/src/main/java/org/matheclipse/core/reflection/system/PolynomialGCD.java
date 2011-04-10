@@ -3,6 +3,7 @@ package org.matheclipse.core.reflection.system;
 import org.matheclipse.basic.Config;
 import org.matheclipse.core.convert.ExprVariables;
 import org.matheclipse.core.convert.JASConvert;
+import org.matheclipse.core.eval.exception.JASConversionException;
 import org.matheclipse.core.eval.exception.Validate;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
 import org.matheclipse.core.eval.util.Options;
@@ -49,7 +50,7 @@ public class PolynomialGCD extends AbstractFunctionEvaluator {
 					int intValue = ((IInteger) option).toInt();
 					ModIntegerRing modIntegerRing = new ModIntegerRing(intValue, value.isProbablePrime(32));
 					JASConvert<ModInteger> jas = new JASConvert<ModInteger>(r.toList(), modIntegerRing);
-					GenPolynomial<ModInteger> poly = jas.expr2Poly(expr);
+					GenPolynomial<ModInteger> poly = jas.expr2JAS(expr);
 					GenPolynomial<ModInteger> temp;
 					for (int i = 2; i < ast.size() - 1; i++) {
 						eVar = new ExprVariables(ast.get(i));
@@ -58,22 +59,21 @@ public class PolynomialGCD extends AbstractFunctionEvaluator {
 							return null;
 						}
 						expr = F.evalExpandAll(ast.get(i));
-						temp = jas.expr2Poly(expr);
+						temp = jas.expr2JAS(expr);
 						poly = poly.gcd(temp);
 					}
 					return jas.modIntegerPoly2Expr(poly);
-				} catch (ArithmeticException ae) {
-					// toInt() conversion failed
+				} catch (JASConversionException e) {
 					if (Config.DEBUG) {
-						ae.printStackTrace();
+						e.printStackTrace();
 					}
-					return null; // no evaluation
+					return null;
 				}
 			}
 		}
 		try {
 			JASConvert<BigRational> jas = new JASConvert<BigRational>(r.toList(), BigRational.ZERO);
-			GenPolynomial<BigRational> poly = jas.expr2Poly(expr);
+			GenPolynomial<BigRational> poly = jas.expr2JAS(expr);
 			GenPolynomial<BigRational> temp;
 			for (int i = 2; i < ast.size(); i++) {
 				eVar = new ExprVariables(ast.get(i));
@@ -82,11 +82,11 @@ public class PolynomialGCD extends AbstractFunctionEvaluator {
 					return null;
 				}
 				expr = F.evalExpandAll(ast.get(i));
-				temp = jas.expr2Poly(expr);
+				temp = jas.expr2JAS(expr);
 				poly = poly.gcd(temp);
 			}
 			return jas.rationalPoly2Expr(poly);
-		} catch (Exception e) {
+		} catch (JASConversionException e) {
 			if (Config.DEBUG) {
 				e.printStackTrace();
 			}

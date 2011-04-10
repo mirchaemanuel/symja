@@ -15,6 +15,15 @@ public class IntegrateTrigFunctionTestCase extends AbstractTestCase {
 	/**
 	 * Test combinatorial functions
 	 */
+	public void testTrig002() {
+		// TODO wrong result:
+		check("Integrate[Sin[x]/Sqrt[x],x]", "Integrate[x^(-1/2)*Sin[x],x]");
+
+	}
+
+	/**
+	 * Test combinatorial functions
+	 */
 	public void testTrig003() {
 		check("$f[a_.+b_.*c_]:={a,b,c};$f[x]", "{0,1,x}");
 		check("$h[$g[a_.+b_.*c_]]:={a,b,c};$h[$g[x]]", "{0,1,x}");

@@ -14,6 +14,8 @@ import org.matheclipse.core.interfaces.IExpr;
  */
 public class IndefiniteIntegrationRules1 { 
   public static IAST RULES = List( 
+SetDelayed(Int(Times(C1,Power(Plus(Plus($p("a"),Times($p("b",true),Power($p("x"),C2))),Times($p("c",true),Power($p("x"),C4))),CN1)),$p("x",$s("Symbol"))),
+    Condition(Module(List(Set($s("q"),Rt(Times(Times(CN1,$s("a")),Power($s("c"),CN1)),C2))),Plus(Times(CN1,Dist(Times($s("c"),Times($s("q"),Power(Times(C2,$s("a")),CN1))),Int(Times(Plus($s("q"),Power($s("x"),C2)),Power(Plus(Plus($s("a"),Times($s("b"),Power($s("x"),C2))),Times($s("c"),Power($s("x"),C4))),CN1)),$s("x")))),Times(CN1,Dist(Times($s("c"),Times($s("q"),Power(Times(C2,$s("a")),CN1))),Int(Times(Plus($s("q"),Times(CN1,Power($s("x"),C2))),Power(Plus(Plus($s("a"),Times($s("b"),Power($s("x"),C2))),Times($s("c"),Power($s("x"),C4))),CN1)),$s("x")))))),And(And(FreeQ(List($s("a"),$s("b"),$s("c")),$s("x")),NegQ(Times($s("a"),Power($s("c"),CN1)))),Or(NegativeQ(Plus(Power($s("b"),C2),Times(CN1,Times(Times(C4,$s("a")),$s("c"))))),And(RationalQ(Times($s("a"),Power($s("c"),CN1))),Not(PositiveQ(Plus(Power($s("b"),C2),Times(CN1,Times(Times(C4,$s("a")),$s("c"))))))))))),
 SetDelayed(Int(Times(Power($p("x"),C2),Power(Plus(Plus($p("a"),Times($p("b",true),Power($p("x"),C2))),Times($p("c",true),Power($p("x"),C4))),CN1)),$p("x",$s("Symbol"))),
     Condition(Module(List(Set($s("q"),Rt(Times($s("a"),Power($s("c"),CN1)),C2))),Plus(Dist(C1D2,Int(Times(Plus($s("q"),Power($s("x"),C2)),Power(Plus(Plus($s("a"),Times($s("b"),Power($s("x"),C2))),Times($s("c"),Power($s("x"),C4))),CN1)),$s("x"))),Times(CN1,Dist(C1D2,Int(Times(Plus($s("q"),Times(CN1,Power($s("x"),C2))),Power(Plus(Plus($s("a"),Times($s("b"),Power($s("x"),C2))),Times($s("c"),Power($s("x"),C4))),CN1)),$s("x")))))),And(And(FreeQ(List($s("a"),$s("b"),$s("c")),$s("x")),PosQ(Times($s("a"),Power($s("c"),CN1)))),Or(NegativeQ(Plus(Power($s("b"),C2),Times(CN1,Times(Times(C4,$s("a")),$s("c"))))),And(RationalQ(Times($s("a"),Power($s("c"),CN1))),Not(PositiveQ(Plus(Power($s("b"),C2),Times(CN1,Times(Times(C4,$s("a")),$s("c"))))))))))),
 SetDelayed(Int(Times(Power($p("x"),C2),Power(Plus(Plus($p("a"),Times($p("b",true),Power($p("x"),C2))),Times($p("c",true),Power($p("x"),C4))),CN1)),$p("x",$s("Symbol"))),
@@ -209,8 +211,6 @@ SetDelayed(Int(Times(C1,Power(Plus($p("a"),Times($p("b",true),Power($p("x"),$p("
 SetDelayed(Int(Times(C1,Power(Sqrt(Plus($p("a"),Times($p("b",true),Power($p("x"),C2)))),CN1)),$p("x",$s("Symbol"))),
     Condition(Times(ArcSinh(Times(Rt($s("b"),C2),Times($s("x"),Power(Sqrt($s("a")),CN1)))),Power(Rt($s("b"),C2),CN1)),And(And(FreeQ(List($s("a"),$s("b")),$s("x")),PositiveQ($s("a"))),PosQ($s("b"))))),
 SetDelayed(Int(Times(C1,Power(Sqrt(Plus($p("a"),Times($p("b",true),Power($p("x"),C2)))),CN1)),$p("x",$s("Symbol"))),
-    Condition(Times(ArcSin(Times(Rt(Times(CN1,$s("b")),C2),Times($s("x"),Power(Sqrt($s("a")),CN1)))),Power(Rt(Times(CN1,$s("b")),C2),CN1)),And(And(FreeQ(List($s("a"),$s("b")),$s("x")),PositiveQ($s("a"))),NegQ($s("b"))))),
-SetDelayed(Int(Times(C1,Power(Sqrt(Plus($p("a"),Times($p("b",true),Power($p("x"),C2)))),CN1)),$p("x",$s("Symbol"))),
-    Condition(Times(ArcTanh(Times(Sqrt(Plus($s("a"),Times($s("b"),Power($s("x"),C2)))),Power(Times(Rt($s("b"),C2),$s("x")),CN1))),Power(Rt($s("b"),C2),CN1)),And(And(FreeQ(List($s("a"),$s("b")),$s("x")),Not(PositiveQ($s("a")))),PosQ($s("b")))))
+    Condition(Times(ArcSin(Times(Rt(Times(CN1,$s("b")),C2),Times($s("x"),Power(Sqrt($s("a")),CN1)))),Power(Rt(Times(CN1,$s("b")),C2),CN1)),And(And(FreeQ(List($s("a"),$s("b")),$s("x")),PositiveQ($s("a"))),NegQ($s("b")))))
   );
 }
