@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.matheclipse.basic.Config;
 import org.matheclipse.core.convert.JASConvert;
+import org.matheclipse.core.eval.exception.JASConversionException;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IAST;
@@ -52,7 +53,7 @@ public class GroebnerBasis extends AbstractFunctionEvaluator {
           JASConvert<BigRational> jas = new JASConvert<BigRational>(varList, BigRational.ZERO);
           for (int i = 1; i < polys.size(); i++) {
             IExpr expr = F.evalExpandAll(polys.get(i));
-            GenPolynomial<BigRational> poly = jas.expr2Poly(expr);
+            GenPolynomial<BigRational> poly = jas.expr2JAS(expr);
             polyList.add(poly);
           }
 
@@ -67,7 +68,7 @@ public class GroebnerBasis extends AbstractFunctionEvaluator {
           }
           return resultList;
         }
-      } catch (Exception e) {
+      } catch (JASConversionException e) {
         if (Config.SHOW_STACKTRACE) {
           e.printStackTrace();
         }

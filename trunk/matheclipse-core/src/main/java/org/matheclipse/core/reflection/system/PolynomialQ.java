@@ -2,7 +2,9 @@ package org.matheclipse.core.reflection.system;
 
 import static org.matheclipse.core.expression.F.List;
 
+import org.matheclipse.basic.Config;
 import org.matheclipse.core.convert.JASConvert;
+import org.matheclipse.core.eval.exception.JASConversionException;
 import org.matheclipse.core.eval.exception.WrongNumberOfArguments;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
 import org.matheclipse.core.expression.ASTRange;
@@ -48,9 +50,9 @@ public class PolynomialQ extends AbstractFunctionEvaluator implements BiPredicat
 			ASTRange r = new ASTRange(variables, 1);
 			JASConvert<BigRational> jas = new JASConvert<BigRational>(r.toList(), BigRational.ZERO);
 			// GenPolynomial<BigRational> poly = jas.expr2Poly(expr);
-			return jas.expr2Poly(expr) != null;
-		} catch (final Exception e) {
-			// exception will be thrown if the expression is not a polynomial
+			return jas.expr2JAS(expr) != null;
+		} catch (JASConversionException e) {
+			// exception will be thrown if the expression is not JAS a polynomial
 		}
 		return false;
 	}

@@ -32,13 +32,13 @@ public class UtilityFunctions {
 	 * @return
 	 */
 	public static IAST Int(final IExpr a0, final IExpr a1) {
-		// Integrate.setAttributes(ISymbol.CONSOLE_OUTPUT);
+//		 Integrate.setAttributes(ISymbol.CONSOLE_OUTPUT);
 		return binary(Integrate, a0, a1);
 	}
 
 	public static ISymbol $sDBG(final String symbolName) {
 		ISymbol sym = $s(symbolName);
-		// sym.setAttributes(ISymbol.CONSOLE_OUTPUT);
+//		 sym.setAttributes(ISymbol.CONSOLE_OUTPUT);
 		return sym;
 	}
 
@@ -283,7 +283,7 @@ public class UtilityFunctions {
 
 	public static IAST Scan(final IExpr a0, final IExpr a1) {
 		// TODO
-		return binary($sDBG("Scan"), a0, a1);
+		return binary($s("Scan"), a0, a1);
 	}
 
 	public static IAST ArcCoth(final IExpr a) {

@@ -664,7 +664,7 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 			resultList = ast.clone();
 			if ((ISymbol.HOLDFIRST & attr) == ISymbol.NOATTRIBUTE) {
 				// the HoldFirst attribute isn't set here
-				if (ast.size() > 1 && ast.get(1) instanceof IAST) {
+				if (ast.size() > 1 && ast.get(1).isAST()) {
 					IAST temp = (IAST) ast.get(1);
 					// if (temp.isFree(isPattern, true)) {
 					resultList.set(1, evaluate(temp));
@@ -805,7 +805,7 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 			return temp;
 		}
 
-		if (obj instanceof INumber) {
+		if (obj.isNumber()) {
 			if (obj instanceof ISignedNumber) {
 				return evalSignedNumber((ISignedNumber) obj);
 			}
@@ -816,15 +816,15 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 				return evalComplex((IComplex) obj);
 			}
 		}
-		if (obj instanceof ISymbol) {
+		if (obj.isSymbol()) {
 			return evalSymbol((ISymbol) obj);
 		}
-		if (obj instanceof IStringX) {
-			return null;
-		}
-		if (obj instanceof IPattern) {
-			return evalPattern((IPattern) obj);
-		}
+		// if (obj instanceof IStringX) {
+		// return null;
+		// }
+		// if (obj instanceof IPattern) {
+		// return evalPattern((IPattern) obj);
+		// }
 
 		return null;
 	}
@@ -842,32 +842,9 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 		return null;
 	}
 
-	/**
-	 * Evaluate an object, if evaluation is not possible return <code>null</code>
-	 * 
-	 * @param obj
-	 *          the object which should be evaluated
-	 * @return the evaluated object or <code>null</code>
-	 * 
-	 */
-	// protected Object evalStep(Object obj) {
-	// if (fRecursionLimit > 0 && fExprStack.size() > fRecursionLimit) {
-	// throw new RecursionLimitExceeded(fRecursionLimit);
-	// }
-	// fExprStack.push(obj);
-	// Object result = evalPeek();
-	// fExprStack.pop();
-	// return result;
-	// }
-	protected IExpr evalPattern(final IPattern obj) {
-		return null;
-	}
-
 	public IExpr evalSymbol(final ISymbol symbol) {
 		IExpr result;
-		if (symbol.hasLocalVariableStack()) {// &&
-			// !symbol.isLocalVariableStackEmpty())
-			// {
+		if (symbol.hasLocalVariableStack()) { 
 			return symbol.get();
 		}
 		if ((result = symbol.evalDownRule(this, symbol)) != null) {
@@ -883,12 +860,6 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 		return null;
 	}
 
-	/**
-	 * @return
-	 */
-	// public ExprFactory getExpressionFactory() {
-	// return fExpressionFactory;
-	// }
 	/**
 	 * @return
 	 */

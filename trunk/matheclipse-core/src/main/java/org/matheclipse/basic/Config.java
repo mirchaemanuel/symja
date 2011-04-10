@@ -50,8 +50,8 @@ public class Config {
 	 * Show the console output, if an expression has a head symbol with attribute
 	 * <code>ISymbol.CONSOLE_OUTPUT</code>.
 	 * 
-	 */
-	public final static boolean SHOW_CONSOLE = false;
+	 */  
+	public final static boolean SHOW_CONSOLE = true; 
 
 	/**
 	 * Version string for console application

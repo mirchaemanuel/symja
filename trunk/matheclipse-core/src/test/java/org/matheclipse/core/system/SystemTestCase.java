@@ -63,6 +63,8 @@ public class SystemTestCase extends AbstractTestCase {
 		check("Sin[x]^(-2)", "Csc[x]^2");
 
 		check("x - (11 + (7 - x))", "2*x-18");
+
+		check("1/Sqrt[x]*a", "a*x^(-1/2)");
 	}
 
 	public void testSystem000a() {
@@ -491,12 +493,16 @@ public class SystemTestCase extends AbstractTestCase {
 		check("$ofoi[a,10,b,c]", "{10,{a,{b,c}}}");
 	}
 
-	// test attribute ISymbol.LISTABLE
 	public void testSystem067() {
-		check("Sin[{a,b,c}]", "{Sin[a],Sin[b],Sin[c]}");
+		check("$int[Sin[x_]/Sqrt[x_],x_Symbol]:={x}", "");
+		check("$int[Sin[a]/Sqrt[a],a]", "{a}");
+		check("$int[Sin[x]/Sqrt[x],x]", "{x}");
+		check("$int[x^(-1/2)*Sin[x],x]", "{x}");
 	}
 
 	public void testSystem068() {
+		// test attribute ISymbol.LISTABLE
+		check("Sin[{a,b,c}]", "{Sin[a],Sin[b],Sin[c]}");
 		check("NumberQ[{a,b,c}]", "{False,False,False}");
 	}
 

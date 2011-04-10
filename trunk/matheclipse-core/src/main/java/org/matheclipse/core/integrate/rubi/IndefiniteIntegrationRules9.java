@@ -14,6 +14,8 @@ import org.matheclipse.core.interfaces.IExpr;
  */
 public class IndefiniteIntegrationRules9 { 
   public static IAST RULES = List( 
+SetDelayed(Int(Times(Times($p("u",true),Cosh($p("v"))),Power(Tanh($p("w")),$p("n",true))),$p("x",$s("Symbol"))),
+    Condition(Plus(Int(Times(Times($s("u"),Sinh($s("v"))),Power(Tanh($s("w")),Plus($s("n"),Times(CN1,C1)))),$s("x")),Times(CN1,Times(Sinh(Plus($s("v"),Times(CN1,$s("w")))),Int(Times(Times($s("u"),Sech($s("w"))),Power(Tanh($s("w")),Plus($s("n"),Times(CN1,C1)))),$s("x"))))),And(And(And(RationalQ($s("n")),Greater($s("n"),C0)),FreeQ(Plus($s("v"),Times(CN1,$s("w"))),$s("x"))),NonzeroQ(Plus($s("v"),Times(CN1,$s("w"))))))),
 SetDelayed(Int(Times(Times($p("u",true),Cosh($p("v"))),Power(Coth($p("w")),$p("n",true))),$p("x",$s("Symbol"))),
     Condition(Plus(Int(Times(Times($s("u"),Sinh($s("v"))),Power(Coth($s("w")),Plus($s("n"),Times(CN1,C1)))),$s("x")),Times(Cosh(Plus($s("v"),Times(CN1,$s("w")))),Int(Times(Times($s("u"),Csch($s("w"))),Power(Coth($s("w")),Plus($s("n"),Times(CN1,C1)))),$s("x")))),And(And(And(RationalQ($s("n")),Greater($s("n"),C0)),FreeQ(Plus($s("v"),Times(CN1,$s("w"))),$s("x"))),NonzeroQ(Plus($s("v"),Times(CN1,$s("w"))))))),
 SetDelayed(Int(Times(Times($p("u",true),Cosh($p("v"))),Power(Sech($p("w")),$p("n",true))),$p("x",$s("Symbol"))),
@@ -211,8 +213,6 @@ SetDelayed(Int(Times(Power(Csch(Plus($p("a",true),Times($p("b",true),$p("x")))),
 SetDelayed(Int(Times(Power(Csch(Plus($p("a",true),Times($p("b",true),$p("x")))),$p("m")),Power(Sech(Plus($p("a",true),Times($p("b",true),$p("x")))),$p("n",true))),$p("x",$s("Symbol"))),
     Condition(Plus(Times(Times(CN1,Power(Csch(Plus($s("a"),Times($s("b"),$s("x")))),Plus($s("m"),C1))),Times(Power(Sech(Plus($s("a"),Times($s("b"),$s("x")))),Plus($s("n"),Times(CN1,C1))),Power(Times($s("b"),Plus($s("m"),$s("n"))),CN1))),Times(CN1,Dist(Times(Plus($s("m"),C1),Power(Plus($s("m"),$s("n")),CN1)),Int(Times(Power(Csch(Plus($s("a"),Times($s("b"),$s("x")))),Plus($s("m"),C2)),Power(Sech(Plus($s("a"),Times($s("b"),$s("x")))),$s("n"))),$s("x"))))),And(And(And(FreeQ(List($s("a"),$s("b"),$s("n")),$s("x")),RationalQ($s("m"))),Less($s("m"),CN1)),NonzeroQ(Plus($s("m"),$s("n")))))),
 SetDelayed(Int(Times(Power(Csch(Plus($p("a",true),Times($p("b",true),$p("x")))),$p("m",true)),Power(Coth(Plus($p("a",true),Times($p("b",true),$p("x")))),$p("n",true))),$p("x",$s("Symbol"))),
-    Condition(Times(Times(CN1,Power(Csch(Plus($s("a"),Times($s("b"),$s("x")))),$s("m"))),Power(Times($s("b"),$s("m")),CN1)),And(FreeQ(List($s("a"),$s("b"),$s("m")),$s("x")),SameQ($s("n"),C1)))),
-SetDelayed(Int(Times(Power(Csch(Plus($p("a",true),Times($p("b",true),$p("x")))),$p("m")),Power(Coth(Plus($p("a",true),Times($p("b",true),$p("x")))),$p("n",true))),$p("x",$s("Symbol"))),
-    Condition(Dist(Times(CN1,Power($s("b"),CN1)),Subst(Int(Regularize(Times(Power($s("x"),$s("n")),Power(Plus(CN1,Power($s("x"),C2)),Times(Plus($s("m"),Times(CN1,C2)),C1D2))),$s("x")),$s("x")),$s("x"),Coth(Plus($s("a"),Times($s("b"),$s("x")))))),And(And(And(FreeQ(List($s("a"),$s("b"),$s("n")),$s("x")),EvenQ($s("m"))),Greater($s("m"),C2)),Not(And(OddQ($s("n")),Less(Less(C0,$s("n")),Plus($s("m"),Times(CN1,C1))))))))
+    Condition(Times(Times(CN1,Power(Csch(Plus($s("a"),Times($s("b"),$s("x")))),$s("m"))),Power(Times($s("b"),$s("m")),CN1)),And(FreeQ(List($s("a"),$s("b"),$s("m")),$s("x")),SameQ($s("n"),C1))))
   );
 }

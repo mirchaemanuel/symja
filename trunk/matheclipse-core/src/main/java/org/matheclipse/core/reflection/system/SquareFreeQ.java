@@ -5,6 +5,7 @@ import java.util.List;
 import org.matheclipse.basic.Config;
 import org.matheclipse.core.convert.ExprVariables;
 import org.matheclipse.core.convert.JASConvert;
+import org.matheclipse.core.eval.exception.JASConversionException;
 import org.matheclipse.core.eval.exception.WrongArgumentType;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
 import org.matheclipse.core.eval.util.Options;
@@ -61,43 +62,36 @@ public class SquareFreeQ extends AbstractFunctionEvaluator {
 				return F.bool(isSquarefreeWithOption(lst, expr, varList));
 			}
 			return F.bool(isSquarefree(expr, varList));
-
-		} catch (Exception e) {
-			if (Config.DEBUG) {
+		} catch (JASConversionException e) {
+			if (Config.SHOW_STACKTRACE) {
 				e.printStackTrace();
 			}
 		}
 		return null;
 	}
 
-	public static boolean isSquarefree(IExpr expr, List<IExpr> varList) {
+	public static boolean isSquarefree(IExpr expr, List<IExpr> varList) throws JASConversionException {
 		JASConvert<BigRational> jas = new JASConvert<BigRational>(varList, BigRational.ZERO);
-		GenPolynomial<BigRational> poly = jas.expr2Poly(expr);
+		GenPolynomial<BigRational> poly = jas.expr2JAS(expr);
 
 		FactorAbstract<BigRational> factorAbstract = FactorFactory.getImplementation(BigRational.ONE);
 		return factorAbstract.isSquarefree(poly);
 	}
 
-	public static boolean isSquarefreeWithOption(final IAST lst, IExpr expr, List<IExpr> varList) {
+	public static boolean isSquarefreeWithOption(final IAST lst, IExpr expr, List<IExpr> varList) throws JASConversionException {
 		final Options options = new Options(lst.topHead(), lst, 2);
 		IExpr option = options.getOption("Modulus");
 		if (option != null && option instanceof IInteger) {
-			try {
-				// found "Modulus" option => use ModIntegerRing
-				final BigInteger value = ((IInteger) option).getBigNumerator();
-				int intValue = ((IInteger) option).toInt();
-				ModIntegerRing modIntegerRing = new ModIntegerRing(intValue, value.isProbablePrime(32));
-				JASConvert<ModInteger> jas = new JASConvert<ModInteger>(varList, modIntegerRing);
-				GenPolynomial<ModInteger> poly = jas.expr2Poly(expr);
 
-				FactorAbstract<ModInteger> factorAbstract = FactorFactory.getImplementation(modIntegerRing);
-				return factorAbstract.isSquarefree(poly);
-			} catch (ArithmeticException ae) {
-				// toInt() conversion failed
-				if (Config.DEBUG) {
-					ae.printStackTrace();
-				}
-			}
+			// found "Modulus" option => use ModIntegerRing
+			final BigInteger value = ((IInteger) option).getBigNumerator();
+			int intValue = ((IInteger) option).toInt();
+			ModIntegerRing modIntegerRing = new ModIntegerRing(intValue, value.isProbablePrime(32));
+			JASConvert<ModInteger> jas = new JASConvert<ModInteger>(varList, modIntegerRing);
+			GenPolynomial<ModInteger> poly = jas.expr2JAS(expr);
+
+			FactorAbstract<ModInteger> factorAbstract = FactorFactory.getImplementation(modIntegerRing);
+			return factorAbstract.isSquarefree(poly);
 		}
 		// option = options.getOption("GaussianIntegers");
 		// if (option != null && option.equals(F.True)) {
