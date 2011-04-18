@@ -122,9 +122,6 @@ public class VisitorReplaceAll extends VisitorExpr {
 			if (temp != null) {
 				// something was evaluated - return a new IAST:
 				result = ast.clone();
-				for (int j = 1; j < i; j++) {
-					result.set(j, ast.get(j));
-				}
 				result.set(i++, temp);
 				break;
 			}
@@ -134,8 +131,6 @@ public class VisitorReplaceAll extends VisitorExpr {
 			temp = ast.get(i).accept(this);
 			if (temp != null) {
 				result.set(i, temp);
-			} else {
-				result.set(i, ast.get(i));
 			}
 			i++;
 		}
