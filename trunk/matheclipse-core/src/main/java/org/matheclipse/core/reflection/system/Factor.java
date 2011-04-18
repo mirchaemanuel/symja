@@ -80,7 +80,37 @@ public class Factor extends AbstractFunctionEvaluator {
 			result.add(F.fraction(gcd, lcm));
 		}
 		for (SortedMap.Entry<GenPolynomial<edu.jas.arith.BigInteger>, Long> entry : map.entrySet()) {
+			if (entry.getKey().isONE() && entry.getValue().equals(1L)) {
+				continue;
+			}
 			result.add(F.Power(jas.integerPoly2Expr(entry.getKey()), F.integer(entry.getValue())));
+		}
+		return result;
+	}
+
+	public static IExpr factorList(IExpr expr, List<IExpr> varList, boolean factorSquareFree) throws JASConversionException {
+		JASConvert<BigRational> jas = new JASConvert<BigRational>(varList, BigRational.ZERO);
+		GenPolynomial<BigRational> polyRat = jas.expr2JAS(expr);
+		Object[] objects = jas.factorTerms(polyRat);
+		java.math.BigInteger gcd = (java.math.BigInteger) objects[0];
+		java.math.BigInteger lcm = (java.math.BigInteger) objects[1];
+		GenPolynomial<edu.jas.arith.BigInteger> poly = (GenPolynomial<edu.jas.arith.BigInteger>) objects[2];
+		FactorAbstract<edu.jas.arith.BigInteger> factorAbstract = FactorFactory.getImplementation(edu.jas.arith.BigInteger.ONE);
+		SortedMap<GenPolynomial<edu.jas.arith.BigInteger>, Long> map;
+		if (factorSquareFree) {
+			map = factorAbstract.squarefreeFactors(poly);// factors(poly);
+		} else {
+			map = factorAbstract.factors(poly);
+		}
+		IAST result = F.List();
+		if (!gcd.equals(java.math.BigInteger.ONE) || !lcm.equals(java.math.BigInteger.ONE)) {
+			result.add(F.List(F.fraction(gcd, lcm), F.C1));
+		}
+		for (SortedMap.Entry<GenPolynomial<edu.jas.arith.BigInteger>, Long> entry : map.entrySet()) {
+			if (entry.getKey().isONE() && entry.getValue().equals(1L)) {
+				continue;
+			}
+			result.add(F.List(jas.integerPoly2Expr(entry.getKey()), F.integer(entry.getValue())));
 		}
 		return result;
 	}

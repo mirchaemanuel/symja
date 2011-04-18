@@ -172,23 +172,26 @@ public class PatternMatcherAndEvaluator extends PatternMatcher implements Serial
 		}
 		initPattern();
 		IExpr rightHandSide = fRightHandSide;
-//		if (fLeftHandSide.isAST(F.Integrate)) {
-//			System.out.println(fLeftHandSide.toString());
-//			System.out.println("  :> " + fRightHandSide.toString());
-//		}
-		if (matchExpr(fLeftHandSide, leftHandSide) && checkCondition()) {
-			if (fLastResult != null) {
-				rightHandSide = fLastResult;
-			}
-			IExpr result = EvaluationSupport.substituteLocalVariables(rightHandSide, fPatternSymbolsArray, fPatternValuesArray);
-			try {
-				IExpr temp = F.eval(result);
-				if (temp != null) {
-					return temp;
+
+		if (matchExpr(fLeftHandSide, leftHandSide)) {
+			// if (fLeftHandSide.isAST(F.Integrate)) {
+			// System.out.println(fLeftHandSide.toString());
+			// System.out.println("  :> " + fRightHandSide.toString());
+			// }
+			if (checkCondition()) {
+				if (fLastResult != null) {
+					rightHandSide = fLastResult;
 				}
-				return result;
-			} catch (final ReturnException e) {
-				return e.getValue();
+				IExpr result = EvaluationSupport.substituteLocalVariables(rightHandSide, fPatternSymbolsArray, fPatternValuesArray);
+				try {
+					IExpr temp = F.eval(result);
+					if (temp != null) {
+						return temp;
+					}
+					return result;
+				} catch (final ReturnException e) {
+					return e.getValue();
+				}
 			}
 		}
 		return null;

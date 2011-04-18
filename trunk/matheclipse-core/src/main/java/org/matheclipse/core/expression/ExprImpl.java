@@ -17,13 +17,13 @@ import org.matheclipse.core.interfaces.ISignedNumber;
 import org.matheclipse.core.interfaces.ISymbol;
 import org.matheclipse.core.patternmatching.PatternMatcher;
 import org.matheclipse.core.visit.VisitorReplaceAll;
+import org.matheclipse.core.visit.VisitorReplacePart;
 
 import apache.harmony.math.BigInteger;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 
-import edu.jas.poly.ExpVector;
 import edu.jas.structure.ElemFactory;
 
 /**
@@ -403,6 +403,13 @@ public abstract class ExprImpl implements IExpr {
 		return this.accept(new VisitorReplaceAll(function));
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	public IExpr replacePart(final IAST astRules) {
+		return this.accept(new VisitorReplacePart(astRules));
+	}
+	
 	/**
 	 * {@inheritDoc}
 	 */
