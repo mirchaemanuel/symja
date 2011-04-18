@@ -1333,7 +1333,6 @@ public class SystemTestCase extends AbstractTestCase {
 
 	public void testSystem220() {
 		check("Position[{u+v+w^5, 42, w^10, 12, u+w^3, w^2}, w^_, {1,2}]", "{{1,3},{3},{5,2},{6}}");
-
 	}
 
 	public void testSystem221() {

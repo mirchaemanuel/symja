@@ -26,6 +26,7 @@ import org.matheclipse.core.visit.IVisitor;
 import org.matheclipse.core.visit.IVisitorBoolean;
 import org.matheclipse.core.visit.IVisitorInt;
 import org.matheclipse.core.visit.VisitorReplaceAll;
+import org.matheclipse.core.visit.VisitorReplacePart;
 import org.matheclipse.generic.interfaces.BiFunction;
 
 import apache.harmony.math.BigInteger;
@@ -728,7 +729,14 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 	public IExpr replaceAll(final Function<IExpr, IExpr> function) {
 		return this.accept(new VisitorReplaceAll(function));
 	}
-
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	public IExpr replacePart(final IAST astRules) {
+		return this.accept(new VisitorReplacePart(astRules));
+	}
+	
 	/**
 	 * {@inheritDoc}
 	 */

@@ -16,14 +16,14 @@ import org.matheclipse.core.interfaces.IExpr;
  * Factors out only multiple factors of a univariate polynomial
  * 
  */
-public class FactorSquareFree extends Factor {
+public class FactorSquareFreeList extends Factor {
 
-	public FactorSquareFree() {
+	public FactorSquareFreeList() {
 	}
 
 	@Override
 	public IExpr evaluate(final IAST ast) {
-		Validate.checkRange(ast, 2, 3);
+		Validate.checkSize(ast, 2);
 
 		ExprVariables eVar = new ExprVariables(ast.get(1));
 		if (!eVar.isSize(1)) {
@@ -34,10 +34,10 @@ public class FactorSquareFree extends Factor {
 			ASTRange r = new ASTRange(eVar.getVarList(), 1);
 			List<IExpr> varList = r.toList();
 
-			if (ast.size() == 3) {
-				return factorWithOption(ast, expr, varList, true);
-			}
-			return factor(expr, varList, true);
+//			if (ast.size() == 3) {
+//				return factorWithOption(ast, expr, varList, true);
+//			}
+			return factorList(expr, varList, true);
 
 		} catch (JASConversionException jce) {
 			// toInt() conversion failed

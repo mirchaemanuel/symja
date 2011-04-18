@@ -2,6 +2,7 @@ package org.matheclipse.core.eval.exception;
 
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IAST;
+import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.IInteger;
 import org.matheclipse.core.interfaces.ISymbol;
 
@@ -46,7 +47,7 @@ public final class Validate {
 		throw new WrongArgumentType(ast, ast.get(pos), pos, "Trying to convert the argument into the integer range: " + startValue
 				+ " - " + Integer.MAX_VALUE);
 	}
-
+	
 	/**
 	 * Check if the argument at the given position is a integer.
 	 * 

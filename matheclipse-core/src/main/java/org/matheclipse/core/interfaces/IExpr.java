@@ -523,7 +523,9 @@ public interface IExpr extends Comparable<IExpr>, RingElem<IExpr>, INestedListEl
 	 *         possible.
 	 */
 	public IExpr replaceAll(final IAST astRules);
+	 
 
+	public IExpr replacePart(final IAST astRules);
 	/**
 	 * Repeatedly replace all (sub-) expressions with the given unary function. If
 	 * no substitution matches, the method returns <code>this</code>.
