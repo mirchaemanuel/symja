@@ -525,6 +525,8 @@ public class F {
 	public static ISymbol White;
 
 	public static ISymbol Slot;
+	
+	public static ISymbol SlotSequence;
 
 	public static ISymbol Options;
 
@@ -964,6 +966,7 @@ public class F {
 			MethodHead = predefinedSymbol(IConstantHeaders.MethodHead);
 
 			Slot = predefinedSymbol("Slot");
+			SlotSequence = predefinedSymbol("SlotSequence");
 			Options = predefinedSymbol("Options");
 			Graphics = predefinedSymbol("Graphics");
 			ReplaceAll = predefinedSymbol("ReplaceAll");

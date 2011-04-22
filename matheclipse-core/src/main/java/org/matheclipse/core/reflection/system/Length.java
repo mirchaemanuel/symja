@@ -1,5 +1,6 @@
 package org.matheclipse.core.reflection.system;
 
+import org.matheclipse.core.eval.exception.Validate;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IAST;
@@ -12,14 +13,12 @@ public class Length extends AbstractFunctionEvaluator {
 
 	@Override
 	public IExpr evaluate(final IAST ast) {
-		if (ast.size() != 2) {
-			return null;
-		}
-		int result = 0;
+		Validate.checkSize(ast, 2);
+		
 		if (ast.get(1) instanceof IAST) {
-			result = ((IAST) ast.get(1)).size()-1;
+			return F.integer( ((IAST) ast.get(1)).size()-1 );
 		}
-		return F.integer(result);
+		return F.C0;
 	}
 
 }

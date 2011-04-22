@@ -116,6 +116,10 @@ public class LevelSpec {
 				&& (fCurrentDepth <= fToDepth);
 	}
 
+	public boolean isInScope() {
+		return (fCurrentLevel <= fToLevel) && (fCurrentDepth <= fToDepth);
+	}
+	
 	public final int getCurrentDepth() {
 		return fCurrentDepth;
 	}

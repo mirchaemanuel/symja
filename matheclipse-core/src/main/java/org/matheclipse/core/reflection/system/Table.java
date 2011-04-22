@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.matheclipse.core.eval.EvalEngine;
+import org.matheclipse.core.eval.exception.Validate;
 import org.matheclipse.core.eval.interfaces.IFunctionEvaluator;
 import org.matheclipse.core.eval.util.Iterator;
 import org.matheclipse.core.expression.AST;
@@ -24,22 +25,30 @@ public class Table implements IFunctionEvaluator {
 	}
 
 	public IExpr evaluate(final IAST ast) {
+		Validate.checkRange(ast, 3);
+
 		return evaluateTable(ast, List(), null);
 	}
 
-	public static IExpr evaluateTable(final IAST ast, final IAST resultList, IExpr defaultValue) {
+	/**
+	 * 
+	 * @param ast an AST with at least 3 arguments
+	 * @param resultList
+	 * @param defaultValue
+	 * @return
+	 */
+	protected static IExpr evaluateTable(final IAST ast, final IAST resultList, IExpr defaultValue) {
 		try {
-			if (ast.size() >= 3) {
-				final EvalEngine engine = EvalEngine.get();
-				final List<Iterator> iterList = new ArrayList<Iterator>();
-				for (int i = 2; i < ast.size(); i++) {
-					iterList.add(new Iterator((IAST) ast.get(i), engine));
-				}
-
-				final TableGenerator<IExpr, IAST> generator = new TableGenerator<IExpr, IAST>(iterList, resultList, new UnaryArrayFunction(
-						engine, ast.get(1)), AST.COPY, defaultValue);
-				return generator.table();
+			final EvalEngine engine = EvalEngine.get();
+			final List<Iterator> iterList = new ArrayList<Iterator>();
+			for (int i = 2; i < ast.size(); i++) {
+				iterList.add(new Iterator((IAST) ast.get(i), engine));
 			}
+
+			final TableGenerator<IExpr, IAST> generator = new TableGenerator<IExpr, IAST>(iterList, resultList, new UnaryArrayFunction(
+					engine, ast.get(1)), AST.COPY, defaultValue);
+			return generator.table();
+
 		} catch (final ClassCastException e) {
 			// the iterators are generated only from IASTs
 		}

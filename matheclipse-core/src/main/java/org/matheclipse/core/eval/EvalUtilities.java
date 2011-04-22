@@ -69,6 +69,17 @@ public class EvalUtilities extends MathMLUtilities {
 		}
 		return null;
 	}
+	
+	public IExpr evalStepByStep(final IExpr parsedExpression) throws RuntimeException {
+		if (parsedExpression != null) {
+			startRequest();
+			fEvalEngine.reset();
+			IExpr temp = fEvalEngine.evalStepByStep(parsedExpression);
+			fEvalEngine.addOut(temp);
+			return temp;
+		}
+		return null;
+	}
 
 	@Override
 	synchronized public void toMathML(final String inputExpression, final Writer out) {

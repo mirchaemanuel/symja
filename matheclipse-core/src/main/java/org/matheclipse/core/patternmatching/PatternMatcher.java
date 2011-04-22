@@ -697,18 +697,17 @@ public class PatternMatcher extends IPatternMatcher<IExpr> implements Serializab
 	 * @return
 	 */
 	private IExpr matchDefaultAST(ISymbol symbol, int attr, IAST ast) {
-		IExpr commonDefaultValue = symbol.getDefaultValue();
 		IAST cloned = F.ast(ast.head(), ast.size(), false);
-		IExpr positionDefaultValue = null;
 		for (int i = 1; i < ast.size(); i++) {
-			if (ast.get(i) instanceof IPattern && ((IPattern) ast.get(i)).isDefault()) {
-				positionDefaultValue = symbol.getDefaultValue(i);
+			if (ast.get(i).isPattern() && ((IPattern) ast.get(i)).isDefault()) {
+				IExpr positionDefaultValue = symbol.getDefaultValue(i);
 				if (positionDefaultValue != null) {
 					if (!matchPattern((IPattern) ast.get(i), positionDefaultValue)) {
 						return null;
 					}
 					continue;
 				} else {
+					IExpr commonDefaultValue = symbol.getDefaultValue();
 					if (commonDefaultValue != null) {
 						if (!matchPattern((IPattern) ast.get(i), commonDefaultValue)) {
 							return null;

@@ -4,6 +4,7 @@ import static org.matheclipse.core.expression.F.*;
 
 import java.util.HashMap;
 
+import org.matheclipse.core.eval.exception.Validate;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.generic.Functors;
 import org.matheclipse.core.interfaces.IAST;
@@ -38,6 +39,8 @@ public class Sum extends Table {
 
 	@Override
 	public IExpr evaluate(final IAST ast) {
+		Validate.checkRange(ast, 3);
+		
 		if (ast.size() == 3 && ast.get(2).isList() && ((IAST) ast.get(2)).size() == 4) {
 			IAST list = (IAST) ast.get(2);
 			if (ast.get(1).isPlus()) {

@@ -16,14 +16,14 @@ public class Position extends AbstractFunctionEvaluator {
 	}
 
 	@Override
-	public IExpr evaluate(final IAST functionList) {
-		if ((functionList.size() == 3) && (functionList.get(1) instanceof IAST)) {
+	public IExpr evaluate(final IAST ast) {
+		if ((ast.size() == 3) && (ast.get(1) instanceof IAST)) {
 			final LevelSpec level = new LevelSpec(0, Integer.MAX_VALUE);
-			return position((IAST) functionList.get(1), functionList.get(2), level);
+			return position((IAST) ast.get(1), ast.get(2), level);
 		}
-		if ((functionList.size() == 4) && (functionList.get(1) instanceof IAST)) {
-			final LevelSpec level = new LevelSpecification(functionList.get(3));
-			return position((IAST) functionList.get(1), functionList.get(2), level);
+		if ((ast.size() == 4) && (ast.get(1) instanceof IAST)) {
+			final LevelSpec level = new LevelSpecification(ast.get(3));
+			return position((IAST) ast.get(1), ast.get(2), level);
 		}
 		return null;
 	}

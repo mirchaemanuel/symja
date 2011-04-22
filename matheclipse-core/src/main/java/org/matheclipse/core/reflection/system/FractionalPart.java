@@ -21,6 +21,7 @@ public class FractionalPart extends AbstractFunctionEvaluator {
 	@Override
 	public IExpr evaluate(final IAST ast) {
 		Validate.checkSize(ast, 2);
+		
 		IExpr expr = ast.get(1);
 		if (expr.isSignedNumber()) {
 			if (expr.isInteger()) {

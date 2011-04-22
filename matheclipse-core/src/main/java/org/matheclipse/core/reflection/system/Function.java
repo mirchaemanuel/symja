@@ -9,6 +9,8 @@ import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.ISymbol;
 
+import com.google.common.base.Predicate;
+
 public class Function implements IFunctionEvaluator {
 
 	public Function() {
@@ -38,12 +40,39 @@ public class Function implements IFunctionEvaluator {
 		return null;
 	}
 
+//	private static class IsSlotOrSlotSequence implements Predicate<IExpr> {
+//		public IsSlotOrSlotSequence() {
+//
+//		}
+//
+//		@Override
+//		public boolean apply(IExpr input) {
+//			if (input.isAST()) {
+//				IAST ast = (IAST) input;
+//				if (ast.size() == 2 && (ast.head().equals(F.Slot) || ast.head().equals(F.SlotSequence))) {
+//					return true;
+//				}
+//			}
+//			return false;
+//		}
+//	}
+//
+//	public static IAST getSlotOrSlotSequences(final IExpr expr) {
+//		IAST filterAST = F.List();
+//		if (expr.isAST()) {
+//			Predicate<IExpr> predicate = new IsSlotOrSlotSequence();
+//			IAST astExpr = (IAST) expr;
+//			astExpr.filter(filterAST, predicate);
+//		}
+//		return filterAST;
+//	}
+
 	public static IExpr replaceSlots(final IExpr expr, final IAST list) {
-		final IAST intSlots = F.ast(null);
-		for (int i = 1; i < list.size(); i++) {
-			intSlots.add(Slot(i));
-		}
-		final IExpr result = AST.COPY.replaceAll(expr, intSlots, list, 1);
+//		final IAST intSlots = F.ast(null);
+//		for (int i = 1; i < list.size(); i++) {
+//			intSlots.add(Slot(i));
+//		}
+		final IExpr result = expr.replaceSlots(list);
 		return (result == null) ? expr : result;
 	}
 

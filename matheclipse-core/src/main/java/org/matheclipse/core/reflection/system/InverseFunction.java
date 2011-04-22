@@ -23,6 +23,14 @@ public class InverseFunction extends AbstractFunctionEvaluator {
 		INVERSE_FUNCTIONS.put(F.ArcCos, F.Cos);
 		INVERSE_FUNCTIONS.put(F.ArcSin, F.Sin);
 		INVERSE_FUNCTIONS.put(F.ArcTan, F.Tan);
+		
+		INVERSE_FUNCTIONS.put(F.Cosh, F.ArcCosh);
+		INVERSE_FUNCTIONS.put(F.Sinh, F.ArcSinh);
+		INVERSE_FUNCTIONS.put(F.Tanh, F.ArcTanh);
+		
+		INVERSE_FUNCTIONS.put(F.ArcCosh, F.Cosh);
+		INVERSE_FUNCTIONS.put(F.ArcSinh, F.Sinh);
+		INVERSE_FUNCTIONS.put(F.ArcTanh, F.Tanh);
 	}
 
 	public InverseFunction() {

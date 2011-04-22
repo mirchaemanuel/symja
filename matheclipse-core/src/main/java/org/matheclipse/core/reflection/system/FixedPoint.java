@@ -2,6 +2,7 @@ package org.matheclipse.core.reflection.system;
 
 import org.matheclipse.core.eval.EvalEngine;
 import org.matheclipse.core.eval.exception.IterationLimitExceeded;
+import org.matheclipse.core.eval.exception.Validate;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IAST;
@@ -17,39 +18,41 @@ public class FixedPoint extends AbstractFunctionEvaluator {
 
 	@Override
 	public IExpr evaluate(final IAST ast) {
+		Validate.checkRange(ast, 3, 4);
+		
 		try {
-			if (ast.size() == 3 || ast.size() == 4) {
-				final EvalEngine engine = EvalEngine.get();
-				final int iterationLimit = engine.getIterationLimit();
-				int iterationCounter = 1;
+			
+			final EvalEngine engine = EvalEngine.get();
+			final int iterationLimit = engine.getIterationLimit();
+			int iterationCounter = 1;
 
-				IExpr f = ast.get(1);
-				IExpr current = ast.get(2);
-				int steps = Integer.MAX_VALUE;
-				if (ast.size() == 4) {
-					if (!(ast.get(3) instanceof IInteger)) {
-						return null;
-					}
-					try {
-						steps = ((IInteger) ast.get(3)).toInt();
-					} catch (ArithmeticException e) {
-						return null;
-					}
+			IExpr f = ast.get(1);
+			IExpr current = ast.get(2);
+			int steps = Integer.MAX_VALUE;
+			if (ast.size() == 4) {
+				if (!(ast.get(3) instanceof IInteger)) {
+					return null;
 				}
-				IExpr last;
-				do {
-					last = current;
-					current = engine.evaluate(F.Apply(f, current));
-					if (iterationLimit >= 0 && iterationLimit <= ++iterationCounter) {
-						IterationLimitExceeded.throwIt(iterationCounter, ast);
-					}
-				} while ((!current.isSame(last)) && (--steps > 0));
-				return current;
+				try {
+					steps = ((IInteger) ast.get(3)).toInt();
+				} catch (ArithmeticException e) {
+					return null;
+				}
 			}
+			IExpr last;
+			do {
+				last = current;
+				current = engine.evaluate(F.Apply(f, current));
+				if (iterationLimit >= 0 && iterationLimit <= ++iterationCounter) {
+					IterationLimitExceeded.throwIt(iterationCounter, ast);
+				}
+			} while ((!current.isSame(last)) && (--steps > 0));
+			return current;
+
 		} finally {
 			EvalEngine.get().setNumericMode(false);
-		}
-		return null;
+		} 
+		
 	}
 
 	public void setUp(final ISymbol symbol) throws SyntaxError {

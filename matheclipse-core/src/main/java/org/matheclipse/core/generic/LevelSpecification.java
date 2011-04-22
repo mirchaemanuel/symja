@@ -1,5 +1,6 @@
 package org.matheclipse.core.generic;
 
+import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.IInteger;
@@ -25,8 +26,7 @@ public class LevelSpecification extends LevelSpec {
 	 * Create a LevelSpecification from an IInteger or IAST list-object.<br>
 	 * <br>
 	 * 
-	 * If <code>obj</code> is a non-negative IInteger iValue set Level
-	 * {0,iValue};<br>
+	 * If <code>obj</code> is a non-negative IInteger iValue set Level {0,iValue};<br>
 	 * If <code>obj</code> is a negative IInteger iValue set Level {iValue, 0};<br>
 	 * If <code>obj</code> is a List {i0Value, i1Value} set Level {i0Value,
 	 * i1Value};<br>
@@ -106,6 +106,13 @@ public class LevelSpecification extends LevelSpec {
 					return;
 				}
 			}
+		}
+		if (obj.equals(F.CInfinity)) {
+			fToLevel = Integer.MAX_VALUE;
+			fFromLevel = 0;
+			fFromDepth = Integer.MIN_VALUE;
+			fToDepth = -1;
+			return;
 		}
 		throw new Error("Invalid Level specification!");
 	}

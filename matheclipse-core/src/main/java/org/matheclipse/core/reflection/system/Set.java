@@ -40,7 +40,7 @@ public class Set implements IFunctionEvaluator, ICreatePatternMatcher {
 			} catch (final ReturnException e) {
 				rightHandSide = e.getValue();
 			}
-			IExpr temp = EvalEngine.theadASTListArgs(F.Set(leftHandSide, rightHandSide));
+			IExpr temp = EvalEngine.threadASTListArgs(F.Set(leftHandSide, rightHandSide));
 			if (temp != null) {
 				return F.eval(temp);
 			}

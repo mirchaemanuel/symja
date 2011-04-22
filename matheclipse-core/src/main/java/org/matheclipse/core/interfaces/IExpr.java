@@ -264,6 +264,13 @@ public interface IExpr extends Comparable<IExpr>, RingElem<IExpr>, INestedListEl
 	public boolean isFree(Predicate<IExpr> predicate, boolean heads);
 
 	/**
+	 * Test if this expression is a <code>Funtion[ arg1 ]</code> expression with
+	 * at least 1 argument.
+	 * 
+	 */
+	public boolean isFunction();
+
+	/**
 	 * Compares this expression with the specified expression for order. Returns
 	 * true if this expression is canonical greater than or equal to the specified
 	 * expression (&lt;= relation).
@@ -428,6 +435,18 @@ public interface IExpr extends Comparable<IExpr>, RingElem<IExpr>, INestedListEl
 	public boolean isSinh();
 
 	/**
+	 * Test if this expression is the function <code>Slot[&lt;integer-value&gt;]</code>
+	 * 
+	 */
+	public boolean isSlot();
+	
+	/**
+	 * Test if this expression is the function <code>SlotSequence[&lt;integer-value&gt;]</code>
+	 * 
+	 */
+	public boolean isSlotSequence();
+	
+	/**
 	 * Test if this expression is a symbol
 	 * 
 	 */
@@ -523,9 +542,9 @@ public interface IExpr extends Comparable<IExpr>, RingElem<IExpr>, INestedListEl
 	 *         possible.
 	 */
 	public IExpr replaceAll(final IAST astRules);
-	 
-
+	
 	public IExpr replacePart(final IAST astRules);
+
 	/**
 	 * Repeatedly replace all (sub-) expressions with the given unary function. If
 	 * no substitution matches, the method returns <code>this</code>.
@@ -551,6 +570,8 @@ public interface IExpr extends Comparable<IExpr>, RingElem<IExpr>, INestedListEl
 	 */
 	public IExpr replaceRepeated(final IAST astRules);
 
+	public IExpr replaceSlots(final IAST astSlots);
+	
 	/**
 	 * Signum functionality is used in JAS toString() method, don't use it as math
 	 * signum function.

@@ -18,6 +18,7 @@ import org.matheclipse.core.interfaces.ISymbol;
 import org.matheclipse.core.patternmatching.PatternMatcher;
 import org.matheclipse.core.visit.VisitorReplaceAll;
 import org.matheclipse.core.visit.VisitorReplacePart;
+import org.matheclipse.core.visit.VisitorReplaceSlots;
 
 import apache.harmony.math.BigInteger;
 
@@ -266,6 +267,14 @@ public abstract class ExprImpl implements IExpr {
 		return false;
 	}
 
+	public boolean isSlot() {
+		return false;
+	}
+	
+	public boolean isSlotSequence() {
+		return false;
+	}
+	
 	public boolean isFree(final IExpr pattern, boolean heads) {
 		final PatternMatcher matcher = new PatternMatcher(pattern);
 		return !AST.COPY.some(this, matcher, 1);
@@ -273,6 +282,13 @@ public abstract class ExprImpl implements IExpr {
 
 	public boolean isFree(Predicate<IExpr> predicate, boolean heads) {
 		return !AST.COPY.some(this, predicate, 1);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public boolean isFunction() {
+		return false;
 	}
 
 	public boolean isPattern() {
@@ -409,12 +425,19 @@ public abstract class ExprImpl implements IExpr {
 	public IExpr replacePart(final IAST astRules) {
 		return this.accept(new VisitorReplacePart(astRules));
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
 	public IExpr replaceRepeated(final IAST astRules) {
 		return replaceRepeated(this, new VisitorReplaceAll(astRules));
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public IExpr replaceSlots(final IAST astSlots) {
+		return this.accept(new VisitorReplaceSlots(astSlots));
 	}
 
 	/**
@@ -461,7 +484,7 @@ public abstract class ExprImpl implements IExpr {
 	public boolean isZERO() {
 		return isZero();
 	}
-	
+
 	/**
 	 * Signum functionality is used in JAS toString() method, don't use it as math
 	 * signum function.
