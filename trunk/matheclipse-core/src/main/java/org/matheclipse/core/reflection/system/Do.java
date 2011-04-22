@@ -39,6 +39,7 @@ public class Do implements IFunctionEvaluator {
 						fIndex++;
 						while (iter.hasNext()) {
 							try {
+								iter.next();
 								F.eval(input);
 							} catch (final ReturnException e) {
 								return e.getValue();
@@ -47,10 +48,9 @@ public class Do implements IFunctionEvaluator {
 							} catch (final BreakException e) {
 								return F.Null;
 							} catch (final ContinueException e) {
-								iter.next();
 								continue;
 							}
-							iter.next();
+
 						}
 					} finally {
 						--fIndex;
