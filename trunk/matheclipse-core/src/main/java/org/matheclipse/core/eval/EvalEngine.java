@@ -367,12 +367,12 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 			setTraceMode(true);
 			setStopAfterEvaluationMode(true);
 			result = evalLoop(expr);
+			return result == null ? expr : result;
 		} finally {
 			setStopAfterEvaluationMode(false);
 			setTraceMode(false);
 			setNumericMode(numericMode);
 		}
-		return result;
 	}
 
 	protected IExpr evalComplex(final IComplex obj) {
@@ -510,10 +510,15 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 				return ast.get(1);
 			}
 
+			IAST flattened = null;
 			if ((ISymbol.FLAT & attr) == ISymbol.FLAT) {
 				// associative
-				if ((result = EvaluationSupport.flatten(ast)) != null) {
-					return result;
+				if ((flattened = EvaluationSupport.flatten(ast)) != null) {
+					IAST resultList = evalArgs(flattened, attr);
+					if (resultList != null) {
+						return resultList;
+					}
+					return flattened;
 				}
 			}
 
@@ -524,7 +529,7 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 
 			if ((ISymbol.LISTABLE & attr) == ISymbol.LISTABLE) {
 				// thread over the lists
-				resultList = theadASTListArgs(ast);
+				resultList = threadASTListArgs(ast);
 				if (resultList != null) {
 					return resultList;
 				}
@@ -539,7 +544,7 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 		return evalASTBuiltinFunction(symbol, ast);
 	}
 
-	public static IAST theadASTListArgs(final IAST ast) {
+	public static IAST threadASTListArgs(final IAST ast) {
 		IAST result;
 		int listLength = 0;
 
@@ -844,7 +849,7 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 
 	public IExpr evalSymbol(final ISymbol symbol) {
 		IExpr result;
-		if (symbol.hasLocalVariableStack()) { 
+		if (symbol.hasLocalVariableStack()) {
 			return symbol.get();
 		}
 		if ((result = symbol.evalDownRule(this, symbol)) != null) {

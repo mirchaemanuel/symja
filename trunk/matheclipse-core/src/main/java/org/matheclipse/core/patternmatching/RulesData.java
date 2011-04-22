@@ -61,11 +61,7 @@ public class RulesData {
 			final List<IPatternMatcher<IExpr>> list = fSimplePatternRules.get(hash);
 			if (list != null) {
 				for (int i = 0; i < list.size(); i++) {
-					if (Config.SERVER_MODE) {
-						pmEvaluator = (IPatternMatcher<IExpr>) list.get(i).clone();
-					} else {
-						pmEvaluator = list.get(i);
-					}
+					pmEvaluator = (IPatternMatcher<IExpr>) list.get(i).clone();
 					result = pmEvaluator.eval(expression);
 					if (result != null) {
 						return result;
@@ -76,11 +72,7 @@ public class RulesData {
 
 		if (fPatternRules != null) {
 			for (int i = 0; i < fPatternRules.size(); i++) {
-				if (Config.SERVER_MODE) {
-					pmEvaluator = (IPatternMatcher<IExpr>) fPatternRules.get(i).clone();
-				} else {
-					pmEvaluator = fPatternRules.get(i);
-				}
+				pmEvaluator = (IPatternMatcher<IExpr>) fPatternRules.get(i).clone();
 				result = pmEvaluator.eval(expression);
 				if (result != null) {
 					return result;

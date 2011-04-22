@@ -101,11 +101,9 @@ public class EvaluationSupport {
 					res1.set(i, list.get(i));
 				}
 			}
-			// end for j
 
 			res0.set(j, res1);
 		}
-		// end for i
 
 		return res0;
 	}

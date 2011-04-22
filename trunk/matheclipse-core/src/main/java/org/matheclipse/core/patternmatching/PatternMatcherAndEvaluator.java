@@ -172,12 +172,12 @@ public class PatternMatcherAndEvaluator extends PatternMatcher implements Serial
 		}
 		initPattern();
 		IExpr rightHandSide = fRightHandSide;
-
+  
 		if (matchExpr(fLeftHandSide, leftHandSide)) {
-			// if (fLeftHandSide.isAST(F.Integrate)) {
-			// System.out.println(fLeftHandSide.toString());
-			// System.out.println("  :> " + fRightHandSide.toString());
-			// }
+//			 if (fLeftHandSide.isAST(F.Integrate)) {
+//			 System.out.println(fLeftHandSide.toString());
+//			 System.out.println("  :> " + fRightHandSide.toString());
+//			 }
 			if (checkCondition()) {
 				if (fLastResult != null) {
 					rightHandSide = fLastResult;

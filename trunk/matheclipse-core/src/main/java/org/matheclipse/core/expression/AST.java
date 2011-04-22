@@ -27,6 +27,7 @@ import org.matheclipse.core.visit.IVisitorBoolean;
 import org.matheclipse.core.visit.IVisitorInt;
 import org.matheclipse.core.visit.VisitorReplaceAll;
 import org.matheclipse.core.visit.VisitorReplacePart;
+import org.matheclipse.core.visit.VisitorReplaceSlots;
 import org.matheclipse.generic.interfaces.BiFunction;
 
 import apache.harmony.math.BigInteger;
@@ -522,6 +523,14 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 		return size() == 2 && head().equals(F.Sinh);
 	}
 
+	public boolean isSlot() {
+		return size() == 2 && head().equals(F.Slot) && get(1).isInteger();
+	}
+
+	public boolean isSlotSequence() {
+		return size() == 2 && head().equals(F.SlotSequence) && get(1).isInteger();
+	}
+
 	public boolean isCosh() {
 		return size() == 2 && head().equals(F.Cosh);
 	}
@@ -729,14 +738,14 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 	public IExpr replaceAll(final Function<IExpr, IExpr> function) {
 		return this.accept(new VisitorReplaceAll(function));
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
 	public IExpr replacePart(final IAST astRules) {
 		return this.accept(new VisitorReplacePart(astRules));
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -749,6 +758,10 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 	 */
 	public IExpr replaceRepeated(final Function<IExpr, IExpr> function) {
 		return ExprImpl.replaceRepeated(this, new VisitorReplaceAll(function));
+	}
+
+	public IExpr replaceSlots(final IAST astSlots) {
+		return this.accept(new VisitorReplaceSlots(astSlots));
 	}
 
 	/**
@@ -853,6 +866,13 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 			return !AST.COPY.some((IExpr) this, predicate, 0);
 		}
 		return !AST.COPY.some((IExpr) this, predicate, 1);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public boolean isFunction() {
+		return size() >= 2 && head().equals(F.Function);
 	}
 
 	/**

@@ -306,15 +306,13 @@ public class SystemTestCase extends AbstractTestCase {
 	public void testSystem038() {
 		check("Trace[D[Sin[x],x]]", "{{Derivative[Sin],Cos[#1]&},{x&,Cos[x]},{D[Sin[x],x],Cos[x]*D[x,x],{D[x,x],1},1*Cos[x],Cos[x]}}");
 		check("D[Sin[x]^Cos[x],x]", "(-Log[Sin[x]]*Sin[x]+Csc[x]*Cos[x]^2)*Sin[x]^Cos[x]");
-		check("Trace[D[Sin[x]^Cos[x],x]]", "{D[Sin[x]^Cos[x],x],Sin[x]^Cos[x]*(Log[Sin[x]]*D[Cos[x],x]+Cos[x]*D[Sin[x],x]*Sin[x]^(\n"
-				+ "-1)),{Derivative[Sin],Cos[#1]&},{x&,Cos[x]},{D[Sin[x],x],Cos[x]*D[x,x],{D[x,x],1},\n"
-				+ "1*Cos[x],Cos[x]},{(-1)*(-1),(-1)^2,1},{Csc[x]^((-1)*(-1)),Csc[x]^1,Csc[x]},{Sin[x]^(\n"
-				+ "-1),Csc[x]},{Cos[x]*D[Sin[x],x]*Sin[x]^(-1),Cos[x]*Cos[x]*Csc[x],Csc[x]*Cos[x]^2},{Derivative[Cos],(\n"
-				+ "-1)*Sin[#1]&},{x&,(-1)*Sin[x]},{D[Cos[x],x],(-1)*Sin[x]*D[x,x],(-1)*Sin[x]*D[x,x],{D[x,x],\n"
-				+ "1},(-1)*1*Sin[x],(-1)*Sin[x]},{Log[Sin[x]]*D[Cos[x],x],Log[Sin[x]]*(-1)*Sin[x],(\n"
-				+ "-1)*Log[Sin[x]]*Sin[x]},{Log[Sin[x]]*D[Cos[x],x]+Cos[x]*D[Sin[x],x]*Sin[x]^(-1),-Log[Sin[x]]*Sin[x]+Csc[x]*Cos[x]^\n"
-				+ "2},(-Log[Sin[x]]*Sin[x]+Csc[x]*Cos[x]^2)*Sin[x]^Cos[x]}");
-		check("Trace[NumberQ[1/3]]", "{NumberQ[1/3],True}");
+		check("Trace[D[Sin[x]^Cos[x],x]]", "{D[Sin[x]^Cos[x],x],Sin[x]^Cos[x]*(Log[Sin[x]]*D[Cos[x],x]+Cos[x]*D[Sin[x],x]*Sin[x]^(\n" + 
+				"-1)),{Derivative[Sin],Cos[#1]&},{x&,Cos[x]},{D[Sin[x],x],Cos[x]*D[x,x],{D[x,x],1},\n" + 
+				"1*Cos[x],Cos[x]},{(-1)*(-1),(-1)^2,1},{Csc[x]^((-1)*(-1)),Csc[x]^1,Csc[x]},{Sin[x]^(\n" + 
+				"-1),Csc[x]},{Cos[x]*D[Sin[x],x]*Sin[x]^(-1),Cos[x]*Cos[x]*Csc[x],Csc[x]*Cos[x]^2},{Derivative[Cos],(\n" + 
+				"-1)*Sin[#1]&},{x&,(-1)*Sin[x]},{D[Cos[x],x],(-1)*Sin[x]*D[x,x],{D[x,x],1},(-1)*1*Sin[x],(\n" + 
+				"-1)*Sin[x]},{Log[Sin[x]]*D[Cos[x],x],Log[Sin[x]]*(-1)*Sin[x],(-1)*Log[Sin[x]]*Sin[x]},{Log[Sin[x]]*D[Cos[x],x]+Cos[x]*D[Sin[x],x]*Sin[x]^(\n" + 
+				"-1),-Log[Sin[x]]*Sin[x]+Csc[x]*Cos[x]^2},(-Log[Sin[x]]*Sin[x]+Csc[x]*Cos[x]^2)*Sin[x]^Cos[x]}");
 	}
 
 	public void testSystem039() {
@@ -2165,6 +2163,7 @@ public class SystemTestCase extends AbstractTestCase {
 	}
 
 	public void testSystem390() {
+		check("Apply[(1 + 1/#) &, 10]", "11/10");
 		check("FixedPoint[(1 + 1/#) &, 10, 3]", "32/21");
 		check("FixedPoint[(Cos[#])&,0.8]", "0.7390851332151603");
 	}

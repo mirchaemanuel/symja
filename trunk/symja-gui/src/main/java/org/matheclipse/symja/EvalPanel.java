@@ -149,7 +149,7 @@ public class EvalPanel extends JPanel { // implements DocumentListener {
 
 				final StringBufferWriter buf0 = new StringBufferWriter();
 
-				final IExpr expr = EVAL.constrainedEval(buf0, command);
+				final IExpr expr = EVAL.constrainedEval(buf0, command, false);
 				// eval(buf0, command);
 
 				if (printBuffer.getBuffer().length() > 0) {
@@ -207,7 +207,7 @@ public class EvalPanel extends JPanel { // implements DocumentListener {
 		}
 
 		protected double[][] eval(final StringBufferWriter buf, final String evalStr) throws Exception {
-			final IExpr expr = EVAL.constrainedEval(buf, evalStr);
+			final IExpr expr = EVAL.constrainedEval(buf, evalStr, false);
 			if (expr instanceof IAST) {
 				final IAST show = (IAST) expr;
 				if ((show.size() == 2) && show.isAST("Show")) {
@@ -235,6 +235,101 @@ public class EvalPanel extends JPanel { // implements DocumentListener {
 				}
 			}
 			return null;
+		}
+	}
+
+	/**
+	 * Calculation thread implemented as internal class
+	 */
+	class CalcStepwiseThread extends Thread {
+		String command;
+
+		/**
+		 * Pass command string to calculation thread. Must be called before starting
+		 * the thread
+		 * 
+		 * @param cmd
+		 *          Command string to parse
+		 */
+		public void setCommand(final String cmd) {
+			command = cmd;
+		}
+
+		/**
+		 * Thread run method
+		 * 
+		 * @see java.lang.Runnable#run()
+		 */
+		@Override
+		public void run() {
+			try {
+				final StringBufferWriter printBuffer = new StringBufferWriter();
+				final PrintStream pout = new PrintStream(new WriterOutputStream(printBuffer));
+
+				EVAL_ENGINE.setOutPrintStream(pout);
+
+				final StringBufferWriter buf0 = new StringBufferWriter();
+
+				// use evalStepByStep method
+				final IExpr expr = EVAL.constrainedEval(buf0, command, true // use
+																																		// evalStepByStep
+																																		// method
+						);
+				// eval(buf0, command);
+
+				if (printBuffer.getBuffer().length() > 0) {
+					// print error messages ...
+					jOutputPane.printOut(printBuffer.toString() + "\n\n");
+				}
+
+				if (buf0.getBuffer().length() > 0 && fPrettyPrintStyle.isSelected()) {
+
+					final StringBufferWriter buf1 = new StringBufferWriter();
+					// final MathMLUtilities mathUtil = new MathMLUtilities(EVAL_ENGINE,
+					// false);
+					final TeXUtilities texUtil = new TeXUtilities(EVAL_ENGINE);
+					try {
+						if (expr != null) {
+							// mathUtil.toMathML(expr, buf1);
+							texUtil.toTeX(expr, buf1);
+							TeXFormula formula = new TeXFormula(buf1.toString());
+							TeXIcon ticon = formula.createTeXIcon(TeXConstants.STYLE_DISPLAY, FONT_SIZE_TEX, TeXConstants.UNIT_PIXEL, 80,
+									TeXConstants.ALIGN_LEFT);
+							setBusy(false);
+							jOutputPane.addIcon(ticon, 0, true);
+							// JMathComponent component = new JMathComponent();
+							// component.setFontSize(FONT_SIZE_MATHML);
+							// component.setFont(new Font("miscfixed", 0, 16));
+							// component.setContent(buf1.toString());
+							// setBusy(false);
+							// jOutputPane.addComponent(component, 0, true);
+						}
+					} catch (final Exception e) {
+						e.printStackTrace();
+					}
+				} else {
+					String result = buf0.toString();
+					jInputArea.setText(result);
+					jOutputPane.printOutColored("Out[" + commandHistoryStoreIndex + "]=" + result + "\n");
+				}
+			} catch (final MathException ex) {
+				String mess = ex.getMessage();
+				if (mess == null) {
+					jOutputPane.printErr(ex.getClass().getName());
+				} else {
+					jOutputPane.printErr(mess);
+				}
+			} catch (final Throwable ex) {
+				ex.printStackTrace();
+				String mess = ex.getMessage();
+				if (mess == null) {
+					jOutputPane.printErr(ex.getClass().getName());
+				} else {
+					jOutputPane.printErr(mess);
+				}
+			} finally {
+				setBusy(false);
+			}
 		}
 	}
 
@@ -464,6 +559,34 @@ public class EvalPanel extends JPanel { // implements DocumentListener {
 		calcThread.start();
 	}
 
+	private void evalStepwiseInputField() {
+		final String cmd = jInputArea.getText();
+		jInputArea.setText("");
+		if (cmd.length() > 0) {
+			evalStepwise(cmd);
+		}
+	}
+
+	private void evalStepwise(final String cmd) {
+		if (fInitThread != null) {
+			try {
+				fInitThread.join();
+			} catch (InterruptedException e) {
+			}
+		}
+		commandHistory[commandHistoryStoreIndex++] = cmd;
+		if (commandHistoryStoreIndex >= commandHistory.length) {
+			commandHistoryStoreIndex = 0;
+		}
+		commandHistoryReadIndex = commandHistoryStoreIndex;
+		jInputArea.setText("");
+		jOutputPane.printOutColored("In[" + commandHistoryStoreIndex + "]=" + cmd + "\n\n");
+		setBusy(true);
+		CalcStepwiseThread calcStepwiseThread = new CalcStepwiseThread();
+		calcStepwiseThread.setCommand(cmd);
+		EventQueue.invokeLater(calcStepwiseThread);
+	}
+
 	/**
 	 * Print the MathML text gotm
 	 * 
@@ -656,6 +779,14 @@ public class EvalPanel extends JPanel { // implements DocumentListener {
 			}
 		});
 		buttonsPanel.add(b2);
+
+		final JButton bsw = new JButton("Stepwise");
+		bsw.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(final java.awt.event.ActionEvent e) {
+				evalStepwiseInputField();
+			}
+		});
+		buttonsPanel.add(bsw);
 
 		buttonsPanel.add(fPrettyPrintStyle);
 
