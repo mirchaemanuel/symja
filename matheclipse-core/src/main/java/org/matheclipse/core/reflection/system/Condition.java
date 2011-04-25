@@ -1,6 +1,6 @@
 package org.matheclipse.core.reflection.system;
 
-import org.matheclipse.core.eval.exception.WrongNumberOfArguments;
+import org.matheclipse.core.eval.exception.Validate;
 import org.matheclipse.core.eval.interfaces.IFunctionEvaluator;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IAST;
@@ -13,9 +13,7 @@ public class Condition implements IFunctionEvaluator {
 	}
 
 	public IExpr evaluate(final IAST ast) {
-		if (ast.size() != 3) {
-			throw new WrongNumberOfArguments(ast, 2, ast.size() - 1);
-		}
+		Validate.checkSize(ast, 3);
 		if (F.evalTrue(ast.get(2))) {
 			return F.eval(ast.get(1));
 		}

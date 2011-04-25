@@ -9,6 +9,7 @@ import org.matheclipse.core.expression.Symbol;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.ISymbol;
+import org.matheclipse.core.patternmatching.PatternMatcher;
 
 public class Rule extends AbstractFunctionEvaluator {
 
@@ -20,7 +21,7 @@ public class Rule extends AbstractFunctionEvaluator {
 		Validate.checkSize(ast, 3);
 		final EvalEngine engine = EvalEngine.get();
 		IExpr leftHandSide = ast.get(1);
-		leftHandSide = Set.evalLeftHandSide(leftHandSide, engine);
+		leftHandSide = PatternMatcher.evalLeftHandSide(leftHandSide, engine);
 		IExpr arg2 = engine.evalNull(ast.get(2));
 		if (arg2 == null) {
 			if (leftHandSide.equals(ast.get(1))) {

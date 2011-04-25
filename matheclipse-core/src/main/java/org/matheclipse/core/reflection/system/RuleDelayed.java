@@ -8,6 +8,7 @@ import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.ISymbol;
+import org.matheclipse.core.patternmatching.PatternMatcher;
 
 public class RuleDelayed extends AbstractFunctionEvaluator {
 
@@ -19,7 +20,7 @@ public class RuleDelayed extends AbstractFunctionEvaluator {
 		Validate.checkSize(ast, 3);
 		final EvalEngine engine = EvalEngine.get();
 		IExpr leftHandSide = ast.get(1);
-		leftHandSide = Set.evalLeftHandSide(leftHandSide, engine);
+		leftHandSide = PatternMatcher.evalLeftHandSide(leftHandSide, engine);
 		if (!leftHandSide.equals(ast.get(1))) {
 			return RuleDelayed(leftHandSide, ast.get(2));
 		}

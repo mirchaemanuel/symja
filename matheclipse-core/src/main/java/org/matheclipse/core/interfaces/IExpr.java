@@ -381,6 +381,20 @@ public interface IExpr extends Comparable<IExpr>, RingElem<IExpr>, INestedListEl
 	public boolean isPattern();
 
 	/**
+	 * Test if this expression is the Condition function
+	 * <code>Condition[&lt;arg1&gt;, &lt;arg2&gt;]</code>
+	 * 
+	 */
+	public boolean isCondition();
+	
+	/**
+	 * Test if this expression is the Module function
+	 * <code>Module[&lt;arg1&gt;, &lt;arg2&gt;]</code>
+	 * 
+	 */
+	public boolean isModule();
+	
+	/**
 	 * Test if this expression is the function
 	 * <code>Power[&lt;arg1&gt;, &lt;arg2&gt;]</code>
 	 * 

@@ -270,11 +270,11 @@ public abstract class ExprImpl implements IExpr {
 	public boolean isSlot() {
 		return false;
 	}
-	
+
 	public boolean isSlotSequence() {
 		return false;
 	}
-	
+
 	public boolean isFree(final IExpr pattern, boolean heads) {
 		final PatternMatcher matcher = new PatternMatcher(pattern);
 		return !AST.COPY.some(this, matcher, 1);
@@ -291,8 +291,25 @@ public abstract class ExprImpl implements IExpr {
 		return false;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public boolean isPattern() {
 		return this instanceof IPattern;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public boolean isCondition() {
+		return false;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public boolean isModule() {
+		return false;
 	}
 
 	public boolean isSymbol() {

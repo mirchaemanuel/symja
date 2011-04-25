@@ -18,7 +18,7 @@ public class IntegrateTrigFunctionTestCase extends AbstractTestCase {
 	public void testTrig002() {
 		check("Integrate[1/(x*(a + a*Sin[x])),x]", "Integrate[(a*x*Sin[x]+a*x)^(-1),x]");
 		// TODO wrong result:
-//		check("Integrate[Sin[x]/Sqrt[x],x]", "Integrate[x^(-1/2)*Sin[x],x]");
+		check("Integrate[Sin[x]/Sqrt[x],x]", "Integrate[x^(-1/2)*Sin[x],x]");
 
 	}
 
@@ -57,9 +57,6 @@ public class IntegrateTrigFunctionTestCase extends AbstractTestCase {
 		check("Integrate[(a + b*Sin[c + d*x]),x]", "a*x-b*Cos[d*x+c]*d^(-1)");
 		check("Integrate[(a + b*Sin[c + d*x])^2,x]", "-1/2*Cos[d*x+c]*b^2*d^(-1)*Sin[d*x+c]+1/2*b^2*x+a^2*x-2*a*b*Cos[d*x+c]*d^(-1)");
 
-		// TODO wrong result:
-		// check("Integrate[Sin[x]/Sqrt[x],x]", "8/3*Sin[1/2*x]^(3/2)");
-
 		// TODO wrong result?
 		check("Integrate[Sqrt[a*Sin[x]^2],x]", "(-1)*Cos[x]*a^(1/2)");
 
@@ -67,7 +64,6 @@ public class IntegrateTrigFunctionTestCase extends AbstractTestCase {
 		check("Integrate[1/(a + b*Cos[x]^3),x]", "Integrate[(b*Cos[x]^3+a)^(-1),x]");
 
 		check("Integrate[Cos[x]*x,x]", "x*Sin[x]+Cos[x]");
-//		check("Integrate[1/(x*(a + a*Sin[x])),x]", "");
 		// check("Integrate[,x]", "");
 	}
 }

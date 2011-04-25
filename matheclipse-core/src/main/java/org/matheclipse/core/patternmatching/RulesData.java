@@ -86,7 +86,7 @@ public class RulesData {
 			final IExpr rightHandSide, final IExpr condition, IAST moduleInitializer, final int priority) {
 		if (Config.DEBUG) {
 			if (rightHandSide.isAST("Condition")) {
-				throw new RuntimeException("Condition  not allowed in right-hand-side");
+				throw new RuntimeException("Condition not allowed in right-hand-side");
 			}
 		}
 		if (equalRule) {
@@ -175,6 +175,9 @@ public class RulesData {
 					return true;
 				}
 				if (ast.get(1).isAST()) {
+					if (ast.get(1).isCondition()) {
+						return true;
+					}
 					// the left hand side is associated with the first argument
 					// see if the first argument is complicated
 					IAST arg1 = (IAST) ast.get(1);
