@@ -5,8 +5,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.matheclipse.core.eval.EvalEngine;
 import org.matheclipse.core.expression.F;
+import org.matheclipse.core.generic.Functors;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.IPattern;
@@ -14,6 +17,8 @@ import org.matheclipse.core.interfaces.IPatternMatcher;
 import org.matheclipse.core.interfaces.ISymbol;
 import org.matheclipse.generic.combinatoric.KPartitionsIterable;
 import org.matheclipse.generic.combinatoric.KPermutationsIterable;
+
+import com.google.common.base.Function;
 
 public class PatternMatcher extends IPatternMatcher<IExpr> implements Serializable {
 
@@ -362,6 +367,12 @@ public class PatternMatcher extends IPatternMatcher<IExpr> implements Serializab
 	protected IExpr fLeftHandSide;
 
 	/**
+	 * Additional condition for pattern-matching maybe <code>null</code>
+	 * 
+	 */
+	protected IExpr fCondition;
+
+	/**
 	 * contains the current values of the patterns
 	 */
 	transient protected IExpr[] fPatternValuesArray = null;
@@ -382,6 +393,11 @@ public class PatternMatcher extends IPatternMatcher<IExpr> implements Serializab
 
 	public PatternMatcher(final IExpr patternExpr) {
 		fLeftHandSide = patternExpr;
+		fCondition = null;
+		if (patternExpr.isCondition()) {
+			fLeftHandSide = ((IAST) patternExpr).get(1);
+			fCondition = ((IAST) patternExpr).get(2);
+		}
 		init(fLeftHandSide);
 	}
 
@@ -419,32 +435,46 @@ public class PatternMatcher extends IPatternMatcher<IExpr> implements Serializab
 	}
 
 	public boolean checkCondition() {
-		// if (fCondition != null) {
-		// if (fPatternValuesArray != null) {
-		// // all patterns have values assigned?
-		// for (int i = 0; i < fPatternValuesArray.length; i++) {
-		// if (fPatternValuesArray[i] == null) {
-		// return true;
-		// }
-		// }
-		// }
-		// final EvalEngine engine = EvalEngine.get();
-		// boolean traceMode = false;
-		// try {
-		// traceMode = engine.isTraceMode();
-		// engine.setTraceMode(false);
-		//
-		// final IExpr substConditon =
-		// EvaluationSupport.substituteLocalVariables(fCondition,
-		// fPatternSymbolsArray,
-		// fPatternValuesArray);
-		// return engine.evaluate(substConditon).equals(F.True);
-		// } finally {
-		// if (traceMode) {
-		// engine.setTraceMode(true);
-		// }
-		// }
-		// }
+
+		if (fCondition != null) {
+			if (fPatternValuesArray != null) {
+				// all patterns have values assigned?
+				for (int i = 0; i < fPatternValuesArray.length; i++) {
+					if (fPatternValuesArray[i] == null) {
+						return true;
+					}
+				}
+			}
+			final EvalEngine engine = EvalEngine.get();
+			boolean traceMode = false;
+			try {
+				traceMode = engine.isTraceMode();
+				engine.setTraceMode(false);
+
+				// if (fModuleInitializer != null) {
+				// final Map<IExpr, IExpr> rulesMap = new HashMap<IExpr, IExpr>();
+				// for (int i = 0; i < fPatternSymbolsArray.size(); i++) {
+				// rulesMap.put(fPatternSymbolsArray.get(i), fPatternValuesArray[i]);
+				// }
+				// try {
+				// fLastResult = Module.evalModuleCondition(fModuleInitializer,
+				// fRightHandSide, fCondition, engine, Functors
+				// .rules(rulesMap));
+				// } catch (final ReturnException e) {
+				// fLastResult = e.getValue();
+				// }
+				// return fLastResult != null;
+				// }
+
+				final IExpr substConditon = PatternMatcher.substituteLocalVariables(fCondition, fPatternSymbolsArray,
+						fPatternValuesArray);
+				return engine.evaluate(substConditon).equals(F.True);
+			} finally {
+				if (traceMode) {
+					engine.setTraceMode(true);
+				}
+			}
+		}
 		return true;
 	}
 
@@ -599,7 +629,6 @@ public class PatternMatcher extends IPatternMatcher<IExpr> implements Serializab
 			final IAST list = (IAST) pExpr;
 			setPatternValue2Local(list.head());
 			for (int i = 0; i < list.size(); i++) {
-
 				setPatternValue2Local(list.get(i));
 			}
 		} else {
@@ -652,6 +681,40 @@ public class PatternMatcher extends IPatternMatcher<IExpr> implements Serializab
 		return matchExpr(fLeftHandSide, evalExpr);
 	}
 
+	private class ReplacePatternByValuesFunction implements Function<IExpr, IExpr> {
+		/**
+		 * contains the current values of the patterns
+		 */
+		protected IExpr[] fPatternValuesArray = null;
+
+		/**
+		 * contains the current symbols of the patterns
+		 */
+		protected ArrayList<ISymbol> fPatternSymbolsArray = null;
+
+		public ReplacePatternByValuesFunction(ArrayList<ISymbol> patternSymbolsArray, IExpr[] patternValuesArray) {
+			this.fPatternValuesArray = patternValuesArray;
+			this.fPatternSymbolsArray = patternSymbolsArray;
+		}
+
+		/**
+		 * Replace a pattern by the value defined in
+		 * <code>fPatternValuesArray</code>
+		 */
+		@Override
+		public IExpr apply(IExpr from) {
+			if (from.isPattern() && fPatternSymbolsArray != null) {
+				for (int i = 0; i < fPatternSymbolsArray.size(); i++) {
+					ISymbol symbol = ((IPattern) from).getSymbol();
+					if (symbol != null) {
+						return fPatternValuesArray[i];
+					}
+				}
+			}
+			return null;
+		}
+	}
+
 	/**
 	 * Checks if the two expressions match each other
 	 * 
@@ -660,13 +723,25 @@ public class PatternMatcher extends IPatternMatcher<IExpr> implements Serializab
 	 * @return
 	 */
 	protected boolean matchExpr(final IExpr lhsPatternExpression, final IExpr rhsExpression) {
-		if (lhsPatternExpression instanceof IAST) {
+		boolean matched = false;
+		if (lhsPatternExpression.isCondition()) {
+			// expression /; test
+			lhsPatternExpression.replaceAll(new ReplacePatternByValuesFunction(fPatternSymbolsArray, fPatternValuesArray));
+			PatternMatcher.evalLeftHandSide(lhsPatternExpression);
+			final PatternMatcher matcher = new PatternMatcher(lhsPatternExpression);
+			matched = matcher.apply(rhsExpression);
+			if (matched) {
+				copyPatternValuesFromPatternMatcher(matcher);
+			}
+		} else if (lhsPatternExpression instanceof IAST) {
 			IAST ast = (IAST) lhsPatternExpression;
 			IExpr[] patternValues = null;
 			if ((ast.getEvalFlags() & IAST.CONTAINS_DEFAULT_PATTERN) == IAST.CONTAINS_DEFAULT_PATTERN) {
 				patternValues = copyPattern();
 			}
+			matched = true;
 			if (!matchAST(ast, rhsExpression)) {
+				matched = false;
 				if ((ast.getEvalFlags() & IAST.CONTAINS_DEFAULT_PATTERN) == IAST.CONTAINS_DEFAULT_PATTERN) {
 					IExpr temp = null;
 					ISymbol symbol = ast.topHead();
@@ -674,18 +749,38 @@ public class PatternMatcher extends IPatternMatcher<IExpr> implements Serializab
 					resetPattern(patternValues);
 					temp = matchDefaultAST(symbol, attr, ast);
 					if (temp != null) {
-						return matchExpr(temp, rhsExpression);
+						matched = matchExpr(temp, rhsExpression);
 					}
 				}
-				return false;
 			}
-			return true;
+		} else if (lhsPatternExpression instanceof IPattern) {
+			matched = matchPattern((IPattern) lhsPatternExpression, rhsExpression);
+		} else {
+			matched = lhsPatternExpression.equals(rhsExpression);
 		}
-		if (lhsPatternExpression instanceof IPattern) {
-			return matchPattern((IPattern) lhsPatternExpression, rhsExpression);
+		if (matched) {
+			return checkCondition();
 		}
+		return false;
 
-		return lhsPatternExpression.equals(rhsExpression);
+	}
+
+	/**
+	 * Copy the found pattern matches from the given <code>matcher</code> back to
+	 * the current matchers pattern values.
+	 * 
+	 * @param matcher
+	 */
+	private void copyPatternValuesFromPatternMatcher(final PatternMatcher matcher) {
+		ArrayList<ISymbol> patternSymbolsArray = matcher.fPatternSymbolsArray;
+		IExpr[] patternValuesArray = matcher.fPatternValuesArray;
+		for (int i = 0; i < patternValuesArray.length; i++) {
+			for (int j = 0; j < fPatternSymbolsArray.size(); j++) {
+				if (fPatternSymbolsArray.get(j).equals(patternSymbolsArray.get(i))) {
+					fPatternValuesArray[j] = patternValuesArray[i];
+				}
+			}
+		}
 	}
 
 	/**
@@ -840,12 +935,12 @@ public class PatternMatcher extends IPatternMatcher<IExpr> implements Serializab
 				return fLeftHandSide.equals(pm.fLeftHandSide);
 			}
 			if (equivalent(fLeftHandSide, pm.fLeftHandSide)) {
-				// if ((fCondition != null) && (pm.fCondition != null)) {
-				// return fCondition.equals(pm.fCondition);
-				// }
-				// if ((fCondition != null) || (pm.fCondition != null)) {
-				// return false;
-				// }
+				if ((fCondition != null) && (pm.fCondition != null)) {
+					return fCondition.equals(pm.fCondition);
+				}
+				if ((fCondition != null) || (pm.fCondition != null)) {
+					return false;
+				}
 				return true;
 			}
 		}
@@ -859,17 +954,57 @@ public class PatternMatcher extends IPatternMatcher<IExpr> implements Serializab
 
 	@Override
 	public Object clone() {
-		// try {
 		PatternMatcher v = (PatternMatcher) super.clone();
-		// v.fCondition = fCondition;
 		v.fPatternCounter = fPatternCounter;
 		v.fLeftHandSide = fLeftHandSide;
+		v.fCondition = fCondition;
 		v.fPatternValuesArray = Arrays.copyOf(fPatternValuesArray, fPatternValuesArray.length);
 		v.fPatternSymbolsArray = (ArrayList<ISymbol>) fPatternSymbolsArray.clone();
 		return v;
-		// } catch (CloneNotSupportedException e) {
-		// // this shouldn't happen, since we are Cloneable
-		// throw new InternalError();
-		// }
 	}
+
+	public IExpr getCondition() {
+		return fCondition;
+	}
+
+	/**
+	 * Sets an additional evaluation-condition for pattern-matching
+	 * 
+	 */
+	public void setCondition(final IExpr condition) {
+		fCondition = condition;
+	}
+
+	public static IExpr evalLeftHandSide(IExpr leftHandSide, final EvalEngine engine) {
+		if (leftHandSide instanceof IAST) {
+			final IExpr temp = engine.evalSetAttributes((IAST) leftHandSide);
+			if (temp != null) {
+				leftHandSide = temp;
+			}
+		}
+		return leftHandSide;
+	}
+
+	public static IExpr evalLeftHandSide(IExpr leftHandSide) {
+		return evalLeftHandSide(leftHandSide, EvalEngine.get());
+	}
+
+	/**
+	 * Substitute all symbols in the given expression with the current value of
+	 * the given arrays
+	 * 
+	 * @param expression
+	 * 
+	 * @return
+	 */
+	public static <T extends IExpr> IExpr substituteLocalVariables(final IExpr expression, final ArrayList<T> symbolList,
+			final IExpr[] valueList) {
+		final Map<IExpr, IExpr> rulesMap = new HashMap<IExpr, IExpr>();
+		for (int i = 0; i < symbolList.size(); i++) {
+			rulesMap.put(symbolList.get(i), valueList[i]);
+		}
+		final IExpr result = expression.replaceAll(Functors.rules(rulesMap));
+		return (result == null) ? expression : result;
+	}
+
 }

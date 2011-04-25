@@ -5,6 +5,7 @@ import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.ISymbol;
 import org.matheclipse.core.patternmatching.PatternMatcher;
+import org.matheclipse.core.patternmatching.PatternMatcherAndEvaluator;
 
 public class Cases implements IFunctionEvaluator {
 

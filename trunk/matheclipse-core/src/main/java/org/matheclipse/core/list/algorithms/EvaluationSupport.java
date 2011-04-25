@@ -1,14 +1,10 @@
 package org.matheclipse.core.list.algorithms;
 
-import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.matheclipse.core.expression.AST;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.generic.ExprComparator;
-import org.matheclipse.core.generic.Functors;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
 
@@ -106,23 +102,5 @@ public class EvaluationSupport {
 		}
 
 		return res0;
-	}
-
-	/**
-	 * Substitute all symbols in the given expression with the current value of
-	 * the given arrays
-	 * 
-	 * @param expression
-	 * 
-	 * @return
-	 */
-	public static <T extends IExpr> IExpr substituteLocalVariables(final IExpr expression, final ArrayList<T> symbolList,
-			final IExpr[] valueList) {
-		final Map<IExpr, IExpr> rulesMap = new HashMap<IExpr, IExpr>();
-		for (int i = 0; i < symbolList.size(); i++) {
-			rulesMap.put(symbolList.get(i), valueList[i]);
-		}
-		final IExpr result = expression.replaceAll(Functors.rules(rulesMap));
-		return (result == null) ? expression : result;
 	}
 }

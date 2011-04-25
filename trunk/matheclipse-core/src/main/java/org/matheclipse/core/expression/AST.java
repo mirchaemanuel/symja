@@ -648,6 +648,20 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 		return false;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	public boolean isCondition() {
+		return size() == 3 && head().equals(F.Condition);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public boolean isModule() {
+		return size() == 3 && head().equals(F.Module);
+	}
+
 	public boolean isSymbol() {
 		return false;
 	}

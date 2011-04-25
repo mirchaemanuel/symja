@@ -10,22 +10,9 @@ import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.ISymbol;
+import org.matheclipse.core.patternmatching.PatternMatcher;
 
 public class Set implements IFunctionEvaluator, ICreatePatternMatcher {
-	public static IExpr evalLeftHandSide(IExpr leftHandSide) {
-		return evalLeftHandSide(leftHandSide, EvalEngine.get());
-	}
-
-	public static IExpr evalLeftHandSide(IExpr leftHandSide, final EvalEngine engine) {
-		if (leftHandSide instanceof IAST) {
-			final IExpr temp = engine.evalSetAttributes((IAST) leftHandSide);
-			if (temp != null) {
-				leftHandSide = temp;
-			}
-		}
-		return leftHandSide;
-	}
-
 	public Set() {
 	}
 
@@ -46,11 +33,11 @@ public class Set implements IFunctionEvaluator, ICreatePatternMatcher {
 			}
 		}
 		Object[] result;
-		if (rightHandSide.isAST(F.Condition, 3)) {
+		if (rightHandSide.isCondition()) {
 			result = createPatternMatcher(leftHandSide, ((IAST) rightHandSide).get(1), ((IAST) rightHandSide).get(2), null);
-		} else if (rightHandSide.isAST(F.Module, 3)) {
+		} else if (rightHandSide.isModule()) {
 			IAST module = (IAST) rightHandSide;
-			if (module.get(2).isAST(F.Condition, 3)) {
+			if (module.get(2).isCondition()) {
 				IAST condition = (IAST) module.get(2);
 				result = createPatternMatcher(leftHandSide, condition.get(1), condition.get(2), module.get(1));
 			} else {
@@ -67,7 +54,7 @@ public class Set implements IFunctionEvaluator, ICreatePatternMatcher {
 		final Object[] result = new Object[2];
 		final EvalEngine engine = EvalEngine.get();
 
-		leftHandSide = evalLeftHandSide(leftHandSide, engine);
+		leftHandSide = PatternMatcher.evalLeftHandSide(leftHandSide, engine);
 
 		try {
 			rightHandSide = engine.evaluate(rightHandSide);

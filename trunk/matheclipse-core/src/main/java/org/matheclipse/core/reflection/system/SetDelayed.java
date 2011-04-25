@@ -9,6 +9,7 @@ import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.ISymbol;
+import org.matheclipse.core.patternmatching.PatternMatcher;
 
 public class SetDelayed implements IFunctionEvaluator, ICreatePatternMatcher {
 
@@ -19,11 +20,11 @@ public class SetDelayed implements IFunctionEvaluator, ICreatePatternMatcher {
 		Validate.checkSize(ast, 3);
 		final IExpr leftHandSide = ast.get(1);
 		final IExpr rightHandSide = ast.get(2);
-		if (rightHandSide.isAST(F.Condition, 3)) {
+		if (rightHandSide.isCondition()) {
 			createPatternMatcher(leftHandSide, ((IAST) rightHandSide).get(1), ((IAST) rightHandSide).get(2), null);
-		} else if (rightHandSide.isAST(F.Module, 3)) {
+		} else if (rightHandSide.isModule()) {
 			IAST module = (IAST) rightHandSide;
-			if (module.get(2).isAST(F.Condition, 3)) {
+			if (module.get(2).isCondition()) {
 				IAST condition = (IAST) module.get(2);
 				createPatternMatcher(leftHandSide, condition.get(1), condition.get(2), module.get(1));
 			} else {
@@ -40,7 +41,7 @@ public class SetDelayed implements IFunctionEvaluator, ICreatePatternMatcher {
 		final Object[] result = new Object[2];
 		final EvalEngine engine = EvalEngine.get();
 
-		leftHandSide = Set.evalLeftHandSide(leftHandSide, engine);
+		leftHandSide = PatternMatcher.evalLeftHandSide(leftHandSide, engine);
 
 		result[0] = null;
 		result[1] = rightHandSide;
