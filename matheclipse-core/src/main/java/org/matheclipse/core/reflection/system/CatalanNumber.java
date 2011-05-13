@@ -44,7 +44,7 @@ public class CatalanNumber extends AbstractTrigArg1 {
 
 	@Override
   public void setUp(final ISymbol symbol) throws SyntaxError {
-    symbol.setAttributes(ISymbol.LISTABLE );
+		symbol.setAttributes(ISymbol.LISTABLE | ISymbol.NUMERICFUNCTION);
     super.setUp(symbol);
   }
 }

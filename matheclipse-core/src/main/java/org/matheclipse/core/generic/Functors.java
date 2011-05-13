@@ -132,7 +132,6 @@ public class Functors {
 			if (temp != null) {
 				return temp;
 			}
-			// for (IPatternMatcher<IExpr> matcher : fMatchers) {
 			IPatternMatcher<IExpr> matcher;
 			for (int i = 0; i < fMatchers.size(); i++) {
 				temp = fMatchers.get(i).eval(arg);

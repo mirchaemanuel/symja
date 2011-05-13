@@ -21,7 +21,10 @@ import org.matheclipse.core.interfaces.ISignedNumber;
 import org.matheclipse.core.interfaces.ISymbol;
 
 public class Power extends AbstractArg2 implements INumeric {
-
+	/**
+	 * Constructor for the singleton
+	 */
+	public final static Power CONST = new Power();
 	/**
 	 * <pre>
      E^(I*Pi)=(-1),

@@ -83,7 +83,7 @@ public class RulesData {
 	}
 
 	public PatternMatcher putDownRule(ISymbol setSymbol, final boolean equalRule, final IExpr leftHandSide,
-			final IExpr rightHandSide, final IExpr condition, IAST moduleInitializer, final int priority) {
+			final IExpr rightHandSide, final int priority) {
 		if (Config.DEBUG) {
 			if (rightHandSide.isAST("Condition")) {
 				throw new RuntimeException("Condition not allowed in right-hand-side");
@@ -92,9 +92,6 @@ public class RulesData {
 		if (equalRule) {
 			fEqualRules = getEqualRules();
 			fEqualRules.put(leftHandSide, new Pair<ISymbol, IExpr>(setSymbol, rightHandSide));
-			if (condition != null) {
-				throw new RuleCreationError(leftHandSide, rightHandSide, condition);
-			}
 			return null;
 		}
 
@@ -103,17 +100,10 @@ public class RulesData {
 		if (pmEvaluator.isRuleWithoutPatterns()) {
 			fEqualRules = getEqualRules();
 			fEqualRules.put(leftHandSide, new Pair<ISymbol, IExpr>(setSymbol, rightHandSide));
-			if (condition != null) {
-				throw new RuleCreationError(leftHandSide, rightHandSide, condition);
-			}
 			return null;
 		}
 
-		// if (condition!=null && condition.isAST(F.And,3)) {
-		// System.out.println("condition");
-		// }
-		pmEvaluator.setCondition(condition);
-		pmEvaluator.setInitializer(moduleInitializer);
+//		pmEvaluator.setCondition(condition); 
 		if (!isComplicatedPatternRule(leftHandSide)) {
 
 			fSimplePatternRules = getSimplePatternRules();
@@ -166,42 +156,36 @@ public class RulesData {
 		}
 	}
 
-	private boolean isComplicatedPatternRule(final IExpr patternExpr) {
-		if (patternExpr.isAST()) {
-			final IAST ast = ((IAST) patternExpr);
-			if (ast.size() > 1) {
-				final int attr = ast.topHead().getAttributes();
+	private boolean isComplicatedPatternRule(final IExpr lhsExpr) {
+		if (lhsExpr.isAST()) {
+			final IAST lhsAST = ((IAST) lhsExpr); 
+			if (lhsAST.size() > 1) {
+				final int attr = lhsAST.topHead().getAttributes();
 				if ((ISymbol.ORDERLESS & attr) == ISymbol.ORDERLESS) {
 					return true;
 				}
-				if (ast.get(1).isAST()) {
-					if (ast.get(1).isCondition()) {
+				if (lhsAST.get(1).isAST()) {
+					IAST arg1 = (IAST) lhsAST.get(1);
+					if (arg1.isCondition()) { 
 						return true;
 					}
 					// the left hand side is associated with the first argument
 					// see if the first argument is complicated
-					IAST arg1 = (IAST) ast.get(1);
 					for (int i = 2; i < arg1.size(); i++) {
 						if (arg1.get(i).isPattern() && ((IPattern) arg1.get(i)).isDefault()) {
 							return true;
 						}
 					}
-				} else if (ast.get(1).isPattern()) {
+				} else if (lhsAST.get(1).isPattern()) {
 					return true;
 				}
-				for (int i = 2; i < ast.size(); i++) {
-					// if (ast.get(i).isAST()) {
-					// if (isComplicatedPatternRule((IAST) ast.get(i))) {
-					// return true;
-					// }
-					// } else {
-					if (ast.get(i).isPattern() && ((IPattern) ast.get(i)).isDefault()) {
+				for (int i = 2; i < lhsAST.size(); i++) {
+					if (lhsAST.get(i).isPattern() && ((IPattern) lhsAST.get(i)).isDefault()) {
 						return true;
-					}
-					// }
+					} 
 				}
 			}
-		} else if (patternExpr.isPattern()) {
+		} else if (lhsExpr.isPattern()) {
 			return true;
 		}
 		return false;

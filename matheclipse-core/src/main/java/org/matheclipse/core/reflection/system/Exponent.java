@@ -43,7 +43,15 @@ public class Exponent extends AbstractFunctionEvaluator {
 			} else if (arg1.isPlus()) {
 				for (int i = 1; i < arg1.size(); i++) {
 					if (arg1.get(i).isAtom()) {
-						collector.add(F.C0);
+						if (arg1.get(i).isSymbol()) {
+							if (matcher.apply(arg1.get(i))) {
+								collector.add(F.C1);
+							} else {
+								collector.add(F.C0);
+							}
+						} else {
+							collector.add(F.C0);
+						}
 					} else if (arg1.get(i).isPower()) {
 						IAST pow = (IAST) arg1.get(i);
 						if (matcher.apply(pow.get(1))) {
@@ -88,6 +96,13 @@ public class Exponent extends AbstractFunctionEvaluator {
 				}
 			}
 
+		} else if (expr.isSymbol()) {
+			final PatternMatcher matcher = new PatternMatcher(form);
+			if (matcher.apply(expr)) {
+				collector.add(F.C1);
+			} else {
+				collector.add(F.C0);
+			}
 		} else {
 			collector.add(F.C0);
 		}

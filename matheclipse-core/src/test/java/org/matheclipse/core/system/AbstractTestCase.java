@@ -40,7 +40,7 @@ public abstract class AbstractTestCase extends TestCase {
 			if (evalString.length() == 0 && expectedResult.length() == 0) {
 				return;
 			}
-//			scriptEngine.put("STEPWISE",Boolean.TRUE);
+			// scriptEngine.put("STEPWISE",Boolean.TRUE);
 			String evaledResult = (String) scriptEngine.eval(evalString);
 
 			assertEquals(evaledResult, expectedResult);

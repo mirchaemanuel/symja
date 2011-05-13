@@ -190,6 +190,7 @@ public class Plus extends AbstractArgMultiple implements INumeric {
 		ORDERLESS_MATCHER.setUpHashRule("ArcTan[x_]", "ArcTan[y_]", "Pi/2", "Positive[x]&&(y==1/x)");
 		ORDERLESS_MATCHER.setUpHashRule("-ArcTan[x_]", "-ArcTan[y_]", "-Pi/2", "Positive[x]&&(y==1/x)");
 		ORDERLESS_MATCHER.setUpHashRule("Cosh[x_]^2", "-Sinh[x_]^2", "1");
+		super.setUp(symbol);
 	}
 
 	public double evalReal(final double[] stack, final int top, final int size) {

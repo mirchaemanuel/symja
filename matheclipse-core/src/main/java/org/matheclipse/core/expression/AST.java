@@ -586,7 +586,11 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 		if (isEvalFlagOn(IAST.IS_MATRIX)) {
 			final int[] dim = new int[2];
 			dim[0] = size() - 1;
+			// if (size() <= 1) {
+			// dim[1] = 0;
+			// } else {
 			dim[1] = ((IAST) get(1)).size() - 1;
+			// }
 			return dim;
 		}
 		if (head().equals(F.List)) {
@@ -610,9 +614,10 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 				} else {
 					return null;
 				}
+				addEvalFlags(IAST.IS_MATRIX);
+				return dim;
 			}
-			addEvalFlags(IAST.IS_MATRIX);
-			return dim;
+
 		}
 		return null;
 	}

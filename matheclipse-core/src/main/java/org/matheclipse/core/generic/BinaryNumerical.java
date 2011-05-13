@@ -27,10 +27,7 @@ public class BinaryNumerical extends BinaryFunctorImpl<IExpr> {
 	}
 
 	public IExpr apply(final IExpr firstArg, final IExpr secondArg) {
-		final IExpr temp = fun.replaceAll(F.List(F.Rule(variable1, firstArg), F.Rule(variable2, secondArg)));
-		return F.evaln(temp);
-		// AST.COPY.substitute(fun, variable1, firstArg, 1);
-		// return F.evaln(AST.COPY.substitute(temp, variable2, secondArg, 1));
+		return F.evaln(F.subst(fun,F.List(F.Rule(variable1, firstArg), F.Rule(variable2, secondArg)) ));
 	}
 
 	public double value(double x, double y) {

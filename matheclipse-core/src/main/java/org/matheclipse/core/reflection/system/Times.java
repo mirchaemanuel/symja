@@ -24,7 +24,7 @@ public class Times extends AbstractArgMultiple implements INumeric {
 	/**
 	 * Constructor for the singleton
 	 */
-	public final static Plus CONST = new Plus();
+	public final static Times CONST = new Times();
 
 	private static HashedOrderlessMatcher ORDERLESS_MATCHER = new HashedOrderlessMatcher(true);
 
@@ -266,6 +266,7 @@ public class Times extends AbstractArgMultiple implements INumeric {
 	@Override
 	public void setUp(final ISymbol symbol) {
 		symbol.setAttributes(ISymbol.ONEIDENTITY | ISymbol.ORDERLESS | ISymbol.FLAT | ISymbol.LISTABLE | ISymbol.NUMERICFUNCTION);
+		super.setUp(symbol);
 	}
 
 	public double evalReal(final double[] stack, final int top, final int size) {

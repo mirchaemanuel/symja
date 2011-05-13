@@ -21,7 +21,7 @@ public interface ISymbol extends IExpr { // Variable<IExpr>
 	 * to Console with System.out.println();
 	 */
 	public final static int CONSOLE_OUTPUT = 0x1000;
-	
+
 	/**
 	 * ISymbol attribute to indicate that a symbol has a constant value
 	 */
@@ -237,26 +237,6 @@ public interface ISymbol extends IExpr { // Variable<IExpr>
 	public IPatternMatcher<IExpr> putDownRule(ISymbol symbol, boolean equalRule, IExpr leftHandSide, IExpr rightHandSide);
 
 	/**
-	 * Associate a new rule with default priority to this symbol.
-	 * 
-	 * @param equalRule
-	 *          <code>true</code> if the leftHandSide could be matched with
-	 *          equality
-	 * @param leftHandSide
-	 * @param rightHandSide
-	 * @param condition
-	 *          additional condition for rules containing patterns
-	 * @param moduleInitializer
-	 *          if the right-hand-side is a module, this is the initializer part
-	 * 
-	 * @return
-	 * 
-	 * @see ISymbol#DEFAULT_RULE_PRIORITY
-	 */
-	public IPatternMatcher putDownRule(ISymbol symbol, boolean equalRule, IExpr leftHandSide, IExpr rightHandSide, IExpr condition,
-			IExpr moduleInitializer);
-
-	/**
 	 * Associate a new rule with the given priority to this symbol.<br/>
 	 * Rules with lower numbers have higher priorities.
 	 * 
@@ -276,8 +256,7 @@ public interface ISymbol extends IExpr { // Variable<IExpr>
 	 * 
 	 * @see ISymbol#DEFAULT_RULE_PRIORITY
 	 */
-	public IPatternMatcher putDownRule(ISymbol symbol, boolean equalRule, IExpr leftHandSide, IExpr rightHandSide, IExpr condition,
-			IExpr moduleInitializer, int priority);
+	public IPatternMatcher putDownRule(ISymbol symbol, boolean equalRule, IExpr leftHandSide, IExpr rightHandSide, int priority);
 
 	/**
 	 * Associate a new rule, which invokes a method, to this symbol.
