@@ -32,13 +32,13 @@ public class UtilityFunctions {
 	 * @return
 	 */
 	public static IAST Int(final IExpr a0, final IExpr a1) {
-//		 Integrate.setAttributes(ISymbol.CONSOLE_OUTPUT);
+		// Integrate.setAttributes(ISymbol.CONSOLE_OUTPUT);
 		return binary(Integrate, a0, a1);
 	}
 
 	public static ISymbol $sDBG(final String symbolName) {
 		ISymbol sym = $s(symbolName);
-//		 sym.setAttributes(ISymbol.CONSOLE_OUTPUT);
+		// sym.setAttributes(ISymbol.CONSOLE_OUTPUT);
 		return sym;
 	}
 
@@ -177,10 +177,6 @@ public class UtilityFunctions {
 		return binary($s("LCM"), a0, a1);
 	}
 
-	// public static IAST Colon(final IExpr a0, final IExpr a1) {
-	// // TODO
-	// return binary($s("Colon"), a0, a1);
-	// }
 	public static IAST Order(final IExpr a0, final IExpr a1) {
 		// TODO
 		return binary($s("Order"), a0, a1);
@@ -421,10 +417,6 @@ public class UtilityFunctions {
 
 	public static IAST TrigReduce(final IExpr v) {
 		return unary($s("TrigReduce"), v);
-	}
-
-	public static IAST TrigReduce(final IExpr v, final IExpr u, final IExpr x) {
-		return ternary($s("TrigReduce"), v, u, x);
 	}
 
 	public static IAST Coth(final IExpr a) {

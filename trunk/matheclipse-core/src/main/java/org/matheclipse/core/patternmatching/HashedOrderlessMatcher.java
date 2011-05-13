@@ -68,7 +68,7 @@ public class HashedOrderlessMatcher {
 	 * @param condition
 	 */
 	public void setUpHashRule(final IExpr lhs1, final IExpr lhs2, final IExpr rhs, final IExpr condition) {
-		HashedPatternRules hashRule = new HashedPatternRules(lhs1, lhs2, rhs, condition, fDefaultHashCode);
+		HashedPatternRules hashRule = new HashedPatternRules(lhs1, lhs2, rhs, fDefaultHashCode);
 		hashRuleMap.put(hashRule.getHash1(), hashRule);
 	}
 

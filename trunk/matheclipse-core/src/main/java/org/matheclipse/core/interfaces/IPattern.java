@@ -14,7 +14,7 @@ public interface IPattern extends IExpr {
 	 * 
 	 * @param index
 	 */
-	public int getIndex();
+//	public int getIndex();
 
 	/**
 	 * Set the index in which this pattern is stored during pattern-matching for a
@@ -23,7 +23,7 @@ public interface IPattern extends IExpr {
 	 * @param index
 	 * @see PatternMatcher#determinePatternParameters()
 	 */
-	public void setIndex(int index);
+//	public void setIndex(int index);
 
 	/**
 	 * Get the associated symbol for this pattern-object

@@ -13,17 +13,5 @@ public interface ICreatePatternMatcher {
 	 * @param rightHandSide
 	 * @return
 	 */
-//	public Object[] createPatternMatcher(IExpr leftHandSide, IExpr rightHandSide);
-
-	/**
-	 * Returns an array of 2 objects with type IPatternMatcher and IExpr
-	 * 
-	 * @param leftHandSide
-	 * @param rightHandSide
-	 * @param condition
-	 * @param moduleInitializer TODO
-	 * @return
-	 */
-	public Object[] createPatternMatcher(IExpr leftHandSide,
-			IExpr rightHandSide, IExpr condition, IExpr moduleInitializer);
+	public Object[] createPatternMatcher(IExpr leftHandSide, IExpr rightHandSide);
 }

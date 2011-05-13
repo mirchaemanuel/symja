@@ -53,7 +53,7 @@ public abstract class IPatternMatcher<E> implements Predicate<E>, Cloneable {
 	 * @param thatMatcher
 	 * @return
 	 */
-	public abstract boolean checkPatternMatcher(final PatternMatcher thatMatcher);
+//	public abstract boolean checkPatternMatcher(final PatternMatcher thatMatcher);
 
 	@Override
 	public Object clone() {

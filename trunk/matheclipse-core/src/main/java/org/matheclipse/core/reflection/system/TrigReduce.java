@@ -1,5 +1,6 @@
 package org.matheclipse.core.reflection.system;
 
+import org.matheclipse.core.eval.exception.Validate;
 import org.matheclipse.core.eval.exception.WrongNumberOfArguments;
 import org.matheclipse.core.eval.interfaces.IFunctionEvaluator;
 import static org.matheclipse.core.expression.F.*;
@@ -58,9 +59,8 @@ public class TrigReduce implements IFunctionEvaluator {
 	}
 
 	public IExpr evaluate(final IAST ast) {
-		if (ast.size() != 2) {
-			throw new WrongNumberOfArguments(ast, 1, ast.size() - 1);
-		}
+		Validate.checkSize(ast, 2);
+
 		TrigReduceVisitor trigReduceVisitor = new TrigReduceVisitor();
 		IExpr temp = ast.get(1);
 		IExpr result = temp;

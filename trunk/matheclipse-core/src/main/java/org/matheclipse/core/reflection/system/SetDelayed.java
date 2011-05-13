@@ -20,24 +20,13 @@ public class SetDelayed implements IFunctionEvaluator, ICreatePatternMatcher {
 		Validate.checkSize(ast, 3);
 		final IExpr leftHandSide = ast.get(1);
 		final IExpr rightHandSide = ast.get(2);
-		if (rightHandSide.isCondition()) {
-			createPatternMatcher(leftHandSide, ((IAST) rightHandSide).get(1), ((IAST) rightHandSide).get(2), null);
-		} else if (rightHandSide.isModule()) {
-			IAST module = (IAST) rightHandSide;
-			if (module.get(2).isCondition()) {
-				IAST condition = (IAST) module.get(2);
-				createPatternMatcher(leftHandSide, condition.get(1), condition.get(2), module.get(1));
-			} else {
-				createPatternMatcher(leftHandSide, rightHandSide, null, null);
-			}
-		} else {
-			createPatternMatcher(leftHandSide, rightHandSide, null, null);
-		}
+
+		createPatternMatcher(leftHandSide, rightHandSide);
+
 		return F.Null;
 	}
 
-	public Object[] createPatternMatcher(IExpr leftHandSide, IExpr rightHandSide, IExpr condition, IExpr moduleInitializer)
-			throws RuleCreationError {
+	public Object[] createPatternMatcher(IExpr leftHandSide, IExpr rightHandSide) throws RuleCreationError {
 		final Object[] result = new Object[2];
 		final EvalEngine engine = EvalEngine.get();
 
@@ -51,7 +40,7 @@ public class SetDelayed implements IFunctionEvaluator, ICreatePatternMatcher {
 				lhsSymbol.set(rightHandSide);
 				return result;
 			} else {
-				result[0] = lhsSymbol.putDownRule(F.SetDelayed, true, leftHandSide, rightHandSide, condition, moduleInitializer);
+				result[0] = lhsSymbol.putDownRule(F.SetDelayed, true, leftHandSide, rightHandSide);
 				return result;
 			}
 		}
@@ -59,7 +48,7 @@ public class SetDelayed implements IFunctionEvaluator, ICreatePatternMatcher {
 		if (leftHandSide instanceof IAST) {
 			final ISymbol lhsSymbol = ((IAST) leftHandSide).topHead();
 
-			result[0] = lhsSymbol.putDownRule(F.SetDelayed, false, leftHandSide, rightHandSide, condition, moduleInitializer);
+			result[0] = lhsSymbol.putDownRule(F.SetDelayed, false, leftHandSide, rightHandSide);
 			return result;
 		}
 

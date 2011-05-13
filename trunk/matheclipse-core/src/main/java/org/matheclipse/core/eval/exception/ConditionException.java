@@ -7,7 +7,7 @@ public class ConditionException extends FlowControlException {
 	 * 
 	 */
 	private static final long serialVersionUID = -1175359074220162860L;
-	
+
 	final private IExpr value;
 
 	public ConditionException(final IExpr val) {
@@ -19,4 +19,8 @@ public class ConditionException extends FlowControlException {
 		return value;
 	}
 
+	@Override
+	public String getMessage() {
+		return "Condition[] exception: " + value.toString();
+	}
 }

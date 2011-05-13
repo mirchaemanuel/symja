@@ -151,8 +151,8 @@ public class Limit extends AbstractFunctionEvaluator implements IConstantHeaders
 	}
 
 	private String[] RULES = { 
-		"Limit[x_^n_IntegerQ, x_Symbol->Infinity]=0/; Negative[n]",
-		"Limit[x_^n_IntegerQ, x_Symbol->DirectedInfinity[-1]]=0/; Negative[n]", 
+		"Limit[x_^n_IntegerQ, x_Symbol->Infinity]:= 0 /; Negative[n]",
+		"Limit[x_^n_IntegerQ, x_Symbol->DirectedInfinity[-1]]:= 0 /; Negative[n]", 
 		"Limit[(1+x_^(-1))^x_, x_Symbol->Infinity]=E",
 		"Limit[(1-x_^(-1))^x_, x_Symbol->Infinity]=E^(-1)",
 	};

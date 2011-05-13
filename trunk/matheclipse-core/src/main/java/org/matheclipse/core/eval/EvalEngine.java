@@ -34,19 +34,18 @@ import org.matheclipse.core.interfaces.IFraction;
 import org.matheclipse.core.interfaces.IInteger;
 import org.matheclipse.core.interfaces.INum;
 import org.matheclipse.core.interfaces.INumber;
-import org.matheclipse.core.interfaces.IPattern;
 import org.matheclipse.core.interfaces.ISignedNumber;
-import org.matheclipse.core.interfaces.IStringX;
 import org.matheclipse.core.interfaces.ISymbol;
 import org.matheclipse.core.list.algorithms.EvaluationSupport;
 import org.matheclipse.core.sql.SerializeVariables2DB;
 import org.matheclipse.parser.client.Parser;
 import org.matheclipse.parser.client.ast.ASTNode;
-
-import com.google.common.base.Predicate;
+import org.matheclipse.parser.client.math.MathException;
 
 import apache.harmony.math.BigInteger;
 import apache.harmony.math.Rational;
+
+import com.google.common.base.Predicate;
 
 /**
  * 
@@ -79,6 +78,8 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 	transient int fRecursionCounter;
 
 	transient boolean fNumericMode;
+
+	transient boolean fEvalLHSMode;
 
 	transient String fSessionID;
 
@@ -209,6 +210,7 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 	 */
 	public void reset() {
 		fNumericMode = false;
+		fEvalLHSMode = false;
 		fRecursionCounter = 0;
 	}
 
@@ -254,6 +256,7 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 	final public void init() {
 		fRecursionCounter = 0;
 		fNumericMode = false;
+		fEvalLHSMode = false;
 		fTraceMode = false;
 		fStopAfterEvaluationMode = false;
 		fTraceStack = new Stack<IAST>();
@@ -299,6 +302,17 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 		} finally {
 			fNumericMode = numericMode;
 			// StackContext.exit();
+		}
+	}
+
+	public final boolean evalTrue(final IExpr expr) {
+		try {
+			return evaluate(expr).equals(F.True);
+		} catch (MathException fce) {
+			if (Config.SHOW_STACKTRACE) {
+				fce.printStackTrace();
+			}
+			return false;
 		}
 	}
 
@@ -581,6 +595,21 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 			}
 		}
 
+		if (fEvalLHSMode) {
+			final int attr = symbol.getAttributes();
+			if ((ISymbol.HOLDALL & attr) == ISymbol.HOLDALL) {
+				// check for Set or SetDelayed necessary, because of dynamic evaluation
+				// then initializing rules for predefined symbols (i.e. Sin, Cos,...)
+				if (!(symbol.equals(F.Set) || symbol.equals(F.SetDelayed))) {
+					return null;
+				}
+			} else {
+				if ((ISymbol.NUMERICFUNCTION & attr) != ISymbol.NUMERICFUNCTION) {
+					return null;
+				}
+			}
+		}
+
 		if (symbol instanceof MethodSymbol) {
 			return ((MethodSymbol) symbol).invoke(ast);
 		} else {
@@ -649,56 +678,54 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 	 * @return
 	 */
 	public IAST evalSetAttributes(IAST ast) {
-		if ((ast.getEvalFlags() & IAST.IS_FLATTENED_OR_SORTED_MASK) != 0x0000) {
-			// already flattened or sorted
-			return ast;
-		}
-		final ISymbol symbol = ast.topHead();
-		final int attr = symbol.getAttributes();
-		final Predicate<IExpr> isPattern = Predicates.isPattern();
-		IAST resultList = ast;
-		IAST result;
-		if ((ISymbol.FLAT & attr) == ISymbol.FLAT) {
-			// associative
-			if ((result = EvaluationSupport.flatten(ast)) != null) {
-				resultList = result;
-				ast = result;
+		boolean evalLHSMode = fEvalLHSMode;
+		try {
+			fEvalLHSMode = true;
+			if ((ast.getEvalFlags() & IAST.IS_FLATTENED_OR_SORTED_MASK) != 0x0000) {
+				// already flattened or sorted
+				return ast;
 			}
-		}
-		if ((ISymbol.HOLDALL & attr) != ISymbol.HOLDALL) {
-			resultList = ast.clone();
-			if ((ISymbol.HOLDFIRST & attr) == ISymbol.NOATTRIBUTE) {
-				// the HoldFirst attribute isn't set here
-				if (ast.size() > 1 && ast.get(1).isAST()) {
-					IAST temp = (IAST) ast.get(1);
-					// if (temp.isFree(isPattern, true)) {
-					resultList.set(1, evaluate(temp));
-					// } else {
-					// resultList.set(1, evalSetAttributes(temp));
-					// }
+			final ISymbol symbol = ast.topHead();
+			final int attr = symbol.getAttributes();
+			final Predicate<IExpr> isPattern = Predicates.isPattern();
+			IAST resultList = ast;
+			IAST result;
+			if ((ISymbol.FLAT & attr) == ISymbol.FLAT) {
+				// associative
+				if ((result = EvaluationSupport.flatten(ast)) != null) {
+					resultList = result;
+					ast = result;
 				}
 			}
-			if ((ISymbol.HOLDREST & attr) == ISymbol.NOATTRIBUTE) {
-				// the HoldRest attribute isn't set here
-				for (int i = 2; i < ast.size(); i++) {
-					if (ast.get(i) instanceof IAST) {
-						IAST temp = (IAST) ast.get(i);
-						// if (temp.isFree(isPattern, true)) {
-						resultList.set(i, evaluate(temp));
-						// } else {
-						// resultList.set(i, evalSetAttributes(temp));
-						// }
+			if ((ISymbol.HOLDALL & attr) != ISymbol.HOLDALL) {
+				resultList = ast.clone();
+				if ((ISymbol.HOLDFIRST & attr) == ISymbol.NOATTRIBUTE) {
+					// the HoldFirst attribute isn't set here
+					if (ast.size() > 1 && ast.get(1).isAST()) {
+						IAST temp = (IAST) ast.get(1);
+						resultList.set(1, evaluate(temp));
 					}
 				}
-			}
+				if ((ISymbol.HOLDREST & attr) == ISymbol.NOATTRIBUTE) {
+					// the HoldRest attribute isn't set here
+					for (int i = 2; i < ast.size(); i++) {
+						if (ast.get(i) instanceof IAST) {
+							IAST temp = (IAST) ast.get(i);
+							resultList.set(i, evaluate(temp));
+						}
+					}
+				}
 
-		}
-		if (resultList.size() > 2) {
-			if ((ISymbol.ORDERLESS & attr) == ISymbol.ORDERLESS) {
-				EvaluationSupport.sort(resultList);
 			}
+			if (resultList.size() > 2) {
+				if ((ISymbol.ORDERLESS & attr) == ISymbol.ORDERLESS) {
+					EvaluationSupport.sort(resultList);
+				}
+			}
+			return resultList;
+		} finally {
+			fEvalLHSMode = evalLHSMode;
 		}
-		return resultList;
 	}
 
 	protected IExpr evalInteger(final IInteger obj) {

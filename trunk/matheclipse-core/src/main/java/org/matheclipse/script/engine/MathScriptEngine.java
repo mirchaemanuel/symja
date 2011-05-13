@@ -77,10 +77,10 @@ public class MathScriptEngine extends AbstractScriptEngine {
 			// evaluate an expression
 			final Object stepwise = get("STEPWISE");
 			IExpr result;
-			if (Boolean.TRUE.equals(stepwise)){
+			if (Boolean.TRUE.equals(stepwise)) {
 				result = fUtility.evalStepByStep(script);
 			} else {
-			  result = fUtility.evaluate(script);
+				result = fUtility.evaluate(script);
 			}
 			final Object returnType = context.getAttribute("RETURN_OBJECT");
 			if ((returnType != null) && returnType.equals(Boolean.TRUE)) {
@@ -98,6 +98,9 @@ public class MathScriptEngine extends AbstractScriptEngine {
 			}
 
 		} catch (final MathException e) {
+			if (Config.SHOW_STACKTRACE) {
+				e.printStackTrace();
+			}
 			// catch parser errors here
 			return e.getMessage();
 		} catch (final Exception e) {

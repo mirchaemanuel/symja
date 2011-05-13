@@ -23,11 +23,11 @@ public class UtilityFunctionCtors {
 		return sym;
 	}
 
-//	public static ISymbol $sDBG_2(final String symbolName) {
-//		ISymbol sym = $s(symbolName);
-//		sym.setAttributes(ISymbol.CONSOLE_OUTPUT);
-//		return sym;
-//	}
+	// public static ISymbol $sDBG_2(final String symbolName) {
+	// ISymbol sym = $s(symbolName);
+	// sym.setAttributes(ISymbol.CONSOLE_OUTPUT);
+	// return sym;
+	// }
 
 	public static IAST AlgebraicFunctionQ(final IExpr a0, final IExpr a1) {
 		return binary($sDBG(INTEGRATE_PREFIX + "AlgebraicFunctionQ"), a0, a1);

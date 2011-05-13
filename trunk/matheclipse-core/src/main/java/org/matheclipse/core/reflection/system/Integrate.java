@@ -60,6 +60,8 @@ import org.matheclipse.core.interfaces.IInteger;
 import org.matheclipse.core.interfaces.INumber;
 import org.matheclipse.core.interfaces.ISymbol;
 
+import com.google.common.base.Predicate;
+
 import edu.jas.arith.BigRational;
 import edu.jas.poly.ExpVector;
 import edu.jas.poly.GenPolynomial;
@@ -90,9 +92,16 @@ public class Integrate extends AbstractFunctionEvaluator implements IConstantHea
 			return ast.range(2).foldRight(new BinaryEval(F.Integrate), fx);
 		}
 
-		IExpr arg2 = ast.get(2);
-		if (arg2.isList()) {
-			IAST xList = (IAST) arg2;
+		if (ast.get(1) instanceof IAST) {
+			fx = F.evalExpandAll(ast.get(1));
+			if (fx.isPlus()) {
+				// Integrate[a_+b_+...,x_] -> Integrate[a,x]+Integrate[b,x]+...
+				return ((IAST) fx).map(Functors.replace1st(F.Integrate(F.Null, ast.get(2))));
+			}
+		}
+
+		if (ast.get(2).isList()) {
+			IAST xList = (IAST) ast.get(2);
 			if (xList.isVector() == 3) {
 				// Integrate[f[x], {x,a,b}]
 				IAST clone = ast.clone();
@@ -100,8 +109,8 @@ public class Integrate extends AbstractFunctionEvaluator implements IConstantHea
 				IExpr temp = F.eval(clone);
 				if (temp.isFree(F.Integrate, true)) {
 					// F(b)-F(a)
-					IExpr Fb = F.eval(temp.replaceAll(F.Rule(xList.get(1), xList.get(3))));
-					IExpr Fa = F.eval(temp.replaceAll(F.Rule(xList.get(1), xList.get(2))));
+					IExpr Fb = F.eval(F.subst(temp, F.Rule(xList.get(1), xList.get(3))));
+					IExpr Fa = F.eval(F.subst(temp, F.Rule(xList.get(1), xList.get(2))));
 					if (!Fb.isFree(F.DirectedInfinity, true) || !Fb.isFree(F.Indeterminate, true)) {
 						PrintStream stream = EvalEngine.get().getOutPrintStream();
 						if (stream == null) {
@@ -123,42 +132,66 @@ public class Integrate extends AbstractFunctionEvaluator implements IConstantHea
 			}
 		}
 
-		if (ast.get(1).isPlus()) {
-			// Integrate[a_+b_+...,x_] -> Integrate[a,x]+Integrate[b,x]+...
-			return ((IAST) ast.get(1)).map(Functors.replace1st(F.Integrate(F.Null, ast.get(2))));
-		}
-		if (arg2.isSymbol()) {
-			if (ast.get(1) instanceof INumber) {
-				// Integrate[x_NumberQ,y_] -> x*y
-				return Times(ast.get(1), arg2);
+		if (ast.get(2).isSymbol()) {
+			final ISymbol symbol = (ISymbol) ast.get(2);
+			if (fx.isNumber()) {
+				// Integrate[x_NumberQ,y_Symbol] -> x*y
+				return Times(fx, symbol);
 			}
-			if (ast.get(1).isFree(arg2, false)) {
-				// Integrate[x_,y_] -> x*y /; FreeQ[x,y]
-				return Times(ast.get(1), arg2);
+			if (fx.isFree(symbol, false)) {
+				// Integrate[x_,y_Symbol] -> x*y /; FreeQ[x,y]
+				return Times(fx, symbol);
 			}
-			if (ast.get(1).equals(arg2)) {
-				// Integrate[x_,x_] -> x^2 / 2
-				return Times(F.C1D2, Power(ast.get(1), F.C2));
+			if (fx.equals(symbol)) {
+				// Integrate[x_,x_Symbol] -> x^2 / 2
+				return Times(F.C1D2, Power(fx, F.C2));
 			}
-			if (ast.get(1) instanceof IAST) {
-				IExpr arg = F.evalExpandAll(ast.get(1));
-				if (!ast.get(1).equals(arg)) {
+			if (fx instanceof IAST) {
+				final IAST arg1 = (IAST) fx;
+				if (arg1.isTimes()) {
+					// Integrate[a_*y_,x_Symbol] -> a*Integrate[y,x] /; FreeQ[a,x]
+					IAST filterCollector = F.Times();
+					IAST restCollector = F.Times();
+					arg1.filter(filterCollector, restCollector, new Predicate<IExpr>() {
+						@Override
+						public boolean apply(IExpr input) {
+							return input.isFree(symbol, true);
+						}
+					});
+					if (filterCollector.size() > 1) {
+						if (restCollector.size() > 1) {
+							if (restCollector.size() == 2) {
+								filterCollector.add(F.Integrate(restCollector.get(1), symbol));
+							} else {
+								filterCollector.add(F.Integrate(restCollector, symbol));
+							}
+						}
+						return filterCollector;
+					}
+				}
+
+				if (!ast.get(1).equals(fx)) {
 					IAST clon = ast.clone();
-					clon.set(1, arg);
+					clon.set(1, fx);
 					return clon;
 				}
-				final IAST arg1 = (IAST) ast.get(1);
+
 				final IExpr header = arg1.head();
 				if (arg1.size() >= 3) {
 					if (header == F.Times || header == F.Power) {
 						if (!arg1.isEvalFlagOn(IAST.IS_DECOMPOSED_PARTIAL_FRACTION) && ast.get(2) instanceof ISymbol) {
-							ISymbol symbol = (ISymbol) ast.get(2);
 							IExpr[] parts = Apart.getFractionalParts(arg1);
 							if (parts != null) {
 								IAST apartPlus = integrateByPartialFractions(parts, symbol);
 								if (apartPlus != null && apartPlus.size() > 1) {
 									if (apartPlus.size() == 2) {
+										if (ast.equals(apartPlus.get(1))) {
+											return null;
+										}
 										return apartPlus.get(1);
+									}
+									if (ast.equals(apartPlus)) {
+										return null;
 									}
 									return apartPlus;
 								}

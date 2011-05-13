@@ -7,6 +7,7 @@ import java.io.Serializable;
 import javax.annotation.Nullable;
 
 import org.matheclipse.core.eval.EvalEngine;
+import org.matheclipse.core.eval.exception.FlowControlException;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
@@ -103,10 +104,7 @@ public class Predicates {
 		public boolean apply(final IExpr arg) {
 			final IAST ast = fAST.clone();
 			ast.add(arg);
-			if (fEngine.evaluate(ast).equals(F.True)) {
-				return true;
-			}
-			return false;
+			return fEngine.evalTrue(ast);
 		}
 
 	}
@@ -174,7 +172,7 @@ public class Predicates {
 			}
 		};
 	}
-	
+
 	/**
 	 * Returns a predicate that evaluates to {@code true} if
 	 * <code>input.isSignedNumber()</code> gives {@code true}.
@@ -189,6 +187,5 @@ public class Predicates {
 			}
 		};
 	}
-	
-	
+
 }

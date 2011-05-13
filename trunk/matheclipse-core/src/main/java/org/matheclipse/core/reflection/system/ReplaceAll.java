@@ -17,13 +17,11 @@ public class ReplaceAll implements IFunctionEvaluator {
 		if (ast.get(2).isListOfLists()) {
 			IAST result = F.List();
 			for (IExpr subList : (IAST) ast.get(2)) {
-				IExpr expr = ast.get(1).replaceAll((IAST) subList);
-				result.add((expr == null) ? ast.get(1) : expr);
+				result.add(F.subst(ast.get(1), (IAST) subList));
 			}
 			return result;
 		}
-		final IExpr result = ast.get(1).replaceAll((IAST) ast.get(2));
-		return (result == null) ? ast.get(1) : result;
+		return F.subst(ast.get(1), (IAST) ast.get(2));
 
 	}
 
@@ -32,5 +30,6 @@ public class ReplaceAll implements IFunctionEvaluator {
 	}
 
 	public void setUp(final ISymbol symbol) {
+		symbol.setAttributes(ISymbol.HOLDREST);
 	}
 }

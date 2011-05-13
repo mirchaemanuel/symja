@@ -91,6 +91,14 @@ public interface IExpr extends Comparable<IExpr>, RingElem<IExpr>, INestedListEl
 	 */
 	public String fullFormString();
 
+	/**
+	 * 
+	 * Get the element at the specified <code>index</code> if this object is of
+	 * type <code>IAST</code>.
+	 * 
+	 * @param index
+	 * @return
+	 */
 	public IExpr getAt(final int index);
 
 	/**
@@ -386,14 +394,14 @@ public interface IExpr extends Comparable<IExpr>, RingElem<IExpr>, INestedListEl
 	 * 
 	 */
 	public boolean isCondition();
-	
+
 	/**
 	 * Test if this expression is the Module function
 	 * <code>Module[&lt;arg1&gt;, &lt;arg2&gt;]</code>
 	 * 
 	 */
 	public boolean isModule();
-	
+
 	/**
 	 * Test if this expression is the function
 	 * <code>Power[&lt;arg1&gt;, &lt;arg2&gt;]</code>
@@ -449,17 +457,19 @@ public interface IExpr extends Comparable<IExpr>, RingElem<IExpr>, INestedListEl
 	public boolean isSinh();
 
 	/**
-	 * Test if this expression is the function <code>Slot[&lt;integer-value&gt;]</code>
+	 * Test if this expression is the function
+	 * <code>Slot[&lt;integer-value&gt;]</code>
 	 * 
 	 */
 	public boolean isSlot();
-	
+
 	/**
-	 * Test if this expression is the function <code>SlotSequence[&lt;integer-value&gt;]</code>
+	 * Test if this expression is the function
+	 * <code>SlotSequence[&lt;integer-value&gt;]</code>
 	 * 
 	 */
 	public boolean isSlotSequence();
-	
+
 	/**
 	 * Test if this expression is a symbol
 	 * 
@@ -556,7 +566,7 @@ public interface IExpr extends Comparable<IExpr>, RingElem<IExpr>, INestedListEl
 	 *         possible.
 	 */
 	public IExpr replaceAll(final IAST astRules);
-	
+
 	public IExpr replacePart(final IAST astRules);
 
 	/**
@@ -585,7 +595,7 @@ public interface IExpr extends Comparable<IExpr>, RingElem<IExpr>, INestedListEl
 	public IExpr replaceRepeated(final IAST astRules);
 
 	public IExpr replaceSlots(final IAST astSlots);
-	
+
 	/**
 	 * Signum functionality is used in JAS toString() method, don't use it as math
 	 * signum function.

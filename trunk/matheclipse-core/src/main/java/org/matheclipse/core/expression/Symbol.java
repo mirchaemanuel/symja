@@ -266,18 +266,12 @@ public class Symbol extends ExprImpl implements ISymbol {
 	/** {@inheritDoc} */
 	public IPatternMatcher<IExpr> putDownRule(ISymbol symbol, final boolean equalRule, final IExpr leftHandSide,
 			final IExpr rightHandSide) {
-		return putDownRule(symbol, equalRule, leftHandSide, rightHandSide, null, null, DEFAULT_RULE_PRIORITY);
-	}
-
-	/** {@inheritDoc} */
-	public IPatternMatcher<IExpr> putDownRule(ISymbol symbol, final boolean equalRule, final IExpr leftHandSide,
-			final IExpr rightHandSide, final IExpr condition, IExpr moduleInitializer) {
-		return putDownRule(symbol, equalRule, leftHandSide, rightHandSide, condition, null, DEFAULT_RULE_PRIORITY);
+		return putDownRule(symbol, equalRule, leftHandSide, rightHandSide, DEFAULT_RULE_PRIORITY);
 	}
 
 	/** {@inheritDoc} */
 	public PatternMatcher putDownRule(ISymbol setSymbol, final boolean equalRule, final IExpr leftHandSide,
-			final IExpr rightHandSide, final IExpr condition, IExpr moduleInitializer, final int priority) {
+			final IExpr rightHandSide, final int priority) {
 		EvalEngine engine = EvalEngine.get();
 		if (!engine.isPackageMode()) {
 			if (Config.SERVER_MODE && (fSymbolName.charAt(0) != '$')) {
@@ -286,7 +280,7 @@ public class Symbol extends ExprImpl implements ISymbol {
 
 			engine.addModifiedVariable(this);
 		}
-		return fRulesData.putDownRule(setSymbol, equalRule, leftHandSide, rightHandSide, condition, null, priority);
+		return fRulesData.putDownRule(setSymbol, equalRule, leftHandSide, rightHandSide, priority);
 	}
 
 	/** {@inheritDoc} */
@@ -306,6 +300,7 @@ public class Symbol extends ExprImpl implements ISymbol {
 	/** {@inheritDoc} */
 	public void setEvaluator(final IEvaluator evaluator) {
 		fEvaluator = evaluator;
+		evaluator.setUp(this);
 	}
 
 	/**
@@ -418,21 +413,21 @@ public class Symbol extends ExprImpl implements ISymbol {
 		if (symbolsAsFactoryMethod) {
 			if (Character.isUpperCase(fSymbolName.charAt(0))) {
 				String alias = F.PREDEFINED_INTERNAL_STRINGS.get(fSymbolName);
-				if (alias!=null){
-					if (alias.contains("::")){
+				if (alias != null) {
+					if (alias.contains("::")) {
 						return "$s(\"" + alias + "\")";
 					}
 					return alias;
 				}
-//				if (fSymbolName.equals("Pi")) {
-//					return "Pi";
-//				} else if (fSymbolName.equals("E")) {
-//					return "E";
-//				} else if (fSymbolName.equals("False")) {
-//					return "False";
-//				} else if (fSymbolName.equals("True")) {
-//					return "True";
-//				}
+				// if (fSymbolName.equals("Pi")) {
+				// return "Pi";
+				// } else if (fSymbolName.equals("E")) {
+				// return "E";
+				// } else if (fSymbolName.equals("False")) {
+				// return "False";
+				// } else if (fSymbolName.equals("True")) {
+				// return "True";
+				// }
 			}
 			return "$s(\"" + fSymbolName + "\")";
 		}

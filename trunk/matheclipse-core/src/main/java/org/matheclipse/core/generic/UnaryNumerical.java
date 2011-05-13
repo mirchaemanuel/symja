@@ -33,7 +33,7 @@ public class UnaryNumerical implements Function<IExpr, IExpr>, DifferentiableUni
 	}
 
 	public IExpr apply(final IExpr firstArg) {
-		return F.evaln(fFunction.replaceAll(F.Rule(fVariable, firstArg)));
+		return F.evaln(F.subst(fFunction, F.Rule(fVariable, firstArg)));
 	}
 
 	public double value(double x) {

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.matheclipse.core.eval.EvalEngine;
+import org.matheclipse.core.eval.exception.ConditionException;
 import org.matheclipse.core.generic.Predicates;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.IPattern;
@@ -44,7 +45,7 @@ public class Pattern extends ExprImpl implements IPattern {
 		Pattern p = new Pattern();
 		p.fSymbol = symbol;
 		p.fCondition = check;
-		p.fIndex = 0;
+//		p.fIndex = 0;
 		p.fDefault = def;
 		return p;
 	}
@@ -58,7 +59,7 @@ public class Pattern extends ExprImpl implements IPattern {
 		Pattern p = new Pattern();
 		p.fSymbol = symbol;
 		p.fCondition = check;
-		p.fIndex = 0;
+//		p.fIndex = 0;
 		return p;
 	}
 
@@ -66,7 +67,7 @@ public class Pattern extends ExprImpl implements IPattern {
 		Pattern p = new Pattern();
 		p.fSymbol = symbol;
 		p.fCondition = null;
-		p.fIndex = 0;
+//		p.fIndex = 0;
 		return p;
 	}
 
@@ -80,7 +81,7 @@ public class Pattern extends ExprImpl implements IPattern {
 	 * 
 	 * @see org.matheclipse.core.patternmatching.PatternMatcher
 	 */
-	int fIndex = 0;
+//	int fIndex = 0;
 
 	/**
 	 * The associated symbol for this pattern
@@ -130,9 +131,9 @@ public class Pattern extends ExprImpl implements IPattern {
 	/**
 	 * @return
 	 */
-	public int getIndex() {
-		return fIndex;
-	}
+//	public int getIndex() {
+//		return fIndex;
+//	}
 
 	/**
 	 * @return
@@ -165,9 +166,9 @@ public class Pattern extends ExprImpl implements IPattern {
 	// return fSymbol.toString().equals(str);
 	// }
 
-	public void setIndex(final int i) {
-		fIndex = i;
-	}
+//	public void setIndex(final int i) {
+//		fIndex = i;
+//	}
 
 	// public String toString() {
 	// if (fCheck == null) {
@@ -385,10 +386,7 @@ public class Pattern extends ExprImpl implements IPattern {
 			traceMode = engine.isTraceMode();
 			engine.setTraceMode(false);
 			final Predicate<IExpr> matcher = Predicates.isTrue(engine, fCondition);
-			if (matcher.apply(expr)) {
-				return true;
-			}
-			return false;
+			return matcher.apply(expr);
 		} finally {
 			if (traceMode) {
 				engine.setTraceMode(true);

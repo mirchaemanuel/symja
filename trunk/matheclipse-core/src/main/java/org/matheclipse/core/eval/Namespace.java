@@ -16,26 +16,25 @@ public class Namespace {
 	ArrayList<Namespace> fNamespaces;
 	ArrayList<String> fNamespacesString;
 	Map<String, Namespace> fPackageNamespaceMap;
-	
+
 	public Namespace() {
 		fNamespaces = new ArrayList<Namespace>();
 		fNamespacesString = new ArrayList<String>();
 		fPackageNamespaceMap = new HashMap<String, Namespace>();
 	}
 
-    /**
-     * Adds a Java packagename to the namespace
-     * 
-     * @param arg
-     *          the name of a Java package which should be add to this namespace
-     * @return
-     */
-	public boolean add(final String arg)
-	{
-	    fPackageNamespaceMap.put(arg, null);
-	    return fNamespacesString.add(arg);
+	/**
+	 * Adds a Java packagename to the namespace
+	 * 
+	 * @param arg
+	 *          the name of a Java package which should be add to this namespace
+	 * @return
+	 */
+	public boolean add(final String arg) {
+		fPackageNamespaceMap.put(arg, null);
+		return fNamespacesString.add(arg);
 	}
-	
+
 	/**
 	 * Adds a Java packagename to the namespace
 	 * 
@@ -44,7 +43,7 @@ public class Namespace {
 	 * @return
 	 */
 	public boolean add(final Namespace arg) {
-	    fPackageNamespaceMap.put(arg.getClass().getPackage().getName(), arg);
+		fPackageNamespaceMap.put(arg.getClass().getPackage().getName(), arg);
 		return fNamespaces.add(arg);
 	}
 
@@ -57,43 +56,39 @@ public class Namespace {
 	 *          the symbol which should be set-up
 	 */
 	@SuppressWarnings("unchecked")
-    public void setEvaluator(final ISymbol symbol) {
+	public void setEvaluator(final ISymbol symbol) {
 
-		for (Map.Entry<String, Namespace> namespaceEntry : fPackageNamespaceMap.entrySet())
-		{
+		for (Map.Entry<String, Namespace> namespaceEntry : fPackageNamespaceMap.entrySet()) {
 			Class clazz;
 			try {
-			    if (namespaceEntry.getValue() == null)
-			    {
-			        clazz = Class.forName(namespaceEntry.getKey() + "." + symbol.toString());
-			    }
-			    else
-			    {
-			        clazz = Class.forName(namespaceEntry.getKey() + "." + symbol.toString(), true, namespaceEntry.getValue().getClass().getClassLoader());
-			    }
+				if (namespaceEntry.getValue() == null) {
+					clazz = Class.forName(namespaceEntry.getKey() + "." + symbol.toString());
+				} else {
+					clazz = Class.forName(namespaceEntry.getKey() + "." + symbol.toString(), true, namespaceEntry.getValue().getClass()
+							.getClassLoader());
+				}
 			} catch (final ClassNotFoundException e) {
-			    // not a predefined function
-			    clazz = null;
+				// not a predefined function
+				clazz = null;
 			} catch (final NoClassDefFoundError e) {
-			    // wrong written functionnames (i.e. PLot, PROduct)
-			    // not a predefined function
-			    clazz = null;
+				// wrong written functionnames (i.e. PLot, PROduct)
+				// not a predefined function
+				clazz = null;
 			}
 
 			if (clazz == null) {
 				continue;
 			}
 
-			IEvaluator module;
 			try {
-				module = (IEvaluator) clazz.newInstance();
+				IEvaluator module = (IEvaluator) clazz.newInstance();
 				// a predefined function
 				// use reflection to setUp this symbol
 				symbol.setEvaluator(module);
-				module.setUp(symbol);
+//				module.setUp(symbol);
 				return;
 			} catch (final Throwable se) {
-				if (Config.DEBUG) {
+				if (Config.SHOW_STACKTRACE) {
 					se.printStackTrace();
 				}
 				continue;
@@ -102,7 +97,7 @@ public class Namespace {
 	}
 
 	@SuppressWarnings("unchecked")
-    public void setEquals(final Symbol symbol) {
+	public void setEquals(final Symbol symbol) {
 		String namespace;
 		for (int i = fNamespaces.size() - 1; i >= 0; i--) {
 			namespace = fNamespaces.get(i) + symbol.toString();
@@ -121,10 +116,10 @@ public class Namespace {
 				// use reflection to setUp this symbol
 				symbol.setEvaluator(module);
 				// module.setUpXML(symbol);
-				module.setUp(symbol);
+//				module.setUp(symbol);
 				return;
 			} catch (final Throwable se) {
-				if (Config.DEBUG) {
+				if (Config.SHOW_STACKTRACE) {
 					se.printStackTrace();
 				}
 				continue;

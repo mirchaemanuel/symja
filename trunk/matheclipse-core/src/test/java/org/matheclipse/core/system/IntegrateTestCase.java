@@ -22,6 +22,7 @@ public class IntegrateTestCase extends AbstractTestCase {
 
 		check("Apart[1/(x^3+1)]", "(-1/3*x+2/3)*(x^2-x+1)^(-1)+1/3*(x+1)^(-1)");
 		check("Integrate[1/(x^5+x-7),x]", "Integrate[(x^5+x-7)^(-1),x]");
+		check("Integrate[1/(x^5-7),x]", "Integrate[(x^5-7)^(-1),x]");
 		check("Integrate[1/(x-2),x]", "Log[x-2]");
 		check("Integrate[(x-2)^(-2),x]", "(-1)*(x-2)^(-1)");
 		check("Integrate[(x-2)^(-3),x]", "(-1/2)*(x-2)^(-2)");
@@ -83,6 +84,7 @@ public class IntegrateTestCase extends AbstractTestCase {
 		check("Integrate[48*(x^2+2)^(-3),x]", "9/2*x*(x^2+2)^(-1)+6*x*(x^2+2)^(-2)+9/2*ArcTan[x*(1/2)^(1/2)]*(1/2)^(1/2)");
 		check("Integrate[-x^(-2),x]", "x^(-1)");
 		check("Integrate[x^(-1),x]", "Log[x]");
+		check("Integrate[Exp[-x^4],x]", "(-1/4)*x*Gamma[1/4,x^4]*x^4^(-1/4)");
 
 	}
 

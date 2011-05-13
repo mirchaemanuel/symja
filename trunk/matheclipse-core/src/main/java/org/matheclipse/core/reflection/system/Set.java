@@ -1,6 +1,7 @@
 package org.matheclipse.core.reflection.system;
 
 import org.matheclipse.core.eval.EvalEngine;
+import org.matheclipse.core.eval.exception.ConditionException;
 import org.matheclipse.core.eval.exception.ReturnException;
 import org.matheclipse.core.eval.exception.RuleCreationError;
 import org.matheclipse.core.eval.exception.Validate;
@@ -33,23 +34,25 @@ public class Set implements IFunctionEvaluator, ICreatePatternMatcher {
 			}
 		}
 		Object[] result;
-		if (rightHandSide.isCondition()) {
-			result = createPatternMatcher(leftHandSide, ((IAST) rightHandSide).get(1), ((IAST) rightHandSide).get(2), null);
-		} else if (rightHandSide.isModule()) {
-			IAST module = (IAST) rightHandSide;
-			if (module.get(2).isCondition()) {
-				IAST condition = (IAST) module.get(2);
-				result = createPatternMatcher(leftHandSide, condition.get(1), condition.get(2), module.get(1));
-			} else {
-				result = createPatternMatcher(leftHandSide, rightHandSide, null, null);
-			}
-		} else {
-			result = createPatternMatcher(leftHandSide, rightHandSide, null, null);
-		}
+		// if (rightHandSide.isCondition()) {
+		// result = createPatternMatcher(leftHandSide, ((IAST)
+		// rightHandSide).get(1), ((IAST) rightHandSide).get(2), null);
+		// } else if (rightHandSide.isModule()) {
+		// IAST module = (IAST) rightHandSide;
+		// if (module.get(2).isCondition()) {
+		// IAST condition = (IAST) module.get(2);
+		// result = createPatternMatcher(leftHandSide, condition.get(1),
+		// condition.get(2), module.get(1));
+		// } else {
+		// result = createPatternMatcher(leftHandSide, rightHandSide, null, null);
+		// }
+		// } else {
+		result = createPatternMatcher(leftHandSide, rightHandSide);
+		// }
 		return (IExpr) result[1];
 	}
 
-	public Object[] createPatternMatcher(IExpr leftHandSide, IExpr rightHandSide, IExpr condition, IExpr moduleInitializer)
+	public Object[] createPatternMatcher(IExpr leftHandSide, IExpr rightHandSide)
 			throws RuleCreationError {
 		final Object[] result = new Object[2];
 		final EvalEngine engine = EvalEngine.get();
@@ -58,6 +61,8 @@ public class Set implements IFunctionEvaluator, ICreatePatternMatcher {
 
 		try {
 			rightHandSide = engine.evaluate(rightHandSide);
+		} catch (final ConditionException e) {
+			System.out.println("Condition[] in right-hand-side of Set[]");
 		} catch (final ReturnException e) {
 			rightHandSide = e.getValue();
 		}
@@ -71,14 +76,14 @@ public class Set implements IFunctionEvaluator, ICreatePatternMatcher {
 				lhsSymbol.set(rightHandSide);
 				return result;
 			} else {
-				result[0] = lhsSymbol.putDownRule(F.Set, true, leftHandSide, rightHandSide, condition, moduleInitializer);
+				result[0] = lhsSymbol.putDownRule(F.Set, true, leftHandSide, rightHandSide);
 				return result;
 			}
 		}
 
 		if (leftHandSide instanceof IAST) {
 			final ISymbol lhsSymbol = ((IAST) leftHandSide).topHead();
-			result[0] = lhsSymbol.putDownRule(F.Set, false, leftHandSide, rightHandSide, condition, moduleInitializer);
+			result[0] = lhsSymbol.putDownRule(F.Set, false, leftHandSide, rightHandSide);
 			return result;
 		}
 

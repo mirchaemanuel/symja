@@ -25,16 +25,11 @@ public class PatternMatcherAndInvoker extends PatternMatcher {
 
 	@Override
 	public Object clone() {
-		// try {
 		PatternMatcherAndInvoker v = (PatternMatcherAndInvoker) super.clone();
 		v.fMethod = fMethod;
 		v.fTypes = fTypes;
 		v.fInstance = fInstance;
 		return v;
-		// } catch (CloneNotSupportedException e) {
-		// // this shouldn't happen, since we are Cloneable
-		// throw new InternalError();
-		// }
 	}
 
 	/**
@@ -88,36 +83,10 @@ public class PatternMatcherAndInvoker extends PatternMatcher {
 		}
 	}
 
-	/**
-	 * Match the (left-hand-side) pattern with the given expression. If true
-	 * evaluate the right-hand-side for the determined values of the patterns
-	 * 
-	 * @param ee
-	 * @param evalExpr
-	 * @return
-	 */
-	// public IExpr eval(final IExpr leftHandSide) {
-	// // if(fRightHandSide.isAST("Condition")) {
-	// // System.out.println("2:"+fRightHandSide);
-	// // }
-	// if (fPatternCounter == 0) {
-	// // no patterns found match equally:
-	// if (fLeftHandSide.equals(leftHandSide)) {
-	// return fRightHandSide;
-	// }
-	// return null;
-	// }
-	// initPattern();
-	// if (matchExpr(fLeftHandSide, leftHandSide) && checkCondition()) {
-	// return EvaluationSupport.substituteLocalVariables(fRightHandSide,
-	// fPatternSymbolsArray, fPatternValuesArray);
-	// }
-	// return null;
-	// }
 	@Override
 	public IExpr eval(final IExpr leftHandSide) {
 		IExpr result = null;
-		if (fPatternCounter == 0 && fLeftHandSide.equals(leftHandSide)) {
+		if (isRuleWithoutPatterns() && fLeftHandSide.equals(leftHandSide)) {
 			if (fTypes.length != 0) {
 				return null;
 			}
@@ -138,20 +107,13 @@ public class PatternMatcherAndInvoker extends PatternMatcher {
 			}
 			return result;
 		}
-		if (fTypes.length != fPatternSymbolsArray.size()) {
+		if (fTypes.length != fPatternMap.size()) {
 			return null;
 		}
-		initPattern();
+		fPatternMap.initPattern();
 		if (matchExpr(fLeftHandSide, leftHandSide) && checkCondition()) {
 
-			IExpr arg;
-			List<IExpr> args = new ArrayList<IExpr>(fPatternSymbolsArray.size());
-			for (int i = 0; i < fPatternSymbolsArray.size(); i++) {
-				arg = fPatternValuesArray[i];
-				if (arg == null)
-					return null;
-				args.add(arg);
-			}
+			List<IExpr> args = fPatternMap.getValuesAsList();
 			result = null;
 			try {
 				result = (IExpr) fMethod.invoke(fInstance, args.toArray());
@@ -184,9 +146,9 @@ public class PatternMatcherAndInvoker extends PatternMatcher {
 
 		return false;
 	}
-	
+
 	@Override
 	public int hashCode() {
-		return super.hashCode()*47;
+		return super.hashCode() * 47;
 	}
 }
