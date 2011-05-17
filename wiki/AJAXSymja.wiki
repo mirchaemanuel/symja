@@ -96,6 +96,17 @@ After installing the package with the *Save package* button the new command
 }}}
 can be evaluated.
 
-== Development ==
-Browse source code in SVN:
+= Google Appengine Development =
+Install the Google Plugin for Eclipse as described here:
+  * [http://code.google.com/intl/de-DE/appengine/docs/java/tools/eclipse.html Using the Google Plugin for Eclipse]
+
+Checkout the *symja.ajax* source code from SVN:
   * [http://code.google.com/p/symja/source/browse/#svn/trunk/symja.ajax svn/trunk/symja.ajax]
+
+Change the *symja.ajax* configuration:
+  * open: symja.ajax/war/WEB-INF/appengine-web.xml
+  * change the *your application ID* to the ID you configured in your Google Appengine Account
+  * modify the other configuration options as desired
+
+
+Select menu _Run->Run As->Web Application_ to run the Google Web Application locally.
