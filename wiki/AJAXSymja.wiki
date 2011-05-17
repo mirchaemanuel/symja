@@ -97,6 +97,8 @@ After installing the package with the *Save package* button the new command
 can be evaluated.
 
 = Google Appengine Development =
+Before starting, please read the [http://code.google.com/appengine/docs/java/gettingstarted/ Google Appengine for Java Introduction]
+
 Install the Google Plugin for Eclipse as described here:
   * [http://code.google.com/intl/de-DE/appengine/docs/java/tools/eclipse.html Using the Google Plugin for Eclipse]
 
