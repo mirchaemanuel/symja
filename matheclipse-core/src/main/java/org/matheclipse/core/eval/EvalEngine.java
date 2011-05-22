@@ -305,11 +305,19 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 		}
 	}
 
+	/**
+	 * Test if <code>expr</code> could be evaluated to <code>True</code>. If a
+	 * <code>org.matheclipse.parser.client.math.MathException</code> occurs during evaluation,
+	 * return <code>False</code>.
+	 * 
+	 * @param expr
+	 * @return
+	 */
 	public final boolean evalTrue(final IExpr expr) {
 		try {
 			return evaluate(expr).equals(F.True);
 		} catch (MathException fce) {
-			if (Config.SHOW_STACKTRACE) {
+			if (Config.DEBUG) {
 				fce.printStackTrace();
 			}
 			return false;

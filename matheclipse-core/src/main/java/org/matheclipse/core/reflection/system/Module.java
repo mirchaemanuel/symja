@@ -3,6 +3,7 @@ package org.matheclipse.core.reflection.system;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.matheclipse.basic.Config;
 import org.matheclipse.core.eval.EvalEngine;
 import org.matheclipse.core.eval.exception.Validate;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
@@ -11,6 +12,7 @@ import org.matheclipse.core.generic.Functors;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.ISymbol;
+import org.matheclipse.parser.client.math.MathException;
 
 public class Module extends AbstractFunctionEvaluator {
 	public Module() {
@@ -38,8 +40,8 @@ public class Module extends AbstractFunctionEvaluator {
 	}
 
 	/**
-	 * Check the (possible nested) module condition in pattern matcher without evaluating
-	 * a result.
+	 * Check the (possible nested) module condition in pattern matcher without
+	 * evaluating a result.
 	 * 
 	 * @param arg1
 	 * @param arg2
@@ -165,7 +167,15 @@ public class Module extends AbstractFunctionEvaluator {
 						oldSymbol = (ISymbol) setFun.get(1);
 						newSymbol = F.$s(oldSymbol.toString() + varAppend);
 						variables.put(oldSymbol, newSymbol);
-						newSymbol.pushLocalVariable(engine.evaluate(setFun.get(2)));
+						IExpr rightHandSide = setFun.get(2);
+						try {
+							rightHandSide = engine.evaluate(rightHandSide);
+						} catch (MathException me) {
+							if (Config.DEBUG) {
+								me.printStackTrace();
+							}
+						}
+						newSymbol.pushLocalVariable(rightHandSide);
 					}
 				}
 			}

@@ -12,6 +12,7 @@ import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.ISymbol;
 import org.matheclipse.core.patternmatching.PatternMatcher;
+import org.matheclipse.parser.client.math.MathException;
 
 public class Set implements IFunctionEvaluator, ICreatePatternMatcher {
 	public Set() {
@@ -65,7 +66,7 @@ public class Set implements IFunctionEvaluator, ICreatePatternMatcher {
 			System.out.println("Condition[] in right-hand-side of Set[]");
 		} catch (final ReturnException e) {
 			rightHandSide = e.getValue();
-		}
+		}  
 
 		result[0] = null; // IPatternMatcher
 		result[1] = rightHandSide;

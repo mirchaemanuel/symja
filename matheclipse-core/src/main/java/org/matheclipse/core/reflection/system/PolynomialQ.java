@@ -2,19 +2,17 @@ package org.matheclipse.core.reflection.system;
 
 import static org.matheclipse.core.expression.F.List;
 
-import org.matheclipse.basic.Config;
 import org.matheclipse.core.convert.JASConvert;
 import org.matheclipse.core.eval.exception.JASConversionException;
 import org.matheclipse.core.eval.exception.WrongNumberOfArguments;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
 import org.matheclipse.core.expression.ASTRange;
+import org.matheclipse.core.expression.ExprRingFactory;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.ISymbol;
 import org.matheclipse.generic.interfaces.BiPredicate;
-
-import edu.jas.arith.BigRational;
 
 /**
  * Returns <code>True</code>, if the given expression is a polynoomial object
@@ -48,11 +46,10 @@ public class PolynomialQ extends AbstractFunctionEvaluator implements BiPredicat
 		try {
 			IExpr expr = F.evalExpandAll(polnomialExpr);
 			ASTRange r = new ASTRange(variables, 1);
-			JASConvert<BigRational> jas = new JASConvert<BigRational>(r.toList(), BigRational.ZERO);
-			// GenPolynomial<BigRational> poly = jas.expr2Poly(expr);
+			JASConvert<IExpr> jas = new JASConvert<IExpr>(r.toList(), new ExprRingFactory());
 			return jas.expr2JAS(expr) != null;
 		} catch (JASConversionException e) {
-			// exception will be thrown if the expression is not JAS a polynomial
+			// exception will be thrown if the expression is not a JAS polynomial
 		}
 		return false;
 	}

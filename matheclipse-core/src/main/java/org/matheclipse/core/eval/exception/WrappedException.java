@@ -4,8 +4,13 @@ import org.matheclipse.parser.client.math.MathException;
 
 public class WrappedException extends MathException {
 
-	Throwable fThrowable;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 884091932172509642L;
 
+	Throwable fThrowable;
+	
 	public WrappedException(Throwable throwable) {
 		fThrowable = throwable;
 	}
