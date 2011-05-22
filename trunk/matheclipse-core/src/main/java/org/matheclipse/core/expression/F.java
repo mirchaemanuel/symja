@@ -1363,6 +1363,14 @@ public class F {
 		return binary(Or, a0, a1);
 	}
 
+	public static IAST Part() {
+		return function(Part);
+	}
+
+	public static IAST Part(final IExpr a0) {
+		return unary(Part, a0);
+	}
+
 	public static IAST Part(final IExpr a0, final IExpr a1) {
 		return binary(Part, a0, a1);
 	}

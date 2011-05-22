@@ -198,10 +198,10 @@ public class PatternMatcherAndEvaluator extends PatternMatcher implements Serial
 
 		fPatternMap.initPattern();
 		if (matchExpr(fLeftHandSide, leftHandSide)) {
-			// if (fLeftHandSide.isAST(F.Integrate)) {
-			// System.out.println(fLeftHandSide.toString());
-			// System.out.println("  :> " + fRightHandSide.toString());
-			// }
+			 if (fLeftHandSide.isAST(F.Integrate)) {
+			 System.out.println(fLeftHandSide.toString());
+			 System.out.println("  :> " + fRightHandSide.toString());
+			 }
 			IExpr result = fPatternMap.substitutePatternSymbols(fRightHandSide);
 			try {
 				return F.eval(result);

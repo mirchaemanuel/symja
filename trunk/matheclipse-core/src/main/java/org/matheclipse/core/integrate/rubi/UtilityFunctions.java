@@ -32,13 +32,13 @@ public class UtilityFunctions {
 	 * @return
 	 */
 	public static IAST Int(final IExpr a0, final IExpr a1) {
-		// Integrate.setAttributes(ISymbol.CONSOLE_OUTPUT);
+		Integrate.setAttributes(ISymbol.CONSOLE_OUTPUT);
 		return binary(Integrate, a0, a1);
 	}
 
 	public static ISymbol $sDBG(final String symbolName) {
 		ISymbol sym = $s(symbolName);
-		// sym.setAttributes(ISymbol.CONSOLE_OUTPUT);
+		sym.setAttributes(ISymbol.CONSOLE_OUTPUT);
 		return sym;
 	}
 
@@ -139,12 +139,12 @@ public class UtilityFunctions {
 
 	public static IAST Distribute(final IExpr a) {
 		// TODO fix this
-		return unary($s("Distribute"), a);
+		return unary($sDBG("Distribute"), a);
 	}
 
 	public static IAST FactorSquareFreeList(final IExpr a) {
 		// TODO fix this
-		return unary($s("FactorSquareFreeList"), a);
+		return unary($sDBG("FactorSquareFreeList"), a);
 	}
 
 	public static IAST Reverse(final IExpr a) {
@@ -169,12 +169,12 @@ public class UtilityFunctions {
 
 	public static IAST Exponent(final IExpr a0, final IExpr a1, final IExpr a2) {
 		// TODO
-		return ternary($s("Exponent"), a0, a1, a2);
+		return ternary($sDBG("Exponent"), a0, a1, a2);
 	}
 
 	public static IAST LCM(final IExpr a0, final IExpr a1) {
 		// TODO
-		return binary($s("LCM"), a0, a1);
+		return binary($sDBG("LCM"), a0, a1);
 	}
 
 	public static IAST Order(final IExpr a0, final IExpr a1) {
@@ -194,12 +194,7 @@ public class UtilityFunctions {
 
 	public static IAST TrigExpand(final IExpr a0) {
 		// TODO
-		return unary($s("TrigExpand"), a0);
-	}
-
-	public static IAST TrigExpand(final IExpr a0, final IExpr a1) {
-		// TODO
-		return binary($s("TrigExpand"), a0, a1);
+		return unary($sDBG("TrigExpand"), a0);
 	}
 
 	public static IAST While(final IExpr a0, final IExpr a1) {
@@ -244,7 +239,7 @@ public class UtilityFunctions {
 
 	public static IAST ReplacePart(final IExpr a0, final IExpr a1, final IExpr a2) {
 		// TODO
-		return ternary($s("ReplacePart"), a0, a1, a2);
+		return ternary($sDBG("ReplacePart"), a0, a1, a2);
 	}
 
 	public static IAST Do(final IExpr a0, final IExpr a1) {
@@ -262,15 +257,15 @@ public class UtilityFunctions {
 		return unary($s("Sow"), a);
 	}
 
-	public static IAST Unprotect(final IExpr a) {
-		// TODO fix this
-		return unary($s("Unprotect"), a);
-	}
+	// public static IAST Unprotect(final IExpr a) {
+	// // TODO fix this
+	// return unary($s("Unprotect"), a);
+	// }
 
-	public static IAST DownValues(final IExpr a) {
-		// TODO fix this
-		return unary($s("DownValues"), a);
-	}
+	// public static IAST DownValues(final IExpr a) {
+	// // TODO fix this
+	// return unary($s("DownValues"), a);
+	// }
 
 	public static IAST Length(final IExpr a) {
 		// TODO fix this
@@ -279,7 +274,7 @@ public class UtilityFunctions {
 
 	public static IAST Scan(final IExpr a0, final IExpr a1) {
 		// TODO
-		return binary($s("Scan"), a0, a1);
+		return binary($sDBG("Scan"), a0, a1);
 	}
 
 	public static IAST ArcCoth(final IExpr a) {
@@ -288,7 +283,7 @@ public class UtilityFunctions {
 	}
 
 	public static IAST Coefficient(final IExpr a0, final IExpr a1, final IExpr a2) {
-		return ternary($s("Coefficient"), a0, a1, a2);
+		return ternary($sDBG("Coefficient"), a0, a1, a2);
 	}
 
 	public static IAST CosIntegral(final IExpr a) {
@@ -305,7 +300,7 @@ public class UtilityFunctions {
 	}
 
 	public static IAST Exponent(final IExpr a0, final IExpr a1) {
-		return binary($s("Exponent"), a0, a1);
+		return binary($sDBG("Exponent"), a0, a1);
 	}
 
 	public static IAST ArcCsc(final IExpr a) {
@@ -339,15 +334,15 @@ public class UtilityFunctions {
 	}
 
 	public static IAST PolynomialQ(final IExpr a0, final IExpr a1) {
-		return binary($s("PolynomialQ"), a0, a1);
+		return binary($sDBG("PolynomialQ"), a0, a1);
 	}
 
 	public static IAST SameQ(final IExpr a0, final IExpr a1) {
-		return binary($s("SameQ"), a0, a1);
+		return binary($sDBG("SameQ"), a0, a1);
 	}
 
 	public static IAST UnsameQ(final IExpr a0, final IExpr a1) {
-		return binary($s("UnsameQ"), a0, a1);
+		return binary($sDBG("UnsameQ"), a0, a1);
 	}
 
 	public static IAST SinIntegral(final IExpr a) {

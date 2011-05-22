@@ -1608,12 +1608,8 @@ public class SystemTestCase extends AbstractTestCase {
 
 	public void testSystem276() {
 		check("{10,9,8,7}[[4]]", "7");
-		// this should now throw an exception
 	}
 
-	public void testSystem277() {
-		check("{10,9,8,7}[[5]]", "{10,9,8,7}[[5]]");
-	}
 
 	public void testSystem278() {
 		check("{10,9,8,7}[[1]]", "10");
@@ -1621,7 +1617,6 @@ public class SystemTestCase extends AbstractTestCase {
 
 	public void testSystem279() {
 		check("{10,9,8,7}[[0]]", "List");
-
 	}
 
 	public void testSystem280() {
@@ -1943,7 +1938,7 @@ public class SystemTestCase extends AbstractTestCase {
 	}
 
 	public void testSystem348() {
-		check("PolynomialQ[13 x^4 y^7+a^7*x, {x,y}]", "False");
+		check("PolynomialQ[13 x^4 y^7+a^7*x, {x,y}]", "True");
 	}
 
 	public void testSystem349() {
@@ -1952,7 +1947,7 @@ public class SystemTestCase extends AbstractTestCase {
 	}
 
 	public void testSystem350() {
-		check("PolynomialQ[(2 + a)^2 (a - b - c^2)^2, a]", "False");
+		check("PolynomialQ[(2 + a)^2 (a - b - c^2)^2, a]", "True");
 		check("PolynomialQ[(2 + a)^2 (a - b - c^2)^2, {a,b,c}]", "True");
 	}
 

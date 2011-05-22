@@ -49,9 +49,9 @@ public class UtilityFunctionCtors {
 		return unary($sDBG(INTEGRATE_PREFIX + "CalculusQ"), a0);
 	}
 
-	public static IAST ClearDownValues(final IExpr a0) {
-		return unary($sDBG(INTEGRATE_PREFIX + "ClearDownValues"), a0);
-	}
+	// public static IAST ClearDownValues(final IExpr a0) {
+	// return unary($sDBG(INTEGRATE_PREFIX + "ClearDownValues"), a0);
+	// }
 
 	public static IAST CommonFactors(final IExpr a0) {
 		return unary($sDBG(INTEGRATE_PREFIX + "CommonFactors"), a0);
@@ -507,9 +507,9 @@ public class UtilityFunctionCtors {
 		return unary($sDBG(INTEGRATE_PREFIX + "MostMainFactorPosition"), a0);
 	}
 
-	public static IAST MoveDownValues(final IExpr a0, final IExpr a1) {
-		return binary($sDBG(INTEGRATE_PREFIX + "MoveDownValues"), a0, a1);
-	}
+	// public static IAST MoveDownValues(final IExpr a0, final IExpr a1) {
+	// return binary($sDBG(INTEGRATE_PREFIX + "MoveDownValues"), a0, a1);
+	// }
 
 	public static IAST NegQ(final IExpr a0) {
 		return unary($sDBG(INTEGRATE_PREFIX + "NegQ"), a0);
@@ -755,9 +755,9 @@ public class UtilityFunctionCtors {
 		return unary($sDBG(INTEGRATE_PREFIX + "Second"), a0);
 	}
 
-	public static IAST SetDownValues(final IExpr a0, final IExpr a1) {
-		return binary($sDBG(INTEGRATE_PREFIX + "SetDownValues"), a0, a1);
-	}
+	// public static IAST SetDownValues(final IExpr a0, final IExpr a1) {
+	// return binary($sDBG(INTEGRATE_PREFIX + "SetDownValues"), a0, a1);
+	// }
 
 	public static IAST Simp(final IExpr a0) {
 		return unary($sDBG(INTEGRATE_PREFIX + "Simp"), a0);

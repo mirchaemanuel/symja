@@ -96,6 +96,7 @@ public class JASConvert<C extends RingElem<C>> {
 		try {
 			return expr2Poly(exprPoly);
 		} catch (Exception ae) {
+			// ae.printStackTrace();
 			throw new JASConversionException();
 		}
 	}
@@ -114,7 +115,7 @@ public class JASConvert<C extends RingElem<C>> {
 			final IAST ast = (IAST) exprPoly;
 			GenPolynomial<C> result = fPolyFactory.getZERO();
 			GenPolynomial<C> p = fPolyFactory.getZERO();
-			if (ast.isASTSizeGE(F.Plus, 2)) {
+			if (ast.isPlus()) {
 				IExpr expr = ast.get(1);
 				result = expr2Poly(expr);
 				for (int i = 2; i < ast.size(); i++) {
@@ -123,7 +124,7 @@ public class JASConvert<C extends RingElem<C>> {
 					result = result.sum(p);
 				}
 				return result;
-			} else if (ast.isASTSizeGE(F.Times, 2)) {
+			} else if (ast.isTimes()) {
 				IExpr expr = ast.get(1);
 				result = expr2Poly(expr);
 				for (int i = 2; i < ast.size(); i++) {
@@ -132,11 +133,10 @@ public class JASConvert<C extends RingElem<C>> {
 					result = result.multiply(p);
 				}
 				return result;
-			} else if (ast.isAST(F.Power, 3)) {
+			} else if (ast.isPower()) {
 				final IExpr expr = ast.get(1);
 				for (int i = 0; i < fVariables.size(); i++) {
 					if (fVariables.get(i).equals(expr)) {
-						// TODO replace by own exception
 						// the following may throw ClassCastExcepion or ArithmeticException
 						if (((IInteger) ast.get(2)).isNegative()) {
 							throw new ArithmeticException("JASConvert:expr2Poly - negative exponent: " + ast.get(2).toString());
@@ -146,7 +146,6 @@ public class JASConvert<C extends RingElem<C>> {
 						return fPolyFactory.getONE().multiply(e);
 					}
 				}
-				// return Constant.valueOf((IExpr) ast);
 			}
 		} else if (exprPoly instanceof ISymbol) {
 			for (int i = 0; i < fVariables.size(); i++) {
@@ -157,8 +156,6 @@ public class JASConvert<C extends RingElem<C>> {
 			}
 			return new GenPolynomial(fPolyFactory, exprPoly);
 		} else if (exprPoly instanceof IInteger) {
-			// BigInteger bi = ((IInteger)
-			// exprPoly).getBigNumerator().toJavaBigInteger();
 			return fPolyFactory.fromInteger(((IInteger) exprPoly).toInt());
 		} else if (exprPoly instanceof IFraction) {
 			BigInteger n = ((IFraction) exprPoly).getBigNumerator().toJavaBigInteger();
@@ -170,8 +167,14 @@ public class JASConvert<C extends RingElem<C>> {
 		}
 		if (exprPoly.isFree(Predicates.in(fVariables), true)) {
 			return new GenPolynomial(fPolyFactory, exprPoly);
+		} else {
+			for (int i = 0; i < fVariables.size(); i++) {
+				if (fVariables.get(i).equals(exprPoly)) {
+					ExpVector e = ExpVector.create(fVariables.size(), i, 1L);
+					return fPolyFactory.getONE().multiply(e);
+				}
+			}
 		}
-		// TODO replace by own exception
 		throw new ClassCastException(exprPoly.toString());
 	}
 
