@@ -1,6 +1,19 @@
 package org.matheclipse.core.reflection.system;
 
-import static org.matheclipse.core.expression.F.*;
+import static org.matheclipse.core.expression.F.C0;
+import static org.matheclipse.core.expression.F.C1;
+import static org.matheclipse.core.expression.F.C2;
+import static org.matheclipse.core.expression.F.CI;
+import static org.matheclipse.core.expression.F.List;
+import static org.matheclipse.core.expression.F.Plus;
+import static org.matheclipse.core.expression.F.Power;
+import static org.matheclipse.core.expression.F.Sqr;
+import static org.matheclipse.core.expression.F.Sqrt;
+import static org.matheclipse.core.expression.F.Subtract;
+import static org.matheclipse.core.expression.F.Times;
+import static org.matheclipse.core.expression.F.evalExpandAll;
+import static org.matheclipse.core.expression.F.fraction;
+import static org.matheclipse.core.expression.F.integer;
 
 import java.util.List;
 import java.util.SortedMap;
@@ -109,7 +122,7 @@ public class Roots extends AbstractFunctionEvaluator {
 				}
 			}
 			if (org.matheclipse.core.reflection.system.PossibleZeroQ.possibleZeroQ(a)) {
-				result.add(F.Divide(c, b));
+				result.add(F.Divide(c.negate(), b));
 			} else {
 				IAST sqrt = Sqrt(Plus(Sqr(b), Times(integer(-4), a, c)));
 				IExpr rev2a = F.Divide(C1, a.multiply(C2));
@@ -303,4 +316,5 @@ public class Roots extends AbstractFunctionEvaluator {
 		}
 		return result;
 	}
+	
 }
