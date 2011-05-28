@@ -2527,6 +2527,9 @@ public class SystemTestCase extends AbstractTestCase {
 	}
 
 	public void testSystem805() {
+		check("Solve[x+5==a,x]", "{{x->a-5}}");
+		check("Solve[x+5==10,x]", "{{x->5}}");
+		check("Solve[x^2==a,x]", "{{x->a^(1/2)},{x->(-1)*a^(1/2)}}");
 		check("Solve[x^2+b*c*x+3==0, x]", "{{x->1/2*((b^2*c^2-12)^(1/2)-b*c)},{x->1/2*(-(b^2*c^2-12)^(1/2)-b*c)}}");
 		check("Solve[{x+2*y==10,3*x+y==20},{x,y}]", "{{x->6,y->2}}");
 		check("Solve[x^2==0,{x,y,z}]", "{{x->0}}");
