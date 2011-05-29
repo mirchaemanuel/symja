@@ -1,5 +1,5 @@
 /*
- * $Id: GenPolynomialRing.java 3571 2011-03-18 22:02:51Z kredel $
+ * $Id: GenPolynomialRing.java 3624 2011-04-29 16:13:01Z kredel $
  */
 
 package edu.jas.poly;
@@ -160,6 +160,17 @@ public class GenPolynomialRing<C extends RingElem<C>> implements RingFactory<Gen
      */
     public GenPolynomialRing(RingFactory<C> cf, int n, String[] v) {
         this(cf, n, new TermOrder(), v);
+    }
+
+
+    /**
+     * The constructor creates a polynomial factory object.
+     * @param cf factory for coefficients of type C.
+     * @param t a term order.
+     * @param v names for the variables.
+     */
+    public GenPolynomialRing(RingFactory<C> cf, TermOrder t, String[] v) {
+        this(cf, v.length, t, v);
     }
 
 
@@ -593,7 +604,11 @@ public class GenPolynomialRing<C extends RingElem<C>> implements RingFactory<Gen
      * @return GenPolynomial from s.
      */
     public GenPolynomial<C> parse(String s) {
-        return parse(new StringReader(s));
+        String val = s;
+        if ( !s.contains("|") ) {
+            val = val.replace("{","").replace("}","");
+        }
+        return parse(new StringReader(val));
     }
 
 

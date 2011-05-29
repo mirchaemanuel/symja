@@ -2605,7 +2605,8 @@ public class SystemTestCase extends AbstractTestCase {
 
 	public void testSystem997() {
 		check("GroebnerBasis[{a+b+c+d, a*b+a*d+b*c+c*d, a*b*c+a*b*d+a*c*d+b*c*d,1-a*b*c*d}, {d,c,b,a}]",
-				"{d+c+b+a,c^2+2*a*c+a^2,a^2*b^3+a^3*b^2-b-a,b*c-a*c+a^4*b^2+a*b-2*a^2,a^4*c-c+a^5-a,a^\n" + "6*b^2-a^2*b^2-a^4+1}");
+				"{a^6*b^2-a^2*b^2-a^4+1,a^4*c-c+a^5-a,b*c-a*c+a^4*b^2+a*b-2*a^2,a^2*b^3+a^3*b^2-b-a,c^\n" + 
+				"2+2*a*c+a^2,d+c+b+a}");
 		check("GroebnerBasis[{x-1},{x}]", "{x-1}");
 		// check(
 		// "GroebnerBasis[{a+b+c+d, a*b+a*d+b*c+c*d, a*b*c+a*b*d+a*c*d+b*c*d, 1-a*b*c*d}, {d,c,b,a}, MonomialOrder->DegreeReverseLexicographic, Modulus->1]",

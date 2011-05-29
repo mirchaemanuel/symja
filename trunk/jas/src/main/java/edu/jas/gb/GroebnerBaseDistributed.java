@@ -1,5 +1,5 @@
 /*
- * $Id: GroebnerBaseDistributed.java 3411 2010-12-18 14:42:41Z kredel $
+ * $Id: GroebnerBaseDistributed.java 3626 2011-05-08 09:51:57Z kredel $
  */
 
 package edu.jas.gb;
@@ -10,6 +10,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Collections;
 import java.util.concurrent.Semaphore;
 
 import org.apache.log4j.Logger;
@@ -341,6 +342,7 @@ public class GroebnerBaseDistributed<C extends RingElem<C>> extends GroebnerBase
         if (G.size() <= 1) {
             return G;
         }
+        Collections.reverse(G); // important for lex GB
 
         MiReducerServer<C>[] mirs = (MiReducerServer<C>[]) new MiReducerServer[G.size()];
         int i = 0;

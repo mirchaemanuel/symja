@@ -1,5 +1,5 @@
 /*
- * $Id: Ideal.java 3586 2011-03-27 11:20:11Z kredel $
+ * $Id: Ideal.java 3627 2011-05-08 11:12:04Z kredel $
  */
 
 package edu.jas.application;
@@ -1162,11 +1162,15 @@ public class Ideal<C extends GcdRingElem<C>> implements Comparable<Ideal<C>>, Se
      */
     public GenPolynomial<C> inverse(GenPolynomial<C> h) {
         if (h == null || h.isZERO()) {
-            throw new IllegalArgumentException("zero not invertible");
+            throw new NotInvertibleException("zero not invertible");
         }
         if (this.isZERO()) {
             throw new NotInvertibleException("zero ideal");
         }
+        if ( h.isUnit() ) { 
+            return h.inverse();
+        }
+        doGB(); 
         List<GenPolynomial<C>> F = new ArrayList<GenPolynomial<C>>(1 + list.list.size());
         F.add(h);
         F.addAll(list.list);
@@ -1211,7 +1215,7 @@ public class Ideal<C extends GcdRingElem<C>> implements Comparable<Ideal<C>>, Se
             //logger.info("inv f = " + f);
             f = g.multiply(h);
             k = red.normalform(list.list, f);
-            logger.info("inv k = " + k);
+            logger.debug("inv k = " + k);
             if (!k.isUnit()) {
                 throw new NotInvertibleException(" k = " + k);
             }
@@ -2195,7 +2199,7 @@ public class Ideal<C extends GcdRingElem<C>> implements Comparable<Ideal<C>>, Se
             ExpVector e = p.degreeVector();
             int[] dov = e.dependencyOnVariables();
             long t = e.totalDeg(); // lt(p) would be enough
-            //System.out.println("dov_univ = " + Arrays.toString(dov));
+            //System.out.println("dov_univ = " + Arrays.toString(dov) + ", e = " + e);
             if (dov.length == 0) {
                 throw new IllegalArgumentException("ideal dimension is not zero");
             }
@@ -2223,7 +2227,7 @@ public class Ideal<C extends GcdRingElem<C>> implements Comparable<Ideal<C>>, Se
                 if (t >= 2) {
                     e = p.degreeVector();
                     int[] dov = e.dependencyOnVariables();
-                    //System.out.println("dov_univ2 = " + Arrays.toString(dov));
+                    //System.out.println("dov_univ2 = " + Arrays.toString(dov) + " e = " + e);
                     if (dov.length == 0) {
                         throw new IllegalArgumentException("ideal dimension is not zero");
                     }

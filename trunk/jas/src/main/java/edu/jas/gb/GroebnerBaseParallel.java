@@ -1,5 +1,5 @@
 /*
- * $Id: GroebnerBaseParallel.java 3402 2010-12-12 17:21:36Z kredel $
+ * $Id: GroebnerBaseParallel.java 3626 2011-05-08 09:51:57Z kredel $
  */
 
 package edu.jas.gb;
@@ -7,6 +7,7 @@ package edu.jas.gb;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Collections;
 import java.util.concurrent.Semaphore;
 
 import org.apache.log4j.Logger;
@@ -262,6 +263,7 @@ public class GroebnerBaseParallel<C extends RingElem<C>>
         if ( G.size() <= 1 ) {
             return G;
         }
+        Collections.reverse(G); // important for lex GB
 
         MiReducer<C>[] mirs = (MiReducer<C>[]) new MiReducer[ G.size() ];
         int i = 0;
