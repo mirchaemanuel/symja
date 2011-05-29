@@ -1,5 +1,5 @@
 /*
- * $Id: ComprehensiveGroebnerBaseSeq.java 3432 2010-12-24 14:28:19Z kredel $
+ * $Id: ComprehensiveGroebnerBaseSeq.java 3626 2011-05-08 09:51:57Z kredel $
  */
 
 package edu.jas.application;
@@ -7,6 +7,7 @@ package edu.jas.application;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Collections;
 
 import org.apache.log4j.Logger;
 
@@ -639,6 +640,7 @@ public class ComprehensiveGroebnerBaseSeq<C extends GcdRingElem<C>>
         if (G.size() <= 1) {
             return new ColoredSystem<C>(cs.condition, G, cs.pairlist);
         }
+        Collections.reverse(G); // important for lex GB
         // reduce remaining polynomials
         int len = G.size();
         int i = 0;

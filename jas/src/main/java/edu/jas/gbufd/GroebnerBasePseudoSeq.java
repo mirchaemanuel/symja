@@ -1,5 +1,5 @@
 /*
- * $Id: GroebnerBasePseudoSeq.java 3423 2010-12-24 10:56:50Z kredel $
+ * $Id: GroebnerBasePseudoSeq.java 3626 2011-05-08 09:51:57Z kredel $
  */
 
 package edu.jas.gbufd;
@@ -8,6 +8,7 @@ package edu.jas.gbufd;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Collections;
 
 import org.apache.log4j.Logger;
 
@@ -220,6 +221,7 @@ public class GroebnerBasePseudoSeq<C extends GcdRingElem<C>> extends GroebnerBas
         if (G.size() <= 1) {
             return G;
         }
+        Collections.reverse(G); // important for lex GB
         // reduce remaining polynomials
         int len = G.size();
         int i = 0;

@@ -1,5 +1,5 @@
 /*
- * $Id: GroebnerBaseAbstract.java 3569 2011-03-18 21:48:58Z kredel $
+ * $Id: GroebnerBaseAbstract.java 3627 2011-05-08 11:12:04Z kredel $
  */
 
 package edu.jas.gb;
@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Set;
 import java.util.HashSet;
+import java.util.Collections;
 
 import org.apache.log4j.Logger;
 
@@ -136,7 +137,7 @@ public abstract class GroebnerBaseAbstract<C extends RingElem<C>>
         if (F == null || F.isEmpty()) {
             return 1;
         }
-	GenPolynomialRing<C> pfac = F.get(0).ring;
+        GenPolynomialRing<C> pfac = F.get(0).ring;
         if (pfac.nvar <= 0) {
             return -1;
         }
@@ -254,11 +255,20 @@ public abstract class GroebnerBaseAbstract<C extends RingElem<C>>
            return G;
         }
         // reduce remaining polynomials
+        Collections.reverse(G); // important for lex GB
         int len = G.size();
+        if ( debug ) {
+            System.out.println("#G " + len);
+            for (GenPolynomial<C> aa : G) {
+                System.out.println("aa = " + aa.length() + ", lt = " + aa.getMap().keySet());
+            }
+        }
         int i = 0;
         while ( i < len ) {
             a = G.remove(0);
-            //System.out.println("doing " + a.length());
+            if ( debug ) {
+                System.out.println("doing " + a.length() + ", lt = " + a.leadingExpVector());
+            }
             a = red.normalform( G, a );
             G.add( a ); // adds as last
             i++;
@@ -527,5 +537,3 @@ public abstract class GroebnerBaseAbstract<C extends RingElem<C>>
     }
 
 }
-
-

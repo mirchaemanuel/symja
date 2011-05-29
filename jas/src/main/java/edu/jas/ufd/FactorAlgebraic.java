@@ -1,5 +1,5 @@
 /*
- * $Id: FactorAlgebraic.java 3289 2010-08-26 08:04:56Z kredel $
+ * $Id: FactorAlgebraic.java 3627 2011-05-08 11:12:04Z kredel $
  */
 
 package edu.jas.ufd;
@@ -125,7 +125,7 @@ public class FactorAlgebraic<C extends GcdRingElem<C>> extends FactorAbsolute<Al
         List<GenPolynomial<C>> nfacs;
         if (!sqf) {
             //System.out.println("\nres = " + res); 
-            System.out.println("sqf(" + ks + ") = " + sqf);
+            System.out.println("sqf(" + ks + ") = " + res.degree());
             //res = factorCoeff.squarefreePart(res); // better use obtained factors
             //res = factorCoeff.baseFactors(res).lastKey();
         }

@@ -1,5 +1,5 @@
 /*
- * $Id: PolyUtil.java 3496 2011-01-20 21:26:46Z kredel $
+ * $Id: PolyUtil.java 3604 2011-04-26 20:42:44Z kredel $
  */
 
 package edu.jas.poly;
@@ -1597,12 +1597,15 @@ public class PolyUtil {
             return null;
         }
         GenPolynomialRing<C> fac = f.ring;
-        if (fac.nvar > 1 || t.ring.nvar > 1) {
-            throw new IllegalArgumentException("only for univariate polynomials");
+        if (fac.nvar > 1) {
+            throw new IllegalArgumentException("only for univariate polynomial f");
         }
         if (f.isZERO() || f.isConstant()) {
             return f;
         }
+        if (t.ring.nvar > 1) {
+            fac = t.ring;
+	}
         // assert decending exponents, i.e. compatible term order
         Map<ExpVector, C> val = f.getMap();
         GenPolynomial<C> s = null;
