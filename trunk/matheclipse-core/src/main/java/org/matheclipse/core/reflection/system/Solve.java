@@ -186,20 +186,34 @@ public class Solve extends AbstractFunctionEvaluator {
 						}
 					}
 				}
-			} else if (expr.isFree(Predicates.in(vars), true)) {
+				return;
+			}
+			if (expr.isFree(Predicates.in(vars), true)) {
 				leafCount++;
 				value.add(expr);
-			} else if (expr.isPower() && ((IAST) expr).get(2).isInteger()) {
-				if (equationType == LINEAR) {
-					equationType = POLYNOMIAL;
+				return;
+			}
+			if (expr.isPower()) {
+				if (((IAST) expr).get(2).isInteger()) {
+					if (equationType == LINEAR) {
+						equationType = POLYNOMIAL;
+					}
+					getTimesEquationType(((IAST) expr).get(1));
+					return;
 				}
-				getTimesEquationType(((IAST) expr).get(1));
-			} else {
-				leafCount += LeafCount.leafCount(expr);
-				if (equationType <= POLYNOMIAL) {
-					equationType = OTHERS;
+				if (((IAST) expr).get(2).isNumIntValue()) {
+					if (equationType == LINEAR) {
+						equationType = POLYNOMIAL;
+					}
+					getTimesEquationType(((IAST) expr).get(1));
+					return;
 				}
 			}
+			leafCount += LeafCount.leafCount(expr);
+			if (equationType <= POLYNOMIAL) {
+				equationType = OTHERS;
+			}
+
 		}
 
 		/**

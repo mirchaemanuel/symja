@@ -83,7 +83,7 @@ public class Roots extends AbstractFunctionEvaluator {
 		} catch (JASConversionException e) {
 			try {
 				JASConvert<IExpr> eJas = new JASConvert<IExpr>(varList, new ExprRingFactory());
-				GenPolynomial<IExpr> ePoly = eJas.expr2JAS(expr);
+				GenPolynomial<IExpr> ePoly = eJas.expr2IExprJAS(expr);
 				return rootsOfPolynomial(ePoly);
 			} catch (JASConversionException e2) {
 				if (Config.SHOW_STACKTRACE) {

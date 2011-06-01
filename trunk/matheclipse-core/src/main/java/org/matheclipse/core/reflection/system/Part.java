@@ -89,5 +89,6 @@ public class Part implements IFunctionEvaluator {
 	}
 
 	public void setUp(final ISymbol symbol) {
+		symbol.setAttributes(ISymbol.NHOLDREST);
 	}
 }
