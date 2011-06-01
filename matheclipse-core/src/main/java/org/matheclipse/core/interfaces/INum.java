@@ -12,4 +12,15 @@ public interface INum extends ISignedNumber {
 	public INum multiply(INum val);
 
 	public INum pow(INum val);
+
+	/** {@inheritDoc} */
+	public boolean isNumIntValue();
+
+	/**
+	 * Returns the value of this number as an <code>int</code> (by simply casting
+	 * to type <code>int</code>).
+	 * 
+	 * @return
+	 */
+	public int intValue();
 }

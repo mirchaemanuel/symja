@@ -66,7 +66,7 @@ public class CoefficientList extends AbstractFunctionEvaluator {
 	public static long univariateCoefficientList(IExpr polynomial, final ISymbol variable, List<IExpr> resultList)
 			throws JASConversionException {
 		JASConvert<IExpr> jas = new JASConvert<IExpr>(variable, new ExprRingFactory());
-		GenPolynomial<IExpr> polyExpr = jas.expr2JAS(polynomial);
+		GenPolynomial<IExpr> polyExpr = jas.expr2IExprJAS(polynomial);
 		long degree = polyExpr.degree();
 		if (degree >= Short.MAX_VALUE) {
 			return degree;
@@ -94,7 +94,7 @@ public class CoefficientList extends AbstractFunctionEvaluator {
 	public static long univariateCoefficientList(IExpr polynomial, ISymbol variable, List<IExpr> resultList,
 			List<IExpr> resultListDiff) throws JASConversionException {
 		JASConvert<IExpr> jas = new JASConvert<IExpr>(variable, new ExprRingFactory());
-		GenPolynomial<IExpr> polyExpr = jas.expr2JAS(polynomial);
+		GenPolynomial<IExpr> polyExpr = jas.expr2IExprJAS(polynomial);
 		// derivative of the given polynomial
 		GenPolynomial<IExpr> polyExprDiff = PolyUtil.<IExpr> baseDeriviative(polyExpr);
 

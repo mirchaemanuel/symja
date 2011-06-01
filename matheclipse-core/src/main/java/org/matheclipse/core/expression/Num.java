@@ -64,6 +64,10 @@ public class Num extends ExprImpl implements INum {
 		return DOUBLEID;
 	}
 
+	public boolean isNumIntValue() {
+		return fDouble == Math.floor(fDouble);
+	}
+
 	public boolean isNegative() {
 		return fDouble < 0.0;
 	}
@@ -390,7 +394,7 @@ public class Num extends ExprImpl implements INum {
 	public ISignedNumber round() {
 		return valueOf(Math.rint(fDouble));
 	}
-	
+
 	public int sign() {
 		return (int) Math.signum(fDouble);
 	}

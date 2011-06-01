@@ -72,7 +72,7 @@ public class Derivative extends AbstractFunctionEvaluator {
 
 	@Override
 	public void setUp(final ISymbol symbol) throws SyntaxError {
-		symbol.setAttributes(ISymbol.LISTABLE | ISymbol.NUMERICFUNCTION);
+		symbol.setAttributes(ISymbol.LISTABLE | ISymbol.NHOLDALL);
 		super.setUp(symbol);
 	}
 

@@ -307,8 +307,8 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 
 	/**
 	 * Test if <code>expr</code> could be evaluated to <code>True</code>. If a
-	 * <code>org.matheclipse.parser.client.math.MathException</code> occurs during evaluation,
-	 * return <code>False</code>.
+	 * <code>org.matheclipse.parser.client.math.MathException</code> occurs during
+	 * evaluation, return <code>False</code>.
 	 * 
 	 * @param expr
 	 * @return
@@ -643,30 +643,50 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 	 */
 	private IAST evalArgs(final IAST ast, final int attr) {
 		if (ast.size() > 1) {
+			boolean numericMode = fNumericMode;
 			IAST resultList = null;
 			IExpr evaledExpr;
 			if ((ISymbol.HOLDFIRST & attr) == ISymbol.NOATTRIBUTE) {
 				// the HoldFirst attribute isn't set here
-				if ((evaledExpr = evalLoop(ast.get(1))) != null) {
-					if (resultList == null) {
-						resultList = ast.clone();
-						resultList.setEvalFlags(ast.getEvalFlags() & IAST.IS_MATRIX_OR_VECTOR);
+				try {
+					if ((ISymbol.NHOLDFIRST & attr) == ISymbol.NHOLDFIRST) {
+						fNumericMode = false;
 					}
-					resultList.set(1, evaledExpr);
-					if (ast.size() == 2) {
-						return resultList;
+					if ((evaledExpr = evalLoop(ast.get(1))) != null) {
+						if (resultList == null) {
+							resultList = ast.clone();
+							resultList.setEvalFlags(ast.getEvalFlags() & IAST.IS_MATRIX_OR_VECTOR);
+						}
+						resultList.set(1, evaledExpr);
+						if (ast.size() == 2) {
+							return resultList;
+						}
+					}
+				} finally {
+					if ((ISymbol.NHOLDFIRST & attr) == ISymbol.NHOLDFIRST) {
+						fNumericMode = numericMode;
 					}
 				}
 			}
 			if ((ISymbol.HOLDREST & attr) == ISymbol.NOATTRIBUTE) {
 				// the HoldRest attribute isn't set here
-				for (int i = 2; i < ast.size(); i++) {
-					if ((evaledExpr = evalLoop(ast.get(i))) != null) {
-						if (resultList == null) {
-							resultList = ast.clone();
-							resultList.setEvalFlags(ast.getEvalFlags() & IAST.IS_MATRIX_OR_VECTOR);
+				numericMode = fNumericMode;
+				try {
+					if ((ISymbol.NHOLDREST & attr) == ISymbol.NHOLDREST) {
+						fNumericMode = false;
+					}
+					for (int i = 2; i < ast.size(); i++) {
+						if ((evaledExpr = evalLoop(ast.get(i))) != null) {
+							if (resultList == null) {
+								resultList = ast.clone();
+								resultList.setEvalFlags(ast.getEvalFlags() & IAST.IS_MATRIX_OR_VECTOR);
+							}
+							resultList.set(i, evaledExpr);
 						}
-						resultList.set(i, evaledExpr);
+					}
+				} finally {
+					if ((ISymbol.NHOLDREST & attr) == ISymbol.NHOLDREST) {
+						fNumericMode = numericMode;
 					}
 				}
 			}

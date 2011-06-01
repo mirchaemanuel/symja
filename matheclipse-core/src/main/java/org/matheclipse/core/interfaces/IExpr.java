@@ -309,6 +309,14 @@ public interface IExpr extends Comparable<IExpr>, RingElem<IExpr>, INestedListEl
 	public boolean isInteger();
 
 	/**
+	 * Check if this expression represents an <code>int</code> value. The value of
+	 * an <code>INum</code> object can be an <code>int</code> value.
+	 * 
+	 * @return
+	 */
+	public boolean isNumIntValue();
+
+	/**
 	 * Compares this expression with the specified expression for order. Returns
 	 * true if this expression is canonical less than or equal to the specified
 	 * expression (&lt;= relation).

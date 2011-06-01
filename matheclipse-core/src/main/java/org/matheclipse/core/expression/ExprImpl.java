@@ -118,7 +118,7 @@ public abstract class ExprImpl implements IExpr {
 			}
 		} else if (clazz.equals(java.math.BigInteger.class)) {
 			if (this instanceof IntegerSym) {
-				return new BigInteger(((IntegerSym) this).toByteArray());
+				return new java.math.BigInteger(((IntegerSym) this).toByteArray());
 			}
 		} else if (clazz.equals(String.class)) {
 			return toString();
@@ -332,6 +332,13 @@ public abstract class ExprImpl implements IExpr {
 	 */
 	public boolean isInteger() {
 		return this instanceof IInteger;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public boolean isNumIntValue() {
+		return false;
 	}
 
 	/**

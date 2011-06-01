@@ -47,7 +47,7 @@ public class PolynomialQ extends AbstractFunctionEvaluator implements BiPredicat
 			IExpr expr = F.evalExpandAll(polnomialExpr);
 			ASTRange r = new ASTRange(variables, 1);
 			JASConvert<IExpr> jas = new JASConvert<IExpr>(r.toList(), new ExprRingFactory());
-			return jas.expr2JAS(expr) != null;
+			return jas.expr2IExprJAS(expr) != null;
 		} catch (JASConversionException e) {
 			// exception will be thrown if the expression is not a JAS polynomial
 		}

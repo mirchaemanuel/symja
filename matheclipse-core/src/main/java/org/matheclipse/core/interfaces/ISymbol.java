@@ -61,24 +61,24 @@ public interface ISymbol extends IExpr { // Variable<IExpr>
 	public final static int LISTABLE = 0x0080;
 
 	/**
-	 * ISymbol attribute for a function, which should not be evaluated numerically
-	 * 
-	 */
-	public final static int NHOLDALL = 0x2000;
-
-	/**
 	 * ISymbol attribute for a function, where the first argument should not be
 	 * evaluated numerically
 	 * 
 	 */
-	public final static int NHOLDFIRST = 0x4000;
+	public final static int NHOLDFIRST = 0x2000;
 
 	/**
 	 * ISymbol attribute for a function, where the rest of the arguments should
 	 * not be evaluated numerically.
 	 * 
 	 */
-	public final static int NHOLDREST = 0x8000;
+	public final static int NHOLDREST = 0x4000;
+
+	/**
+	 * ISymbol attribute for a function, which should not be evaluated numerically
+	 * 
+	 */
+	public final static int NHOLDALL = NHOLDFIRST | NHOLDREST;
 
 	/**
 	 * ISymbol attribute which means that no attribute is set.

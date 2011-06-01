@@ -6,6 +6,7 @@ import org.matheclipse.core.generic.PositionConverter;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.IInteger;
+import org.matheclipse.core.interfaces.ISymbol;
 
 public class Extract extends AbstractFunctionEvaluator {
 
@@ -37,4 +38,7 @@ public class Extract extends AbstractFunctionEvaluator {
 		return null;
 	}
 
+	public void setUp(final ISymbol symbol) {
+		symbol.setAttributes(ISymbol.NHOLDREST);
+	}
 }

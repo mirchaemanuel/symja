@@ -980,7 +980,9 @@ public class F {
 				MethodHead = predefinedSymbol(IConstantHeaders.MethodHead);
 
 				Slot = predefinedSymbol("Slot");
+				Slot.setAttributes(ISymbol.NHOLDALL);
 				SlotSequence = predefinedSymbol("SlotSequence");
+				SlotSequence.setAttributes(ISymbol.NHOLDALL);
 				Options = predefinedSymbol("Options");
 				Graphics = predefinedSymbol("Graphics");
 				ReplaceAll = predefinedSymbol("ReplaceAll");
