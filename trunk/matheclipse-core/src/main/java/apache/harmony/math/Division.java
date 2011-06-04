@@ -628,7 +628,7 @@ class Division {
 			}
 
 		}
-		if (!u.isOne()) {
+		if (!u.isAbsOne()) {
 			// in u is stored the gcd
 			// math.19: BigInteger not invertible.
 			throw new ArithmeticException("Division.almostMonInv");// Messages.getString("math.19"));

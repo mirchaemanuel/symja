@@ -74,5 +74,9 @@ public interface ISignedNumber extends INumber {
 	 */
 	public ISignedNumber round();
 
+	public IExpr inverse();
+
+	public IExpr opposite();
+
 	public double doubleValue();
 }

@@ -175,6 +175,21 @@ public class Predicates {
 
 	/**
 	 * Returns a predicate that evaluates to {@code true} if
+	 * <code>input.isNumeric()</code> gives {@code true}.
+	 * 
+	 * @return
+	 */
+	public static Predicate<IExpr> isNumeric() {
+		return new Predicate<IExpr>() {
+			@Override
+			public boolean apply(IExpr input) {
+				return input.isNumeric();
+			}
+		};
+	}
+	
+	/**
+	 * Returns a predicate that evaluates to {@code true} if
 	 * <code>input.isSignedNumber()</code> gives {@code true}.
 	 * 
 	 * @return

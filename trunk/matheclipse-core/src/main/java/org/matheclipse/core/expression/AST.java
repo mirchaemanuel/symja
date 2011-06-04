@@ -558,7 +558,11 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 	public boolean isOne() {
 		return false;
 	}
-
+	
+	public boolean isMinusOne() {
+		return false;
+	}
+	
 	public boolean isZero() {
 		return false;
 	}
@@ -684,7 +688,7 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 	public boolean isNumIntValue() {
 		return false;
 	}
-	
+
 	/** {@inheritDoc} */
 	public boolean isRational() {
 		return false;
@@ -692,6 +696,11 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 
 	/** {@inheritDoc} */
 	public boolean isSignedNumber() {
+		return false;
+	}
+
+	/** {@inheritDoc} */
+	public boolean isNumeric() {
 		return false;
 	}
 
@@ -895,6 +904,15 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 		return !AST.COPY.some((IExpr) this, predicate, 1);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	public boolean isMember(Predicate<IExpr> predicate, boolean heads) {
+		if (heads) {
+			return AST.COPY.some((IExpr) this, predicate, 0);
+		}
+		return AST.COPY.some((IExpr) this, predicate, 1);
+	}
 	/**
 	 * {@inheritDoc}
 	 */

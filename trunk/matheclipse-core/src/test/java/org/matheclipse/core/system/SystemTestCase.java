@@ -575,7 +575,7 @@ public class SystemTestCase extends AbstractTestCase {
 
 	public void testSystem081() {
 		check("Inverse[{{1,2},{3,4}}]", "{{-2,1},\n" + " {3/2,-1/2}}");
-		check("Inverse[{{1,2.0},{3,4}}]", "{{-1.9999999999999998,1.0},\n" + " {1.4999999999999998,-0.49999999999999994}}");
+		check("Inverse[{{1,2.0},{3,4}}]", "{{-2.0,1.0},\n" + " {1.5,-0.5}}");
 	}
 
 	public void testSystem082() {
@@ -755,9 +755,7 @@ public class SystemTestCase extends AbstractTestCase {
 
 	public void testSystem110() {
 		check("Table[Gamma[x],{x,10}]", "{1,1,2,6,24,120,720,5040,40320,362880}");
-		check(
-				"Table[Gamma[x],{x,10.0}]",
-				"{0.9999999999999996,1.0,2.000000000000001,5.999999999999996,24.000000000000004,119.99999999999977,720.0000000000001,5039.999999999993,40320.00000000003,362879.9999999998}");
+		check("Table[Gamma[x],{x,10.0}]", "{1.0,1.0,2.0,6.0,24.0,120.0,720.0,5040.0,40320.0,362880.0}");
 	}
 
 	public void testSystem111() {
@@ -771,7 +769,7 @@ public class SystemTestCase extends AbstractTestCase {
 		check("Table[x,{x,10.0}]", "{1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0,10.0}");
 		check(
 				"Table[x!,{x,10.0}]",
-				"{1.0,2.000000000000001,5.999999999999996,24.000000000000004,119.99999999999977,720.0000000000001,5039.999999999993,40320.00000000003,362879.9999999998,3628800.0000000214}");
+				"{1.0,2.0,6.0,24.0,120.0,720.0,5040.0,40320.0,362880.0,3628800.0}");
 	}
 
 	public void testSystem113() {
@@ -1610,7 +1608,6 @@ public class SystemTestCase extends AbstractTestCase {
 		check("{10,9,8,7}[[4]]", "7");
 	}
 
-
 	public void testSystem278() {
 		check("{10,9,8,7}[[1]]", "10");
 	}
@@ -1738,8 +1735,7 @@ public class SystemTestCase extends AbstractTestCase {
 	public void testSystem306() {
 		// ReplaceRepeated
 		check("{a+b,x,c+d+e} //. x_+y_->{x,y}", "{{a,b},x,{e,{c,d}}}");
-		check("{a+b,x,c+d+e} //. {{x_+y_->{x,y}}, {x_+y_->rr[x,y]}}", 
-		  "{{{a,b},x,{e,{c,d}}},{rr[a,b],x,rr[e,rr[c,d]]}}");
+		check("{a+b,x,c+d+e} //. {{x_+y_->{x,y}}, {x_+y_->rr[x,y]}}", "{{{a,b},x,{e,{c,d}}},{rr[a,b],x,rr[e,rr[c,d]]}}");
 	}
 
 	public void testSystem307() {
@@ -2605,8 +2601,7 @@ public class SystemTestCase extends AbstractTestCase {
 
 	public void testSystem997() {
 		check("GroebnerBasis[{a+b+c+d, a*b+a*d+b*c+c*d, a*b*c+a*b*d+a*c*d+b*c*d,1-a*b*c*d}, {d,c,b,a}]",
-				"{a^6*b^2-a^2*b^2-a^4+1,a^4*c-c+a^5-a,b*c-a*c+a^4*b^2+a*b-2*a^2,a^2*b^3+a^3*b^2-b-a,c^\n" + 
-				"2+2*a*c+a^2,d+c+b+a}");
+				"{a^6*b^2-a^2*b^2-a^4+1,a^4*c-c+a^5-a,b*c-a*c+a^4*b^2+a*b-2*a^2,a^2*b^3+a^3*b^2-b-a,c^\n" + "2+2*a*c+a^2,d+c+b+a}");
 		check("GroebnerBasis[{x-1},{x}]", "{x-1}");
 		// check(
 		// "GroebnerBasis[{a+b+c+d, a*b+a*d+b*c+c*d, a*b*c+a*b*d+a*c*d+b*c*d, 1-a*b*c*d}, {d,c,b,a}, MonomialOrder->DegreeReverseLexicographic, Modulus->1]",

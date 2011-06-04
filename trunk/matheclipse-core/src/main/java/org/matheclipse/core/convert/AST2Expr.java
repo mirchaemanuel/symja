@@ -25,7 +25,7 @@ import org.matheclipse.parser.client.ast.SymbolNode;
  * expression into an IExpr expression
  * 
  */
-public class AST2Expr { // extends Converter<ASTNode, IExpr> {
+public class AST2Expr { 
 
 	/**
 	 * Typical instance of an ASTNode to IExpr converter

@@ -25,7 +25,7 @@ public class Plus extends AbstractArgMultiple implements INumeric {
 	 * Constructor for the singleton
 	 */
 	public final static Plus CONST = new Plus();
-	
+
 	private static HashedOrderlessMatcher ORDERLESS_MATCHER = new HashedOrderlessMatcher(true);
 
 	@Override
@@ -64,24 +64,11 @@ public class Plus extends AbstractArgMultiple implements INumeric {
 
 	@Override
 	public IExpr e2ObjArg(final IExpr o0, final IExpr o1) {
-		IExpr temp = null;
-		EvalEngine ee = EvalEngine.get();
-		// Context ct = ((ContextThread) Thread.currentThread()).getContext();
-		if (ee.isNumericMode()) {
-			if (o0.equals(F.CD0)) {
-				return o1;
-			}
-
-			if (o1.equals(F.CD0)) {
-				return o0;
-			}
-		}
-
-		if (o0.equals(F.C0)) {
+		if (o0.isZero()) {
 			return o1;
 		}
 
-		if (o1.equals(F.C0)) {
+		if (o1.isZero()) {
 			return o0;
 		}
 
@@ -89,6 +76,7 @@ public class Plus extends AbstractArgMultiple implements INumeric {
 			return F.Indeterminate;
 		}
 
+		IExpr temp = null;
 		if (o0.isAST(F.DirectedInfinity, 2)) {
 			temp = eInfinity(o0, o1);
 		} else if (o1.isAST(F.DirectedInfinity, 2)) {
@@ -102,18 +90,18 @@ public class Plus extends AbstractArgMultiple implements INumeric {
 			return Times(F.C2, o0);
 		}
 
-		if (o0.isAST(F.Times) && (((IAST) o0).size() > 2)) {
+		if (o0.isTimes()) {
 			final AST f0 = (AST) o0;
 
-			if (f0.get(1) instanceof INumber) {
+			if (f0.get(1).isNumber()) {
 				if ((f0.size() == 3) && f0.get(2).equals(o1)) {
 					return Times(Plus(F.C1, f0.get(1)), o1);
 				}
 
-				if (o1.isAST(F.Times) && (((IAST) o1).size() > 2)) {
+				if (o1.isTimes()) {
 					final AST f1 = (AST) o1;
 
-					if (f1.get(1) instanceof INumber) {
+					if (f1.get(1).isNumber()) {
 						if (f0.equalsFromPosition(1, f1, 1)) {
 							final IAST result = F.ast(f0, F.Times, true, 2, f0.size());
 
@@ -128,10 +116,10 @@ public class Plus extends AbstractArgMultiple implements INumeric {
 					}
 				}
 			} else {
-				if (o1.isAST(F.Times) && (((IAST) o1).size() > 2)) {
+				if (o1.isTimes()) {
 					final AST f1 = (AST) o1;
 
-					if (f1.get(1) instanceof INumber) {
+					if (f1.get(1).isNumber()) {
 						if (f0.equalsFromPosition(0, f1, 1)) {
 							final IAST result = F.ast(f1, F.Times, true, 2, f1.size());
 
@@ -142,7 +130,7 @@ public class Plus extends AbstractArgMultiple implements INumeric {
 			}
 		}
 
-		if (o1.isAST(F.Times) && (((IAST) o1).size() > 2) && (((IAST) o1).get(1) instanceof INumber)) {
+		if (o1.isTimes() && (((IAST) o1).get(1).isNumber())) {
 			final IAST f1 = (IAST) o1;
 
 			if ((f1.size() == 3) && f1.get(2).equals(o0)) {

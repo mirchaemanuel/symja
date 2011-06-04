@@ -29,13 +29,9 @@ public interface IComplex extends IBigNumber {
 	
 	public IFraction getRe();
 	
-	public boolean isZero();
-
 	public IComplex multiply(IComplex val);
 
 	public IComplex pow(int parm1);
 
 	public INumber normalize();
-
-	public IExpr reciprocal();
 }

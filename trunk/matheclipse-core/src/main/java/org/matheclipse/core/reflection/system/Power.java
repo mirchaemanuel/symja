@@ -1,9 +1,30 @@
 package org.matheclipse.core.reflection.system;
 
-import static org.matheclipse.core.expression.F.*;
+import static org.matheclipse.core.expression.F.$p;
+import static org.matheclipse.core.expression.F.$s;
+import static org.matheclipse.core.expression.F.C0;
+import static org.matheclipse.core.expression.F.C1;
+import static org.matheclipse.core.expression.F.CI;
+import static org.matheclipse.core.expression.F.CN1;
+import static org.matheclipse.core.expression.F.Condition;
+import static org.matheclipse.core.expression.F.Cos;
+import static org.matheclipse.core.expression.F.Cot;
+import static org.matheclipse.core.expression.F.Csc;
+import static org.matheclipse.core.expression.F.E;
+import static org.matheclipse.core.expression.F.Less;
+import static org.matheclipse.core.expression.F.List;
+import static org.matheclipse.core.expression.F.Log;
+import static org.matheclipse.core.expression.F.Pi;
+import static org.matheclipse.core.expression.F.Power;
+import static org.matheclipse.core.expression.F.Sec;
+import static org.matheclipse.core.expression.F.Set;
+import static org.matheclipse.core.expression.F.SetDelayed;
+import static org.matheclipse.core.expression.F.Sin;
+import static org.matheclipse.core.expression.F.Tan;
+import static org.matheclipse.core.expression.F.Times;
+import static org.matheclipse.core.expression.F.fraction;
 
 import org.matheclipse.core.eval.EvalEngine;
-import org.matheclipse.core.eval.exception.DivisionByZero;
 import org.matheclipse.core.eval.interfaces.AbstractArg2;
 import org.matheclipse.core.eval.interfaces.INumeric;
 import org.matheclipse.core.expression.F;
@@ -27,32 +48,30 @@ public class Power extends AbstractArg2 implements INumeric {
 	public final static Power CONST = new Power();
 	/**
 	 * <pre>
-     E^(I*Pi)=(-1),
-     E^Log[x_]:=x,
-     Tan[x_]^(n_IntegerQ):=Cot[x]^(-n)/;(n<0)
-     Cot[x_]^(n_IntegerQ):=Tan[x]^(-n)/;(n<0),
-     Sec[x_]^(n_IntegerQ):=Cos[x]^(-n)/;(n<0),
-     Cos[x_]^(n_IntegerQ):=Sec[x]^(-n)/;(n<0),
-     Csc[x_]^(n_IntegerQ):=Sin[x]^(-n)/;(n<0),
-     Sin[x_]^(n_IntegerQ):=Csc[x]^(-n)/;(n<0),
-	 </pre>
+	 * E^(I*Pi)=(-1),
+	 *      E^Log[x_]:=x,
+	 *      Tan[x_]^(n_IntegerQ):=Cot[x]^(-n)/;(n<0)
+	 *      Cot[x_]^(n_IntegerQ):=Tan[x]^(-n)/;(n<0),
+	 *      Sec[x_]^(n_IntegerQ):=Cos[x]^(-n)/;(n<0),
+	 *      Cos[x_]^(n_IntegerQ):=Sec[x]^(-n)/;(n<0),
+	 *      Csc[x_]^(n_IntegerQ):=Sin[x]^(-n)/;(n<0),
+	 *      Sin[x_]^(n_IntegerQ):=Csc[x]^(-n)/;(n<0),
+	 * </pre>
 	 */
-	final static IAST RULES = List( 
-			Set(Power(E,Times(CI,Pi)),CN1),
-			SetDelayed(Power(E,Log($p("x"))),$s("x")),
-			SetDelayed(Power(Tan($p("x")),$p("n",$s("IntegerQ"))),Condition(Power(Cot($s("x")),Times(CN1,$s("n"))),Less($s("n"),C0))),
-			SetDelayed(Power(Cot($p("x")),$p("n",$s("IntegerQ"))),Condition(Power(Tan($s("x")),Times(CN1,$s("n"))),Less($s("n"),C0))),
-			SetDelayed(Power(Sec($p("x")),$p("n",$s("IntegerQ"))),Condition(Power(Cos($s("x")),Times(CN1,$s("n"))),Less($s("n"),C0))),
-			SetDelayed(Power(Cos($p("x")),$p("n",$s("IntegerQ"))),Condition(Power(Sec($s("x")),Times(CN1,$s("n"))),Less($s("n"),C0))),
-			SetDelayed(Power(Csc($p("x")),$p("n",$s("IntegerQ"))),Condition(Power(Sin($s("x")),Times(CN1,$s("n"))),Less($s("n"),C0))),
-			SetDelayed(Power(Sin($p("x")),$p("n",$s("IntegerQ"))),Condition(Power(Csc($s("x")),Times(CN1,$s("n"))),Less($s("n"),C0)))
-	);
+	final static IAST RULES = List(Set(Power(E, Times(CI, Pi)), CN1), SetDelayed(Power(E, Log($p("x"))), $s("x")), SetDelayed(Power(
+			Tan($p("x")), $p("n", $s("IntegerQ"))), Condition(Power(Cot($s("x")), Times(CN1, $s("n"))), Less($s("n"), C0))), SetDelayed(
+			Power(Cot($p("x")), $p("n", $s("IntegerQ"))), Condition(Power(Tan($s("x")), Times(CN1, $s("n"))), Less($s("n"), C0))),
+			SetDelayed(Power(Sec($p("x")), $p("n", $s("IntegerQ"))), Condition(Power(Cos($s("x")), Times(CN1, $s("n"))),
+					Less($s("n"), C0))), SetDelayed(Power(Cos($p("x")), $p("n", $s("IntegerQ"))), Condition(Power(Sec($s("x")), Times(CN1,
+					$s("n"))), Less($s("n"), C0))), SetDelayed(Power(Csc($p("x")), $p("n", $s("IntegerQ"))), Condition(Power(Sin($s("x")),
+					Times(CN1, $s("n"))), Less($s("n"), C0))), SetDelayed(Power(Sin($p("x")), $p("n", $s("IntegerQ"))), Condition(Power(
+					Csc($s("x")), Times(CN1, $s("n"))), Less($s("n"), C0))));
 
 	@Override
 	public IAST getRuleAST() {
 		return RULES;
 	}
-	
+
 	public Power() {
 	}
 
@@ -73,6 +92,12 @@ public class Power extends AbstractArg2 implements INumeric {
 
 	@Override
 	public IExpr e2DblArg(final INum d0, final INum d1) {
+		if (d1.isMinusOne()) {
+			return d0.inverse();
+		}
+		if (d1.isNumIntValue()) {
+			return d0.pow(d1);
+		}
 		if (d0.isNegative()) {
 			return F.complexNum(d0.doubleValue()).pow(F.complexNum(d1.doubleValue()));
 		}
@@ -95,38 +120,12 @@ public class Power extends AbstractArg2 implements INumeric {
 
 	@Override
 	public IExpr e2ObjArg(final IExpr o0, final IExpr o1) {
-		EvalEngine ee = EvalEngine.get();
-		if (ee.isNumericMode()) {
-			if (o0.equals(F.CD0)) {
-				if (o1.equals(F.CD0)) {
-					// 0^0
-					throw new DivisionByZero("0^0");
-				}
-
-				if ((o1 instanceof ISignedNumber) && ((ISignedNumber) o1).isNegative()) {
-					throw new DivisionByZero("");
-				}
-
-				return F.CD0;
-			}
-
-			if (o1.equals(F.CD0)) {
-				return F.CD1;
-			}
-
-			if (o1.equals(F.CD1)) {
-				return o0;
-			}
-
-			if (o0.equals(F.CD1)) {
-				return F.CD1;
-			}
-		}
 		if (o0.equals(F.Indeterminate) || o1.equals(F.Indeterminate)) {
 			return F.Indeterminate;
 		}
-		if (o0.equals(F.C0)) {
-			if (o1.equals(F.C0)) {
+		if (o0.isZero()) {
+			EvalEngine ee = EvalEngine.get();
+			if (o1.isZero()) {
 				// 0^0
 				// TODO add a real log message
 				// throw new DivisionByZero("0^0");
@@ -134,7 +133,7 @@ public class Power extends AbstractArg2 implements INumeric {
 				return F.Indeterminate;
 			}
 
-			if ((o1 instanceof ISignedNumber) && ((ISignedNumber) o1).isNegative()) {
+			if ((o1.isSignedNumber()) && ((ISignedNumber) o1).isNegative()) {
 				// throw new DivisionByZero("");
 				ee.getOutPrintStream().println("Infinite expression 1/0");
 				return F.Indeterminate;
@@ -143,15 +142,15 @@ public class Power extends AbstractArg2 implements INumeric {
 			return F.C0;
 		}
 
-		if (o1.equals(F.C0)) {
+		if (o1.isZero()) {
 			return F.C1;
 		}
 
-		if (o1.equals(F.C1)) {
+		if (o1.isOne()) {
 			return o0;
 		}
 
-		if (o0.equals(F.C1)) {
+		if (o0.isOne()) {
 			return F.C1;
 		}
 
@@ -178,15 +177,9 @@ public class Power extends AbstractArg2 implements INumeric {
 			}
 		}
 
-		if (o1.equals(F.CN1)) {
-			if (o0.isInteger()) {
-				return F.fraction(F.C1, (IInteger) o0);
-			}
-			if (o0.isFraction()) {
-				return F.fraction(((IFraction) o0).getDenominator(), ((IFraction) o0).getNumerator());
-			}
-			if (o0.isComplex()) {
-				return ((IComplex) o0).reciprocal();
+		if (o1.isMinusOne()) {
+			if (o0.isNumber()) {
+				return ((INumber) o0).inverse();
 			}
 		}
 
@@ -394,9 +387,7 @@ public class Power extends AbstractArg2 implements INumeric {
 		return c0.pow(i1.getBigNumerator().intValue());
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public void setUp(final ISymbol symbol) {
 		symbol.setAttributes(ISymbol.LISTABLE | ISymbol.NUMERICFUNCTION);
