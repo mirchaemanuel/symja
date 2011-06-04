@@ -260,26 +260,11 @@ public class ComplexSym extends ExprImpl implements IComplex {
 		return super.times(that);
 	}
 
-	public IExpr reciprocal() {
+	@Override
+	public IExpr inverse() {
 		final Rational tmp = (_real.times(_real)).plus((_imaginary.times(_imaginary)));
 		return ComplexSym.valueOf(_real.divide(tmp), _imaginary.opposite().divide(tmp));
 	}
-
-	// @Override
-	// public boolean move(final ObjectSpace os) {
-	// if (super.move(os)) {
-	// _real.move(os);
-	// _imaginary.move(os);
-	// return true;
-	// }
-	// return false;
-	// }
-	// public ComplexSym copy() {
-	// ComplexSym r = new ComplexSym();// FACTORY.object();
-	// r._real = _real.copy();
-	// r._imaginary = _imaginary.copy();
-	// return r;
-	// }
 
 	public ComplexSym copyNew() {
 		ComplexSym r = new ComplexSym();
@@ -287,20 +272,6 @@ public class ComplexSym extends ExprImpl implements IComplex {
 		r._imaginary = _imaginary.copyNew();
 		return r;
 	}
-
-	// public void recycle() {
-	// FACTORY.recycle(this);
-	// }
-	//
-	// public Text toText() {
-	// final TextBuilder tb = TextBuilder.newInstance();
-	// tb.append("(");
-	// tb.append(_real.toText());
-	// tb.append(")+I*(");
-	// tb.append(_imaginary.toText());
-	// tb.append(")");
-	// return tb.toText();
-	// }
 
 	@Override
 	public String toString() {
@@ -311,7 +282,6 @@ public class ComplexSym extends ExprImpl implements IComplex {
 		tb.append(_imaginary.toString());
 		tb.append(')');
 		return tb.toString();
-		// return toText().toString();
 	}
 
 	@Override

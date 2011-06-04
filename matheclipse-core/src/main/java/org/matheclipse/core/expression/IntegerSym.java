@@ -340,6 +340,11 @@ public class IntegerSym extends ExprImpl implements IInteger {
 		return fInteger.isOne();
 	}
 	
+	@Override
+	public boolean isMinusOne() {
+		return fInteger.isMinusOne();
+	}
+	
 	public int intValue() {
 		return (int) fInteger.longValue();
 	}

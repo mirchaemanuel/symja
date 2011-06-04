@@ -7,6 +7,7 @@ import static org.matheclipse.core.expression.F.Plus;
 import org.matheclipse.core.eval.EvalEngine;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.expression.Symbol;
+import org.matheclipse.core.generic.Predicates;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.ISignedNumber;
@@ -22,8 +23,8 @@ public class Iterator implements IIterator<IExpr> {
 	IExpr count;
 
 	// boolean illegalIterator;
-  final boolean fNumericMode;
-  
+	final boolean fNumericMode;
+
 	EvalEngine evalEngine;
 
 	final IExpr maxCount;
@@ -37,7 +38,7 @@ public class Iterator implements IIterator<IExpr> {
 	public Iterator(final IAST lst, final EvalEngine sess) {
 		// illegalIterator = false;
 		evalEngine = sess;
-		fNumericMode = evalEngine.isNumericMode();
+		fNumericMode = evalEngine.isNumericMode() || lst.isMember(Predicates.isNumeric(), false);
 		switch (lst.size()) {
 
 		case 2:
@@ -200,7 +201,7 @@ public class Iterator implements IIterator<IExpr> {
 	}
 
 	public boolean setUp() {
-		
+
 		if (!(step instanceof ISignedNumber)) {
 			return false;
 		}
@@ -211,7 +212,7 @@ public class Iterator implements IIterator<IExpr> {
 		} else {
 			if (evalEngine.evaluate(Less(maxCount, start)) == F.True) {
 				return false;
-			} 
+			}
 		}
 		count = start;
 		if (variable != null) {

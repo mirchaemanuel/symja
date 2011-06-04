@@ -3,7 +3,6 @@ package org.matheclipse.core.reflection.system;
 import static org.matheclipse.core.expression.F.Plus;
 import static org.matheclipse.core.expression.F.Power;
 
-import org.matheclipse.core.eval.EvalEngine;
 import org.matheclipse.core.eval.interfaces.AbstractArgMultiple;
 import org.matheclipse.core.eval.interfaces.INumeric;
 import org.matheclipse.core.expression.F;
@@ -63,59 +62,35 @@ public class Times extends AbstractArgMultiple implements INumeric {
 
 	@Override
 	public IExpr e2ObjArg(final IExpr o0, final IExpr o1) {
-		EvalEngine ee = EvalEngine.get();
 		IExpr temp = null;
-		if (ee.isNumericMode()) {
-			if (o0.equals(F.CD0)) {
-				if (o1.isAST(F.DirectedInfinity, 2)) {
-					return F.Indeterminate;
-				}
-				return F.CD0;
-			}
-
-			if (o1.equals(F.CD0)) {
-				if (o0.isAST(F.DirectedInfinity, 2)) {
-					return F.Indeterminate;
-				}
-				return F.CD0;
-			}
-
-			if (o0.equals(F.CD1)) {
-				return o1;
-			}
-
-			if (o1.equals(F.CD1)) {
-				return o0;
-			}
-		}
 		if (o0.equals(F.Indeterminate) || o1.equals(F.Indeterminate)) {
 			return F.Indeterminate;
 		}
 
-		if (o0.equals(F.C0)) {
+		if (o0.isZero()) {
 			if (o1.isAST(F.DirectedInfinity, 2)) {
 				return F.Indeterminate;
 			}
 			return F.C0;
 		}
 
-		if (o1.equals(F.C0)) {
+		if (o1.isZero()) {
 			if (o0.isAST(F.DirectedInfinity, 2)) {
 				return F.Indeterminate;
 			}
 			return F.C0;
 		}
 
-		if (o0.equals(F.C1)) {
+		if (o0.isOne()) {
 			return o1;
 		}
 
-		if (o1.equals(F.C1)) {
+		if (o1.isOne()) {
 			return o0;
 		}
 
 		if (o0.equals(o1)) {
-			return F.function(F.Power, o0, F.C2);
+			return F.Power(o0, F.C2);
 		}
 
 		if (o0.isAST(F.DirectedInfinity, 2)) {
@@ -127,17 +102,17 @@ public class Times extends AbstractArgMultiple implements INumeric {
 			return temp;
 		}
 
-		if (o0.isAST(F.Power, 3)) {
+		if (o0.isPower()) {
 			final IAST f0 = (IAST) o0;
 			if (f0.get(2) instanceof INumber) {
 				if (f0.get(1).equals(o1)) {
 					return Power(o1, Plus(F.C1, f0.get(2)));
 				}
 
-				if (o1.isAST(F.Power, 3)) {
+				if (o1.isPower()) {
 					final IAST f1 = (IAST) o1;
 
-					if (f1.get(2) instanceof INumber) {
+					if (f1.get(2).isNumber()) {
 						if (f0.get(1).equals(f1.get(1))) {
 							return Power(f0.get(1), Plus(f0.get(2), f1.get(2)));
 						}
@@ -146,7 +121,7 @@ public class Times extends AbstractArgMultiple implements INumeric {
 			}
 		}
 
-		if (o1.isAST(F.Power, 3) && (((IAST) o1).get(2) instanceof IInteger)) {
+		if (o1.isPower() && (((IAST) o1).get(2).isInteger())) {
 			final IAST f1 = (IAST) o1;
 
 			if (f1.get(1).equals(o0)) {

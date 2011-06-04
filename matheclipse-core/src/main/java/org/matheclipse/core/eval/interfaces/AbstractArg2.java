@@ -22,8 +22,25 @@ public abstract class AbstractArg2 extends AbstractFunctionEvaluator {
 			// use specialized methods for numeric mode
 			if (o1 instanceof INum) {
 				result = e2DblArg((INum) o0, (INum) o1);
+			} else if (o1.isInteger()) {
+				result = e2DblArg((INum) o0, F.num((IInteger) o1));
+			} else if (o1.isFraction()) {
+				result = e2DblArg((INum) o0, F.num((IFraction) o1));
 			} else if (o1 instanceof IComplexNum) {
 				result = e2DblComArg(F.complexNum(((INum) o0).getRealPart()), (IComplexNum) o1);
+			}
+			if (result != null) {
+				return result;
+			}
+			return e2ObjArg(o0, o1);
+		} else if (o1 instanceof INum) {
+			// use specialized methods for numeric mode
+			if (o0.isInteger()) {
+				result = e2DblArg(F.num((IInteger) o0), (INum) o1);
+			} else if (o0.isFraction()) {
+				result = e2DblArg(F.num((IFraction) o0), (INum) o1);
+			} else if (o0 instanceof IComplexNum) {
+				result = e2DblComArg((IComplexNum) o0, F.complexNum(((INum) o1).getRealPart()));
 			}
 			if (result != null) {
 				return result;
@@ -35,8 +52,25 @@ public abstract class AbstractArg2 extends AbstractFunctionEvaluator {
 			// use specialized methods for complex numeric mode
 			if (o1 instanceof INum) {
 				result = e2DblComArg((IComplexNum) o0, F.complexNum(((INum) o1).getRealPart()));
+			} else if (o1.isInteger()) {
+				result = e2DblComArg((IComplexNum) o0, F.complexNum((IInteger) o1));
+			} else if (o1.isFraction()) {
+				result = e2DblComArg((IComplexNum) o0, F.complexNum((IFraction) o1));
 			} else if (o1 instanceof IComplexNum) {
 				result = e2DblComArg((IComplexNum) o0, (IComplexNum) o1);
+			}
+			if (result != null) {
+				return result;
+			}
+			return e2ObjArg(o0, o1);
+		} else if (o1 instanceof IComplexNum) {
+			// use specialized methods for complex numeric mode
+			if (o0 instanceof INum) {
+				result = e2DblComArg(F.complexNum(((INum) o0).getRealPart()), (IComplexNum) o1);
+			} else if (o0.isInteger()) {
+				result = e2DblComArg(F.complexNum((IInteger) o0), (IComplexNum) o1);
+			} else if (o0.isFraction()) {
+				result = e2DblComArg(F.complexNum((IFraction) o0), (IComplexNum) o1);
 			}
 			if (result != null) {
 				return result;

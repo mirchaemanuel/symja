@@ -8,9 +8,11 @@ import org.matheclipse.core.eval.EvalEngine;
 import org.matheclipse.core.eval.exception.IterationLimitExceeded;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IComplex;
+import org.matheclipse.core.interfaces.IComplexNum;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.IFraction;
 import org.matheclipse.core.interfaces.IInteger;
+import org.matheclipse.core.interfaces.INum;
 import org.matheclipse.core.interfaces.INumber;
 import org.matheclipse.core.interfaces.IPattern;
 import org.matheclipse.core.interfaces.ISignedNumber;
@@ -19,8 +21,6 @@ import org.matheclipse.core.patternmatching.PatternMatcher;
 import org.matheclipse.core.visit.VisitorReplaceAll;
 import org.matheclipse.core.visit.VisitorReplacePart;
 import org.matheclipse.core.visit.VisitorReplaceSlots;
-
-import apache.harmony.math.BigInteger;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -35,7 +35,10 @@ import edu.jas.structure.ElemFactory;
 public abstract class ExprImpl implements IExpr {
 
 	public IExpr opposite() {
-		return F.function(F.Times, F.CN1, this);
+		if (this.isNumber()) {
+			return F.eval(F.Times(F.CN1, this));
+		}
+		return F.Times(F.CN1, this);
 	}
 
 	/**
@@ -49,19 +52,34 @@ public abstract class ExprImpl implements IExpr {
 	}
 
 	public IExpr minus(final IExpr that) {
-		return F.function(F.Plus, this, F.function(F.Times, F.CN1, that));
+		if (this.isNumber() && that.isNumber()) {
+			return F.eval(F.Plus(this, ((INumber) that).opposite()));
+		}
+		if (that.isNumber()) {
+			return F.Plus(this, ((INumber) that).opposite());
+		}
+		return F.Plus(this, F.Times(F.CN1, that));
 	}
 
 	public IExpr plus(final IExpr that) {
-		return F.function(F.Plus, this, that);
+		if (this.isNumber() && that.isNumber()) {
+			return F.eval(F.Plus(this, that));
+		}
+		return F.Plus(this, that);
 	}
 
 	public IExpr inverse() {
-		return F.function(F.Power, this, F.CN1);
+		if (this.isNumber()) {
+			return F.eval(F.Power(this, F.CN1));
+		}
+		return F.Power(this, F.CN1);
 	}
 
 	public IExpr times(final IExpr that) {
-		return F.function(F.Times, this, that);
+		if (this.isNumber() && that.isNumber()) {
+			return F.eval(F.Times(this, that));
+		}
+		return F.Times(this, that);
 	}
 
 	/**
@@ -76,31 +94,40 @@ public abstract class ExprImpl implements IExpr {
 	}
 
 	public final IExpr power(final Integer n) {
-		return F.function(F.Power, this, F.integer(n));
+		if (this.isNumber() ) {
+			return F.eval(F.Power(this, F.integer(n)));
+		}
+		return F.Power(this, F.integer(n));
 	}
 
 	public final IExpr power(final IExpr that) {
-		return F.function(F.Power, this, that);
+		if (this.isNumber() && that.isNumber()) {
+			return F.eval(F.Power(this, that));
+		}
+		return F.Power(this, that);
 	}
 
 	public IExpr div(final IExpr that) {
-		return F.eval(F.function(F.Times, this, F.function(F.Power, that, F.CN1)));
+		if (that.isNumber()){
+			return F.eval(F.Times(this, that.inverse()));
+		}
+		return F.eval(F.Times(this, F.Power(that, F.CN1)));
 	}
 
 	public IExpr mod(final IExpr that) {
-		return F.function(F.Mod, this, that);
+		return F.Mod(this, that);
 	}
 
 	public IExpr and(final IExpr that) {
-		return F.function(F.And, this, that);
+		return F.And(this, that);
 	}
 
 	public IExpr or(final IExpr that) {
-		return F.function(F.Or, this, that);
+		return F.Or(this, that);
 	}
 
 	public IExpr getAt(final int index) {
-		return F.function(F.Part, this, F.integer(index));
+		return F.Part(this, F.integer(index));
 	}
 
 	@SuppressWarnings("unchecked")
@@ -263,6 +290,10 @@ public abstract class ExprImpl implements IExpr {
 		return false;
 	}
 
+	public boolean isMinusOne() {
+		return false;
+	}
+
 	public boolean isZero() {
 		return false;
 	}
@@ -282,6 +313,10 @@ public abstract class ExprImpl implements IExpr {
 
 	public boolean isFree(Predicate<IExpr> predicate, boolean heads) {
 		return !AST.COPY.some(this, predicate, 1);
+	}
+
+	public boolean isMember(Predicate<IExpr> predicate, boolean heads) {
+		return AST.COPY.some(this, predicate, 1);
 	}
 
 	/**
@@ -350,6 +385,10 @@ public abstract class ExprImpl implements IExpr {
 
 	public boolean isSignedNumber() {
 		return this instanceof ISignedNumber;
+	}
+
+	public boolean isNumeric() {
+		return this instanceof INum || this instanceof IComplexNum;
 	}
 
 	public boolean isNumber() {

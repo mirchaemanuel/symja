@@ -905,7 +905,7 @@ public class BigInteger implements Comparable<BigInteger>, Serializable {
 			// //$NON-NLS-1$
 		}
 		int divisorSign = divisor._sign;
-		if (divisor.isOne()) {
+		if (divisor.isAbsOne()) {
 			return ((divisor._sign > 0) ? this : this.opposite());
 		}
 		int thisSign = _sign;
@@ -991,7 +991,7 @@ public class BigInteger implements Comparable<BigInteger>, Serializable {
 			// ));
 			// //$NON-NLS-1$
 		}
-		if (m.isOne()) {
+		if (m.isAbsOne()) {
 			return ZERO;
 		}
 
@@ -1019,7 +1019,7 @@ public class BigInteger implements Comparable<BigInteger>, Serializable {
 		}
 		BigInteger base = this;
 
-		if (m.isOne() | (exponent._sign > 0 & base._sign == 0)) {
+		if (m.isAbsOne() | (exponent._sign > 0 & base._sign == 0)) {
 			return BigInteger.ZERO;
 		}
 		if (base._sign == 0 && exponent._sign == 0) {
@@ -1099,7 +1099,7 @@ public class BigInteger implements Comparable<BigInteger>, Serializable {
 	}
 
 	/** Tests if {@code this.abs()} is equals to {@code ONE} */
-	public boolean isOne() {
+	protected boolean isAbsOne() {
 		return ((_size == 1) && (_words[0] == 1));
 	}
 
@@ -1261,7 +1261,15 @@ public class BigInteger implements Comparable<BigInteger>, Serializable {
 	public boolean isZero() {
 		return (compareTo(ZERO) == EQUALS);
 	}
+	
+	public boolean isOne() {
+		return (compareTo(ONE) == EQUALS);
+	}
 
+	public boolean isMinusOne() {
+		return (compareTo(MINUS_ONE) == EQUALS);
+	}
+	
 	public boolean isEven() {
 		return !testBit(0);
 	}

@@ -271,10 +271,10 @@ public class Primality {
 							 */
 				do {
 					x = new BigInteger(bitLength, rnd);
-				} while ((x.compareTo(n) >= BigInteger.EQUALS) || (x._sign == 0) || x.isOne());
+				} while ((x.compareTo(n) >= BigInteger.EQUALS) || (x._sign == 0) || x.isAbsOne());
 			}
 			y = x.modPow(q, n);
-			if (y.isOne() || y.equals(n_minus_1)) {
+			if (y.isAbsOne() || y.equals(n_minus_1)) {
 				continue;
 			}
 			for (int j = 1; j < k; j++) {
@@ -282,7 +282,7 @@ public class Primality {
 					continue;
 				}
 				y = y.times(y).mod(n);
-				if (y.isOne()) {
+				if (y.isAbsOne()) {
 					return false;
 				}
 			}

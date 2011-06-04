@@ -91,7 +91,6 @@ public class OutputFormFactory implements IConstantHeaders {
 		buf.write("+I*");
 		final boolean isNegative = dc.getImaginaryPart() < 0;
 		convertDoubleValue(buf, String.valueOf(dc.getImaginaryPart()), ASTNodeFactory.TIMES_PRECEDENCE, isNegative);
-		// buf.write(String.valueOf(dc.getImaginaryPart()));
 		if (ASTNodeFactory.PLUS_PRECEDENCE < precedence) {
 			buf.write(")");
 		}

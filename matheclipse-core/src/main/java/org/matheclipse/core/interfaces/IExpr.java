@@ -272,6 +272,17 @@ public interface IExpr extends Comparable<IExpr>, RingElem<IExpr>, INestedListEl
 	public boolean isFree(Predicate<IExpr> predicate, boolean heads);
 
 	/**
+	 * Test if the expression contains (sub-)expressions which match the given
+	 * predicate.
+	 * 
+	 * @param heads
+	 *          if set to <code>false</code>, only the arguments of an IAST should
+	 *          be tested and not the <code>Head[]</code> element.
+	 * 
+	 */
+	public boolean isMember(Predicate<IExpr> predicate, boolean heads);
+
+	/**
 	 * Test if this expression is a <code>Funtion[ arg1 ]</code> expression with
 	 * at least 1 argument.
 	 * 
@@ -384,6 +395,12 @@ public interface IExpr extends Comparable<IExpr>, RingElem<IExpr>, INestedListEl
 	public boolean isOne();
 
 	/**
+	 * Test if this expression equals <code>-1</code> in symbolic or numeric mode.
+	 * 
+	 */
+	public boolean isMinusOne();
+
+	/**
 	 * Test if this expression is the addition function
 	 * <code>Plus[&lt;arg1&gt;, &lt;arg2&gt;, ...]</code>
 	 * 
@@ -451,6 +468,13 @@ public interface IExpr extends Comparable<IExpr>, RingElem<IExpr>, INestedListEl
 	 * 
 	 */
 	public boolean isSignedNumber();
+
+	/**
+	 * Test if this expression is a numeric number (i.e. of type <code>INum</code>
+	 * or <code>IComplexNum</code>.
+	 * 
+	 */
+	public boolean isNumeric();
 
 	/**
 	 * Test if this expression is the function <code>Sin[&lt;arg&gt;]</code>

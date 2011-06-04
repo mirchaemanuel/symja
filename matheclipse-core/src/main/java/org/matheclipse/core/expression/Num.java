@@ -388,9 +388,13 @@ public class Num extends ExprImpl implements INum {
 	@Override
 	public boolean isOne() {
 		return F.isZero(fDouble - 1.0);
-		// return fDouble == 1.0;
 	}
-
+	
+	@Override
+	public boolean isMinusOne() {
+		return F.isZero(fDouble + 1.0);
+	}
+	
 	public ISignedNumber round() {
 		return valueOf(Math.rint(fDouble));
 	}

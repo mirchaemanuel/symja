@@ -399,27 +399,7 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 
 	protected IExpr evalComplex(final IComplex obj) {
 		if (fNumericMode) {
-			final Rational r = obj.getRealPart();
-			final Rational i = obj.getImaginaryPart();
-			double nr = 0.0;
-			double dr = 1.0;
-			double ni = 0.0;
-			double di = 1.0;
-			// if (r instanceof IFraction) {
-			nr = r.getNumerator().doubleValue();
-			dr = r.getDenominator().doubleValue();
-			// }
-			// if (r instanceof IInteger) {
-			// nr = ((IInteger) r).getNumerator().doubleValue();
-			// }
-			// if (i instanceof IFraction) {
-			ni = i.getNumerator().doubleValue();
-			di = i.getDenominator().doubleValue();
-			// }
-			// if (i instanceof IInteger) {
-			// ni = ((IInteger) i).getNumerator().doubleValue();
-			// }
-			return F.complexNum(nr / dr, ni / di);
+			return F.complexNum(obj);
 		}
 		if (obj instanceof ComplexSym) {
 			final INumber cTemp = ((ComplexSym) obj).normalize();
@@ -431,27 +411,25 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 		return null;
 	}
 
-	protected IExpr evalDouble(final INum dbl) {
-		if (!fNumericMode) {
-			fNumericMode = true;
-			return dbl;
-		}
-		return null;
-	}
-
-	protected IExpr evalDoubleComplex(final IComplexNum obj) {
-		if (!fNumericMode) {
-			fNumericMode = true;
-			return obj;
-		}
-		return null;
-	}
+	// protected IExpr evalDouble(final INum dbl) {
+	// if (!fNumericMode) {
+	// fNumericMode = true;
+	// return dbl;
+	// }
+	// return null;
+	// }
+	//
+	// protected IExpr evalDoubleComplex(final IComplexNum obj) {
+	// if (!fNumericMode) {
+	// fNumericMode = true;
+	// return obj;
+	// }
+	// return null;
+	// }
 
 	protected IExpr evalFraction(final IFraction obj) {
 		if (fNumericMode) {
-			final double n = obj.getBigNumerator().doubleValue();
-			final double d = obj.getBigDenominator().doubleValue();
-			return F.num(n / d);
+			return F.num(obj);
 		}
 		if (obj.getBigDenominator().equals(BigInteger.ONE)) {
 			return F.integer(obj.getBigNumerator());
@@ -644,13 +622,25 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 	private IAST evalArgs(final IAST ast, final int attr) {
 		if (ast.size() > 1) {
 			boolean numericMode = fNumericMode;
+			boolean localNumericMode = fNumericMode;
 			IAST resultList = null;
 			IExpr evaledExpr;
+			if (!fNumericMode) {
+				for (int i = 1; i < ast.size(); i++) {
+					if (ast.get(i).isNumeric()) {
+						localNumericMode = true;
+						break;
+					}
+				}
+			}
+
 			if ((ISymbol.HOLDFIRST & attr) == ISymbol.NOATTRIBUTE) {
 				// the HoldFirst attribute isn't set here
 				try {
 					if ((ISymbol.NHOLDFIRST & attr) == ISymbol.NHOLDFIRST) {
 						fNumericMode = false;
+					} else {
+						fNumericMode = localNumericMode;
 					}
 					if ((evaledExpr = evalLoop(ast.get(1))) != null) {
 						if (resultList == null) {
@@ -674,6 +664,8 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 				try {
 					if ((ISymbol.NHOLDREST & attr) == ISymbol.NHOLDREST) {
 						fNumericMode = false;
+					} else {
+						fNumericMode = localNumericMode;
 					}
 					for (int i = 2; i < ast.size(); i++) {
 						if ((evaledExpr = evalLoop(ast.get(i))) != null) {
@@ -758,7 +750,7 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 
 	protected IExpr evalInteger(final IInteger obj) {
 		if (fNumericMode) {
-			return F.num(obj.getBigNumerator().doubleValue());
+			return F.num(obj);
 		}
 		return null;
 	}
@@ -869,12 +861,13 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 			if (obj instanceof ISignedNumber) {
 				return evalSignedNumber((ISignedNumber) obj);
 			}
-			if (obj instanceof IComplexNum) {
-				return evalDoubleComplex((IComplexNum) obj);
-			}
+			// if (obj instanceof IComplexNum) {
+			// return evalDoubleComplex((IComplexNum) obj);
+			// }
 			if (obj instanceof IComplex) {
 				return evalComplex((IComplex) obj);
 			}
+			return null;
 		}
 		if (obj.isSymbol()) {
 			return evalSymbol((ISymbol) obj);
@@ -890,9 +883,9 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 	}
 
 	protected IExpr evalSignedNumber(final ISignedNumber obj) {
-		if (obj instanceof INum) {
-			return evalDouble((INum) obj);
-		}
+		// if (obj instanceof INum) {
+		// return evalDouble((INum) obj);
+		// }
 		if (obj instanceof IInteger) {
 			return evalInteger((IInteger) obj);
 		}
