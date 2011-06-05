@@ -1,7 +1,6 @@
 package org.matheclipse.core.reflection.system;
 
 import org.matheclipse.core.interfaces.IExpr;
-import org.matheclipse.core.interfaces.ISignedNumber;
 
 public class LessEqual extends Greater {
 	public final static LessEqual CONST = new LessEqual();
@@ -9,28 +8,17 @@ public class LessEqual extends Greater {
 	}
 
 	@Override
-	public int compare(final IExpr o0, final IExpr o1) {
-		if (o0.equals(o1)) {
-			return 1;
+	public COMPARE_RESULT compare(final IExpr a0, final IExpr a1) {
+		// don't compare strings
+		if (a0.equals(a1)) {
+			return COMPARE_RESULT.TRUE;
 		}
-
-		if ((o0 instanceof ISignedNumber) && (o1 instanceof ISignedNumber)) {
-			if (o0.isLTOrdered(o1)) {
-				return 1;
+		if (a0.isSignedNumber() && a1.isSignedNumber()) {
+			if (a0.isLTOrdered(a1)) {
+				return COMPARE_RESULT.TRUE;
 			}
-
-			return -1;
+			return COMPARE_RESULT.FALSE;
 		}
-		// IExpr result[] = new IExpr[2];
-		// if (compareAddFunction(result, o0, o1)) {
-		// return result[0].less(result[1]) ? ft.True : ft.False;
-		// }
-
-		// don't compare strings here
-		// if ((o0 instanceof StringImpl) && (o1 instanceof StringImpl)) {
-		// return (((StringImpl) o0).compareTo((StringImpl) o1) <= 0 ? 1 : -1);
-		// }
-
-		return 0;
+		return COMPARE_RESULT.UNDEFINED;
 	}
 }

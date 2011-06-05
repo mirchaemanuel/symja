@@ -16,6 +16,7 @@ public class Sow extends AbstractFunctionEvaluator {
 	@Override
 	public IExpr evaluate(final IAST ast) {
 		Validate.checkSize(ast, 2);
+		
 		EvalEngine engine = EvalEngine.get();
 		IAST reapList = engine.getReapList();
 		IExpr expr = engine.evaluate(ast.get(1));
@@ -26,6 +27,6 @@ public class Sow extends AbstractFunctionEvaluator {
 	}
 
 	public void setUp(final ISymbol symbol) {
-		symbol.setAttributes(ISymbol.HOLDALL | ISymbol.LISTABLE);
+		symbol.setAttributes(ISymbol.HOLDALL);
 	}
 }

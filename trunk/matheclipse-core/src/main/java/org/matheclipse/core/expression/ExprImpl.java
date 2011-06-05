@@ -15,6 +15,7 @@ import org.matheclipse.core.interfaces.IInteger;
 import org.matheclipse.core.interfaces.INum;
 import org.matheclipse.core.interfaces.INumber;
 import org.matheclipse.core.interfaces.IPattern;
+import org.matheclipse.core.interfaces.IRational;
 import org.matheclipse.core.interfaces.ISignedNumber;
 import org.matheclipse.core.interfaces.ISymbol;
 import org.matheclipse.core.patternmatching.PatternMatcher;
@@ -94,7 +95,7 @@ public abstract class ExprImpl implements IExpr {
 	}
 
 	public final IExpr power(final Integer n) {
-		if (this.isNumber() ) {
+		if (this.isNumber()) {
 			return F.eval(F.Power(this, F.integer(n)));
 		}
 		return F.Power(this, F.integer(n));
@@ -108,7 +109,7 @@ public abstract class ExprImpl implements IExpr {
 	}
 
 	public IExpr div(final IExpr that) {
-		if (that.isNumber()){
+		if (that.isNumber()) {
 			return F.eval(F.Times(this, that.inverse()));
 		}
 		return F.eval(F.Times(this, F.Power(that, F.CN1)));
@@ -308,15 +309,15 @@ public abstract class ExprImpl implements IExpr {
 
 	public boolean isFree(final IExpr pattern, boolean heads) {
 		final PatternMatcher matcher = new PatternMatcher(pattern);
-		return !AST.COPY.some(this, matcher, 1);
+		return !matcher.apply(this);
 	}
 
 	public boolean isFree(Predicate<IExpr> predicate, boolean heads) {
-		return !AST.COPY.some(this, predicate, 1);
+		return !predicate.apply(this);
 	}
 
 	public boolean isMember(Predicate<IExpr> predicate, boolean heads) {
-		return AST.COPY.some(this, predicate, 1);
+		return predicate.apply(this);
 	}
 
 	/**
@@ -362,51 +363,52 @@ public abstract class ExprImpl implements IExpr {
 		return this instanceof IFraction;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	public boolean isInteger() {
 		return this instanceof IInteger;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	public boolean isNumIntValue() {
 		return false;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	public boolean isRational() {
-		return (this instanceof IInteger) || (this instanceof IFraction);
+		return this instanceof IRational;
 	}
 
+	/** {@inheritDoc} */
 	public boolean isSignedNumber() {
 		return this instanceof ISignedNumber;
 	}
 
+	/** {@inheritDoc} */
 	public boolean isNumeric() {
 		return this instanceof INum || this instanceof IComplexNum;
 	}
 
+	/** {@inheritDoc} */
 	public boolean isNumber() {
 		return this instanceof INumber;
 	}
 
+	/** {@inheritDoc} */
 	public boolean isLTOrdered(final IExpr obj) {
 		return compareTo(obj) < 0;
 	}
 
+	/** {@inheritDoc} */
 	public boolean isLEOrdered(final IExpr obj) {
 		return compareTo(obj) <= 0;
 	}
 
+	/** {@inheritDoc} */
 	public boolean isGTOrdered(final IExpr obj) {
 		return compareTo(obj) > 0;
 	}
 
+	/** {@inheritDoc} */
 	public boolean isGEOrdered(final IExpr obj) {
 		return compareTo(obj) >= 0;
 	}

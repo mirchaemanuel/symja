@@ -82,34 +82,47 @@ public class LevelSpecification extends LevelSpec {
 					return;
 				}
 			} else {
-				if ((lst.size() == 3) && (lst.get(1) instanceof IInteger) && (lst.get(2) instanceof IInteger)) {
-					final IInteger i0 = (IInteger) lst.get(1);
-					final IInteger i1 = (IInteger) lst.get(2);
-					if (i0.isNegative() && i1.isNegative()) {
-						fFromDepth = i0.getBigNumerator().intValue();
-						fToDepth = i1.getBigNumerator().intValue();
-						fFromLevel = 0;
-						fToLevel = Integer.MAX_VALUE;
-					} else if (i0.isNegative()) {
-						throw new Error("Invalid Level specification!");
-					} else if (i1.isNegative()) {
-						fFromDepth = Integer.MIN_VALUE;
-						fToDepth = i1.getBigNumerator().intValue();
-						fFromLevel = i0.getBigNumerator().intValue();
-						fToLevel = Integer.MAX_VALUE;
-					} else {
-						fFromDepth = Integer.MIN_VALUE;
-						fToDepth = -1;
-						fFromLevel = i0.getBigNumerator().intValue();
-						fToLevel = i1.getBigNumerator().intValue();
+				if ((lst.size() == 3)) {
+					if ((lst.get(1) instanceof IInteger) && (lst.get(2) instanceof IInteger)) {
+						final IInteger i0 = (IInteger) lst.get(1);
+						final IInteger i1 = (IInteger) lst.get(2);
+						if (i0.isNegative() && i1.isNegative()) {
+							fFromDepth = i0.getBigNumerator().intValue();
+							fToDepth = i1.getBigNumerator().intValue();
+							fFromLevel = 0;
+							fToLevel = Integer.MAX_VALUE;
+						} else if (i0.isNegative()) {
+							throw new Error("Invalid Level specification!");
+						} else if (i1.isNegative()) {
+							fFromDepth = Integer.MIN_VALUE;
+							fToDepth = i1.getBigNumerator().intValue();
+							fFromLevel = i0.getBigNumerator().intValue();
+							fToLevel = Integer.MAX_VALUE;
+						} else {
+							fFromDepth = Integer.MIN_VALUE;
+							fToDepth = -1;
+							fFromLevel = i0.getBigNumerator().intValue();
+							fToLevel = i1.getBigNumerator().intValue();
+						}
+						return;
+					} else if ((lst.get(1) instanceof IInteger) && (lst.get(2).equals(F.CInfinity))) {
+						final IInteger i0 = (IInteger) lst.get(1);
+						if (i0.isNegative()) {
+							throw new Error("Invalid Level specification!");
+						} else {
+							fFromDepth = Integer.MIN_VALUE;
+							fToDepth = -1;
+							fFromLevel = i0.getBigNumerator().intValue();
+							fToLevel = Integer.MAX_VALUE;
+						}
+						return;
 					}
-					return;
 				}
 			}
 		}
 		if (obj.equals(F.CInfinity)) {
 			fToLevel = Integer.MAX_VALUE;
-			fFromLevel = 0;
+			fFromLevel = 1;
 			fFromDepth = Integer.MIN_VALUE;
 			fToDepth = -1;
 			return;

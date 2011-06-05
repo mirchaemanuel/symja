@@ -397,67 +397,6 @@ public abstract class NestedAlgorithms<T extends INestedListElement, L extends L
 	}
 
 	/**
-	 * Maps a function to the parameters of a nested list, by applying in turn
-	 * each element of the list as a parameter to the function and calling it, and
-	 * returns a list of the results.
-	 * 
-	 * @param <T>
-	 * @param expr
-	 * @param function
-	 * @param level
-	 * @return
-	 */
-	public T map(final T expr, final Function<T, ? extends T> function, final LevelSpec level) {
-		return map(expr, function, level, 0);
-	}
-
-	/**
-	 * Maps a function to the parameters of a nested list, by applying in turn
-	 * each element of the list as a parameter to the function and calling it, and
-	 * returns a list of the results.
-	 * 
-	 * @param <T>
-	 * @param expr
-	 * @param function
-	 * @param level
-	 * @param headOffset
-	 * @return
-	 */
-	public T map(final T expr, final Function<T, ? extends T> function, final LevelSpec level, final int headOffset) {
-		L result = null;
-		int minDepth = 0;
-		level.incCurrentLevel();
-
-		T temp;
-		L list;
-		if (isInstance(expr)) {
-			list = cast(expr);
-			for (int i = headOffset; i < list.size(); i++) {
-
-				temp = map(list.get(i), function, level, headOffset);
-				if (temp != null) {
-					if (result == null) {
-						result = clone(list);
-					}
-					result.set(i, temp);
-				}
-				if (level.getCurrentDepth() < minDepth) {
-					minDepth = level.getCurrentDepth();
-				}
-			}
-		}
-		level.setCurrentDepth(--minDepth);
-		level.decCurrentLevel();
-		if (level.isInRange()) {
-			if (result == null) {
-				return function.apply(expr);
-			}
-			return function.apply(castList(result));
-		}
-		return castList(result);
-	}
-
-	/**
 	 * Add the positions to the <code>resultCollection</code> where the matching
 	 * expressions appear in <code>list</code>. The <code>positionConverter</code>
 	 * converts the <code>int</code> position into an object for the
@@ -607,267 +546,46 @@ public abstract class NestedAlgorithms<T extends INestedListElement, L extends L
 	 * @param to
 	 * @return
 	 */
-	public T replaceAll(final T expr, final L from, final L to) {
-		return replaceAll(expr, from, to, 0);
-	}
+//	public T replaceAll(final T expr, final L from, final L to) {
+//		return replaceAll(expr, from, to, 0);
+//	}
 
 	/**
 	 * Replace all elements in the <code>from</code> list, found in expression
 	 * <code>expr</code> with the corresponding elements in the <code>to</code>
 	 * list. If no replacement is found return <code>null</code>
 	 */
-	public T replaceAll(final T expr, final L from, final L to, final int headOffset) {
-		for (int i = headOffset; i < from.size(); i++) {
-
-			if (expr.equals(from.get(i))) {
-				return to.get(i);
-			}
-		}
-		L nestedList;
-		if (isInstance(expr)) {
-			nestedList = cast(expr);
-			L result = null;
-			final T head = nestedList.get(0);
-			T temp = replaceAll(head, from, to, headOffset);
-			if (temp != null) {
-				result = clone(nestedList);
-				result.set(0, temp);
-			}
-			for (int i = 1; i < nestedList.size(); i++) {
-
-				temp = replaceAll(nestedList.get(i), from, to, headOffset);
-				if (temp != null) {
-					if (result == null) {
-						result = clone(nestedList);
-					}
-					result.set(i, temp);
-				}
-			}
-			return castList(result);
-		}
-		return null;
-	}
-
-	/**
-	 * Replace all matching elements that are keys in the <code>ruleMap</code>, ,
-	 * found in expression <code>expr</code>, with their corresponding value in
-	 * the <code>ruleMap</code>. If no replacement is found return
-	 * <code>null</code>
-	 * 
-	 * @param <T>
-	 * @param expr
-	 * @param ruleMap
-	 * @return
-	 */
-	public <K> T replaceAll(final T expr, final Map<K, T> ruleMap) {
-		return replaceAll(expr, ruleMap, 0);
-	}
-
-	/**
-	 * Replace all matching elements that are keys in the <code>ruleMap</code>, ,
-	 * found in expression <code>expr</code>, with their corresponding value in
-	 * the <code>ruleMap</code>. If no replacement is found return
-	 * <code>null</code>
-	 * 
-	 * @param <T>
-	 * @param expr
-	 * @param ruleMap
-	 * @return
-	 */
-	public <K> T replaceAll(final T expr, final Map<K, T> ruleMap, final int headOffset) {
-		final T value = ruleMap.get(expr);
-		if (value != null) {
-			return value;
-		}
-		L nestedList;
-		if (isInstance(expr)) {
-			nestedList = cast(expr);
-			L result = null;
-			final T head = nestedList.get(0);
-			T temp = replaceAll(head, ruleMap, headOffset);
-			if (temp != null) {
-				result = clone(nestedList);
-				result.set(0, temp);
-			}
-			for (int i = 1; i < nestedList.size(); i++) {
-
-				temp = replaceAll(nestedList.get(i), ruleMap, headOffset);
-				if (temp != null) {
-					if (result == null) {
-						result = clone(nestedList);
-					}
-					result.set(i, temp);
-				}
-			}
-			return castList(result);
-		}
-		return null;
-	}
-
-	/**
-	 * Replace all elements that return a non <code>null</code> value from the
-	 * <code>function.apply()</code> method, If no replacement is found return
-	 * <code>null</code>.
-	 * 
-	 * @param <T>
-	 * @param expr
-	 * @param function
-	 * @return
-	 */
-	public <K> T replaceAll(final T expr, final Function<T, T> function) {
-		return replaceAll(expr, function, 0);
-	}
-
-	/**
-	 * Replace all elements that return a non <code>null</code> value from the
-	 * <code>function.apply()</code> method, If no replacement is found return
-	 * <code>null</code>.
-	 * 
-	 * @param <T>
-	 * @param expr
-	 * @param function
-	 * @return
-	 */
-	public <K> T replaceAll(final T expr, final Function<T, T> function, final int headOffset) {
-		final T value = function.apply(expr);
-		if (value != null) {
-			return value;
-		}
-		L nestedList;
-		if (isInstance(expr)) {
-			nestedList = cast(expr);
-			L result = null;
-			final T head = nestedList.get(0);
-			T temp = replaceAll(head, function, headOffset);
-			if (temp != null) {
-				result = clone(nestedList);
-				result.set(0, temp);
-			}
-			for (int i = 1; i < nestedList.size(); i++) {
-
-				temp = replaceAll(nestedList.get(i), function, headOffset);
-				if (temp != null) {
-					if (result == null) {
-						result = clone(nestedList);
-					}
-					result.set(i, temp);
-				}
-			}
-			return castList(result);
-		}
-		return null;
-	}
-
-	/**
-	 * Returns <code>true</code>, if at least one of the selected elements in the
-	 * nested list satisfies a unary predicate.
-	 * 
-	 */
-	public boolean some(final L nestedList, final Predicate<? super T> matcher) {
-		return some(nestedList, matcher, 0);
-	}
-
-	/**
-	 * Returns <code>true</code>, if at least one of the selected elements in the
-	 * nested list satisfies a unary predicate.
-	 * 
-	 */
-	public boolean some(final L nestedList, final Predicate<? super T> matcher, int headOffset) {
-		L list;
-		for (int i = headOffset; i < nestedList.size(); i++) {
-
-			if (isInstance(nestedList.get(i))) {
-				list = cast(nestedList.get(i));
-				if (some(list, matcher, headOffset)) {
-					return true;
-				}
-			} else if (matcher.apply(nestedList.get(i))) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	/**
-	 * Returns <code>true</code>, if at least one of the elements in the
-	 * expression or in the nested list satisfies a unary predicate.
-	 * 
-	 * @param headOffset
-	 *          the start index in the list
-	 * 
-	 */
-	public boolean some(final T expr, final Predicate<T> matcher) {
-		return some(expr, matcher, 0);
-	}
-
-	/**
-	 * Returns <code>true</code>, if at least one of the elements in the
-	 * expression or in the nested list satisfies a unary predicate.
-	 * 
-	 * @param headOffset
-	 *          the start index in the list
-	 * 
-	 */
-	public boolean some(final T expr, final Predicate<T> matcher, int headOffset) {
-		if (matcher.apply(expr)) {
-			return true;
-		}
-
-		if (isInstance(expr)) {
-			L list = cast(expr);
-			for (int i = headOffset; i < list.size(); i++) {
-				if (matcher.apply(list.get(i))) {
-					return true;
-				}
-				if (some(list.get(i), matcher, headOffset)) {
-					return true;
-				}
-			}
-			return false;
-		}
-
-		return matcher.apply(expr);
-	}
-
-	/**
-	 * Replace all elements in the <code>from</code> list, found in expression
-	 * <code>expr</code> with the corresponding elements in the <code>to</code>
-	 * list. If no replacement is found return the original input expression.
-	 */
-	// public T substitute(final T expr, final L from, final L to) {
-	// return substitute(expr, from, to, 0);
-	// }
-
-	/**
-	 * Replace all elements in the <code>from</code> list, found in expression
-	 * <code>expr</code> with the corresponding elements in the <code>to</code>
-	 * list. If no replacement is found return the original input expression.
-	 */
-	// public T substitute(final T expr, final L from, final L to, final int
-	// headOffset) {
-	// final T result = replaceAll(expr, from, to, headOffset);
-	// return (result == null) ? expr : result;
-	// }
-
-	/**
-	 * Replace all elements which are equal to <code>from</code>, found in
-	 * expression <code>expr</code> with the <code>to</code> object. If no
-	 * replacement is found return the original input expression.
-	 */
-	// public T substitute(final T expr, final T from, final T to) {
-	// return substitute(expr, from, to, 0);
-	// }
-
-	/**
-	 * Replace all elements which are equal to <code>from</code>, found in
-	 * expression <code>expr</code> with the <code>to</code> object. If no
-	 * replacement is found return the original input expression.
-	 */
-	// public T substitute(final T expr, final T from, final T to, final int
-	// headOffset) {
-	// final T result = replace(expr, from, to, headOffset);
-	// return (result == null) ? expr : result;
-	// }
+//	public T replaceAll(final T expr, final L from, final L to, final int headOffset) {
+//		for (int i = headOffset; i < from.size(); i++) {
+//
+//			if (expr.equals(from.get(i))) {
+//				return to.get(i);
+//			}
+//		}
+//		L nestedList;
+//		if (isInstance(expr)) {
+//			nestedList = cast(expr);
+//			L result = null;
+//			final T head = nestedList.get(0);
+//			T temp = replaceAll(head, from, to, headOffset);
+//			if (temp != null) {
+//				result = clone(nestedList);
+//				result.set(0, temp);
+//			}
+//			for (int i = 1; i < nestedList.size(); i++) {
+//
+//				temp = replaceAll(nestedList.get(i), from, to, headOffset);
+//				if (temp != null) {
+//					if (result == null) {
+//						result = clone(nestedList);
+//					}
+//					result.set(i, temp);
+//				}
+//			}
+//			return castList(result);
+//		}
+//		return null;
+//	}
 
 	public L take(final L list, final int level, final ISequence[] sequ) {
 		sequ[level].setListSize(list.size());
