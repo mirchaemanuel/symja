@@ -250,9 +250,11 @@ public interface IExpr extends Comparable<IExpr>, RingElem<IExpr>, INestedListEl
 	public boolean isFraction();
 
 	/**
-	 * Test if the expression is free of (sub-)expressions which match the
-	 * pattern.
+	 * Returns <code>true</code>, if <b>all of the elements</b> in the
+	 * subexpressions or the expression itself, did not match the given pattern.
 	 * 
+	 * @param pattern
+	 *          a pattern-matching expression
 	 * @param heads
 	 *          if set to <code>false</code>, only the arguments of an IAST should
 	 *          be tested and not the <code>Head[]</code> element.
@@ -261,9 +263,12 @@ public interface IExpr extends Comparable<IExpr>, RingElem<IExpr>, INestedListEl
 	public boolean isFree(IExpr pattern, boolean heads);
 
 	/**
-	 * Test if the expression is free of (sub-)expressions which match the given
+	 * Returns <code>true</code>, if <b>all of the elements</b> in the
+	 * subexpressions or the expression itself, did not satisfy the given unary
 	 * predicate.
 	 * 
+	 * @param predicate
+	 *          a unary predicate
 	 * @param heads
 	 *          if set to <code>false</code>, only the arguments of an IAST should
 	 *          be tested and not the <code>Head[]</code> element.
@@ -272,9 +277,11 @@ public interface IExpr extends Comparable<IExpr>, RingElem<IExpr>, INestedListEl
 	public boolean isFree(Predicate<IExpr> predicate, boolean heads);
 
 	/**
-	 * Test if the expression contains (sub-)expressions which match the given
-	 * predicate.
+	 * Returns <code>true</code>, if <b>at least one of the elements</b> in the
+	 * subexpressions or the expression itself, satisfy the given unary predicate.
 	 * 
+	 * @param predicate
+	 *          a unary predicate
 	 * @param heads
 	 *          if set to <code>false</code>, only the arguments of an IAST should
 	 *          be tested and not the <code>Head[]</code> element.

@@ -17,6 +17,7 @@ public class Reap extends AbstractFunctionEvaluator {
 	@Override
 	public IExpr evaluate(final IAST ast) {
 		Validate.checkSize(ast, 2);
+
 		EvalEngine engine = EvalEngine.get();
 		IAST oldList = engine.getReapList();
 		try {
@@ -25,7 +26,11 @@ public class Reap extends AbstractFunctionEvaluator {
 			engine.setReapList(reapList);
 			IExpr expr = engine.evaluate(ast.get(1));
 			result.add(expr);
-			result.add(F.List(reapList));
+			if (reapList.size() == 1) {
+				result.add(F.List());
+			} else {
+				result.add(F.List(reapList));
+			}
 			return result;
 		} finally {
 			engine.setReapList(oldList);
@@ -34,6 +39,6 @@ public class Reap extends AbstractFunctionEvaluator {
 	}
 
 	public void setUp(final ISymbol symbol) {
-		symbol.setAttributes(ISymbol.HOLDFIRST | ISymbol.LISTABLE);
+		symbol.setAttributes(ISymbol.HOLDFIRST);
 	}
 }

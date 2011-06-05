@@ -22,7 +22,7 @@ public class MapAll extends AbstractFunctionEvaluator {
 		}
 		final LevelSpec level = new LevelSpec(0, Integer.MAX_VALUE);
 		final IAST arg1AST = F.ast(ast.get(1));
-		final IExpr result = AST.COPY.map(ast.get(2), Functors.append(arg1AST), level, 1);
+		final IExpr result = Map.map(ast.get(2), Functors.append(arg1AST), level, 1);
 		return result == null ? ast.get(2) : result;
 	}
 

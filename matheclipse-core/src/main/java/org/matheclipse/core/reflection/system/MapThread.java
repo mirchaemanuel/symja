@@ -48,7 +48,7 @@ public class MapThread extends AbstractFunctionEvaluator {
     } else {
       level = new LevelSpec(0);
     }
-    final IExpr result = AST.COPY.map(ast.get(2),
+    final IExpr result = Map.map(ast.get(2),
         new UnaryMapThread(ast.get(1)), level, 1);
     return result == null ? ast.get(2) : result;
   }

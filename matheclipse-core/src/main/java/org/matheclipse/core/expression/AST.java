@@ -558,11 +558,11 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 	public boolean isOne() {
 		return false;
 	}
-	
+
 	public boolean isMinusOne() {
 		return false;
 	}
-	
+
 	public boolean isZero() {
 		return false;
 	}
@@ -883,36 +883,34 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 		return size() == 3 && (head().equals(F.Rule) || head().equals(F.RuleDelayed));
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	public boolean isFree(final IExpr pattern, boolean heads) {
 		final PatternMatcher matcher = new PatternMatcher(pattern);
-		if (heads) {
-			return !AST.COPY.some((IExpr) this, matcher, 0);
-		}
-		return !AST.COPY.some((IExpr) this, matcher, 1);
+		return !isMember(matcher, heads);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	public boolean isFree(Predicate<IExpr> predicate, boolean heads) {
-		if (heads) {
-			return !AST.COPY.some((IExpr) this, predicate, 0);
-		}
-		return !AST.COPY.some((IExpr) this, predicate, 1);
+		return !isMember(predicate, heads);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	public boolean isMember(Predicate<IExpr> predicate, boolean heads) {
-		if (heads) {
-			return AST.COPY.some((IExpr) this, predicate, 0);
+		if (predicate.apply(this)) {
+			return true;
 		}
-		return AST.COPY.some((IExpr) this, predicate, 1);
+		int start = 1;
+		if (heads) {
+			start = 0;
+		}
+		for (int i = start; i < size(); i++) {
+			if (get(i).isMember(predicate, heads)) {
+				return true;
+			}
+		}
+		return false;
 	}
+
 	/**
 	 * {@inheritDoc}
 	 */

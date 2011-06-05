@@ -3,6 +3,7 @@ package org.matheclipse.core.reflection.system;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
 import org.matheclipse.core.expression.AST;
 import org.matheclipse.core.expression.F;
+import org.matheclipse.core.generic.ITernaryComparator.COMPARE_RESULT;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
 
@@ -22,15 +23,15 @@ public class Max extends AbstractFunctionEvaluator {
 			IExpr max2;
 			max1 = list.get(1);
 			IAST f = list.copyHead();
-			int comp;
+			COMPARE_RESULT comp;
 			for (int i = 2; i < list.size(); i++) {
 				max2 = list.get(i);
-				comp = Less.CONST.compare(max1, max2);
+				comp = Less.CONST.prepareCompare(max1, max2);
 
-				if (comp == 1) {
+				if (comp == COMPARE_RESULT.TRUE) {
 					max1 = max2;
 				} else {
-					if (comp == 0) {
+					if (comp == COMPARE_RESULT.UNDEFINED) {
 						// undetermined
 						if (max1.isNumber()) {
 							f.add(max2);
