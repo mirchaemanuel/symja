@@ -1668,7 +1668,7 @@ public class F {
 	 * @param a
 	 * @return
 	 */
-	public static IAST $(final IExpr head, final IExpr... a) {
+	public final static IAST $(final IExpr head, final IExpr... a) {
 		return ast(a, head);
 	}
 
@@ -1707,10 +1707,23 @@ public class F {
 	 * @return
 	 */
 	public static IAST ast(final IExpr[] arr, final IExpr head) {
-		final AST ast = AST.newInstance(arr.length, head);
-		for (final IExpr expr : arr) {
-			ast.add(expr);
-		}
+		return AST.newInstance(arr, head);
+		// for (int i = 0; i < arr.length; i++) {
+		// ast.add(arr[i]);
+		// }
+		// return ast;
+	}
+
+	/**
+	 * Create a function with 1 argument without evaluation.
+	 * 
+	 * @param head
+	 * @param a0
+	 * @return
+	 */
+	public final static IAST unary(final IExpr head, final IExpr a0) {
+		final IAST ast = ast(head);
+		ast.add(a0);
 		return ast;
 	}
 
@@ -1722,50 +1735,25 @@ public class F {
 	 * @param a1
 	 * @return
 	 */
-	public static IAST binary(final IExpr head, final IExpr a0, final IExpr a1) {
-		final IAST ast = ast(head, 2, false);
-		ast.add(a0);
-		ast.add(a1);
-		return ast;
+	public final static IAST binary(final IExpr head, final IExpr a0, final IExpr a1) {
+		return ast(new IExpr[] { a0, a1 }, head);
 	}
 
-	public static IAST ternary(final IExpr head, final IExpr a0, final IExpr a1, final IExpr a2) {
-		final IAST ast = ast(head, 3, false);
-		ast.add(a0);
-		ast.add(a1);
-		ast.add(a2);
-		return ast;
+	public final static IAST ternary(final IExpr head, final IExpr a0, final IExpr a1, final IExpr a2) {
+		return ast(new IExpr[] { a0, a1, a2 }, head);
 	}
 
-	public static IAST quaternary(final IExpr head, final IExpr a0, final IExpr a1, final IExpr a2, final IExpr a3) {
-		final IAST ast = ast(head, 4, false);
-		ast.add(a0);
-		ast.add(a1);
-		ast.add(a2);
-		ast.add(a3);
-		return ast;
+	public final static IAST quaternary(final IExpr head, final IExpr a0, final IExpr a1, final IExpr a2, final IExpr a3) {
+		return ast(new IExpr[] { a0, a1, a2, a3 }, head);
 	}
 
-	public static IAST quinary(final IExpr head, final IExpr a0, final IExpr a1, final IExpr a2, final IExpr a3, final IExpr a4) {
-		final IAST ast = ast(head, 5, false);
-		ast.add(a0);
-		ast.add(a1);
-		ast.add(a2);
-		ast.add(a3);
-		ast.add(a4);
-		return ast;
+	public final static IAST quinary(final IExpr head, final IExpr a0, final IExpr a1, final IExpr a2, final IExpr a3, final IExpr a4) {
+		return ast(new IExpr[] { a0, a1, a2, a3, a4 }, head);
 	}
 
-	public static IAST senary(final IExpr head, final IExpr a0, final IExpr a1, final IExpr a2, final IExpr a3, final IExpr a4,
+	public final static IAST senary(final IExpr head, final IExpr a0, final IExpr a1, final IExpr a2, final IExpr a3, final IExpr a4,
 			final IExpr a5) {
-		final IAST ast = ast(head, 6, false);
-		ast.add(a0);
-		ast.add(a1);
-		ast.add(a2);
-		ast.add(a3);
-		ast.add(a4);
-		ast.add(a5);
-		return ast;
+		return ast(new IExpr[] { a0, a1, a2, a3, a4, a5 }, head);
 	}
 
 	/**
@@ -2541,36 +2529,6 @@ public class F {
 	 */
 	public static void popLocal(ISymbol temp) {
 		temp.popLocalVariable();
-	}
-
-	/**
-	 * Create a function with 3 arguments without evaluation.
-	 * 
-	 * @param head
-	 * @param a0
-	 * @param a1
-	 * @param a2
-	 * @return
-	 */
-	// public static IAST ternary(final IExpr head, final IExpr a0, final IExpr
-	// a1, final IExpr a2) {
-	// final IAST ast = ast(head);
-	// ast.add(a0);
-	// ast.add(a1);
-	// ast.add(a2);
-	// return ast;
-	// }
-	/**
-	 * Create a function with 1 argument without evaluation.
-	 * 
-	 * @param head
-	 * @param a0
-	 * @return
-	 */
-	public static IAST unary(final IExpr head, final IExpr a0) {
-		final IAST ast = ast(head);
-		ast.add(a0);
-		return ast;
 	}
 
 	public static IExpr plus(Integer i, IExpr b) {
