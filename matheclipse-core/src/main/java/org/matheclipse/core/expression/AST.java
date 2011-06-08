@@ -1321,6 +1321,16 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 		ast.add(head);
 		return ast;
 	}
+	
+	public static AST newInstance(final IExpr[] arr, final IExpr head) {
+		AST ast = new AST(arr.length + 1, false);
+		ast.add(head);
+		for (int i = 0; i < arr.length; i++) {
+			ast.add(arr[i]);
+		}
+		return ast; 
+	}
+	
 
 	public static AST newInstance(final IExpr head) {
 		// AST ast;
