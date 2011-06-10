@@ -1,5 +1,8 @@
 package org.matheclipse.core.expression;
 
+import java.math.BigInteger;
+
+import org.apache.commons.math.fraction.BigFraction;
 import org.matheclipse.core.interfaces.IComplex;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.IFraction;
@@ -9,9 +12,6 @@ import org.matheclipse.core.interfaces.ISymbol;
 import org.matheclipse.core.visit.IVisitor;
 import org.matheclipse.core.visit.IVisitorBoolean;
 import org.matheclipse.core.visit.IVisitorInt;
-
-import apache.harmony.math.BigInteger;
-import apache.harmony.math.Rational;
 
 /**
  * A concrete complex implementation
@@ -42,9 +42,9 @@ public class ComplexSym extends ExprImpl implements IComplex {
 	 */
 	private static final long serialVersionUID = 1489050560741527824L;
 
-	private Rational _real;
+	private BigFraction _real;
 
-	private Rational _imaginary;
+	private BigFraction _imaginary;
 
 	/**
 	 * Holds the factory constructing complex instances.
@@ -62,47 +62,47 @@ public class ComplexSym extends ExprImpl implements IComplex {
 	// }
 	// };
 	// write this object after the FACTORY initialization
-	public final static ComplexSym ZERO = ComplexSym.valueOf(Rational.ZERO);
+	public final static ComplexSym ZERO = ComplexSym.valueOf(BigFraction.ZERO);
 
 	private ComplexSym() {
 	}
 
 	public static ComplexSym valueOf(final BigInteger real, final BigInteger imaginary) {
 		final ComplexSym c = new ComplexSym();// FACTORY.object();
-		c._real = Rational.valueOf(real, BigInteger.ONE);
-		c._imaginary = Rational.valueOf(imaginary, BigInteger.ONE);
+		c._real = new BigFraction(real, BigInteger.ONE);
+		c._imaginary = new BigFraction(imaginary, BigInteger.ONE);
 		return c;
 	}
 
 	public static ComplexSym valueOf(final BigInteger real) {
 		final ComplexSym c = new ComplexSym();// FACTORY.object();
-		c._real = Rational.valueOf(real, BigInteger.ONE);
-		c._imaginary = Rational.ZERO;
+		c._real = new BigFraction(real, BigInteger.ONE);
+		c._imaginary = BigFraction.ZERO;
 		return c;
 	}
 
 	public static ComplexSym valueOf(final IInteger real, final IInteger imaginary) {
 		final ComplexSym c = new ComplexSym();// FACTORY.object();
-		c._real = Rational.valueOf(real.getBigNumerator(), BigInteger.ONE);
-		c._imaginary = Rational.valueOf(imaginary.getBigNumerator(), BigInteger.ONE);
+		c._real = new BigFraction(real.getBigNumerator(), BigInteger.ONE);
+		c._imaginary = new BigFraction(imaginary.getBigNumerator(), BigInteger.ONE);
 		return c;
 	}
 
 	public static ComplexSym valueOf(final IInteger real) {
 		final ComplexSym c = new ComplexSym();// FACTORY.object();
-		c._real = Rational.valueOf(real.getBigNumerator(), BigInteger.ONE);
-		c._imaginary = Rational.ZERO;
+		c._real = new BigFraction(real.getBigNumerator(), BigInteger.ONE);
+		c._imaginary = BigFraction.ZERO;
 		return c;
 	}
 
-	public static ComplexSym valueOf(final Rational real) {
+	public static ComplexSym valueOf(final BigFraction real) {
 		final ComplexSym c = new ComplexSym();// FACTORY.object();
 		c._real = real;
-		c._imaginary = Rational.ZERO;
+		c._imaginary = BigFraction.ZERO;
 		return c;
 	}
 
-	public static ComplexSym valueOf(final Rational real, final Rational imaginary) {
+	public static ComplexSym valueOf(final BigFraction real, final BigFraction imaginary) {
 		final ComplexSym c = new ComplexSym();// FACTORY.object();
 		c._real = real;
 		c._imaginary = imaginary;
@@ -112,15 +112,15 @@ public class ComplexSym extends ExprImpl implements IComplex {
 	public static ComplexSym valueOf(final long real_numerator, final long real_denominator, final long imag_numerator,
 			final long imag_denominator) {
 		final ComplexSym c = new ComplexSym();// FACTORY.object();
-		c._real = Rational.valueOf(real_numerator, real_denominator);
-		c._imaginary = Rational.valueOf(imag_numerator, imag_denominator);
+		c._real = new BigFraction(real_numerator, real_denominator);
+		c._imaginary = new BigFraction(imag_numerator, imag_denominator);
 		return c;
 	}
 
 	public static ComplexSym valueOf(final IFraction real) {
 		final ComplexSym c = new ComplexSym();// FACTORY.object();
 		c._real = real.getRational();
-		c._imaginary = Rational.ZERO;
+		c._imaginary = BigFraction.ZERO;
 		return c;
 	}
 
@@ -132,15 +132,15 @@ public class ComplexSym extends ExprImpl implements IComplex {
 	}
 
 	public IComplex conjugate() {
-		return ComplexSym.valueOf(_real, _imaginary.opposite());
+		return ComplexSym.valueOf(_real, _imaginary.negate());
 	}
 
 	public IExpr eabs() {
-		return F.Sqrt(FractionSym.valueOf(_real.times(_real).plus(_imaginary.times(_imaginary))));
+		return F.Sqrt(FractionSym.valueOf(_real.multiply(_real).add(_imaginary.multiply(_imaginary))));
 	}
 
 	public ComplexSym add(final ComplexSym parm1) throws java.lang.ArithmeticException {
-		return ComplexSym.valueOf(_real.plus(parm1._real), _imaginary.plus(parm1._imaginary));
+		return ComplexSym.valueOf(_real.add(parm1._real), _imaginary.add(parm1._imaginary));
 	}
 
 	/*
@@ -150,7 +150,7 @@ public class ComplexSym extends ExprImpl implements IComplex {
 	 * interfaces.IComplex)
 	 */
 	public IComplex add(final IComplex parm1) {
-		return ComplexSym.valueOf(_real.plus(parm1.getRealPart()), _imaginary.plus(parm1.getImaginaryPart()));
+		return ComplexSym.valueOf(_real.add(parm1.getRealPart()), _imaginary.add(parm1.getImaginaryPart()));
 	}
 
 	@Override
@@ -169,7 +169,7 @@ public class ComplexSym extends ExprImpl implements IComplex {
 	 * 
 	 * @return imaginary part
 	 */
-	public Rational getImaginaryPart() {
+	public BigFraction getImaginaryPart() {
 		return _imaginary;
 	}
 
@@ -182,7 +182,7 @@ public class ComplexSym extends ExprImpl implements IComplex {
 	 * 
 	 * @return real part
 	 */
-	public Rational getRealPart() {
+	public BigFraction getRealPart() {
 		return _real;
 	}
 
@@ -205,14 +205,14 @@ public class ComplexSym extends ExprImpl implements IComplex {
 	}
 
 	public IComplex multiply(final IComplex parm1) {
-		return ComplexSym.valueOf(_real.times(parm1.getRealPart()).minus(_imaginary.times(parm1.getImaginaryPart())), _real.times(
-				parm1.getImaginaryPart()).plus(parm1.getRealPart().times(_imaginary)));
+		return ComplexSym.valueOf(_real.multiply(parm1.getRealPart()).subtract(_imaginary.multiply(parm1.getImaginaryPart())), _real
+				.multiply(parm1.getImaginaryPart()).add(parm1.getRealPart().multiply(_imaginary)));
 	}
 
 	public IComplex pow(final int parm1) {
 		int temp = parm1;
 
-		if ((parm1 == 0) && _real.equals(Rational.ZERO) && _imaginary.equals(Rational.ZERO)) {
+		if ((parm1 == 0) && _real.equals(BigFraction.ZERO) && _imaginary.equals(BigFraction.ZERO)) {
 			throw new java.lang.ArithmeticException();
 		}
 
@@ -220,7 +220,7 @@ public class ComplexSym extends ExprImpl implements IComplex {
 			return this;
 		}
 
-		IComplex res = ComplexSym.valueOf(Rational.ONE, Rational.ZERO);
+		IComplex res = ComplexSym.valueOf(BigFraction.ONE, BigFraction.ZERO);
 
 		if (parm1 < 0) {
 			temp *= -1;
@@ -231,9 +231,10 @@ public class ComplexSym extends ExprImpl implements IComplex {
 		}
 
 		if (parm1 < 0) {
-			final Rational d = res.getRealPart().times(res.getRealPart()).plus(res.getImaginaryPart().times(res.getImaginaryPart()));
+			final BigFraction d = res.getRealPart().multiply(res.getRealPart()).add(
+					res.getImaginaryPart().multiply(res.getImaginaryPart()));
 
-			return ComplexSym.valueOf(res.getRealPart().divide(d), res.getImaginaryPart().opposite().divide(d));
+			return ComplexSym.valueOf(res.getRealPart().divide(d), res.getImaginaryPart().negate().divide(d));
 		}
 
 		return res;
@@ -249,7 +250,7 @@ public class ComplexSym extends ExprImpl implements IComplex {
 
 	@Override
 	public IExpr opposite() {
-		return ComplexSym.valueOf(_real.opposite(), _imaginary.opposite());
+		return ComplexSym.valueOf(_real.negate(), _imaginary.negate());
 	}
 
 	@Override
@@ -262,15 +263,8 @@ public class ComplexSym extends ExprImpl implements IComplex {
 
 	@Override
 	public IExpr inverse() {
-		final Rational tmp = (_real.times(_real)).plus((_imaginary.times(_imaginary)));
-		return ComplexSym.valueOf(_real.divide(tmp), _imaginary.opposite().divide(tmp));
-	}
-
-	public ComplexSym copyNew() {
-		ComplexSym r = new ComplexSym();
-		r._real = _real.copyNew();
-		r._imaginary = _imaginary.copyNew();
-		return r;
+		final BigFraction tmp = (_real.multiply(_real)).add((_imaginary.multiply(_imaginary)));
+		return ComplexSym.valueOf(_real.divide(tmp), _imaginary.negate().divide(tmp));
 	}
 
 	@Override
@@ -313,15 +307,15 @@ public class ComplexSym extends ExprImpl implements IComplex {
 
 	@Override
 	public String internalFormString(boolean symbolsAsFactoryMethod, int depth) {
-		int real_numerator = _real.getNumerator().toInt();
-		int real_denominator = _real.getDenominator().toInt();
-		int imag_numerator = _imaginary.getNumerator().toInt();
-		int imag_denominator = _imaginary.getDenominator().toInt();
-		if (_real.equals(Rational.ZERO)) {
-			if (_imaginary.equals(Rational.ONE)) {
+		int real_numerator = NumberUtil.toInt(_real.getNumerator());
+		int real_denominator = NumberUtil.toInt(_real.getDenominator());
+		int imag_numerator = NumberUtil.toInt(_imaginary.getNumerator());
+		int imag_denominator = NumberUtil.toInt(_imaginary.getDenominator());
+		if (_real.equals(BigFraction.ZERO)) {
+			if (_imaginary.equals(BigFraction.ONE)) {
 				return "CI";
 			}
-			if (_imaginary.equals(Rational.MINUS_ONE)) {
+			if (_imaginary.equals(BigFraction.MINUS_ONE)) {
 				return "CNI";
 			}
 		}
@@ -329,7 +323,7 @@ public class ComplexSym extends ExprImpl implements IComplex {
 	}
 
 	public INumber normalize() {
-		if (_imaginary.equals(Rational.ZERO)) {
+		if (_imaginary.equals(BigFraction.ZERO)) {
 			if (_real.getDenominator().equals(BigInteger.ZERO)) {
 				return IntegerSym.valueOf(_real.getNumerator());
 			}

@@ -9,7 +9,7 @@ import org.matheclipse.core.interfaces.IInteger;
 import org.matheclipse.core.interfaces.ISymbol;
 import org.matheclipse.parser.client.SyntaxError;
 
-import apache.harmony.math.BigInteger;
+import java.math.BigInteger;
 
 /**
  * Returns the factorial of an integer n
@@ -40,13 +40,13 @@ public class Factorial extends AbstractTrigArg1 {
       result = BigInteger.valueOf(-1);
 
       for (BigInteger i = BigInteger.valueOf(-2); i.compareTo(biggi) >= 0; i = i
-          .plus(BigInteger.valueOf(-1))) {
-        result = result.times(i);
+          .add(BigInteger.valueOf(-1))) {
+        result = result.multiply(i);
       }
     } else {
       for (BigInteger i = BigInteger.valueOf(2); i.compareTo(biggi) <= 0; i = i
-          .plus(BigInteger.ONE)) {
-        result = result.times(i);
+          .add(BigInteger.ONE)) {
+        result = result.multiply(i);
       }
     }
     return result;

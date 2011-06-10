@@ -2,17 +2,17 @@ package org.matheclipse.core.reflection.system;
 
 import static org.matheclipse.core.expression.F.Times;
 
+import org.apache.commons.math.fraction.BigFraction;
 import org.matheclipse.core.eval.interfaces.AbstractTrigArg1;
 import org.matheclipse.core.eval.interfaces.INumeric;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.expression.Num;
+import org.matheclipse.core.expression.NumberUtil;
 import org.matheclipse.core.interfaces.IComplex;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.ISignedNumber;
 import org.matheclipse.core.interfaces.ISymbol;
 import org.matheclipse.parser.client.SyntaxError;
-
-import apache.harmony.math.Rational;
 
 public class Arg extends AbstractTrigArg1 implements INumeric {
 
@@ -35,11 +35,11 @@ public class Arg extends AbstractTrigArg1 implements INumeric {
 			}
 		} else if (arg1 instanceof IComplex) {
 			final IComplex ic = (IComplex) arg1;
-			if (ic.getRealPart().equals(Rational.ZERO)) {
-				final Rational imaginaryPart = ic.getImaginaryPart();
-				if (Rational.ZERO.isLargerThan(imaginaryPart)) {
+			if (ic.getRealPart().equals(BigFraction.ZERO)) {
+				final BigFraction imaginaryPart = ic.getImaginaryPart();
+				if (NumberUtil.isNegative(imaginaryPart)) {
 					return Times(F.CN1D2, F.Pi);
-				} else if (imaginaryPart.isLargerThan(Rational.ZERO)) {
+				} else if (NumberUtil.isPositive(imaginaryPart)) {
 					return Times(F.C1D2, F.Pi);
 				}
 			}

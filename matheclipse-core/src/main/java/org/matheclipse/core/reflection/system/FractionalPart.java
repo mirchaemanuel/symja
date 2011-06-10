@@ -8,7 +8,7 @@ import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.IFraction;
 import org.matheclipse.core.interfaces.INum;
 
-import apache.harmony.math.BigInteger;
+import java.math.BigInteger;
 
 /**
  * Get the fractional part auf a number
@@ -31,7 +31,7 @@ public class FractionalPart extends AbstractFunctionEvaluator {
 				BigInteger num = fr.getBigNumerator();
 				BigInteger den = fr.getBigDenominator();
 				BigInteger div = num.divide(den);
-				if (div.isZero()) {
+				if (div.equals(BigInteger.ZERO)) {
 					return F.C0;
 				}
 				return F.fraction(div, den);

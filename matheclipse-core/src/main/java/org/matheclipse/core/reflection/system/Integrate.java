@@ -76,7 +76,11 @@ import edu.jas.ufd.SquarefreeFactory;
  * href="http://en.wikipedia.org/wiki/Integral">Integral</a>
  */
 public class Integrate extends AbstractFunctionEvaluator implements IConstantHeaders {
-
+	/**
+	 * Constructor for the singleton
+	 */
+	public final static Integrate CONST = new Integrate();
+	
 	public Integrate() {
 	}
 

@@ -39,7 +39,7 @@ public class FindRootScriptTestCase extends TestCase {
 		result = eval(meEngine,
 				"FindRoot[(($K*(1+p-$g)^($n/$Z))/(1+$AA))+(Sum[(($R*(1+$d)^(Floor[i/$Z]))/(1+$AA))*(1+p-$g)^(($n-i-$vn)/$Z),{i,0,$n-1}])+(Sum[($EAj*(1+p-$g)^(($n-$zj)/$Z))/(1+$AA),{j,1,$sz}]) - 30199, {p, 0, 0.1}]",
 				map);
-		assertEquals(result, "{p->0.049997093938224026}");
+		assertEquals(result, "{p->0.049997093938224005}");
 		map.clear();
 		map.put("$g", Double.valueOf(0.0));
 		map.put("$n", Double.valueOf(120.0));

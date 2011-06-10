@@ -177,8 +177,8 @@ public class JASConvert<C extends RingElem<C>> {
 		} else if (exprPoly instanceof IInteger) {
 			return fPolyFactory.fromInteger((java.math.BigInteger) ((IInteger) exprPoly).asType(java.math.BigInteger.class));
 		} else if (exprPoly instanceof IFraction) {
-			BigInteger n = ((IFraction) exprPoly).getBigNumerator().toJavaBigInteger();
-			BigInteger d = ((IFraction) exprPoly).getBigDenominator().toJavaBigInteger();
+			BigInteger n = ((IFraction) exprPoly).getBigNumerator();//.toJavaBigInteger();
+			BigInteger d = ((IFraction) exprPoly).getBigDenominator();//.toJavaBigInteger();
 			BigRational nr = new BigRational(n);
 			BigRational dr = new BigRational(d);
 			BigRational r = nr.divide(dr);
@@ -245,8 +245,8 @@ public class JASConvert<C extends RingElem<C>> {
 			return fPolyFactory.fromInteger((java.math.BigInteger) ((IInteger) exprPoly)
 					.asType(java.math.BigInteger.class));
 		} else if (exprPoly instanceof IFraction) {
-			BigInteger n = ((IFraction) exprPoly).getBigNumerator().toJavaBigInteger();
-			BigInteger d = ((IFraction) exprPoly).getBigDenominator().toJavaBigInteger();
+			BigInteger n = ((IFraction) exprPoly).getBigNumerator();//.toJavaBigInteger();
+			BigInteger d = ((IFraction) exprPoly).getBigDenominator();//.toJavaBigInteger();
 			BigRational nr = new BigRational(n);
 			BigRational dr = new BigRational(d);
 			BigRational r = nr.divide(dr);

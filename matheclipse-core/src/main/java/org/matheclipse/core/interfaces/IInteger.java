@@ -1,6 +1,6 @@
 package org.matheclipse.core.interfaces;
 
-import apache.harmony.math.BigInteger;
+import java.math.BigInteger;
 /**
  * An expression representing a big integer number
  *

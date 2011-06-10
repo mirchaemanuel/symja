@@ -1,9 +1,12 @@
 package org.matheclipse.core.form.mathml;
 
+import java.math.BigInteger;
 import java.util.Hashtable;
 
+import org.apache.commons.math.fraction.BigFraction;
 import org.matheclipse.basic.Config;
 import org.matheclipse.core.expression.IConstantHeaders;
+import org.matheclipse.core.expression.NumberUtil;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IComplex;
 import org.matheclipse.core.interfaces.IComplexNum;
@@ -14,11 +17,9 @@ import org.matheclipse.core.interfaces.INum;
 import org.matheclipse.core.interfaces.ISymbol;
 import org.matheclipse.parser.client.operator.ASTNodeFactory;
 
-import apache.harmony.math.BigInteger;
-import apache.harmony.math.Rational;
-
 /**
  * PresentationGenerator generates MathML presentation output
+ * 
  * @deprecated
  */
 public class MathMLContentFormFactory extends AbstractMathMLFormFactory implements IConstantHeaders {
@@ -65,7 +66,8 @@ public class MathMLContentFormFactory extends AbstractMathMLFormFactory implemen
 
 	/**
 	 * Constructor
-	 *  @deprecated
+	 * 
+	 * @deprecated
 	 */
 	public MathMLContentFormFactory() {
 		this("");
@@ -74,7 +76,7 @@ public class MathMLContentFormFactory extends AbstractMathMLFormFactory implemen
 	/**
 	 * 
 	 * @param tagPrefix
-	 *  @deprecated
+	 * @deprecated
 	 */
 	public MathMLContentFormFactory(final String tagPrefix) {
 		super(tagPrefix);
@@ -142,8 +144,8 @@ public class MathMLContentFormFactory extends AbstractMathMLFormFactory implemen
 		}
 	}
 
-	public void convertFraction(final StringBuffer buf, final Rational f, final int precedence) {
-		if (f.isNegative() && (precedence > plusPrec)) {
+	public void convertFraction(final StringBuffer buf, final BigFraction f, final int precedence) {
+		if (NumberUtil.isNegative(f) && (precedence > plusPrec)) {
 			tagStart(buf, "mrow");
 			tag(buf, "mo", "(");
 		}
@@ -161,7 +163,7 @@ public class MathMLContentFormFactory extends AbstractMathMLFormFactory implemen
 			tagEnd(buf, "mn");
 			tagEnd(buf, "mfrac");
 		}
-		if (f.isNegative() && (precedence > plusPrec)) {
+		if (NumberUtil.isNegative(f) && (precedence > plusPrec)) {
 			tag(buf, "mo", ")");
 			tagEnd(buf, "mrow");
 		}
@@ -242,7 +244,7 @@ public class MathMLContentFormFactory extends AbstractMathMLFormFactory implemen
 	}
 
 	/**
-	 *  @deprecated
+	 * @deprecated
 	 */
 	public void convert(final StringBuffer buf, final IExpr o, final int precedence) {
 		if (o instanceof IAST) {

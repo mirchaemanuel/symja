@@ -7,7 +7,7 @@ import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.IInteger;
 
-import apache.harmony.math.BigInteger;
+import java.math.BigInteger;
 
 /**
  * 

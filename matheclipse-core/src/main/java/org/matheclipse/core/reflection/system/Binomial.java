@@ -5,7 +5,7 @@ import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.IInteger;
 
-import apache.harmony.math.BigInteger;
+import java.math.BigInteger;
 
 /**
  * Returns the binomial coefficient of 2 integers.
@@ -29,19 +29,19 @@ public class Binomial extends AbstractArg2 {
 	private BigInteger binomial(final BigInteger n, final BigInteger k) {
 		// k>n : by definition --> 0
 
-		if (k.isLargerThan(n)) {
+		if (k.compareTo(n) > 0) {
 			return BigInteger.ZERO;
 		}
-		if (k.isZero() || k.equals(n)) {
+		if (k.equals(BigInteger.ZERO) || k.equals(n)) {
 			return BigInteger.ONE;
 		}
 
 		BigInteger bin = BigInteger.ONE;
 		BigInteger i = BigInteger.ONE;
 
-		while (!i.isLargerThan(k)) {
-			bin = bin.times(n.minus(i).plus(BigInteger.ONE)).divide(i);
-			i = i.plus(BigInteger.ONE);
+		while (!(i.compareTo(k)>0)) {
+			bin = bin.multiply(n.subtract(i).add(BigInteger.ONE)).divide(i);
+			i = i.add(BigInteger.ONE);
 		}
 		return bin;
 	}

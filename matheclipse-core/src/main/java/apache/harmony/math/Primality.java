@@ -14,18 +14,14 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-
 package apache.harmony.math;
 
-import java.util.Arrays;
+import java.math.BigInteger;
 import java.util.Map;
-import java.util.Random;
-
-import org.matheclipse.basic.Config;
-import org.matheclipse.basic.ObjectMemoryExceededException;
 
 /**
- * Provides primality probabilistic methods.
+ * Provides primality probabilistic methods. Copied from Apache Harmony
+ * java.math package
  * 
  * @author Intel Middleware Product Division
  * @author Instituto Tecnologico de Cordoba
@@ -71,226 +67,8 @@ public class Primality {
 
 	static {// To initialize the dual table of BigInteger primes
 		for (int i = 0; i < primes.length; i++) {
-			BIprimes[i] = BigInteger.valueOfStatic(primes[i]);
+			BIprimes[i] = BigInteger.valueOf(primes[i]);
 		}
-	}
-
-	/* Package Methods */
-
-	/**
-	 * It uses the sieve of Eratosthenes to discard several composite numbers in
-	 * some appropriate range (at the moment {@code [this, this + 1024]}). After
-	 * this process it applies the Miller-Rabin test to the numbers that were not
-	 * discarded in the sieve.
-	 * 
-	 * @see BigInteger#nextProbablePrime()
-	 * @see #millerRabin(BigInteger, int)
-	 */
-	static BigInteger nextProbablePrime(BigInteger n) {
-		// PRE: n >= 0
-		int i, j;
-		int certainty;
-		int gapSize = 1024; // for searching of the next probable prime number
-		int modules[] = new int[primes.length];
-		boolean isDivisible[] = new boolean[gapSize];
-		BigInteger startPoint;
-		BigInteger probPrime;
-		// If n < "last prime of table" searches next prime in the table
-		if ((n._size == 1) && (n._words[0] >= 0) && (n._words[0] < primes[primes.length - 1])) {
-			for (i = 0; n._words[0] >= primes[i]; i++) {
-				;
-			}
-			return BIprimes[i];
-		}
-		/*
-		 * Creates a "N" enough big to hold the next probable prime Note that: N <
-		 * "next prime" < 2*N
-		 */
-		// axelclk
-		if (Config.SERVER_MODE) {
-			if (Config.BIGINTEGER_MAX_SIZE < n._size + 1) {
-				throw new ObjectMemoryExceededException("BigInteger", n._size + 1);
-			}
-		}
-		startPoint = BigInteger.newInstance(1, n._size, new int[n._size + 1]);
-		// startPoint = new BigInteger(1, n._size,
-		// new int[n._size + 1]);
-		System.arraycopy(n._words, 0, startPoint._words, 0, n._size);
-		// To fix N to the "next odd number"
-		if (n.testBit(0)) {
-			Elementary.inplaceAdd(startPoint, 2);
-		} else {
-			startPoint._words[0] |= 1;
-		}
-		// To set the improved certainly of Miller-Rabin
-		j = startPoint.bitLength();
-		for (certainty = 2; j < BITS[certainty]; certainty++) {
-			;
-		}
-		// To calculate modules: N mod p1, N mod p2, ... for first primes.
-		for (i = 0; i < primes.length; i++) {
-			modules[i] = Division.remainder(startPoint, primes[i]) - gapSize;
-		}
-		while (true) {
-			// At this point, all numbers in the gap are initialized as
-			// probably primes
-			Arrays.fill(isDivisible, false);
-			// To discard multiples of first primes
-			for (i = 0; i < primes.length; i++) {
-				modules[i] = (modules[i] + gapSize) % primes[i];
-				j = (modules[i] == 0) ? 0 : (primes[i] - modules[i]);
-				for (; j < gapSize; j += primes[i]) {
-					isDivisible[j] = true;
-				}
-			}
-			// To execute Miller-Rabin for non-divisible numbers by all first
-			// primes
-			for (j = 0; j < gapSize; j++) {
-				if (!isDivisible[j]) {
-					probPrime = startPoint.copy();
-					Elementary.inplaceAdd(probPrime, j);
-
-					if (millerRabin(probPrime, certainty)) {
-						return probPrime;
-					}
-				}
-			}
-			Elementary.inplaceAdd(startPoint, gapSize);
-		}
-	}
-
-	/**
-	 * A random number is generated until a probable prime number is found.
-	 * 
-	 * @see BigInteger#BigInteger(int,int,Random)
-	 * @see BigInteger#probablePrime(int,Random)
-	 * @see #isProbablePrime(BigInteger, int)
-	 */
-	static BigInteger consBigInteger(int bitLength, int certainty, Random rnd) {
-		// PRE: bitLength >= 2;
-		// For small numbers get a random prime from the prime table
-		if (bitLength <= 10) {
-			int rp[] = offsetPrimes[bitLength];
-			return BIprimes[rp[0] + rnd.nextInt(rp[1])];
-		}
-		int shiftCount = (-bitLength) & 31;
-		int last = (bitLength + 31) >> 5;
-		// axelclk
-		if (Config.SERVER_MODE) {
-			if (Config.BIGINTEGER_MAX_SIZE < last) {
-				throw new ObjectMemoryExceededException("BigInteger", last);
-			}
-		}
-		BigInteger n = BigInteger.newInstance(1, last, new int[last]);
-		// BigInteger n = new BigInteger(1, last, new int[last]);
-
-		last--;
-		do {// To fill the array with random integers
-			for (int i = 0; i < n._size; i++) {
-				n._words[i] = rnd.nextInt();
-			}
-			// To fix to the correct bitLength
-			n._words[last] |= 0x80000000;
-			n._words[last] >>>= shiftCount;
-			// To create an odd number
-			n._words[0] |= 1;
-		} while (!isProbablePrime(n, certainty));
-		return n;
-	}
-
-	/**
-	 * @see BigInteger#isProbablePrime(int)
-	 * @see #millerRabin(BigInteger, int)
-	 * @ar.org.fitc.ref Optimizations: "A. Menezes - Handbook of applied
-	 *                  Cryptography, Chapter 4".
-	 */
-	static boolean isProbablePrime(BigInteger n, int certainty) {
-		// PRE: n >= 0;
-		if ((certainty <= 0) || ((n._size == 1) && (n._words[0] == 2))) {
-			return true;
-		}
-		// To discard all even numbers
-		if (!n.testBit(0)) {
-			return false;
-		}
-		// To check if 'n' exists in the table (it fit in 10 bits)
-		if ((n._size == 1) && ((n._words[0] & 0XFFFFFC00) == 0)) {
-			return (Arrays.binarySearch(primes, n._words[0]) >= 0);
-		}
-		// To check if 'n' is divisible by some prime of the table
-		for (int i = 1; i < primes.length; i++) {
-			if (Division.remainderArrayByInt(n._words, n._size, primes[i]) == 0) {
-				return false;
-			}
-		}
-		// To set the number of iterations necessary for Miller-Rabin test
-		int i;
-		int bitLength = n.bitLength();
-
-		for (i = 2; bitLength < BITS[i]; i++) {
-			;
-		}
-		certainty = Math.min(i, 1 + ((certainty - 1) >> 1));
-
-		return millerRabin(n, certainty);
-	}
-
-	/* Private Methods */
-
-	/**
-	 * The Miller-Rabin primality test.
-	 * 
-	 * @param n
-	 *          the input number to be tested.
-	 * @param t
-	 *          the number of trials.
-	 * @return {@code false} if the number is definitely compose, otherwise
-	 *         {@code true} with probability {@code 1 - 4<sup>(-t)</sup>}.
-	 * @ar.org.fitc.ref "D. Knuth, The Art of Computer Programming Vo.2, Section
-	 *                  4.5.4., Algorithm P"
-	 */
-	private static boolean millerRabin(BigInteger n, int t) {
-		// PRE: n >= 0, t >= 0
-		BigInteger x; // x := UNIFORM{2...n-1}
-		BigInteger y; // y := x^(q * 2^j) mod n
-		BigInteger n_minus_1 = n.minus(BigInteger.ONE); // n-1
-		int bitLength = n_minus_1.bitLength(); // ~ log2(n-1)
-		// (q,k) such that: n-1 = q * 2^k and q is odd
-		int k = n_minus_1.getLowestSetBit();
-		BigInteger q = n_minus_1.shiftRight(k);
-		Random rnd = new Random();
-
-		for (int i = 0; i < t; i++) {
-			// To generate a witness 'x', first it use the primes of table
-			if (i < primes.length) {
-				x = BIprimes[i];
-			} else {/*
-							 * It generates random witness only if it's necesssary. Note that
-							 * all methods would call Miller-Rabin with t <= 50 so this part
-							 * is only to do more robust the algorithm
-							 */
-				do {
-					x = new BigInteger(bitLength, rnd);
-				} while ((x.compareTo(n) >= BigInteger.EQUALS) || (x._sign == 0) || x.isAbsOne());
-			}
-			y = x.modPow(q, n);
-			if (y.isAbsOne() || y.equals(n_minus_1)) {
-				continue;
-			}
-			for (int j = 1; j < k; j++) {
-				if (y.equals(n_minus_1)) {
-					continue;
-				}
-				y = y.times(y).mod(n);
-				if (y.isAbsOne()) {
-					return false;
-				}
-			}
-			if (!y.equals(n_minus_1)) {
-				return false;
-			}
-		}
-		return true;
 	}
 
 	/**
@@ -309,22 +87,22 @@ public class Primality {
 		BigInteger result = val;
 		Integer count;
 		for (int i = 0; i < primes.length; i++) {
-			if (result.isLessThan(BIprimes[i])) {
+			if (result.compareTo(BIprimes[i]) < 0) {
 				break;
 			}
-			divRem = Division.divideAndRemainderByInteger(result, primes[i], 1);
+			divRem = result.divideAndRemainder(BIprimes[i]);
 			while (divRem[1].equals(BigInteger.ZERO)) {
 				count = map.get(primes[i]);
 				if (count == null) {
 					map.put(primes[i], 1);
 				} else {
-					map.put(primes[i], count+1);
+					map.put(primes[i], count + 1);
 				}
 				result = divRem[0];// quotient
-				if (result.isLessThan(BIprimes[i])) {
+				if (result.compareTo(BIprimes[i]) < 0) {
 					break;
 				}
-				divRem = Division.divideAndRemainderByInteger(result, primes[i], 1);
+				divRem = result.divideAndRemainder(BIprimes[i]);
 			}
 		}
 		return result;

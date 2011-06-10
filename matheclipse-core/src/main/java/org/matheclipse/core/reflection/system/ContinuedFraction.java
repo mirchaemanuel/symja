@@ -10,7 +10,7 @@ import org.matheclipse.core.interfaces.INum;
 import org.matheclipse.core.interfaces.IRational;
 import org.matheclipse.core.interfaces.ISymbol;
 
-import apache.harmony.math.BigInteger;
+import java.math.BigInteger;
 
 /**
  * ContinuedFraction of a double or fraction number

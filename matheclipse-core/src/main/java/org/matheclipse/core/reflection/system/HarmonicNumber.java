@@ -1,5 +1,8 @@
 package org.matheclipse.core.reflection.system;
 
+import java.math.BigInteger;
+
+import org.apache.commons.math.fraction.BigFraction;
 import org.matheclipse.core.eval.exception.Validate;
 import org.matheclipse.core.eval.exception.WrongNumberOfArguments;
 import org.matheclipse.core.eval.interfaces.IFunctionEvaluator;
@@ -8,9 +11,6 @@ import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.IInteger;
 import org.matheclipse.core.interfaces.ISymbol;
-
-import apache.harmony.math.BigInteger;
-import apache.harmony.math.Rational;
 
 /**
  * Harmonic number of a given integer value
@@ -41,11 +41,11 @@ public class HarmonicNumber implements IFunctionEvaluator {
 				return F.C1;
 			}
 			n--;
-			Rational sum = Rational.ONE;
+			BigFraction sum = BigFraction.ONE;
 			BigInteger counter = BigInteger.ONE;
 			for (int i = 0; i < n; i++) {
 				counter = counter.add(BigInteger.ONE);
-				sum = sum.plus(Rational.valueOf(BigInteger.ONE, counter));
+				sum = sum.add(new BigFraction(BigInteger.ONE, counter));
 			}
 			return F.fraction(sum);
 

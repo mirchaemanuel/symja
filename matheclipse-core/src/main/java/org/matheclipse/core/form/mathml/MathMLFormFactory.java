@@ -2,8 +2,10 @@ package org.matheclipse.core.form.mathml;
 
 import java.util.Hashtable;
 
+import org.apache.commons.math.fraction.BigFraction;
 import org.matheclipse.basic.Config;
 import org.matheclipse.core.expression.IConstantHeaders;
+import org.matheclipse.core.expression.NumberUtil;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IComplex;
 import org.matheclipse.core.interfaces.IComplexNum;
@@ -14,10 +16,6 @@ import org.matheclipse.core.interfaces.INum;
 import org.matheclipse.core.interfaces.ISymbol;
 import org.matheclipse.core.list.algorithms.EvaluationSupport;
 import org.matheclipse.parser.client.operator.ASTNodeFactory;
-
-import edu.jas.arith.BigInteger;
-
-import apache.harmony.math.Rational;
 
 /**
  * PresentationGenerator generates MathML presentation output
@@ -112,7 +110,7 @@ public class MathMLFormFactory extends AbstractMathMLFormFactory implements ICon
 	}
 
 	public void convertFraction(final StringBuffer buf, final IFraction f, final int precedence) {
-		boolean isInteger = f.getBigDenominator().equals(apache.harmony.math.BigInteger.ONE);
+		boolean isInteger = f.isOne();
 		if (f.isNegative() && (precedence > plusPrec)) {
 			tagStart(buf, "mrow");
 			tag(buf, "mo", "(");
@@ -137,12 +135,12 @@ public class MathMLFormFactory extends AbstractMathMLFormFactory implements ICon
 		}
 	}
 
-	public void convertFraction(final StringBuffer buf, final Rational f, final int precedence) {
-		if (f.isNegative() && (precedence > plusPrec)) {
+	public void convertFraction(final StringBuffer buf, final BigFraction f, final int precedence) {
+		if (NumberUtil.isNegative(f) && (precedence > plusPrec)) {
 			tagStart(buf, "mrow");
 			tag(buf, "mo", "(");
 		}
-		if (f.getDenominator().equals(apache.harmony.math.BigInteger.ONE)) {
+		if (f.equals(BigFraction.ONE)) {
 			tagStart(buf, "mn");
 			buf.append(f.getNumerator().toString());
 			tagEnd(buf, "mn");
@@ -156,17 +154,17 @@ public class MathMLFormFactory extends AbstractMathMLFormFactory implements ICon
 			tagEnd(buf, "mn");
 			tagEnd(buf, "mfrac");
 		}
-		if (f.isNegative() && (precedence > plusPrec)) {
+		if (NumberUtil.isNegative(f) && (precedence > plusPrec)) {
 			tag(buf, "mo", ")");
 			tagEnd(buf, "mrow");
 		}
 	}
 
 	public void convertComplex(final StringBuffer buf, final IComplex c, final int precedence) {
-		boolean isReZero = c.getRealPart().compareTo(Rational.ZERO) == 0;
-		final boolean isImOne = c.getImaginaryPart().compareTo(Rational.ONE) == 0;
-		final boolean isImNegative = c.getImaginaryPart().compareTo(Rational.ZERO) < 0;
-		final boolean isImMinusOne = isImNegative && c.getImaginaryPart().compareTo(Rational.valueOf(-1, 1)) == 0;
+		boolean isReZero = c.getRealPart().compareTo(BigFraction.ZERO) == 0;
+		final boolean isImOne = c.getImaginaryPart().compareTo(BigFraction.ONE) == 0;
+		final boolean isImNegative = c.getImaginaryPart().compareTo(BigFraction.ZERO) < 0;
+		final boolean isImMinusOne = c.getImaginaryPart().equals(BigFraction.MINUS_ONE);
 		tagStart(buf, "mrow");
 		if (!isReZero) {
 			convertFraction(buf, c.getRealPart(), precedence);

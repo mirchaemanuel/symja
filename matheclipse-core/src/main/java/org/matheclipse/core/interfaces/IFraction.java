@@ -1,8 +1,9 @@
 package org.matheclipse.core.interfaces;
 
 
-import apache.harmony.math.BigInteger;
-import apache.harmony.math.Rational;
+import java.math.BigInteger;
+
+import org.apache.commons.math.fraction.BigFraction;
 /**
  * interface for "fractional" numbers
  * 
@@ -13,7 +14,7 @@ public interface IFraction extends IRational {
 	//
 	// public IFraction divide(IFraction parm1);
 
-	public Rational getRational();
+	public BigFraction getRational();
 
 	/**
 	 * Returns the denominator of this fraction.
