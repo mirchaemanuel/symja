@@ -4,8 +4,10 @@ import java.io.StringWriter;
 
 import junit.framework.TestCase;
 
+import org.matheclipse.basic.Config;
 import org.matheclipse.core.eval.EvalEngine;
 import org.matheclipse.core.eval.TeXUtilities;
+import org.matheclipse.core.expression.F;
 
 /**
  * Tests MathML presentation function
@@ -15,6 +17,7 @@ public class BasicTeXTestCase extends TestCase {
 
 	public BasicTeXTestCase(String name) {
 		super(name);
+		F.initSymbols(null, null, false);
 	}
 
 	/**
@@ -42,11 +45,11 @@ public class BasicTeXTestCase extends TestCase {
 	}
 
 	public void testTeX006() {
-		check("Integrate[f[x],y]", "\\int f(x)\\,dy");
+		check("Integrate[f[x],y]", "\\int f\\left( x \\right)\\,dy");
 	}
 
 	public void testTeX007() {
-		check("Integrate[f[x],{x,1,10}]", "\\int_{1}{10}f(x)\\,dx");
+		check("Integrate[f[x],{x,1,10}]", "\\int_{1}^{10}f\\left( x \\right)\\,dx");
 	}
 
 	public void testTeX008() {
@@ -54,7 +57,7 @@ public class BasicTeXTestCase extends TestCase {
 	}
 
 	public void testTeX009() {
-		check("Limit[Sin[x],x->0]", "\\lim_{x\\rightarrow 0}\\sin(x)");
+		check("Limit[Sin[x],x->0]", "\\mathop {\\lim }\\limits_{x \\to 0}\\sin(x)");
 	}
 
 	public void testTeX010() {
@@ -67,9 +70,9 @@ public class BasicTeXTestCase extends TestCase {
 	}
 	
 	public void testTeX012() {
-		check("MatrixForm[{{1,2,3},{4,5,6}}]", "\\begin{matrix} 1  2  3 \\\n" + 
-				" 4  5  6 \\\n" + 
-				"\\end{matrix}");
+		check("MatrixForm[{{1,2,3},{4,5,6}}]", "\\begin{pmatrix} 1 & 2 & 3 \\\\\n" + 
+				" 4 & 5 & 6 \\\\\n" + 
+				"\\end{pmatrix}");
 	}
 	
 	public void check(String strEval, String strResult) {

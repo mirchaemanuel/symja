@@ -1,5 +1,11 @@
 package org.matheclipse.core.expression;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
+
+import org.apache.commons.math.fraction.BigFraction;
+import org.apache.commons.math.fraction.FractionConversionException;
+import org.matheclipse.basic.Config;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.IFraction;
 import org.matheclipse.core.interfaces.IInteger;
@@ -8,11 +14,6 @@ import org.matheclipse.core.interfaces.ISymbol;
 import org.matheclipse.core.visit.IVisitor;
 import org.matheclipse.core.visit.IVisitorBoolean;
 import org.matheclipse.core.visit.IVisitorInt;
-
-import java.math.BigDecimal;
-
-import apache.harmony.math.BigInteger;
-import apache.harmony.math.Rational;
 
 /**
  * 
@@ -25,7 +26,7 @@ public class FractionSym extends ExprImpl implements IFraction {
 	 * @param numerator
 	 * @return
 	 */
-	protected static FractionSym newInstance(final Rational rational) {
+	protected static FractionSym newInstance(final BigFraction rational) {
 		FractionSym r = new FractionSym();
 		r.fRational = rational;
 		return r;
@@ -33,37 +34,48 @@ public class FractionSym extends ExprImpl implements IFraction {
 
 	public static FractionSym valueOf(final BigInteger numerator) {
 		FractionSym r = new FractionSym();
-		r.fRational = Rational.valueOf(numerator, BigInteger.ONE);
+		r.fRational = new BigFraction(numerator, BigInteger.ONE);
 		return r;
 	}
 
-	public static FractionSym valueOf(final Rational rat) {
+	/**
+	 * 
+	 * @param rat
+	 * @return
+	 * 
+	 * @deprecated
+	 */
+	public static FractionSym valueOf(final BigFraction rat) {
 		FractionSym r = new FractionSym();
-		r.fRational = Rational.valueOf(rat);
+		r.fRational = new BigFraction(rat.getNumerator(), rat.getDenominator());
 		return r;
 	}
 
 	public static FractionSym valueOf(final BigInteger numerator, final BigInteger denominator) {
 		FractionSym r = new FractionSym();
-		r.fRational = Rational.valueOf(numerator, denominator);
+		r.fRational = new BigFraction(numerator, denominator);
 		return r;
 	}
 
 	public static FractionSym valueOf(final IInteger numerator, final IInteger denominator) {
 		FractionSym r = new FractionSym();
-		r.fRational = Rational.valueOf(numerator.getBigNumerator(), denominator.getBigNumerator());
+		r.fRational = new BigFraction(numerator.getBigNumerator(), denominator.getBigNumerator());
 		return r;
 	}
 
 	public static FractionSym valueOf(final long numerator, final long denominator) {
 		FractionSym r = new FractionSym();
-		r.fRational = Rational.valueOf(BigInteger.valueOf(numerator), BigInteger.valueOf(denominator));
+		r.fRational = new BigFraction(numerator, denominator);
 		return r;
 	}
 
 	public static FractionSym valueOf(final double value) {
 		FractionSym r = new FractionSym();
-		r.fRational = Rational.valueOf(value);
+		try {
+			r.fRational = new BigFraction(value, Config.DOUBLE_EPSILON, 200);
+		} catch (FractionConversionException e) {
+			r.fRational = new BigFraction(value);
+		}
 		return r;
 	}
 
@@ -72,7 +84,7 @@ public class FractionSym extends ExprImpl implements IFraction {
 	 */
 	private static final long serialVersionUID = 2396715994276842438L;
 
-	/* package private */Rational fRational;
+	/* package private */BigFraction fRational;
 
 	private FractionSym() {
 		fRational = null;
@@ -123,18 +135,18 @@ public class FractionSym extends ExprImpl implements IFraction {
 	public IInteger getNumerator() {
 		return IntegerSym.valueOf(fRational.getNumerator());
 	}
-	
+
 	/** {@inheritDoc} */
 	public int hierarchy() {
 		return FRACTIONID;
 	}
 
 	public IFraction add(final IFraction parm1) {
-		return newInstance(fRational.plus(((FractionSym) parm1).fRational));
+		return newInstance(fRational.add(((FractionSym) parm1).fRational));
 	}
 
 	public IFraction multiply(final IFraction parm1) {
-		return newInstance(fRational.times(((FractionSym) parm1).fRational));
+		return newInstance(fRational.multiply(((FractionSym) parm1).fRational));
 	}
 
 	public boolean isNegative() {
@@ -154,15 +166,15 @@ public class FractionSym extends ExprImpl implements IFraction {
 	 * @param that
 	 * @return
 	 */
-	public Rational add(final Rational that) {
-		return fRational.plus(that);
+	public BigFraction add(final BigFraction that) {
+		return fRational.add(that);
 	}
 
 	/**
 	 * @param that
 	 * @return
 	 */
-	public Rational divide(final Rational that) {
+	public BigFraction divide(final BigFraction that) {
 		return fRational.divide(that);
 	}
 
@@ -214,15 +226,15 @@ public class FractionSym extends ExprImpl implements IFraction {
 	 * @param that
 	 * @return
 	 */
-	public Rational multiply(final Rational that) {
-		return fRational.times(that);
+	public BigFraction multiply(final BigFraction that) {
+		return fRational.multiply(that);
 	}
 
 	/**
 	 * @return
 	 */
 	public ISignedNumber negate() {
-		return newInstance(fRational.opposite());
+		return newInstance(fRational.negate());
 	}
 
 	/**
@@ -230,7 +242,7 @@ public class FractionSym extends ExprImpl implements IFraction {
 	 */
 	@Override
 	public IExpr opposite() {
-		return newInstance(fRational.opposite());
+		return newInstance(fRational.negate());
 	}
 
 	/**
@@ -247,7 +259,7 @@ public class FractionSym extends ExprImpl implements IFraction {
 		}
 		return super.plus(that);
 	}
-	
+
 	/** {@inheritDoc} */
 	public ISignedNumber minus(ISignedNumber that) {
 		if (that instanceof FractionSym) {
@@ -289,15 +301,15 @@ public class FractionSym extends ExprImpl implements IFraction {
 	/** {@inheritDoc} */
 	@Override
 	public IExpr inverse() {
-		return newInstance(fRational.inverse());
+		return newInstance(NumberUtil.inverse(fRational));
 	}
 
 	/**
 	 * @param that
 	 * @return
 	 */
-	public Rational subtract(final Rational that) {
-		return fRational.minus(that);
+	public BigFraction subtract(final BigFraction that) {
+		return fRational.subtract(that);
 	}
 
 	/** {@inheritDoc} */
@@ -339,7 +351,6 @@ public class FractionSym extends ExprImpl implements IFraction {
 		return "fraction(" + numerator + "L," + denominator + "L)";
 	}
 
- 
 	@Override
 	public String toString() {
 		return fRational.getNumerator().toString() + "/" + fRational.getDenominator().toString();
@@ -360,10 +371,10 @@ public class FractionSym extends ExprImpl implements IFraction {
 	 * 
 	 * @see org.matheclipse.parser.interfaces.IFraction#getRational()
 	 */
-	public Rational getRational() {
+	public BigFraction getRational() {
 		return fRational;
 	}
-	
+
 	/** {@inheritDoc} */
 	public int sign() {
 		return fRational.getNumerator().signum();
@@ -376,17 +387,17 @@ public class FractionSym extends ExprImpl implements IFraction {
 
 	/** {@inheritDoc} */
 	public ISignedNumber ceil() {
-		return IntegerSym.valueOf(fRational.ceiling());
+		return IntegerSym.valueOf(NumberUtil.ceiling(fRational));
 	}
 
 	/** {@inheritDoc} */
 	public ISignedNumber floor() {
-		return IntegerSym.valueOf(fRational.floor());
+		return IntegerSym.valueOf(NumberUtil.floor(fRational));
 	}
 
 	/** {@inheritDoc} */
 	public ISignedNumber round() {
-		return IntegerSym.valueOf(fRational.round(BigDecimal.ROUND_HALF_EVEN));
+		return IntegerSym.valueOf(NumberUtil.round(fRational, BigDecimal.ROUND_HALF_EVEN));
 	}
 
 	/**
@@ -399,7 +410,7 @@ public class FractionSym extends ExprImpl implements IFraction {
 			return fRational.compareTo(((FractionSym) obj).fRational);
 		}
 		if (obj instanceof IntegerSym) {
-			return fRational.compareTo(Rational.valueOf(((IntegerSym) obj).fInteger, BigInteger.ONE));
+			return fRational.compareTo(new BigFraction(((IntegerSym) obj).fInteger, BigInteger.ONE));
 		}
 		return (hierarchy() - (obj).hierarchy());
 	}
@@ -409,7 +420,7 @@ public class FractionSym extends ExprImpl implements IFraction {
 			return fRational.compareTo(((FractionSym) obj).fRational) < 0;
 		}
 		if (obj instanceof IntegerSym) {
-			return fRational.compareTo(Rational.valueOf(((IntegerSym) obj).fInteger, BigInteger.ONE)) < 0;
+			return fRational.compareTo(new BigFraction(((IntegerSym) obj).fInteger, BigInteger.ONE)) < 0;
 		}
 		return fRational.doubleValue() < obj.doubleValue();
 	}
@@ -419,7 +430,7 @@ public class FractionSym extends ExprImpl implements IFraction {
 			return fRational.compareTo(((FractionSym) obj).fRational) > 0;
 		}
 		if (obj instanceof IntegerSym) {
-			return fRational.compareTo(Rational.valueOf(((IntegerSym) obj).fInteger, BigInteger.ONE)) > 0;
+			return fRational.compareTo(new BigFraction(((IntegerSym) obj).fInteger, BigInteger.ONE)) > 0;
 		}
 		return fRational.doubleValue() < obj.doubleValue();
 	}

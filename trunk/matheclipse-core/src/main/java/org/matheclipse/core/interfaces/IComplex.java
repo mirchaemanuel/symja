@@ -1,6 +1,6 @@
 package org.matheclipse.core.interfaces;
 
-import apache.harmony.math.Rational;
+import org.apache.commons.math.fraction.BigFraction;
 
 /**
  * An expression representing a complex number
@@ -16,7 +16,7 @@ public interface IComplex extends IBigNumber {
 	 * 
 	 * @return imaginary part
 	 */
-	public Rational getImaginaryPart();
+	public BigFraction getImaginaryPart();
 
 	public IFraction getIm();
 	
@@ -25,9 +25,9 @@ public interface IComplex extends IBigNumber {
 	 * 
 	 * @return real part
 	 */
-	public Rational getRealPart();
+	public BigFraction getRealPart();
 	
-	public IFraction getRe();
+	public IFraction getRe(); 
 	
 	public IComplex multiply(IComplex val);
 

@@ -1,15 +1,16 @@
 package org.matheclipse.core.reflection.system;
 
+import java.math.BigInteger;
+
 import org.matheclipse.core.eval.interfaces.AbstractTrigArg1;
 import org.matheclipse.core.expression.ComplexNum;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.expression.Num;
+import org.matheclipse.core.expression.NumberUtil;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.IInteger;
 import org.matheclipse.core.interfaces.ISymbol;
 import org.matheclipse.parser.client.SyntaxError;
-
-import apache.harmony.math.BigInteger;
 
 public class Fibonacci extends AbstractTrigArg1 {
 
@@ -35,16 +36,16 @@ public class Fibonacci extends AbstractTrigArg1 {
 		final BigInteger c2 = BigInteger.valueOf(2);
 		BigInteger temp = iArg.getBigNumerator();
 
-		while (!temp.isZero()) {
-			if (temp.isOdd()) {
-				d = f.times(c);
-				f = a.times(c).plus(f.times(b).plus(d));
-				a = a.times(b).plus(d);
+		while (!NumberUtil.isZero(temp)) {
+			if (NumberUtil.isOdd(temp)) {
+				d = f.multiply(c);
+				f = a.multiply(c).add(f.multiply(b).add(d));
+				a = a.multiply(b).add(d);
 			}
 
-			d = c.times(c);
-			c = b.times(c).times(c2).plus(d);
-			b = b.times(b).plus(d);
+			d = c.multiply(c);
+			c = b.multiply(c).multiply(c2).add(d);
+			b = b.multiply(b).add(d);
 			temp = temp.shiftRight(1);
 		}
 

@@ -11,7 +11,7 @@ import org.matheclipse.core.interfaces.IInteger;
 import org.matheclipse.core.interfaces.ISymbol;
 import org.matheclipse.parser.client.SyntaxError;
 
-import apache.harmony.math.BigInteger;
+import java.math.BigInteger;
 
 /**
  * Returns the Gamma function value.
@@ -51,7 +51,7 @@ public class Gamma extends AbstractTrigArg1 {
 	}
 
 	public static BigInteger gamma(final BigInteger biggi) {
-		return Factorial.factorial(biggi.minus(BigInteger.ONE));
+		return Factorial.factorial(biggi.subtract(BigInteger.ONE));
 	}
 
 	@Override

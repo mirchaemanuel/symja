@@ -30,8 +30,6 @@ import org.matheclipse.core.visit.VisitorReplacePart;
 import org.matheclipse.core.visit.VisitorReplaceSlots;
 import org.matheclipse.generic.interfaces.BiFunction;
 
-import apache.harmony.math.BigInteger;
-
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 
@@ -1564,7 +1562,7 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 		} else if (clazz.equals(java.math.BigInteger.class)) {
 			IExpr temp = F.eval(this);
 			if (temp instanceof IntegerSym) {
-				return new BigInteger(((IntegerSym) temp).toByteArray());
+				return new java.math.BigInteger(((IntegerSym) temp).toByteArray());
 			}
 		} else if (clazz.equals(String.class)) {
 			return toString();

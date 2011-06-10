@@ -7,7 +7,7 @@ import org.matheclipse.core.interfaces.IInteger;
 import org.matheclipse.core.interfaces.ISymbol;
 import org.matheclipse.parser.client.SyntaxError;
 
-import apache.harmony.math.BigInteger;
+import java.math.BigInteger;
  
 /**
  * 
@@ -28,16 +28,16 @@ public class CatalanNumber extends AbstractTrigArg1 {
 	}
 
 	public static BigInteger catalanNumber(BigInteger n) {
-		n = n.plus(1);
-		if (!n.isLargerThan(BigInteger.ZERO)) {
+		n = n.add(BigInteger.ONE);
+		if (!(n.compareTo(BigInteger.ZERO)>0)) {
 			return BigInteger.ZERO;
 		}
 		BigInteger i = BigInteger.ONE;
 		BigInteger c = BigInteger.ONE;
-		final BigInteger temp1 = n.shiftLeft(1).minus(BigInteger.ONE);
-		while (i.isLessThan(n)) {
-			c = c.times(temp1.minus(i)).divide(i);
-			i = i.plus(1);
+		final BigInteger temp1 = n.shiftLeft(1).subtract(BigInteger.ONE);
+		while (i.compareTo(n)<0) {
+			c = c.multiply(temp1.subtract(i)).divide(i);
+			i = i.add(BigInteger.ONE);
 		}
 		return c.divide(n);
 	}

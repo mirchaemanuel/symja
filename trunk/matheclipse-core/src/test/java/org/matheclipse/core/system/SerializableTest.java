@@ -9,7 +9,6 @@ import java.io.ObjectOutputStream;
 
 import org.matheclipse.core.eval.EvalEngine;
 import org.matheclipse.core.expression.F;
-import org.matheclipse.core.expression.Symbol;
 import org.matheclipse.core.interfaces.ISymbol;
 
 public class SerializableTest extends SpecialTestCase {
@@ -43,19 +42,19 @@ public class SerializableTest extends SpecialTestCase {
 		// test the result
 
 		assertEquals(sym.definitionToString(), "{Sin[Pi]=0,\n" + 
-				" Sin[1/12*Pi]=1/4*(-1/3*3^(1/2)+1)*6^(1/2),\n" + 
-				" Sin[1/10*Pi]=1/4*5^(1/2)-1/4,\n" + 
-				" Sin[1/2*Pi]=1,\n" + 
-				" Sin[1/4*Pi]=1/2*2^(1/2),\n" + 
 				" Sin[2/5*Pi]=1/4*2^(1/2)*(5^(1/2)+5)^(1/2),\n" + 
-				" Sin[1/3*Pi]=1/2*3^(1/2),\n" + 
-				" Sin[1/6*Pi]=1/2,\n" + 
-				" Sin[3/8*Pi]=1/2*(2^(1/2)+2)^(1/2),\n" + 
-				" Sin[1/5*Pi]=1/4*2^(1/2)*(-5^(1/2)+5)^(1/2),\n" + 
-				" Sin[3/10*Pi]=1/4*5^(1/2)+1/4,\n" + 
-				" Sin[1/8*Pi]=1/2*(-2^(1/2)+2)^(1/2),\n" + 
 				" Sin[5/12*Pi]=1/4*(1/3*3^(1/2)+1)*6^(1/2),\n" + 
+				" Sin[1/6*Pi]=1/2,\n" + 
 				" Sin[I]=I*Sinh[1],\n" + 
+				" Sin[1/5*Pi]=1/4*2^(1/2)*(-5^(1/2)+5)^(1/2),\n" + 
+				" Sin[1/4*Pi]=1/2*2^(1/2),\n" + 
+				" Sin[1/3*Pi]=1/2*3^(1/2),\n" + 
+				" Sin[1/10*Pi]=1/4*5^(1/2)-1/4,\n" + 
+				" Sin[3/8*Pi]=1/2*(2^(1/2)+2)^(1/2),\n" + 
+				" Sin[1/12*Pi]=1/4*(-1/3*3^(1/2)+1)*6^(1/2),\n" + 
+				" Sin[1/8*Pi]=1/2*(-2^(1/2)+2)^(1/2),\n" + 
+				" Sin[3/10*Pi]=1/4*5^(1/2)+1/4,\n" + 
+				" Sin[1/2*Pi]=1,\n" + 
 				" Sin[0]=0,\n" + 
 				" Sin[ArcSin[x_]]:=x,\n" + 
 				" Sin[ArcCos[x_]]:=(-x^2+1)^(1/2),\n" + 

@@ -3,6 +3,7 @@ package org.matheclipse.core.eval;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.Serializable;
+import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -26,13 +27,11 @@ import org.matheclipse.core.expression.MethodSymbol;
 import org.matheclipse.core.generic.Predicates;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IComplex;
-import org.matheclipse.core.interfaces.IComplexNum;
 import org.matheclipse.core.interfaces.IEvaluationEngine;
 import org.matheclipse.core.interfaces.IEvaluator;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.IFraction;
 import org.matheclipse.core.interfaces.IInteger;
-import org.matheclipse.core.interfaces.INum;
 import org.matheclipse.core.interfaces.INumber;
 import org.matheclipse.core.interfaces.ISignedNumber;
 import org.matheclipse.core.interfaces.ISymbol;
@@ -41,9 +40,6 @@ import org.matheclipse.core.sql.SerializeVariables2DB;
 import org.matheclipse.parser.client.Parser;
 import org.matheclipse.parser.client.ast.ASTNode;
 import org.matheclipse.parser.client.math.MathException;
-
-import apache.harmony.math.BigInteger;
-import apache.harmony.math.Rational;
 
 import com.google.common.base.Predicate;
 

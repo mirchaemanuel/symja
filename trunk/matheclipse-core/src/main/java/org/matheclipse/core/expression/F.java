@@ -1,25 +1,20 @@
 package org.matheclipse.core.expression;
 
-import static org.matheclipse.core.expression.F.$s;
-import static org.matheclipse.core.expression.F.Not;
-import static org.matheclipse.core.expression.F.ast;
-import static org.matheclipse.core.expression.F.binary;
-import static org.matheclipse.core.expression.F.unary;
-
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.math.fraction.BigFraction;
 import org.matheclipse.basic.Config;
 import org.matheclipse.core.convert.Object2Expr;
 import org.matheclipse.core.eval.EvalEngine;
 import org.matheclipse.core.eval.Namespace;
 import org.matheclipse.core.eval.SystemNamespace;
-import org.matheclipse.core.generic.Functors;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IComplex;
 import org.matheclipse.core.interfaces.IComplexNum;
@@ -35,9 +30,6 @@ import org.matheclipse.core.patternmatching.PatternMatcher;
 import org.matheclipse.core.reflection.system.Package;
 
 import com.google.common.base.Function;
-
-import apache.harmony.math.BigInteger;
-import apache.harmony.math.Rational;
 
 /**
  * Factory for creating MathEclipse expression objects.
@@ -913,7 +905,7 @@ public class F {
 				CN1D4 = FractionSym.valueOf(-1, 4);
 
 				CI = ComplexSym.valueOf(BigInteger.ZERO, BigInteger.ONE);
-				CNI = ComplexSym.valueOf(BigInteger.ZERO, BigInteger.MINUS_ONE);
+				CNI = ComplexSym.valueOf(BigInteger.ZERO, BigInteger.valueOf(-1L));
 
 				CD0 = Num.valueOf(0.0);
 				CD1 = Num.valueOf(1.0);
@@ -1861,8 +1853,8 @@ public class F {
 	}
 
 	public static IComplexNum complexNum(final IComplex obj) {
-		final Rational r = obj.getRealPart();
-		final Rational i = obj.getImaginaryPart();
+		final BigFraction r = obj.getRealPart();
+		final BigFraction i = obj.getImaginaryPart();
 		double nr = 0.0;
 		double dr = 1.0;
 		double ni = 0.0;
@@ -2022,19 +2014,6 @@ public class F {
 	 *          denumerator of the fractional number
 	 * @return IFraction
 	 */
-	public static IFraction fraction(java.math.BigInteger jmNumeratorBig, java.math.BigInteger jmDenominatorBig) {
-		return FractionSym.valueOf(new BigInteger(jmNumeratorBig.toByteArray()), new BigInteger(jmDenominatorBig.toByteArray()));
-	}
-
-	/**
-	 * Create a "fractional" number
-	 * 
-	 * @param numerator
-	 *          numerator of the fractional number
-	 * @param denominator
-	 *          denumerator of the fractional number
-	 * @return IFraction
-	 */
 	public static IFraction fraction(final long numerator, final long denominator) {
 		return FractionSym.valueOf(numerator, denominator);
 	}
@@ -2047,7 +2026,7 @@ public class F {
 	 *          number
 	 * @return IFraction
 	 */
-	public static IFraction fraction(final Rational value) {
+	public static IFraction fraction(final BigFraction value) {
 		return FractionSym.valueOf(value);
 	}
 
@@ -2213,16 +2192,6 @@ public class F {
 	 */
 	public static IInteger integer(final BigInteger integerValue) {
 		return IntegerSym.valueOf(integerValue);
-	}
-
-	/**
-	 * Create a large integer number.
-	 * 
-	 * @param integerValue
-	 * @return
-	 */
-	public static IInteger integer(java.math.BigInteger jmBig) {
-		return IntegerSym.valueOf(new BigInteger(jmBig.toByteArray()));
 	}
 
 	/**

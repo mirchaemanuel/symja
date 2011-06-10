@@ -1,15 +1,16 @@
 package org.matheclipse.core.reflection.system;
 
+import java.math.BigInteger;
+
 import org.matheclipse.core.eval.interfaces.AbstractTrigArg1;
 import org.matheclipse.core.expression.ComplexNum;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.expression.Num;
+import org.matheclipse.core.expression.NumberUtil;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.IInteger;
 import org.matheclipse.core.interfaces.ISymbol;
 import org.matheclipse.parser.client.SyntaxError;
-
-import apache.harmony.math.BigInteger;
 
 public class Factorial2 extends AbstractTrigArg1 {
 
@@ -32,22 +33,22 @@ public class Factorial2 extends AbstractTrigArg1 {
 		BigInteger start;
 		if (biggi.compareTo(BigInteger.ZERO) == -1) {
 			result = BigInteger.valueOf(-1);
-			if (biggi.isOdd()) {
+			if (NumberUtil.isOdd(biggi)) {
 				start = BigInteger.valueOf(-3);
 			} else {
 				start = BigInteger.valueOf(-2);
 			}
-			for (BigInteger i = start; i.compareTo(biggi) >= 0; i = i.plus(BigInteger.valueOf(-2))) {
-				result = result.times(i);
+			for (BigInteger i = start; i.compareTo(biggi) >= 0; i = i.add(BigInteger.valueOf(-2))) {
+				result = result.multiply(i);
 			}
 		} else {
-			if (biggi.isOdd()) {
+			if (NumberUtil.isOdd(biggi)) {
 				start = BigInteger.valueOf(3);
 			} else {
 				start = BigInteger.valueOf(2);
 			}
-			for (BigInteger i = start; i.compareTo(biggi) <= 0; i = i.plus(BigInteger.valueOf(2))) {
-				result = result.times(i);
+			for (BigInteger i = start; i.compareTo(biggi) <= 0; i = i.add(BigInteger.valueOf(2))) {
+				result = result.multiply(i);
 			}
 		}
 

@@ -2,11 +2,13 @@ package org.matheclipse.core.expression;
 
 import static org.matheclipse.core.expression.F.List;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.apache.commons.math.fraction.BigFraction;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.IInteger;
@@ -16,30 +18,18 @@ import org.matheclipse.core.visit.IVisitor;
 import org.matheclipse.core.visit.IVisitorBoolean;
 import org.matheclipse.core.visit.IVisitorInt;
 
-import edu.jas.structure.ElemFactory;
-
-import apache.harmony.math.BigInteger;
 import apache.harmony.math.Primality;
-import apache.harmony.math.Rational;
 
 /**
  * IInteger implementation which simply delegates most of the methods to the
  * BigInteger methods
  */
 public class IntegerSym extends ExprImpl implements IInteger {
-	// private static final ObjectFactory<IntegerSym> FACTORY = new
-	// ObjectFactory<IntegerSym>() {
-	// @Override
-	// protected IntegerSym create() {
-	// if (Config.SERVER_MODE && currentQueue().getSize() >=
-	// Config.INTEGER_MAX_POOL_SIZE) {
-	// throw new PoolMemoryExceededException("IntegerImpl",
-	// currentQueue().getSize());
-	// }
-	// return new IntegerSym();
-	// }
-	//
-	// };
+	/**
+	 * The BigInteger constant minus one.
+	 * 
+	 */
+	public static final BigInteger BI_MINUS_ONE = BigInteger.valueOf(-1l);
 
 	/**
 	 * Be cautious with this method, no new internal BigInteger is created
@@ -94,7 +84,7 @@ public class IntegerSym extends ExprImpl implements IInteger {
 		// z = new IntegerSym();
 		// }
 		IntegerSym z = new IntegerSym();
-		z.fInteger = BigInteger.valueOf(integerString, radix);
+		z.fInteger = new BigInteger(integerString, radix);
 		return z;
 	}
 
@@ -133,7 +123,7 @@ public class IntegerSym extends ExprImpl implements IInteger {
 	 * @return
 	 */
 	public IInteger add(final IInteger val) {
-		return newInstance(fInteger.plus(val.getBigNumerator()));
+		return newInstance(fInteger.add(val.getBigNumerator()));
 	}
 
 	/**
@@ -141,7 +131,7 @@ public class IntegerSym extends ExprImpl implements IInteger {
 	 * @return
 	 */
 	public IInteger multiply(final IInteger val) {
-		return newInstance(fInteger.times(val.getBigNumerator()));
+		return newInstance(fInteger.multiply(val.getBigNumerator()));
 	}
 
 	@Override
@@ -160,7 +150,7 @@ public class IntegerSym extends ExprImpl implements IInteger {
 	 * @return
 	 */
 	public static IntegerSym valueOf(final BigInteger bigInteger) {
-		return newInstance(BigInteger.valueOf(bigInteger));
+		return newInstance(bigInteger);
 	}
 
 	/**
@@ -175,7 +165,7 @@ public class IntegerSym extends ExprImpl implements IInteger {
 	 * @return
 	 */
 	public IntegerSym add(final IntegerSym that) {
-		return newInstance(fInteger.plus(that.fInteger));
+		return newInstance(fInteger.add(that.fInteger));
 	}
 
 	/**
@@ -200,11 +190,11 @@ public class IntegerSym extends ExprImpl implements IInteger {
 	// return fInteger.compareTo(o);
 	// }
 	/**
-	 * @param i
+	 * @param val
 	 * @return
 	 */
-	public BigInteger divide(final int i) {
-		return fInteger.divide(i);
+	public BigInteger divide(final long val) {
+		return fInteger.divide(BigInteger.valueOf(val));
 	}
 
 	/**
@@ -312,39 +302,38 @@ public class IntegerSym extends ExprImpl implements IInteger {
 	 * @return
 	 */
 	public boolean isLargerThan(final BigInteger that) {
-		return fInteger.isLargerThan(that);
+		return fInteger.compareTo(that) > 0;
 	}
 
 	/**
 	 * @return
 	 */
 	public boolean isNegative() {
-		return fInteger.isNegative();
+		return fInteger.compareTo(BigInteger.ZERO) < 0;
 	}
 
 	/**
 	 * @return
 	 */
 	public boolean isPositive() {
-		return fInteger.isPositive();
+		return fInteger.compareTo(BigInteger.ZERO) > 0;
 	}
 
-	
 	@Override
 	public boolean isZero() {
-		return fInteger.isZero();
+		return fInteger.equals(BigInteger.ZERO);
 	}
 
 	@Override
 	public boolean isOne() {
-		return fInteger.isOne();
+		return fInteger.equals(BigInteger.ONE);
 	}
-	
+
 	@Override
 	public boolean isMinusOne() {
-		return fInteger.isMinusOne();
+		return fInteger.equals(BI_MINUS_ONE);
 	}
-	
+
 	public int intValue() {
 		return (int) fInteger.longValue();
 	}
@@ -361,59 +350,27 @@ public class IntegerSym extends ExprImpl implements IInteger {
 		return newInstance(fInteger.mod(that.fInteger));
 	}
 
-	// @Override
-	// public boolean move(final ObjectSpace os) {
-	// // return fInteger.move(os);
-	// if (super.move(os)) {
-	// fInteger.move(os);
-	// return true;
-	// }
-	// return false;
-	// }
-	public IntegerSym copy() {
-		// IntegerSym z;
-		// if (Config.SERVER_MODE) {
-		// z = FACTORY.object();
-		// } else {
-		// z = new IntegerSym();
-		// }
-		IntegerSym z = new IntegerSym();
-		z.fInteger = fInteger.copy();
-		return z;
-	}
-
-	public IntegerSym copyNew() {
-		IntegerSym i = new IntegerSym();
-		i.fInteger = fInteger.copyNew();
-		return i;
-	}
-
-	// public void recycle() {
-	// fInteger.recycle();
-	// FACTORY.recycle(this);
-	// }
-
 	/**
 	 * @param that
 	 * @return
 	 */
 	public IntegerSym multiply(final IntegerSym that) {
-		return newInstance(fInteger.times(that.fInteger));
+		return newInstance(fInteger.multiply(that.fInteger));
 	}
 
 	/**
-	 * @param l
+	 * @param val
 	 * @return
 	 */
-	public BigInteger multiply(final long l) {
-		return fInteger.times(l);
+	public BigInteger multiply(final long val) {
+		return fInteger.multiply(BigInteger.valueOf(val));
 	}
 
 	/**
 	 * @return
 	 */
 	public ISignedNumber negate() {
-		return newInstance(fInteger.opposite());
+		return newInstance(fInteger.negate());
 	}
 
 	/**
@@ -421,7 +378,7 @@ public class IntegerSym extends ExprImpl implements IInteger {
 	 */
 	@Override
 	public IExpr opposite() {
-		return newInstance(fInteger.opposite());
+		return newInstance(fInteger.negate());
 	}
 
 	@Override
@@ -471,8 +428,8 @@ public class IntegerSym extends ExprImpl implements IInteger {
 	 */
 	@Override
 	public IExpr inverse() {
-		if (fInteger.isNegative()) {
-			return FractionSym.valueOf(BigInteger.valueOf(-1), fInteger.opposite());
+		if (NumberUtil.isNegative(fInteger)) {
+			return FractionSym.valueOf(BigInteger.valueOf(-1), fInteger.negate());
 		}
 		return FractionSym.valueOf(BigInteger.ONE, fInteger);
 	}
@@ -505,11 +462,11 @@ public class IntegerSym extends ExprImpl implements IInteger {
 	 * @return
 	 */
 	public BigInteger subtract(final BigInteger that) {
-		return fInteger.minus(that);
+		return fInteger.subtract(that);
 	}
 
 	public IInteger subtract(final IInteger that) {
-		return newInstance(fInteger.minus(that.getBigNumerator()));
+		return newInstance(fInteger.subtract(that.getBigNumerator()));
 	}
 
 	/**
@@ -819,11 +776,11 @@ public class IntegerSym extends ExprImpl implements IInteger {
 	}
 
 	public boolean isEven() {
-		return fInteger.isEven();
+		return NumberUtil.isEven(fInteger);
 	}
 
 	public boolean isOdd() {
-		return fInteger.isOdd();
+		return NumberUtil.isOdd(fInteger);
 	}
 
 	public IntegerSym modInverse(final IntegerSym m) {
@@ -835,11 +792,11 @@ public class IntegerSym extends ExprImpl implements IInteger {
 	}
 
 	public int toInt() throws ArithmeticException {
-		return fInteger.toInt();
+		return NumberUtil.toInt(fInteger);
 	}
 
 	public long toLong() throws ArithmeticException {
-		return fInteger.toLong();
+		return NumberUtil.toLong(fInteger);
 	}
 
 	public int sign() {
@@ -949,7 +906,7 @@ public class IntegerSym extends ExprImpl implements IInteger {
 	public ISignedNumber round() {
 		return this;
 	}
-	
+
 	/**
 	 * Compares this expression with the specified expression for order. Returns a
 	 * negative integer, zero, or a positive integer as this expression is
@@ -960,7 +917,7 @@ public class IntegerSym extends ExprImpl implements IInteger {
 			return fInteger.compareTo(((IntegerSym) obj).fInteger);
 		}
 		if (obj instanceof FractionSym) {
-			return -((FractionSym) obj).fRational.compareTo(Rational.valueOf(fInteger, BigInteger.ONE));
+			return -((FractionSym) obj).fRational.compareTo(new BigFraction(fInteger, BigInteger.ONE));
 		}
 		return (hierarchy() - (obj).hierarchy());
 	}
@@ -970,7 +927,7 @@ public class IntegerSym extends ExprImpl implements IInteger {
 			return fInteger.compareTo(((IntegerSym) obj).fInteger) < 0;
 		}
 		if (obj instanceof FractionSym) {
-			return -((FractionSym) obj).fRational.compareTo(Rational.valueOf(fInteger, BigInteger.ONE)) < 0;
+			return -((FractionSym) obj).fRational.compareTo(new BigFraction(fInteger, BigInteger.ONE)) < 0;
 		}
 		return fInteger.doubleValue() < obj.doubleValue();
 	}
@@ -980,7 +937,7 @@ public class IntegerSym extends ExprImpl implements IInteger {
 			return fInteger.compareTo(((IntegerSym) obj).fInteger) > 0;
 		}
 		if (obj instanceof FractionSym) {
-			return -((FractionSym) obj).fRational.compareTo(Rational.valueOf(fInteger, BigInteger.ONE)) > 0;
+			return -((FractionSym) obj).fRational.compareTo(new BigFraction(fInteger, BigInteger.ONE)) > 0;
 		}
 		return fInteger.doubleValue() < obj.doubleValue();
 	}
@@ -1007,7 +964,7 @@ public class IntegerSym extends ExprImpl implements IInteger {
 
 	@Override
 	public String internalFormString(boolean symbolsAsFactoryMethod, int depth) {
-		int value = fInteger.toInt();
+		int value = NumberUtil.toInt(fInteger);
 		switch (value) {
 		case -1:
 			return "CN1";

@@ -2,10 +2,13 @@ package org.matheclipse.core.form.output;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.math.BigInteger;
 import java.util.Map;
 
+import org.apache.commons.math.fraction.BigFraction;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.expression.IConstantHeaders;
+import org.matheclipse.core.expression.NumberUtil;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IComplex;
 import org.matheclipse.core.interfaces.IComplexNum;
@@ -22,9 +25,6 @@ import org.matheclipse.parser.client.operator.InfixOperator;
 import org.matheclipse.parser.client.operator.Operator;
 import org.matheclipse.parser.client.operator.PostfixOperator;
 import org.matheclipse.parser.client.operator.PrefixOperator;
-
-import apache.harmony.math.BigInteger;
-import apache.harmony.math.Rational;
 
 /**
  * Converts an internal <code>IExpr</code> into a user readable string.
@@ -128,7 +128,7 @@ public class OutputFormFactory implements IConstantHeaders {
 		}
 	}
 
-	public void convertFraction(final Writer buf, final Rational f, final int precedence) throws IOException {
+	public void convertFraction(final Writer buf, final BigFraction f, final int precedence) throws IOException {
 		boolean isInteger = f.getDenominator().compareTo(BigInteger.ONE) == 0;
 		final boolean isNegative = f.getNumerator().compareTo(BigInteger.ZERO) < 0;
 		final int prec = isNegative ? ASTNodeFactory.PLUS_PRECEDENCE : ASTNodeFactory.TIMES_PRECEDENCE;
@@ -186,10 +186,10 @@ public class OutputFormFactory implements IConstantHeaders {
 	}
 
 	public void convertComplex(final Writer buf, final IComplex c, final int precedence) throws IOException {
-		boolean isReZero = c.getRealPart().compareTo(Rational.ZERO) == 0;
-		final boolean isImOne = c.getImaginaryPart().compareTo(Rational.ONE) == 0;
-		final boolean isImNegative = c.getImaginaryPart().compareTo(Rational.ZERO) < 0;
-		final boolean isImMinusOne = isImNegative && c.getImaginaryPart().compareTo(Rational.valueOf(-1, 1)) == 0;
+		boolean isReZero = c.getRealPart().compareTo(BigFraction.ZERO) == 0;
+		final boolean isImOne = c.getImaginaryPart().compareTo(BigFraction.ONE) == 0;
+		final boolean isImNegative = c.getImaginaryPart().compareTo(BigFraction.ZERO) < 0;
+		final boolean isImMinusOne = c.getImaginaryPart().equals(BigFraction.MINUS_ONE);
 		if (!isReZero && (ASTNodeFactory.PLUS_PRECEDENCE < precedence)) {
 			buf.write("(");
 		}
@@ -209,10 +209,10 @@ public class OutputFormFactory implements IConstantHeaders {
 			if (isReZero && (ASTNodeFactory.TIMES_PRECEDENCE < precedence)) {
 				buf.write("(");
 			}
-			final Rational im = c.getImaginaryPart();
-			if (Rational.ZERO.isLargerThan(im)) {
+			final BigFraction im = c.getImaginaryPart();
+			if (NumberUtil.isNegative(im)) {
 				buf.write("-I*");
-				convertFraction(buf, c.getImaginaryPart().opposite(), ASTNodeFactory.TIMES_PRECEDENCE);
+				convertFraction(buf, c.getImaginaryPart().negate(), ASTNodeFactory.TIMES_PRECEDENCE);
 			} else {
 				if (isReZero) {
 					buf.write("I*");
@@ -468,8 +468,8 @@ public class OutputFormFactory implements IConstantHeaders {
 			convertPattern(buf, (IPattern) o);
 			return;
 		}
-		if (o instanceof Rational) {
-			convertFraction(buf, (Rational) o, precedence);
+		if (o instanceof BigFraction) {
+			convertFraction(buf, (BigFraction) o, precedence);
 		}
 		convertString(buf, o.toString());
 	}
