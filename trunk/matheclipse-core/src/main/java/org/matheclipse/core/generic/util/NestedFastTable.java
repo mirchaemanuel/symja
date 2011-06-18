@@ -6,7 +6,8 @@ import java.util.Iterator;
 import java.util.ListIterator;
 import java.util.NoSuchElementException;
 
-import org.matheclipse.basic.Config;
+import org.matheclipse.core.basic.Config;
+import org.matheclipse.generic.nested.INestedListElement;
 
 /**
  * Resizable-array implementation (a wrapper for

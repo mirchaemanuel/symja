@@ -4,7 +4,7 @@ import org.apache.commons.math.FieldElement;
 import org.apache.commons.math.linear.BlockFieldMatrix;
 import org.apache.commons.math.linear.FieldMatrix;
 import org.apache.commons.math.linear.FieldVector;
-import org.matheclipse.basic.Config;
+import org.matheclipse.core.basic.Config;
 import org.matheclipse.core.convert.Convert;
 import org.matheclipse.core.eval.interfaces.AbstractNonOrderlessArgMultiple;
 import org.matheclipse.core.expression.ExprField;

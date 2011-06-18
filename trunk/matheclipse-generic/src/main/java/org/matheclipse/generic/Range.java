@@ -7,7 +7,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.generic.interfaces.Aggregator;
 import org.matheclipse.generic.interfaces.BiFunction;
 import org.matheclipse.generic.interfaces.BiPredicate;

@@ -3,8 +3,8 @@ package org.matheclipse.generic.combinatoric;
 import java.util.Iterator;
 import java.util.List;
 
-import org.matheclipse.core.generic.util.INestedListElement;
 import org.matheclipse.generic.nested.INestedList;
+import org.matheclipse.generic.nested.INestedListElement;
 
 /**
  * This <code>Iterable</code> iterates through all k-partition lists for a given

@@ -2,7 +2,7 @@ package org.matheclipse.core.eval;
 
 import java.io.Writer;
 
-import org.matheclipse.basic.Config;
+import org.matheclipse.core.basic.Config;
 import org.matheclipse.core.eval.exception.TimeExceeded;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.form.output.OutputFormFactory;

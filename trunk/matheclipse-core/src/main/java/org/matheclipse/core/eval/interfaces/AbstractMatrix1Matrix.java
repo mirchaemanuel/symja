@@ -2,7 +2,7 @@ package org.matheclipse.core.eval.interfaces;
 
 import org.apache.commons.math.linear.FieldMatrix;
 import org.apache.commons.math.linear.RealMatrix;
-import org.matheclipse.basic.Config;
+import org.matheclipse.core.basic.Config;
 import org.matheclipse.core.convert.Convert;
 import org.matheclipse.core.eval.exception.Validate;
 import org.matheclipse.core.expression.ExprFieldElement;

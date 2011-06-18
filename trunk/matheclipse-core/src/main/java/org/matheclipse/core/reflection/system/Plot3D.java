@@ -8,7 +8,7 @@ import static org.matheclipse.core.expression.F.SurfaceGraphics;
 
 import javax.swing.JOptionPane;
 
-import org.matheclipse.basic.Alloc;
+import org.matheclipse.core.basic.Alloc;
 import org.matheclipse.core.convert.Object2Expr;
 import org.matheclipse.core.eval.EvalEngine;
 import org.matheclipse.core.eval.interfaces.IFunctionEvaluator;

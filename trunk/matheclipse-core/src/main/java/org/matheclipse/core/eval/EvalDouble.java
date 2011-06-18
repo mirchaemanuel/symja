@@ -1,6 +1,6 @@
 package org.matheclipse.core.eval;
 
-import org.matheclipse.basic.Alloc;
+import org.matheclipse.core.basic.Alloc;
 import org.matheclipse.core.eval.interfaces.INumeric;
 import org.matheclipse.core.eval.interfaces.INumericConstant;
 import org.matheclipse.core.expression.F;

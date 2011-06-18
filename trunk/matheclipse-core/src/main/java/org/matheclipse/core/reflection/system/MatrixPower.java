@@ -2,7 +2,7 @@ package org.matheclipse.core.reflection.system;
 
 import org.apache.commons.math.linear.BlockFieldMatrix;
 import org.apache.commons.math.linear.FieldMatrix;
-import org.matheclipse.basic.Config;
+import org.matheclipse.core.basic.Config;
 import org.matheclipse.core.convert.Convert;
 import org.matheclipse.core.eval.exception.NonNegativeIntegerExpected;
 import org.matheclipse.core.eval.exception.Validate;

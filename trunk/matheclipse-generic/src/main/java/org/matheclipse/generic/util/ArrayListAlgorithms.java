@@ -2,7 +2,7 @@ package org.matheclipse.generic.util;
 
 import java.util.ArrayList;
 
-import org.matheclipse.core.generic.util.INestedListElement;
+import org.matheclipse.generic.nested.INestedListElement;
 import org.matheclipse.generic.nested.NestedAlgorithms;
 
 /**

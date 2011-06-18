@@ -2,7 +2,7 @@ package org.matheclipse.core.reflection.system;
 
 import java.util.List;
 
-import org.matheclipse.basic.Config;
+import org.matheclipse.core.basic.Config;
 import org.matheclipse.core.convert.ExprVariables;
 import org.matheclipse.core.eval.exception.JASConversionException;
 import org.matheclipse.core.eval.exception.Validate;

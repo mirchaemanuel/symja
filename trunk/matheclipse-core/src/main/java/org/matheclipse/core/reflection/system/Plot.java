@@ -7,8 +7,8 @@ import static org.matheclipse.core.expression.F.N;
 import static org.matheclipse.core.expression.F.Rule;
 import static org.matheclipse.core.expression.F.Show;
 
-import org.matheclipse.basic.Alloc;
-import org.matheclipse.basic.Config;
+import org.matheclipse.core.basic.Alloc;
+import org.matheclipse.core.basic.Config;
 import org.matheclipse.core.convert.Convert;
 import org.matheclipse.core.eval.EvalEngine;
 import org.matheclipse.core.eval.interfaces.IFunctionEvaluator;

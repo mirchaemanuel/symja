@@ -1,6 +1,6 @@
 package org.matheclipse.core.system;
 
-import org.matheclipse.basic.Config;
+import org.matheclipse.core.basic.Config;
 import org.matheclipse.core.eval.EvalEngine;
 import org.matheclipse.core.expression.Matrix;
 import org.matheclipse.core.expression.Vector;

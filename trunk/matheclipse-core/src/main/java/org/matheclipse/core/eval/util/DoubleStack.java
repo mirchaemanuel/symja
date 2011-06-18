@@ -1,6 +1,6 @@
 package org.matheclipse.core.eval.util;
 
-import org.matheclipse.basic.Alloc;
+import org.matheclipse.core.basic.Alloc;
 
 public class DoubleStack {
 	private double[] stack;

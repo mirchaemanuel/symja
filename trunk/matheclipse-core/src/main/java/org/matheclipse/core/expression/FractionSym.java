@@ -5,7 +5,7 @@ import java.math.BigInteger;
 
 import org.apache.commons.math.fraction.BigFraction;
 import org.apache.commons.math.fraction.FractionConversionException;
-import org.matheclipse.basic.Config;
+import org.matheclipse.core.basic.Config;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.IFraction;
 import org.matheclipse.core.interfaces.IInteger;

@@ -6,7 +6,7 @@ import java.io.Reader;
 import java.util.HashMap;
 import java.util.HashSet;
 
-import org.matheclipse.basic.Config;
+import org.matheclipse.core.basic.Config;
 import org.matheclipse.core.eval.EvalEngine;
 import org.matheclipse.core.eval.exception.RuleCreationError;
 import org.matheclipse.core.eval.exception.WrongNumberOfArguments;

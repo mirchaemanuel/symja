@@ -5,7 +5,7 @@ import java.util.List;
 
 import javax.script.ScriptEngine;
 
-import org.matheclipse.basic.Config;
+import org.matheclipse.core.basic.Config;
 import org.matheclipse.core.expression.F;
 
 public class MathScriptEngineFactory implements javax.script.ScriptEngineFactory {

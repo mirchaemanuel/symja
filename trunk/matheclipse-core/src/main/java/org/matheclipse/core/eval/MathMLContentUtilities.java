@@ -3,42 +3,31 @@ package org.matheclipse.core.eval;
 import java.io.Writer;
 
 import org.matheclipse.core.convert.AST2Expr;
-import org.matheclipse.core.form.mathml.MathMLFormFactory;
+import org.matheclipse.core.form.mathml.MathMLContentFormFactory;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.parser.client.Parser;
 import org.matheclipse.parser.client.ast.ASTNode;
 
 /**
- * Convert an expression into presentation MathML output
+ * Convert an expression into content MathML output
  * 
- * See <a
- * href="http://www.w3.org/TR/2000/CR-MathML2-20001113/byalpha.html">Chracters
- * ordered by Unicode</a>
  * 
  */
-public class MathMLUtilities {
+public class MathMLContentUtilities {
 	protected EvalEngine fEvalEngine;
 
-	protected MathMLFormFactory fMathMLFactory;
-
-	/**
-	 * MS Internet Explorer client ?
-	 */
-	boolean fMSIE;
+	protected MathMLContentFormFactory fMathMLFactory;
 
 	Parser fParser;
 
-	public MathMLUtilities(final EvalEngine evalEngine, final boolean msie) {
+	public MathMLContentUtilities(final EvalEngine evalEngine) {
 		fEvalEngine = evalEngine;
 		// set the thread local instance
 		startRequest();
-		if (msie) {
-			fMathMLFactory = new MathMLFormFactory("m:");
-		} else {
-			fMathMLFactory = new MathMLFormFactory();
-		}
+
+		fMathMLFactory = new MathMLContentFormFactory();
+
 		fParser = new Parser();
-		fMSIE = msie;
 	}
 
 	/**
@@ -76,20 +65,12 @@ public class MathMLUtilities {
 		if (objectExpression != null) {
 			fMathMLFactory.convert(buf, objectExpression, 0);
 			try {
-				if (fMSIE) {
-					out.write("<m:math>");
-					out.write(buf.toString());
-					out.write("</m:math>");
-				} else {
-					// out.write("<math xmlns=\"&mathml;\">");
 
-					// out.write("<math xmlns=\"http://www.w3.org/1998/Math/MathML\">");
-					out.write("<?xml version=\"1.0\"?>\n"
-							+ "<!DOCTYPE math PUBLIC \"-//W3C//DTD MathML 2.0//EN\" \"http://www.w3.org/TR/MathML2/dtd/mathml2.dtd\">\n"
-							+ "<math mode=\"display\">\n");
-					out.write(buf.toString());
-					out.write("</math>");
-				}
+				out.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+				out.write("<math:math xmlns=\"http://www.w3.org/1998/Math/MathML\">\n");
+				out.write(buf.toString());
+				out.write("\n</math:math>");
+
 			} catch (final Throwable e) {
 				// parsedExpression == null ==> fError occured
 			}

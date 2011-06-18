@@ -14,7 +14,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package apache.harmony.math;
+package org.matheclipse.core.expression;
 
 import java.math.BigInteger;
 import java.util.Map;

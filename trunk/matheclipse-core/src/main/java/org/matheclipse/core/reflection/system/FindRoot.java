@@ -11,7 +11,7 @@ import org.apache.commons.math.analysis.solvers.MullerSolver;
 import org.apache.commons.math.analysis.solvers.NewtonSolver;
 import org.apache.commons.math.analysis.solvers.RiddersSolver;
 import org.apache.commons.math.analysis.solvers.SecantSolver;
-import org.matheclipse.basic.Config;
+import org.matheclipse.core.basic.Config;
 import org.matheclipse.core.eval.EvalEngine;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
 import org.matheclipse.core.expression.F;

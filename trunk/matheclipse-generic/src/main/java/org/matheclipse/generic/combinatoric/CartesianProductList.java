@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.matheclipse.core.generic.util.INestedListElement;
 import org.matheclipse.generic.nested.INestedList;
+import org.matheclipse.generic.nested.INestedListElement;
 
 /**
  * Cartesian product iterable.
