@@ -1,5 +1,5 @@
 /*
- * $Id: GBDist.java 3391 2010-12-05 13:18:42Z kredel $
+ * $Id: GBDist.java 3652 2011-06-02 18:17:04Z kredel $
  */
 
 package edu.jas.gb;
@@ -59,7 +59,7 @@ public class GBDist<C extends RingElem<C>> {
      * @param port for GB server.
      */
     public GBDist(int threads, String mfile, int port) {
-	this(threads, new OrderedPairlist<C>(), mfile, port);
+        this(threads, new OrderedPairlist<C>(), mfile, port);
     }
 
     /**

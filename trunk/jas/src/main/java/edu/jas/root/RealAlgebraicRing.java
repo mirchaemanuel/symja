@@ -1,5 +1,5 @@
 /*
- * $Id: RealAlgebraicRing.java 3625 2011-05-08 09:35:21Z kredel $
+ * $Id: RealAlgebraicRing.java 3664 2011-06-13 10:48:08Z kredel $
  */
 
 package edu.jas.root;
@@ -152,6 +152,16 @@ implements RingFactory<RealAlgebraicNumber<C>> {
      */
     public synchronized void setEps(BigRational e) {
         this.eps = algebraic.ring.coFac.parse(e.toString());
+    }
+
+
+    /**
+     * RealAlgebraicRing half interval.
+     */
+    public void halfInterval() {
+        Interval<C> v = engine.halfInterval(root, algebraic.modul);
+        //System.out.println("old v = " + ring.root + ", new v = " + v);
+        setRoot(v);
     }
 
 

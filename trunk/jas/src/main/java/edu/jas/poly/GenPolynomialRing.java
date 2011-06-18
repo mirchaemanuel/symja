@@ -1,5 +1,5 @@
 /*
- * $Id: GenPolynomialRing.java 3624 2011-04-29 16:13:01Z kredel $
+ * $Id: GenPolynomialRing.java 3641 2011-05-22 12:23:54Z kredel $
  */
 
 package edu.jas.poly;
@@ -840,6 +840,30 @@ public class GenPolynomialRing<C extends RingElem<C>> implements RingFactory<Gen
         }
         TermOrder to = tord.contract(i, nvar - i);
         GenPolynomialRing<C> pfac = new GenPolynomialRing<C>(coFac, nvar - i, to, v);
+        return pfac;
+    }
+
+
+    /**
+     * Recursive representation as polynomial with i main variables.
+     * @param i number of main variables.
+     * @return recursive polynomial ring factory.
+     */
+    public GenPolynomialRing<GenPolynomial<C>> recursive(int i) {
+        if ( i <= 0 || i >= nvar ) {
+            throw new IllegalArgumentException("wrong: 0 < " + i + " < " + nvar);
+        }
+        GenPolynomialRing<C> cfac = contract(i);
+        String[] v = null;
+        if (vars != null) {
+            v = new String[i];
+            int k = 0;
+            for (int j = nvar-i; j < nvar; j++) {
+                v[k++] = vars[j];
+            }
+        }
+        TermOrder to = tord.contract(0,i); // ??
+        GenPolynomialRing<GenPolynomial<C>> pfac = new GenPolynomialRing<GenPolynomial<C>>(cfac, i, to, v);
         return pfac;
     }
 

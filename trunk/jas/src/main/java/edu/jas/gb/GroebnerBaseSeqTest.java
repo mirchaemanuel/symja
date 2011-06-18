@@ -1,5 +1,5 @@
 /*
- * $Id: GroebnerBaseSeqTest.java 3422 2010-12-23 22:22:43Z kredel $
+ * $Id: GroebnerBaseSeqTest.java 3652 2011-06-02 18:17:04Z kredel $
  */
 
 package edu.jas.gb;
@@ -400,16 +400,16 @@ public class GroebnerBaseSeqTest extends TestCase {
 
         do {
             a = fac.random(kl, ll, el, q );
-	} while ( a.isZERO() || a.isONE() );
+        } while ( a.isZERO() || a.isONE() );
         do {
             b = fac.random(kl, ll, el, q );
-	} while ( b.isZERO() || b.isONE() );
+        } while ( b.isZERO() || b.isONE() );
         do {
             c = fac.random(kl, ll, el, q );
-	} while ( c.isZERO() || c.isONE() );
+        } while ( c.isZERO() || c.isONE() );
         do {
             d = fac.random(kl, ll, el, q );
-	} while ( d.isZERO() || d.isONE() );
+        } while ( d.isZERO() || d.isONE() );
         e = d; //fac.random(kl, ll, el, q );
 
         //if ( a.isZERO() || b.isZERO() || c.isZERO() || d.isZERO() ) {

@@ -1,5 +1,5 @@
 /*
- * $Id: Interval.java 3287 2010-08-23 21:29:53Z kredel $
+ * $Id: Interval.java 3662 2011-06-11 13:41:28Z kredel $
  */
 
 package edu.jas.root;
@@ -68,7 +68,7 @@ public class Interval<C extends RingElem<C> & Rational > {
      */
     public String toScript() {
         // Python case
-        return "( " + left + ", " + right + " ) ";
+        return "[ " + left.toScript() + ", " + right.toScript() + " ]";
     }
 
 
@@ -108,6 +108,26 @@ public class Interval<C extends RingElem<C> & Rational > {
     @Override
     public int hashCode() {
         return 37 * left.hashCode() + right.hashCode();
+    }
+
+
+    /**
+     * Test if an element is contained in this interval.
+     * @param c element to test.
+     * @return true, if left <= b <= right;
+     */
+    public boolean contains(C c) {
+        return left.compareTo(c) <= 0 && c.compareTo(right) <= 0;
+    }
+
+
+    /**
+     * Test if an interval is contained in this interval.
+     * @param vc interval to test.
+     * @return true, if left <= vc.left and vc.right <= right;
+     */
+    public boolean contains(Interval<C> vc) {
+        return contains(vc.left) && contains(vc.right);
     }
 
 

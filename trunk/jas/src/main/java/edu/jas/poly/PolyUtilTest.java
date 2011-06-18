@@ -1,5 +1,5 @@
 /*
- * $Id: PolyUtilTest.java 3496 2011-01-20 21:26:46Z kredel $
+ * $Id: PolyUtilTest.java 3641 2011-05-22 12:23:54Z kredel $
  */
 
 package edu.jas.poly;
@@ -196,6 +196,20 @@ public class PolyUtilTest extends TestCase {
         dr = PolyUtil.recursive(rfac, d);
         b = PolyUtil.distribute(dfac, dr);
         assertEquals("d == dist(rec(d))", d, b);
+    }
+
+
+    /**
+     * Test recursive <--> distributive ring conversion.
+     * 
+     */
+    public void testConversionRing() {
+        GenPolynomialRing<GenPolynomial<BigInteger>> rf = dfac.recursive(1);
+        GenPolynomialRing<BigInteger> cf = (GenPolynomialRing<BigInteger>)rf.coFac;
+        assertEquals("rfac#var == rf#var ", rfac.nvar, rf.nvar);
+        assertEquals("rfac.coFac#var == rf.coFac#var ", cfac.nvar, cf.nvar);
+        assertEquals("rfac.coFac.coFac == rf.coFac.coFac ", cfac.coFac, cf.coFac);
+        // variable names not same in this test
     }
 
 

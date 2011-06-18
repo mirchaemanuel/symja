@@ -1,5 +1,5 @@
 /*
- * $Id: ModuleList.java 3470 2011-01-06 19:19:11Z kredel $
+ * $Id: ModuleList.java 3654 2011-06-02 18:19:30Z kredel $
  */
 
 package edu.jas.poly;
@@ -213,7 +213,7 @@ public class ModuleList<C extends RingElem<C> > implements Serializable {
         StringBuffer s = new StringBuffer();
         if ( ring instanceof GenSolvablePolynomialRing ) {
             s.append("Solvable");
-	}
+        }
         switch (Scripting.getLang() ) {
         case Ruby:
             s.append("SubModule.new(");

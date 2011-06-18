@@ -1,5 +1,5 @@
 /*
- * $Id: RealRootAbstract.java 3579 2011-03-26 10:32:37Z kredel $
+ * $Id: RealRootAbstract.java 3664 2011-06-13 10:48:08Z kredel $
  */
 
 package edu.jas.root;
@@ -46,7 +46,11 @@ public abstract class RealRootAbstract<C extends RingElem<C>& Rational> implemen
         }
         RingFactory<C> cfac = f.ring.coFac;
         C M = cfac.getONE();
-        if (f.isZERO() || f.isConstant()) {
+        if (f.isZERO()) {
+            return M;
+        }
+        if (f.isConstant()) {
+            M = f.leadingBaseCoefficient().abs().sum(cfac.getONE());
             return M;
         }
         C a = f.leadingBaseCoefficient().abs();
@@ -209,6 +213,23 @@ public abstract class RealRootAbstract<C extends RingElem<C>& Rational> implemen
      * @return number of real roots of f in I.
      */
     public abstract long realRootCount(Interval<C> iv, GenPolynomial<C> f);
+
+
+    /**
+     * Half interval.
+     * @param iv root isolating interval with f(left) * f(right) &lt; 0.
+     * @param f univariate polynomial, non-zero.
+     * @return a new interval v such that |v| &lt; |iv|/2.
+     */
+    public Interval<C> halfInterval(Interval<C> iv, GenPolynomial<C> f) {
+        if (f == null || f.isZERO()) {
+            return iv;
+        }
+        C len = iv.length();
+        C two = len.factory().fromInteger(2);
+        C eps = len.divide(two);
+        return refineInterval(iv,f,eps);
+    }
 
 
     /**

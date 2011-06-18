@@ -1,5 +1,5 @@
 /*
- * $Id: QuotientRing.java 3436 2010-12-24 18:27:19Z kredel $
+ * $Id: QuotientRing.java 3652 2011-06-02 18:17:04Z kredel $
  */
 
 package edu.jas.ufd;
@@ -271,9 +271,9 @@ public class QuotientRing<C extends GcdRingElem<C>> implements RingFactory<Quoti
         String s = null;
         if ( ring.coFac.characteristic().signum() == 0 ) {
             s = "RatFunc";
-	} else {
+        } else {
             s = "ModFunc";
-	}
+        }
         return s + "( " + ring.toString() + " )";
     }
 

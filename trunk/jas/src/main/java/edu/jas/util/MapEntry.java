@@ -1,5 +1,5 @@
 /*
- * $Id: MapEntry.java 3431 2010-12-24 14:09:08Z kredel $
+ * $Id: MapEntry.java 3652 2011-06-02 18:17:04Z kredel $
  */
 
 package edu.jas.util;

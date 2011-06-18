@@ -1,5 +1,5 @@
 /*
- * $Id: RealAlgebraicRing.java 3625 2011-05-08 09:35:21Z kredel $
+ * $Id: RealAlgebraicRing.java 3650 2011-05-28 18:32:35Z kredel $
  */
 
 package edu.jas.application;
@@ -10,10 +10,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import org.apache.log4j.Logger;
+
+import edu.jas.kern.Scripting;
 import edu.jas.arith.BigRational;
 import edu.jas.arith.Rational;
+import edu.jas.poly.AlgebraicNumber;
+import edu.jas.poly.AlgebraicNumberRing;
+import edu.jas.poly.PolyUtil;
+import edu.jas.poly.TermOrder;
 import edu.jas.poly.GenPolynomial;
+import edu.jas.poly.GenPolynomialRing;
 import edu.jas.root.RealRootTuple;
+import edu.jas.root.PolyUtilRoot;
+import edu.jas.root.Interval;
 import edu.jas.structure.GcdRingElem;
 import edu.jas.structure.Power;
 import edu.jas.structure.RingFactory;
@@ -68,6 +78,9 @@ public class RealAlgebraicRing<C extends GcdRingElem<C> & Rational> implements
     public final int PRECISION = 9; //BigDecimal.DEFAULT_PRECISION;
 
 
+    private static final Logger logger = Logger.getLogger(RealAlgebraicRing.class);
+
+
     /**
      * The constructor creates a RealAlgebraicNumber factory object from a
      * IdealWithUniv, ResidueRing and a root tuple.
@@ -92,19 +105,23 @@ public class RealAlgebraicRing<C extends GcdRingElem<C> & Rational> implements
         if (p0 == null) {
             throw new RuntimeException("no polynomial found in " + (0) + " of  " + univs.ideal);
         }
-        //System.out.println("p0 = " + p0);
-        //System.out.println("realRing, var = " + rfac2.algebraic.ring.getVars()[0]);
-        //System.out.println("realRing, pol = " + p0.toString());
-        //System.out.println("realRing, iv  = " + rfac2.getRoot().toString());
-        String ival = rfac2.getRoot().toString();
-        ival = ival.replace("{", "");
-        ival = ival.replace("}", "");
-        //System.out.println("realRing, val = " + ival);
-        realRing = (edu.jas.root.RealAlgebraicRing<edu.jas.root.RealAlgebraicNumber<C>>) ExtensionFieldBuilder
-                        .baseField(rfac1)
-                        .realAlgebraicExtension(rfac2.algebraic.ring.getVars()[0], p0.toString(), ival)
-                        .build();
-        //System.out.println("realRing = " + realRing);
+        //System.out.println("realRing, pol = " + p0.toScript());
+        GenPolynomialRing<C> pfac = p0.ring;
+        GenPolynomialRing<GenPolynomial<C>> prfac = pfac.recursive(1);
+        //System.out.println("prfac = " + prfac);
+        GenPolynomial<GenPolynomial<C>> p0r = PolyUtil.<C> recursive(prfac,p0);
+        GenPolynomialRing<edu.jas.root.RealAlgebraicNumber<C>> parfac 
+            = new GenPolynomialRing<edu.jas.root.RealAlgebraicNumber<C>>(rfac1,prfac);
+        GenPolynomial<edu.jas.root.RealAlgebraicNumber<C>> p0ar 
+           = PolyUtilRoot.<C> convertRecursiveToAlgebraicCoefficients(parfac,p0r);
+        Interval<C> r2 = rfac2.getRoot();
+        edu.jas.root.RealAlgebraicNumber<C> rleft = rfac1.getZERO().sum(r2.left);
+        edu.jas.root.RealAlgebraicNumber<C> rright = rfac1.getZERO().sum(r2.right);
+        Interval<edu.jas.root.RealAlgebraicNumber<C>> r2r = new Interval<edu.jas.root.RealAlgebraicNumber<C>>(rleft,rright);
+        edu.jas.root.RealAlgebraicRing<edu.jas.root.RealAlgebraicNumber<C>> rr 
+            = new edu.jas.root.RealAlgebraicRing<edu.jas.root.RealAlgebraicNumber<C>>(p0ar,r2r); 
+        logger.info("realRing = " + rr);
+        realRing = rr;
     }
 
 

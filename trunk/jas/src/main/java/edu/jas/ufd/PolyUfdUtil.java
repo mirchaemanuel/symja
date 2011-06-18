@@ -1,5 +1,5 @@
 /*
- * $Id: PolyUfdUtil.java 3356 2010-10-23 16:41:01Z kredel $
+ * $Id: PolyUfdUtil.java 3634 2011-05-15 18:48:04Z kredel $
  */
 
 package edu.jas.ufd;
@@ -327,19 +327,19 @@ public class PolyUfdUtil {
 
         // transform minimal polynomial to bi-variate polynomial
         GenPolynomial<GenPolynomial<C>> Ac = PolyUfdUtil.<C> introduceLowerVariable(rfac, agen);
-        //System.out.println("Ac = " + Ac);
+        //System.out.println("Ac = " + Ac.toScript());
 
         // transform to bi-variate polynomial, 
         // switching varaible sequence from Q[alpha][x] to Q[X][alpha]
         GenPolynomial<GenPolynomial<C>> Pc = PolyUfdUtil.<C> substituteFromAlgebraicCoefficients(rfac, A, k);
         Pc = PolyUtil.<C> monic(Pc);
-        //System.out.println("Pc = " + Pc);
+        //System.out.println("Pc = " + Pc.toScript());
 
         GreatestCommonDivisorSubres<C> engine = new GreatestCommonDivisorSubres<C>( /*cfac.coFac*/);
         // = (GreatestCommonDivisorAbstract<C>)GCDFactory.<C>getImplementation( cfac.coFac );
 
         GenPolynomial<GenPolynomial<C>> Rc = engine.recursiveResultant(Pc, Ac);
-        //System.out.println("Rc = " + Rc);
+        //System.out.println("Rc = " + Rc.toScript());
         GenPolynomial<C> res = Rc.leadingBaseCoefficient();
         res = res.monic();
         return res;
