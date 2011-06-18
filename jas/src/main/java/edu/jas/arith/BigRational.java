@@ -1,5 +1,5 @@
 /*
- * $Id: BigRational.java 3470 2011-01-06 19:19:11Z kredel $
+ * $Id: BigRational.java 3652 2011-06-02 18:17:04Z kredel $
  */
 
 package edu.jas.arith;
@@ -314,19 +314,19 @@ public final class BigRational implements GcdRingElem<BigRational>, RingFactory<
             return s.toString();
         }
         switch (Scripting.getLang() ) {
-	case Python:
-	    s.append("(");
-	    s.append(num.toString());
-	    s.append(",");
-	    s.append(den.toString());
-	    s.append(")");
-	    break;
-	case Ruby:
+        case Python:
+            s.append("(");
+            s.append(num.toString());
+            s.append(",");
+            s.append(den.toString());
+            s.append(")");
+            break;
+        case Ruby:
         default:
-	    s.append(num.toString());
-	    s.append("/");
-	    s.append(den.toString());
-	}
+            s.append(num.toString());
+            s.append("/");
+            s.append(den.toString());
+        }
         return s.toString();
     }
 

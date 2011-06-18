@@ -1,5 +1,5 @@
 /*
- * $Id: RealAlgebraicNumber.java 3625 2011-05-08 09:35:21Z kredel $
+ * $Id: RealAlgebraicNumber.java 3664 2011-06-13 10:48:08Z kredel $
  */
 
 package edu.jas.root;
@@ -306,14 +306,24 @@ implements GcdRingElem<RealAlgebraicNumber<C>>, Rational {
 
 
     /**
+     * RealAlgebraicNumber half interval.
+     */
+    public void halfInterval() {
+        Interval<C> v = ring.engine.halfInterval(ring.root, ring.algebraic.modul);
+        //System.out.println("old v = " + ring.root + ", new v = " + v);
+        ring.setRoot(v);
+    }
+
+
+    /**
      * RealAlgebraicNumber magnitude.
      * @return |this|.
      */
     public BigRational magnitude() {
         Interval<C> v = ring.engine.invariantMagnitudeInterval(ring.root, ring.algebraic.modul, number.val,
                         ring.eps);
+        //System.out.println("old v = " + ring.root + ", new v = " + v);
         ring.setRoot(v);
-        //System.out.println("new v = " + v);
         C ev = ring.engine.realIntervalMagnitude(v, ring.algebraic.modul, number.val); //, ring.eps);
         if ((Object) ev instanceof Rational) { // always true by type parameter
             BigRational er = ev.getRational();
@@ -322,6 +332,7 @@ implements GcdRingElem<RealAlgebraicNumber<C>>, Rational {
             throw new RuntimeException("Rational expected, but was " + ev.getClass());
         }
     }
+
 
 
     /**

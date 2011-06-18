@@ -1,5 +1,5 @@
 /*
- * $Id: GreatestCommonDivisorAbstract.java 3575 2011-03-20 23:11:18Z kredel $
+ * $Id: GreatestCommonDivisorAbstract.java 3652 2011-06-02 18:17:04Z kredel $
  */
 
 package edu.jas.ufd;
@@ -363,9 +363,9 @@ public abstract class GreatestCommonDivisorAbstract<C extends GcdRingElem<C>> im
         if ( pfac.getVars() != null && pfac.getVars().length > 0 ) {
             String[] v = new String[] { pfac.getVars()[pfac.nvar-1]  };
             rfac = new GenPolynomialRing<GenPolynomial<C>>(cfac, 1, v);
-	} else {
+        } else {
             rfac = new GenPolynomialRing<GenPolynomial<C>>(cfac, 1);
-	}
+        }
         GenPolynomial<GenPolynomial<C>> Pr = PolyUtil.<C> recursive(rfac, P);
         GenPolynomial<GenPolynomial<C>> Sr = PolyUtil.<C> recursive(rfac, S);
         GenPolynomial<GenPolynomial<C>> Dr = recursiveUnivariateGcd(Pr, Sr);

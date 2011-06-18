@@ -1,5 +1,5 @@
 /*
- * $Id: OrderedRPairlist.java 3423 2010-12-24 10:56:50Z kredel $
+ * $Id: OrderedRPairlist.java 3652 2011-06-02 18:17:04Z kredel $
  */
 
 package edu.jas.gbufd;
@@ -98,7 +98,7 @@ public class OrderedRPairlist<C extends RegularRingElem<C> >
             if ( xl.size() == 0 ) {
                 ip.remove(); 
                 // = pairlist.remove( g );
-	    }
+            }
         }
         remCount++; // count pairs
         return pair; 

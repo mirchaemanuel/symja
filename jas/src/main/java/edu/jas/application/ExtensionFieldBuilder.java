@@ -1,5 +1,5 @@
 /*
- * $Id: ExtensionFieldBuilder.java 3586 2011-03-27 11:20:11Z kredel $
+ * $Id: ExtensionFieldBuilder.java 3655 2011-06-02 18:20:54Z kredel $
  */
 
 package edu.jas.application;
@@ -16,6 +16,7 @@ import edu.jas.poly.Complex;
 import edu.jas.poly.GenPolynomial;
 import edu.jas.poly.GenPolynomialRing;
 import edu.jas.poly.GenPolynomialTokenizer;
+import edu.jas.poly.TermOrder;
 import edu.jas.root.ComplexAlgebraicRing;
 import edu.jas.root.Interval;
 import edu.jas.root.RealAlgebraicRing;
@@ -111,7 +112,7 @@ public class ExtensionFieldBuilder implements Serializable {
             variables = GenPolynomialTokenizer.expressionVariables(expr);
             if (variables.length < 1) {
                 throw new IllegalArgumentException("no variables in '" + var + "' and '" + expr + "'" );
-	    }
+            }
         }
         GenPolynomialRing pfac = new GenPolynomialRing(factory, variables);
         if (variables.length == 1) { // simple extension
@@ -155,7 +156,8 @@ public class ExtensionFieldBuilder implements Serializable {
         if (!(one instanceof Rational)) {
             throw new IllegalArgumentException("base field not instance of Rational");
         }
-        GenPolynomialRing pfac = new GenPolynomialRing(factory, variables);
+        TermOrder to = new TermOrder(TermOrder.INVLEX);
+        GenPolynomialRing pfac = new GenPolynomialRing(factory, to, variables);
         GenPolynomial gen = pfac.parse(expr);
         RingFactory cf = pfac.coFac;
         Interval iv = RootUtil.parseInterval(cf, root);

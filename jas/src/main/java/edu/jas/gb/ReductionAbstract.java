@@ -1,5 +1,5 @@
 /*
- * $Id: ReductionAbstract.java 3410 2010-12-18 14:41:56Z kredel $
+ * $Id: ReductionAbstract.java 3652 2011-06-02 18:17:04Z kredel $
  */
 
 package edu.jas.gb;
@@ -214,7 +214,7 @@ public abstract class ReductionAbstract<C extends RingElem<C>>
     public boolean criterion4(GenPolynomial<C> A, 
                               GenPolynomial<C> B) {  
         if ( logger.isInfoEnabled() ) {
-	    if ( !A.ring.isCommutative() || !B.ring.isCommutative() ) { // A instanceof GenSolvablePolynomial
+            if ( !A.ring.isCommutative() || !B.ring.isCommutative() ) { // A instanceof GenSolvablePolynomial
                logger.error("GBCriterion4 not applicabable to non-commutative polynomials"); 
                return true;
            }

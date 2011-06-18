@@ -1,5 +1,5 @@
 /*
- * $Id: RealAlgebraicNumber.java 3625 2011-05-08 09:35:21Z kredel $
+ * $Id: RealAlgebraicNumber.java 3655 2011-06-02 18:20:54Z kredel $
  */
 
 package edu.jas.application;
@@ -394,7 +394,7 @@ public class RealAlgebraicNumber<C extends GcdRingElem<C> & Rational> implements
         //             GenPolynomial<C> p = number.val;
         //             number = ring.realRing.parse(p.toString()); // todo: convert
         //             //System.out.println("number = " + number);
-        // 	}
+        //      }
         return number.signum();
     }
 
@@ -408,7 +408,7 @@ public class RealAlgebraicNumber<C extends GcdRingElem<C> & Rational> implements
         //             GenPolynomial<C> p = number.val;
         //             number = ring.realRing.parse(p.toString()); // todo: convert
         //             //System.out.println("number = " + number);
-        // 	}
+        //      }
         return number.magnitude();
     }
 

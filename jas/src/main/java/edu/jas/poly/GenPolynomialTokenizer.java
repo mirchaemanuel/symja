@@ -1,5 +1,5 @@
 /*
- * $Id: GenPolynomialTokenizer.java 3585 2011-03-26 22:40:36Z kredel $
+ * $Id: GenPolynomialTokenizer.java 3660 2011-06-11 12:17:33Z kredel $
  */
 
 package edu.jas.poly;
@@ -376,8 +376,31 @@ public class GenPolynomialTokenizer {
                     //System.out.println("coeff 0 = " + tok.sval );
                     StringBuffer df = new StringBuffer();
                     df.append(tok.sval);
+                    if (tok.sval.charAt(tok.sval.length()-1) == 'i') { // complex number
+                        tt = tok.nextToken();
+                        if (debug)
+                            logger.debug("tt,im = " + tok);
+                        if (tok.sval != null || tt == '-') {
+                            if (tok.sval != null) {
+                                df.append(tok.sval);
+                            } else {
+                                df.append("-");
+                            }
+                            if (tt == '-') {
+                                tt = tok.nextToken(); // todo: decimal number
+                                if (tok.sval != null && digit(tok.sval.charAt(0))) {
+                                    df.append(tok.sval);
+
+                                } else {
+                                    tok.pushBack();
+                                }
+			    }
+                        } else {
+                            tok.pushBack();
+                        }
+                    } 
                     tt = tok.nextToken();
-                    if (tt == '.') {
+                    if (tt == '.') { // decimal number
                         tt = tok.nextToken();
                         if (debug)
                             logger.debug("tt,dot = " + tok);
@@ -427,12 +450,12 @@ public class GenPolynomialTokenizer {
                         }
                         if (debug)
                             logger.info("coeff " + r);
-                        if (r.isONE() || r.isZERO()) {
+                        //if (r.isONE() || r.isZERO()) {
                             //logger.error("Unknown varibable " + tok.sval);
                             //done = true;
                             //break;
-                            throw new InvalidExpressionException("recursively unknown variable " + tok.sval);
-                        }
+                            //throw new InvalidExpressionException("recursively unknown variable " + tok.sval);
+			//}
                         ie = nextExponent();
                         //  System.out.println("ie: " + ie);
                         r = Power.<RingElem> positivePower(r, ie);

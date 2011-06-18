@@ -1,5 +1,5 @@
 /*
- * $Id: PolyUtil.java 3604 2011-04-26 20:42:44Z kredel $
+ * $Id: PolyUtil.java 3654 2011-06-02 18:19:30Z kredel $
  */
 
 package edu.jas.poly;
@@ -521,10 +521,10 @@ public class PolyUtil {
 
     /**
      * ModInteger chinese remainder algorithm on coefficients.
-     * @param fac GenPolynomial<ModInteger> result factory with
+     * @param fac GenPolynomial&lt;ModInteger&gt; result factory with
      *            A.coFac.modul*B.coFac.modul = C.coFac.modul.
-     * @param A GenPolynomial<ModInteger>.
-     * @param B other GenPolynomial<ModInteger>.
+     * @param A GenPolynomial&lt;ModInteger&gt;.
+     * @param B other GenPolynomial&lt;ModInteger&gt;.
      * @param mi inverse of A.coFac.modul in ring B.coFac.
      * @return S = cra(A,B), with S mod A.coFac.modul == A and S mod
      *         B.coFac.modul == B.
@@ -1605,7 +1605,7 @@ public class PolyUtil {
         }
         if (t.ring.nvar > 1) {
             fac = t.ring;
-	}
+        }
         // assert decending exponents, i.e. compatible term order
         Map<ExpVector, C> val = f.getMap();
         GenPolynomial<C> s = null;
@@ -1674,10 +1674,10 @@ public class PolyUtil {
      * ModInteger interpolate on first variable.
      * @param <C> coefficient type.
      * @param fac GenPolynomial<C> result factory.
-     * @param A GenPolynomial<C>.
-     * @param M GenPolynomial<C> interpolation modul of A.
+     * @param A GenPolynomial.
+     * @param M GenPolynomial interpolation modul of A.
      * @param mi inverse of M(am) in ring fac.coFac.
-     * @param B evaluation of other GenPolynomial<C>.
+     * @param B evaluation of other GenPolynomial.
      * @param am evaluation point (interpolation modul) of B, i.e. P(am) = B.
      * @return S, with S mod M == A and S(am) == B.
      */
@@ -1724,10 +1724,10 @@ public class PolyUtil {
      * Univariate polynomial interpolation.
      * @param <C> coefficient type.
      * @param fac GenPolynomial<C> result factory.
-     * @param A GenPolynomial<C>.
-     * @param M GenPolynomial<C> interpolation modul of A.
+     * @param A GenPolynomial.
+     * @param M GenPolynomial interpolation modul of A.
      * @param mi inverse of M(am) in ring fac.coFac.
-     * @param a evaluation of other GenPolynomial<C>.
+     * @param a evaluation of other GenPolynomial.
      * @param am evaluation point (interpolation modul) of a, i.e. P(am) = a.
      * @return S, with S mod M == A and S(am) == a.
      */
