@@ -1,6 +1,6 @@
 package org.matheclipse.core.eval.interfaces;
 
-import org.matheclipse.basic.Config;
+import org.matheclipse.core.basic.Config;
 import org.matheclipse.core.convert.AST2Expr;
 import org.matheclipse.core.eval.EvalEngine;
 import org.matheclipse.core.expression.F;

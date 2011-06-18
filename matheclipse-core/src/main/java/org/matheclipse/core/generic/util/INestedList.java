@@ -2,6 +2,8 @@ package org.matheclipse.core.generic.util;
 
 import java.util.List;
 
+import org.matheclipse.generic.nested.INestedListElement;
+
 
 
 /**

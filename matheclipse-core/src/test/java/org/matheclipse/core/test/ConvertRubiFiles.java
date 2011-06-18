@@ -7,7 +7,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.List;
 
-import org.matheclipse.basic.Config;
+import org.matheclipse.core.basic.Config;
 import org.matheclipse.core.convert.AST2Expr;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IAST;

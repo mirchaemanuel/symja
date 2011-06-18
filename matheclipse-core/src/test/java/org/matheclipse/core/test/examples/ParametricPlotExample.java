@@ -2,7 +2,7 @@ package org.matheclipse.core.test.examples;
 
 import javax.swing.JFrame;
 
-import org.matheclipse.basic.Config;
+import org.matheclipse.core.basic.Config;
 import org.matheclipse.core.convert.AST2Expr;
 import org.matheclipse.core.eval.EvalUtilities;
 import org.matheclipse.core.expression.F;

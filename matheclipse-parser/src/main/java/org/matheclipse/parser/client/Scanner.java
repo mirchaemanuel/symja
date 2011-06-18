@@ -310,7 +310,10 @@ public class Scanner {
 					continue; // while loop
 				}
 				if (((fCurrentChar >= 'a') && (fCurrentChar <= 'z')) || ((fCurrentChar >= 'A') && (fCurrentChar <= 'Z'))
-						|| (fCurrentChar == '$') || (Character.isUnicodeIdentifierStart(fCurrentChar))) {
+						|| (fCurrentChar == '$')) {
+					// the Character.isUnicodeIdentifierStart method doesn't
+					// work in Google Web Toolkit:
+					// || (Character.isUnicodeIdentifierStart(fCurrentChar))) {
 					fToken = TT_IDENTIFIER;
 					return;
 				}

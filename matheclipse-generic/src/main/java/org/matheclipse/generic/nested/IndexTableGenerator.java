@@ -2,7 +2,6 @@ package org.matheclipse.generic.nested;
 
 import java.util.List;
 
-import org.matheclipse.core.generic.util.INestedListElement;
 import org.matheclipse.generic.interfaces.IIndexFunction;
 
 /**

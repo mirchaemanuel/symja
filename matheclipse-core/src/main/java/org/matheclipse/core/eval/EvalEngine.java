@@ -14,8 +14,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 
-import org.matheclipse.basic.Config;
-import org.matheclipse.basic.Util;
+import org.matheclipse.core.basic.Config;
+import org.matheclipse.core.basic.Util;
 import org.matheclipse.core.convert.AST2Expr;
 import org.matheclipse.core.eval.exception.IterationLimitExceeded;
 import org.matheclipse.core.eval.exception.RecursionLimitExceeded;

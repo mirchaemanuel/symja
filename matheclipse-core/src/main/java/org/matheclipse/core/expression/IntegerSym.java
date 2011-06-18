@@ -18,7 +18,6 @@ import org.matheclipse.core.visit.IVisitor;
 import org.matheclipse.core.visit.IVisitorBoolean;
 import org.matheclipse.core.visit.IVisitorInt;
 
-import apache.harmony.math.Primality;
 
 /**
  * IInteger implementation which simply delegates most of the methods to the

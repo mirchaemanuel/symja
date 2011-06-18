@@ -4,10 +4,10 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
-import org.matheclipse.core.generic.util.INestedListElement;
 import org.matheclipse.core.visit.IVisitor;
 import org.matheclipse.core.visit.IVisitorBoolean;
 import org.matheclipse.core.visit.IVisitorInt;
+import org.matheclipse.generic.nested.INestedListElement;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;

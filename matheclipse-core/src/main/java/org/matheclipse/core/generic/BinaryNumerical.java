@@ -1,6 +1,6 @@
 package org.matheclipse.core.generic;
 
-import org.matheclipse.basic.Alloc;
+import org.matheclipse.core.basic.Alloc;
 import org.matheclipse.core.eval.EvalDouble;
 import org.matheclipse.core.expression.ComplexNum;
 import org.matheclipse.core.expression.F;

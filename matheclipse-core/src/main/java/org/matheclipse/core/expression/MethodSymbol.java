@@ -2,7 +2,7 @@ package org.matheclipse.core.expression;
 
 import java.lang.reflect.Method;
 
-import org.matheclipse.basic.Config;
+import org.matheclipse.core.basic.Config;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.ISymbol;

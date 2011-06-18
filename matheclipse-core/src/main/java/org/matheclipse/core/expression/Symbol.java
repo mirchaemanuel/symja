@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
-import org.matheclipse.basic.Config;
+import org.matheclipse.core.basic.Config;
 import org.matheclipse.core.eval.EvalEngine;
 import org.matheclipse.core.eval.SystemNamespace;
 import org.matheclipse.core.eval.exception.RuleCreationError;

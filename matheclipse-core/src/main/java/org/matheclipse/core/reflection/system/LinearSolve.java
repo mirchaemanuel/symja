@@ -4,7 +4,7 @@ import org.apache.commons.math.linear.FieldDecompositionSolver;
 import org.apache.commons.math.linear.FieldLUDecompositionImpl;
 import org.apache.commons.math.linear.FieldMatrix;
 import org.apache.commons.math.linear.FieldVector;
-import org.matheclipse.basic.Config;
+import org.matheclipse.core.basic.Config;
 import org.matheclipse.core.convert.Convert;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
 import org.matheclipse.core.expression.ExprFieldElement;

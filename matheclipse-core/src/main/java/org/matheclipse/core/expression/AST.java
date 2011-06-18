@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 
-import org.matheclipse.basic.Config;
+import org.matheclipse.core.basic.Config;
 import org.matheclipse.core.eval.exception.WrongArgumentType;
 import org.matheclipse.core.generic.IsUnaryVariableOrPattern;
 import org.matheclipse.core.generic.UnaryVariable2Slot;

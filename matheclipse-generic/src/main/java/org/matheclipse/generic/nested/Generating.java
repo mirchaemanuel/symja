@@ -2,7 +2,6 @@ package org.matheclipse.generic.nested;
 
 import java.util.List;
 
-import org.matheclipse.core.generic.util.INestedListElement;
 
 public class Generating<T extends INestedListElement, L extends List<T> & INestedListElement> {
 	final private L fOuterList;

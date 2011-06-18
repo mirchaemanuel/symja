@@ -2,7 +2,7 @@ package org.matheclipse.core.eval;
 
 import java.io.Writer;
 
-import org.matheclipse.basic.Config;
+import org.matheclipse.core.basic.Config;
 import org.matheclipse.core.generic.Predicates;
 import org.matheclipse.core.interfaces.IExpr;
 
