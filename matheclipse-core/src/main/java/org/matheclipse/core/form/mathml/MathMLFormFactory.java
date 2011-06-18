@@ -3,7 +3,7 @@ package org.matheclipse.core.form.mathml;
 import java.util.Hashtable;
 
 import org.apache.commons.math.fraction.BigFraction;
-import org.matheclipse.basic.Config;
+import org.matheclipse.core.basic.Config;
 import org.matheclipse.core.expression.IConstantHeaders;
 import org.matheclipse.core.expression.NumberUtil;
 import org.matheclipse.core.interfaces.IAST;
@@ -18,7 +18,7 @@ import org.matheclipse.core.list.algorithms.EvaluationSupport;
 import org.matheclipse.parser.client.operator.ASTNodeFactory;
 
 /**
- * PresentationGenerator generates MathML presentation output
+ * Presentation generator generates MathML presentation output
  * 
  */
 public class MathMLFormFactory extends AbstractMathMLFormFactory implements IConstantHeaders {

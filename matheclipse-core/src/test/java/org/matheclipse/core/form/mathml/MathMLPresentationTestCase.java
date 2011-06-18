@@ -34,7 +34,7 @@ public class MathMLPresentationTestCase extends TestCase {
         "<mrow><mo>(</mo><mfrac linethickness=\"0\"><mi>n</mi><mfrac><mi>k</mi><mn>2</mn></mfrac></mfrac><mo>)</mo></mrow>");
 
     check(
-        "a*b+c",
+        "a*b+c", 
         "<mrow><mi>c</mi><mo>+</mo><mrow><mi>a</mi><mo>&#x2062;</mo><mi>b</mi></mrow></mrow>");
     check("HEllipsis", "<mo>&hellip;</mo>");
     check(
@@ -56,23 +56,22 @@ public class MathMLPresentationTestCase extends TestCase {
 
     check(
         "a*(b+c)",
-        "<mrow><mi>a</mi><mo>&#x2062;</mo><mrow><mo>(</mo><mi>c</mi><mo>+</mo><mi>b</mi><mo>)</mo></mrow></mrow>");
-    check("I", "<mi>&#x02148;</mi>");
-    check("2I", "<mrow><mn>2</mn><mo>&#x2062;</mo><mi>&#x02148;</mi></mrow>");
+        "<mrow><mi>a</mi><mo>&#x2062;</mo><mrow><mrow><mo>(</mo><mi>c</mi><mo>+</mo><mi>b</mi><mo>)</mo></mrow></mrow></mrow>");
+    check("I", "<mrow><mi>i</mi></mrow>");
+    check("2I", "<mrow><mn>2</mn><mo>&#x2062;</mo><mrow><mi>i</mi></mrow></mrow>");
     check("2/3", "<mfrac><mn>2</mn><mn>3</mn></mfrac>");
 
-    check("a+b", "<mrow><mi>a</mi><mo>+</mo><mi>b</mi></mrow>");
+    check("a+b", "<mrow><mi>b</mi><mo>+</mo><mi>a</mi></mrow>");
     check("a*b", "<mrow><mi>a</mi><mo>&#x2062;</mo><mi>b</mi></mrow>");
     check("a^b", "<msup><mi>a</mi><mi>b</mi></msup>");
-    check("E", "<mi>&#02147;</mi>");
     check("n!", "<mrow><mi>n</mi><mo>!</mo></mrow>");
     check(
         "4*x+4",
-        "<mrow><mrow><mn>4</mn><mo>&#x2062;</mo><mi>x</mi></mrow><mo>+</mo><mn>4</mn></mrow>");
+        "<mrow><mn>4</mn><mo>+</mo><mrow><mn>4</mn><mo>&#x2062;</mo><mi>x</mi></mrow></mrow>");
 
     check(
         "x^2+4*x+4==0",
-        "<mrow><mrow><msup><mi>x</mi><mn>2</mn></msup><mo>+</mo><mrow><mn>4</mn><mo>&#x2062;</mo><mi>x</mi></mrow><mo>+</mo><mn>4</mn></mrow><mo>=</mo><mn>0</mn></mrow>");
+        "<mrow><mrow><mn>4</mn><mo>+</mo><mrow><mn>4</mn><mo>&#x2062;</mo><mi>x</mi></mrow><mo>+</mo><msup><mi>x</mi><mn>2</mn></msup></mrow><mo>=</mo><mn>0</mn></mrow>");
 
     check("n!", "<mrow><mi>n</mi><mo>!</mo></mrow>");
 
@@ -85,7 +84,9 @@ public class MathMLPresentationTestCase extends TestCase {
     // Object obj = fParser.start();
     // StringBuffer buf = new StringBuffer();
     // fMathMLFactory.convert(buf, obj, 0);
-    assertEquals(stw.toString(), "<math>" + strResult + "</math>");
+    assertEquals(stw.toString(), "<?xml version=\"1.0\"?>\n" + 
+    		"<!DOCTYPE math PUBLIC \"-//W3C//DTD MathML 2.0//EN\" \"http://www.w3.org/TR/MathML2/dtd/mathml2.dtd\">\n" + 
+    		"<math mode=\"display\">\n" + strResult + "</math>");
 
   }
 

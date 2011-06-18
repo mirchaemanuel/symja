@@ -68,6 +68,9 @@ abstract public class AbstractMathMLFormFactory implements IConstantHeaders {
     buf.append("</" + fTagPrefix + tag + ">");
   }
 
+  public void tagStartEnd(final StringBuffer buf, final String tag) {
+    buf.append("<" + fTagPrefix + tag + " />");
+  }
   /**
    * Returns the reflection package name which is used in #getReflectionNamespace()
    *
