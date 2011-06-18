@@ -4,13 +4,12 @@ import java.io.StringWriter;
 
 import junit.framework.TestCase;
 
-import org.matheclipse.basic.Config;
 import org.matheclipse.core.eval.EvalEngine;
 import org.matheclipse.core.eval.TeXUtilities;
 import org.matheclipse.core.expression.F;
 
 /**
- * Tests MathML presentation function
+ * Tests LaTeX export function
  */
 public class BasicTeXTestCase extends TestCase {
 	TeXUtilities texUtil;
