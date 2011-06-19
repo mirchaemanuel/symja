@@ -176,6 +176,18 @@ public interface IExpr extends Comparable<IExpr>, RingElem<IExpr>, INestedListEl
 	public boolean isAST();
 
 	/**
+	 * Test if this expression is an AST (i.e. no atomic expression) with attribute <code>Orderless</code>.
+	 * 
+	 */
+	public boolean isOrderlessAST(); 
+	
+	/**
+	 * Test if this expression is an AST (i.e. no atomic expression) with attribute <code>Flat</code>.
+	 * 
+	 */
+	public boolean isFlatAST(); 
+	
+	/**
 	 * Test if this expression is an AST (i.e. no atomic expression) with the
 	 * given head expression
 	 * 

@@ -447,7 +447,7 @@ public class SystemTestCase extends AbstractTestCase {
 		check("SetAttributes[$f, Flat]", "");
 		check("$f[a,b,$f[x,y,$f[u,v]],z]", "$f[a,b,x,y,u,v,z]");
 		check("$f[x_,y_]:={x,y}", "");
-		check("$f[a,b,c]", "{$f[a],{b,c}}");
+		check("$f[a,b,c]", "{{a,b},c}");
 	}
 
 	// test attribute ISymbol.ORDERLESS

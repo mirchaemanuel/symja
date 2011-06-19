@@ -111,7 +111,7 @@ public class PatternMatcherAndInvoker extends PatternMatcher {
 			return null;
 		}
 		fPatternMap.initPattern();
-		if (matchExpr(fLeftHandSide, leftHandSide) && checkCondition()) {
+		if (matchExpr(fLeftHandSide, leftHandSide)) {
 
 			List<IExpr> args = fPatternMap.getValuesAsList();
 			result = null;

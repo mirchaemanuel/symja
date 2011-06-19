@@ -37,21 +37,14 @@ public class PatternMatcherAndEvaluator extends PatternMatcher implements Serial
 		super(leftHandSide);
 		fSetSymbol = setSymbol;
 		fRightHandSide = rightHandSide;
-		// fModuleInitializer = null;
 	}
 
 	@Override
 	public Object clone() {
-		// try {
 		PatternMatcherAndEvaluator v = (PatternMatcherAndEvaluator) super.clone();
 		v.fRightHandSide = fRightHandSide;
 		v.fSetSymbol = fSetSymbol;
-		// v.fModuleInitializer = fModuleInitializer;
 		return v;
-		// } catch (CloneNotSupportedException e) {
-		// // this shouldn't happen, since we are Cloneable
-		// throw new InternalError();
-		// }
 	}
 
 	@Override
@@ -175,33 +168,29 @@ public class PatternMatcherAndEvaluator extends PatternMatcher implements Serial
 					return e.getValue();
 				}
 			}
-			return null;
+			if (!(fLeftHandSide.isOrderlessAST() && leftHandSide.isOrderlessAST())) {
+				if (!(fLeftHandSide.isFlatAST() && leftHandSide.isFlatAST())) {
+					return null;
+				}
+				// TODO implement equals matching for special cases, if the AST is
+				// Orderless or Flat
+			}
 		}
 		fPatternMap.initPattern();
 
 		if (fLeftHandSide.isAST() && leftHandSide.isAST()) {
-			IAST filter = ((IAST) leftHandSide).clone();
-			if (evalAST((IAST) fLeftHandSide, (IAST) leftHandSide, filter)) {
-				try {
-					IExpr result = fPatternMap.substitutePatternSymbols(fRightHandSide);
-					result = F.eval(result);
-					filter.add(result);
-					return filter;
-				} catch (final ConditionException e) {
-					// fall through
-				} catch (final ReturnException e) {
-					filter.add(e.getValue());
-					return filter;
-				}
+			IExpr result = evalAST((IAST) fLeftHandSide, (IAST) leftHandSide, fRightHandSide, new StackMatcher());
+			if (result != null) {
+				return result;
 			}
 		}
 
 		fPatternMap.initPattern();
 		if (matchExpr(fLeftHandSide, leftHandSide)) {
-//			 if (fLeftHandSide.isAST(F.Integrate)) {
-//			 System.out.println(fLeftHandSide.toString());
-//			 System.out.println("  :> " + fRightHandSide.toString());
-//			 }
+			// if (fLeftHandSide.isAST(F.Integrate)) {
+			// System.out.println(fLeftHandSide.toString());
+			// System.out.println("  :> " + fRightHandSide.toString());
+			// }
 			IExpr result = fPatternMap.substitutePatternSymbols(fRightHandSide);
 			try {
 				return F.eval(result);
