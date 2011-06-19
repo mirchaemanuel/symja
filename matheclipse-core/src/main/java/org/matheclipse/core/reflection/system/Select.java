@@ -13,22 +13,22 @@ public class Select implements IFunctionEvaluator {
 	public Select() {
 	}
 
-	public IExpr evaluate(final IAST functionList) {
-		if ((functionList.size() == 3) && (functionList.get(1) instanceof IAST)) {
-			return select((IAST) functionList.get(1), functionList.get(2));
-		} else if ((functionList.size() == 4) && (functionList.get(1) instanceof IAST) && (functionList.get(3) instanceof IInteger)) {
-			final int resultLimit = Validate.checkIntType(functionList, 3);
-			return select((IAST) functionList.get(1), functionList.get(2), resultLimit);
+	public IExpr evaluate(final IAST ast) {
+		if ((ast.size() == 3) && (ast.get(1).isAST())) {
+			return select((IAST) ast.get(1), ast.get(2));
+		} else if ((ast.size() == 4) && (ast.get(1) instanceof IAST) && (ast.get(3) instanceof IInteger)) {
+			final int resultLimit = Validate.checkIntType(ast, 3);
+			return select((IAST) ast.get(1), ast.get(2), resultLimit);
 		}
 		return null;
 	}
 
-	public static IAST select(final IAST list, final IExpr head) {
-		return list.filter(list.copyHead(), Predicates.isTrue(head));
+	public static IAST select(final IAST ast, final IExpr head) {
+		return ast.filter(ast.copyHead(), Predicates.isTrue(head));
 	}
 
-	public static IAST select(final IAST list, final IExpr head, final int resultLimit) {
-		return list.args().filter(list.copyHead(), Predicates.isTrue(head), resultLimit);
+	public static IAST select(final IAST ast, final IExpr head, final int resultLimit) {
+		return ast.args().filter(ast.copyHead(), Predicates.isTrue(head), resultLimit);
 	}
 
 	public IExpr numericEval(final IAST functionList) {
