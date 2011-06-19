@@ -301,12 +301,15 @@ public class Parser extends Scanner {
 					postfixOperator = determinePostfixOperator();
 
 					if (postfixOperator != null) {
-						getNextToken();
-						lhs = postfixOperator.createFunction(fFactory, lhs);
-						lhs = parseArguments(lhs);
-						continue;
+						if (postfixOperator.getPrecedence() >= min_precedence) {
+							getNextToken();
+							lhs = postfixOperator.createFunction(fFactory, lhs);
+							lhs = parseArguments(lhs);
+							continue;
+						}
+					} else {
+						throwSyntaxError("Operator: " + fOperatorString + " is no infix or postfix operator.");
 					}
-					throwSyntaxError("Operator: " + fOperatorString + " is no infix or postfix operator.");
 				}
 			}
 			break;
