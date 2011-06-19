@@ -62,8 +62,8 @@ public class PatternMatcherAndInvoker extends PatternMatcher {
 		Parser parser = new Parser();
 		ASTNode node = parser.parse(leftHandSide);
 		IExpr lhs = AST2Expr.CONST.convert(node);
-		fLeftHandSide = lhs;
-		init(fLeftHandSide);
+		fLhsPatternExpr = lhs;
+		init(fLhsPatternExpr);
 		initInvoker(instance, methodName);
 	}
 
@@ -86,7 +86,7 @@ public class PatternMatcherAndInvoker extends PatternMatcher {
 	@Override
 	public IExpr eval(final IExpr leftHandSide) {
 		IExpr result = null;
-		if (isRuleWithoutPatterns() && fLeftHandSide.equals(leftHandSide)) {
+		if (isRuleWithoutPatterns() && fLhsPatternExpr.equals(leftHandSide)) {
 			if (fTypes.length != 0) {
 				return null;
 			}
@@ -111,7 +111,7 @@ public class PatternMatcherAndInvoker extends PatternMatcher {
 			return null;
 		}
 		fPatternMap.initPattern();
-		if (matchExpr(fLeftHandSide, leftHandSide)) {
+		if (matchExpr(fLhsPatternExpr, leftHandSide)) {
 
 			List<IExpr> args = fPatternMap.getValuesAsList();
 			result = null;
