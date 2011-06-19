@@ -90,7 +90,8 @@ public class PatternMatcherAndEvaluator extends PatternMatcher implements Serial
 	 *          TODO
 	 * @return
 	 */
-	private static boolean equivalentRHS(final IExpr patternExpr1, final IExpr patternExpr2, PatternMap pm1, PatternMap pm2) {
+	private static boolean equivalentRHS(final IExpr patternExpr1, final IExpr patternExpr2, final PatternMap pm1,
+			final PatternMap pm2) {
 		if (patternExpr1.isCondition()) {
 			if (patternExpr2.isCondition()) {
 				return equivalentRHS(patternExpr1.getAt(2), patternExpr2.getAt(2), pm1, pm2);
@@ -148,13 +149,13 @@ public class PatternMatcherAndEvaluator extends PatternMatcher implements Serial
 	 * @return
 	 */
 	@Override
-	public IExpr eval(final IExpr leftHandSide) {
+	public IExpr eval(final IExpr lhsEvalExpr) {
 		// if(fRightHandSide.isAST("Condition")) {
 		// System.out.println("2:"+fRightHandSide);
 		// }
 		if (isRuleWithoutPatterns()) {
 			// no patterns found match equally:
-			if (fLeftHandSide.equals(leftHandSide)) {
+			if (fLhsPatternExpr.equals(lhsEvalExpr)) {
 				IExpr result = fRightHandSide;
 				try {
 					IExpr temp = F.eval(result);
@@ -168,8 +169,8 @@ public class PatternMatcherAndEvaluator extends PatternMatcher implements Serial
 					return e.getValue();
 				}
 			}
-			if (!(fLeftHandSide.isOrderlessAST() && leftHandSide.isOrderlessAST())) {
-				if (!(fLeftHandSide.isFlatAST() && leftHandSide.isFlatAST())) {
+			if (!(fLhsPatternExpr.isOrderlessAST() && lhsEvalExpr.isOrderlessAST())) {
+				if (!(fLhsPatternExpr.isFlatAST() && lhsEvalExpr.isFlatAST())) {
 					return null;
 				}
 				// TODO implement equals matching for special cases, if the AST is
@@ -178,15 +179,15 @@ public class PatternMatcherAndEvaluator extends PatternMatcher implements Serial
 		}
 		fPatternMap.initPattern();
 
-		if (fLeftHandSide.isAST() && leftHandSide.isAST()) {
-			IExpr result = evalAST((IAST) fLeftHandSide, (IAST) leftHandSide, fRightHandSide, new StackMatcher());
+		if (fLhsPatternExpr.isAST() && lhsEvalExpr.isAST()) {
+			IExpr result = evalAST((IAST) fLhsPatternExpr, (IAST) lhsEvalExpr, fRightHandSide, new StackMatcher());
 			if (result != null) {
 				return result;
 			}
 		}
 
 		fPatternMap.initPattern();
-		if (matchExpr(fLeftHandSide, leftHandSide)) {
+		if (matchExpr(fLhsPatternExpr, lhsEvalExpr)) {
 			// if (fLeftHandSide.isAST(F.Integrate)) {
 			// System.out.println(fLeftHandSide.toString());
 			// System.out.println("  :> " + fRightHandSide.toString());

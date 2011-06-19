@@ -24,12 +24,12 @@ public class PatternMatcher extends IPatternMatcher<IExpr> implements Serializab
 	private static final long serialVersionUID = -6708462090303928690L;
 
 	private static class Entry {
-		IExpr patternExpr;
-		IExpr evalExpr;
+		IExpr fPatternExpr;
+		IExpr fEvalExpr;
 
 		public Entry(IExpr patternExpr, IExpr evalExpr) {
-			this.patternExpr = patternExpr;
-			this.evalExpr = evalExpr;
+			this.fPatternExpr = patternExpr;
+			this.fEvalExpr = evalExpr;
 		}
 	}
 
@@ -39,7 +39,7 @@ public class PatternMatcher extends IPatternMatcher<IExpr> implements Serializab
 	 */
 	protected class StackMatcher {
 
-		private ArrayList<Entry> stack = new ArrayList<Entry>();
+		private ArrayList<Entry> fStack = new ArrayList<Entry>();
 
 		public StackMatcher() {
 
@@ -50,7 +50,7 @@ public class PatternMatcher extends IPatternMatcher<IExpr> implements Serializab
 		 * @see java.util.Stack#peek()
 		 */
 		public Entry peek() {
-			return stack.get(stack.size() - 1);
+			return fStack.get(fStack.size() - 1);
 		}
 
 		/**
@@ -58,7 +58,7 @@ public class PatternMatcher extends IPatternMatcher<IExpr> implements Serializab
 		 * @see java.util.Stack#pop()
 		 */
 		public Entry pop() {
-			return stack.remove(stack.size() - 1);
+			return fStack.remove(fStack.size() - 1);
 		}
 
 		/**
@@ -67,9 +67,9 @@ public class PatternMatcher extends IPatternMatcher<IExpr> implements Serializab
 		 * @param fromPosition
 		 */
 		public void removeFrom(int fromPosition) {
-			int len = stack.size();
+			int len = fStack.size();
 			while (len > fromPosition) {
-				stack.remove(len - 1);
+				fStack.remove(len - 1);
 				len--;
 			}
 		}
@@ -77,13 +77,13 @@ public class PatternMatcher extends IPatternMatcher<IExpr> implements Serializab
 		public boolean push(IExpr patternExpr, IExpr evalExpr) {
 			if (patternExpr.isAST() && ((IAST) patternExpr).isEvalFlagOn(IAST.CONTAINS_PATTERN)) {
 				// insert for delayed evaluation in matchRest() method
-				stack.add(new Entry(patternExpr, evalExpr));
+				fStack.add(new Entry(patternExpr, evalExpr));
 				return true;
 			}
-			if (!patternExpr.isPattern()) {
-				return patternExpr.equals(evalExpr);
+			if (patternExpr.isPattern()) {
+				return matchPattern((IPattern) patternExpr, evalExpr);
 			} else {
-				return matchExpr(patternExpr, evalExpr);
+				return patternExpr.equals(evalExpr);
 			}
 		}
 
@@ -97,14 +97,13 @@ public class PatternMatcher extends IPatternMatcher<IExpr> implements Serializab
 				return checkCondition();
 			}
 			boolean matched = true;
-			Entry entry = null;
+			Entry entry = pop();
 			try {
-				entry = pop();
-				matched = matchExpr(entry.patternExpr, entry.evalExpr, this);
+				matched = matchExpr(entry.fPatternExpr, entry.fEvalExpr, this);
 				return matched;
 			} finally {
-				if (!matched && entry != null) {
-					stack.add(entry);
+				if (!matched) {
+					fStack.add(entry);
 				}
 			}
 		}
@@ -116,7 +115,7 @@ public class PatternMatcher extends IPatternMatcher<IExpr> implements Serializab
 		 * @see java.util.ArrayList#isEmpty()
 		 */
 		public boolean isEmpty() {
-			return stack.isEmpty();
+			return fStack.isEmpty();
 		}
 
 		/**
@@ -126,7 +125,7 @@ public class PatternMatcher extends IPatternMatcher<IExpr> implements Serializab
 		 * @see java.util.ArrayList#size()
 		 */
 		public int size() {
-			return stack.size();
+			return fStack.size();
 		}
 	}
 
@@ -137,7 +136,7 @@ public class PatternMatcher extends IPatternMatcher<IExpr> implements Serializab
 	 */
 	public class FlatMatcher {
 
-		private IAST fLhsPatternList;
+		private IAST fLhsPatternAST;
 
 		final private boolean fOneIdentity;
 
@@ -145,19 +144,19 @@ public class PatternMatcher extends IPatternMatcher<IExpr> implements Serializab
 
 		private ISymbol fSymbol;
 
-		private IAST lhsEvalList;
+		private IAST fLhsEvalAST;
 
 		public FlatMatcher(final ISymbol sym, final IAST lhsPatternList, final IAST lhsEvalList) {
 			fSymbol = sym;
-			fLhsPatternList = lhsPatternList;
-			this.lhsEvalList = lhsEvalList;
+			fLhsPatternAST = lhsPatternList;
+			this.fLhsEvalAST = lhsEvalList;
 			fOneIdentity = (sym.getAttributes() & ISymbol.ONEIDENTITY) == ISymbol.ONEIDENTITY;
 		}
 
 		public boolean matchFlatAST(StackMatcher stackMatcher) {
 			// AbstractExpressionFactory f = fSession.getExpressionFactory();
-			final int n = lhsEvalList.size() - 1;
-			final int k = fLhsPatternList.size() - 1;
+			final int n = fLhsEvalAST.size() - 1;
+			final int k = fLhsPatternAST.size() - 1;
 			final KPartitionsIterable partitionIterator = new KPartitionsIterable(n, k);
 			// copy pattern values to local variable
 			IExpr[] patternValues = fPatternMap.copyPattern();
@@ -176,7 +175,7 @@ public class PatternMatcher extends IPatternMatcher<IExpr> implements Serializab
 		private boolean matchSingleFlatPartition(StackMatcher stackMatcher) {
 			IAST partitionElement;
 
-			final int n = lhsEvalList.size() - 1;
+			final int n = fLhsEvalAST.size() - 1;
 			// 0 is always the first index of a partition
 			int partitionStartIndex = 0;
 			int partitionElementCounter = 0;
@@ -188,14 +187,14 @@ public class PatternMatcher extends IPatternMatcher<IExpr> implements Serializab
 					if (partitionStartIndex + 1 == fPartitionsIndex[i]) {
 						// OneIdentity check here
 						if (fOneIdentity) {
-							if (!stackMatcher.push(fLhsPatternList.get(partitionElementCounter + 1), lhsEvalList.get(partitionStartIndex + 1))) {
+							if (!stackMatcher.push(fLhsPatternAST.get(partitionElementCounter + 1), fLhsEvalAST.get(partitionStartIndex + 1))) {
 								matched = false;
 								return false;
 							}
 						} else {
 							partitionElement = F.function(fSymbol);
-							partitionElement.add(lhsEvalList.get(partitionStartIndex + 1));
-							if (!stackMatcher.push(fLhsPatternList.get(partitionElementCounter + 1), partitionElement)) {
+							partitionElement.add(fLhsEvalAST.get(partitionStartIndex + 1));
+							if (!stackMatcher.push(fLhsPatternAST.get(partitionElementCounter + 1), partitionElement)) {
 								matched = false;
 								return false;
 							}
@@ -205,15 +204,15 @@ public class PatternMatcher extends IPatternMatcher<IExpr> implements Serializab
 						for (int m = partitionStartIndex; m < fPartitionsIndex[i]; m++) {
 
 							if (m + 1 < fPartitionsIndex[i]) {
-								if ((lhsEvalList.get(m + 2)).isLTOrdered(lhsEvalList.get(m + 1))) {
+								if ((fLhsEvalAST.get(m + 2)).isLTOrdered(fLhsEvalAST.get(m + 1))) {
 									// wrong ordering inside partitionElement
 									matched = false;
 									return false;
 								}
 							}
-							partitionElement.add(lhsEvalList.get(m + 1));
+							partitionElement.add(fLhsEvalAST.get(m + 1));
 						}
-						if (!stackMatcher.push(fLhsPatternList.get(partitionElementCounter + 1), partitionElement)) {
+						if (!stackMatcher.push(fLhsPatternAST.get(partitionElementCounter + 1), partitionElement)) {
 							matched = false;
 							return false;
 						}
@@ -227,35 +226,35 @@ public class PatternMatcher extends IPatternMatcher<IExpr> implements Serializab
 				if (partitionStartIndex + 1 == n) {
 					// OneIdentity check here
 					if (fOneIdentity) {
-						if (!stackMatcher.push(fLhsPatternList.get(partitionElementCounter + 1), lhsEvalList.get(partitionStartIndex + 1))) {
+						if (!stackMatcher.push(fLhsPatternAST.get(partitionElementCounter + 1), fLhsEvalAST.get(partitionStartIndex + 1))) {
 							matched = false;
 							return false;
-						} 
+						}
 					} else {
 						partitionElement = F.function(fSymbol);
-						partitionElement.add(lhsEvalList.get(partitionStartIndex + 1));
-						if (!stackMatcher.push(fLhsPatternList.get(partitionElementCounter + 1), partitionElement)) {
+						partitionElement.add(fLhsEvalAST.get(partitionStartIndex + 1));
+						if (!stackMatcher.push(fLhsPatternAST.get(partitionElementCounter + 1), partitionElement)) {
 							matched = false;
 							return false;
-						} 
+						}
 					}
 				} else {
 					partitionElement = F.function(fSymbol);
 					for (int m = partitionStartIndex; m < n; m++) {
 
 						if (m + 1 < n) {
-							if ((lhsEvalList.get(m + 2)).isLTOrdered(lhsEvalList.get(m + 1))) {
+							if ((fLhsEvalAST.get(m + 2)).isLTOrdered(fLhsEvalAST.get(m + 1))) {
 								// wrong ordering inside partitionElement
 								matched = false;
 								return false;
 							}
 						}
-						partitionElement.add(lhsEvalList.get(m + 1));
+						partitionElement.add(fLhsEvalAST.get(m + 1));
 					}
-					if (!stackMatcher.push(fLhsPatternList.get(partitionElementCounter + 1), partitionElement)) {
+					if (!stackMatcher.push(fLhsPatternAST.get(partitionElementCounter + 1), partitionElement)) {
 						matched = false;
 						return false;
-					} 
+					}
 				}
 
 				if (!stackMatcher.matchRest()) {
@@ -277,7 +276,7 @@ public class PatternMatcher extends IPatternMatcher<IExpr> implements Serializab
 	 */
 	public class FlatOrderlessMatcher {
 
-		private IAST fLhsPatternList;
+		private IAST fLhsPatternAST;
 
 		private boolean fOneIdentity;
 
@@ -287,21 +286,21 @@ public class PatternMatcher extends IPatternMatcher<IExpr> implements Serializab
 
 		private ISymbol fSymbol;
 
-		private IAST lhsEvalList;
+		private IAST fLhsEvalAST;
 
-		public FlatOrderlessMatcher(final ISymbol sym, final IAST lhsPatternList, final IAST lhsEvalList) {
+		public FlatOrderlessMatcher(final ISymbol sym, final IAST lhsPatternAST, final IAST lhsEvalAST) {
 			fSymbol = sym;
-			fLhsPatternList = lhsPatternList;
-			this.lhsEvalList = lhsEvalList;
+			fLhsPatternAST = lhsPatternAST;
+			this.fLhsEvalAST = lhsEvalAST;
 			// this.fSession = EvalEngine.get();
 			fOneIdentity = (sym.getAttributes() & ISymbol.ONEIDENTITY) == ISymbol.ONEIDENTITY;
 		}
 
 		private boolean matchFlatOrderlessList(StackMatcher stackMatcher) {
 			// AbstractExpressionFactory f = fSession.getExpressionFactory();
-			final int n = lhsEvalList.size() - 1;
-			final int k = fLhsPatternList.size() - 1;
-			final KPermutationsIterable permutationIterator = new KPermutationsIterable(lhsEvalList, n, 1);
+			final int n = fLhsEvalAST.size() - 1;
+			final int k = fLhsPatternAST.size() - 1;
+			final KPermutationsIterable permutationIterator = new KPermutationsIterable(fLhsEvalAST, n, 1);
 			final KPartitionsIterable partitionIterator = new KPartitionsIterable(n, k);
 
 			// copy pattern values to local variable
@@ -334,7 +333,7 @@ public class PatternMatcher extends IPatternMatcher<IExpr> implements Serializab
 			// }
 			// System.out.println(buf.toString() + " <FO> " + lhsEvalList.toString());
 			// }
-			final int n = lhsEvalList.size() - 1;
+			final int n = fLhsEvalAST.size() - 1;
 			// 0 is always the first index of a partition
 			int partitionStartIndex = 0;
 			int partitionElementCounter = 0;
@@ -347,15 +346,15 @@ public class PatternMatcher extends IPatternMatcher<IExpr> implements Serializab
 					if (partitionStartIndex + 1 == fPartitionsIndex[i]) {
 						// OneIdentity check here
 						if (fOneIdentity) {
-							if (!stackMatcher.push(fLhsPatternList.get(partitionElementCounter + 1), lhsEvalList
+							if (!stackMatcher.push(fLhsPatternAST.get(partitionElementCounter + 1), fLhsEvalAST
 									.get(fPermutationsIndex[partitionStartIndex] + 1))) {
 								matched = false;
 								return false;
 							}
 						} else {
 							partitionElement = F.function(fSymbol);
-							partitionElement.add(lhsEvalList.get(fPermutationsIndex[partitionStartIndex] + 1));
-							if (!stackMatcher.push(fLhsPatternList.get(partitionElementCounter + 1), partitionElement)) {
+							partitionElement.add(fLhsEvalAST.get(fPermutationsIndex[partitionStartIndex] + 1));
+							if (!stackMatcher.push(fLhsPatternAST.get(partitionElementCounter + 1), partitionElement)) {
 								matched = false;
 								return false;
 							}
@@ -365,15 +364,15 @@ public class PatternMatcher extends IPatternMatcher<IExpr> implements Serializab
 						for (int m = partitionStartIndex; m < fPartitionsIndex[i]; m++) {
 
 							if (m + 1 < fPartitionsIndex[i]) {
-								if ((lhsEvalList.get(fPermutationsIndex[m + 1] + 1)).isLTOrdered(lhsEvalList.get(fPermutationsIndex[m] + 1))) {
+								if ((fLhsEvalAST.get(fPermutationsIndex[m + 1] + 1)).isLTOrdered(fLhsEvalAST.get(fPermutationsIndex[m] + 1))) {
 									// wrong ordering inside partitionElement
 									matched = false;
 									return false;
 								}
 							}
-							partitionElement.add(lhsEvalList.get(fPermutationsIndex[m] + 1));
+							partitionElement.add(fLhsEvalAST.get(fPermutationsIndex[m] + 1));
 						}
-						if (!stackMatcher.push(fLhsPatternList.get(partitionElementCounter + 1), partitionElement)) {
+						if (!stackMatcher.push(fLhsPatternAST.get(partitionElementCounter + 1), partitionElement)) {
 							matched = false;
 							return false;
 						}
@@ -387,15 +386,15 @@ public class PatternMatcher extends IPatternMatcher<IExpr> implements Serializab
 				if (partitionStartIndex + 1 == n) {
 					// OneIdentity check here
 					if (fOneIdentity) {
-						if (!stackMatcher.push(fLhsPatternList.get(partitionElementCounter + 1), lhsEvalList
+						if (!stackMatcher.push(fLhsPatternAST.get(partitionElementCounter + 1), fLhsEvalAST
 								.get(fPermutationsIndex[partitionStartIndex] + 1))) {
 							matched = false;
 							return false;
 						}
 					} else {
 						partitionElement = F.function(fSymbol);
-						partitionElement.add(lhsEvalList.get(fPermutationsIndex[partitionStartIndex] + 1));
-						if (!stackMatcher.push(fLhsPatternList.get(partitionElementCounter + 1), partitionElement)) {
+						partitionElement.add(fLhsEvalAST.get(fPermutationsIndex[partitionStartIndex] + 1));
+						if (!stackMatcher.push(fLhsPatternAST.get(partitionElementCounter + 1), partitionElement)) {
 							matched = false;
 							return false;
 						}
@@ -405,15 +404,15 @@ public class PatternMatcher extends IPatternMatcher<IExpr> implements Serializab
 					for (int m = partitionStartIndex; m < n; m++) {
 
 						if (m + 1 < n) {
-							if ((lhsEvalList.get(fPermutationsIndex[m + 1] + 1)).isLTOrdered(lhsEvalList.get(fPermutationsIndex[m] + 1))) {
+							if ((fLhsEvalAST.get(fPermutationsIndex[m + 1] + 1)).isLTOrdered(fLhsEvalAST.get(fPermutationsIndex[m] + 1))) {
 								// wrong ordering inside partitionElement
 								matched = false;
 								return false;
 							}
 						}
-						partitionElement.add(lhsEvalList.get(fPermutationsIndex[m] + 1));
+						partitionElement.add(fLhsEvalAST.get(fPermutationsIndex[m] + 1));
 					}
-					if (!stackMatcher.push(fLhsPatternList.get(partitionElementCounter + 1), partitionElement)) {
+					if (!stackMatcher.push(fLhsPatternAST.get(partitionElementCounter + 1), partitionElement)) {
 						matched = false;
 						return false;
 					}
@@ -534,7 +533,7 @@ public class PatternMatcher extends IPatternMatcher<IExpr> implements Serializab
 	/**
 	 * Contains the "pattern-matching" expression
 	 */
-	protected IExpr fLeftHandSide;
+	protected IExpr fLhsPatternExpr;
 
 	/**
 	 * Additional condition for pattern-matching maybe <code>null</code>
@@ -554,14 +553,14 @@ public class PatternMatcher extends IPatternMatcher<IExpr> implements Serializab
 	}
 
 	public PatternMatcher(final IExpr patternExpr) {
-		this.fLeftHandSide = patternExpr;
+		this.fLhsPatternExpr = patternExpr;
 		this.fPatternCondition = null;
 		if (patternExpr.isCondition()) {
-			this.fLeftHandSide = ((IAST) patternExpr).get(1);
+			this.fLhsPatternExpr = ((IAST) patternExpr).get(1);
 			this.fPatternCondition = ((IAST) patternExpr).get(2);
 		}
 		this.fPatternMap = new PatternMap();
-		init(fLeftHandSide);
+		init(fLhsPatternExpr);
 	}
 
 	protected final void init(IExpr patternExpr) {
@@ -617,7 +616,7 @@ public class PatternMatcher extends IPatternMatcher<IExpr> implements Serializab
 	 *          TODO
 	 * @return
 	 */
-	public static boolean equivalent(final IExpr patternExpr1, final IExpr patternExpr2, PatternMap pm1, PatternMap pm2) {
+	public static boolean equivalent(final IExpr patternExpr1, final IExpr patternExpr2, final PatternMap pm1, final PatternMap pm2) {
 		if (patternExpr1 == patternExpr2) {
 			return true;
 		}
@@ -662,12 +661,12 @@ public class PatternMatcher extends IPatternMatcher<IExpr> implements Serializab
 	 * 
 	 * Increments this classes pattern counter.
 	 * 
-	 * @param lhsExprWithPattern
+	 * @param lhsPatternExpr
 	 * @param patternIndexMap
 	 */
-	private int determinePatterns(final IExpr lhsExprWithPattern) {
-		if (lhsExprWithPattern instanceof IAST) {
-			final IAST ast = (IAST) lhsExprWithPattern;
+	private int determinePatterns(final IExpr lhsPatternExpr) {
+		if (lhsPatternExpr instanceof IAST) {
+			final IAST ast = (IAST) lhsPatternExpr;
 			int listEvalFlags = IAST.NO_FLAG;
 			listEvalFlags |= determinePatterns(ast.head());
 			for (int i = 1; i < ast.size(); i++) {
@@ -690,34 +689,20 @@ public class PatternMatcher extends IPatternMatcher<IExpr> implements Serializab
 			listEvalFlags &= IAST.CONTAINS_NO_DEFAULT_PATTERN_MASK;
 			return listEvalFlags;
 		} else {
-			if (lhsExprWithPattern.isPattern()) {
-				fPatternMap.addPattern((IPattern) lhsExprWithPattern);
+			if (lhsPatternExpr.isPattern()) {
+				fPatternMap.addPattern((IPattern) lhsPatternExpr);
 				return IAST.CONTAINS_PATTERN;
 			}
 		}
 		return IAST.NO_FLAG;
 	}
 
-	// /**
-	// * Set the index of <code>fPatternSymbolsArray</code> where the
-	// * <code>pattern</code> stores it's assigned value during pattern matching.
-	// *
-	// * @param pattern
-	// * @param patternIndexMap
-	// */
-	// private void determinePatternParameters(IPattern pattern) {
-	// if (pattern.getSymbol() == null) {
-	// // for "unnamed" patterns (i.e. "_" or "_IntegerQ")
-	//
-	// // needs to increase fPatternCounter, otherwise a rule could eventually be
-	// // valued as an "equals rule"
-	// fPatternMap.addNull(pattern);
-	// } else {
-	// // for "named" patterns (i.e. "x_" or "x_IntegerQ")
-	// fPatternMap.addSymbol(pattern);
-	// }
-	// }
-
+	/**
+	 * Get the right-hand-side expression. Override in derived classes. The
+	 * default implementation returns <code>null</code>.
+	 * 
+	 * @return <code>null</code>
+	 */
 	public IExpr getRightHandside() {
 		return null;
 	}
@@ -782,11 +767,11 @@ public class PatternMatcher extends IPatternMatcher<IExpr> implements Serializab
 
 		if (isRuleWithoutPatterns()) {
 			// no patterns found match equally:
-			return fLeftHandSide.equals(evalExpr);
+			return fLhsPatternExpr.equals(evalExpr);
 		}
 
 		fPatternMap.initPattern();
-		return matchExpr(fLeftHandSide, evalExpr);
+		return matchExpr(fLhsPatternExpr, evalExpr);
 	}
 
 	/**
@@ -795,8 +780,8 @@ public class PatternMatcher extends IPatternMatcher<IExpr> implements Serializab
 	 * 
 	 * @return
 	 */
-	protected boolean matchExpr(IExpr lhsPatternExpression, final IExpr lhsEvalExpression) {
-		return matchExpr(lhsPatternExpression, lhsEvalExpression, new StackMatcher());
+	protected boolean matchExpr(IExpr lhsPatternExpr, final IExpr lhsEvalExpr) {
+		return matchExpr(lhsPatternExpr, lhsEvalExpr, new StackMatcher());
 	}
 
 	/**
@@ -804,22 +789,22 @@ public class PatternMatcher extends IPatternMatcher<IExpr> implements Serializab
 	 * 
 	 * @return
 	 */
-	protected boolean matchExpr(IExpr lhsPatternExpression, final IExpr lhsEvalExpression, StackMatcher stackMatcher) {
+	protected boolean matchExpr(IExpr lhsPatternExpr, final IExpr lhsEvalExpr, StackMatcher stackMatcher) {
 		boolean matched = false;
-		if (lhsPatternExpression.isCondition()) {
+		if (lhsPatternExpr.isCondition()) {
 			// expression /; test
-			lhsPatternExpression = fPatternMap.substitutePatternSymbols(lhsPatternExpression);
-			PatternMatcher.evalLeftHandSide(lhsPatternExpression);
-			final PatternMatcher matcher = new PatternMatcher(lhsPatternExpression);
-			if (matcher.apply(lhsEvalExpression)) {
+			lhsPatternExpr = fPatternMap.substitutePatternSymbols(lhsPatternExpr);
+			PatternMatcher.evalLeftHandSide(lhsPatternExpr);
+			final PatternMatcher matcher = new PatternMatcher(lhsPatternExpr);
+			if (matcher.apply(lhsEvalExpr)) {
 				matched = true;
 				fPatternMap.copyPatternValuesFromPatternMatcher(matcher.fPatternMap);
 			}
-		} else if (lhsPatternExpression instanceof IAST) {
-			IAST lhsPatternAST = (IAST) lhsPatternExpression;
+		} else if (lhsPatternExpr instanceof IAST) {
+			IAST lhsPatternAST = (IAST) lhsPatternExpr;
 			IExpr[] patternValues = fPatternMap.copyPattern();
 			try {
-				matched = matchAST(lhsPatternAST, lhsEvalExpression, stackMatcher);
+				matched = matchAST(lhsPatternAST, lhsEvalExpr, stackMatcher);
 				if ((lhsPatternAST.getEvalFlags() & IAST.CONTAINS_DEFAULT_PATTERN) == IAST.CONTAINS_DEFAULT_PATTERN) {
 					if (!matched) {
 						IExpr temp = null;
@@ -828,7 +813,7 @@ public class PatternMatcher extends IPatternMatcher<IExpr> implements Serializab
 						fPatternMap.resetPattern(patternValues);
 						temp = matchDefaultAST(symbol, attr, lhsPatternAST);
 						if (temp != null) {
-							matched = matchExpr(temp, lhsEvalExpression, stackMatcher);
+							matched = matchExpr(temp, lhsEvalExpr, stackMatcher);
 						}
 					}
 				}
@@ -838,10 +823,10 @@ public class PatternMatcher extends IPatternMatcher<IExpr> implements Serializab
 				}
 			}
 
-		} else if (lhsPatternExpression.isPattern()) {
-			matched = matchPattern((IPattern) lhsPatternExpression, lhsEvalExpression);
+		} else if (lhsPatternExpr.isPattern()) {
+			matched = matchPattern((IPattern) lhsPatternExpr, lhsEvalExpr);
 		} else {
-			matched = lhsPatternExpression.equals(lhsEvalExpression);
+			matched = lhsPatternExpr.equals(lhsEvalExpr);
 		}
 		if (matched) {
 			return stackMatcher.matchRest();
@@ -884,9 +869,6 @@ public class PatternMatcher extends IPatternMatcher<IExpr> implements Serializab
 		if (cloned.size() == 2) {
 			return cloned.get(1);
 		}
-		// if ((attr & ISymbol.ORDERLESS) == ISymbol.ORDERLESS) {
-		// EvaluationSupport.sort(cloned);
-		// }
 		return null;
 	}
 
@@ -900,13 +882,13 @@ public class PatternMatcher extends IPatternMatcher<IExpr> implements Serializab
 		}
 	}
 
-	protected boolean matchAST(final IAST lhsPatternAST, final IExpr lhsEvalExpression, StackMatcher stackMatcher) {
-		if (lhsEvalExpression instanceof IAST) {
-			if ((!lhsPatternAST.isEvalFlagOn(IAST.CONTAINS_PATTERN)) && lhsPatternAST.equals(lhsEvalExpression)) {
+	protected boolean matchAST(final IAST lhsPatternAST, final IExpr lhsEvalExpr, StackMatcher stackMatcher) {
+		if (lhsEvalExpr instanceof IAST) {
+			if ((!lhsPatternAST.isEvalFlagOn(IAST.CONTAINS_PATTERN)) && lhsPatternAST.equals(lhsEvalExpr)) {
 				return stackMatcher.matchRest();
 			}
 
-			final IAST lhsEvalAST = (IAST) lhsEvalExpression;
+			final IAST lhsEvalAST = (IAST) lhsEvalExpr;
 			final ISymbol sym = lhsPatternAST.topHead();
 			if (lhsPatternAST.size() < lhsEvalAST.size()) {
 				if (((sym.getAttributes() & ISymbol.FLAT) == ISymbol.FLAT) && lhsPatternAST.head().equals(lhsEvalAST.head())) {
@@ -964,7 +946,7 @@ public class PatternMatcher extends IPatternMatcher<IExpr> implements Serializab
 		}
 	}
 
-	protected IExpr evalAST(final IAST lhsPatternAST, final IAST lhsEvalAST, IExpr rhsExpr, StackMatcher stackMatcher) {
+	protected IExpr evalAST(final IAST lhsPatternAST, final IAST lhsEvalAST, final IExpr rhsExpr, StackMatcher stackMatcher) {
 		if (lhsPatternAST.size() < lhsEvalAST.size()) {
 			if (lhsPatternAST.isOrderlessAST()) {
 				if (!matchExpr(lhsPatternAST.head(), lhsEvalAST.head(), new StackMatcher())) {
@@ -973,7 +955,7 @@ public class PatternMatcher extends IPatternMatcher<IExpr> implements Serializab
 				final OrderlessMatcher foMatcher = new OrderlessMatcher(lhsPatternAST, lhsEvalAST);
 				boolean matched = foMatcher.matchOrderlessAST(1, stackMatcher);
 				if (matched) {
-					IAST lhsResultAST = ((IAST) lhsEvalAST).clone();
+					IAST lhsResultAST = (lhsEvalAST).clone();
 					foMatcher.filterResult(lhsResultAST);
 					try {
 						IExpr result = fPatternMap.substitutePatternSymbols(rhsExpr);
@@ -997,7 +979,7 @@ public class PatternMatcher extends IPatternMatcher<IExpr> implements Serializab
 				int len = lhsEvalAST.size() - lhsPatternAST.size();
 				for (int i = 0; i < len; i++) {
 					if (matchASTSequence(lhsPatternAST, lhsEvalAST, i, stackMatcher)) {
-						IAST lhsResultAST = ((IAST) lhsEvalAST).clone();
+						IAST lhsResultAST = (lhsEvalAST).clone();
 						for (int j = 1; j < lhsPatternAST.size(); j++) {
 							lhsResultAST.remove(i + 1);
 						}
@@ -1035,7 +1017,7 @@ public class PatternMatcher extends IPatternMatcher<IExpr> implements Serializab
 	}
 
 	public IExpr getLHS() {
-		return fLeftHandSide;
+		return fLhsPatternExpr;
 	}
 
 	@Override
@@ -1054,9 +1036,9 @@ public class PatternMatcher extends IPatternMatcher<IExpr> implements Serializab
 				return false;
 			}
 			if (isRuleWithoutPatterns()) {
-				return fLeftHandSide.equals(pm.fLeftHandSide);
+				return fLhsPatternExpr.equals(pm.fLhsPatternExpr);
 			}
-			if (equivalent(fLeftHandSide, pm.fLeftHandSide, fPatternMap, pm.fPatternMap)) {
+			if (equivalent(fLhsPatternExpr, pm.fLhsPatternExpr, fPatternMap, pm.fPatternMap)) {
 				if ((fPatternCondition != null) && (pm.fPatternCondition != null)) {
 					return fPatternCondition.equals(pm.fPatternCondition);
 				}
@@ -1071,13 +1053,13 @@ public class PatternMatcher extends IPatternMatcher<IExpr> implements Serializab
 
 	@Override
 	public int hashCode() {
-		return fLeftHandSide.hashCode();
+		return fLhsPatternExpr.hashCode();
 	}
 
 	@Override
 	public Object clone() {
 		PatternMatcher v = (PatternMatcher) super.clone();
-		v.fLeftHandSide = fLeftHandSide;
+		v.fLhsPatternExpr = fLhsPatternExpr;
 		v.fPatternCondition = fPatternCondition;
 		v.fPatternMap = fPatternMap.clone();
 		return v;
@@ -1099,11 +1081,11 @@ public class PatternMatcher extends IPatternMatcher<IExpr> implements Serializab
 		fPatternCondition = condition;
 	}
 
-	public static IExpr evalLeftHandSide(IExpr leftHandSide, final EvalEngine engine) {
+	public static IExpr evalLeftHandSide(final IExpr leftHandSide, final EvalEngine engine) {
 		if (leftHandSide instanceof IAST) {
 			final IExpr temp = engine.evalSetAttributes((IAST) leftHandSide);
 			if (temp != null) {
-				leftHandSide = temp;
+				return temp;
 			}
 		}
 		return leftHandSide;
