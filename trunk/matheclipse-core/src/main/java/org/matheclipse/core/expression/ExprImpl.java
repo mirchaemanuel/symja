@@ -194,26 +194,42 @@ public abstract class ExprImpl implements IExpr {
 		return -1;
 	}
 
+	/** {@inheritDoc} */
 	public boolean isAST() {
 		return false;
 	}
 
+	/** {@inheritDoc} */
+	public boolean isOrderlessAST() {
+		return false;
+	} 
+	
+	/** {@inheritDoc} */
+	public boolean isFlatAST() {
+		return false;
+	}
+	
+	/** {@inheritDoc} */
 	public boolean isAST(final IExpr header) {
 		return false;
 	}
 
+	/** {@inheritDoc} */
 	public boolean isAST(final IExpr header, final int sz) {
 		return false;
 	}
 
+	/** {@inheritDoc} */
 	public boolean isASTSizeGE(final IExpr header, final int size) {
 		return false;
 	}
 
+	/** {@inheritDoc} */
 	public boolean isAST(final String symbol) {
 		return false;
 	}
 
+	/** {@inheritDoc} */
 	public boolean isAST(final String symbol, final int size) {
 		return false;
 	}

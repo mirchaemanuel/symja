@@ -841,9 +841,17 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 		return true;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
+	public boolean isOrderlessAST() {
+		return ((ISymbol.ORDERLESS & topHead().getAttributes()) == ISymbol.ORDERLESS);
+	}
+
+	/** {@inheritDoc} */
+	public boolean isFlatAST() {
+		return ((ISymbol.FLAT & topHead().getAttributes()) == ISymbol.FLAT);
+	}
+
+	/** {@inheritDoc} */
 	public boolean isAST(final IExpr header) {
 		return get(0).equals(header);
 	}
@@ -1319,16 +1327,15 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 		ast.add(head);
 		return ast;
 	}
-	
+
 	public static AST newInstance(final IExpr[] arr, final IExpr head) {
 		AST ast = new AST(arr.length + 1, false);
 		ast.add(head);
 		for (int i = 0; i < arr.length; i++) {
 			ast.add(arr[i]);
 		}
-		return ast; 
+		return ast;
 	}
-	
 
 	public static AST newInstance(final IExpr head) {
 		// AST ast;

@@ -222,7 +222,7 @@ public class Functors {
 		final EvalEngine engine = EvalEngine.get();
 		for (String str : strRules) {
 			final ASTNode parsedAST = parser.parse(str);
-		  IExpr expr = AST2Expr.CONST.convert(parsedAST);
+			IExpr expr = AST2Expr.CONST.convert(parsedAST);
 			expr = engine.evaluate(expr);
 			astRules.add(expr);
 		}
@@ -242,12 +242,6 @@ public class Functors {
 	public static Function<IExpr, IExpr> rules(@Nonnull IAST astRules) throws WrongArgumentType {
 		Map<IExpr, IExpr> equalRules = new HashMap<IExpr, IExpr>();
 		List<PatternMatcherAndEvaluator> matchers = new ArrayList<PatternMatcherAndEvaluator>();
-		Predicate<IExpr> patternQ = new Predicate<IExpr>() {
-			@Override
-			public boolean apply(IExpr input) {
-				return input instanceof IPattern;
-			}
-		};
 		if (astRules.isList()) {
 			// assuming multiple rules in a list
 			IAST rule;
@@ -255,23 +249,14 @@ public class Functors {
 			for (final IExpr expr : astRules) {
 				if (expr.isRuleAST()) {
 					rule = (IAST) expr;
-					if (rule.get(1).isFree(patternQ, true)) {
-						equalRules.put(rule.get(1), rule.get(2));
-					} else {
-						matchers.add(new PatternMatcherAndEvaluator(F.SetDelayed, rule.get(1), rule.get(2)));
-					}
+					addRuleToCollection(equalRules, matchers, rule);
 				} else {
 					throw new WrongArgumentType(astRules, astRules, -1, "Rule expression (x->y) expected: ");
 				}
 			}
 		} else {
 			if (astRules.isRuleAST()) {
-				// a single rule
-				if (astRules.get(1).isFree(patternQ, true)) {
-					equalRules.put(astRules.get(1), astRules.get(2));
-				} else {
-					matchers.add(new PatternMatcherAndEvaluator(F.SetDelayed, astRules.get(1), astRules.get(2)));
-				}
+				addRuleToCollection(equalRules, matchers, astRules);
 			} else {
 				throw new WrongArgumentType(astRules, astRules, -1, "Rule expression (x->y) expected: ");
 			}
@@ -280,6 +265,25 @@ public class Functors {
 			return new RulesPatternFunctor(equalRules, matchers);
 		}
 		return rules(equalRules);
+	}
+
+	private static Predicate<IExpr> PATTERNQ_PREDICATE = new Predicate<IExpr>() {
+		@Override
+		public boolean apply(IExpr input) {
+			return input.isPattern();
+		}
+	};
+
+	private static void addRuleToCollection(Map<IExpr, IExpr> equalRules, List<PatternMatcherAndEvaluator> matchers, IAST rule) {
+		if (rule.get(1).isFree(PATTERNQ_PREDICATE, true)) {
+			if (rule.get(1).isOrderlessAST()||rule.get(1).isFlatAST()) {
+				matchers.add(new PatternMatcherAndEvaluator(F.SetDelayed, rule.get(1), rule.get(2)));
+				return;
+			}
+			equalRules.put(rule.get(1), rule.get(2));
+		} else {
+			matchers.add(new PatternMatcherAndEvaluator(F.SetDelayed, rule.get(1), rule.get(2)));
+		}
 	}
 
 	private Functors() {
