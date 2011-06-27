@@ -10,6 +10,10 @@ import edu.jas.ps.UnivPowerSeries;
 import edu.jas.ps.UnivPowerSeriesMap;
 import edu.jas.ps.UnivPowerSeriesRing;
 
+/**
+ * 
+ * @deprecated doesn't work at the moment
+ */
 public class SeriesGenerator {
 	private final UnivPowerSeriesRing<BigRational> psr;
 	private final String varName;
