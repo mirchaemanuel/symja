@@ -83,7 +83,8 @@ public class CoefficientList extends AbstractFunctionEvaluator {
 	 * @param polynomial
 	 * @param variable
 	 * @param resultList
-	 *          the coefficient list of the given univariate polynomial
+	 *          the coefficient list of the given univariate polynomial in
+	 *          increasing order
 	 * @param resultListDiff
 	 *          the coefficient list of the derivative of the given univariate
 	 *          polynomial
