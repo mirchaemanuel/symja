@@ -1,3 +1,12 @@
 #summary Android version
 
 I released a first Android prototype here: <a href="http://code.google.com/p/symja/downloads/detail?name=SymjaDroid.apk&can=2&q=">SymjaDroid.apk</a>.  
+
+This is a screenshot of the interface:
+
+http://symja.googlecode.com/svn/wiki/SymjaAjaxGUI.png
+
+The buttons are used for:
+  * *Sym* - symbolic evaluation
+  * *Num* - numeric evaluation
+  * *Clear* - clears the input text area
