@@ -1,0 +1,3 @@
+#summary Android version
+
+I released a first Android prototype here: <a href="http://code.google.com/p/symja/downloads/detail?name=SymjaDroid.apk&can=2&q=">SymjaDroid.apk</a>.  
