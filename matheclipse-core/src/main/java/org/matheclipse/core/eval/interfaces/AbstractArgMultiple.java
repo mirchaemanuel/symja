@@ -13,39 +13,39 @@ import org.matheclipse.parser.client.SyntaxError;
 public class AbstractArgMultiple extends AbstractArg2 {
 
 	@Override
-	public IExpr evaluate(final IAST functionList) {
-		if (functionList.size() > 2) {
-			IAST temp = evaluateHashs(functionList);
+	public IExpr evaluate(final IAST ast) {
+		if (ast.size() > 2) {
+			IAST temp = evaluateHashs(ast);
 			if (temp != null) {
 				return temp;
 			}
 		}
-		if (functionList.size() == 3) {
-			return binaryOperator(functionList.get(1), functionList.get(2));
+		if (ast.size() == 3) {
+			return binaryOperator(ast.get(1), ast.get(2));
 		}
 
-		if (functionList.size() > 3) {
-			final ISymbol sym = functionList.topHead();
+		if (ast.size() > 3) {
+			final ISymbol sym = ast.topHead();
 			final IAST result = F.function(sym);
 			IExpr tres;
-			IExpr temp = functionList.get(1);
+			IExpr temp = ast.get(1);
 			boolean evaled = false;
 			int i = 2;
 
-			while (i < functionList.size()) {
+			while (i < ast.size()) {
 
-				tres = binaryOperator(temp, functionList.get(i));
+				tres = binaryOperator(temp, ast.get(i));
 
 				if (tres == null) {
 
-					for (int j = i + 1; j < functionList.size(); j++) {
-						tres = binaryOperator(temp, functionList.get(j));
+					for (int j = i + 1; j < ast.size(); j++) {
+						tres = binaryOperator(temp, ast.get(j));
 
 						if (tres != null) {
 							evaled = true;
 							temp = tres;
 
-							functionList.remove(j);
+							ast.remove(j);
 
 							break;
 						}
@@ -53,10 +53,10 @@ public class AbstractArgMultiple extends AbstractArg2 {
 
 					if (tres == null) {
 						result.add(temp);
-						if (i == functionList.size() - 1) {
-							result.add(functionList.get(i));
+						if (i == ast.size() - 1) {
+							result.add(ast.get(i));
 						} else {
-							temp = functionList.get(i);
+							temp = ast.get(i);
 						}
 						i++;
 					}
@@ -65,7 +65,7 @@ public class AbstractArgMultiple extends AbstractArg2 {
 					evaled = true;
 					temp = tres;
 
-					if (i == (functionList.size() - 1)) {
+					if (i == (ast.size() - 1)) {
 						result.add(temp);
 					}
 

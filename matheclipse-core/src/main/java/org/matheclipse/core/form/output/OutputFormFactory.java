@@ -3,7 +3,6 @@ package org.matheclipse.core.form.output;
 import java.io.IOException;
 import java.io.Writer;
 import java.math.BigInteger;
-import java.util.Map;
 
 import org.apache.commons.math.fraction.BigFraction;
 import org.matheclipse.core.expression.F;
@@ -32,7 +31,7 @@ import org.matheclipse.parser.client.operator.PrefixOperator;
  */
 public class OutputFormFactory implements IConstantHeaders {
 
-	private boolean fRelaxedSyntax;
+	private final boolean fRelaxedSyntax;
 
 	private OutputFormFactory(final boolean relaxedSyntax) {
 		fRelaxedSyntax = relaxedSyntax;
@@ -44,10 +43,10 @@ public class OutputFormFactory implements IConstantHeaders {
 	 * 
 	 * @param relaxedSyntax
 	 *          If <code>true</code> use paranthesis instead of square brackets
-	 *          for functions, i.e. Sin() instead of Sin[]. If <code>true</code>
-	 *          use single square brackets instead of double square brackets for
-	 *          extracting parts of an expression, i.e. {a,b,c,d}[1] instead of
-	 *          {a,b,c,d}[[1]].
+	 *          and ignore case for functions, i.e. sin() instead of Sin[]. If
+	 *          <code>true</code> use single square brackets instead of double
+	 *          square brackets for extracting parts of an expression, i.e.
+	 *          {a,b,c,d}[1] instead of {a,b,c,d}[[1]].
 	 * @return
 	 */
 	public static OutputFormFactory get(final boolean relaxedSyntax) {
@@ -188,7 +187,6 @@ public class OutputFormFactory implements IConstantHeaders {
 	public void convertComplex(final Writer buf, final IComplex c, final int precedence) throws IOException {
 		boolean isReZero = c.getRealPart().compareTo(BigFraction.ZERO) == 0;
 		final boolean isImOne = c.getImaginaryPart().compareTo(BigFraction.ONE) == 0;
-		final boolean isImNegative = c.getImaginaryPart().compareTo(BigFraction.ZERO) < 0;
 		final boolean isImMinusOne = c.getImaginaryPart().equals(BigFraction.MINUS_ONE);
 		if (!isReZero && (ASTNodeFactory.PLUS_PRECEDENCE < precedence)) {
 			buf.write("(");
@@ -265,7 +263,7 @@ public class OutputFormFactory implements IConstantHeaders {
 				final String multCh = ASTNodeFactory.MMA_STYLE_FACTORY.get("Times").getOperatorString();
 				boolean flag = false;
 				final IAST multFun = (IAST) temp;
-				Object temp1 = multFun.get(1);
+				IExpr temp1 = multFun.get(1);
 
 				if ((temp1 instanceof INumber) && (((INumber) temp1).complexSign() < 0)) {
 					// ((ISignedNumber) temp1).isNegative()) {
@@ -384,27 +382,26 @@ public class OutputFormFactory implements IConstantHeaders {
 		}
 	}
 
-	public void convert(final Writer buf, final Object o, final int precedence) throws IOException {
+	public void convert(final Writer buf, final IExpr o, final int precedence) throws IOException {
 		if (o instanceof IAST) {
 			final IAST list = (IAST) o;
 			final String header = list.topHead().toString();
-			final Map map = ASTNodeFactory.MMA_STYLE_FACTORY.getIdentifier2OperatorMap();
-			final Operator oper = (Operator) map.get(header);
-			if (oper != null) {
-				if ((oper instanceof PrefixOperator) && (list.size() == 2)) {
-					convertPrefixOperator(buf, list, (PrefixOperator) oper, precedence);
+			final Operator operator = ASTNodeFactory.MMA_STYLE_FACTORY.get(header);
+			if (operator != null) {
+				if ((operator instanceof PrefixOperator) && (list.size() == 2)) {
+					convertPrefixOperator(buf, list, (PrefixOperator) operator, precedence);
 					return;
 				}
-				if ((oper instanceof InfixOperator) && (list.size() > 2)) {
+				if ((operator instanceof InfixOperator) && (list.size() > 2)) {
 					if (header.equals(Plus)) {
-						convertPlusOperator(buf, list, (InfixOperator) oper, precedence);
+						convertPlusOperator(buf, list, (InfixOperator) operator, precedence);
 						return;
 					}
-					convertBinaryOperator(buf, list, (InfixOperator) oper, precedence);
+					convertBinaryOperator(buf, list, (InfixOperator) operator, precedence);
 					return;
 				}
-				if ((oper instanceof PostfixOperator) && (list.size() == 2)) {
-					convertPostfixOperator(buf, list, (PostfixOperator) oper, precedence);
+				if ((operator instanceof PostfixOperator) && (list.size() == 2)) {
+					convertPostfixOperator(buf, list, (PostfixOperator) operator, precedence);
 					return;
 				}
 			}
@@ -468,9 +465,9 @@ public class OutputFormFactory implements IConstantHeaders {
 			convertPattern(buf, (IPattern) o);
 			return;
 		}
-		if (o instanceof BigFraction) {
-			convertFraction(buf, (BigFraction) o, precedence);
-		}
+		// if (o instanceof BigFraction) {
+		// convertFraction(buf, (BigFraction) o, precedence);
+		// }
 		convertString(buf, o.toString());
 	}
 

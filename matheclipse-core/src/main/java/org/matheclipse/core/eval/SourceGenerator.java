@@ -333,7 +333,7 @@ public class SourceGenerator {
 
 	}
 
-	public static void generateJavaScript(final String pckgname) {
+	public static void generateJavaScript(final String pckgname, boolean isArray) {
 		String name = pckgname;
 		if (!name.startsWith("/")) {
 			name = "/" + name;
@@ -348,6 +348,18 @@ public class SourceGenerator {
 		if (directory.exists()) {
 			System.out.println("\"True\",");
 			System.out.println("\"False\",");
+			System.out.println("\"List\",");
+			System.out.println("\"Modulus\",");
+			System.out.println("\"Flat\",");
+			System.out.println("\"HoldAll\",");
+			System.out.println("\"HoldFirst\",");
+			System.out.println("\"HoldRest\",");
+			System.out.println("\"Listable\",");
+			System.out.println("\"NumericFunction\",");
+			System.out.println("\"OneIdentity\",");
+			System.out.println("\"Orderless\",");
+			System.out.println("\"Slot\",");
+			System.out.println("\"SlotSequence\",");
 			// Get the list of the files contained in the package
 			final String[] files = directory.list();
 			for (int i = 0; i < files.length; i++) {
@@ -364,7 +376,11 @@ public class SourceGenerator {
 							if (o instanceof AbstractSymbolEvaluator) {
 								System.out.print("\"" + classname + "\"");
 							} else {
-								System.out.print("\"" + classname + "[]\"");
+								if (isArray) {
+									System.out.print("\"" + classname + "[]\"");
+								} else {
+									System.out.print("\"" + classname + "\"");
+								}
 							}
 							if (i < files.length - 1) {
 								System.out.println(",");
@@ -472,7 +488,7 @@ public class SourceGenerator {
 		// generate javascript:
 		System.out.println("private final String[] COMPLETIONS = { ");
 
-		generateJavaScript("org.matheclipse.core.reflection.system");
+		generateJavaScript("org.matheclipse.core.reflection.system", false);
 
 		System.out.println("};");
 

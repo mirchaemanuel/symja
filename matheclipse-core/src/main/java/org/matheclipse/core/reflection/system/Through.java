@@ -1,5 +1,6 @@
 package org.matheclipse.core.reflection.system;
 
+import org.matheclipse.core.eval.exception.Validate;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IAST;
@@ -11,19 +12,18 @@ public class Through extends AbstractFunctionEvaluator {
 	public Through() {
 	}
 
-	@Override 
-	public IExpr evaluate(final IAST functionList) {
-		if (functionList.size() != 2 && functionList.size() != 3) {
-			return null;
-		}
-		if ((functionList.get(1) instanceof IAST)) {
-			IAST l1 = (IAST) functionList.get(1);
+	@Override
+	public IExpr evaluate(final IAST ast) {
+		Validate.checkRange(ast, 2, 3);
+
+		if ((ast.get(1) instanceof IAST)) {
+			IAST l1 = (IAST) ast.get(1);
 			IExpr h = l1.head();
 			if (h instanceof IAST) {
 
 				IAST clonedList;
 				IAST l2 = (IAST) h;
-				if (functionList.size() == 3 && !l2.head().equals(functionList.get(2))) {
+				if (ast.size() == 3 && !l2.head().equals(ast.get(2))) {
 					return l1;
 				}
 				IAST result = F.ast(l2.head());
@@ -40,6 +40,6 @@ public class Through extends AbstractFunctionEvaluator {
 			}
 			return l1;
 		}
-		return functionList.get(1);
+		return ast.get(1);
 	}
 }

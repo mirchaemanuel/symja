@@ -73,6 +73,7 @@ public class Together extends AbstractFunctionEvaluator {
 				}
 				i++;
 			}
+			// System.out.println(numer.toString());
 			IExpr exprNumerator = F.evalExpandAll(numer);
 			if (denom.size() == 1) {
 				return exprNumerator;

@@ -1,5 +1,8 @@
 package org.matheclipse.core.convert;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
@@ -25,16 +28,77 @@ import org.matheclipse.parser.client.ast.SymbolNode;
  * expression into an IExpr expression
  * 
  */
-public class AST2Expr { 
+public class AST2Expr {
 
+	public static final String[] PREDEFINED_SYMBOLS = { "True", "False", "List", "Modulus", "Flat", "HoldAll", "HoldFirst",
+			"HoldRest", "Listable", "NumericFunction", "OneIdentity", "Orderless", "Slot", "SlotSequence", "Abs", "AddTo", "And",
+			"Apart", "Append", "AppendTo", "Apply", "ArcCos", "ArcSin", "ArcTan", "Arg", "Array", "AtomQ", "Binomial", "Blank", "Block",
+			"Boole", "Break", "Cancel", "CartesianProduct", "Cases", "Catalan", "CatalanNumber", "Catch", "Ceiling",
+			"CharacteristicPolynomial", "ChessboardDistance", "Chop", "Clear", "ClearAll", "Coefficient", "CoefficientList",
+			"Complement", "Complex", "ComplexInfinity", "ComposeList", "CompoundExpression", "Condition", "Conjugate", "ConstantArray",
+			"Continue", "ContinuedFraction", "CoprimeQ", "Cos", "Cosh", "Cot", "Count", "Cross", "Csc", "Curl", "D", "Decrement",
+			"Default", "Definition", "Degree", "Delete", "Denominator", "Depth", "Derivative", "Det", "DiagonalMatrix", "DigitQ",
+			"Dimensions", "Discriminant", "Distribute", "Divergence", "DivideBy", "Do", "Dot", "Drop", "E", "Eigenvalues",
+			"Eigenvectors", "Equal", "Erf", "EuclidianDistance", "EulerGamma", "EulerPhi", "EvenQ", "Exp", "Expand", "ExpandAll",
+			"Exponent", "ExtendedGCD", "Extract", "Factor", "Factorial", "Factorial2", "FactorInteger", "FactorSquareFree",
+			"FactorSquareFreeList", "FactorTerms", "Fibonacci", "FindRoot", "First", "Fit", "FixedPoint", "Floor", "Fold", "FoldList",
+			"For", "FractionalPart", "FreeQ", "FromCharacterCode", "FromContinuedFraction", "FullForm", "FullSimplify", "Function",
+			"Gamma", "GCD", "Glaisher", "GoldenRatio", "Greater", "GreaterEqual", "GroebnerBasis", "HarmonicNumber", "Head",
+			"HilbertMatrix", "Hold", "Horner", "I", "IdentityMatrix", "If", "Im", "Increment", "Infinity", "Inner", "IntegerPartitions",
+			"IntegerQ", "Integrate", "Intersection", "Inverse", "InverseFunction", "JacobiMatrix", "JacobiSymbol", "JavaForm", "Join",
+			"Khinchin", "KOrderlessPartitions", "KPartitions", "Last", "LCM", "LeafCount", "Length", "Less", "LessEqual", "LetterQ",
+			"Level", "Limit", "LinearProgramming", "LinearSolve", "Log", "LowerCaseQ", "LUDecomposition", "ManhattanDistance", "Map",
+			"MapAll", "MapThread", "MatchQ", "MatrixPower", "MatrixQ", "Max", "Mean", "Median", "MemberQ", "Min", "Mod", "Module",
+			"MoebiusMu", "Most", "Multinomial", "N", "Negative", "Nest", "NestList", "NextPrime", "NIntegrate", "NonCommutativeMultiply",
+			"NonNegative", "Norm", "Not", "NRoots", "NumberQ", "Numerator", "NumericQ", "OddQ", "Or", "Order", "OrderedQ", "Out",
+			"Outer", "Package", "PadLeft", "PadRight", "ParametricPlot", "Part", "Partition", "Pattern", "Permutations", "Pi", "Plot",
+			"Plot3D", "Plus", "PolynomialExtendedGCD", "PolynomialGCD", "PolynomialLCM", "PolynomialQ", "PolynomialQuotient",
+			"PolynomialQuotientRemainder", "PolynomialRemainder", "Position", "Positive", "PossibleZeroQ", "Power", "PowerExpand",
+			"PowerMod", "PreDecrement", "PreIncrement", "Prepend", "PrependTo", "PrimeQ", "PrimitiveRoots", "Print", "Product",
+			"Quotient", "RandomInteger", "RandomReal", "Range", "Rational", "Rationalize", "Re", "Reap", "ReplaceAll", "ReplacePart",
+			"ReplaceRepeated", "Rest", "Resultant", "Return", "Reverse", "Riffle", "RootIntervals", "Roots", "RotateLeft", "RotateRight",
+			"Round", "Rule", "RuleDelayed", "SameQ", "Scan", "Sec", "Select", "Set", "SetAttributes", "SetDelayed", "Sign", "SignCmp",
+			"Simplify", "Sin", "SingularValueDecomposition", "Sinh", "Solve", "Sort", "Sow", "Sqrt", "SquaredEuclidianDistance",
+			"SquareFreeQ", "StirlingS2", "StringDrop", "StringJoin", "StringLength", "StringTake", "Subsets", "SubtractFrom", "Sum",
+			"SyntaxLength", "SyntaxQ", "Table", "Take", "Tan", "Tanh", "Taylor", "Thread", "Through", "Throw", "Times", "TimesBy",
+			"Timing", "ToCharacterCode", "Together", "ToString", "Total", "ToUnicode", "Tr", "Trace", "Transpose", "TrigExpand",
+			"TrigReduce", "TrigToExp", "TrueQ", "Trunc", "Unequal", "Union", "UnsameQ", "UpperCaseQ", "ValueQ", "VandermondeMatrix",
+			"Variables", "VectorQ", "While" };;
+
+	static final Map<String, String> PREDEFINED_SYMBOLS_MAP = new HashMap<String, String>();
+
+	static {
+		for (String str : PREDEFINED_SYMBOLS) {
+			PREDEFINED_SYMBOLS_MAP.put(str.toLowerCase(), str);
+		}
+
+	}
 	/**
 	 * Typical instance of an ASTNode to IExpr converter
 	 */
-	public final static AST2Expr CONST = new AST2Expr(ASTNode.class, IExpr.class);
+	public final static AST2Expr CONST = new AST2Expr();
 
+	public final static AST2Expr CONST_LC = new AST2Expr(true);
+
+	private boolean fLowercaseEnabled;
+
+	/**
+	 * 
+	 * @param sType
+	 * @param tType
+	 * @deprecated
+	 */
 	public AST2Expr(final Class<ASTNode> sType, final Class<IExpr> tType) {
+		this(false);
+	}
+
+	public AST2Expr() {
+		this(false);
+	}
+
+	public AST2Expr(boolean lowercaseEnabled) {
 		super();
-		// super(sType, tType);
+		fLowercaseEnabled = lowercaseEnabled;
 	}
 
 	/**
@@ -104,14 +168,23 @@ public class AST2Expr {
 			return ast;
 		}
 		if (node instanceof SymbolNode) {
-			if (node.getString().equals("I")) {
+			String nodeStr = node.getString();
+			if (fLowercaseEnabled) {
+				nodeStr = nodeStr.toLowerCase();
+				String temp = PREDEFINED_SYMBOLS_MAP.get(nodeStr);
+				if (temp != null) {
+					nodeStr = temp;
+				}
+			}
+
+			if (nodeStr.equals("I")) {
 				// special - convert on input
 				return F.CI;
-			} else if (node.getString().equals("Infinity")) {
+			} else if (nodeStr.equals("Infinity")) {
 				// special - convert on input
 				return F.CInfinity;
 			}
-			return F.$s(node.getString());
+			return F.$s(nodeStr);
 		}
 		if (node instanceof PatternNode) {
 			final PatternNode pn = (PatternNode) node;

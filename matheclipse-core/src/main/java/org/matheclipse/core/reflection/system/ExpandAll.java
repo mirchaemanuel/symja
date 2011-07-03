@@ -25,31 +25,30 @@ public class ExpandAll extends AbstractFunctionEvaluator implements IConstantHea
 	}
 
 	public static IExpr expandAll(final IExpr expr) {
-		if (!(expr instanceof IAST)) {
+		if (!expr.isAST()) {
 			return null;
 		}
 		IAST ast = (IAST) expr;
 		int j = ast.size();
 		IExpr temp = null;
 		for (int i = 1; i < ast.size(); i++) {
-			if (ast.get(i) instanceof IAST) {
-				// temp = expandAll(ast.get(i));
-				// if (temp!=null) {
+			if (ast.get(i).isAST()) {
 				j = i;
 				break;
-				// }
 			}
 		}
-		if (j>=ast.size()){
+		if (j >= ast.size()) {
 			return null;
 		}
 		IAST result = ast.clone();
 		for (int i = j; i < ast.size(); i++) {
-			temp = expandAll(ast.get(i));
-			if (temp != null) {
-				result.set(i, temp);
-			} else {
-				result.set(i, ast.get(i));
+			if (ast.get(i).isAST()) {
+				temp = expandAll(ast.get(i));
+				if (temp != null) {
+					result.set(i, temp);
+				} else {
+					result.set(i, ast.get(i));
+				}
 			}
 		}
 		temp = Expand.expand(result);

@@ -226,7 +226,7 @@ public class Apart extends AbstractFunctionEvaluator {
 						continue;
 					}
 				} else if (arg.isPower()) {
-					if (argAST.get(2) instanceof ISignedNumber) {
+					if (argAST.get(2).isSignedNumber()) {
 						ISignedNumber sn = (ISignedNumber) argAST.get(2);
 						if (sn.equals(F.CN1)) {
 							denominator.add(argAST.get(1));
