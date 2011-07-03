@@ -8,6 +8,7 @@
     * [UsedLibraries Libraries used to create Symja]
   * [JSR223Support Use Symja JSR223 scripting engine]
   * [MathExpressionParser The basic math expression parser]
+  * [Android Android version]
   * [ProGuard Using ProGuard to reduce JAR size]
   * [ReleaseNotes Release Notes]
   * [PoweredBy Projects powered by Symja]
