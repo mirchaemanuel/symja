@@ -4,7 +4,7 @@ I released a first Android prototype here: <a href="http://code.google.com/p/sym
 
 This is a screenshot of the interface:
 
-http://symja.googlecode.com/svn/wiki/SymjaAjaxGUI.png
+http://symja.googlecode.com/svn/wiki/android_main.png
 
 The buttons are used for:
   * *Sym* - symbolic evaluation
