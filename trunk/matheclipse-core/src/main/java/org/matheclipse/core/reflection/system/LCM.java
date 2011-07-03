@@ -8,7 +8,9 @@ import org.matheclipse.core.interfaces.ISymbol;
 /**
  * Least common multiple
  * 
- * See <a href="http://en.wikipedia.org/wiki/Least_common_multiple">Wikipedia:Least common multiple</a>
+ * See <a
+ * href="http://en.wikipedia.org/wiki/Least_common_multiple">Wikipedia:Least
+ * common multiple</a>
  */
 public class LCM extends AbstractArgMultiple {
 	/**
@@ -19,11 +21,19 @@ public class LCM extends AbstractArgMultiple {
 
 	/**
 	 * Compute lcm of 2 integer numbers
-	 *
+	 * 
 	 */
 	@Override
 	public IExpr e2IntArg(final IInteger i0, final IInteger i1) {
 		return i0.lcm(i1);
+	}
+
+	@Override
+	public IExpr e2ObjArg(final IExpr o0, final IExpr o1) {
+		if (o0.isZero()) {
+			return o0;
+		}
+		return null;
 	}
 
 	@Override

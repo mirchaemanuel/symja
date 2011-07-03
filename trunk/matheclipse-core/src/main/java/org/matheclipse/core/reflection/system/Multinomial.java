@@ -40,26 +40,29 @@ public class Multinomial extends AbstractFunctionEvaluator {
 	}
 
 	public static BigInteger multinomial(final List<IExpr> ast) {
-		BigInteger k;
+		BigInteger[] k = new BigInteger[ast.size() - 1];
 		BigInteger n = BigInteger.ZERO;
-		BigInteger denom = BigInteger.ONE;
 		for (int i = 1; i < ast.size(); i++) {
-			k = ((IInteger) ast.get(i)).getBigNumerator();
-			n = n.add(k);
-			denom = denom.multiply(Factorial.factorial(k));
+			k[i - 1] = ((IInteger) ast.get(i)).getBigNumerator();
+			n = n.add(k[i - 1]);
 		}
-		return Factorial.factorial(n).divide(denom);
+
+		BigInteger result = Factorial.factorial(n);
+		for (int i = 0; i < k.length; i++) {
+			result = result.divide(Factorial.factorial(k[i]));
+		}
+		return result;
 	}
 
 	public static BigInteger multinomial(final int[] indices, final int n) {
 		BigInteger bn = BigInteger.valueOf(n);
-		BigInteger denom = BigInteger.ONE;
+		BigInteger result = Factorial.factorial(bn);
 		for (int i = 0; i < indices.length; i++) {
 			if (indices[i] != 0) {
-				denom = denom.multiply(Factorial.factorial(BigInteger.valueOf(indices[i])));
+				result = result.divide(Factorial.factorial(BigInteger.valueOf(indices[i])));
 			}
 		}
-		return Factorial.factorial(bn).divide(denom);
+		return result;
 	}
 
 	@Override

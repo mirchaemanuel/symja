@@ -99,6 +99,8 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 
 	transient int fModuleCounter = 0;
 
+	private final boolean fRelaxedSyntax;
+
 	/**
 	 * List for results in <code>Reap[]</code> function.
 	 */
@@ -160,7 +162,7 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 			if (DEBUG) {
 				System.out.println("ThreadLocal" + fID);
 			}
-			return new EvalEngine("ThreadLocal" + (fID++), 0, System.out);
+			return new EvalEngine("ThreadLocal" + (fID++), 0, System.out, false);
 		}
 	};
 
@@ -197,7 +199,11 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 	 * 
 	 */
 	public EvalEngine() {
-		this("", 0, System.out);
+		this("", 0, System.out, false);
+	}
+
+	public EvalEngine(boolean relaxedSyntax) {
+		this("", 0, System.out, relaxedSyntax);
 	}
 
 	/**
@@ -211,11 +217,11 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 	}
 
 	public EvalEngine(final F f, final PrintStream out) {
-		this("", -1, -1, out);
+		this("", -1, -1, out, false);
 	}
 
 	public EvalEngine(final String sessionID, final PrintStream out) {
-		this(sessionID, -1, -1, out);
+		this(sessionID, -1, -1, out, false);
 	}
 
 	/**
@@ -226,19 +232,22 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 	 * @param recursionLimit
 	 *          the maximum allowed recursion limit (if set to zero, no limit will
 	 *          be proofed)
+	 * @param lowercaseEnabled
+	 *          TODO
 	 * @see javax.servlet.http.HttpSession#getID()
 	 */
-	public EvalEngine(final String sessionID, final int recursionLimit, final PrintStream out) {
-		this(sessionID, recursionLimit, -1, out);
+	public EvalEngine(final String sessionID, final int recursionLimit, final PrintStream out, boolean relaxedSyntax) {
+		this(sessionID, recursionLimit, -1, out, relaxedSyntax);
 	}
 
-	public EvalEngine(final String sessionID, final int recursionLimit, final int iterationLimit, final PrintStream out) {
+	public EvalEngine(final String sessionID, final int recursionLimit, final int iterationLimit, final PrintStream out,
+			boolean relaxedSyntax) {
 		fSessionID = sessionID;
 		// fExpressionFactory = f;
 		fRecursionLimit = recursionLimit;
 		fIterationLimit = iterationLimit;
 		fOutPrintStream = out;
-
+		fRelaxedSyntax = relaxedSyntax;
 		// fNamespace = fExpressionFactory.getNamespace();
 
 		init();
@@ -1108,9 +1117,15 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 	 *           if a parsing error occurs
 	 */
 	final public IExpr parse(String expression) {
-		final Parser parser = new Parser();
-		final ASTNode node = parser.parse(expression);
-		return AST2Expr.CONST.convert(node);
+		if (fRelaxedSyntax) {
+			final Parser parser = new Parser(fRelaxedSyntax);
+			final ASTNode node = parser.parse(expression);
+			return AST2Expr.CONST_LC.convert(node);
+		} else {
+			final Parser parser = new Parser();
+			final ASTNode node = parser.parse(expression);
+			return AST2Expr.CONST.convert(node);
+		}
 	}
 
 	/**

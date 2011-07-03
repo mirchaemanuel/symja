@@ -4,7 +4,6 @@ import static org.matheclipse.core.expression.F.Expand;
 import static org.matheclipse.core.expression.F.Plus;
 import static org.matheclipse.core.expression.F.Times;
 
-import org.matheclipse.core.eval.EvalEngine;
 import org.matheclipse.core.eval.exception.Validate;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
 import org.matheclipse.core.expression.F;
@@ -26,9 +25,11 @@ public class Expand extends AbstractFunctionEvaluator implements IConstantHeader
 		IAST precalculatedPowerASTs;
 
 		public NumberPartititon(IAST plusAST, int n, IAST expandedResult) {
+
 			this.expandedResult = expandedResult;
 			this.n = n;
 			this.m = plusAST.size() - 1;
+			// System.out.println(m+"/"+n);
 			this.parts = new int[m];
 			// precalculate all Power[] ASTs:
 			this.precalculatedPowerASTs = F.List();
@@ -81,31 +82,23 @@ public class Expand extends AbstractFunctionEvaluator implements IConstantHeader
 	}
 
 	private static IAST assurePlus(final IExpr expr) {
-		IAST astPlus = null;
 		if (expr.isPlus()) {
 			return (IAST) expr;
 		}
 		// if expr is not of the form Plus[...], generate Plus[expr]
-		if (astPlus == null) {
-			astPlus = Plus();
-			astPlus.add(expr);
-		}
-		return astPlus;
+		return F.Plus(expr);
 	}
 
 	public static IExpr expand(final IAST ast) {
 		if (ast.isPower()) {
 			// (a+b)^exp
-			if ((ast.get(1) instanceof IAST) && (ast.get(2) instanceof IInteger)) {
-				IExpr header = ((IAST) ast.get(1)).head();
-				if (header == F.Plus) {
-					int exp = Validate.checkIntType(ast, 2, Integer.MIN_VALUE);
-					if (exp < 0) {
-						exp *= (-1);
-						return F.Power(expandPower((IAST) ast.get(1), exp), F.CN1);
-					}
-					return expandPower((IAST) ast.get(1), exp);
+			if ((ast.get(1).isPlus()) && (ast.get(2).isInteger())) {
+				int exp = Validate.checkIntType(ast, 2, Integer.MIN_VALUE);
+				if (exp < 0) {
+					exp *= (-1);
+					return F.Power(expandPower((IAST) ast.get(1), exp), F.CN1);
 				}
+				return expandPower((IAST) ast.get(1), exp);
 			}
 		} else if (ast.isTimes()) {
 			// (a+b)*(c+d)...
@@ -114,6 +107,12 @@ public class Expand extends AbstractFunctionEvaluator implements IConstantHeader
 			if (temp[0].equals(F.C1)) {
 				if (temp[1].isTimes()) {
 					return F.Power(expandTimes((IAST) temp[1]), F.CN1);
+				}
+				if (temp[1].isPower() || temp[1].isPlus()) {
+					IExpr denom = expand((IAST) temp[1]);
+					if (denom != null) {
+						return F.Power(denom, F.CN1);
+					}
 				}
 				return null;
 			}
@@ -127,9 +126,16 @@ public class Expand extends AbstractFunctionEvaluator implements IConstantHeader
 			}
 			if (temp[1].isTimes()) {
 				temp[1] = expandTimes((IAST) temp[1]);
+			} else {
+				if (temp[1].isPower() || temp[1].isPlus()) {
+					IExpr denom = expand((IAST) temp[1]);
+					if (denom != null) {
+						temp[1] = denom;
+					}
+				}
 			}
 			return F.Times(temp[0], F.Power(temp[1], F.CN1));
-		} else if (ast.isASTSizeGE(F.Plus, 3)) {
+		} else if (ast.isPlus()) {
 			return ast.map(Functors.replace1st(Expand(F.Null)));
 		}
 		return null;
@@ -142,6 +148,7 @@ public class Expand extends AbstractFunctionEvaluator implements IConstantHeader
 	 * 
 	 * @param plusAST
 	 * @param n
+	 *          <code>n &ge; 0</code>
 	 * @return
 	 */
 	public static IExpr expandPower(final IAST plusAST, final int n) {
@@ -149,7 +156,7 @@ public class Expand extends AbstractFunctionEvaluator implements IConstantHeader
 			return plusAST;
 		}
 		if (n == 0) {
-			return F.C0;
+			return F.C1;
 		}
 
 		final IAST expandedResult = Plus();
@@ -167,28 +174,37 @@ public class Expand extends AbstractFunctionEvaluator implements IConstantHeader
 	}
 
 	public static IExpr expandTimesBinary(final IExpr expr0, final IExpr expr1) {
-		if (expr0.isNumber() && expr1.isPlus()) {
-			return EvalEngine.eval(expandTimesPlus((INumber) expr0, (IAST) expr1));
+		if (expr0.isPlus()) {
+			if (!expr1.isPlus()) {
+				return F.eval(expandTimesPlus(expr1, (IAST) expr0));
+			}
+			final IAST ast1 = assurePlus(expr1);
+			return F.eval(expandTimesPlus((IAST) expr0, ast1));
 		}
-		final IAST ast0 = assurePlus(expr0);
-		final IAST ast1 = assurePlus(expr1);
-		return EvalEngine.eval(expandTimesPlus(ast0, ast1));
+		if (expr1.isPlus()) {
+			if (!expr0.isPlus()) {
+				return F.eval(expandTimesPlus(expr0, (IAST) expr1));
+			}
+			final IAST ast0 = assurePlus(expr0);
+			return F.eval(expandTimesPlus(ast0, (IAST) expr1));
+		}
+		return F.eval(F.Times(expr0, expr1));
 	}
 
-	public static IAST expandTimesPlus(final IAST expr0, final IAST expr1) {
+	public static IAST expandTimesPlus(final IAST plusAST0, final IAST plusAST1) {
 		// (a+b)*(c+d) -> a*c+a*d+b*c+b*d
 		final IAST pList = Plus();
-		for (int i = 1; i < expr0.size(); i++) {
-			expr1.args().map(pList, Functors.replace2nd(Times(expr0.get(i), F.Null)));
+		for (int i = 1; i < plusAST0.size(); i++) {
+			plusAST1.args().map(pList, Functors.replace2nd(Times(plusAST0.get(i), F.Null)));
 		}
 		return pList;
 	}
 
-	public static IAST expandTimesPlus(final INumber expr1, final IAST ast) {
-		// (a+b)*(c+d) -> a*c+a*d+b*c+b*d
+	public static IAST expandTimesPlus(final IExpr expr1, final IAST plusAST) {
+		// expr*(a+b+c) -> expr*a+expr*b+expr*c
 		final IAST pList = Plus();
-		for (int i = 1; i < ast.size(); i++) {
-			pList.add(F.Times(expr1, ast.get(i)));
+		for (int i = 1; i < plusAST.size(); i++) {
+			pList.add(F.Times(expr1, plusAST.get(i)));
 		}
 		return pList;
 	}
