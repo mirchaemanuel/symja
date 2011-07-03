@@ -79,7 +79,7 @@ public class Discriminant extends AbstractFunctionEvaluator {
 			if (degree >= Short.MAX_VALUE) {
 				throw new WrongArgumentType(ast, ast.get(1), 1, "Polynomial degree" + degree + " is larger than: " + Short.MAX_VALUE);
 			}
-			if (degree >= 1L && degree <= 4L) {
+			if (degree >= 2L && degree <= 4L) {
 				IAST rules = F.List();
 				for (int i = 1; i < result.size(); i++) {
 					rules.add(F.Rule(vars[i - 1], result.get(i)));
