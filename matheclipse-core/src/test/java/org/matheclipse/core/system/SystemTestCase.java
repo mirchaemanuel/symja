@@ -766,9 +766,7 @@ public class SystemTestCase extends AbstractTestCase {
 	public void testSystem112() {
 		check("Table[x!,{x,10}]", "{1,2,6,24,120,720,5040,40320,362880,3628800}");
 		check("Table[x,{x,10.0}]", "{1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0,10.0}");
-		check(
-				"Table[x!,{x,10.0}]",
-				"{1.0,2.0,6.0,24.0,120.0,720.0,5040.0,40320.0,362880.0,3628800.0}");
+		check("Table[x!,{x,10.0}]", "{1.0,2.0,6.0,24.0,120.0,720.0,5040.0,40320.0,362880.0,3628800.0}");
 	}
 
 	public void testSystem113() {
@@ -1165,8 +1163,7 @@ public class SystemTestCase extends AbstractTestCase {
 	}
 
 	public void testSystem185() {
-		check("Function[x,(x^3)][]", "Expected number of arguments: 1 but got 0 arguments:\n" + 
-				"Function[x, Power[x, 3]][]");
+		check("Function[x,(x^3)][]", "Expected number of arguments: 1 but got 0 arguments:\n" + "Function[x, Power[x, 3]][]");
 	}
 
 	public void testSystem186() {
@@ -2523,6 +2520,10 @@ public class SystemTestCase extends AbstractTestCase {
 	}
 
 	public void testSystem805() {
+		check("Solve[(x^2-1)/(x-1)==0,x]","{{x->-1}}");
+		check("Solve[4*x^(-2)-1==0,x]", "{{x->2},{x->-2}}");
+		check("Solve[2.5*x^2+1650==0,x]",
+				"{{x->1.5730872961765547E-15+I*25.69046515733025},{x->-1.5730872961765547E-15+I*(-25.69046515733025)}}");
 		check("Solve[x+5==a,x]", "{{x->a-5}}");
 		check("Solve[x+5==10,x]", "{{x->5}}");
 		check("Solve[x^2==a,x]", "{{x->a^(1/2)},{x->(-1)*a^(1/2)}}");
@@ -2625,6 +2626,7 @@ public class SystemTestCase extends AbstractTestCase {
 		// check("Factor[1+x^2,GaussianIntegers->True]", "");
 		check("Roots[x^3-3*x-2]", "{2,-1}");
 		check("Roots[x^3-4*x^2+x+6]", "{3,2,-1}");
+		check("Roots[(x^2-1)/(x-1)]","{-1}");
 		check("Factor[3*x^2+6]", "3*x^2+6");
 		check("Factor[3/4*x^2+9/16]", "3/16*(4*x^2+3)");
 		check("Factor[3/4*x^2+9/16+7]", "1/16*(12*x^2+121)");
@@ -2632,6 +2634,9 @@ public class SystemTestCase extends AbstractTestCase {
 
 		// check("Roots[Sin[13]*x^3 + 5*x + 10]", "");
 		check("NRoots[Sin[13]*x^2 + 5*x + 10]", "{-2.5437534046413663,-9.356275778426076}");
+		check("NRoots[x^2-4]", "{2.0,-2.0}");
+		check("NRoots[4*x^(-2)-1]", "{2.0,-2.0}");
+		check("NRoots[2.5*x^2+1650]", "{1.5730872961765547E-15+I*25.69046515733025,-1.5730872961765547E-15+I*(-25.69046515733025)}");
 
 		check("Roots[x^2 - 4*x + 8]", "{2+I*2,2-I*2}");
 		// not reduccible with current factor method

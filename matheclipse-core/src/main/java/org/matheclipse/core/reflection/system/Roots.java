@@ -52,14 +52,14 @@ public class Roots extends AbstractFunctionEvaluator {
 	}
 
 	@Override
-	public IExpr evaluate(final IAST lst) {
-		if (lst.size() != 2) {
+	public IExpr evaluate(final IAST ast) {
+		if (ast.size() != 2) {
 			return null;
 		}
-		return roots(lst);
+		return roots(ast);
 	}
 
-	protected static IExpr roots(final IAST ast) {
+	protected static IAST roots(final IAST ast) {
 
 		ExprVariables eVar = new ExprVariables(ast.get(1));
 		if (!eVar.isSize(1)) {
@@ -68,33 +68,71 @@ public class Roots extends AbstractFunctionEvaluator {
 		}
 		IExpr expr = evalExpandAll(ast.get(1));
 		IAST variables = eVar.getVarList();
-		return rootsOfVariable(expr, variables);
+		IExpr denom = F.C1;
+		if (expr.isAST()) {
+			expr = Together.together((IAST) expr);
+
+			// split expr into numerator and denominator
+			denom = F.eval(F.Denominator(expr));
+			if (!denom.isOne()) {
+				// search roots for the numerator expression
+				expr = F.eval(F.Numerator(expr));
+			}
+		}
+		return rootsOfVariable(expr, denom, variables);
 	}
 
-	protected static IExpr rootsOfVariable(IExpr expr, IAST variables) {
+	protected static IAST rootsOfVariable(final IExpr expr, final IExpr denom, final IAST variables) {
+		// IExpr expr = arg;
+		IAST result = null;
+		// IExpr denom = F.C1;
+		// if (expr.isAST()) {
+		// expr = Together.together((IAST) expr);
+		//
+		// // split expr into numerator and denominator
+		// denom = F.eval(F.Denominator(expr));
+		// if (!denom.isOne()) {
+		// // search roots for the numerator expression
+		// expr = F.eval(F.Numerator(expr));
+		// }
+		// }
 		ASTRange r = new ASTRange(variables, 1);
 		List<IExpr> varList = r.toList();
 		try {
 			JASConvert<BigRational> jas = new JASConvert<BigRational>(varList, BigRational.ZERO);
 			GenPolynomial<BigRational> rPoly = jas.expr2JAS(expr);
 
-			return rootsOfPolynomial(rPoly, jas);
+			result = rootsOfPolynomial(rPoly, jas);
 
 		} catch (JASConversionException e) {
 			try {
 				JASConvert<IExpr> eJas = new JASConvert<IExpr>(varList, new ExprRingFactory());
 				GenPolynomial<IExpr> ePoly = eJas.expr2IExprJAS(expr);
-				return rootsOfPolynomial(ePoly);
+				result = rootsOfPolynomial(ePoly);
 			} catch (JASConversionException e2) {
 				if (Config.SHOW_STACKTRACE) {
 					e2.printStackTrace();
 				}
 			}
 		}
+		if (result != null) {
+			if (!denom.isNumber()) {
+				// eliminate roots from the result list, which occur in the denominator
+				int i = 1;
+				while (i < result.size()) {
+					if (F.eval(denom.replaceAll(F.Rule(variables.get(1), result.get(i)))).isZero()) {
+						result.remove(i);
+						continue;
+					}
+					i++;
+				}
+			}
+			return result;
+		}
 		return null;
 	}
 
-	private static IExpr rootsOfPolynomial(GenPolynomial<IExpr> ePoly) {
+	private static IAST rootsOfPolynomial(GenPolynomial<IExpr> ePoly) {
 		long varDegree = ePoly.degree(0);
 		IAST result = List();
 		if (ePoly.isConstant()) {
@@ -316,5 +354,5 @@ public class Roots extends AbstractFunctionEvaluator {
 		}
 		return result;
 	}
-	
+
 }
