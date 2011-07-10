@@ -26,7 +26,7 @@ import edu.jas.poly.GenPolynomial;
  */
 public class Cancel extends AbstractFunctionEvaluator {
 	/**
-	 * this predicate identifies polynomial expressions. It requires thta the
+	 * this predicate identifies polynomial expressions. It requires that the
 	 * given expression is already expanded for <code>Plus,Power,Times</code>
 	 * operations.
 	 * 

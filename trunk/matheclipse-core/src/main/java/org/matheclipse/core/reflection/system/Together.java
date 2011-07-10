@@ -15,8 +15,13 @@ import org.matheclipse.parser.client.SyntaxError;
  * 
  */
 public class Together extends AbstractFunctionEvaluator {
-	class TogetherVisitor extends VisitorExpr {
-
+	/**
+	 * 
+	 */
+	static class TogetherVisitor extends VisitorExpr {
+		/**
+		 * 
+		 */
 		public TogetherVisitor() {
 			super();
 		}
@@ -95,21 +100,25 @@ public class Together extends AbstractFunctionEvaluator {
 		}
 	}
 
+	private static final TogetherVisitor VISITOR = new TogetherVisitor();
+
 	public Together() {
 	}
 
 	@Override
 	public IExpr evaluate(final IAST ast) {
 		Validate.checkSize(ast, 2);
-
 		if (ast.get(1).isAST()) {
-			IExpr expr = ast.get(1).accept(new TogetherVisitor());
+			IExpr expr = together((IAST) ast.get(1));
 			if (expr != null) {
 				return expr;
 			}
 		}
-
 		return ast.get(1);
+	}
+
+	public static IExpr together(IAST ast) {
+		return F.eval(ast.accept(VISITOR));
 	}
 
 	@Override

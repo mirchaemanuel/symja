@@ -147,20 +147,10 @@ public class JASConvert<C extends RingElem<C>> {
 				final IExpr expr = ast.get(1);
 				for (int i = 0; i < fVariables.size(); i++) {
 					if (fVariables.get(i).equals(expr)) {
-						int exponent = -1;
-						// the following may throw ClassCastExcepion or ArithmeticException
-						if (ast.get(2) instanceof INum) {
-							exponent = ((INum) ast.get(2)).intValue();
-						} else if (ast.get(2) instanceof IInteger) {
-							if (((IInteger) ast.get(2)).isNegative()) {
-								throw new ArithmeticException("JASConvert:expr2Poly - negative exponent: " + ast.get(2).toString());
-							}
-							exponent = ((IInteger) ast.get(2)).toInt();
-						}
+						int exponent = getExponent(ast);
 						if (exponent < 0) {
 							throw new ArithmeticException("JASConvert:expr2Poly - invalid exponent: " + ast.get(2).toString());
 						}
-
 						ExpVector e = ExpVector.create(fVariables.size(), i, exponent);
 						return fPolyFactory.getONE().multiply(e);
 					}
@@ -177,8 +167,8 @@ public class JASConvert<C extends RingElem<C>> {
 		} else if (exprPoly instanceof IInteger) {
 			return fPolyFactory.fromInteger((java.math.BigInteger) ((IInteger) exprPoly).asType(java.math.BigInteger.class));
 		} else if (exprPoly instanceof IFraction) {
-			BigInteger n = ((IFraction) exprPoly).getBigNumerator();//.toJavaBigInteger();
-			BigInteger d = ((IFraction) exprPoly).getBigDenominator();//.toJavaBigInteger();
+			BigInteger n = ((IFraction) exprPoly).getBigNumerator();// .toJavaBigInteger();
+			BigInteger d = ((IFraction) exprPoly).getBigDenominator();// .toJavaBigInteger();
 			BigRational nr = new BigRational(n);
 			BigRational dr = new BigRational(d);
 			BigRational r = nr.divide(dr);
@@ -214,20 +204,10 @@ public class JASConvert<C extends RingElem<C>> {
 				final IExpr expr = ast.get(1);
 				for (int i = 0; i < fVariables.size(); i++) {
 					if (fVariables.get(i).equals(expr)) {
-						int exponent = -1;
-						// the following may throw ClassCastExcepion or ArithmeticException
-						if (ast.get(2) instanceof INum) {
-							exponent = ((INum) ast.get(2)).intValue();
-						} else if (ast.get(2) instanceof IInteger) {
-							if (((IInteger) ast.get(2)).isNegative()) {
-								throw new ArithmeticException("JASConvert:expr2Poly - negative exponent: " + ast.get(2).toString());
-							}
-							exponent = ((IInteger) ast.get(2)).toInt();
-						}
+						int exponent = getExponent(ast);
 						if (exponent < 0) {
 							throw new ArithmeticException("JASConvert:expr2Poly - invalid exponent: " + ast.get(2).toString());
 						}
-
 						ExpVector e = ExpVector.create(fVariables.size(), i, exponent);
 						return fPolyFactory.getONE().multiply(e);
 					}
@@ -242,11 +222,10 @@ public class JASConvert<C extends RingElem<C>> {
 			}
 			return new GenPolynomial(fPolyFactory, exprPoly);
 		} else if (exprPoly instanceof IInteger) {
-			return fPolyFactory.fromInteger((java.math.BigInteger) ((IInteger) exprPoly)
-					.asType(java.math.BigInteger.class));
+			return fPolyFactory.fromInteger((java.math.BigInteger) ((IInteger) exprPoly).asType(java.math.BigInteger.class));
 		} else if (exprPoly instanceof IFraction) {
-			BigInteger n = ((IFraction) exprPoly).getBigNumerator();//.toJavaBigInteger();
-			BigInteger d = ((IFraction) exprPoly).getBigDenominator();//.toJavaBigInteger();
+			BigInteger n = ((IFraction) exprPoly).getBigNumerator();// .toJavaBigInteger();
+			BigInteger d = ((IFraction) exprPoly).getBigDenominator();// .toJavaBigInteger();
 			BigRational nr = new BigRational(n);
 			BigRational dr = new BigRational(d);
 			BigRational r = nr.divide(dr);
@@ -263,6 +242,37 @@ public class JASConvert<C extends RingElem<C>> {
 			}
 		}
 		throw new ClassCastException(exprPoly.toString());
+	}
+
+	/**
+	 * Get the positive exponent <code>int</code> value of the
+	 * <code>Power[x,exp]</code> expression. Return a negative exponent value if
+	 * the exponent isn't valid.
+	 * 
+	 * @param powerAST
+	 * @return the positive exponent <code>int</code> value of the
+	 *         <code>Power[x,exp]</code> expression. Return a negative exponent
+	 *         value if the exponent isn't valid.
+	 */
+	public static int getExponent(final IAST powerAST) {
+		int exponent = -1;
+		try {
+			// the following may throw ClassCastExcepion or ArithmeticException
+			if (powerAST.get(2) instanceof INum) {
+				exponent = ((INum) powerAST.get(2)).intValue();
+			} else if (powerAST.get(2) instanceof IInteger) {
+				if (((IInteger) powerAST.get(2)).isNegative()) {
+					return -1;
+					// throw new
+					// ArithmeticException("JASConvert:expr2Poly - negative exponent: " +
+					// powerAST.get(2).toString());
+				}
+				exponent = ((IInteger) powerAST.get(2)).toInt();
+			}
+		} catch (ArithmeticException ae) {
+
+		}
+		return exponent;
 	}
 
 	/**

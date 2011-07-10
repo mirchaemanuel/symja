@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 
+import org.matheclipse.core.convert.JASConvert;
 import org.matheclipse.core.eval.exception.Validate;
 import org.matheclipse.core.eval.exception.WrongArgumentType;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
@@ -28,10 +29,11 @@ public class Solve extends AbstractFunctionEvaluator {
 		final static public int OTHERS = 2;
 		final static public int POLYNOMIAL = 1;
 
-		int equationType;
-		final IExpr expr;
-
-		int leafCount;
+		private int equationType;
+		private IExpr expr;
+		private IExpr numer;
+		private IExpr denom;
+		private int leafCount;
 
 		IAST row;
 		HashSet<ISymbol> symbolSet;
@@ -42,17 +44,32 @@ public class Solve extends AbstractFunctionEvaluator {
 		public ExprAnalyzer(IExpr expr, IAST vars) {
 			super();
 			this.expr = expr;
+			this.numer = expr;
+			this.denom = F.C1;
+			if (this.expr.isAST()) {
+				this.expr = Together.together((IAST) this.expr);
+				// split expr into numerator and denominator
+				this.denom = F.eval(F.Denominator(this.expr));
+				if (!this.denom.isOne()) {
+					// search roots for the numerator expression
+					this.numer = F.eval(F.Numerator(this.expr));
+				}
+			}
 			this.vars = vars;
 			this.symbolSet = new HashSet<ISymbol>();
 			this.leafCount = 0;
 			reset();
 		}
 
+		public void analyze() {
+			analyze(getNumerator());
+		}
+
 		/**
 		 * Analyze an expression, if it has linear, polynomial or other form.
 		 * 
 		 */
-		public void analyze(IExpr eqExpr) {
+		private void analyze(IExpr eqExpr) {
 			if (eqExpr.isFree(Predicates.in(vars), true)) {
 				leafCount++;
 				value.add(eqExpr);
@@ -105,6 +122,14 @@ public class Solve extends AbstractFunctionEvaluator {
 			return expr;
 		}
 
+		public IExpr getNumerator() {
+			return numer;
+		}
+
+		public IExpr getDenominator() {
+			return denom;
+		}
+
 		public int getNumberOfVars() {
 			return symbolSet.size();
 		}
@@ -138,7 +163,8 @@ public class Solve extends AbstractFunctionEvaluator {
 								}
 							}
 						}
-					} else if (expr.isPower() && ((IAST) expr).get(2).isInteger()) {
+					} else if (expr.isPower() && (expr.getAt(2).isInteger() || expr.getAt(2).isNumIntValue())) {
+						// (JASConvert.getExponent((IAST) expr) > 0)) {
 						if (equationType == LINEAR) {
 							equationType = POLYNOMIAL;
 						}
@@ -289,7 +315,7 @@ public class Solve extends AbstractFunctionEvaluator {
 			exprAnalyzer = analyzerList.get(currEquation);
 			if (exprAnalyzer.getNumberOfVars() == 0) {
 				// check if the equation equals zero.
-				IExpr expr = exprAnalyzer.getExpr();
+				IExpr expr = exprAnalyzer.getNumerator();
 				if (!expr.isZero()) {
 					if (expr instanceof INumber) {
 						throw new NoSolution(NoSolution.WRONG_SOLUTION);
@@ -317,7 +343,7 @@ public class Solve extends AbstractFunctionEvaluator {
 								if (temp != null) {
 									expr = F.eval(temp);
 									exprAnalyzer = new ExprAnalyzer(expr, vars);
-									exprAnalyzer.analyze(expr);
+									exprAnalyzer.analyze();
 								} else {
 									// reuse old analyzer; expression hasn't changed
 									exprAnalyzer = analyzerList.get(i);
@@ -369,19 +395,35 @@ public class Solve extends AbstractFunctionEvaluator {
 	 * @return
 	 */
 	private static IAST rootsOfUnivariatePolynomial(ExprAnalyzer exprAnalyzer) {
-		IExpr expr = exprAnalyzer.getExpr();
+		IExpr expr = exprAnalyzer.getNumerator();
+		IExpr denom = exprAnalyzer.getDenominator();
+		// F.C1;
+		// if (expr.isAST()) {
+		// expr = Together.together((IAST) expr);
+		//
+		// // split expr into numerator and denominator
+		// denom = F.eval(F.Denominator(expr));
+		// if (!denom.isOne()) {
+		// // search roots for the numerator expression
+		// expr = F.eval(F.Numerator(expr));
+		// }
+		// }
+
+		// try to solve the expr for a symbol in the symbol set
 		for (ISymbol sym : exprAnalyzer.getSymbolSet()) {
-			IExpr temp = Roots.rootsOfVariable(expr, F.List(sym));
-			IAST resultList = F.List();
-			if (temp.isASTSizeGE(F.List, 2)) {
-				IAST rootsList = (IAST) temp;
-				for (IExpr root : rootsList) {
-					IAST rule = F.Rule(sym, root);
-					resultList.add(rule);
+			IExpr temp = Roots.rootsOfVariable(expr, denom, F.List(sym));
+			if (temp != null) {
+				IAST resultList = F.List();
+				if (temp.isASTSizeGE(F.List, 2)) {
+					IAST rootsList = (IAST) temp;
+					for (IExpr root : rootsList) {
+						IAST rule = F.Rule(sym, root);
+						resultList.add(rule);
+					}
+					return resultList;
 				}
-				return resultList;
+				return null;
 			}
-			return null;
 		}
 		return null;
 	}
@@ -436,7 +478,7 @@ public class Solve extends AbstractFunctionEvaluator {
 		// collect linear and univariate polynomial equations:
 		for (IExpr expr : termsEqualZeroList) {
 			exprAnalyzer = new ExprAnalyzer(expr, vars);
-			exprAnalyzer.analyze(expr);
+			exprAnalyzer.analyze();
 			analyzerList.add(exprAnalyzer);
 		}
 		IAST matrix = F.List();
