@@ -1,5 +1,16 @@
 package org.matheclipse.core.system;
 
+import org.apache.commons.math.analysis.UnivariateRealFunction;
+import org.apache.commons.math.analysis.solvers.RegulaFalsiSolver;
+import org.apache.commons.math.analysis.solvers.UnivariateRealSolver;
+import org.apache.commons.math.exception.MathUserException;
+import org.apache.commons.math.linear.Array2DRowRealMatrix;
+import org.apache.commons.math.linear.EigenDecompositionImpl;
+import org.apache.commons.math.linear.RealMatrix;
+import org.apache.commons.math.linear.RealVector;
+import org.apache.commons.math.util.FastMath;
+import org.apache.commons.math.util.MathUtils;
+import org.junit.Assert;
 import org.matheclipse.core.basic.Config;
 import org.matheclipse.core.eval.EvalEngine;
 import org.matheclipse.core.expression.Matrix;
@@ -712,22 +723,14 @@ public class SystemTestCase extends AbstractTestCase {
 		// "LUBackSubstitution[{{{1,2,3},{3,-2,2},{13,19/2,-50}},{1,2,3},0},{10,11,12}]"
 		// ,
 		// "{-11/4,33/4,-5/4}");
-		check("SingularValueDecomposition[{{ 24.0/25.0, 43.0/25.0 },{57.0/25.0, 24.0/25.0 }}]", "{\n" + 
-				"{{0.6000000000000001,0.8},\n" + 
-				" {0.8,-0.6000000000000001}},\n" + 
-				"{{3.0000000000000004,0.0},\n" + 
-				" {0.0,1.0000000000000004}},\n" + 
-				"{{0.7999999999999999,-0.6000000000000001},\n" + 
-				" {0.6000000000000001,0.7999999999999999}}}");
+		check("SingularValueDecomposition[{{ 24.0/25.0, 43.0/25.0 },{57.0/25.0, 24.0/25.0 }}]", "{\n" + "{{0.6000000000000001,0.8},\n"
+				+ " {0.8,-0.6000000000000001}},\n" + "{{3.0000000000000004,0.0},\n" + " {0.0,1.0000000000000004}},\n"
+				+ "{{0.7999999999999999,-0.6000000000000001},\n" + " {0.6000000000000001,0.7999999999999999}}}");
 
 		// See http://issues.apache.org/jira/browse/MATH-320:
-		check("SingularValueDecomposition[{{1,2},{1,2}}]", "{\n" + 
-				"{{-0.7071067811865475,-0.7071067811865475},\n" + 
-				" {-0.7071067811865475,0.7071067811865476}},\n" + 
-				"{{3.162277660168379,0.0},\n" + 
-				" {0.0,0.0}},\n" + 
-				"{{-0.447213595499958,-0.8944271909999159},\n" + 
-				" {-0.8944271909999159,0.447213595499958}}}");
+		check("SingularValueDecomposition[{{1,2},{1,2}}]", "{\n" + "{{-0.7071067811865475,-0.7071067811865475},\n"
+				+ " {-0.7071067811865475,0.7071067811865476}},\n" + "{{3.162277660168379,0.0},\n" + " {0.0,0.0}},\n"
+				+ "{{-0.447213595499958,-0.8944271909999159},\n" + " {-0.8944271909999159,0.447213595499958}}}");
 	}
 
 	public void testSystem104() {
@@ -2093,15 +2096,37 @@ public class SystemTestCase extends AbstractTestCase {
 	public void testSystem380() {
 		check("Exp[3.4341896]", "31.006274895944433");
 		check("Pi^3.0", "31.006276680299816");
-		check("FindRoot[Exp[x]==Pi^3,{x,-1,10}, Bisection]", "{x->3.434189647436142}");
-		check("FindRoot[Exp[x]==Pi^3,{x,-1,10}, Brent]", "{x->3.4341896127725238}");
+		// default to Newton method
+		check("FindRoot[Exp[x]==Pi^3,{x,-1,10}]", "{x->3.4341896575482007}");
+		check("FindRoot[Exp[x]==Pi^3,{x,-1,10}, Method->Newton]", "{x->3.4341896575482007}");
+		
+		check("FindRoot[Exp[x]==Pi^3,{x,-1,10}, Method->Bisection]", "{x->3.434189647436142}");
+		check("FindRoot[Exp[x]==Pi^3,{x,-1,10}, Method->Brent]", "{x->3.4341896127725238}");
 		check("FindRoot[Exp[x]==Pi^3,{x,-1,10}, Muller]", "{x->3.4341896575483015}");
 		check("FindRoot[Exp[x]==Pi^3,{x,-1,10}, Ridders]", "{x->3.4341896575482007}");
 		check("FindRoot[Exp[x]==Pi^3,{x,1,10}, Secant]", "{x->3.4341896575036097}");
-		check("FindRoot[Exp[x]==Pi^3,{x,1,10}, RegulaFalsi]", "{x->3.4341896575036097}");
+		check("FindRoot[Exp[x]==Pi^3,{x,1,10}, Method->RegulaFalsi, MaxIterations->100]",
+		"illegal state: maximal count (100) exceeded: evaluations");
+		check("FindRoot[Exp[x]==Pi^3,{x,1,10}, Method->RegulaFalsi, MaxIterations->32000]",
+				"illegal state: maximal count (32,000) exceeded: evaluations");
 		check("FindRoot[Exp[x]==Pi^3,{x,1,10}, Illinois]", "{x->3.4341896915055257}");
 		check("FindRoot[Exp[x]==Pi^3,{x,1,10}, Pegasus]", "{x->3.4341896575481976}");
 
+	}
+
+	public void testRegulaFalsi() {
+		UnivariateRealFunction f = new UnivariateRealFunction() {
+
+			@Override
+			public double value(double x) throws MathUserException {
+				return Math.exp(x) - Math.pow(Math.PI, 3.0);
+			}
+
+		};
+		double result;
+		UnivariateRealSolver solver = new RegulaFalsiSolver();
+
+		result = solver.solve(100, f, 1, 10);
 	}
 
 	public void testSystem381() {
@@ -2531,7 +2556,7 @@ public class SystemTestCase extends AbstractTestCase {
 	}
 
 	public void testSystem805() {
-		check("Solve[(x^2-1)/(x-1)==0,x]","{{x->-1}}");
+		check("Solve[(x^2-1)/(x-1)==0,x]", "{{x->-1}}");
 		check("Solve[4*x^(-2)-1==0,x]", "{{x->2},{x->-2}}");
 		check("Solve[2.5*x^2+1650==0,x]",
 				"{{x->1.5730872961765547E-15+I*25.69046515733025},{x->-1.5730872961765547E-15+I*(-25.69046515733025)}}");
@@ -2637,7 +2662,7 @@ public class SystemTestCase extends AbstractTestCase {
 		// check("Factor[1+x^2,GaussianIntegers->True]", "");
 		check("Roots[x^3-3*x-2]", "{2,-1}");
 		check("Roots[x^3-4*x^2+x+6]", "{3,2,-1}");
-		check("Roots[(x^2-1)/(x-1)]","{-1}");
+		check("Roots[(x^2-1)/(x-1)]", "{-1}");
 		check("Factor[3*x^2+6]", "3*x^2+6");
 		check("Factor[3/4*x^2+9/16]", "3/16*(4*x^2+3)");
 		check("Factor[3/4*x^2+9/16+7]", "1/16*(12*x^2+121)");
