@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.sql.DataSource;
 
-import org.matheclipse.basic.Config;
+import org.matheclipse.core.basic.Config;
 import org.matheclipse.core.eval.EvalEngine;
 import org.matheclipse.core.form.output.StringBufferWriter;
 import org.matheclipse.parser.client.math.MathException;
@@ -30,7 +30,7 @@ public class AdminServlet extends HttpServlet {
 	 * 
 	 */
 	private static final long serialVersionUID = -5138122751860950428L;
-	
+
 	private static final Logger log = Logger.getLogger(AdminServlet.class.getName());
 
 	public static int APPLET_NUMBER = 1;
@@ -67,10 +67,10 @@ public class AdminServlet extends HttpServlet {
 			return;
 		}
 		value = value.trim();
-		log.warning("In::"+value);
+		log.warning("In::" + value);
 		try {
 			String result = evaluate(req, value, "", 0);
-			log.warning("Out::"+result);
+			log.warning("Out::" + result);
 			out.println(result);// URLEncoder.encode(result, "UTF-8"));
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -98,19 +98,19 @@ public class AdminServlet extends HttpServlet {
 			// if (engine == null) {
 			// ExprFactory f = new ExprFactory(new SystemNamespace());
 			// PrintStream pout = new PrintStream();
-			engine = new EvalEngine(session.getId(), 256, 256, outs);
+			engine = new EvalEngine(session.getId(), 256, 256, outs, false);
 			// session.setAttribute(EVAL_ENGINE, engine);
 			// // init ThreadLocal instance:
 			// EvalEngine.get();
 			// } else {
-			// engine.init(); 
+			// engine.init();
 			// engine.setOutPrintStream(outs);
 			// engine.setSessionID(session.getId());
 			// // init ThreadLocal instance:
 			// EvalEngine.set(engine);
 			// }
 		} else {
-			engine = new EvalEngine("no-session", 256, 256, outs);
+			engine = new EvalEngine("no-session", 256, 256, outs, false);
 		}
 
 		try {
