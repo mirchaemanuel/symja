@@ -12,7 +12,7 @@ import org.matheclipse.core.interfaces.INum;
 
 public class MathEvaluator {
 	public static double[][] eval(final StringBufferWriter buf, final String inputString) throws Exception {
-		EvalEngine fEvalEngine = new EvalEngine("", 64, 100000, System.out);
+		EvalEngine fEvalEngine = new EvalEngine("", 64, 100000, System.out, false);
 		IExpr parsedExpression = fEvalEngine.parse(inputString);
 		fEvalEngine.reset();
 		IExpr evaluationResult = fEvalEngine.evaluate(parsedExpression);

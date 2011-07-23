@@ -21,7 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.matheclipse.basic.Config;
+import org.matheclipse.core.basic.Config;
 import org.matheclipse.core.convert.AST2Expr;
 import org.matheclipse.core.eval.EvalEngine;
 import org.matheclipse.core.eval.MathMLUtilities;
@@ -122,7 +122,7 @@ public class EvaluateServlet extends HttpServlet {
 			// if (engine == null) {
 			// ExprFactory f = new ExprFactory(new SystemNamespace());
 			// PrintStream pout = new PrintStream();
-			engine = new EvalEngine(session.getId(), 256, 256, outs);
+			engine = new EvalEngine(session.getId(), 256, 256, outs, false);
 			// session.setAttribute(EVAL_ENGINE, engine);
 			// } else {
 			// engine.init();
@@ -132,7 +132,7 @@ public class EvaluateServlet extends HttpServlet {
 			// EvalEngine.set(engine);
 			// }
 		} else {
-			engine = new EvalEngine("no-session", 256, 256, outs);
+			engine = new EvalEngine("no-session", 256, 256, outs, false);
 		}
 
 		try {
@@ -474,8 +474,12 @@ public class EvaluateServlet extends HttpServlet {
 		// }
 		if (!Config.SERVER_MODE) {
 			F.initSymbols(null, new SymbolObserver(), false);
-			Config.SERVER_MODE = true;
+			Config.SERVER_MODE = true; 
 			log.info("Config.SERVER_MODE = true");
+
+			// TODO optimize - the following initialization is very slow
+			// F.Integrate.setEvaluator(org.matheclipse.core.reflection.system.Integrate.CONST);
+
 			// System.out.println("Config.SERVER_MODE = true");
 		}
 		if (cache == null) {

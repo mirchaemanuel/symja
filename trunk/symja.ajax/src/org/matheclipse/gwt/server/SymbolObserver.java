@@ -4,7 +4,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.matheclipse.basic.Config;
 import org.matheclipse.core.eval.EvalEngine;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.expression.ISymbolObserver;
@@ -17,6 +16,7 @@ import org.matheclipse.gwt.server.entity.SymbolService;
 import org.matheclipse.gwt.server.entity.UserSymbolEntity;
 import org.matheclipse.gwt.server.entity.UserSymbolService;
 import org.matheclipse.parser.client.math.MathException;
+import org.matheclipse.core.basic.Config;
 
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
