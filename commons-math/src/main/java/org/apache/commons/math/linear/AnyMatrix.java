@@ -20,7 +20,7 @@ package org.apache.commons.math.linear;
 
 /**
  * Interface defining very basic matrix operations.
- * @version $Revision: 772119 $ $Date: 2009-05-06 11:43:28 +0200 (Mi, 06 Mai 2009) $
+ * @version $Id: AnyMatrix.java 1131229 2011-06-03 20:49:25Z luc $
  * @since 2.0
  */
 public interface AnyMatrix {

@@ -23,10 +23,17 @@ import org.apache.commons.math.analysis.UnivariateRealFunction;
  * Interface for (univariate real) rootfinding algorithms.
  * Implementations will search for only one zero in the given interval.
  *
+ * This class is not intended for use outside of the Apache Commons Math
+ * library, regular user should rely on more specific interfaces like
+ * {@link UnivariateRealSolver}, {link PolynomialSolver} or {@link
+ * DifferentiableUnivariateRealSolver}.
  * @param <FUNC> Type of function to solve.
  *
- * @version $Revision$ $Date$
+ * @version $Id$
  * @since 3.0
+ * @see UnivariateRealSolver
+ * @see PolynomialSolver
+ * @see DifferentiableUnivariateRealSolver
  */
 public interface BaseUnivariateRealSolver<FUNC extends UnivariateRealFunction> {
     /**
@@ -65,10 +72,10 @@ public interface BaseUnivariateRealSolver<FUNC extends UnivariateRealFunction> {
      * Solvers that do require bracketing should be able to handle the case
      * where one of the endpoints is itself a root.
      *
+     * @param maxEval Maximum number of evaluations.
      * @param f Function to solve.
      * @param min Lower bound for the interval.
      * @param max Upper bound for the interval.
-     * @param maxEval Maximum number of evaluations.
      * @return a value where the function is zero.
      * @throws org.apache.commons.math.exception.MathIllegalArgumentException
      * if the arguments do not satisfy the requirements specified by the solver.
@@ -83,11 +90,11 @@ public interface BaseUnivariateRealSolver<FUNC extends UnivariateRealFunction> {
      * Solvers that do require bracketing should be able to handle the case
      * where one of the endpoints is itself a root.
      *
+     * @param maxEval Maximum number of evaluations.
      * @param f Function to solve.
      * @param min Lower bound for the interval.
      * @param max Upper bound for the interval.
      * @param startValue Start value to use.
-     * @param maxEval Maximum number of evaluations.
      * @return a value where the function is zero.
      * @throws org.apache.commons.math.exception.MathIllegalArgumentException
      * if the arguments do not satisfy the requirements specified by the solver.

@@ -24,6 +24,7 @@ import org.apache.commons.math.exception.NullArgumentException;
 import org.apache.commons.math.exception.NoDataException;
 import org.apache.commons.math.exception.MathIllegalStateException;
 import org.apache.commons.math.exception.util.LocalizedFormats;
+import org.apache.commons.math.util.MathUtils;
 
 /**
  * Implementation of RealMatrix using a double[][] array to store entries and
@@ -51,7 +52,7 @@ import org.apache.commons.math.exception.util.LocalizedFormats;
  * returns the element in the first row, first column of the matrix.</li></ul>
  * </p>
  *
- * @version $Revision: 1038403 $ $Date: 2010-11-24 01:42:12 +0100 (Mi, 24 Nov 2010) $
+ * @version $Id: Array2DRowRealMatrix.java 1132432 2011-06-05 14:59:29Z luc $
  */
 public class Array2DRowRealMatrix extends AbstractRealMatrix implements Serializable {
     /** Serializable version identifier. */
@@ -87,10 +88,11 @@ public class Array2DRowRealMatrix extends AbstractRealMatrix implements Serializ
      * @param d Data for the new matrix.
      * @throws DimensionMismatchException if {@code d} is not rectangular.
      * @throws NoDataException if {@code d} row or colum dimension is zero.
-     * @throws NullPointerException if {@code d} is {@code null}.
+     * @throws NullArgumentException if {@code d} is {@code null}.
      * @see #Array2DRowRealMatrix(double[][], boolean)
      */
-    public Array2DRowRealMatrix(final double[][] d) {
+    public Array2DRowRealMatrix(final double[][] d)
+        throws DimensionMismatchException, NoDataException, NullArgumentException {
         copyIn(d);
     }
 
@@ -168,7 +170,7 @@ public class Array2DRowRealMatrix extends AbstractRealMatrix implements Serializ
      *
      * @param m Matrix to be added.
      * @return {@code this} + m.
-     * @throws org.apache.commons.math.exception.MatrixDimensionMismatchException
+     * @throws MatrixDimensionMismatchException
      * if {@code m} is not the same size as this matrix.
      */
     public Array2DRowRealMatrix add(final Array2DRowRealMatrix m) {
@@ -195,7 +197,7 @@ public class Array2DRowRealMatrix extends AbstractRealMatrix implements Serializ
      *
      * @param m Matrix to be subtracted.
      * @return {@code this} - m.
-     * @throws org.apache.commons.math.exception.MatrixDimensionMismatchException
+     * @throws MatrixDimensionMismatchException
      * if {@code m} is not the same size as this matrix.
      */
     public Array2DRowRealMatrix subtract(final Array2DRowRealMatrix m) {
@@ -275,6 +277,7 @@ public class Array2DRowRealMatrix extends AbstractRealMatrix implements Serializ
             if (column > 0) {
                 throw new MathIllegalStateException(LocalizedFormats.FIRST_COLUMNS_NOT_INITIALIZED_YET, column);
             }
+            MathUtils.checkNotNull(subMatrix);
             final int nRows = subMatrix.length;
             if (nRows == 0) {
                 throw new NoDataException(LocalizedFormats.AT_LEAST_ONE_ROW);
@@ -526,10 +529,11 @@ public class Array2DRowRealMatrix extends AbstractRealMatrix implements Serializ
      * @param in Data to copy.
      * @throws NoDataException if the input array is empty.
      * @throws DimensionMismatchException if the input array is not rectangular.
-     * @throws org.apache.commons.math.exception.NullArgumentException if
+     * @throws NullArgumentException if
      * the input array is {@code null}.
      */
-    private void copyIn(final double[][] in) {
+    private void copyIn(final double[][] in)
+        throws DimensionMismatchException, NoDataException, NullArgumentException {
         setSubMatrix(in, 0, 0);
     }
 }

@@ -32,7 +32,7 @@ import org.apache.commons.math.util.FastMath;
  * intended for internal use by the library and is not public. As a consequence of
  * this explicitly limited scope, many methods directly returns references to
  * internal arrays, not copies.</p>
- * @version $Revision: 990658 $ $Date: 2010-08-30 00:04:09 +0200 (Mo, 30 Aug 2010) $
+ * @version $Id: BiDiagonalTransformer.java 1131229 2011-06-03 20:49:25Z luc $
  * @since 2.0
  */
 class BiDiagonalTransformer {

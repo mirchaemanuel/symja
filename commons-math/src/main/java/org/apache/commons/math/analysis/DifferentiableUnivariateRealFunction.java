@@ -19,7 +19,7 @@ package org.apache.commons.math.analysis;
 /**
  * Extension of {@link UnivariateRealFunction} representing a differentiable univariate real function.
  *
- * @version $Revision: 811786 $ $Date: 2009-09-06 11:36:08 +0200 (So, 06 Sep 2009) $
+ * @version $Id: DifferentiableUnivariateRealFunction.java 1131229 2011-06-03 20:49:25Z luc $
  */
 public interface DifferentiableUnivariateRealFunction
     extends UnivariateRealFunction {

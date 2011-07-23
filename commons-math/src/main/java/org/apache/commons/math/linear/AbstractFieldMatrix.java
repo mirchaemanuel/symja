@@ -18,12 +18,11 @@
 package org.apache.commons.math.linear;
 
 import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.apache.commons.math.Field;
 import org.apache.commons.math.FieldElement;
-import org.apache.commons.math.exception.MatrixDimensionMismatchException;
-import org.apache.commons.math.exception.NonSquareMatrixException;
 import org.apache.commons.math.exception.DimensionMismatchException;
 import org.apache.commons.math.exception.NoDataException;
 import org.apache.commons.math.exception.OutOfRangeException;
@@ -39,7 +38,7 @@ import org.apache.commons.math.exception.util.LocalizedFormats;
  *
  * @param <T> Type of the field elements.
  *
- * @version $Revision: 1038403 $ $Date: 2010-11-24 01:42:12 +0100 (Mi, 24 Nov 2010) $
+ * @version $Id: AbstractFieldMatrix.java 1131229 2011-06-03 20:49:25Z luc $
  * @since 2.0
  */
 public abstract class AbstractFieldMatrix<T extends FieldElement<T>>
@@ -268,6 +267,64 @@ public abstract class AbstractFieldMatrix<T extends FieldElement<T>>
     }
 
     /** {@inheritDoc} */
+    public FieldMatrix<T> power(final int p) {
+        if (p < 0) {
+            throw new IllegalArgumentException("p must be >= 0");
+        }
+
+        if (!isSquare()) {
+            throw new NonSquareMatrixException(getRowDimension(), getColumnDimension());
+        }
+
+        if (p == 0) {
+            return MatrixUtils.createFieldIdentityMatrix(this.getField(), this.getRowDimension());
+        }
+
+        if (p == 1) {
+            return this.copy();
+        }
+
+        final int power = p - 1;
+
+        /*
+         * Only log_2(p) operations is used by doing as follows:
+         * 5^214 = 5^128 * 5^64 * 5^16 * 5^4 * 5^2
+         *
+         * In general, the same approach is used for A^p.
+         */
+
+        final char[] binaryRepresentation = Integer.toBinaryString(power)
+                .toCharArray();
+        final ArrayList<Integer> nonZeroPositions = new ArrayList<Integer>();
+
+        for (int i = 0; i < binaryRepresentation.length; ++i) {
+            if (binaryRepresentation[i] == '1') {
+                final int pos = binaryRepresentation.length - i - 1;
+                nonZeroPositions.add(pos);
+            }
+        }
+
+        ArrayList<FieldMatrix<T>> results = new ArrayList<FieldMatrix<T>>(
+                binaryRepresentation.length);
+
+        results.add(0, this.copy());
+
+        for (int i = 1; i < binaryRepresentation.length; ++i) {
+            final FieldMatrix<T> s = results.get(i - 1);
+            final FieldMatrix<T> r = s.multiply(s);
+            results.add(i, r);
+        }
+
+        FieldMatrix<T> result = this.copy();
+
+        for (Integer i : nonZeroPositions) {
+            result = result.multiply(results.get(i));
+        }
+
+        return result;
+    }
+
+    /** {@inheritDoc} */
     public T[][] getData() {
         final T[][] data = buildArray(field, getRowDimension(), getColumnDimension());
 
@@ -481,7 +538,7 @@ public abstract class AbstractFieldMatrix<T extends FieldElement<T>>
 
     /** {@inheritDoc} */
     public FieldVector<T> getRowVector(final int row) {
-        return new ArrayFieldVector<T>(getRow(row), false);
+        return new ArrayFieldVector<T>(field, getRow(row), false);
     }
 
     /** {@inheritDoc} */
@@ -500,7 +557,7 @@ public abstract class AbstractFieldMatrix<T extends FieldElement<T>>
 
     /** {@inheritDoc} */
     public FieldVector<T> getColumnVector(final int column) {
-        return new ArrayFieldVector<T>(getColumn(column), false);
+        return new ArrayFieldVector<T>(field, getColumn(column), false);
     }
 
     /** {@inheritDoc} */
@@ -645,7 +702,7 @@ public abstract class AbstractFieldMatrix<T extends FieldElement<T>>
     /** {@inheritDoc} */
     public FieldVector<T> operate(final FieldVector<T> v) {
         try {
-            return new ArrayFieldVector<T>(operate(((ArrayFieldVector<T>) v).getDataRef()), false);
+            return new ArrayFieldVector<T>(field, operate(((ArrayFieldVector<T>) v).getDataRef()), false);
         } catch (ClassCastException cce) {
             final int nRows = getRowDimension();
             final int nCols = getColumnDimension();
@@ -662,7 +719,7 @@ public abstract class AbstractFieldMatrix<T extends FieldElement<T>>
                 out[row] = sum;
             }
 
-            return new ArrayFieldVector<T>(out, false);
+            return new ArrayFieldVector<T>(field, out, false);
         }
     }
 
@@ -690,7 +747,7 @@ public abstract class AbstractFieldMatrix<T extends FieldElement<T>>
     /** {@inheritDoc} */
     public FieldVector<T> preMultiply(final FieldVector<T> v) {
         try {
-            return new ArrayFieldVector<T>(preMultiply(((ArrayFieldVector<T>) v).getDataRef()), false);
+            return new ArrayFieldVector<T>(field, preMultiply(((ArrayFieldVector<T>) v).getDataRef()), false);
         } catch (ClassCastException cce) {
             final int nRows = getRowDimension();
             final int nCols = getColumnDimension();
@@ -707,7 +764,7 @@ public abstract class AbstractFieldMatrix<T extends FieldElement<T>>
                 out[col] = sum;
             }
 
-            return new ArrayFieldVector<T>(out);
+            return new ArrayFieldVector<T>(field, out, false);
         }
     }
 

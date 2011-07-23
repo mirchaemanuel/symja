@@ -66,9 +66,8 @@ public class Fit extends AbstractFunctionEvaluator {
 					fitter.addObservedPoint(1.0, i, ((ISignedNumber) vector.get(i)).doubleValue());
 				}
 			}
-			PolynomialFunction fitted;
-			fitted = fitter.fit();
-			return Convert.polynomialFunction2Expr(fitted, (ISymbol) ast.get(3));
+			// PolynomialFunction fitted = new PolynomialFunction(fitter.fit());
+			return Convert.polynomialFunction2Expr(fitter.fit(), (ISymbol) ast.get(3));
 		}
 
 		return null;

@@ -24,7 +24,7 @@ import org.apache.commons.math.util.OpenIntToDoubleHashMap;
 /**
  * Sparse matrix implementation based on an open addressed map.
  *
- * @version $Revision: 1038403 $ $Date: 2010-11-24 01:42:12 +0100 (Mi, 24 Nov 2010) $
+ * @version $Id: OpenMapRealMatrix.java 1131229 2011-06-03 20:49:25Z luc $
  * @since 2.0
  */
 public class OpenMapRealMatrix extends AbstractRealMatrix
@@ -170,7 +170,7 @@ public class OpenMapRealMatrix extends AbstractRealMatrix
      *
      * @param m Matrix to postmultiply by.
      * @return {@code this} * {@code m}.
-     * @throws org.apache.commons.math.exception.MatrixDimensionMismatchException
+     * @throws MatrixDimensionMismatchException
      * if the number of rows of {@code m} differ from the number of columns
      * of this matrix.
      */

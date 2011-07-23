@@ -24,7 +24,9 @@ import org.apache.commons.math.FieldElement;
 import org.apache.commons.math.exception.NoDataException;
 import org.apache.commons.math.exception.DimensionMismatchException;
 import org.apache.commons.math.exception.MathIllegalStateException;
+import org.apache.commons.math.exception.NullArgumentException;
 import org.apache.commons.math.exception.util.LocalizedFormats;
+import org.apache.commons.math.util.MathUtils;
 
 /**
  * Implementation of FieldMatrix<T> using a {@link FieldElement}[][] array to store entries.
@@ -35,7 +37,7 @@ import org.apache.commons.math.exception.util.LocalizedFormats;
  * </p>
  *
  * @param <T> the type of the field elements
- * @version $Revision: 1038403 $ $Date: 2010-11-24 01:42:12 +0100 (Mi, 24 Nov 2010) $
+ * @version $Id: Array2DRowFieldMatrix.java 1132432 2011-06-05 14:59:29Z luc $
  */
 public class Array2DRowFieldMatrix<T extends FieldElement<T>>
     extends AbstractFieldMatrix<T>
@@ -84,7 +86,26 @@ public class Array2DRowFieldMatrix<T extends FieldElement<T>>
      * @see #Array2DRowFieldMatrix(FieldElement[][], boolean)
      */
     public Array2DRowFieldMatrix(final T[][] d) {
-        super(extractField(d));
+        this(extractField(d), d);
+    }
+
+    /**
+     * Create a new {@code FieldMatrix<T>} using the input array as the underlying
+     * data array.
+     * <p>The input array is copied, not referenced. This constructor has
+     * the same effect as calling {@link #Array2DRowFieldMatrix(FieldElement[][], boolean)}
+     * with the second argument set to {@code true}.</p>
+     *
+     * @param field Field to which the elements belong.
+     * @param d Data for the new matrix.
+     * @throws DimensionMismatchException if {@code d} is not rectangular.
+     * @throws org.apache.commons.math.exception.NullArgumentException if
+     * {@code d} is {@code null}.
+     * @throws NoDataException if there are not at least one row and one column.
+     * @see #Array2DRowFieldMatrix(FieldElement[][], boolean)
+     */
+    public Array2DRowFieldMatrix(final Field<T> field, final T[][] d) {
+        super(field);
         copyIn(d);
     }
 
@@ -105,13 +126,32 @@ public class Array2DRowFieldMatrix<T extends FieldElement<T>>
      * @see #Array2DRowFieldMatrix(FieldElement[][])
      */
     public Array2DRowFieldMatrix(final T[][] d, final boolean copyArray) {
-        super(extractField(d));
+        this(extractField(d), d, copyArray);
+    }
+
+    /**
+     * Create a new {@code FieldMatrix<T>} using the input array as the underlying
+     * data array.
+     * <p>If an array is built specially in order to be embedded in a
+     * {@code FieldMatrix<T>} and not used directly, the {@code copyArray} may be
+     * set to {@code false}. This will prevent the copying and improve
+     * performance as no new array will be built and no data will be copied.</p>
+     *
+     * @param field Field to which the elements belong.
+     * @param d Data for the new matrix.
+     * @param copyArray Whether to copy or reference the input array.
+     * @throws DimensionMismatchException if {@code d} is not rectangular.
+     * @throws NoDataException if there are not at least one row and one column.
+     * @throws NullArgumentException if {@code d} is {@code null}.
+     * @see #Array2DRowFieldMatrix(FieldElement[][])
+     */
+    public Array2DRowFieldMatrix(final Field<T> field, final T[][] d, final boolean copyArray)
+        throws DimensionMismatchException, NoDataException, NullArgumentException {
+        super(field);
         if (copyArray) {
             copyIn(d);
         } else {
-            if (d == null) {
-                throw new NullPointerException();
-            }
+            MathUtils.checkNotNull(d);
             final int nRows = d.length;
             if (nRows == 0) {
                 throw new NoDataException(LocalizedFormats.AT_LEAST_ONE_ROW);
@@ -137,7 +177,19 @@ public class Array2DRowFieldMatrix<T extends FieldElement<T>>
      * @param v Column vector holding data for new matrix.
      */
     public Array2DRowFieldMatrix(final T[] v) {
-        super(extractField(v));
+        this(extractField(v), v);
+    }
+
+    /**
+     * Create a new (column) {@code FieldMatrix<T>} using {@code v} as the
+     * data for the unique column of the created matrix.
+     * The input array is copied.
+     *
+     * @param field Field to which the elements belong.
+     * @param v Column vector holding data for new matrix.
+     */
+    public Array2DRowFieldMatrix(final Field<T> field, final T[] v) {
+        super(field);
         final int nRows = v.length;
         data = buildArray(getField(), nRows, 1);
         for (int row = 0; row < nRows; row++) {
@@ -154,7 +206,7 @@ public class Array2DRowFieldMatrix<T extends FieldElement<T>>
     /** {@inheritDoc} */
     @Override
     public FieldMatrix<T> copy() {
-        return new Array2DRowFieldMatrix<T>(copyOut(), false);
+        return new Array2DRowFieldMatrix<T>(getField(), copyOut(), false);
     }
 
     /**
@@ -162,7 +214,7 @@ public class Array2DRowFieldMatrix<T extends FieldElement<T>>
      *
      * @param m Matrix to be added.
      * @return {@code this} + m.
-     * @throws org.apache.commons.math.exception.MatrixDimensionMismatchException
+     * @throws MatrixDimensionMismatchException
      * if {@code m} is not the same size as this matrix.
      */
     public Array2DRowFieldMatrix<T> add(final Array2DRowFieldMatrix<T> m) {
@@ -181,7 +233,7 @@ public class Array2DRowFieldMatrix<T extends FieldElement<T>>
             }
         }
 
-        return new Array2DRowFieldMatrix<T>(outData, false);
+        return new Array2DRowFieldMatrix<T>(getField(), outData, false);
     }
 
     /**
@@ -189,7 +241,7 @@ public class Array2DRowFieldMatrix<T extends FieldElement<T>>
      *
      * @param m Matrix to be subtracted.
      * @return {@code this} + m.
-     * @throws org.apache.commons.math.exception.MatrixDimensionMismatchException
+     * @throws MatrixDimensionMismatchException
      * if {@code m} is not the same size as this matrix.
      */
     public Array2DRowFieldMatrix<T> subtract(final Array2DRowFieldMatrix<T> m) {
@@ -208,7 +260,7 @@ public class Array2DRowFieldMatrix<T extends FieldElement<T>>
             }
         }
 
-        return new Array2DRowFieldMatrix<T>(outData, false);
+        return new Array2DRowFieldMatrix<T>(getField(), outData, false);
 
     }
 
@@ -240,7 +292,7 @@ public class Array2DRowFieldMatrix<T extends FieldElement<T>>
             }
         }
 
-        return new Array2DRowFieldMatrix<T>(outData, false);
+        return new Array2DRowFieldMatrix<T>(getField(), outData, false);
 
     }
 

@@ -23,7 +23,7 @@ import org.apache.commons.math.exception.util.Localizable;
 
 /**
  * Signals a configuration problem with any of the factory methods.
- * @version $Revision: 983921 $ $Date: 2010-08-10 12:46:06 +0200 (Di, 10 Aug 2010) $
+ * @version $Id: MathConfigurationException.java 1131229 2011-06-03 20:49:25Z luc $
  */
 public class MathConfigurationException extends MathException implements Serializable{
 

@@ -82,7 +82,7 @@ import org.apache.commons.math.util.FastMath;
  *
  * @see StepHandler
  * @see StepInterpolator
- * @version $Revision: 1037328 $ $Date: 2010-11-20 22:01:50 +0100 (Sa, 20 Nov 2010) $
+ * @version $Id: ContinuousOutputModel.java 1139831 2011-06-26 16:26:48Z luc $
  * @since 1.2
  */
 
@@ -165,16 +165,6 @@ public class ContinuousOutputModel
     index = steps.size() - 1;
     finalTime = (steps.get(index)).getCurrentTime();
 
-  }
-
-  /** Determines whether this handler needs dense output.
-   * <p>The essence of this class is to provide dense output over all
-   * steps, hence it requires the internal steps to provide themselves
-   * dense output. The method therefore returns always true.</p>
-   * @return always true
-   */
-  public boolean requiresDenseOutput() {
-    return true;
   }
 
   /** Reset the step handler.

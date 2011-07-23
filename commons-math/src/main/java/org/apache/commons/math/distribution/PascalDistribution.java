@@ -35,7 +35,7 @@ package org.apache.commons.math.distribution;
  * </ul>
  * </p>
  *
- * @version $Revision: 1003512 $ $Date: 2010-10-01 14:46:16 +0200 (Fr, 01 Okt 2010) $
+ * @version $Id: PascalDistribution.java 1131229 2011-06-03 20:49:25Z luc $
  * @since 1.2
  */
 public interface PascalDistribution extends IntegerDistribution {

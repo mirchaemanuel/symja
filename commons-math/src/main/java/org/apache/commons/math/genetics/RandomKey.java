@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import org.apache.commons.math.exception.util.LocalizedFormats;
 
 /**
  * <p>
@@ -59,7 +60,7 @@ import java.util.List;
  * @param <T>
  *            type of the permuted objects
  * @since 2.0
- * @version $Revision: 811685 $ $Date: 2009-09-05 19:36:48 +0200 (Sa, 05 Sep 2009) $
+ * @version $Id: RandomKey.java 1139906 2011-06-26 18:42:32Z luc $
  */
 public abstract class RandomKey<T> extends AbstractListChromosome<Double> implements PermutationChromosome<T> {
 
@@ -148,12 +149,14 @@ public abstract class RandomKey<T> extends AbstractListChromosome<Double> implem
     @Override
     protected boolean isSame(Chromosome another) {
         // type check
-        if (! (another instanceof RandomKey<?>))
+        if (! (another instanceof RandomKey<?>)) {
             return false;
+        }
         RandomKey<?> anotherRk = (RandomKey<?>) another;
         // size check
-        if (getLength() != anotherRk.getLength())
+        if (getLength() != anotherRk.getLength()) {
             return false;
+        }
 
         // two different representations can still encode the same permutation
         // the ordering is what counts
@@ -161,8 +164,9 @@ public abstract class RandomKey<T> extends AbstractListChromosome<Double> implem
         List<Integer> anotherPerm = anotherRk.baseSeqPermutation;
 
         for (int i=0; i<getLength(); i++) {
-            if (thisPerm.get(i) != anotherPerm.get(i))
+            if (thisPerm.get(i) != anotherPerm.get(i)) {
                 return false;
+            }
         }
         // the permutations are the same
         return true;
@@ -175,7 +179,8 @@ public abstract class RandomKey<T> extends AbstractListChromosome<Double> implem
     protected void checkValidity(java.util.List<Double> chromosomeRepresentation) throws InvalidRepresentationException {
         for (double val : chromosomeRepresentation) {
             if (val < 0 || val > 1) {
-                throw new InvalidRepresentationException("Values of representation must be in [0,1] interval");
+                throw new InvalidRepresentationException(
+                        LocalizedFormats.OUT_OF_RANGE_SIMPLE, val, 0, 1);
             }
         }
     }

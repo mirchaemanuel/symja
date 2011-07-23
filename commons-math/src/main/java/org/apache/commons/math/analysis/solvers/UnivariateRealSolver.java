@@ -23,7 +23,7 @@ import org.apache.commons.math.analysis.UnivariateRealFunction;
  * Interface for (univariate real) root-finding algorithms.
  * Implementations will search for only one zero in the given interval.
  *
- * @version $Revision: 1039083 $ $Date: 2010-11-25 17:22:00 +0100 (Do, 25 Nov 2010) $
+ * @version $Id: UnivariateRealSolver.java 1131229 2011-06-03 20:49:25Z luc $
  */
 public interface UnivariateRealSolver
     extends BaseUnivariateRealSolver<UnivariateRealFunction> {}

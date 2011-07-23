@@ -30,7 +30,7 @@ import org.apache.commons.math.util.FastMath;
  * (and automatic step initialization) and continuous output. This
  * method uses 7 functions evaluations per step.</p>
  *
- * @version $Revision: 990658 $ $Date: 2010-08-30 00:04:09 +0200 (Mo, 30 Aug 2010) $
+ * @version $Id: HighamHall54Integrator.java 1131229 2011-06-03 20:49:25Z luc $
  * @since 1.2
  */
 
@@ -66,10 +66,12 @@ public class HighamHall54Integrator extends EmbeddedRungeKuttaIntegrator {
 
   /** Simple constructor.
    * Build a fifth order Higham and Hall integrator with the given step bounds
-   * @param minStep minimal step (must be positive even for backward
-   * integration), the last step can be smaller than this
-   * @param maxStep maximal step (must be positive even for backward
-   * integration)
+   * @param minStep minimal step (sign is irrelevant, regardless of
+   * integration direction, forward or backward), the last step can
+   * be smaller than this
+   * @param maxStep maximal step (sign is irrelevant, regardless of
+   * integration direction, forward or backward), the last step can
+   * be smaller than this
    * @param scalAbsoluteTolerance allowed absolute error
    * @param scalRelativeTolerance allowed relative error
    */
@@ -82,10 +84,12 @@ public class HighamHall54Integrator extends EmbeddedRungeKuttaIntegrator {
 
   /** Simple constructor.
    * Build a fifth order Higham and Hall integrator with the given step bounds
-   * @param minStep minimal step (must be positive even for backward
-   * integration), the last step can be smaller than this
-   * @param maxStep maximal step (must be positive even for backward
-   * integration)
+   * @param minStep minimal step (sign is irrelevant, regardless of
+   * integration direction, forward or backward), the last step can
+   * be smaller than this
+   * @param maxStep maximal step (sign is irrelevant, regardless of
+   * integration direction, forward or backward), the last step can
+   * be smaller than this
    * @param vecAbsoluteTolerance allowed absolute error
    * @param vecRelativeTolerance allowed relative error
    */

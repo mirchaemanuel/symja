@@ -23,13 +23,11 @@ import org.apache.commons.math.exception.util.LocalizedFormats;
  * Exception to be thrown when a number is too small.
  *
  * @since 2.2
- * @version $Revision$ $Date$
+ * @version $Id$
  */
 public class NumberIsTooSmallException extends MathIllegalNumberException {
-
     /** Serializable version Id. */
     private static final long serialVersionUID = -6100997100383932834L;
-
     /**
      * Higher bound.
      */
@@ -49,13 +47,16 @@ public class NumberIsTooSmallException extends MathIllegalNumberException {
     public NumberIsTooSmallException(Number wrong,
                                      Number min,
                                      boolean boundIsAllowed) {
-        this(null, wrong, min, boundIsAllowed);
+        this(boundIsAllowed ?
+             LocalizedFormats.NUMBER_TOO_SMALL :
+             LocalizedFormats.NUMBER_TOO_SMALL_BOUND_EXCLUDED,
+             wrong, min, boundIsAllowed);
     }
 
     /**
      * Construct the exception with a specific context.
      *
-     * @param specific Specific contexte pattern.
+     * @param specific Specific context pattern.
      * @param wrong Value that is smaller than the minimum.
      * @param min Minimum.
      * @param boundIsAllowed Whether {@code min} is included in the allowed range.
@@ -64,11 +65,7 @@ public class NumberIsTooSmallException extends MathIllegalNumberException {
                                      Number wrong,
                                      Number min,
                                      boolean boundIsAllowed) {
-        super(specific,
-              boundIsAllowed ?
-              LocalizedFormats.NUMBER_TOO_SMALL :
-              LocalizedFormats.NUMBER_TOO_SMALL_BOUND_EXCLUDED,
-              wrong, min);
+        super(specific, wrong, min);
 
         this.min = min;
         this.boundIsAllowed = boundIsAllowed;

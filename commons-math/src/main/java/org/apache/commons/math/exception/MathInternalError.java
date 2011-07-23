@@ -22,13 +22,11 @@ import org.apache.commons.math.exception.util.LocalizedFormats;
  * Exception triggered when something that shouldn't happen does happen.
  *
  * @since 2.2
- * @version $Revision: 1061498 $ $Date: 2011-01-20 21:32:54 +0100 (Do, 20 Jan 2011) $
+ * @version $Id: MathInternalError.java 1131229 2011-06-03 20:49:25Z luc $
  */
 public class MathInternalError extends MathIllegalStateException {
-
     /** Serializable version Id. */
     private static final long serialVersionUID = -6276776513966934846L;
-
     /** URL for reporting problems. */
     private static final String REPORT_URL = "https://issues.apache.org/jira/browse/MATH";
 
@@ -36,7 +34,7 @@ public class MathInternalError extends MathIllegalStateException {
      * Simple constructor.
      */
     public MathInternalError() {
-        super(LocalizedFormats.INTERNAL_ERROR, REPORT_URL);
+        getContext().addMessage(LocalizedFormats.INTERNAL_ERROR, REPORT_URL);
     }
 
     /**
@@ -44,7 +42,6 @@ public class MathInternalError extends MathIllegalStateException {
      * @param cause root cause
      */
     public MathInternalError(final Throwable cause) {
-        super(LocalizedFormats.INTERNAL_ERROR, REPORT_URL);
+        super(cause, LocalizedFormats.INTERNAL_ERROR, REPORT_URL);
     }
-
 }

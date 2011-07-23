@@ -23,24 +23,13 @@ import org.apache.commons.math.exception.util.Localizable;
 /**
  * This exception is made available to users to report
  * the error conditions that are triggered by {@link EventHandler}
- * @version $Revision: 983921 $ $Date: 2010-08-10 12:46:06 +0200 (Di, 10 Aug 2010) $
+ * @version $Id: EventException.java 1131229 2011-06-03 20:49:25Z luc $
  * @since 2.0
  */
 public class EventException extends MathException {
 
     /** Serialization UID. */
     private static final long serialVersionUID = -898215297400035290L;
-
-    /** Simple constructor.
-     * Build an exception by translating and formating a message
-     * @param specifier format specifier (to be translated)
-     * @param parts to insert in the format (no translation)
-     * @deprecated as of 2.2 replaced by {@link #EventException(Localizable, Object...)}
-     */
-     @Deprecated
-    public EventException(final String specifier, final Object ... parts) {
-        super(specifier, parts);
-    }
 
     /** Simple constructor.
      * Build an exception by translating and formating a message

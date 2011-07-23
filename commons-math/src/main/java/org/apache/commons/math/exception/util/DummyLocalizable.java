@@ -21,7 +21,7 @@ import java.util.Locale;
 /**
  * Dummy implementation of the {@link Localizable} interface, without localization.
  *
- * @version $Revision: 1003351 $ $Date: 2010-10-01 03:50:12 +0200 (Fr, 01 Okt 2010) $
+ * @version $Id: DummyLocalizable.java 1131229 2011-06-03 20:49:25Z luc $
  * @since 2.2
  */
 public class DummyLocalizable implements Localizable {

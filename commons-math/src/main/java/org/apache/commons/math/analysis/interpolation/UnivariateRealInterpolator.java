@@ -21,7 +21,7 @@ import org.apache.commons.math.analysis.UnivariateRealFunction;
 /**
  * Interface representing a univariate real interpolating function.
  *
- * @version $Revision: 1055931 $ $Date: 2011-01-06 17:20:51 +0100 (Do, 06 Jan 2011) $
+ * @version $Id: UnivariateRealInterpolator.java 1146099 2011-07-13 15:28:21Z erans $
  */
 public interface UnivariateRealInterpolator {
     /**
@@ -30,8 +30,9 @@ public interface UnivariateRealInterpolator {
      * @param xval Arguments for the interpolation points.
      * @param yval Values for the interpolation points.
      * @return a function which interpolates the dataset.
-     * @throws org.apache.commons.math.exception.MathRuntimeException if the
-     * arguments violate assumptions made by the interpolation algorithm.
+     * @throws org.apache.commons.math.exception.MathIllegalArgumentException
+     * if the arguments violate assumptions made by the interpolation
+     * algorithm.
      */
     UnivariateRealFunction interpolate(double xval[], double yval[]);
 }

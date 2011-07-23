@@ -41,7 +41,7 @@ import org.apache.commons.math.analysis.UnivariateRealFunction;
  *   RealVector result = v.mapAddToSelf(3.4).mapToSelf(new Tan()).mapToSelf(new Power(2.3));
  * </pre>
  *
- * @version $Revision: 1043075 $ $Date: 2010-12-07 15:58:08 +0100 (Di, 07 Dez 2010) $
+ * @version $Id: RealVector.java 1131229 2011-06-03 20:49:25Z luc $
  * @since 2.0
  */
 public interface RealVector {
@@ -307,6 +307,24 @@ public interface RealVector {
     double dotProduct(double[] v);
 
     /**
+     * Computes the cosine of the angle between this vector and the
+     * argument.
+     *
+     * @param v Vector.
+     * @return the cosine of the angle between this vector and {@code v}.
+     */
+    double cosine(RealVector v);
+
+    /**
+     * Computes the cosine of the angle between this vector and the
+     * vector whose components are given as argument.
+     *
+     * @param v Components of a vector.
+     * @return the cosine of the angle between this vector and {@code v}.
+     */
+    double cosine(double[] v);
+
+    /**
      * Returns the L<sub>2</sub> norm of the vector.
      * <p>The L<sub>2</sub> norm is the root of the sum of
      * the squared elements.</p>
@@ -462,18 +480,14 @@ public interface RealVector {
     /**
      * Compute the outer product.
      * @param v vector with which outer product should be computed
-     * @return the square matrix outer product between instance and v
-     * @throws org.apache.commons.math.exception.DimensionMismatchException
-     * if {@code v} is not the same size as this vector.
+     * @return the matrix outer product between instance and v
      */
     RealMatrix outerProduct(RealVector v);
 
     /**
      * Compute the outer product.
      * @param v vector with which outer product should be computed
-     * @return the square matrix outer product between instance and v
-     * @throws org.apache.commons.math.exception.DimensionMismatchException
-     * if {@code v} is not the same size as this vector.
+     * @return the matrix outer product between instance and v
      */
     RealMatrix outerProduct(double[] v);
 

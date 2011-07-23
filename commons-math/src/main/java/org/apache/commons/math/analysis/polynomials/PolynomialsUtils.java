@@ -24,7 +24,7 @@ import org.apache.commons.math.util.FastMath;
 /**
  * A collection of static methods that operate on or return polynomials.
  *
- * @version $Revision: 990658 $ $Date: 2010-08-30 00:04:09 +0200 (Mo, 30 Aug 2010) $
+ * @version $Id: PolynomialsUtils.java 1131229 2011-06-03 20:49:25Z luc $
  * @since 2.0
  */
 public class PolynomialsUtils {

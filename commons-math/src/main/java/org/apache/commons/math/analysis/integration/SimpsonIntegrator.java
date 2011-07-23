@@ -32,34 +32,16 @@ import org.apache.commons.math.util.FastMath;
  * This implementation employs basic trapezoid rule as building blocks to
  * calculate the Simpson's rule of alternating 2/3 and 4/3.</p>
  *
- * @version $Revision: 1065763 $ $Date: 2011-01-31 21:42:00 +0100 (Mo, 31 Jan 2011) $
+ * @version $Id: SimpsonIntegrator.java 1131229 2011-06-03 20:49:25Z luc $
  * @since 1.2
  */
 public class SimpsonIntegrator extends UnivariateRealIntegratorImpl {
-
-    /**
-     * Construct an integrator for the given function.
-     *
-     * @param f function to integrate
-     * @deprecated as of 2.0 the integrand function is passed as an argument
-     * to the {@link #integrate(UnivariateRealFunction, double, double)}method.
-     */
-    @Deprecated
-    public SimpsonIntegrator(UnivariateRealFunction f) {
-        super(f, 64);
-    }
 
     /**
      * Construct an integrator.
      */
     public SimpsonIntegrator() {
         super(64);
-    }
-
-    @Deprecated
-    public double integrate(final double min, final double max)
-        throws MaxCountExceededException, MathUserException, IllegalArgumentException {
-        return integrate(f, min, max);
     }
 
     /** {@inheritDoc} */

@@ -41,13 +41,12 @@ import org.apache.commons.math.util.MathUtils;
  * <p>
  * The formulas here use divided differences directly.</p>
  *
- * @version $Revision: 1042596 $ $Date: 2010-12-06 12:56:26 +0100 (Mo, 06 Dez 2010) $
+ * @version $Id: MullerSolver.java 1141880 2011-07-01 09:05:20Z luc $
  * @since 1.2
  * @see MullerSolver2
  */
 public class MullerSolver extends AbstractUnivariateRealSolver {
-    /** Serializable version identifier */
-    private static final long serialVersionUID = 7694577816772532779L;
+
     /** Default absolute accuracy. */
     private static final double DEFAULT_ABSOLUTE_ACCURACY = 1e-6;
 

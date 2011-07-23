@@ -35,7 +35,7 @@ import org.apache.commons.math.util.FastMath;
  * approximation and be able to solve all roots from that point.
  * The algorithm requires a bracketing condition.
  *
- * @version $Revision: 1042596 $ $Date: 2010-12-06 12:56:26 +0100 (Mo, 06 Dez 2010) $
+ * @version $Id: LaguerreSolver.java 1145746 2011-07-12 20:15:01Z psteitz $
  * @since 1.2
  */
 public class LaguerreSolver extends AbstractPolynomialSolver {
@@ -181,35 +181,12 @@ public class LaguerreSolver extends AbstractPolynomialSolver {
          * @return {@code true} if z is a real zero.
          */
         public boolean isRoot(double min, double max, Complex z) {
-            double tolerance = FastMath.max(getRelativeAccuracy() * z.abs(), getAbsoluteAccuracy());
-            return (isSequence(min, z.getReal(), max)) &&
-                (FastMath.abs(z.getImaginary()) <= tolerance ||
-                 z.abs() <= getFunctionValueAccuracy());
-        }
-
-        /**
-         * Find all complex roots for the polynomial with the given
-         * coefficients, starting from the given initial value.
-         *
-         * @param coefficients Polynomial coefficients.
-         * @param initial Start value.
-         * @return the point at which the function value is zero.
-         * @throws org.apache.commons.math.exception.TooManyEvaluationsException
-         * if the maximum number of evaluations is exceeded.
-         * @throws NullArgumentException if the {@code coefficients} is
-         * {@code null}.
-         * @throws NoDataException if the {@code coefficients} array is empty.
-         */
-        public Complex[] solveAll(double coefficients[], double initial) {
-            if (coefficients == null) {
-                throw new NullArgumentException();
+            if (isSequence(min, z.getReal(), max)) {
+                double tolerance = FastMath.max(getRelativeAccuracy() * z.abs(), getAbsoluteAccuracy());
+                return (FastMath.abs(z.getImaginary()) <= tolerance) ||
+                     (z.abs() <= getFunctionValueAccuracy());
             }
-            Complex c[] = new Complex[coefficients.length];
-            Complex z = new Complex(initial, 0);
-            for (int i = 0; i < c.length; i++) {
-                c[i] = new Complex(coefficients[i], 0);
-            }
-            return solveAll(c, z);
+            return false;
         }
 
         /**

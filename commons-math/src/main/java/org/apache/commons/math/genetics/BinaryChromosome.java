@@ -18,12 +18,13 @@ package org.apache.commons.math.genetics;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.commons.math.exception.util.LocalizedFormats;
 
 
 /**
  * Chromosome represented by a vector of 0s and 1s.
  *
- * @version $Revision: 811685 $ $Date: 2009-09-05 19:36:48 +0200 (Sa, 05 Sep 2009) $
+ * @version $Id: BinaryChromosome.java 1139906 2011-06-26 18:42:32Z luc $
  * @since 2.0
  */
 public abstract class BinaryChromosome extends AbstractListChromosome<Integer> {
@@ -48,10 +49,13 @@ public abstract class BinaryChromosome extends AbstractListChromosome<Integer> {
      * {@inheritDoc}
      */
     @Override
-    protected void checkValidity(List<Integer> chromosomeRepresentation) throws InvalidRepresentationException {
+    protected void checkValidity(List<Integer> chromosomeRepresentation)
+        throws InvalidRepresentationException {
         for (int i : chromosomeRepresentation) {
-            if (i < 0 || i >1)
-                throw new InvalidRepresentationException("Elements can be only 0 or 1.");
+            if (i < 0 || i >1) {
+                throw new InvalidRepresentationException(LocalizedFormats.INVALID_BINARY_DIGIT,
+                                                         i);
+            }
         }
     }
 
@@ -75,16 +79,19 @@ public abstract class BinaryChromosome extends AbstractListChromosome<Integer> {
     @Override
     protected boolean isSame(Chromosome another) {
         // type check
-        if (! (another instanceof BinaryChromosome))
+        if (! (another instanceof BinaryChromosome)) {
             return false;
+        }
         BinaryChromosome anotherBc = (BinaryChromosome) another;
         // size check
-        if (getLength() != anotherBc.getLength())
+        if (getLength() != anotherBc.getLength()) {
             return false;
+        }
 
         for (int i=0; i< getRepresentation().size(); i++) {
-            if (!(getRepresentation().get(i).equals(anotherBc.getRepresentation().get(i))))
+            if (!(getRepresentation().get(i).equals(anotherBc.getRepresentation().get(i)))) {
                 return false;
+            }
         }
         // all is ok
         return true;

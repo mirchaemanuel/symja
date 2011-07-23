@@ -27,7 +27,7 @@ import org.apache.commons.math.util.FastMath;
 /**
  * The default implementation of {@link GammaDistribution}.
  *
- * @version $Revision: 1060449 $ $Date: 2011-01-18 17:24:27 +0100 (Di, 18 Jan 2011) $
+ * @version $Id: GammaDistributionImpl.java 1139906 2011-06-26 18:42:32Z luc $
  */
 public class GammaDistributionImpl extends AbstractContinuousDistribution
     implements GammaDistribution, Serializable  {
@@ -154,9 +154,11 @@ public class GammaDistributionImpl extends AbstractContinuousDistribution
      */
     @Override
     public double density(double x) {
-        if (x < 0) return 0;
+        if (x < 0) {
+            return 0;
+        }
         return FastMath.pow(x / beta, alpha - 1) / beta *
-            FastMath.exp(-x / beta) / FastMath.exp(Gamma.logGamma(alpha));
+               FastMath.exp(-x / beta) / FastMath.exp(Gamma.logGamma(alpha));
     }
 
     /**

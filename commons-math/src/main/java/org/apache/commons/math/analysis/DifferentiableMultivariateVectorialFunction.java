@@ -21,7 +21,7 @@ package org.apache.commons.math.analysis;
 /**
  * Extension of {@link MultivariateVectorialFunction} representing a differentiable
  * multivariate vectorial function.
- * @version $Revision: 811685 $ $Date: 2009-09-05 19:36:48 +0200 (Sa, 05 Sep 2009) $
+ * @version $Id: DifferentiableMultivariateVectorialFunction.java 1131229 2011-06-03 20:49:25Z luc $
  * @since 2.0
  */
 public interface DifferentiableMultivariateVectorialFunction

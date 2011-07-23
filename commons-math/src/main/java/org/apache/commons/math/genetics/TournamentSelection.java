@@ -26,7 +26,7 @@ import java.util.List;
  * fittest chromosome among them.
  *
  * @since 2.0
- * @version $Revision: 811685 $ $Date: 2009-09-05 19:36:48 +0200 (Sa, 05 Sep 2009) $
+ * @version $Id: TournamentSelection.java 1139906 2011-06-26 18:42:32Z luc $
  */
 public class TournamentSelection implements SelectionPolicy {
 
@@ -70,8 +70,9 @@ public class TournamentSelection implements SelectionPolicy {
      * @return the selected chromosome.
      */
     private Chromosome tournament(ListPopulation population) {
-        if (population.getPopulationSize() < this.arity)
+        if (population.getPopulationSize() < this.arity) {
             throw new IllegalArgumentException("Tournament arity cannot be bigger than population size.");
+        }
         // auxiliary population
         ListPopulation tournamentPopulation = new ListPopulation(this.arity) {
             public Population nextGeneration() {

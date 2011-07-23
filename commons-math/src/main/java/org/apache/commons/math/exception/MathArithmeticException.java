@@ -18,33 +18,58 @@ package org.apache.commons.math.exception;
 
 import org.apache.commons.math.exception.util.Localizable;
 import org.apache.commons.math.exception.util.LocalizedFormats;
+import org.apache.commons.math.exception.util.ExceptionContext;
+import org.apache.commons.math.exception.util.ExceptionContextProvider;
 
 /**
  * Base class for arithmetic exceptions.
- * It is used for all the exceptions that share the semantics of the standard
+ * It is used for all the exceptions that have the semantics of the standard
  * {@link ArithmeticException}, but must also provide a localized
  * message.
  *
  * @since 3.0
- * @version $Revision$ $Date$
+ * @version $Id$
  */
-public class MathArithmeticException extends MathRuntimeException {
+public class MathArithmeticException extends ArithmeticException
+    implements ExceptionContextProvider {
     /** Serializable version Id. */
     private static final long serialVersionUID = -6024911025449780478L;
+    /** Context. */
+    private final ExceptionContext context = new ExceptionContext();
 
     /**
-     * @param args Arguments.
+     * Default constructor.
      */
-    public MathArithmeticException(Object ... args) {
-        this(null, args);
+    public MathArithmeticException() {
+        context.addMessage(LocalizedFormats.ARITHMETIC_EXCEPTION);
     }
+
     /**
-     * @param specific Message pattern providing the specific context of
+     * Constructor with a specific message.
+     *
+     * @param pattern Message pattern providing the specific context of
      * the error.
      * @param args Arguments.
      */
-    public MathArithmeticException(Localizable specific,
+    public MathArithmeticException(Localizable pattern,
                                    Object ... args) {
-        super(null, specific, LocalizedFormats.ARITHMETIC_EXCEPTION, args);
+        context.addMessage(pattern, args);
+    }
+
+    /** {@inheritDoc} */
+    public ExceptionContext getContext() {
+        return context;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String getMessage() {
+        return context.getMessage();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String getLocalizedMessage() {
+        return context.getLocalizedMessage();
     }
 }

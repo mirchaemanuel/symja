@@ -32,7 +32,7 @@ import org.apache.commons.math.util.FastMath;
  * implementations are provided for some of the methods that do not vary
  * from distribution to distribution.
  *
- * @version $Revision: 1060449 $ $Date: 2011-01-18 17:24:27 +0100 (Di, 18 Jan 2011) $
+ * @version $Id: AbstractIntegerDistribution.java 1134948 2011-06-12 17:19:49Z psteitz $
  */
 public abstract class AbstractIntegerDistribution extends AbstractDistribution
     implements IntegerDistribution, Serializable {
@@ -51,7 +51,7 @@ public abstract class AbstractIntegerDistribution extends AbstractDistribution
 
     /**
      * For a random variable {@code X} whose values are distributed according
-     * to this distribution, this method returns {@code P(X < x)}.  In other
+     * to this distribution, this method returns {@code P(X <= x)}.  In other
      * words, this method represents the (cumulative) distribution function,
      * or CDF, for this distribution.
      * If {@code x} does not represent an integer value, the CDF is
@@ -70,7 +70,7 @@ public abstract class AbstractIntegerDistribution extends AbstractDistribution
     /**
      * For a random variable {@code X} whose values are distributed
      * according to this distribution, this method returns
-     * {@code P(x0 < X < x1)}.
+     * {@code P(x0 <= X <= x1)}.
      *
      * @param x0 Inclusive lower bound.
      * @param x1 Inclusive upper bound.
@@ -99,7 +99,7 @@ public abstract class AbstractIntegerDistribution extends AbstractDistribution
 
     /**
      * For a random variable {@code X} whose values are distributed according
-     * to this distribution, this method returns {@code P(X < x)}. In other
+     * to this distribution, this method returns {@code P(X <= x)}. In other
      * words, this method represents the probability distribution function,
      * or PDF, for this distribution.
      *
@@ -151,7 +151,7 @@ public abstract class AbstractIntegerDistribution extends AbstractDistribution
     /**
      * For a random variable {@code X} whose values are distributed according
      * to this distribution, this method returns the largest {@code x}, such
-     * that {@code P(X < x) < p}.
+     * that {@code P(X <= x) <= p}.
      *
      * @param p Desired probability.
      * @return the largest {@code x} such that {@code P(X < x) <= p}.

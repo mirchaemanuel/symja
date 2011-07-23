@@ -20,12 +20,16 @@ package org.apache.commons.math.ode;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
 import org.apache.commons.math.ConvergenceException;
 import org.apache.commons.math.MaxEvaluationsExceededException;
+import org.apache.commons.math.analysis.solvers.BrentSolver;
+import org.apache.commons.math.analysis.solvers.UnivariateRealSolver;
 import org.apache.commons.math.exception.MathUserException;
 import org.apache.commons.math.exception.util.LocalizedFormats;
 import org.apache.commons.math.ode.events.EventException;
@@ -38,7 +42,7 @@ import org.apache.commons.math.util.MathUtils;
 
 /**
  * Base class managing common boilerplate for all integrators.
- * @version $Revision: 1061527 $ $Date: 2011-01-20 22:31:54 +0100 (Do, 20 Jan 2011) $
+ * @version $Id: AbstractIntegrator.java 1139831 2011-06-26 16:26:48Z luc $
  * @since 2.0
  */
 public abstract class AbstractIntegrator implements FirstOrderIntegrator {
@@ -62,7 +66,7 @@ public abstract class AbstractIntegrator implements FirstOrderIntegrator {
     private Collection<EventState> eventsStates;
 
     /** Initialization indicator of events states. */
-    protected boolean statesInitialized;
+    private boolean statesInitialized;
 
     /** Name of the method. */
     private final String name;
@@ -121,7 +125,18 @@ public abstract class AbstractIntegrator implements FirstOrderIntegrator {
                                 final double maxCheckInterval,
                                 final double convergence,
                                 final int maxIterationCount) {
-        eventsStates.add(new EventState(handler, maxCheckInterval, convergence, maxIterationCount));
+        addEventHandler(handler, maxCheckInterval, convergence,
+                        maxIterationCount, new BrentSolver(convergence));
+    }
+
+    /** {@inheritDoc} */
+    public void addEventHandler(final EventHandler handler,
+                                final double maxCheckInterval,
+                                final double convergence,
+                                final int maxIterationCount,
+                                final UnivariateRealSolver solver) {
+        eventsStates.add(new EventState(handler, maxCheckInterval, convergence,
+                                        maxIterationCount, solver));
     }
 
     /** {@inheritDoc} */
@@ -136,22 +151,6 @@ public abstract class AbstractIntegrator implements FirstOrderIntegrator {
     /** {@inheritDoc} */
     public void clearEventHandlers() {
         eventsStates.clear();
-    }
-
-    /** Check if dense output is needed.
-     * @return true if there is at least one event handler or if
-     * one of the step handlers requires dense output
-     */
-    protected boolean requiresDenseOutput() {
-        if (!eventsStates.isEmpty()) {
-            return true;
-        }
-        for (StepHandler handler : stepHandlers) {
-            if (handler.requiresDenseOutput()) {
-                return true;
-            }
-        }
-        return false;
     }
 
     /** {@inheritDoc} */
@@ -208,6 +207,17 @@ public abstract class AbstractIntegrator implements FirstOrderIntegrator {
         equations.computeDerivatives(t, y, yDot);
     }
 
+    /** Set the stateInitialized flag.
+     * <p>This method must be called by integrators with the value
+     * {@code false} before they start integration, so a proper lazy
+     * initialization is done automatically on the first step.</p>
+     * @param stateInitialized new value for the flag
+     * @since 2.2
+     */
+    protected void setStateInitialized(final boolean stateInitialized) {
+        this.statesInitialized = stateInitialized;
+    }
+
     /** Accept a step, triggering events and step handlers.
      * @param interpolator step interpolator
      * @param y state vector at step end time, must be reset if an event
@@ -216,6 +226,7 @@ public abstract class AbstractIntegrator implements FirstOrderIntegrator {
      * @param tEnd final integration time
      * @return time at end of step
      * @exception IntegratorException if the value of one event state cannot be evaluated
+     * @since 2.2
      */
     protected double acceptStep(final AbstractStepInterpolator interpolator,
                                 final double[] y, final double[] yDot, final double tEnd)
@@ -234,8 +245,17 @@ public abstract class AbstractIntegrator implements FirstOrderIntegrator {
                 statesInitialized = true;
             }
 
-            // find all events that occur during the step
-            SortedSet<EventState> occuringEvents = new TreeSet<EventState>();
+            // search for next events that may occur during the step
+            final int orderingSign = interpolator.isForward() ? +1 : -1;
+            SortedSet<EventState> occuringEvents = new TreeSet<EventState>(new Comparator<EventState>() {
+
+                /** {@inheritDoc} */
+                public int compare(EventState es0, EventState es1) {
+                    return orderingSign * Double.compare(es0.getEventTime(), es1.getEventTime());
+                }
+
+            });
+
             for (final EventState state : eventsStates) {
                 if (state.evaluateStep(interpolator)) {
                     // the event occurs during the current step
@@ -243,18 +263,23 @@ public abstract class AbstractIntegrator implements FirstOrderIntegrator {
                 }
             }
 
-            // handle the events chronologically
-            for (final EventState state : occuringEvents) {
+            while (!occuringEvents.isEmpty()) {
+
+                // handle the chronologically first event
+                final Iterator<EventState> iterator = occuringEvents.iterator();
+                final EventState currentEvent = iterator.next();
+                iterator.remove();
 
                 // restrict the interpolator to the first part of the step, up to the event
-                final double eventT = state.getEventTime();
-                interpolator.setSoftBounds(previousT, eventT);
+                final double eventT = currentEvent.getEventTime();
+                interpolator.setSoftPreviousTime(previousT);
+                interpolator.setSoftCurrentTime(eventT);
 
                 // trigger the event
                 interpolator.setInterpolatedTime(eventT);
                 final double[] eventY = interpolator.getInterpolatedState();
-                state.stepAccepted(eventT, eventY);
-                isLastStep = state.stop();
+                currentEvent.stepAccepted(eventT, eventY);
+                isLastStep = currentEvent.stop();
 
                 // handle the first part of the step, up to the event
                 for (final StepHandler handler : stepHandlers) {
@@ -267,7 +292,7 @@ public abstract class AbstractIntegrator implements FirstOrderIntegrator {
                     return eventT;
                 }
 
-                if (state.reset(eventT, eventY)) {
+                if (currentEvent.reset(eventT, eventY)) {
                     // some event handler has triggered changes that
                     // invalidate the derivatives, we need to recompute them
                     System.arraycopy(eventY, 0, y, 0, y.length);
@@ -278,7 +303,14 @@ public abstract class AbstractIntegrator implements FirstOrderIntegrator {
 
                 // prepare handling of the remaining part of the step
                 previousT = eventT;
-                interpolator.setSoftBounds(eventT, currentT);
+                interpolator.setSoftPreviousTime(eventT);
+                interpolator.setSoftCurrentTime(currentT);
+
+                // check if the same event occurs again in the remaining part of the step
+                if (currentEvent.evaluateStep(interpolator)) {
+                    // the event occurs during the current step
+                    occuringEvents.add(currentEvent);
+                }
 
             }
 

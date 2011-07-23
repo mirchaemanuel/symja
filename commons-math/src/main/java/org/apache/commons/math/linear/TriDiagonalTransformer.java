@@ -19,7 +19,6 @@ package org.apache.commons.math.linear;
 
 import java.util.Arrays;
 
-import org.apache.commons.math.exception.NonSquareMatrixException;
 import org.apache.commons.math.util.FastMath;
 
 
@@ -35,7 +34,7 @@ import org.apache.commons.math.util.FastMath;
  * EigenDecomposition eigen decomposition}. This class is therefore intended for internal
  * use by the library and is not public. As a consequence of this explicitly limited scope,
  * many methods directly returns references to internal arrays, not copies.</p>
- * @version $Revision: 1033486 $ $Date: 2010-11-10 15:23:36 +0100 (Mi, 10 Nov 2010) $
+ * @version $Id: TriDiagonalTransformer.java 1131229 2011-06-03 20:49:25Z luc $
  * @since 2.0
  */
 class TriDiagonalTransformer {
@@ -58,11 +57,12 @@ class TriDiagonalTransformer {
      * Only the upper triangular part of the matrix is used.</p>
      *
      * @param matrix Symmetrical matrix to transform.
-     * @exception NonSquareMatrixException if the matrix is not square.
+     * @throws NonSquareMatrixException if the matrix is not square.
      */
     public TriDiagonalTransformer(RealMatrix matrix) {
         if (!matrix.isSquare()) {
-            throw new NonSquareMatrixException(matrix.getRowDimension(), matrix.getColumnDimension());
+            throw new NonSquareMatrixException(matrix.getRowDimension(),
+                                               matrix.getColumnDimension());
         }
 
         final int m = matrix.getRowDimension();

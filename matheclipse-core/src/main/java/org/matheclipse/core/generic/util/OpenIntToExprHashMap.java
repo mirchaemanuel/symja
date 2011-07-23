@@ -29,8 +29,8 @@ import org.matheclipse.core.interfaces.IExpr;
 /**
  * Open addressed map from int to IExpr.
  * <p>
- * This class provides a dedicated map from integers to IExpr with a
- * much smaller memory overhead than standard <code>java.util.Map</code>.
+ * This class provides a dedicated map from integers to IExpr with a much
+ * smaller memory overhead than standard <code>java.util.Map</code>.
  * </p>
  * <p>
  * This class is not synchronized. The specialized iterators returned by
@@ -41,7 +41,6 @@ import org.matheclipse.core.interfaces.IExpr;
  * 
  */
 public class OpenIntToExprHashMap implements Serializable {
-
 
 	/** Serializable version identifier. */
 	private static final long serialVersionUID = -6334157655226292029L;
@@ -54,7 +53,6 @@ public class OpenIntToExprHashMap implements Serializable {
 
 	/** Status indicator for removed table entries. */
 	protected static final byte REMOVED = 2;
-
 
 	/** Message for map modification during iteration. */
 	private static final String CONCURRENT_MODIFICATION_MESSAGE = "map has been modified while iterating";
@@ -602,12 +600,16 @@ public class OpenIntToExprHashMap implements Serializable {
 		 *              if there is no element left in the map
 		 */
 		public int key() throws ConcurrentModificationException, NoSuchElementException {
-			if (referenceCount != count) {
-				throw MathRuntimeException.createConcurrentModificationException(CONCURRENT_MODIFICATION_MESSAGE);
-			}
-			if (current < 0) {
-				throw MathRuntimeException.createNoSuchElementException(EXHAUSTED_ITERATOR_MESSAGE);
-			}
+			// if (referenceCount != count) {
+			// throw
+			// MathRuntimeException.createConcurrentModificationException(CONCURRENT_MODIFICATION_MESSAGE,
+			// "key()");
+			// }
+			// if (current < 0) {
+			// throw
+			// MathRuntimeException.createNoSuchElementException(EXHAUSTED_ITERATOR_MESSAGE,
+			// "key()");
+			// }
 			return keys[current];
 		}
 
@@ -621,12 +623,16 @@ public class OpenIntToExprHashMap implements Serializable {
 		 *              if there is no element left in the map
 		 */
 		public IExpr value() throws ConcurrentModificationException, NoSuchElementException {
-			if (referenceCount != count) {
-				throw MathRuntimeException.createConcurrentModificationException(CONCURRENT_MODIFICATION_MESSAGE);
-			}
-			if (current < 0) {
-				throw MathRuntimeException.createNoSuchElementException(EXHAUSTED_ITERATOR_MESSAGE);
-			}
+			// if (referenceCount != count) {
+			// throw
+			// MathRuntimeException.createConcurrentModificationException(CONCURRENT_MODIFICATION_MESSAGE,
+			// new Object[0]);
+			// }
+			// if (current < 0) {
+			// throw
+			// MathRuntimeException.createNoSuchElementException(EXHAUSTED_ITERATOR_MESSAGE,
+			// new Object[0]);
+			// }
 			return values[current];
 		}
 
@@ -640,9 +646,10 @@ public class OpenIntToExprHashMap implements Serializable {
 		 */
 		public void advance() throws ConcurrentModificationException, NoSuchElementException {
 
-			if (referenceCount != count) {
-				throw MathRuntimeException.createConcurrentModificationException(CONCURRENT_MODIFICATION_MESSAGE);
-			}
+			// if (referenceCount != count) {
+			// throw
+			// MathRuntimeException.createConcurrentModificationException(CONCURRENT_MODIFICATION_MESSAGE);
+			// }
 
 			// advance on step
 			current = next;
@@ -654,9 +661,11 @@ public class OpenIntToExprHashMap implements Serializable {
 				}
 			} catch (ArrayIndexOutOfBoundsException e) {
 				next = -2;
-				if (current < 0) {
-					throw MathRuntimeException.createNoSuchElementException(EXHAUSTED_ITERATOR_MESSAGE);
-				}
+				// if (current < 0) {
+				// throw
+				// MathRuntimeException.createNoSuchElementException(EXHAUSTED_ITERATOR_MESSAGE,
+				// new Object[0]);
+				// }
 			}
 
 		}

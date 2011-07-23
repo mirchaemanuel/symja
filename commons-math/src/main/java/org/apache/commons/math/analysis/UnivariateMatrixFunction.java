@@ -21,7 +21,7 @@ import org.apache.commons.math.exception.MathUserException;
 /**
  * An interface representing a univariate matrix function.
  *
- * @version $Revision: 1037328 $ $Date: 2010-11-20 22:01:50 +0100 (Sa, 20 Nov 2010) $
+ * @version $Id: UnivariateMatrixFunction.java 1131229 2011-06-03 20:49:25Z luc $
  * @since 2.0
  */
 public interface UnivariateMatrixFunction {

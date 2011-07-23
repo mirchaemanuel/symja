@@ -20,7 +20,7 @@ package org.apache.commons.math.analysis;
 /**
  * An interface representing a multivariate real function.
  *
- * @version $Revision: 1061790 $ $Date: 2011-01-21 13:51:03 +0100 (Fr, 21 Jan 2011) $
+ * @version $Id: MultivariateRealFunction.java 1131229 2011-06-03 20:49:25Z luc $
  * @since 2.0
  */
 public interface MultivariateRealFunction {

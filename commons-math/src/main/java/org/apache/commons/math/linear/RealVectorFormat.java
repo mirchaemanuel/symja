@@ -38,12 +38,11 @@ import org.apache.commons.math.util.CompositeFormat;
  * returned. In the second case, however, the parse position after parsing will be
  * just after the closing curly brace, i.e. just before the trailing space.</p>
  *
- * @version $Revision: 1055835 $ $Date: 2011-01-06 12:32:07 +0100 (Do, 06 Jan 2011) $
+ * @version $Id: RealVectorFormat.java 1141885 2011-07-01 09:16:41Z luc $
  * @since 2.0
  */
 public class RealVectorFormat {
-    /** Serializable version identifier */
-    private static final long serialVersionUID = -708767813036157690L;
+
     /** The default prefix: "{". */
     private static final String DEFAULT_PREFIX = "{";
     /** The default suffix: "}". */

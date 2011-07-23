@@ -23,6 +23,7 @@ import java.util.NoSuchElementException;
 import org.apache.commons.math.exception.MathUnsupportedOperationException;
 import org.apache.commons.math.exception.DimensionMismatchException;
 import org.apache.commons.math.exception.OutOfRangeException;
+import org.apache.commons.math.exception.MathArithmeticException;
 import org.apache.commons.math.analysis.FunctionUtils;
 import org.apache.commons.math.analysis.function.Add;
 import org.apache.commons.math.analysis.function.Multiply;
@@ -35,7 +36,7 @@ import org.apache.commons.math.util.FastMath;
  * This class provides default basic implementations for many methods in the
  * {@link RealVector} interface.
  *
- * @version $Revision: 1044186 $ $Date: 2010-12-10 01:50:50 +0100 (Fr, 10 Dez 2010) $
+ * @version $Id: AbstractRealVector.java 1131229 2011-06-03 20:49:25Z luc $
  * @since 2.1
  */
 public abstract class AbstractRealVector implements RealVector {
@@ -181,6 +182,23 @@ public abstract class AbstractRealVector implements RealVector {
             d += e.getValue() * v.getEntry(e.getIndex());
         }
         return d;
+    }
+
+    /** {@inheritDoc} */
+    public double cosine(RealVector v) {
+        final double norm = getNorm();
+        final double vNorm = v.getNorm();
+
+        if (norm == 0 ||
+            vNorm == 0) {
+            throw new MathArithmeticException(LocalizedFormats.ZERO_NORM);
+        }
+        return dotProduct(v) / (norm * vNorm);
+    }
+
+    /** {@inheritDoc} */
+    public double cosine(double[] v) {
+        return cosine(new ArrayRealVector(v, false));
     }
 
     /** {@inheritDoc} */

@@ -26,7 +26,7 @@ import org.apache.commons.math.util.FastMath;
  * <p>
  * The function should be continuous but not necessarily smooth.</p>
  *
- * @version $Revision: 1042596 $ $Date: 2010-12-06 12:56:26 +0100 (Mo, 06 Dez 2010) $
+ * @version $Id: NewtonSolver.java 1143729 2011-07-07 09:36:54Z erans $
  */
 public class NewtonSolver extends AbstractDifferentiableUnivariateRealSolver {
     /** Default absolute accuracy. */
@@ -51,7 +51,7 @@ public class NewtonSolver extends AbstractDifferentiableUnivariateRealSolver {
      * Find a zero near the midpoint of {@code min} and {@code max}.
      *
      * @param f Function to solve.
-     * @param min Lower bound for the interval?
+     * @param min Lower bound for the interval.
      * @param max Upper bound for the interval.
      * @param maxEval Maximum number of evaluations.
      * @return the value where the function is zero.

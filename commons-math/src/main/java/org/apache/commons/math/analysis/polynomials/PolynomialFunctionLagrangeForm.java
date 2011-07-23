@@ -32,7 +32,7 @@ import org.apache.commons.math.exception.util.LocalizedFormats;
  * The approximated function should be smooth enough for Lagrange polynomial
  * to work well. Otherwise, consider using splines instead.</p>
  *
- * @version $Revision: 1055931 $ $Date: 2011-01-06 17:20:51 +0100 (Do, 06 Jan 2011) $
+ * @version $Id: PolynomialFunctionLagrangeForm.java 1131229 2011-06-03 20:49:25Z luc $
  * @since 1.2
  */
 public class PolynomialFunctionLagrangeForm implements UnivariateRealFunction {

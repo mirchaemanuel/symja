@@ -20,7 +20,7 @@ package org.apache.commons.math.genetics;
  * Algorithm used to determine when to stop evolution.
  *
  * @since 2.0
- * @version $Revision: 811685 $ $Date: 2009-09-05 19:36:48 +0200 (Sa, 05 Sep 2009) $
+ * @version $Id: StoppingCondition.java 1131229 2011-06-03 20:49:25Z luc $
  */
 public interface StoppingCondition {
     /**

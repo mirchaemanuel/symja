@@ -31,11 +31,10 @@ import org.apache.commons.math.util.MathUtils;
  * {@code t} is the absolute accuracy.
  * The given interval must bracket the root.
  *
- * @version $Revision:670469 $ $Date:2008-06-23 10:01:38 +0200 (lun., 23 juin 2008) $
+ * @version $Id: BrentSolver.java 1141921 2011-07-01 12:44:47Z luc $
  */
 public class BrentSolver extends AbstractUnivariateRealSolver {
-    /** Serializable version identifier */
-    private static final long serialVersionUID = 7694577816772532779L;
+
     /** Default absolute accuracy. */
     private static final double DEFAULT_ABSOLUTE_ACCURACY = 1e-6;
 
@@ -121,7 +120,7 @@ public class BrentSolver extends AbstractUnivariateRealSolver {
 
     /**
      * Search for a zero inside the provided interval.
-     * This implemenation is based on the algorithm described at page 58 of
+     * This implementation is based on the algorithm described at page 58 of
      * the book
      * <quote>
      *  <b>Algorithms for Minimization Without Derivatives</b>

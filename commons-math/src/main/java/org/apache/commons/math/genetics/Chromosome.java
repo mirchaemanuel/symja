@@ -23,7 +23,7 @@ package org.apache.commons.math.genetics;
  * therefore it can be cached.
  *
  * @since 2.0
- * @version $Revision: 811685 $ $Date: 2009-09-05 19:36:48 +0200 (Sa, 05 Sep 2009) $
+ * @version $Id: Chromosome.java 1139906 2011-06-26 18:42:32Z luc $
  */
 public abstract class Chromosome implements Comparable<Chromosome>,Fitness {
 
@@ -88,8 +88,9 @@ public abstract class Chromosome implements Comparable<Chromosome>,Fitness {
      */
     protected Chromosome findSameChromosome(Population population) {
         for (Chromosome anotherChr : population) {
-            if (this.isSame(anotherChr))
+            if (this.isSame(anotherChr)) {
                 return anotherChr;
+            }
         }
         return null;
     }

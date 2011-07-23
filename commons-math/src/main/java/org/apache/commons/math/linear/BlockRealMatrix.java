@@ -20,11 +20,12 @@ package org.apache.commons.math.linear;
 import java.io.Serializable;
 import java.util.Arrays;
 
-import org.apache.commons.math.exception.MatrixDimensionMismatchException;
 import org.apache.commons.math.exception.DimensionMismatchException;
 import org.apache.commons.math.exception.NoDataException;
+import org.apache.commons.math.exception.NullArgumentException;
 import org.apache.commons.math.exception.util.LocalizedFormats;
 import org.apache.commons.math.util.FastMath;
+import org.apache.commons.math.util.MathUtils;
 
 /**
  * Cache-friendly implementation of RealMatrix using a flat arrays to store
@@ -62,7 +63,7 @@ import org.apache.commons.math.util.FastMath;
  * arrays is negligible for small matrices (about 1%). The gain from cache efficiency leads
  * to up to 3-fold improvements for matrices of moderate to large size.
  * </p>
- * @version $Revision: 1038403 $ $Date: 2010-11-24 01:42:12 +0100 (Mi, 24 Nov 2010) $
+ * @version $Id: BlockRealMatrix.java 1132432 2011-06-05 14:59:29Z luc $
  * @since 2.0
  */
 public class BlockRealMatrix extends AbstractRealMatrix implements Serializable {
@@ -765,8 +766,10 @@ public class BlockRealMatrix extends AbstractRealMatrix implements Serializable 
 
     /** {@inheritDoc} */
     @Override
-    public void setSubMatrix(final double[][] subMatrix, final int row, final int column) {
+    public void setSubMatrix(final double[][] subMatrix, final int row, final int column)
+        throws NoDataException, NullArgumentException {
         // safety checks
+        MathUtils.checkNotNull(subMatrix);
         final int refLength = subMatrix[0].length;
         if (refLength == 0) {
             throw new NoDataException(LocalizedFormats.AT_LEAST_ONE_COLUMN);

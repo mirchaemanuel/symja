@@ -34,15 +34,16 @@ import org.apache.commons.math.util.FastMath;
  * provided for some of the methods that do not vary from distribution to
  * distribution.
  *
- * @version $Revision: 1060449 $ $Date: 2011-01-18 17:24:27 +0100 (Di, 18 Jan 2011) $
+ * @version $Id: AbstractContinuousDistribution.java 1131229 2011-06-03 20:49:25Z luc $
  */
 public abstract class AbstractContinuousDistribution
     extends AbstractDistribution
     implements ContinuousDistribution, Serializable {
-    /** Serializable version identifier */
-    private static final long serialVersionUID = -38038050983108802L;
+
     /** Default accuracy. */
     public static final double SOLVER_DEFAULT_ABSOLUTE_ACCURACY = 1e-6;
+    /** Serializable version identifier */
+    private static final long serialVersionUID = -38038050983108802L;
     /**
      * RandomData instance used to generate samples from the distribution
      * @since 2.2
@@ -88,9 +89,7 @@ public abstract class AbstractContinuousDistribution
                 try {
                     ret = cumulativeProbability(x) - p;
                 } catch (MathException ex) {
-                    throw new MathUserException(ex,
-                                                ex.getSpecificPattern(), ex.getGeneralPattern(),
-                                                ex.getArguments());
+                    throw new MathUserException(ex);
                 }
                 if (Double.isNaN(ret)) {
                     throw new MathUserException(LocalizedFormats.CUMULATIVE_PROBABILITY_RETURNED_NAN, x, p);

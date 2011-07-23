@@ -23,7 +23,7 @@ import org.apache.commons.math.exception.util.LocalizedFormats;
  * Exception to be thrown when two sets of dimensions differ.
  *
  * @since 3.0
- * @version $Revision$ $Date$
+ * @version $Id$
  */
 public class MultiDimensionMismatchException extends MathIllegalArgumentException {
     /** Serializable version Id. */
@@ -42,7 +42,7 @@ public class MultiDimensionMismatchException extends MathIllegalArgumentExceptio
      */
     public MultiDimensionMismatchException(Integer[] wrong,
                                            Integer[] expected) {
-        this(null, wrong, expected);
+        this(LocalizedFormats.DIMENSIONS_MISMATCH, wrong, expected);
     }
 
     /**
@@ -56,7 +56,7 @@ public class MultiDimensionMismatchException extends MathIllegalArgumentExceptio
     public MultiDimensionMismatchException(Localizable specific,
                                            Integer[] wrong,
                                            Integer[] expected) {
-        super(specific, LocalizedFormats.DIMENSIONS_MISMATCH, wrong, expected);
+        super(specific, wrong, expected);
         this.wrong = wrong.clone();
         this.expected = expected.clone();
     }

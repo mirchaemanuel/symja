@@ -21,25 +21,26 @@ import java.util.Arrays;
 
 import org.apache.commons.math.exception.util.LocalizedFormats;
 import org.apache.commons.math.exception.NoDataException;
+import org.apache.commons.math.exception.NullArgumentException;
 import org.apache.commons.math.analysis.DifferentiableUnivariateRealFunction;
 import org.apache.commons.math.analysis.UnivariateRealFunction;
+import org.apache.commons.math.analysis.ParametricUnivariateRealFunction;
 import org.apache.commons.math.util.FastMath;
+import org.apache.commons.math.util.MathUtils;
 
 /**
  * Immutable representation of a real polynomial function with real coefficients.
  * <p>
  * <a href="http://mathworld.wolfram.com/HornersMethod.html">Horner's Method</a>
- *  is used to evaluate the function.</p>
+ * is used to evaluate the function.</p>
  *
- * @version $Revision: 1042422 $ $Date: 2010-12-05 20:25:21 +0100 (So, 05 Dez 2010) $
+ * @version $Id: PolynomialFunction.java 1132432 2011-06-05 14:59:29Z luc $
  */
 public class PolynomialFunction implements DifferentiableUnivariateRealFunction, Serializable {
-
     /**
      * Serialization identifier
      */
     private static final long serialVersionUID = -7726511984200295583L;
-
     /**
      * The coefficients of the polynomial, ordered by degree -- i.e.,
      * coefficients[0] is the constant term and coefficients[n] is the
@@ -57,12 +58,14 @@ public class PolynomialFunction implements DifferentiableUnivariateRealFunction,
      * The constructor makes a copy of the input array and assigns the copy to
      * the coefficients property.</p>
      *
-     * @param c polynomial coefficients
-     * @throws NullPointerException if c is null
-     * @throws NoDataException if c is empty
+     * @param c Polynomial coefficients.
+     * @throws NullArgumentException if {@code c} is {@code null}.
+     * @throws NoDataException if {@code c} is empty.
      */
-    public PolynomialFunction(double c[]) {
+    public PolynomialFunction(double c[])
+        throws NullArgumentException, NoDataException {
         super();
+        MathUtils.checkNotNull(c);
         int n = c.length;
         if (n == 0) {
             throw new NoDataException(LocalizedFormats.EMPTY_POLYNOMIALS_COEFFICIENTS_ARRAY);
@@ -77,23 +80,22 @@ public class PolynomialFunction implements DifferentiableUnivariateRealFunction,
     /**
      * Compute the value of the function for the given argument.
      * <p>
-     *  The value returned is <br>
-     *   <code>coefficients[n] * x^n + ... + coefficients[1] * x  + coefficients[0]</code>
+     *  The value returned is <br/>
+     *  <code>coefficients[n] * x^n + ... + coefficients[1] * x  + coefficients[0]</code>
      * </p>
      *
-     * @param x the argument for which the function value should be computed
-     * @return the value of the polynomial at the given point
+     * @param x Argument for which the function value should be computed.
+     * @return the value of the polynomial at the given point.
      * @see UnivariateRealFunction#value(double)
      */
     public double value(double x) {
        return evaluate(coefficients, x);
     }
 
-
     /**
-     *  Returns the degree of the polynomial
+     * Returns the degree of the polynomial.
      *
-     * @return the degree of the polynomial
+     * @return the degree of the polynomial.
      */
     public int degree() {
         return coefficients.length - 1;
@@ -105,7 +107,7 @@ public class PolynomialFunction implements DifferentiableUnivariateRealFunction,
      * Changes made to the returned copy will not affect the coefficients of
      * the polynomial.</p>
      *
-     * @return  a fresh copy of the coefficients array
+     * @return a fresh copy of the coefficients array.
      */
     public double[] getCoefficients() {
         return coefficients.clone();
@@ -115,19 +117,21 @@ public class PolynomialFunction implements DifferentiableUnivariateRealFunction,
      * Uses Horner's Method to evaluate the polynomial with the given coefficients at
      * the argument.
      *
-     * @param coefficients  the coefficients of the polynomial to evaluate
-     * @param argument  the input value
-     * @return  the value of the polynomial
-     * @throws NoDataException if coefficients is empty
-     * @throws NullPointerException if coefficients is null
+     * @param coefficients Coefficients of the polynomial to evaluate.
+     * @param argument Input value.
+     * @return the value of the polynomial.
+     * @throws NoDataException if {@code coefficients} is empty.
+     * @throws NullArgumentException if {@code coefficients} is {@code null}.
      */
-    protected static double evaluate(double[] coefficients, double argument) {
+    protected static double evaluate(double[] coefficients, double argument)
+        throws NullArgumentException, NoDataException {
+        MathUtils.checkNotNull(coefficients);
         int n = coefficients.length;
         if (n == 0) {
             throw new NoDataException(LocalizedFormats.EMPTY_POLYNOMIALS_COEFFICIENTS_ARRAY);
         }
         double result = coefficients[n - 1];
-        for (int j = n -2; j >=0; j--) {
+        for (int j = n - 2; j >= 0; j--) {
             result = argument * result + coefficients[j];
         }
         return result;
@@ -135,11 +139,11 @@ public class PolynomialFunction implements DifferentiableUnivariateRealFunction,
 
     /**
      * Add a polynomial to the instance.
-     * @param p polynomial to add
-     * @return a new polynomial which is the sum of the instance and p
+     *
+     * @param p Polynomial to add.
+     * @return a new polynomial which is the sum of the instance and {@code p}.
      */
     public PolynomialFunction add(final PolynomialFunction p) {
-
         // identify the lowest degree polynomial
         final int lowLength  = FastMath.min(coefficients.length, p.coefficients.length);
         final int highLength = FastMath.max(coefficients.length, p.coefficients.length);
@@ -156,16 +160,15 @@ public class PolynomialFunction implements DifferentiableUnivariateRealFunction,
                          highLength - lowLength);
 
         return new PolynomialFunction(newCoefficients);
-
     }
 
     /**
      * Subtract a polynomial from the instance.
-     * @param p polynomial to subtract
-     * @return a new polynomial which is the difference the instance minus p
+     *
+     * @param p Polynomial to subtract.
+     * @return a new polynomial which is the difference the instance minus {@code p}.
      */
     public PolynomialFunction subtract(final PolynomialFunction p) {
-
         // identify the lowest degree polynomial
         int lowLength  = FastMath.min(coefficients.length, p.coefficients.length);
         int highLength = FastMath.max(coefficients.length, p.coefficients.length);
@@ -185,12 +188,12 @@ public class PolynomialFunction implements DifferentiableUnivariateRealFunction,
         }
 
         return new PolynomialFunction(newCoefficients);
-
     }
 
     /**
      * Negate the instance.
-     * @return a new polynomial
+     *
+     * @return a new polynomial.
      */
     public PolynomialFunction negate() {
         double[] newCoefficients = new double[coefficients.length];
@@ -202,11 +205,11 @@ public class PolynomialFunction implements DifferentiableUnivariateRealFunction,
 
     /**
      * Multiply the instance by a polynomial.
-     * @param p polynomial to multiply by
-     * @return a new polynomial
+     *
+     * @param p Polynomial to multiply by.
+     * @return a new polynomial.
      */
     public PolynomialFunction multiply(final PolynomialFunction p) {
-
         double[] newCoefficients = new double[coefficients.length + p.coefficients.length - 1];
 
         for (int i = 0; i < newCoefficients.length; ++i) {
@@ -219,18 +222,19 @@ public class PolynomialFunction implements DifferentiableUnivariateRealFunction,
         }
 
         return new PolynomialFunction(newCoefficients);
-
     }
 
     /**
      * Returns the coefficients of the derivative of the polynomial with the given coefficients.
      *
-     * @param coefficients  the coefficients of the polynomial to differentiate
-     * @return the coefficients of the derivative or null if coefficients has length 1.
-     * @throws NoDataException if coefficients is empty
-     * @throws NullPointerException if coefficients is null
+     * @param coefficients Coefficients of the polynomial to differentiate.
+     * @return the coefficients of the derivative or {@code null} if coefficients has length 1.
+     * @throws NoDataException if {@code coefficients} is empty.
+     * @throws NullArgumentException if {@code coefficients} is {@code null}.
      */
-    protected static double[] differentiate(double[] coefficients) {
+    protected static double[] differentiate(double[] coefficients)
+        throws NullArgumentException, NoDataException {
+        MathUtils.checkNotNull(coefficients);
         int n = coefficients.length;
         if (n == 0) {
             throw new NoDataException(LocalizedFormats.EMPTY_POLYNOMIALS_COEFFICIENTS_ARRAY);
@@ -239,32 +243,33 @@ public class PolynomialFunction implements DifferentiableUnivariateRealFunction,
             return new double[]{0};
         }
         double[] result = new double[n - 1];
-        for (int i = n - 1; i  > 0; i--) {
+        for (int i = n - 1; i > 0; i--) {
             result[i - 1] = i * coefficients[i];
         }
         return result;
     }
 
     /**
-     * Returns the derivative as a PolynomialRealFunction
+     * Returns the derivative as a {@link PolynomialFunction}.
      *
-     * @return  the derivative polynomial
+     * @return the derivative polynomial.
      */
     public PolynomialFunction polynomialDerivative() {
         return new PolynomialFunction(differentiate(coefficients));
     }
 
     /**
-     * Returns the derivative as a UnivariateRealFunction
+     * Returns the derivative as a {@link UnivariateRealFunction}.
      *
-     * @return  the derivative function
+     * @return the derivative function.
      */
     public UnivariateRealFunction derivative() {
         return polynomialDerivative();
     }
 
-    /** Returns a string representation of the polynomial.
-
+    /**
+     * Returns a string representation of the polynomial.
+     *
      * <p>The representation is user oriented. Terms are displayed lowest
      * degrees first. The multiplications signs, coefficients equals to
      * one and null terms are not displayed (except if the polynomial is 0,
@@ -274,56 +279,65 @@ public class PolynomialFunction implements DifferentiableUnivariateRealFunction,
      * (i.e. we display <code>-3</code> for a constant negative polynomial,
      * but <code>1 - 3 x + x^2</code> if the negative coefficient is not
      * the first one displayed).</p>
-
-     * @return a string representation of the polynomial
-
+     *
+     * @return a string representation of the polynomial.
      */
     @Override
-     public String toString() {
+    public String toString() {
+        StringBuilder s = new StringBuilder();
+        if (coefficients[0] == 0.0) {
+            if (coefficients.length == 1) {
+                return "0";
+            }
+        } else {
+            s.append(toString(coefficients[0]));
+        }
 
-       StringBuilder s = new StringBuilder();
-       if (coefficients[0] == 0.0) {
-         if (coefficients.length == 1) {
-           return "0";
-         }
-       } else {
-         s.append(Double.toString(coefficients[0]));
-       }
+        for (int i = 1; i < coefficients.length; ++i) {
+            if (coefficients[i] != 0) {
+                if (s.length() > 0) {
+                    if (coefficients[i] < 0) {
+                        s.append(" - ");
+                    } else {
+                        s.append(" + ");
+                    }
+                } else {
+                    if (coefficients[i] < 0) {
+                        s.append("-");
+                    }
+                }
 
-       for (int i = 1; i < coefficients.length; ++i) {
+                double absAi = FastMath.abs(coefficients[i]);
+                if ((absAi - 1) != 0) {
+                    s.append(toString(absAi));
+                    s.append(' ');
+                }
 
-         if (coefficients[i] != 0) {
+                s.append("x");
+                if (i > 1) {
+                    s.append('^');
+                    s.append(Integer.toString(i));
+                }
+            }
+        }
 
-           if (s.length() > 0) {
-             if (coefficients[i] < 0) {
-               s.append(" - ");
-             } else {
-               s.append(" + ");
-             }
-           } else {
-             if (coefficients[i] < 0) {
-               s.append("-");
-             }
-           }
+        return s.toString();
+    }
 
-           double absAi = FastMath.abs(coefficients[i]);
-           if ((absAi - 1) != 0) {
-             s.append(Double.toString(absAi));
-             s.append(' ');
-           }
-
-           s.append("x");
-           if (i > 1) {
-             s.append('^');
-             s.append(Integer.toString(i));
-           }
-         }
-
-       }
-
-       return s.toString();
-
-     }
+    /**
+     * Creates a string representing a coefficient, removing ".0" endings.
+     *
+     * @param coeff Coefficient.
+     * @return a string representation of {@code coeff}.
+     */
+    private static String toString(double coeff) {
+        final String c = Double.toString(coeff);
+        if (c.endsWith(".0")) {
+            return c.substring(0, c.length() - 2);
+        } else {
+            return c;
+        }
+    }
 
     /** {@inheritDoc} */
     @Override
@@ -337,14 +351,37 @@ public class PolynomialFunction implements DifferentiableUnivariateRealFunction,
     /** {@inheritDoc} */
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (!(obj instanceof PolynomialFunction))
+        }
+        if (!(obj instanceof PolynomialFunction)) {
             return false;
+        }
         PolynomialFunction other = (PolynomialFunction) obj;
-        if (!Arrays.equals(coefficients, other.coefficients))
+        if (!Arrays.equals(coefficients, other.coefficients)) {
             return false;
+        }
         return true;
     }
 
+    /**
+     * Dedicated parametric polynomial class.
+     */
+    public static class Parametric implements ParametricUnivariateRealFunction {
+        /** {@inheritDoc} */
+        public double[] gradient(double x, double ... parameters) {
+            final double[] gradient = new double[parameters.length];
+            double xn = 1.0;
+            for (int i = 0; i < parameters.length; ++i) {
+                gradient[i] = xn;
+                xn *= x;
+            }
+            return gradient;
+        }
+
+        /** {@inheritDoc} */
+        public double value(final double x, final double ... parameters) {
+            return PolynomialFunction.evaluate(parameters, x);
+        }
+    }
 }

@@ -27,7 +27,7 @@ import org.apache.commons.math.util.FastMath;
 /**
  * This class implements the {@link RealVector} interface with a
  * {@link OpenIntToDoubleHashMap} backing store.
- * @version $Revision: 1027952 $ $Date: 2010-10-27 15:16:57 +0200 (Mi, 27 Okt 2010) $
+ * @version $Id: OpenMapRealVector.java 1131229 2011-06-03 20:49:25Z luc $
  * @since 2.0
 */
 public class OpenMapRealVector extends AbstractRealVector
@@ -631,14 +631,14 @@ public class OpenMapRealVector extends AbstractRealVector
      /** {@inheritDoc} */
     @Override
     public RealMatrix outerProduct(double[] v) {
-        checkVectorDimensions(v.length);
-        RealMatrix res = new OpenMapRealMatrix(virtualSize, virtualSize);
+        final int n = v.length;
+        RealMatrix res = new OpenMapRealMatrix(virtualSize, n);
         Iterator iter = entries.iterator();
         while (iter.hasNext()) {
             iter.advance();
             int row = iter.key();
             double value = iter.value();
-            for (int col = 0; col < virtualSize; col++) {
+            for (int col = 0; col < n; col++) {
                 res.setEntry(row, col, value * v[col]);
             }
         }
@@ -839,6 +839,7 @@ public class OpenMapRealVector extends AbstractRealVector
     /**
      *
      * @return the percentage of none zero elements as a decimal percent.
+     * @since 2.2
      */
     public double getSparsity() {
         return (double)entries.size()/(double)getDimension();
