@@ -17,13 +17,18 @@
 
 package org.apache.commons.math.linear;
 
+import org.apache.commons.math.exception.DimensionMismatchException;
+import org.apache.commons.math.exception.NullArgumentException;
+import org.apache.commons.math.exception.OutOfRangeException;
+import org.apache.commons.math.exception.ZeroException;
+
 /**
  * Interface defining a real-valued matrix with basic algebraic operations.
  * <p>
  * Matrix element indexing is 0-based -- e.g., <code>getEntry(0, 0)</code>
  * returns the element in the first row, first column of the matrix.</p>
  *
- * @version $Revision: 1038403 $ $Date: 2010-11-24 01:42:12 +0100 (Mi, 24 Nov 2010) $
+ * @version $Id: RealMatrix.java 1132432 2011-06-05 14:59:29Z luc $
  */
 public interface RealMatrix extends AnyMatrix {
     /**
@@ -98,6 +103,16 @@ public interface RealMatrix extends AnyMatrix {
      *             if rowDimension(this) != columnDimension(m)
      */
     RealMatrix preMultiply(RealMatrix m);
+
+    /**
+     * Returns the result multiplying this with itself <code>p</code> times.
+     * Depending on the underlying storage, instability for high powers might occur.
+     * @param      p raise this to power p
+     * @return     this^p
+     * @throws     IllegalArgumentException if p < 0
+     *             NonSquareMatrixException if the matrix is not square
+     */
+    RealMatrix power(final int p);
 
     /**
      * Returns matrix entries as a two-dimensional array.
@@ -200,19 +215,16 @@ public interface RealMatrix extends AnyMatrix {
     * @param subMatrix  array containing the submatrix replacement data
     * @param row  row coordinate of the top, left element to be replaced
     * @param column  column coordinate of the top, left element to be replaced
-    * @throws org.apache.commons.math.exception.ZeroException if
-    * {@code subMatrix} does not contain at least one column.
-    * @throws org.apache.commons.math.exception.OutOfRangeException if
-    * {@code subMatrix} does not fit into this matrix from element in
-    * {@code (row, column)}.
-    * @throws org.apache.commons.math.exception.DimensionMismatchException
-    * if {@code subMatrix} is not rectangular.
+    * @throws ZeroException if {@code subMatrix} does not contain at least one column.
+    * @throws OutOfRangeException if {@code subMatrix} does not fit into
+    * this matrix from element in {@code (row, column)}.
+    * @throws DimensionMismatchException if {@code subMatrix} is not rectangular.
     * (not all rows have the same length) or empty.
-    * @throws org.apache.commons.math.exception.NullArgumentException if
-    * {@code subMatrix} is {@code null}.
+    * @throws NullArgumentException if {@code subMatrix} is {@code null}.
     * @since 2.0
     */
-    void setSubMatrix(double[][] subMatrix, int row, int column);
+    void setSubMatrix(double[][] subMatrix, int row, int column)
+        throws ZeroException, OutOfRangeException, DimensionMismatchException, NullArgumentException;
 
    /**
     * Geet the entries at the given row index
@@ -234,7 +246,7 @@ public interface RealMatrix extends AnyMatrix {
     * columns as the instance).
     * @throws org.apache.commons.math.exception.OutOfRangeException if the
     * specified row index is invalid.
-    * @throws org.apache.commons.math.exception.MatrixDimensionMismatchException
+    * @throws MatrixDimensionMismatchException
     * if the matrix dimensions do not match one instance row.
     */
     void setRowMatrix(int row, RealMatrix matrix);
@@ -259,7 +271,7 @@ public interface RealMatrix extends AnyMatrix {
     * of rows as the instance).
     * @throws org.apache.commons.math.exception.OutOfRangeException if
     * the specified column index is invalid.
-    * @throws org.apache.commons.math.exception.MatrixDimensionMismatchException
+    * @throws MatrixDimensionMismatchException
     * if the {@code matrix} dimensions do not match one instance column.
     */
     void setColumnMatrix(int column, RealMatrix matrix);
@@ -284,7 +296,7 @@ public interface RealMatrix extends AnyMatrix {
     * as the instance).
     * @throws org.apache.commons.math.exception.OutOfRangeException if
     * the specified row index is invalid.
-    * @throws org.apache.commons.math.exception.MatrixDimensionMismatchException
+    * @throws MatrixDimensionMismatchException
     * if the vector dimension does not match one instance row.
     */
     void setRowVector(int row, RealVector vector);
@@ -309,7 +321,7 @@ public interface RealMatrix extends AnyMatrix {
     * the instance).
     * @throws org.apache.commons.math.exception.OutOfRangeException if the
     * specified column index is invalid.
-    * @throws org.apache.commons.math.exception.MatrixDimensionMismatchException
+    * @throws MatrixDimensionMismatchException
     * if the vector dimension does not match one instance column.
     */
     void setColumnVector(int column, RealVector vector);
@@ -334,7 +346,7 @@ public interface RealMatrix extends AnyMatrix {
      * the instance)
      * @throws org.apache.commons.math.exception.OutOfRangeException if the
      * specified row index is invalid.
-     * @throws org.apache.commons.math.exception.MatrixDimensionMismatchException
+     * @throws MatrixDimensionMismatchException
      * if the array size does not match one instance row.
      */
     void setRow(int row, double[] array);
@@ -359,7 +371,7 @@ public interface RealMatrix extends AnyMatrix {
      * the instance).
      * @throws org.apache.commons.math.exception.OutOfRangeException if the
      * specified column index is invalid.
-     * @throws org.apache.commons.math.exception.MatrixDimensionMismatchException
+     * @throws MatrixDimensionMismatchException
      * if the array size does not match one instance column.
      */
     void setColumn(int column, double[] array);
@@ -427,7 +439,7 @@ public interface RealMatrix extends AnyMatrix {
      * trace</a> of the matrix (the sum of the elements on the main diagonal).
      *
      * @return the trace.
-     * @throws org.apache.commons.math.exception.NonSquareMatrixException
+     * @throws NonSquareMatrixException
      * if the matrix is not square.
      */
     double getTrace();

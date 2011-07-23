@@ -43,7 +43,7 @@ package org.apache.commons.math.ode.events;
  * error (this event handling feature is available for all integrators,
  * including fixed step ones).</p>
  *
- * @version $Revision: 902214 $ $Date: 2010-01-22 19:40:28 +0100 (Fr, 22 Jan 2010) $
+ * @version $Id: EventHandler.java 1131229 2011-06-03 20:49:25Z luc $
  * @since 1.2
  */
 

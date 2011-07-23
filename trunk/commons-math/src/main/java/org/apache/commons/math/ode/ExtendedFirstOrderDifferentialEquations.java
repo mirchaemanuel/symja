@@ -44,7 +44,7 @@ package org.apache.commons.math.ode;
  *
  * @see FirstOrderDifferentialEquations
  *
- * @version $Revision: 980981 $ $Date: 2010-07-31 00:03:04 +0200 (Sa, 31 Jul 2010) $
+ * @version $Id: ExtendedFirstOrderDifferentialEquations.java 1131229 2011-06-03 20:49:25Z luc $
  * @since 2.2
  */
 

@@ -22,7 +22,7 @@ import org.apache.commons.math.analysis.MultivariateRealFunction;
  * Interface representing a univariate real interpolating function.
  *
  * @since 2.1
- * @version $Revision: 1061790 $ $Date: 2011-01-21 13:51:03 +0100 (Fr, 21 Jan 2011) $
+ * @version $Id: MultivariateRealInterpolator.java 1131229 2011-06-03 20:49:25Z luc $
  */
 public interface MultivariateRealInterpolator {
 

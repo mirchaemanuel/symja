@@ -20,8 +20,6 @@ package org.apache.commons.math.ode.nonstiff;
 import org.apache.commons.math.exception.MathUserException;
 import org.apache.commons.math.ode.FirstOrderDifferentialEquations;
 import org.apache.commons.math.ode.IntegratorException;
-import org.apache.commons.math.ode.sampling.AbstractStepInterpolator;
-import org.apache.commons.math.ode.sampling.DummyStepInterpolator;
 import org.apache.commons.math.ode.sampling.StepHandler;
 import org.apache.commons.math.util.FastMath;
 
@@ -58,7 +56,7 @@ import org.apache.commons.math.util.FastMath;
  * evaluation is saved. For an <i>fsal</i> method, we have cs = 1 and
  * asi = bi for all i.</p>
  *
- * @version $Revision: 1061527 $ $Date: 2011-01-20 22:31:54 +0100 (Do, 20 Jan 2011) $
+ * @version $Id: EmbeddedRungeKuttaIntegrator.java 1139831 2011-06-26 16:26:48Z luc $
  * @since 1.2
  */
 
@@ -99,10 +97,12 @@ public abstract class EmbeddedRungeKuttaIntegrator
    * @param a internal weights from Butcher array (without the first empty row)
    * @param b propagation weights for the high order method from Butcher array
    * @param prototype prototype of the step interpolator to use
-   * @param minStep minimal step (must be positive even for backward
-   * integration), the last step can be smaller than this
-   * @param maxStep maximal step (must be positive even for backward
-   * integration)
+   * @param minStep minimal step (sign is irrelevant, regardless of
+   * integration direction, forward or backward), the last step can
+   * be smaller than this
+   * @param maxStep maximal step (sign is irrelevant, regardless of
+   * integration direction, forward or backward), the last step can
+   * be smaller than this
    * @param scalAbsoluteTolerance allowed absolute error
    * @param scalRelativeTolerance allowed relative error
    */
@@ -209,14 +209,8 @@ public abstract class EmbeddedRungeKuttaIntegrator
     final double[] yDotTmp = new double[y0.length];
 
     // set up an interpolator sharing the integrator arrays
-    AbstractStepInterpolator interpolator;
-    if (requiresDenseOutput()) {
-      final RungeKuttaStepInterpolator rki = (RungeKuttaStepInterpolator) prototype.copy();
-      rki.reinitialize(this, yTmp, yDotK, forward);
-      interpolator = rki;
-    } else {
-      interpolator = new DummyStepInterpolator(yTmp, yDotK[stages - 1], forward);
-    }
+    final RungeKuttaStepInterpolator interpolator = (RungeKuttaStepInterpolator) prototype.copy();
+    interpolator.reinitialize(this, yTmp, yDotK, forward);
     interpolator.storeTime(t0);
 
     // set up integration control objects
@@ -226,7 +220,7 @@ public abstract class EmbeddedRungeKuttaIntegrator
     for (StepHandler handler : stepHandlers) {
         handler.reset();
     }
-    statesInitialized = false;
+    setStateInitialized(false);
 
     // main integration loop
     isLastStep = false;

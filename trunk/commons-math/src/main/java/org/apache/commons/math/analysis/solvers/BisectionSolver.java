@@ -24,7 +24,7 @@ import org.apache.commons.math.util.FastMath;
  * <p>
  * The function should be continuous but not necessarily smooth.</p>
  *
- * @version $Revision: 1042596 $ $Date: 2010-12-06 12:56:26 +0100 (Mo, 06 Dez 2010) $
+ * @version $Id: BisectionSolver.java 1131229 2011-06-03 20:49:25Z luc $
  */
 public class BisectionSolver extends AbstractUnivariateRealSolver {
     /** Default absolute accuracy. */

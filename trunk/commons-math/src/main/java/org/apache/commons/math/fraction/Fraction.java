@@ -32,7 +32,7 @@ import org.apache.commons.math.util.FastMath;
  * implements Serializable since 2.0
  *
  * @since 1.1
- * @version $Revision: 1044186 $ $Date: 2010-12-10 01:50:50 +0100 (Fr, 10 Dez 2010) $
+ * @version $Id: Fraction.java 1131229 2011-06-03 20:49:25Z luc $
  */
 public class Fraction
     extends Number

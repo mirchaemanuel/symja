@@ -28,7 +28,7 @@ import org.apache.commons.math.util.OpenIntToFieldHashMap;
 /**
  * This class implements the {@link FieldVector} interface with a {@link OpenIntToFieldHashMap} backing store.
  * @param <T> the type of the field elements
- * @version $Revision: 1027952 $ $Date: 2010-10-27 15:16:57 +0200 (Mi, 27 Okt 2010) $
+ * @version $Id: SparseFieldVector.java 1139906 2011-06-26 18:42:32Z luc $
  * @since 2.0
  */
 public class SparseFieldVector<T extends FieldElement<T>> implements FieldVector<T>, Serializable {
@@ -409,8 +409,8 @@ public class SparseFieldVector<T extends FieldElement<T>> implements FieldVector
      * if the dimensions do not match.
      */
     public FieldMatrix<T> outerProduct(SparseFieldVector<T> v) {
-        checkVectorDimensions(v.getDimension());
-        SparseFieldMatrix<T> res = new SparseFieldMatrix<T>(field, virtualSize, virtualSize);
+        final int n = v.getDimension();
+        SparseFieldMatrix<T> res = new SparseFieldMatrix<T>(field, virtualSize, n);
         OpenIntToFieldHashMap<T>.Iterator iter = entries.iterator();
         while (iter.hasNext()) {
             iter.advance();
@@ -425,14 +425,14 @@ public class SparseFieldVector<T extends FieldElement<T>> implements FieldVector
 
     /** {@inheritDoc} */
     public FieldMatrix<T> outerProduct(T[] v) {
-        checkVectorDimensions(v.length);
-        FieldMatrix<T> res = new SparseFieldMatrix<T>(field, virtualSize, virtualSize);
+        final int n = v.length;
+        FieldMatrix<T> res = new SparseFieldMatrix<T>(field, virtualSize, n);
         OpenIntToFieldHashMap<T>.Iterator iter = entries.iterator();
         while (iter.hasNext()) {
             iter.advance();
             int row = iter.key();
             FieldElement<T>value = iter.value();
-            for (int col = 0; col < virtualSize; col++) {
+            for (int col = 0; col < n; col++) {
                 res.setEntry(row, col, value.multiply(v[col]));
             }
         }
@@ -441,10 +441,11 @@ public class SparseFieldVector<T extends FieldElement<T>> implements FieldVector
 
     /** {@inheritDoc} */
     public FieldMatrix<T> outerProduct(FieldVector<T> v) {
-        if(v instanceof SparseFieldVector<?>)
+        if (v instanceof SparseFieldVector<?>) {
             return outerProduct((SparseFieldVector<T>)v);
-        else
+        } else {
             return outerProduct(v.toArray());
+        }
     }
 
     /** {@inheritDoc} */
@@ -515,10 +516,11 @@ public class SparseFieldVector<T extends FieldElement<T>> implements FieldVector
 
     /** {@inheritDoc} */
     public FieldVector<T> subtract(FieldVector<T> v) {
-        if(v instanceof SparseFieldVector<?>)
+        if (v instanceof SparseFieldVector<?>) {
             return subtract((SparseFieldVector<T>)v);
-        else
+        } else {
             return subtract(v.toArray());
+        }
     }
 
     /** {@inheritDoc} */

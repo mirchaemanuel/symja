@@ -20,7 +20,7 @@ package org.apache.commons.math.distribution;
  * Computes the cumulative, inverse cumulative and density functions for the beta distribuiton.
  *
  * @see <a href="http://en.wikipedia.org/wiki/Beta_distribution">Beta_distribution</a>
- * @version $Revision: 1003048 $ $Date: 2010-09-30 14:55:02 +0200 (Do, 30 Sep 2010) $
+ * @version $Id: BetaDistribution.java 1131229 2011-06-03 20:49:25Z luc $
  * @since 2.0
  */
 public interface BetaDistribution extends ContinuousDistribution {

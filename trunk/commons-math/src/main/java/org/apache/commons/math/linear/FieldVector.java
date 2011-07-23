@@ -40,7 +40,7 @@ import org.apache.commons.math.FieldElement;
  * </pre>
  *
  * @param <T> the type of the field elements
- * @version $Revision: 1027952 $ $Date: 2010-10-27 15:16:57 +0200 (Mi, 27 Okt 2010) $
+ * @version $Id: FieldVector.java 1131229 2011-06-03 20:49:25Z luc $
  * @since 2.0
  */
 public interface FieldVector<T extends FieldElement<T>>  {
@@ -241,20 +241,16 @@ public interface FieldVector<T extends FieldElement<T>>  {
     /**
      * Compute the outer product.
      * @param v vector with which outer product should be computed
-     * @return the square matrix outer product between instance and v
-     * @exception IllegalArgumentException if v is not the same size as this
+     * @return the matrix outer product between instance and v
      */
-    FieldMatrix<T> outerProduct(FieldVector<T> v)
-        throws IllegalArgumentException;
+    FieldMatrix<T> outerProduct(FieldVector<T> v);
 
     /**
      * Compute the outer product.
      * @param v vector with which outer product should be computed
-     * @return the square matrix outer product between instance and v
-     * @exception IllegalArgumentException if v is not the same size as this
+     * @return the matrix outer product between instance and v
      */
-    FieldMatrix<T> outerProduct(T[] v)
-        throws IllegalArgumentException;
+    FieldMatrix<T> outerProduct(T[] v);
 
     /**
      * Returns the entry in the specified index.

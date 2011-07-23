@@ -22,7 +22,7 @@ import org.apache.commons.math.exception.util.LocalizedFormats;
  * Exception to be thrown when the maximal number of evaluations is exceeded.
  *
  * @since 3.0
- * @version $Revision$ $Date$
+ * @version $Id$
  */
 public class TooManyEvaluationsException extends MaxCountExceededException {
     /** Serializable version Id. */
@@ -34,6 +34,7 @@ public class TooManyEvaluationsException extends MaxCountExceededException {
      * @param max Maximum number of evaluations.
      */
     public TooManyEvaluationsException(Number max) {
-        super(LocalizedFormats.EVALUATIONS, max);
+        super(max);
+        getContext().addMessage(LocalizedFormats.EVALUATIONS);
     }
 }

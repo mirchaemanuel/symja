@@ -41,13 +41,12 @@ import org.apache.commons.math.util.FastMath;
  * <p>
  * The formulas here do not use divided differences directly.</p>
  *
- * @version $Revision: 1034896 $ $Date: 2010-11-13 23:27:34 +0100 (Sat, 13 Nov 2010) $
+ * @version $Id$
  * @since 1.2
  * @see MullerSolver
  */
 public class MullerSolver2 extends AbstractUnivariateRealSolver {
-    /** Serializable version identifier */
-    private static final long serialVersionUID = 7694577816772532779L;
+
     /** Default absolute accuracy. */
     private static final double DEFAULT_ABSOLUTE_ACCURACY = 1e-6;
 

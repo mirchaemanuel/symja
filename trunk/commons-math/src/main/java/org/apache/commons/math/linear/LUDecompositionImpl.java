@@ -18,8 +18,6 @@
 package org.apache.commons.math.linear;
 
 import org.apache.commons.math.exception.DimensionMismatchException;
-import org.apache.commons.math.exception.NonSquareMatrixException;
-import org.apache.commons.math.exception.SingularMatrixException;
 import org.apache.commons.math.util.FastMath;
 
 /**
@@ -31,7 +29,7 @@ import org.apache.commons.math.util.FastMath;
  * <p>As shown by the presence of the P matrix, this decomposition is
  * implemented using partial pivoting.</p>
  *
- * @version $Revision: 1034220 $ $Date: 2010-11-12 01:13:27 +0100 (Fr, 12 Nov 2010) $
+ * @version $Id: LUDecompositionImpl.java 1131229 2011-06-03 20:49:25Z luc $
  * @since 2.0
  */
 public class LUDecompositionImpl implements LUDecomposition {
@@ -339,17 +337,17 @@ public class LUDecompositionImpl implements LUDecomposition {
         }
 
         /** {@inheritDoc} */
-        public RealMatrix solve(RealMatrix b) {
+        public double[][] solve(double[][] b) {
 
             final int m = pivot.length;
-            if (b.getRowDimension() != m) {
-                throw new DimensionMismatchException(b.getRowDimension(), m);
+            if (b.length != m) {
+                throw new DimensionMismatchException(b.length, m);
             }
             if (singular) {
                 throw new SingularMatrixException();
             }
 
-            final int nColB = b.getColumnDimension();
+            final int nColB = b[0].length;
 
             // Apply permutations to b
             final double[][] bp = new double[m][nColB];
@@ -357,7 +355,7 @@ public class LUDecompositionImpl implements LUDecomposition {
                 final double[] bpRow = bp[row];
                 final int pRow = pivot[row];
                 for (int col = 0; col < nColB; col++) {
-                    bpRow[col] = b.getEntry(pRow, col);
+                    bpRow[col] = b[pRow][col];
                 }
             }
 
@@ -389,7 +387,13 @@ public class LUDecompositionImpl implements LUDecomposition {
                 }
             }
 
-            return new Array2DRowRealMatrix(bp, false);
+            return bp;
+
+        }
+
+        /** {@inheritDoc} */
+        public RealMatrix solve(RealMatrix b) {
+            return new Array2DRowRealMatrix(solve(b.getData()), false);
         }
 
         /** {@inheritDoc} */

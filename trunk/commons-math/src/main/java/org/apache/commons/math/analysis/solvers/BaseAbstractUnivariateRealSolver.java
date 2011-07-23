@@ -17,11 +17,11 @@
 
 package org.apache.commons.math.analysis.solvers;
 
-import org.apache.commons.math.util.Incrementor;
+import org.apache.commons.math.analysis.UnivariateRealFunction;
 import org.apache.commons.math.exception.MaxCountExceededException;
 import org.apache.commons.math.exception.TooManyEvaluationsException;
-import org.apache.commons.math.exception.NullArgumentException;
-import org.apache.commons.math.analysis.UnivariateRealFunction;
+import org.apache.commons.math.util.Incrementor;
+import org.apache.commons.math.util.MathUtils;
 
 /**
  * Provide a default implementation for several functions useful to generic
@@ -29,7 +29,7 @@ import org.apache.commons.math.analysis.UnivariateRealFunction;
  *
  * @param <FUNC> Type of function to solve.
  *
- * @version $Revision: 1030464 $ $Date: 2010-11-03 14:46:04 +0100 (Wed, 03 Nov 2010) $
+ * @version $Id$
  * @since 2.0
  */
 public abstract class BaseAbstractUnivariateRealSolver<FUNC extends UnivariateRealFunction>
@@ -168,9 +168,7 @@ public abstract class BaseAbstractUnivariateRealSolver<FUNC extends UnivariateRe
                          double min, double max,
                          double startValue) {
         // Checks.
-        if (f == null) {
-            throw new NullArgumentException();
-        }
+        MathUtils.checkNotNull(f);
 
         // Reset.
         searchMin = min;

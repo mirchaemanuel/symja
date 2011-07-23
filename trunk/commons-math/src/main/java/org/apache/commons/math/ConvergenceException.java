@@ -16,7 +16,6 @@
  */
 package org.apache.commons.math;
 
-import org.apache.commons.math.exception.util.DummyLocalizable;
 import org.apache.commons.math.exception.util.Localizable;
 import org.apache.commons.math.exception.util.LocalizedFormats;
 
@@ -24,7 +23,7 @@ import org.apache.commons.math.exception.util.LocalizedFormats;
  * Error thrown when a numerical computation can not be performed because the
  * numerical result failed to converge to a finite value.
  *
- * @version $Revision: 983921 $ $Date: 2010-08-10 12:46:06 +0200 (Di, 10 Aug 2010) $
+ * @version $Id: ConvergenceException.java 1131229 2011-06-03 20:49:25Z luc $
  */
 public class ConvergenceException extends MathException {
 
@@ -36,19 +35,6 @@ public class ConvergenceException extends MathException {
      */
     public ConvergenceException() {
         super(LocalizedFormats.CONVERGENCE_FAILED);
-    }
-
-    /**
-     * Constructs an exception with specified formatted detail message.
-     * Message formatting is delegated to {@link java.text.MessageFormat}.
-     * @param pattern format specifier
-     * @param arguments format arguments
-     * @since 1.2
-     * @deprecated as of 2.2 replaced by {@link #ConvergenceException(Localizable, Object...)}
-     */
-    @Deprecated
-    public ConvergenceException(String pattern, Object ... arguments) {
-        this(new DummyLocalizable(pattern), arguments);
     }
 
     /**
@@ -68,20 +54,6 @@ public class ConvergenceException extends MathException {
      */
     public ConvergenceException(Throwable cause) {
         super(cause);
-    }
-
-    /**
-     * Constructs an exception with specified formatted detail message and root cause.
-     * Message formatting is delegated to {@link java.text.MessageFormat}.
-     * @param cause  the exception or error that caused this exception to be thrown
-     * @param pattern format specifier
-     * @param arguments format arguments
-     * @since 1.2
-     * @deprecated as of 2.2 replaced by {@link #ConvergenceException(Throwable, Localizable, Object...)}
-     */
-    @Deprecated
-    public ConvergenceException(Throwable cause, String pattern, Object ... arguments) {
-        this(cause, new DummyLocalizable(pattern), arguments);
     }
 
     /**

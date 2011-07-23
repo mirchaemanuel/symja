@@ -39,7 +39,7 @@ import org.apache.commons.math.util.FastMath;
  * classical implementations are fixed step size. The value of state vector
  * at step n+1 is a simple combination of the value at step n and of the
  * derivatives at steps n+1, n, n-1 ... Since y'<sub>n+1</sub> is needed to
- * compute y<sub>n+1</sub>,another method must be used to compute a first
+ * compute y<sub>n+1</sub>, another method must be used to compute a first
  * estimate of y<sub>n+1</sub>, then compute y'<sub>n+1</sub>, then compute
  * a final estimate of y<sub>n+1</sub> using the following formulas. Depending
  * on the number k of previous steps one wants to use for computing the next
@@ -62,7 +62,7 @@ import org.apache.commons.math.util.FastMath;
  * s<sub>2</sub>(n) = h<sup>2</sup>/2 y''<sub>n</sub> for second derivative
  * s<sub>3</sub>(n) = h<sup>3</sup>/6 y'''<sub>n</sub> for third derivative
  * ...
- * s<sub>k</sub>(n) = h<sup>k</sup>/k! y(k)<sub>n</sub> for k<sup>th</sup> derivative
+ * s<sub>k</sub>(n) = h<sup>k</sup>/k! y<sup>(k)</sup><sub>n</sub> for k<sup>th</sup> derivative
  * </pre></p>
  *
  * <p>The definitions above use the classical representation with several previous first
@@ -151,7 +151,7 @@ import org.apache.commons.math.util.FastMath;
  * <p>The P<sup>-1</sup>u vector and the P<sup>-1</sup> A P matrix do not depend on the state,
  * they only depend on k and therefore are precomputed once for all.</p>
  *
- * @version $Revision: 1061527 $ $Date: 2011-01-20 22:31:54 +0100 (Do, 20 Jan 2011) $
+ * @version $Id: AdamsMoultonIntegrator.java 1135946 2011-06-15 07:44:05Z luc $
  * @since 2.0
  */
 public class AdamsMoultonIntegrator extends AdamsIntegrator {
@@ -162,10 +162,12 @@ public class AdamsMoultonIntegrator extends AdamsIntegrator {
     /**
      * Build an Adams-Moulton integrator with the given order and error control parameters.
      * @param nSteps number of steps of the method excluding the one being computed
-     * @param minStep minimal step (must be positive even for backward
-     * integration), the last step can be smaller than this
-     * @param maxStep maximal step (must be positive even for backward
-     * integration)
+     * @param minStep minimal step (sign is irrelevant, regardless of
+     * integration direction, forward or backward), the last step can
+     * be smaller than this
+     * @param maxStep maximal step (sign is irrelevant, regardless of
+     * integration direction, forward or backward), the last step can
+     * be smaller than this
      * @param scalAbsoluteTolerance allowed absolute error
      * @param scalRelativeTolerance allowed relative error
      * @exception IllegalArgumentException if order is 1 or less
@@ -182,10 +184,12 @@ public class AdamsMoultonIntegrator extends AdamsIntegrator {
     /**
      * Build an Adams-Moulton integrator with the given order and error control parameters.
      * @param nSteps number of steps of the method excluding the one being computed
-     * @param minStep minimal step (must be positive even for backward
-     * integration), the last step can be smaller than this
-     * @param maxStep maximal step (must be positive even for backward
-     * integration)
+     * @param minStep minimal step (sign is irrelevant, regardless of
+     * integration direction, forward or backward), the last step can
+     * be smaller than this
+     * @param maxStep maximal step (sign is irrelevant, regardless of
+     * integration direction, forward or backward), the last step can
+     * be smaller than this
      * @param vecAbsoluteTolerance allowed absolute error
      * @param vecRelativeTolerance allowed relative error
      * @exception IllegalArgumentException if order is 1 or less
@@ -230,7 +234,7 @@ public class AdamsMoultonIntegrator extends AdamsIntegrator {
         for (StepHandler handler : stepHandlers) {
             handler.reset();
         }
-        statesInitialized = false;
+        setStateInitialized(false);
 
         // compute the initial Nordsieck vector using the configured starter integrator
         start(t0, y, t);

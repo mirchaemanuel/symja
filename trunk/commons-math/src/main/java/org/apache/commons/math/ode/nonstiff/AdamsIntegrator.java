@@ -26,7 +26,7 @@ import org.apache.commons.math.ode.MultistepIntegrator;
 
 /** Base class for {@link AdamsBashforthIntegrator Adams-Bashforth} and
  * {@link AdamsMoultonIntegrator Adams-Moulton} integrators.
- * @version $Revision: 1037328 $ $Date: 2010-11-20 22:01:50 +0100 (Sa, 20 Nov 2010) $
+ * @version $Id: AdamsIntegrator.java 1131229 2011-06-03 20:49:25Z luc $
  * @since 2.0
  */
 public abstract class AdamsIntegrator extends MultistepIntegrator {
@@ -35,14 +35,16 @@ public abstract class AdamsIntegrator extends MultistepIntegrator {
     private final AdamsNordsieckTransformer transformer;
 
     /**
-     * Build an Adams integrator with the given order and step control prameters.
+     * Build an Adams integrator with the given order and step control parameters.
      * @param name name of the method
      * @param nSteps number of steps of the method excluding the one being computed
      * @param order order of the method
-     * @param minStep minimal step (must be positive even for backward
-     * integration), the last step can be smaller than this
-     * @param maxStep maximal step (must be positive even for backward
-     * integration)
+     * @param minStep minimal step (sign is irrelevant, regardless of
+     * integration direction, forward or backward), the last step can
+     * be smaller than this
+     * @param maxStep maximal step (sign is irrelevant, regardless of
+     * integration direction, forward or backward), the last step can
+     * be smaller than this
      * @param scalAbsoluteTolerance allowed absolute error
      * @param scalRelativeTolerance allowed relative error
      * @exception IllegalArgumentException if order is 1 or less
@@ -62,10 +64,12 @@ public abstract class AdamsIntegrator extends MultistepIntegrator {
      * @param name name of the method
      * @param nSteps number of steps of the method excluding the one being computed
      * @param order order of the method
-     * @param minStep minimal step (must be positive even for backward
-     * integration), the last step can be smaller than this
-     * @param maxStep maximal step (must be positive even for backward
-     * integration)
+     * @param minStep minimal step (sign is irrelevant, regardless of
+     * integration direction, forward or backward), the last step can
+     * be smaller than this
+     * @param maxStep maximal step (sign is irrelevant, regardless of
+     * integration direction, forward or backward), the last step can
+     * be smaller than this
      * @param vecAbsoluteTolerance allowed absolute error
      * @param vecRelativeTolerance allowed relative error
      * @exception IllegalArgumentException if order is 1 or less
@@ -89,9 +93,10 @@ public abstract class AdamsIntegrator extends MultistepIntegrator {
 
     /** {@inheritDoc} */
     @Override
-    protected Array2DRowRealMatrix initializeHighOrderDerivatives(final double[] first,
-                                                        final double[][] multistep) {
-        return transformer.initializeHighOrderDerivatives(first, multistep);
+    protected Array2DRowRealMatrix initializeHighOrderDerivatives(final double h, final double[] t,
+                                                                  final double[][] y,
+                                                                  final double[][] yDot) {
+        return transformer.initializeHighOrderDerivatives(h, t, y, yDot);
     }
 
     /** Update the high order scaled derivatives for Adams integrators (phase 1).

@@ -56,7 +56,7 @@ import org.apache.commons.math.util.FastMath;
  * s<sub>2</sub>(n) = h<sup>2</sup>/2 y''<sub>n</sub> for second derivative
  * s<sub>3</sub>(n) = h<sup>3</sup>/6 y'''<sub>n</sub> for third derivative
  * ...
- * s<sub>k</sub>(n) = h<sup>k</sup>/k! y(k)<sub>n</sub> for k<sup>th</sup> derivative
+ * s<sub>k</sub>(n) = h<sup>k</sup>/k! y<sup>(k)</sup><sub>n</sub> for k<sup>th</sup> derivative
  * </pre></p>
  *
  * <p>The definitions above use the classical representation with several previous first
@@ -135,7 +135,7 @@ import org.apache.commons.math.util.FastMath;
  * <p>The P<sup>-1</sup>u vector and the P<sup>-1</sup> A P matrix do not depend on the state,
  * they only depend on k and therefore are precomputed once for all.</p>
  *
- * @version $Revision: 1061527 $ $Date: 2011-01-20 22:31:54 +0100 (Do, 20 Jan 2011) $
+ * @version $Id: AdamsBashforthIntegrator.java 1131229 2011-06-03 20:49:25Z luc $
  * @since 2.0
  */
 public class AdamsBashforthIntegrator extends AdamsIntegrator {
@@ -146,10 +146,12 @@ public class AdamsBashforthIntegrator extends AdamsIntegrator {
     /**
      * Build an Adams-Bashforth integrator with the given order and step control parameters.
      * @param nSteps number of steps of the method excluding the one being computed
-     * @param minStep minimal step (must be positive even for backward
-     * integration), the last step can be smaller than this
-     * @param maxStep maximal step (must be positive even for backward
-     * integration)
+     * @param minStep minimal step (sign is irrelevant, regardless of
+     * integration direction, forward or backward), the last step can
+     * be smaller than this
+     * @param maxStep maximal step (sign is irrelevant, regardless of
+     * integration direction, forward or backward), the last step can
+     * be smaller than this
      * @param scalAbsoluteTolerance allowed absolute error
      * @param scalRelativeTolerance allowed relative error
      * @exception IllegalArgumentException if order is 1 or less
@@ -166,10 +168,12 @@ public class AdamsBashforthIntegrator extends AdamsIntegrator {
     /**
      * Build an Adams-Bashforth integrator with the given order and step control parameters.
      * @param nSteps number of steps of the method excluding the one being computed
-     * @param minStep minimal step (must be positive even for backward
-     * integration), the last step can be smaller than this
-     * @param maxStep maximal step (must be positive even for backward
-     * integration)
+     * @param minStep minimal step (sign is irrelevant, regardless of
+     * integration direction, forward or backward), the last step can
+     * be smaller than this
+     * @param maxStep maximal step (sign is irrelevant, regardless of
+     * integration direction, forward or backward), the last step can
+     * be smaller than this
      * @param vecAbsoluteTolerance allowed absolute error
      * @param vecRelativeTolerance allowed relative error
      * @exception IllegalArgumentException if order is 1 or less
@@ -210,7 +214,7 @@ public class AdamsBashforthIntegrator extends AdamsIntegrator {
         for (StepHandler handler : stepHandlers) {
             handler.reset();
         }
-        statesInitialized = false;
+        setStateInitialized(false);
 
         // compute the initial Nordsieck vector using the configured starter integrator
         start(t0, y, t);

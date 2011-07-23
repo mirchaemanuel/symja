@@ -27,7 +27,7 @@ package org.apache.commons.math.distribution;
  * </ul>
  * </p>
  *
- * @version $Revision: 1003048 $ $Date: 2010-09-30 14:55:02 +0200 (Do, 30 Sep 2010) $
+ * @version $Id: ExponentialDistribution.java 1131229 2011-06-03 20:49:25Z luc $
  */
 public interface ExponentialDistribution extends ContinuousDistribution {
     /**

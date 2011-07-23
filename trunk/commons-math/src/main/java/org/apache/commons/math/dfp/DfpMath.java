@@ -19,7 +19,7 @@ package org.apache.commons.math.dfp;
 
 /** Mathematical routines for use with {@link Dfp}.
  * The constants are defined in {@link DfpField}
- * @version $Revision: 1042422 $ $Date: 2010-12-05 20:25:21 +0100 (So, 05 Dez 2010) $
+ * @version $Id: DfpMath.java 1139906 2011-06-26 18:42:32Z luc $
  * @since 2.2
  */
 public class DfpMath {
@@ -684,8 +684,9 @@ public class DfpMath {
 
             fact = fact.divide((i-1)*i);  // 1 over fact
             y = y.add(x.multiply(fact));
-            if (y.equals(py))
+            if (y.equals(py)) {
                 break;
+            }
             py = new Dfp(y);
         }
 

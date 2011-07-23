@@ -14,27 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.commons.math.linear;
 
+import org.apache.commons.math.exception.MathIllegalArgumentException;
 import org.apache.commons.math.exception.util.LocalizedFormats;
 
-
 /**
- * Thrown when a matrix is singular.
- * @version $Revision: 983921 $ $Date: 2010-08-10 12:46:06 +0200 (Di, 10 Aug 2010) $
- * @since 2.0
+ * Exception to be thrown when a non-singular matrix is expected.
+ *
+ * @since 3.0
+ * @version $Id$
  */
-public class SingularMatrixException extends InvalidMatrixException {
-
-    /** Serializable version identifier. */
-    private static final long serialVersionUID = -7379143356784298432L;
+public class SingularMatrixException extends MathIllegalArgumentException {
+    /** Serializable version Id. */
+    private static final long serialVersionUID = -4206514844735401070L;
 
     /**
-     * Construct an exception with a default message.
+     * Construct an exception.
      */
     public SingularMatrixException() {
         super(LocalizedFormats.SINGULAR_MATRIX);
     }
-
 }

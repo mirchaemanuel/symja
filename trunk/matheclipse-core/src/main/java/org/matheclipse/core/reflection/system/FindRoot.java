@@ -7,8 +7,11 @@ import org.apache.commons.math.analysis.UnivariateRealFunction;
 import org.apache.commons.math.analysis.solvers.BaseAbstractUnivariateRealSolver;
 import org.apache.commons.math.analysis.solvers.BisectionSolver;
 import org.apache.commons.math.analysis.solvers.BrentSolver;
+import org.apache.commons.math.analysis.solvers.IllinoisSolver;
 import org.apache.commons.math.analysis.solvers.MullerSolver;
 import org.apache.commons.math.analysis.solvers.NewtonSolver;
+import org.apache.commons.math.analysis.solvers.PegasusSolver;
+import org.apache.commons.math.analysis.solvers.RegulaFalsiSolver;
 import org.apache.commons.math.analysis.solvers.RiddersSolver;
 import org.apache.commons.math.analysis.solvers.SecantSolver;
 import org.matheclipse.core.basic.Config;
@@ -89,6 +92,12 @@ public class FindRoot extends AbstractFunctionEvaluator implements IConstantHead
 			solver = new RiddersSolver();
 		} else if (method.equals("Secant")) {
 			solver = new SecantSolver();
+		} else if (method.equals("RegulaFalsi")) {
+			solver = new RegulaFalsiSolver();
+		} else if (method.equals("Illinois")) {
+			solver = new IllinoisSolver();
+		} else if (method.equals("Pegasus")) {
+			solver = new PegasusSolver();
 		} else {
 			// default: NewtonSolver
 			BaseAbstractUnivariateRealSolver<DifferentiableUnivariateRealFunction> solver2 = new NewtonSolver();

@@ -38,7 +38,7 @@ package org.apache.commons.math.linear;
  * </ul>
  * @see <a href="http://mathworld.wolfram.com/EigenDecomposition.html">MathWorld</a>
  * @see <a href="http://en.wikipedia.org/wiki/Eigendecomposition_of_a_matrix">Wikipedia</a>
- * @version $Revision: 997724 $ $Date: 2010-09-16 14:39:34 +0200 (Do, 16 Sep 2010) $
+ * @version $Id: EigenDecomposition.java 1131229 2011-06-03 20:49:25Z luc $
  * @since 2.0
  */
 public interface EigenDecomposition {

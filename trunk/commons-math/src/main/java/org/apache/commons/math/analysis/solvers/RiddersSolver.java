@@ -28,7 +28,7 @@ import org.apache.commons.math.util.MathUtils;
  * <p>
  * The function should be continuous but not necessarily smooth.</p>
  *
- * @version $Revision: 1042596 $ $Date: 2010-12-06 12:56:26 +0100 (Mo, 06 Dez 2010) $
+ * @version $Id: RiddersSolver.java 1131229 2011-06-03 20:49:25Z luc $
  * @since 1.2
  */
 public class RiddersSolver extends AbstractUnivariateRealSolver {

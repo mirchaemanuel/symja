@@ -32,7 +32,7 @@ import org.apache.commons.math.util.FastMath;
  * Beta distribution</a></li>
  * </ul>
  * </p>
- * @version $Revision: 1060449 $ $Date: 2011-01-18 17:24:27 +0100 (Di, 18 Jan 2011) $
+ * @version $Id: BetaDistributionImpl.java 1131229 2011-06-03 20:49:25Z luc $
  * @since 2.0
  */
 public class BetaDistributionImpl

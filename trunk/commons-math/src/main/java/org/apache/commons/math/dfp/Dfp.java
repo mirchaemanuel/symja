@@ -31,7 +31,7 @@ import org.apache.commons.math.FieldElement;
  *  <ol>
  *    <li>Decimal math, or close to it</li>
  *    <li>Settable precision (but no mix between numbers using different settings)</li>
- *    <li>Portability.  Code should be keep as portable as possible.</li>
+ *    <li>Portability.  Code should be kept as portable as possible.</li>
  *    <li>Performance</li>
  *    <li>Accuracy  - Results should always be +/- 1 ULP for basic
  *         algebraic operation</li>
@@ -66,7 +66,7 @@ import org.apache.commons.math.FieldElement;
  *
  *  <p>The radix of 10000 was chosen because it should be faster to operate
  *  on 4 decimal digits at once instead of one at a time.  Radix 10 behavior
- *  can be realized by add an additional rounding step to ensure that
+ *  can be realized by adding an additional rounding step to ensure that
  *  the number of decimal digits represented is constant.</p>
  *
  *  <p>The IEEE standard specifically leaves out internal data encoding,
@@ -90,7 +90,7 @@ import org.apache.commons.math.FieldElement;
  *  detail and is really only a matter of definition.  Any side effects of
  *  this can be rendered invisible by a subclass.</p>
  * @see DfpField
- * @version $Revision: 1003349 $ $Date: 2010-10-01 03:40:02 +0200 (Fr, 01 Okt 2010) $
+ * @version $Id: Dfp.java 1141881 2011-07-01 09:06:50Z luc $
  * @since 2.2
  */
 public class Dfp implements FieldElement<Dfp> {
@@ -163,7 +163,7 @@ public class Dfp implements FieldElement<Dfp> {
     /** Mantissa. */
     protected int[] mant;
 
-    /** Sign bit: & for positive, -1 for negative. */
+    /** Sign bit: 1 for positive, -1 for negative. */
     protected byte sign;
 
     /** Exponent. */
@@ -269,6 +269,10 @@ public class Dfp implements FieldElement<Dfp> {
         if (exponent == -1023) {
             // Zero or sub-normal
             if (x == 0) {
+                // make sure 0 has the right sign
+                if ((bits & 0x8000000000000000L) != 0) {
+                    sign = -1;
+                }
                 return;
             }
 
@@ -381,8 +385,9 @@ public class Dfp implements FieldElement<Dfp> {
                     negative = true;
                     continue;
                 }
-                if (fpexp.charAt(i) >= '0' && fpexp.charAt(i) <= '9')
+                if (fpexp.charAt(i) >= '0' && fpexp.charAt(i) <= '9') {
                     sciexp = sciexp * 10 + fpexp.charAt(i) - '0';
+                }
             }
 
             if (negative) {
@@ -488,12 +493,10 @@ public class Dfp implements FieldElement<Dfp> {
         q = offset;  // set q to point to first sig digit
         p = significantDigits-1+offset;
 
-        int trailingZeros = 0;
         while (p > q) {
             if (striped[p] != '0') {
                 break;
             }
-            trailingZeros++;
             p--;
         }
 
@@ -2315,7 +2318,10 @@ public class Dfp implements FieldElement<Dfp> {
 
         Dfp y = this;
         boolean negate = false;
-        if (lessThan(getZero())) {
+        int cmp0 = compare(this, getZero());
+        if (cmp0 == 0) {
+            return sign < 0 ? -0.0 : +0.0;
+        } else if (cmp0 < 0) {
             y = negate();
             negate = true;
         }

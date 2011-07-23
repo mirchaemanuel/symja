@@ -30,7 +30,7 @@ import org.apache.commons.math.analysis.polynomials.PolynomialFunctionNewtonForm
  * The actual code of Neville's evaluation is in PolynomialFunctionLagrangeForm,
  * this class provides an easy-to-use interface to it.</p>
  *
- * @version $Revision: 1030464 $ $Date: 2010-11-03 14:46:04 +0100 (Mi, 03 Nov 2010) $
+ * @version $Id: DividedDifferenceInterpolator.java 1148685 2011-07-20 10:24:15Z luc $
  * @since 1.2
  */
 public class DividedDifferenceInterpolator
@@ -79,7 +79,7 @@ public class DividedDifferenceInterpolator
      * <p>
      * The divided difference array is defined recursively by <pre>
      * f[x0] = f(x0)
-     * f[x0,x1,...,xk] = (f(x1,...,xk) - f(x0,...,x[k-1])) / (xk - x0)
+     * f[x0,x1,...,xk] = (f[x1,...,xk] - f[x0,...,x[k-1]]) / (xk - x0)
      * </pre></p>
      * <p>
      * The computational complexity is O(N^2).</p>

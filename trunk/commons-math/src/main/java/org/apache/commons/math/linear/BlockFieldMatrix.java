@@ -23,9 +23,9 @@ import org.apache.commons.math.Field;
 import org.apache.commons.math.FieldElement;
 import org.apache.commons.math.exception.NoDataException;
 import org.apache.commons.math.exception.DimensionMismatchException;
-import org.apache.commons.math.exception.MatrixDimensionMismatchException;
 import org.apache.commons.math.exception.util.LocalizedFormats;
 import org.apache.commons.math.util.FastMath;
+import org.apache.commons.math.util.MathUtils;
 
 /**
  * Cache-friendly implementation of FieldMatrix using a flat arrays to store
@@ -64,7 +64,7 @@ import org.apache.commons.math.util.FastMath;
  * to up to 3-fold improvements for matrices of moderate to large size.
  * </p>
  * @param <T> the type of the field elements
- * @version $Revision: 1038403 $ $Date: 2010-11-24 01:42:12 +0100 (Mi, 24 Nov 2010) $
+ * @version $Id: BlockFieldMatrix.java 1132432 2011-06-05 14:59:29Z luc $
  * @since 2.0
  */
 public class BlockFieldMatrix<T extends FieldElement<T>> extends AbstractFieldMatrix<T> implements Serializable {
@@ -760,6 +760,7 @@ public class BlockFieldMatrix<T extends FieldElement<T>> extends AbstractFieldMa
     @Override
     public void setSubMatrix(final T[][] subMatrix, final int row, final int column) {
         // safety checks
+        MathUtils.checkNotNull(subMatrix);
         final int refLength = subMatrix[0].length;
         if (refLength == 0) {
             throw new NoDataException(LocalizedFormats.AT_LEAST_ONE_COLUMN);
@@ -986,7 +987,7 @@ public class BlockFieldMatrix<T extends FieldElement<T>> extends AbstractFieldMa
             outIndex += jWidth;
         }
 
-        return new ArrayFieldVector<T>(outData, false);
+        return new ArrayFieldVector<T>(getField(), outData, false);
     }
 
     /** {@inheritDoc} */
@@ -1018,7 +1019,7 @@ public class BlockFieldMatrix<T extends FieldElement<T>> extends AbstractFieldMa
             }
         }
 
-        return new ArrayFieldVector<T>(outData, false);
+        return new ArrayFieldVector<T>(getField(), outData, false);
     }
 
     /** {@inheritDoc} */

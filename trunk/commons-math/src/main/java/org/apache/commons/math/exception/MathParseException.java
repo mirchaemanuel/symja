@@ -16,15 +16,17 @@
  */
 package org.apache.commons.math.exception;
 
+import org.apache.commons.math.exception.util.ExceptionContextProvider;
 import org.apache.commons.math.exception.util.LocalizedFormats;
 
 /**
  * Class to signal parse failures.
  *
  * @since 2.2
- * @version $Revision$ $Date$
+ * @version $Id$
  */
-public class MathParseException extends MathRuntimeException {
+public class MathParseException extends MathIllegalStateException
+    implements ExceptionContextProvider {
     /** Serializable version Id. */
     private static final long serialVersionUID = -6024911025449780478L;
 
@@ -38,8 +40,8 @@ public class MathParseException extends MathRuntimeException {
     public MathParseException(String wrong,
                               int position,
                               Class<?> type) {
-        super(null, null, LocalizedFormats.CANNOT_PARSE_AS_TYPE,
-              wrong, new Integer(position), type.getName());
+        getContext().addMessage(LocalizedFormats.CANNOT_PARSE_AS_TYPE,
+                                wrong, Integer.valueOf(position), type.getName());
     }
 
     /**
@@ -49,7 +51,7 @@ public class MathParseException extends MathRuntimeException {
      */
     public MathParseException(String wrong,
                               int position) {
-        super(null, null, LocalizedFormats.CANNOT_PARSE,
-              wrong, new Integer(position));
+        getContext().addMessage(LocalizedFormats.CANNOT_PARSE,
+                                wrong, Integer.valueOf(position));
     }
 }

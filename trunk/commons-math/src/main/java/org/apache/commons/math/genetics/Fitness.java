@@ -19,7 +19,7 @@ package org.apache.commons.math.genetics;
 /**
  * Fitness of a chromosome.
  *
- * @version $Revision: 811786 $ $Date: 2009-09-06 11:36:08 +0200 (So, 06 Sep 2009) $
+ * @version $Id: Fitness.java 1131229 2011-06-03 20:49:25Z luc $
  * @since 2.0
  */
 public interface Fitness {

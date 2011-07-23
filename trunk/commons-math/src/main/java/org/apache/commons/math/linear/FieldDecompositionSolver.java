@@ -32,7 +32,7 @@ import org.apache.commons.math.FieldElement;
  * solution exists it is also the minimal norm solution.</p>
  *
  * @param <T> the type of the field elements
- * @version $Revision: 1034220 $ $Date: 2010-11-12 01:13:27 +0100 (Fr, 12 Nov 2010) $
+ * @version $Id: FieldDecompositionSolver.java 1131229 2011-06-03 20:49:25Z luc $
  * @since 2.0
  */
 public interface FieldDecompositionSolver<T extends FieldElement<T>> {
@@ -44,7 +44,7 @@ public interface FieldDecompositionSolver<T extends FieldElement<T>> {
      * @return a vector X that minimizes the two norm of A &times; X - B
      * @throws org.apache.commons.math.exception.DimensionMismatchException
      * if the matrices dimensions do not match.
-     * @throws org.apache.commons.math.exception.SingularMatrixException
+     * @throws SingularMatrixException
      * if the decomposed matrix is singular.
      */
     T[] solve(final T[] b);
@@ -56,7 +56,7 @@ public interface FieldDecompositionSolver<T extends FieldElement<T>> {
      * @return a vector X that minimizes the two norm of A &times; X - B
      * @throws org.apache.commons.math.exception.DimensionMismatchException
      * if the matrices dimensions do not match.
-     * @throws org.apache.commons.math.exception.SingularMatrixException
+     * @throws SingularMatrixException
      * if the decomposed matrix is singular.
      */
     FieldVector<T> solve(final FieldVector<T> b);
@@ -68,7 +68,7 @@ public interface FieldDecompositionSolver<T extends FieldElement<T>> {
      * @return a matrix X that minimizes the two norm of A &times; X - B
      * @throws org.apache.commons.math.exception.DimensionMismatchException
      * if the matrices dimensions do not match.
-     * @throws org.apache.commons.math.exception.SingularMatrixException
+     * @throws SingularMatrixException
      * if the decomposed matrix is singular.
      */
     FieldMatrix<T> solve(final FieldMatrix<T> b);
@@ -81,7 +81,7 @@ public interface FieldDecompositionSolver<T extends FieldElement<T>> {
 
     /** Get the inverse (or pseudo-inverse) of the decomposed matrix.
      * @return inverse matrix
-     * @throws org.apache.commons.math.exception.SingularMatrixException
+     * @throws SingularMatrixException
      * if the decomposed matrix is singular.
      */
     FieldMatrix<T> getInverse();

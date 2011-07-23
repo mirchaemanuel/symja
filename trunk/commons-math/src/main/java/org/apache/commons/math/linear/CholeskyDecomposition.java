@@ -21,14 +21,16 @@ package org.apache.commons.math.linear;
 /**
  * An interface to classes that implement an algorithm to calculate the
  * Cholesky decomposition of a real symmetric positive-definite matrix.
+ * <p>The Cholesky decomposition of a real symmetric positive-definite
+ * matrix A consists of a lower triangular matrix L with same size such
+ * that: A = LL<sup>T</sup>. In a sense, this is the square root of A.</p>
  * <p>This interface is based on the class with similar name from the
  * <a href="http://math.nist.gov/javanumerics/jama/">JAMA</a> library, with the
  * following changes:</p>
  * <ul>
  *   <li>a {@link #getLT() getLT} method has been added,</li>
  *   <li>the <code>isspd</code> method has been removed, the constructors of
- *   implementation classes being expected to throw {@link
- *   org.apache.commons.math.exception.NonPositiveDefiniteMatrixException}
+ *   implementation classes being expected to throw {@link NonPositiveDefiniteMatrixException}
  *   when a matrix cannot be decomposed,</li>
  *   <li>a {@link #getDeterminant() getDeterminant} method has been added,</li>
  *   <li>the <code>solve</code> method has been replaced by a {@link
@@ -38,11 +40,10 @@ package org.apache.commons.math.linear;
  *
  * @see <a href="http://mathworld.wolfram.com/CholeskyDecomposition.html">MathWorld</a>
  * @see <a href="http://en.wikipedia.org/wiki/Cholesky_decomposition">Wikipedia</a>
- * @version $Revision: 1034220 $ $Date: 2010-11-12 01:13:27 +0100 (Fr, 12 Nov 2010) $
+ * @version $Id: CholeskyDecomposition.java 1131229 2011-06-03 20:49:25Z luc $
  * @since 2.0
  */
 public interface CholeskyDecomposition {
-
     /**
      * Returns the matrix L of the decomposition.
      * <p>L is an lower-triangular matrix</p>
@@ -68,5 +69,4 @@ public interface CholeskyDecomposition {
      * @return a solver
      */
     DecompositionSolver getSolver();
-
 }

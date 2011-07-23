@@ -23,7 +23,7 @@ import org.apache.commons.math.exception.util.LocalizedFormats;
  * Exception to be thrown when some counter maximum value is exceeded.
  *
  * @since 3.0
- * @version $Revision$ $Date$
+ * @version $Id$
  */
 public class MaxCountExceededException extends MathIllegalStateException {
     /** Serializable version Id. */
@@ -39,19 +39,19 @@ public class MaxCountExceededException extends MathIllegalStateException {
      * @param max Maximum.
      */
     public MaxCountExceededException(Number max) {
-        this(null, max);
+        this(LocalizedFormats.MAX_COUNT_EXCEEDED, max);
     }
     /**
      * Construct the exception with a specific context.
      *
-     * @param specific Specific contexte pattern.
+     * @param specific Specific context pattern.
      * @param max Maximum.
      * @param args Additional arguments.
      */
     public MaxCountExceededException(Localizable specific,
                                      Number max,
                                      Object ... args) {
-        super(specific, LocalizedFormats.MAX_COUNT_EXCEEDED, max, args);
+        getContext().addMessage(specific, max, args);
         this.max = max;
     }
 

@@ -28,14 +28,14 @@ import org.apache.commons.math.exception.NumberIsTooLargeException;
  * Population of chromosomes represented by a {@link List}.
  *
  * @since 2.0
- * @version $Revision: 983921 $ $Date: 2010-08-10 12:46:06 +0200 (Di, 10 Aug 2010) $
+ * @version $Id: ListPopulation.java 1131229 2011-06-03 20:49:25Z luc $
  */
 public abstract class ListPopulation implements Population {
 
     /** List of chromosomes */
     private List<Chromosome> chromosomes;
 
-    /** maximial size of the population */
+    /** maximal size of the population */
     private int populationLimit;
 
 

@@ -24,7 +24,7 @@ import java.util.List;
  * @param <T>
  *            type of the permuted objects
  * @since 2.0
- * @version $Revision: 811786 $ $Date: 2009-09-06 11:36:08 +0200 (So, 06 Sep 2009) $
+ * @version $Id: PermutationChromosome.java 1131229 2011-06-03 20:49:25Z luc $
  */
 public interface PermutationChromosome<T> {
 

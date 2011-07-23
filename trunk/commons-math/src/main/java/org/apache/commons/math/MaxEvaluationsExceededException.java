@@ -17,8 +17,6 @@
 
 package org.apache.commons.math;
 
-import org.apache.commons.math.ConvergenceException;
-import org.apache.commons.math.exception.util.DummyLocalizable;
 import org.apache.commons.math.exception.util.Localizable;
 import org.apache.commons.math.exception.util.LocalizedFormats;
 
@@ -26,7 +24,7 @@ import org.apache.commons.math.exception.util.LocalizedFormats;
  * Error thrown when a numerical computation exceeds its allowed
  * number of functions evaluations.
  *
- * @version $Revision: 983921 $ $Date: 2010-08-10 12:46:06 +0200 (Di, 10 Aug 2010) $
+ * @version $Id: MaxEvaluationsExceededException.java 1131229 2011-06-03 20:49:25Z luc $
  * @since 2.0
  */
 public class MaxEvaluationsExceededException extends ConvergenceException {
@@ -44,20 +42,6 @@ public class MaxEvaluationsExceededException extends ConvergenceException {
     public MaxEvaluationsExceededException(final int maxEvaluations) {
         super(LocalizedFormats.MAX_EVALUATIONS_EXCEEDED, maxEvaluations);
         this.maxEvaluations = maxEvaluations;
-    }
-
-    /**
-     * Constructs an exception with specified formatted detail message.
-     * Message formatting is delegated to {@link java.text.MessageFormat}.
-     * @param maxEvaluations the exceeded maximal number of evaluations
-     * @param pattern format specifier
-     * @param arguments format arguments
-     * @deprecated as of 2.2 replaced by {@link #MaxEvaluationsExceededException(int, Localizable, Object...)}
-     */
-    @Deprecated
-    public MaxEvaluationsExceededException(final int maxEvaluations,
-                                          final String pattern, final Object ... arguments) {
-        this(maxEvaluations, new DummyLocalizable(pattern), arguments);
     }
 
     /**

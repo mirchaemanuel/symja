@@ -18,72 +18,69 @@ package org.apache.commons.math.exception;
 
 import org.apache.commons.math.exception.util.Localizable;
 import org.apache.commons.math.exception.util.LocalizedFormats;
+import org.apache.commons.math.exception.util.ExceptionContext;
+import org.apache.commons.math.exception.util.ExceptionContextProvider;
 
 /**
  * Base class for all exceptions that signal a mismatch between the
  * current state and the user's expectations.
  *
  * @since 2.2
- * @version $Revision$ $Date$
+ * @version $Id$
  */
-public class MathIllegalStateException extends MathRuntimeException {
+public class MathIllegalStateException extends IllegalStateException
+    implements ExceptionContextProvider {
     /** Serializable version Id. */
     private static final long serialVersionUID = -6024911025449780478L;
+    /** Context. */
+    private final ExceptionContext context = new ExceptionContext();
 
     /**
      * Simple constructor.
-     * @param specific Message pattern providing the specific context of
-     * the error.
-     * @param general Message pattern explaining the cause of the error.
+     *
+     * @param pattern Message pattern explaining the cause of the error.
      * @param args Arguments.
      */
-    public MathIllegalStateException(Localizable specific,
-                                     Localizable general,
+    public MathIllegalStateException(Localizable pattern,
                                      Object ... args) {
-        super(null, null, specific, general, args);
+        context.addMessage(pattern, args);
     }
 
     /**
      * Simple constructor.
-     * @param cause root cause
-     * @param specific Message pattern providing the specific context of
-     * the error.
-     * @param general Message pattern explaining the cause of the error.
+     *
+     * @param cause Root cause.
+     * @param pattern Message pattern explaining the cause of the error.
      * @param args Arguments.
      */
     public MathIllegalStateException(Throwable cause,
-                                     Localizable specific,
-                                     Localizable general,
+                                     Localizable pattern,
                                      Object ... args) {
-        super(cause, null, specific, general, args);
+        super(cause);
+        context.addMessage(pattern, args);
     }
 
     /**
-     * Simple constructor.
-     * @param specific Message pattern explaining the cause of the error.
-     * @param args Arguments.
+     * Default constructor.
      */
-    public MathIllegalStateException(Localizable specific,
-                                     Object ... args) {
-        super(null, specific, LocalizedFormats.ILLEGAL_STATE, args);
+    public MathIllegalStateException() {
+        this(LocalizedFormats.ILLEGAL_STATE);
     }
 
-    /**
-     * Simple constructor.
-     * @param cause root cause
-     * @param specific Message pattern explaining the cause of the error.
-     * @param args Arguments.
-     */
-    public MathIllegalStateException(Throwable cause,
-                                     Localizable specific,
-                                     Object ... args) {
-        super(cause, specific, LocalizedFormats.ILLEGAL_STATE, args);
+    /** {@inheritDoc} */
+    public ExceptionContext getContext() {
+        return context;
     }
 
-    /**
-     * @param args Arguments.
-     */
-    public MathIllegalStateException(Object ... args) {
-        this(null, args);
+    /** {@inheritDoc} */
+    @Override
+    public String getMessage() {
+        return context.getMessage();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String getLocalizedMessage() {
+        return context.getLocalizedMessage();
     }
 }

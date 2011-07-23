@@ -24,7 +24,7 @@ import org.apache.commons.math.exception.util.LocalizedFormats;
  * numerical result failed to converge to a finite value.
  *
  * @since 2.2
- * @version $Revision$ $Date$
+ * @version $Id$
  */
 public class ConvergenceException extends MathIllegalStateException {
     /** Serializable version Id. */
@@ -34,28 +34,18 @@ public class ConvergenceException extends MathIllegalStateException {
      * Construct the exception.
      */
     public ConvergenceException() {
-        this(null);
+        this(LocalizedFormats.CONVERGENCE_FAILED);
     }
-    /**
-     * Construct the exception with a specific context.
-     *
-     * @param specific Specific contexte pattern.
-     */
-    public ConvergenceException(Localizable specific) {
-        this(specific,
-             LocalizedFormats.CONVERGENCE_FAILED,
-             null);
-    }
+
     /**
      * Construct the exception with a specific context and arguments.
      *
-     * @param specific Specific contexte pattern.
+     * @param pattern Message pattern providing the specific context of
+     * the error.
      * @param args Arguments.
      */
-    public ConvergenceException(Localizable specific,
+    public ConvergenceException(Localizable pattern,
                                 Object ... args) {
-        super(specific,
-              LocalizedFormats.CONVERGENCE_FAILED,
-              args);
+        getContext().addMessage(pattern, args);
     }
 }

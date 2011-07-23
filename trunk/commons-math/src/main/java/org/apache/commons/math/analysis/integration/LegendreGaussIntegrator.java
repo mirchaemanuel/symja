@@ -47,7 +47,7 @@ import org.apache.commons.math.util.FastMath;
  * &prod; (x-x<sub>k</sub>)/(x<sub>i</sub>-x<sub>k</sub>) for k != i.
  * </p>
  * <p>
- * @version $Revision: 1065763 $ $Date: 2011-01-31 21:42:00 +0100 (Mo, 31 Jan 2011) $
+ * @version $Id: LegendreGaussIntegrator.java 1131229 2011-06-03 20:49:25Z luc $
  * @since 1.2
  */
 
@@ -151,12 +151,6 @@ public class LegendreGaussIntegrator extends UnivariateRealIntegratorImpl {
                     n, 2, 5);
         }
 
-    }
-
-    @Deprecated
-    public double integrate(final double min, final double max)
-        throws ConvergenceException,  MathUserException, IllegalArgumentException {
-        return integrate(f, min, max);
     }
 
     /** {@inheritDoc} */

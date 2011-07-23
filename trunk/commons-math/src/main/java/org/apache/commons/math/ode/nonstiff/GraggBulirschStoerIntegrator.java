@@ -17,12 +17,12 @@
 
 package org.apache.commons.math.ode.nonstiff;
 
+import org.apache.commons.math.analysis.solvers.UnivariateRealSolver;
 import org.apache.commons.math.exception.MathUserException;
 import org.apache.commons.math.ode.FirstOrderDifferentialEquations;
 import org.apache.commons.math.ode.IntegratorException;
 import org.apache.commons.math.ode.events.EventHandler;
 import org.apache.commons.math.ode.sampling.AbstractStepInterpolator;
-import org.apache.commons.math.ode.sampling.DummyStepInterpolator;
 import org.apache.commons.math.ode.sampling.StepHandler;
 import org.apache.commons.math.util.FastMath;
 
@@ -88,7 +88,7 @@ import org.apache.commons.math.util.FastMath;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</strong></td></tr>
  * </table>
  *
- * @version $Revision: 1061527 $ $Date: 2011-01-20 22:31:54 +0100 (Do, 20 Jan 2011) $
+ * @version $Id: GraggBulirschStoerIntegrator.java 1139831 2011-06-26 16:26:48Z luc $
  * @since 1.2
  */
 
@@ -155,10 +155,12 @@ public class GraggBulirschStoerIntegrator extends AdaptiveStepsizeIntegrator {
    * Build a Gragg-Bulirsch-Stoer integrator with the given step
    * bounds. All tuning parameters are set to their default
    * values. The default step handler does nothing.
-   * @param minStep minimal step (must be positive even for backward
-   * integration), the last step can be smaller than this
-   * @param maxStep maximal step (must be positive even for backward
-   * integration)
+   * @param minStep minimal step (sign is irrelevant, regardless of
+   * integration direction, forward or backward), the last step can
+   * be smaller than this
+   * @param maxStep maximal step (sign is irrelevant, regardless of
+   * integration direction, forward or backward), the last step can
+   * be smaller than this
    * @param scalAbsoluteTolerance allowed absolute error
    * @param scalRelativeTolerance allowed relative error
    */
@@ -345,8 +347,10 @@ public class GraggBulirschStoerIntegrator extends AdaptiveStepsizeIntegrator {
   public void addEventHandler(final EventHandler function,
                               final double maxCheckInterval,
                               final double convergence,
-                              final int maxIterationCount) {
-    super.addEventHandler(function, maxCheckInterval, convergence, maxIterationCount);
+                              final int maxIterationCount,
+                              final UnivariateRealSolver solver) {
+    super.addEventHandler(function, maxCheckInterval, convergence,
+                          maxIterationCount, solver);
 
     // reinitialize the arrays
     initializeArrays();
@@ -367,16 +371,9 @@ public class GraggBulirschStoerIntegrator extends AdaptiveStepsizeIntegrator {
       optimalStep     = new double[size];
     }
 
-    if (requiresDenseOutput()) {
-      // step size sequence: 2, 6, 10, 14, ...
-      for (int k = 0; k < size; ++k) {
+    // step size sequence: 2, 6, 10, 14, ...
+    for (int k = 0; k < size; ++k) {
         sequence[k] = 4 * k + 2;
-      }
-    } else {
-      // step size sequence: 2, 4, 6, 8, ...
-      for (int k = 0; k < size; ++k) {
-        sequence[k] = 2 * (k + 1);
-      }
     }
 
     // initialize the order selection cost array
@@ -587,18 +584,8 @@ public class GraggBulirschStoerIntegrator extends AdaptiveStepsizeIntegrator {
       System.arraycopy(y0, 0, y, 0, y0.length);
     }
 
-    double[] yDot1      = new double[y0.length];
-    double[][] yMidDots = null;
-    final boolean denseOutput = requiresDenseOutput();
-    if (denseOutput) {
-      yMidDots = new double[1 + 2 * sequence.length][];
-      for (int j = 0; j < yMidDots.length; ++j) {
-        yMidDots[j] = new double[y0.length];
-      }
-    } else {
-      yMidDots    = new double[1][];
-      yMidDots[0] = new double[y0.length];
-    }
+    final double[] yDot1 = new double[y0.length];
+    final double[][] yMidDots = new double[1 + 2 * sequence.length][y0.length];
 
     // initial scaling
     final double[] scale = new double[mainSetDimension];
@@ -613,14 +600,10 @@ public class GraggBulirschStoerIntegrator extends AdaptiveStepsizeIntegrator {
                                        (int) FastMath.floor(0.5 - 0.6 * log10R)));
 
     // set up an interpolator sharing the integrator arrays
-    AbstractStepInterpolator interpolator = null;
-    if (denseOutput) {
-      interpolator = new GraggBulirschStoerStepInterpolator(y, yDot0,
-                                                            y1, yDot1,
-                                                            yMidDots, forward);
-    } else {
-      interpolator = new DummyStepInterpolator(y, yDot1, forward);
-    }
+    final AbstractStepInterpolator interpolator =
+            new GraggBulirschStoerStepInterpolator(y, yDot0,
+                                                   y1, yDot1,
+                                                   yMidDots, forward);
     interpolator.storeTime(t0);
 
     stepStart = t0;
@@ -633,7 +616,7 @@ public class GraggBulirschStoerIntegrator extends AdaptiveStepsizeIntegrator {
     for (StepHandler handler : stepHandlers) {
         handler.reset();
     }
-    statesInitialized = false;
+    setStateInitialized(false);
     costPerTimeUnit[0] = 0;
     isLastStep = false;
     do {
@@ -812,7 +795,7 @@ public class GraggBulirschStoerIntegrator extends AdaptiveStepsizeIntegrator {
 
       // dense output handling
       double hInt = getMaxStep();
-      if (denseOutput && ! reject) {
+      if (! reject) {
 
         // extrapolate state at middle point of the step
         for (int j = 1; j <= k; ++j) {

@@ -14,137 +14,119 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.commons.math.analysis.solvers;
 
-import org.apache.commons.math.exception.NoBracketingException;
 import org.apache.commons.math.util.FastMath;
 
-
 /**
- * Implements a modified version of the
- * <a href="http://mathworld.wolfram.com/SecantMethod.html">secant method</a>
- * for approximating a zero of a real univariate function.
- * <p>
- * The algorithm is modified to maintain bracketing of a root by successive
- * approximations. Because of forced bracketing, convergence may be slower than
- * the unrestricted secant algorithm. However, this implementation should in
- * general outperform the
- * <a href="http://mathworld.wolfram.com/MethodofFalsePosition.html">
- * regula falsi method.</a></p>
- * <p>
- * The function is assumed to be continuous but not necessarily smooth.</p>
+ * Implements the <em>Secant</em> method for root-finding (approximating a
+ * zero of a univariate real function). The solution that is maintained is
+ * not bracketed, and as such convergence is not guaranteed.
  *
- * @version $Revision: 1042596 $ $Date: 2010-12-06 12:56:26 +0100 (Mo, 06 Dez 2010) $
+ * <p>Implementation based on the following article: M. Dowell and P. Jarratt,
+ * <em>A modified regula falsi method for computing the root of an
+ * equation</em>, BIT Numerical Mathematics, volume 11, number 2,
+ * pages 168-174, Springer, 1971.</p>
+ *
+ * <p>Note that since release 3.0 this class implements the actual
+ * <em>Secant</em> algorithm, and not a modified one. As such, the 3.0 version
+ * is not backwards compatible with previous versions. To use an algorithm
+ * similar to the pre-3.0 releases, use the
+ * {@link IllinoisSolver <em>Illinois</em>} algorithm or the
+ * {@link PegasusSolver <em>Pegasus</em>} algorithm.</p>
+ *
+ * @version $Id: SecantSolver.java 1145146 2011-07-11 12:32:14Z erans $
  */
 public class SecantSolver extends AbstractUnivariateRealSolver {
+
     /** Default absolute accuracy. */
-    private static final double DEFAULT_ABSOLUTE_ACCURACY = 1e-6;
+    protected static final double DEFAULT_ABSOLUTE_ACCURACY = 1e-6;
+
+    /** Construct a solver with default accuracy (1e-6). */
+    public SecantSolver() {
+        super(DEFAULT_ABSOLUTE_ACCURACY);
+    }
 
     /**
-     * Construct a solver with default accuracy (1e-6).
-     */
-    public SecantSolver() {
-        this(DEFAULT_ABSOLUTE_ACCURACY);
-    }
-    /**
      * Construct a solver.
      *
-     * @param absoluteAccuracy Absolute accuracy.
+     * @param absoluteAccuracy absolute accuracy
      */
-    public SecantSolver(double absoluteAccuracy) {
+    public SecantSolver(final double absoluteAccuracy) {
         super(absoluteAccuracy);
     }
+
     /**
      * Construct a solver.
      *
-     * @param relativeAccuracy Relative accuracy.
-     * @param absoluteAccuracy Absolute accuracy.
+     * @param relativeAccuracy relative accuracy
+     * @param absoluteAccuracy absolute accuracy
      */
-    public SecantSolver(double relativeAccuracy,
-                        double absoluteAccuracy) {
+    public SecantSolver(final double relativeAccuracy,
+                        final double absoluteAccuracy) {
         super(relativeAccuracy, absoluteAccuracy);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
-    protected double doSolve() {
-        double min = getMin();
-        double max = getMax();
-        verifyInterval(min, max);
+    protected final double doSolve() {
+        // Get initial solution
+        double x0 = getMin();
+        double x1 = getMax();
+        double f0 = computeObjectiveValue(x0);
+        double f1 = computeObjectiveValue(x1);
 
-        final double functionValueAccuracy = getFunctionValueAccuracy();
-
-        // Index 0 is the old approximation for the root.
-        // Index 1 is the last calculated approximation  for the root.
-        // Index 2 is a bracket for the root with respect to x0.
-        // OldDelta is the length of the bracketing interval of the last
-        // iteration.
-        double x0 = min;
-        double x1 = max;
-
-        double y0 = computeObjectiveValue(x0);
-        // return the first endpoint if it is good enough
-        if (FastMath.abs(y0) <= functionValueAccuracy) {
+        // If one of the bounds is the exact root, return it. Since these are
+        // not under-approximations or over-approximations, we can return them
+        // regardless of the allowed solutions.
+        if (f0 == 0.0) {
             return x0;
         }
-
-        // return the second endpoint if it is good enough
-        double y1 = computeObjectiveValue(x1);
-        if (FastMath.abs(y1) <= functionValueAccuracy) {
+        if (f1 == 0.0) {
             return x1;
         }
 
-        // Verify bracketing
-        if (y0 * y1 >= 0) {
-            throw new NoBracketingException(min, max, y0, y1);
-        }
+        // Verify bracketing of initial solution.
+        verifyBracketing(x0, x1);
 
-        final double absoluteAccuracy = getAbsoluteAccuracy();
-        final double relativeAccuracy = getRelativeAccuracy();
+        // Get accuracies.
+        final double ftol = getFunctionValueAccuracy();
+        final double atol = getAbsoluteAccuracy();
+        final double rtol = getRelativeAccuracy();
 
-        double x2 = x0;
-        double y2 = y0;
-        double oldDelta = x2 - x1;
+        // Keep finding better approximations.
         while (true) {
-            if (FastMath.abs(y2) < FastMath.abs(y1)) {
-                x0 = x1;
-                x1 = x2;
-                x2 = x0;
-                y0 = y1;
-                y1 = y2;
-                y2 = y0;
+            // Calculate the next approximation.
+            final double x = x1 - ((f1 * (x1 - x0)) / (f1 - f0));
+            final double fx = computeObjectiveValue(x);
+
+            // If the new approximation is the exact root, return it. Since
+            // this is not an under-approximation or an over-approximation,
+            // we can return it regardless of the allowed solutions.
+            if (fx == 0.0) {
+                return x;
             }
-            if (FastMath.abs(y1) <= functionValueAccuracy) {
-                return x1;
-            }
-            if (FastMath.abs(oldDelta) < FastMath.max(relativeAccuracy * FastMath.abs(x1),
-                                                      absoluteAccuracy)) {
-                return x1;
-            }
-            double delta;
-            if (FastMath.abs(y1) > FastMath.abs(y0)) {
-                // Function value increased in last iteration. Force bisection.
-                delta = 0.5 * oldDelta;
-            } else {
-                delta = (x0 - x1) / (1 - y0 / y1);
-                if (delta / oldDelta > 1) {
-                    // New approximation falls outside bracket.
-                    // Fall back to bisection.
-                    delta = 0.5 * oldDelta;
-                }
-            }
+
+            // Update the bounds with the new approximation.
             x0 = x1;
-            y0 = y1;
-            x1 = x1 + delta;
-            y1 = computeObjectiveValue(x1);
-            if ((y1 > 0) == (y2 > 0)) {
-                // New bracket is (x0,x1).
-                x2 = x0;
-                y2 = y0;
+            f0 = f1;
+            x1 = x;
+            f1 = fx;
+
+            // If the function value of the last approximation is too small,
+            // given the function value accuracy, then we can't get closer to
+            // the root than we already are.
+            if (FastMath.abs(f1) <= ftol) {
+                return x1;
             }
-            oldDelta = x2 - x1;
+
+            // If the current interval is within the given accuracies, we
+            // are satisfied with the current approximation.
+            if (FastMath.abs(x1 - x0) < FastMath.max(rtol * FastMath.abs(x1), atol)) {
+                return x1;
+            }
         }
     }
+
 }

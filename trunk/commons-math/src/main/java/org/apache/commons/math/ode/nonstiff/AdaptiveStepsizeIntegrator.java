@@ -57,7 +57,7 @@ import org.apache.commons.math.util.FastMath;
  * otherwise the step is rejected and a new attempt is made with a new
  * stepsize.</p>
  *
- * @version $Revision: 1037328 $ $Date: 2010-11-20 22:01:50 +0100 (Sa, 20 Nov 2010) $
+ * @version $Id: AdaptiveStepsizeIntegrator.java 1131229 2011-06-03 20:49:25Z luc $
  * @since 1.2
  *
  */
@@ -66,16 +66,16 @@ public abstract class AdaptiveStepsizeIntegrator
   extends AbstractIntegrator {
 
     /** Allowed absolute scalar error. */
-    protected final double scalAbsoluteTolerance;
+    protected double scalAbsoluteTolerance;
 
     /** Allowed relative scalar error. */
-    protected final double scalRelativeTolerance;
+    protected double scalRelativeTolerance;
 
     /** Allowed absolute vectorial error. */
-    protected final double[] vecAbsoluteTolerance;
+    protected double[] vecAbsoluteTolerance;
 
     /** Allowed relative vectorial error. */
-    protected final double[] vecRelativeTolerance;
+    protected double[] vecRelativeTolerance;
 
     /** Main set dimension. */
     protected int mainSetDimension;
@@ -84,18 +84,20 @@ public abstract class AdaptiveStepsizeIntegrator
     private double initialStep;
 
     /** Minimal step. */
-    private final double minStep;
+    private double minStep;
 
     /** Maximal step. */
-    private final double maxStep;
+    private double maxStep;
 
   /** Build an integrator with the given stepsize bounds.
    * The default step handler does nothing.
    * @param name name of the method
-   * @param minStep minimal step (must be positive even for backward
-   * integration), the last step can be smaller than this
-   * @param maxStep maximal step (must be positive even for backward
-   * integration)
+   * @param minStep minimal step (sign is irrelevant, regardless of
+   * integration direction, forward or backward), the last step can
+   * be smaller than this
+   * @param maxStep maximal step (sign is irrelevant, regardless of
+   * integration direction, forward or backward), the last step can
+   * be smaller than this
    * @param scalAbsoluteTolerance allowed absolute error
    * @param scalRelativeTolerance allowed relative error
    */
@@ -105,16 +107,7 @@ public abstract class AdaptiveStepsizeIntegrator
                                     final double scalRelativeTolerance) {
 
     super(name);
-
-    this.minStep     = FastMath.abs(minStep);
-    this.maxStep     = FastMath.abs(maxStep);
-    this.initialStep = -1.0;
-
-    this.scalAbsoluteTolerance = scalAbsoluteTolerance;
-    this.scalRelativeTolerance = scalRelativeTolerance;
-    this.vecAbsoluteTolerance  = null;
-    this.vecRelativeTolerance  = null;
-
+    setStepSizeControl(minStep, maxStep, scalAbsoluteTolerance, scalRelativeTolerance);
     resetInternalState();
 
   }
@@ -122,10 +115,12 @@ public abstract class AdaptiveStepsizeIntegrator
   /** Build an integrator with the given stepsize bounds.
    * The default step handler does nothing.
    * @param name name of the method
-   * @param minStep minimal step (must be positive even for backward
-   * integration), the last step can be smaller than this
-   * @param maxStep maximal step (must be positive even for backward
-   * integration)
+   * @param minStep minimal step (sign is irrelevant, regardless of
+   * integration direction, forward or backward), the last step can
+   * be smaller than this
+   * @param maxStep maximal step (sign is irrelevant, regardless of
+   * integration direction, forward or backward), the last step can
+   * be smaller than this
    * @param vecAbsoluteTolerance allowed absolute error
    * @param vecRelativeTolerance allowed relative error
    */
@@ -135,17 +130,66 @@ public abstract class AdaptiveStepsizeIntegrator
                                     final double[] vecRelativeTolerance) {
 
     super(name);
-
-    this.minStep     = minStep;
-    this.maxStep     = maxStep;
-    this.initialStep = -1.0;
-
-    this.scalAbsoluteTolerance = 0;
-    this.scalRelativeTolerance = 0;
-    this.vecAbsoluteTolerance  = vecAbsoluteTolerance.clone();
-    this.vecRelativeTolerance  = vecRelativeTolerance.clone();
-
+    setStepSizeControl(minStep, maxStep, vecAbsoluteTolerance, vecRelativeTolerance);
     resetInternalState();
+
+  }
+
+  /** Set the adaptive step size control parameters.
+   * <p>
+   * A side effect of this method is to also reset the initial
+   * step so it will be automatically computed by the integrator
+   * if {@link #setInitialStepSize(double) setInitialStepSize}
+   * is not called by the user.
+   * </p>
+   * @param minimalStep minimal step (must be positive even for backward
+   * integration), the last step can be smaller than this
+   * @param maximalStep maximal step (must be positive even for backward
+   * integration)
+   * @param absoluteTolerance allowed absolute error
+   * @param relativeTolerance allowed relative error
+   */
+  public void setStepSizeControl(final double minimalStep, final double maximalStep,
+                                 final double absoluteTolerance,
+                                 final double relativeTolerance) {
+
+      minStep     = FastMath.abs(minimalStep);
+      maxStep     = FastMath.abs(maximalStep);
+      initialStep = -1;
+
+      scalAbsoluteTolerance = absoluteTolerance;
+      scalRelativeTolerance = relativeTolerance;
+      vecAbsoluteTolerance  = null;
+      vecRelativeTolerance  = null;
+
+  }
+
+  /** Set the adaptive step size control parameters.
+   * <p>
+   * A side effect of this method is to also reset the initial
+   * step so it will be automatically computed by the integrator
+   * if {@link #setInitialStepSize(double) setInitialStepSize}
+   * is not called by the user.
+   * </p>
+   * @param minimalStep minimal step (must be positive even for backward
+   * integration), the last step can be smaller than this
+   * @param maximalStep maximal step (must be positive even for backward
+   * integration)
+   * @param absoluteTolerance allowed absolute error
+   * @param relativeTolerance allowed relative error
+   */
+  public void setStepSizeControl(final double minimalStep, final double maximalStep,
+                                 final double[] absoluteTolerance,
+                                 final double[] relativeTolerance) {
+
+      minStep     = FastMath.abs(minimalStep);
+      maxStep     = FastMath.abs(maximalStep);
+      initialStep = -1;
+
+      scalAbsoluteTolerance = 0;
+      scalRelativeTolerance = 0;
+      vecAbsoluteTolerance  = absoluteTolerance.clone();
+      vecRelativeTolerance  = relativeTolerance.clone();
 
   }
 

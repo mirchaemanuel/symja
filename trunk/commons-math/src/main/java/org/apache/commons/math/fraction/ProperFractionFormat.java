@@ -33,7 +33,7 @@ import org.apache.commons.math.util.MathUtils;
  * will result in a <code>ParseException</code>.</p>
  *
  * @since 1.1
- * @version $Revision: 983921 $ $Date: 2010-08-10 12:46:06 +0200 (Di, 10 Aug 2010) $
+ * @version $Id: ProperFractionFormat.java 1131229 2011-06-03 20:49:25Z luc $
  */
 public class ProperFractionFormat extends FractionFormat {
 

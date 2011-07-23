@@ -18,21 +18,18 @@
 package org.apache.commons.math.linear;
 
 import org.apache.commons.math.exception.DimensionMismatchException;
-import org.apache.commons.math.exception.NonSquareMatrixException;
-import org.apache.commons.math.exception.NonSymmetricMatrixException;
-import org.apache.commons.math.exception.NonPositiveDefiniteMatrixException;
 import org.apache.commons.math.util.FastMath;
 
 
 /**
  * Calculates the Cholesky decomposition of a matrix.
  * <p>The Cholesky decomposition of a real symmetric positive-definite
- * matrix A consists of a lower triangular matrix L with same size that
- * satisfy: A = LL<sup>T</sup>Q = I). In a sense, this is the square root of A.</p>
+ * matrix A consists of a lower triangular matrix L with same size such
+ * that: A = LL<sup>T</sup>. In a sense, this is the square root of A.</p>
  *
  * @see <a href="http://mathworld.wolfram.com/CholeskyDecomposition.html">MathWorld</a>
  * @see <a href="http://en.wikipedia.org/wiki/Cholesky_decomposition">Wikipedia</a>
- * @version $Revision: 1034220 $ $Date: 2010-11-12 01:13:27 +0100 (Fr, 12 Nov 2010) $
+ * @version $Id: CholeskyDecompositionImpl.java 1131229 2011-06-03 20:49:25Z luc $
  * @since 2.0
  */
 public class CholeskyDecompositionImpl implements CholeskyDecomposition {
@@ -270,22 +267,40 @@ public class CholeskyDecompositionImpl implements CholeskyDecomposition {
          * @param b right-hand side of the equation A &times; X = B
          * @return a vector X such that A &times; X = B
          * @throws DimensionMismatchException if the matrices dimensions do not match.
-         * @throws org.apache.commons.math.exception.SingularMatrixException if
-         * the decomposed matrix is singular.
+         * @throws SingularMatrixException if the decomposed matrix is singular.
          */
         public ArrayRealVector solve(ArrayRealVector b) {
             return new ArrayRealVector(solve(b.getDataRef()), false);
         }
 
-        /** {@inheritDoc} */
-        public RealMatrix solve(RealMatrix b) {
+        /** Solve the linear equation A &times; X = B for matrices A.
+         * <p>The A matrix is implicit, it is provided by the underlying
+         * decomposition algorithm.</p>
+         * @param b right-hand side of the equation A &times; X = B
+         * @param reuseB if true, the b array will be reused and returned,
+         * instead of being copied
+         * @return a matrix X that minimizes the two norm of A &times; X - B
+         * @throws org.apache.commons.math.exception.DimensionMismatchException
+         * if the matrices dimensions do not match.
+         * @throws SingularMatrixException
+         * if the decomposed matrix is singular.
+         */
+        private double[][] solve(double[][] b, boolean reuseB) {
             final int m = lTData.length;
-            if (b.getRowDimension() != m) {
-                throw new DimensionMismatchException(b.getRowDimension(), m);
+            if (b.length != m) {
+                throw new DimensionMismatchException(b.length, m);
             }
 
-            final int nColB = b.getColumnDimension();
-            double[][] x = b.getData();
+            final int nColB = b[0].length;
+            final double[][] x;
+            if (reuseB) {
+                x = b;
+            } else {
+                x = new double[b.length][nColB];
+                for (int i = 0; i < b.length; ++i) {
+                    System.arraycopy(b[i], 0, x[i], 0, nColB);
+                }
+            }
 
             // Solve LY = b
             for (int j = 0; j < m; j++) {
@@ -320,8 +335,18 @@ public class CholeskyDecompositionImpl implements CholeskyDecomposition {
                 }
             }
 
-            return new Array2DRowRealMatrix(x, false);
+            return x;
 
+        }
+
+        /** {@inheritDoc} */
+        public double[][] solve(double[][] b) {
+            return solve(b, false);
+        }
+
+        /** {@inheritDoc} */
+        public RealMatrix solve(RealMatrix b) {
+            return new Array2DRowRealMatrix(solve(b.getData(), true), false);
         }
 
         /** {@inheritDoc} */

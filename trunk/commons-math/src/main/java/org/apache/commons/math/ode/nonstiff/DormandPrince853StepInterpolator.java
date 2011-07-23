@@ -31,7 +31,7 @@ import org.apache.commons.math.ode.sampling.StepInterpolator;
  *
  * @see DormandPrince853Integrator
  *
- * @version $Revision: 1061508 $ $Date: 2011-01-20 21:57:11 +0100 (Do, 20 Jan 2011) $
+ * @version $Id: DormandPrince853StepInterpolator.java 1131229 2011-06-03 20:49:25Z luc $
  * @since 1.2
  */
 

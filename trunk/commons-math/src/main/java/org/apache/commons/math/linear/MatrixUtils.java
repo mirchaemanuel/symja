@@ -29,8 +29,8 @@ import org.apache.commons.math.exception.OutOfRangeException;
 import org.apache.commons.math.exception.NoDataException;
 import org.apache.commons.math.exception.NumberIsTooSmallException;
 import org.apache.commons.math.exception.NullArgumentException;
-import org.apache.commons.math.exception.MatrixDimensionMismatchException;
 import org.apache.commons.math.exception.DimensionMismatchException;
+import org.apache.commons.math.exception.ZeroException;
 import org.apache.commons.math.exception.util.LocalizedFormats;
 import org.apache.commons.math.fraction.BigFraction;
 import org.apache.commons.math.fraction.Fraction;
@@ -38,7 +38,7 @@ import org.apache.commons.math.fraction.Fraction;
 /**
  * A collection of static methods that operate on or return matrices.
  *
- * @version $Revision: 1038403 $ $Date: 2010-11-24 01:42:12 +0100 (Mi, 24 Nov 2010) $
+ * @version $Id: MatrixUtils.java 1131229 2011-06-03 20:49:25Z luc $
  */
 public class MatrixUtils {
 
@@ -182,7 +182,7 @@ public class MatrixUtils {
             Arrays.fill(dRow, zero);
             dRow[row] = one;
         }
-        return new Array2DRowFieldMatrix<T>(d, false);
+        return new Array2DRowFieldMatrix<T>(field, d, false);
     }
 
     /**
@@ -243,12 +243,16 @@ public class MatrixUtils {
      * @return a data.length FieldVector
      * @throws NoDataException if {@code data} is empty.
      * @throws NullArgumentException if {@code data} is {@code null}.
+     * @throws ZeroException if {@code data} has 0 elements
      */
     public static <T extends FieldElement<T>> FieldVector<T> createFieldVector(final T[] data) {
         if (data == null) {
             throw new NullArgumentException();
         }
-        return new ArrayFieldVector<T>(data, true);
+        if (data.length == 0) {
+            throw new ZeroException(LocalizedFormats.VECTOR_MUST_HAVE_AT_LEAST_ONE_ELEMENT);
+        }
+        return new ArrayFieldVector<T>(data[0].getField(), data, true);
     }
 
     /**

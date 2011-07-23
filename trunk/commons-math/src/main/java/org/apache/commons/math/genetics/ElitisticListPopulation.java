@@ -25,7 +25,7 @@ import org.apache.commons.math.util.FastMath;
  * Population of chromosomes which uses elitism (certain percentace of the best
  * chromosomes is directly copied to the next generation).
  *
- * @version $Revision: 990658 $ $Date: 2010-08-30 00:04:09 +0200 (Mo, 30 Aug 2010) $
+ * @version $Id: ElitisticListPopulation.java 1139906 2011-06-26 18:42:32Z luc $
  * @since 2.0
  */
 public class ElitisticListPopulation extends ListPopulation {
@@ -94,8 +94,9 @@ public class ElitisticListPopulation extends ListPopulation {
      *            next generation [in %]
      */
     public void setElitismRate(double elitismRate) {
-        if (elitismRate < 0 || elitismRate > 1)
+        if (elitismRate < 0 || elitismRate > 1) {
             throw new IllegalArgumentException("Elitism rate has to be in [0,1]");
+        }
         this.elitismRate = elitismRate;
     }
 

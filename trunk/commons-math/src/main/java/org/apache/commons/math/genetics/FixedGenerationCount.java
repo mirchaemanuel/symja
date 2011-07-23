@@ -23,7 +23,7 @@ package org.apache.commons.math.genetics;
  * <code>maxGenerations</code> value, {@link #isSatisfied(Population)} returns
  * true.
  *
- * @version $Revision: 811685 $ $Date: 2009-09-05 19:36:48 +0200 (Sa, 05 Sep 2009) $
+ * @version $Id: FixedGenerationCount.java 1139906 2011-06-26 18:42:32Z luc $
  * @since 2.0
  */
 public class FixedGenerationCount implements StoppingCondition {
@@ -39,8 +39,9 @@ public class FixedGenerationCount implements StoppingCondition {
      * @param maxGenerations number of generations to evolve
      */
     public FixedGenerationCount(int maxGenerations) {
-        if (maxGenerations <= 0)
+        if (maxGenerations <= 0) {
             throw new IllegalArgumentException("The number of generations has to be >= 0");
+        }
         this.maxGenerations = maxGenerations;
     }
 

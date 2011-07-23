@@ -23,13 +23,11 @@ import org.apache.commons.math.exception.util.LocalizedFormats;
  * Exception to be thrown when a number is too large.
  *
  * @since 2.2
- * @version $Revision$ $Date$
+ * @version $Id$
  */
 public class NumberIsTooLargeException extends MathIllegalNumberException {
-
     /** Serializable version Id. */
     private static final long serialVersionUID = 4330003017885151975L;
-
     /**
      * Higher bound.
      */
@@ -49,12 +47,15 @@ public class NumberIsTooLargeException extends MathIllegalNumberException {
     public NumberIsTooLargeException(Number wrong,
                                      Number max,
                                      boolean boundIsAllowed) {
-        this(null, wrong, max, boundIsAllowed);
+        this(boundIsAllowed ?
+             LocalizedFormats.NUMBER_TOO_LARGE :
+             LocalizedFormats.NUMBER_TOO_LARGE_BOUND_EXCLUDED,
+             wrong, max, boundIsAllowed);
     }
     /**
      * Construct the exception with a specific context.
      *
-     * @param specific Specific contexte pattern.
+     * @param specific Specific context pattern.
      * @param wrong Value that is larger than the maximum.
      * @param max Maximum.
      * @param boundIsAllowed if true the maximum is included in the allowed range.
@@ -63,11 +64,7 @@ public class NumberIsTooLargeException extends MathIllegalNumberException {
                                      Number wrong,
                                      Number max,
                                      boolean boundIsAllowed) {
-        super(specific,
-              boundIsAllowed ?
-              LocalizedFormats.NUMBER_TOO_LARGE :
-              LocalizedFormats.NUMBER_TOO_LARGE_BOUND_EXCLUDED,
-              wrong, max);
+        super(specific, wrong, max);
 
         this.max = max;
         this.boundIsAllowed = boundIsAllowed;

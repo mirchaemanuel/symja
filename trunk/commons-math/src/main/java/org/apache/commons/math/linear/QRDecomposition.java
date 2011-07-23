@@ -33,7 +33,7 @@ package org.apache.commons.math.linear;
  *
  * @see <a href="http://mathworld.wolfram.com/QRDecomposition.html">MathWorld</a>
  * @see <a href="http://en.wikipedia.org/wiki/QR_decomposition">Wikipedia</a>
- * @version $Revision: 826627 $ $Date: 2009-10-19 12:27:47 +0200 (Mo, 19 Okt 2009) $
+ * @version $Id: QRDecomposition.java 1131229 2011-06-03 20:49:25Z luc $
  * @since 1.2
  */
 public interface QRDecomposition {

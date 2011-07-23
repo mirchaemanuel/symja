@@ -36,7 +36,7 @@ import org.apache.commons.math.exception.util.LocalizedFormats;
  * </p>
  *
  * @since 2.0
- * @version $Revision: 983921 $ $Date: 2010-08-10 12:46:06 +0200 (Di, 10 Aug 2010) $
+ * @version $Id: BigFractionFormat.java 1131229 2011-06-03 20:49:25Z luc $
  */
 public class BigFractionFormat extends AbstractFormat implements Serializable {
 

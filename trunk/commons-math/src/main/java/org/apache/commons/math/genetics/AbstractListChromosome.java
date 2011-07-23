@@ -25,7 +25,7 @@ import java.util.List;
  * Chromosome represented by an immutable list of a fixed length.
  *
  * @param <T> type of the representation list
- * @version $Revision: 811685 $ $Date: 2009-09-05 19:36:48 +0200 (Sa, 05 Sep 2009) $
+ * @version $Id: AbstractListChromosome.java 1135025 2011-06-13 05:09:35Z psteitz $
  * @since 2.0
  */
 public abstract class AbstractListChromosome<T> extends Chromosome {
@@ -38,11 +38,7 @@ public abstract class AbstractListChromosome<T> extends Chromosome {
      * @param representation inner representation of the chromosome
      */
     public AbstractListChromosome(final List<T> representation) {
-        try {
-            checkValidity(representation);
-        } catch (InvalidRepresentationException e) {
-            throw new IllegalArgumentException(String.format("Invalid representation for %s", getClass().getSimpleName()), e);
-        }
+        checkValidity(representation);
         this.representation = Collections.unmodifiableList(new ArrayList<T> (representation));
     }
 

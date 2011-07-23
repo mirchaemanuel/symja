@@ -20,9 +20,9 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.text.MessageFormat;
 import java.util.Locale;
+import java.util.Set;
 
 import org.apache.commons.math.exception.MathThrowable;
-import org.apache.commons.math.exception.util.DummyLocalizable;
 import org.apache.commons.math.exception.util.Localizable;
 import org.apache.commons.math.exception.util.LocalizedFormats;
 
@@ -34,12 +34,15 @@ import org.apache.commons.math.exception.util.LocalizedFormats;
 * <p>
 * Adapted from <a href="http://commons.apache.org/collections/api-release/org/apache/commons/collections/FunctorException.html"/>.</p>
 *
-* @version $Revision: 1035476 $ $Date: 2010-11-15 23:39:56 +0100 (Mo, 15 Nov 2010) $
+* @version $Id: MathException.java 1131229 2011-06-03 20:49:25Z luc $
 */
 public class MathException extends Exception implements MathThrowable {
 
     /** Serializable version identifier. */
     private static final long serialVersionUID = 7428019509644517071L;
+
+    /** Deprecation message. */
+    private static final String DEPRECATION_MESSAGE = "This class is deprecated; calling this method is a bug.";
 
     /**
      * Pattern used to build the message.
@@ -58,19 +61,6 @@ public class MathException extends Exception implements MathThrowable {
     public MathException() {
         this.pattern   = LocalizedFormats.SIMPLE_MESSAGE;
         this.arguments = new Object[] { "" };
-    }
-
-    /**
-     * Constructs a new <code>MathException</code> with specified
-     * formatted detail message.
-     * Message formatting is delegated to {@link java.text.MessageFormat}.
-     * @param pattern format specifier
-     * @param arguments format arguments
-     * @deprecated as of 2.2 replaced by {@link #MathException(Localizable, Object...)}
-     */
-    @Deprecated
-    public MathException(String pattern, Object ... arguments) {
-      this(new DummyLocalizable(pattern), arguments);
     }
 
     /**
@@ -107,22 +97,6 @@ public class MathException extends Exception implements MathThrowable {
      * to be thrown.
      * @param pattern format specifier
      * @param arguments format arguments
-     * @since 1.2
-     * @deprecated as of 2.2 replaced by {@link #MathException(Throwable, Localizable, Object...)}
-     */
-    @Deprecated
-    public MathException(Throwable rootCause, String pattern, Object ... arguments) {
-        this(rootCause, new DummyLocalizable(pattern), arguments);
-    }
-
-    /**
-     * Constructs a new <code>MathException</code> with specified
-     * formatted detail message and nested <code>Throwable</code> root cause.
-     * Message formatting is delegated to {@link java.text.MessageFormat}.
-     * @param rootCause the exception or error that caused this exception
-     * to be thrown.
-     * @param pattern format specifier
-     * @param arguments format arguments
      * @since 2.2
      */
     public MathException(Throwable rootCause, Localizable pattern, Object ... arguments) {
@@ -131,30 +105,25 @@ public class MathException extends Exception implements MathThrowable {
       this.arguments = (arguments == null) ? new Object[0] : arguments.clone();
     }
 
-    /** Gets the pattern used to build the message of this throwable.
-     *
-     * @return the pattern used to build the message of this throwable
-     * @since 1.2
-     * @deprecated as of 2.2 replaced by {@link #getSpecificPattern()} and {@link #getGeneralPattern()}
-     */
-    @Deprecated
-    public String getPattern() {
-        return pattern.getSourceString();
+    /** {@inheritDoc} */
+    public void addMessage(Localizable pat,
+                           Object ... args) {
+        throw new UnsupportedOperationException(DEPRECATION_MESSAGE);
     }
 
     /** {@inheritDoc} */
-    public Localizable getSpecificPattern() {
-        return null;
+    public void setContext(String key, Object value) {
+        throw new UnsupportedOperationException(DEPRECATION_MESSAGE);
     }
 
     /** {@inheritDoc} */
-    public Localizable getGeneralPattern() {
-        return pattern;
+    public Object getContext(String key) {
+        throw new UnsupportedOperationException(DEPRECATION_MESSAGE);
     }
 
     /** {@inheritDoc} */
-    public Object[] getArguments() {
-        return arguments.clone();
+    public Set<String> getContextKeys() {
+        throw new UnsupportedOperationException(DEPRECATION_MESSAGE);
     }
 
     /** Gets the message in a specified locale.

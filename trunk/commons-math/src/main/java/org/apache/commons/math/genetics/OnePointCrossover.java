@@ -42,7 +42,7 @@ import java.util.List;
  *
  * @param <T> generic type of the {@link AbstractListChromosome}s for crossover
  * @since 2.0
- * @version $Revision: 903046 $ $Date: 2010-01-26 03:07:26 +0100 (Di, 26 Jan 2010) $
+ * @version $Id: OnePointCrossover.java 1139906 2011-06-26 18:42:32Z luc $
  *
  */
 public class OnePointCrossover<T> implements CrossoverPolicy {
@@ -84,8 +84,9 @@ public class OnePointCrossover<T> implements CrossoverPolicy {
      */
     private ChromosomePair crossover(AbstractListChromosome<T> first, AbstractListChromosome<T> second) {
         int length = first.getLength();
-        if (length != second.getLength())
+        if (length != second.getLength()) {
             throw new IllegalArgumentException("Both chromosomes must have same lengths.");
+        }
 
         // array representations of the parents
         List<T> parent1Rep = first.getRepresentation();

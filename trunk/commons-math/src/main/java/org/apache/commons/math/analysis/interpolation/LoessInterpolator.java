@@ -42,7 +42,7 @@ import org.apache.commons.math.util.MathUtils;
  * This class implements both the loess method and serves as an interpolation
  * adapter to it, allowing to build a spline on the obtained loess fit.
  *
- * @version $Revision: 1056516 $ $Date: 2011-01-07 22:19:19 +0100 (Fr, 07 Jan 2011) $
+ * @version $Id: LoessInterpolator.java 1132439 2011-06-05 15:59:26Z luc $
  * @since 2.0
  */
 public class LoessInterpolator
@@ -427,10 +427,14 @@ public class LoessInterpolator
      * weight function
      *
      * @param x Argument.
-     * @return <code>(1 - |x|<sup>3</sup>)<sup>3</sup></code>.
+     * @return <code>(1 - |x|<sup>3</sup>)<sup>3</sup></code> for |x| &lt; 1, 0 otherwise.
      */
     private static double tricube(final double x) {
-        final double tmp = 1 - x * x * x;
+        final double absX = FastMath.abs(x);
+        if (absX >= 1.0) {
+            return 0.0;
+        }
+        final double tmp = 1 - absX * absX * absX;
         return tmp * tmp * tmp;
     }
 

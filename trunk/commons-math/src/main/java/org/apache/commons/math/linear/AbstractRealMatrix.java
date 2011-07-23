@@ -17,11 +17,12 @@
 
 package org.apache.commons.math.linear;
 
+import java.util.ArrayList;
+
 import org.apache.commons.math.exception.NoDataException;
 import org.apache.commons.math.exception.NotStrictlyPositiveException;
 import org.apache.commons.math.exception.DimensionMismatchException;
-import org.apache.commons.math.exception.NonSquareMatrixException;
-import org.apache.commons.math.exception.MatrixDimensionMismatchException;
+import org.apache.commons.math.exception.NullArgumentException;
 import org.apache.commons.math.exception.util.LocalizedFormats;
 import org.apache.commons.math.util.MathUtils;
 import org.apache.commons.math.util.FastMath;
@@ -31,7 +32,7 @@ import org.apache.commons.math.util.FastMath;
  * <p>All the methods implemented here use {@link #getEntry(int, int)} to access
  * matrix elements. Derived class can provide faster implementations. </p>
  *
- * @version $Revision: 1038403 $ $Date: 2010-11-24 01:42:12 +0100 (Mi, 24 Nov 2010) $
+ * @version $Id: AbstractRealMatrix.java 1132432 2011-06-05 14:59:29Z luc $
  * @since 2.0
  */
 public abstract class AbstractRealMatrix implements RealMatrix {
@@ -149,6 +150,65 @@ public abstract class AbstractRealMatrix implements RealMatrix {
     /** {@inheritDoc} */
     public RealMatrix preMultiply(final RealMatrix m) {
         return m.multiply(this);
+    }
+
+    /** {@inheritDoc} */
+    public RealMatrix power(final int p) {
+        if (p < 0) {
+            throw new IllegalArgumentException("p must be >= 0");
+        }
+
+        if (!isSquare()) {
+            throw new NonSquareMatrixException(getRowDimension(), getColumnDimension());
+        }
+
+        if (p == 0) {
+            return MatrixUtils.createRealIdentityMatrix(this.getRowDimension());
+        }
+
+        if (p == 1) {
+            return this.copy();
+        }
+
+        final int power = p - 1;
+
+        /*
+         * Only log_2(p) operations is used by doing as follows:
+         * 5^214 = 5^128 * 5^64 * 5^16 * 5^4 * 5^2
+         *
+         * In general, the same approach is used for A^p.
+         */
+
+        final char[] binaryRepresentation = Integer.toBinaryString(power).toCharArray();
+        final ArrayList<Integer> nonZeroPositions = new ArrayList<Integer>();
+        int maxI = -1;
+
+        for (int i = 0; i < binaryRepresentation.length; ++i) {
+            if (binaryRepresentation[i] == '1') {
+                final int pos = binaryRepresentation.length - i - 1;
+                nonZeroPositions.add(pos);
+
+                // The positions are taken in turn, so maxI is only changed once
+                if (maxI == -1) {
+                    maxI = pos;
+                }
+            }
+        }
+
+        RealMatrix[] results = new RealMatrix[maxI + 1];
+        results[0] = this.copy();
+
+        for (int i = 1; i <= maxI; ++i) {
+            results[i] = results[i-1].multiply(results[i-1]);
+        }
+
+        RealMatrix result = this.copy();
+
+        for (Integer i : nonZeroPositions) {
+            result = result.multiply(results[i]);
+        }
+
+        return result;
     }
 
     /** {@inheritDoc} */
@@ -326,7 +386,9 @@ public abstract class AbstractRealMatrix implements RealMatrix {
     }
 
     /** {@inheritDoc} */
-    public void setSubMatrix(final double[][] subMatrix, final int row, final int column) {
+    public void setSubMatrix(final double[][] subMatrix, final int row, final int column)
+        throws NoDataException, DimensionMismatchException, NullArgumentException {
+        MathUtils.checkNotNull(subMatrix);
         final int nRows = subMatrix.length;
         if (nRows == 0) {
             throw new NoDataException(LocalizedFormats.AT_LEAST_ONE_ROW);
@@ -634,7 +696,7 @@ public abstract class AbstractRealMatrix implements RealMatrix {
                 out[col] = sum;
             }
 
-            return new ArrayRealVector(out);
+            return new ArrayRealVector(out, false);
         }
     }
 

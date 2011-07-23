@@ -24,13 +24,11 @@ import org.apache.commons.math.exception.util.LocalizedFormats;
  * increasing or decreasing.
  *
  * @since 2.2
- * @version $Revision$ $Date$
+ * @version $Id$
  */
 public class NonMonotonousSequenceException extends MathIllegalNumberException {
-
     /** Serializable version Id. */
     private static final long serialVersionUID = 3596849179428944575L;
-
     /**
      * Direction (positive for increasing, negative for decreasing).
      */

@@ -29,7 +29,7 @@ import org.apache.commons.math.util.FastMath;
  * Default implementation of
  * {@link org.apache.commons.math.distribution.FDistribution}.
  *
- * @version $Revision: 1060449 $ $Date: 2011-01-18 17:24:27 +0100 (Di, 18 Jan 2011) $
+ * @version $Id: FDistributionImpl.java 1131229 2011-06-03 20:49:25Z luc $
  */
 public class FDistributionImpl
     extends AbstractContinuousDistribution

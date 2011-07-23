@@ -22,8 +22,6 @@ import java.lang.reflect.Array;
 import org.apache.commons.math.Field;
 import org.apache.commons.math.FieldElement;
 import org.apache.commons.math.exception.DimensionMismatchException;
-import org.apache.commons.math.exception.NonSquareMatrixException;
-import org.apache.commons.math.exception.SingularMatrixException;
 
 /**
  * Calculates the LUP-decomposition of a square matrix.
@@ -36,7 +34,7 @@ import org.apache.commons.math.exception.SingularMatrixException;
  * a zero pivot element, no attempt is done to get the largest pivot element.</p>
  *
  * @param <T> the type of the field elements
- * @version $Revision: 1034220 $ $Date: 2010-11-12 01:13:27 +0100 (Fr, 12 Nov 2010) $
+ * @version $Id: FieldLUDecompositionImpl.java 1141885 2011-07-01 09:16:41Z luc $
  * @since 2.0
  */
 public class FieldLUDecompositionImpl<T extends FieldElement<T>> implements FieldLUDecomposition<T> {
@@ -222,9 +220,6 @@ public class FieldLUDecompositionImpl<T extends FieldElement<T>> implements Fiel
     /** Specialized solver. */
     private static class Solver<T extends FieldElement<T>> implements FieldDecompositionSolver<T> {
 
-        /** Serializable version identifier. */
-        private static final long serialVersionUID = -6353105415121373022L;
-
         /** Field to which the elements belong. */
         private final Field<T> field;
 
@@ -335,7 +330,7 @@ public class FieldLUDecompositionImpl<T extends FieldElement<T>> implements Fiel
                     }
                 }
 
-                return new ArrayFieldVector<T>(bp, false);
+                return new ArrayFieldVector<T>(field, bp, false);
 
             }
         }
@@ -348,7 +343,7 @@ public class FieldLUDecompositionImpl<T extends FieldElement<T>> implements Fiel
          * @throws SingularMatrixException if the decomposed matrix is singular.
          */
         public ArrayFieldVector<T> solve(ArrayFieldVector<T> b) {
-            return new ArrayFieldVector<T>(solve(b.getDataRef()), false);
+            return new ArrayFieldVector<T>(field, solve(b.getDataRef()), false);
         }
 
         /** {@inheritDoc} */
@@ -402,7 +397,7 @@ public class FieldLUDecompositionImpl<T extends FieldElement<T>> implements Fiel
                 }
             }
 
-            return new Array2DRowFieldMatrix<T>(bp, false);
+            return new Array2DRowFieldMatrix<T>(field, bp, false);
 
         }
 
