@@ -65,7 +65,7 @@ public class EvalExpand {
 }
 }}}
 
-= JSR223 support based scripting engine support =
+= JSR223 based scripting engine support =
 Here is a simple example for the JSR 223 support. More examples can be found here: [JSR223Support].
 
 {{{
