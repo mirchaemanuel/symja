@@ -2,7 +2,7 @@
 #labels Featured,Phase-Implementation
 #sidebar TableOfContents
 
-Symja requires Java 1.6 comliance level.
+*Note*: Symja requires Java 1.6 compliance level.
 
 = Installing the libraries =
 In the folder where you've unzipped the downloaded [http://symja.googlecode.com/files/meconsole-0.0.10.zip ZIP file], there are 5 JARs which should be on your Java classpath:
