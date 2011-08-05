@@ -7,7 +7,7 @@ Before writing a Java program you can interactively test your expressions in the
 
 <wiki:toc max_depth="1" />
 
-= Direct Java integration=
+= Direct Java integration =
 {{{
 package org.matheclipse.examples;
 
@@ -63,6 +63,16 @@ public class EvalExpand {
 
   }
 }
+}}}
+
+== User variable spaces ==
+In the AJAX server interface the {{{SERVER_MODE}}} is set to {{{true}}}, to ensure that only variable identifiers starting with a '$' character could be assigned a new value or rule. The standard default functions like {{{Cos, Sin,...}}} and symbolic variable names like {{{x, y, z...}}} could not be redefined or enhanced. So every logged in user has his own _$ variable space_ which is separated from another users _$ variable space_.
+
+{{{
+...
+    F.initSymbols(null);
+    Config.SERVER_MODE = true;
+...
 }}}
 
 = JSR223 based scripting engine support =
