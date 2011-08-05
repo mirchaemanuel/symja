@@ -5,7 +5,7 @@ Before writing a Java program you can interactively test your expressions in the
 
 *Note*: Symja requires Java 1.6 compliance level.
 
-<wiki:toc max_depth="1" />
+<wiki:toc max_depth="2" />
 
 = Direct Java integration =
 {{{
