@@ -1,20 +1,24 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<project default="create_run_jar" name="Create Runnable Jar for Project symja">
-    <!--this file was created by Eclipse Runnable JAR Export Wizard-->
-    <!--ANT 1.7 is required                                        -->
-    <target name="create_run_jar">
-        <jar destfile="C:/galileo/symja-0.0.14.jar" filesetmanifest="mergewithoutmain">
-            <manifest>
-                <attribute name="Main-Class" value="org.matheclipse.symja.Main"/>
-                <attribute name="Class-Path" value="."/>
-            </manifest>
-            <fileset dir="C:/galileo/workspace/symja/bin"/>
-            <zipfileset excludes="META-INF/*.SF" src="${basedir}/lib/jnlp.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="${basedir}/lib/jsr305.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="${basedir}/lib/google-collect-1.0.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="${basedir}/lib/log4j-1.2.11.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="${basedir}/lib/commons-logging-1.1.1.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="${basedir}/lib/commons-io-1.3.1.jar"/>
-        </jar>
-    </target>
+<project default="create_run_jar" name="Create Runnable Jar for
+Project symja">
+	<tstamp>
+		<format property="date" pattern="yyyy-MM-dd" />
+	</tstamp>
+
+	<!--ANT 1.7 is required                                        -->
+	<target name="create_run_jar">
+		<jar destfile="${basedir}/dist/symja-${date}.jar" filesetmanifest="mergewithoutmain">
+			<manifest>
+				<attribute name="Main-Class" value="org.matheclipse.symja.Main" />
+				<attribute name="Class-Path" value="." />
+			</manifest>
+			<fileset dir="${basedir}/bin" />
+			<zipfileset excludes="META-INF/*.SF" src="${basedir}/lib/jnlp.jar" />
+			<zipfileset excludes="META-INF/*.SF" src="${basedir}/lib/jsr305.jar" />
+			<zipfileset excludes="META-INF/*.SF" src="${basedir}/lib/google-collect-1.0.jar" />
+			<zipfileset excludes="META-INF/*.SF" src="${basedir}/lib/log4j-1.2.11.jar" />
+			<zipfileset excludes="META-INF/*.SF" src="${basedir}/lib/commons-logging-1.1.1.jar" />
+			<zipfileset excludes="META-INF/*.SF" src="${basedir}/lib/commons-io-1.3.1.jar" />
+		</jar>
+	</target>
 </project>
