@@ -67,7 +67,8 @@ import edu.jas.structure.ElemFactory;
 public class AST extends NestedFastTable<IExpr> implements IAST {
 	private final static IAST AST_DUMMY_INSTANCE = new AST();
 
-	public final static ASTCopy COPY = new ASTCopy((Class<IAST>) AST_DUMMY_INSTANCE.getClass());
+	public final static ASTCopy COPY = new ASTCopy(
+			(Class<IAST>) AST_DUMMY_INSTANCE.getClass());
 
 	/**
 	 * 
@@ -111,7 +112,8 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 	 * Example &quot;List[x,List[y]]&quot;
 	 */
 	public static AST parse(final String inputString) {
-		final StringTokenizer tokenizer = new StringTokenizer(inputString, "[],", true);
+		final StringTokenizer tokenizer = new StringTokenizer(inputString,
+				"[],", true);
 		final AST list = newInstance(null);
 		String token = tokenizer.nextToken();
 		list.setHeader(StringX.valueOf(token));
@@ -125,7 +127,8 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 
 	}
 
-	private static void parseList(final StringTokenizer tokenizer, final AST list) {
+	private static void parseList(final StringTokenizer tokenizer,
+			final AST list) {
 		String token = tokenizer.nextToken();
 		String arg;
 		AST argList;
@@ -177,14 +180,14 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 	// }
 	/**
 	 * Constructs a list containing the elements of the specified collection, in
-	 * the order they are returned by the collection's iterator. The <tt>AST</tt>
-	 * instance has an initial capacity of 110% the size of the specified
-	 * collection.
+	 * the order they are returned by the collection's iterator. The
+	 * <tt>AST</tt> instance has an initial capacity of 110% the size of the
+	 * specified collection.
 	 * 
 	 * @param c
-	 *          the collection whose elements are to be placed into this list.
+	 *            the collection whose elements are to be placed into this list.
 	 * @throws NullPointerException
-	 *           if the specified collection is null.
+	 *             if the specified collection is null.
 	 */
 	// private AST(final Collection<IExpr> c, final IExpr head) {
 	// super(c, head);
@@ -197,10 +200,10 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 	// }
 	// }
 	/*
-	 * Creates a new list form the given list and symbol. if incl is set to <code>
-	 * true </code> all arguments from index first to last-1 are copied in the new
-	 * list if incl is set to <code> false </code> all arguments excluded from
-	 * index first to last-1 are copied in the new list
+	 * Creates a new list form the given list and symbol. if incl is set to
+	 * <code> true </code> all arguments from index first to last-1 are copied
+	 * in the new list if incl is set to <code> false </code> all arguments
+	 * excluded from index first to last-1 are copied in the new list
 	 */
 	// private AST(final IAST f, final IExpr sym, final boolean incl,
 	// final int first, final int last) {
@@ -224,9 +227,9 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 	 * Constructs an empty list with the specified initial capacity.
 	 * 
 	 * @param initialCapacity
-	 *          the initial capacity of the list.
+	 *            the initial capacity of the list.
 	 * @exception IllegalArgumentException
-	 *              if the specified initial capacity is negative
+	 *                if the specified initial capacity is negative
 	 */
 	// private AST(final int initialCapacity, final IExpr head) {
 	// super(initialCapacity + 1);
@@ -236,10 +239,11 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 	 * Constructs an empty list with the specified initial capacity.
 	 * 
 	 * @param initialCapacity
-	 *          the initial capacity (i.e. number of arguments without the header
-	 *          element) of the list.
+	 *            the initial capacity (i.e. number of arguments without the
+	 *            header element) of the list.
 	 * @param setLength
-	 *          if <code>true</code>, sets the array's size to initialCapacity.
+	 *            if <code>true</code>, sets the array's size to
+	 *            initialCapacity.
 	 */
 	private AST(final int initialCapacity, final boolean setLength) {
 		super(initialCapacity + 1, setLength ? initialCapacity + 1 : 0);
@@ -324,7 +328,8 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 		return ast;
 	}
 
-	public boolean equalsFromPosition(final int from0, final AST f1, final int from1) {
+	public boolean equalsFromPosition(final int from0, final AST f1,
+			final int from1) {
 		if ((size() - from0) != (f1.size() - from1)) {
 			return false;
 		}
@@ -468,6 +473,10 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 		return head().equals(F.List);
 	}
 
+	public boolean isSequence() {
+		return head().equals(F.Sequence);
+	}
+	
 	public boolean isListOfLists() {
 		if (head().equals(F.List)) {
 			for (int i = 2; i < size(); i++) {
@@ -526,7 +535,8 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 	}
 
 	public boolean isSlotSequence() {
-		return size() == 2 && head().equals(F.SlotSequence) && get(1).isInteger();
+		return size() == 2 && head().equals(F.SlotSequence)
+				&& get(1).isInteger();
 	}
 
 	public boolean isCosh() {
@@ -655,6 +665,10 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 		return false;
 	}
 
+	public boolean isPatternSequence() {
+		return false;
+	}
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -742,17 +756,28 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 
 	public IAST map(final Function<IExpr, IExpr> function) {
 		final IAST f = clone();
+		return map(f, function);
+	}
+
+	public IAST map(final IExpr head, final Function<IExpr, IExpr> function) {
+		final IAST f = clone();
+		f.set(0, head);
+		return map(f, function);
+	}
+
+	public IAST map(final IAST resultAST, final Function<IExpr, IExpr> function) {
 		IExpr temp;
 		for (int i = 1; i < size(); i++) {
 			temp = function.apply(get(i));
 			if (temp != null) {
-				f.set(i, temp);
+				resultAST.set(i, temp);
 			}
 		}
-		return f;
+		return resultAST;
 	}
 
-	public IAST map(IAST resultAST, IAST secondAST, BiFunction<IExpr, IExpr, IExpr> function) {
+	public IAST map(IAST resultAST, IAST secondAST,
+			BiFunction<IExpr, IExpr, IExpr> function) {
 		for (int i = 1; i < size(); i++) {
 			resultAST.add(function.apply(get(i), secondAST.get(i)));
 		}
@@ -809,7 +834,8 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 	 * {@inheritDoc}
 	 */
 	public IAST filter(IAST filterAST, IAST restAST, Predicate<IExpr> predicate) {
-		return (new ASTRange(this, 1, size())).filter(filterAST, restAST, predicate);
+		return (new ASTRange(this, 1, size())).filter(filterAST, restAST,
+				predicate);
 	}
 
 	/**
@@ -886,7 +912,8 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 
 	/** {@inheritDoc} */
 	public boolean isRuleAST() {
-		return size() == 3 && (head().equals(F.Rule) || head().equals(F.RuleDelayed));
+		return size() == 3
+				&& (head().equals(F.Rule) || head().equals(F.RuleDelayed));
 	}
 
 	/** {@inheritDoc} */
@@ -945,7 +972,8 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 				return F.C1.compareTo(ast.get(2));
 			} else {
 				final IExpr lastTimesHeader = ((IAST) lastTimes).head();
-				if ((lastTimesHeader == F.Power) && (((IAST) lastTimes).size() == 3)) {
+				if ((lastTimesHeader == F.Power)
+						&& (((IAST) lastTimes).size() == 3)) {
 					// compare 2 Power ast's
 					cp = ((IAST) lastTimes).get(1).compareTo(ast.get(1));
 					if (cp != 0) {
@@ -982,9 +1010,10 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 	}
 
 	/**
-	 * Compares this expression with the specified expression for canonical order.
-	 * Returns a negative integer, zero, or a positive integer as this expression
-	 * is canonical less than, equal to, or greater than the specified expression.
+	 * Compares this expression with the specified expression for canonical
+	 * order. Returns a negative integer, zero, or a positive integer as this
+	 * expression is canonical less than, equal to, or greater than the
+	 * specified expression.
 	 */
 	public int compareTo(final IExpr expr) {
 		if (expr instanceof AST) {
@@ -1083,24 +1112,29 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 	final public int patternHashCode() {
 		if (fPatternMatchingHashValue == 0) {
 			if (size() > 1) {
-				final int attr = topHead().getAttributes() & ISymbol.FLATORDERLESS;
+				final int attr = topHead().getAttributes()
+						& ISymbol.FLATORDERLESS;
 				if (attr != ISymbol.NOATTRIBUTE) {
 					if (attr == ISymbol.FLATORDERLESS) {
 						fPatternMatchingHashValue = (17 * get(0).hashCode());
 					} else if (attr == ISymbol.FLAT) {
 						if (get(1) instanceof IAST) {
-							fPatternMatchingHashValue = (31 * get(0).hashCode() + ((IAST) get(1)).get(0).hashCode());
+							fPatternMatchingHashValue = (31 * get(0).hashCode() + ((IAST) get(1))
+									.get(0).hashCode());
 						} else {
-							fPatternMatchingHashValue = (37 * get(0).hashCode() + get(1).hashCode());
+							fPatternMatchingHashValue = (37 * get(0).hashCode() + get(
+									1).hashCode());
 						}
 					} else { // attr == ISymbol.ORDERLESS
 						fPatternMatchingHashValue = (17 * get(0).hashCode() + size());
 					}
 				} else {
 					if (get(1) instanceof IAST) {
-						fPatternMatchingHashValue = (31 * get(0).hashCode() + ((IAST) get(1)).get(0).hashCode() + size());
+						fPatternMatchingHashValue = (31 * get(0).hashCode()
+								+ ((IAST) get(1)).get(0).hashCode() + size());
 					} else {
-						fPatternMatchingHashValue = (37 * get(0).hashCode() + get(1).hashCode() + size());
+						fPatternMatchingHashValue = (37 * get(0).hashCode()
+								+ get(1).hashCode() + size());
 					}
 				}
 			} else {
@@ -1127,8 +1161,10 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 		return newInstance(this, index);
 	}
 
-	public IExpr variables2Slots(final Map<IExpr, IExpr> map, final List<IExpr> variableList) {
-		return AST.COPY.replaceAll(this, new IsUnaryVariableOrPattern<IExpr>(), new UnaryVariable2Slot(map, variableList));
+	public IExpr variables2Slots(final Map<IExpr, IExpr> map,
+			final List<IExpr> variableList) {
+		return AST.COPY.replaceAll(this, new IsUnaryVariableOrPattern<IExpr>(),
+				new UnaryVariable2Slot(map, variableList));
 	}
 
 	public String fullFormString() {
@@ -1177,7 +1213,8 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 			if (!Character.isUpperCase(sym.toString().charAt(0))) {
 				text.append("$(");
 				for (int i = 0; i < size(); i++) {
-					text.append(get(i).internalFormString(symbolsAsFactoryMethod, depth + 1));
+					text.append(get(i).internalFormString(
+							symbolsAsFactoryMethod, depth + 1));
 					if (i < size() - 1) {
 						text.append(sep);
 					}
@@ -1188,7 +1225,8 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 		} else if (temp.isPattern() || temp.isAST()) {
 			text.append("$(");
 			for (int i = 0; i < size(); i++) {
-				text.append(get(i).internalFormString(symbolsAsFactoryMethod, depth + 1));
+				text.append(get(i).internalFormString(symbolsAsFactoryMethod,
+						depth + 1));
 				if (i < size() - 1) {
 					text.append(sep);
 				}
@@ -1203,7 +1241,8 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 			text.append('\n');
 		}
 		for (int i = 1; i < size(); i++) {
-			text.append(get(i).internalFormString(symbolsAsFactoryMethod, depth + 1));
+			text.append(get(i).internalFormString(symbolsAsFactoryMethod,
+					depth + 1));
 			if (i < size() - 1) {
 				text.append(sep);
 				if (depth == 0 && isList()) {
@@ -1225,7 +1264,8 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 			if (size() > 0 && isList()) {
 				buf.append('{');
 				for (int i = 1; i < size(); i++) {
-					buf.append(get(i) == this ? "(this AST)" : String.valueOf(get(i)));
+					buf.append(get(i) == this ? "(this AST)" : String
+							.valueOf(get(i)));
 					if (i < size() - 1) {
 						buf.append(", ");
 					}
@@ -1269,7 +1309,8 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 	/**
 	 * {@inheritDoc}
 	 */
-	public boolean addAll(List<? extends IExpr> ast, int startPosition, int endPosition) {
+	public boolean addAll(List<? extends IExpr> ast, int startPosition,
+			int endPosition) {
 		if (ast.size() > 0 && startPosition < endPosition) {
 			ensureCapacity(size() + (endPosition - startPosition));
 			for (int i = startPosition; i < endPosition; i++) {
@@ -1317,8 +1358,8 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 	/**
 	 * 
 	 * @param intialCapacity
-	 *          the initial capacity (i.e. number of arguments without the header
-	 *          element) of the list.
+	 *            the initial capacity (i.e. number of arguments without the
+	 *            header element) of the list.
 	 * @param head
 	 * @return
 	 */
@@ -1533,7 +1574,8 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 	}
 
 	public IExpr div(final IExpr that) {
-		return F.eval(F.function(F.Times, this, F.function(F.Power, that, F.CN1)));
+		return F.eval(F.function(F.Times, this, F
+				.function(F.Power, that, F.CN1)));
 	}
 
 	public IExpr mod(final IExpr that) {
@@ -1569,12 +1611,14 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 		} else if (clazz.equals(java.math.BigInteger.class)) {
 			IExpr temp = F.eval(this);
 			if (temp instanceof IntegerSym) {
-				return new java.math.BigInteger(((IntegerSym) temp).toByteArray());
+				return new java.math.BigInteger(((IntegerSym) temp)
+						.toByteArray());
 			}
 		} else if (clazz.equals(String.class)) {
 			return toString();
 		}
-		throw new UnsupportedOperationException("AST.asType() - cast not supported.");
+		throw new UnsupportedOperationException(
+				"AST.asType() - cast not supported.");
 	}
 
 	/**
@@ -1584,7 +1628,7 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 	 * @param index
 	 * @return
 	 * @throws WrongArgumentType
-	 *           if the cast is not possible
+	 *             if the cast is not possible
 	 */
 	public IInteger getInt(int index) {
 		if (get(index) instanceof IInteger) {
@@ -1600,7 +1644,7 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 	 * @param index
 	 * @return
 	 * @throws WrongArgumentType
-	 *           if the cast is not possible
+	 *             if the cast is not possible
 	 */
 	public INumber getNumber(int index) {
 		if (get(index) instanceof INumber) {
@@ -1616,7 +1660,7 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 	 * @param index
 	 * @return
 	 * @throws WrongArgumentType
-	 *           if the cast is not possible
+	 *             if the cast is not possible
 	 */
 	public IAST getAST(int index) {
 		if (get(index) instanceof IAST) {
@@ -1626,8 +1670,8 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 	}
 
 	/**
-	 * Casts an <code>IExpr</code> which is a list at position <code>index</code>
-	 * to an <code>IAST</code>.
+	 * Casts an <code>IExpr</code> which is a list at position
+	 * <code>index</code> to an <code>IAST</code>.
 	 * 
 	 * @param index
 	 * @return
@@ -1672,8 +1716,8 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 	}
 
 	/**
-	 * Signum functionality is used in JAS toString() method, don't use it as math
-	 * signum function.
+	 * Signum functionality is used in JAS toString() method, don't use it as
+	 * math signum function.
 	 * 
 	 * @deprecated
 	 */

@@ -72,8 +72,8 @@ public class Dot extends AbstractNonOrderlessArgMultiple {
 	}
 
 	@Override
-	public IExpr numericEval(final IAST functionList) {
-		return evaluate(functionList);
+	public IExpr numericEval(final IAST ast) {
+		return evaluate(ast);
 	}
 
 	@Override

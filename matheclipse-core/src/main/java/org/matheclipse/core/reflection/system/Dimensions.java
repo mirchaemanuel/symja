@@ -2,6 +2,7 @@ package org.matheclipse.core.reflection.system;
 
 import java.util.ArrayList;
 
+import org.matheclipse.core.eval.exception.Validate;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IAST;
@@ -18,7 +19,8 @@ public class Dimensions extends AbstractFunctionEvaluator {
 
 	@Override
 	public IExpr evaluate(final IAST ast) {
-		if ((ast.size() == 2) && (ast.get(1) instanceof IAST)) {
+		Validate.checkSize(ast, 2);
+		if (ast.get(1).isAST()) {
 			IAST list = (IAST) ast.get(1);
 			int m = list.size();
 			ArrayList<Integer> dims = new ArrayList<Integer>();
@@ -48,14 +50,16 @@ public class Dimensions extends AbstractFunctionEvaluator {
 		}
 	}
 
-	private void checkLevel(final IAST ast, ISymbol header, ArrayList<Integer> dims, int index) {
+	private void checkLevel(final IAST ast, ISymbol header,
+			ArrayList<Integer> dims, int index) {
 		if (ast.size() > 1) {
 			if (index < dims.size()) {
 				int dim = dims.get(index);
 				for (int i = 1; i < ast.size(); i++) {
 					if (ast.get(i) instanceof IAST) {
 						IAST list = (IAST) ast.get(i);
-						if (!header.equals(list.topHead()) || dim != list.size() - 1) {
+						if (!header.equals(list.topHead())
+								|| dim != list.size() - 1) {
 							while (index < dims.size()) {
 								dims.remove(index);
 							}

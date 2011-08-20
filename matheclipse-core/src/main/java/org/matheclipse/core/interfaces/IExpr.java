@@ -365,6 +365,12 @@ public interface IExpr extends Comparable<IExpr>, RingElem<IExpr>, INestedListEl
 	public boolean isList();
 
 	/**
+	 * Test if this expression is a sequence (i.e. an AST with head Sequence)
+	 * 
+	 */
+	public boolean isSequence();
+	
+	/**
 	 * Test if this expression is a list of lists
 	 * 
 	 * @see #isList()
@@ -432,6 +438,12 @@ public interface IExpr extends Comparable<IExpr>, RingElem<IExpr>, INestedListEl
 	 */
 	public boolean isPattern();
 
+	/**
+	 * Test if this expression is a pattern sequence object
+	 * 
+	 */
+	public boolean isPatternSequence();
+	
 	/**
 	 * Test if this expression is the Condition function
 	 * <code>Condition[&lt;arg1&gt;, &lt;arg2&gt;]</code>

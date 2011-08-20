@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 
-import org.matheclipse.core.convert.JASConvert;
 import org.matheclipse.core.eval.exception.Validate;
 import org.matheclipse.core.eval.exception.WrongArgumentType;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
@@ -163,7 +162,9 @@ public class Solve extends AbstractFunctionEvaluator {
 								}
 							}
 						}
-					} else if (expr.isPower() && (expr.getAt(2).isInteger() || expr.getAt(2).isNumIntValue())) {
+					} else if (expr.isPower()
+							&& (expr.getAt(2).isInteger() || expr.getAt(2)
+									.isNumIntValue())) {
 						// (JASConvert.getExponent((IAST) expr) > 0)) {
 						if (equationType == LINEAR) {
 							equationType = POLYNOMIAL;
@@ -306,7 +307,8 @@ public class Solve extends AbstractFunctionEvaluator {
 	 * @param vector
 	 * @return <code>null</code> if the solution couldn't be found
 	 */
-	private static IAST analyzeSublist(ArrayList<ExprAnalyzer> analyzerList, IAST vars, IAST resultList, IAST matrix, IAST vector)
+	private static IAST analyzeSublist(ArrayList<ExprAnalyzer> analyzerList,
+			IAST vars, IAST resultList, IAST matrix, IAST vector)
 			throws NoSolution {
 		ExprAnalyzer exprAnalyzer;
 		Collections.sort(analyzerList);
@@ -324,7 +326,8 @@ public class Solve extends AbstractFunctionEvaluator {
 						throw new NoSolution(NoSolution.NO_SOLUTION_FOUND);
 					}
 				}
-			} else if (exprAnalyzer.getNumberOfVars() == 1 && exprAnalyzer.isLinearOrPolynomial()) {
+			} else if (exprAnalyzer.getNumberOfVars() == 1
+					&& exprAnalyzer.isLinearOrPolynomial()) {
 				IAST listOfRules = rootsOfUnivariatePolynomial(exprAnalyzer);
 				if (listOfRules != null) {
 					boolean evaled = false;
@@ -336,22 +339,27 @@ public class Solve extends AbstractFunctionEvaluator {
 						} else {
 
 							ArrayList<ExprAnalyzer> subAnalyzerList = new ArrayList<ExprAnalyzer>();
-							// collect linear and univariate polynomial equations:
+							// collect linear and univariate polynomial
+							// equations:
 							for (int i = currEquation; i < analyzerList.size(); i++) {
 								IExpr expr = analyzerList.get(i).getExpr();
-								IExpr temp = expr.replaceAll(listOfRules.getAST(k));
+								IExpr temp = expr.replaceAll(listOfRules
+										.getAST(k));
 								if (temp != null) {
 									expr = F.eval(temp);
 									exprAnalyzer = new ExprAnalyzer(expr, vars);
 									exprAnalyzer.analyze();
 								} else {
-									// reuse old analyzer; expression hasn't changed
+									// reuse old analyzer; expression hasn't
+									// changed
 									exprAnalyzer = analyzerList.get(i);
 								}
 								subAnalyzerList.add(exprAnalyzer);
 							}
 							try {
-								IAST subResultList = analyzeSublist(subAnalyzerList, vars, F.List(), matrix, vector);
+								IAST subResultList = analyzeSublist(
+										subAnalyzerList, vars, F.List(),
+										matrix, vector);
 								if (subResultList != null) {
 									evaled = true;
 									for (IExpr expr : subResultList) {
@@ -433,8 +441,8 @@ public class Solve extends AbstractFunctionEvaluator {
 
 	/**
 	 * Check if the argument at the given position is an equation (i.e.
-	 * Equal[a,b]) or a list of equations and return a list of expressions, which
-	 * should be equal to <code>0</code>.
+	 * Equal[a,b]) or a list of equations and return a list of expressions,
+	 * which should be equal to <code>0</code>.
 	 * 
 	 * @param ast
 	 * @param position
@@ -449,19 +457,23 @@ public class Solve extends AbstractFunctionEvaluator {
 			for (int i = 1; i < eqns.size(); i++) {
 				if (eqns.get(i).isAST(F.Equal, 3)) {
 					eq = (IAST) eqns.get(i);
-					termsEqualZeroList.add(F.evalExpandAll(F.Subtract(eq.get(1), eq.get(2))));
+					termsEqualZeroList.add(F.evalExpandAll(F.Subtract(
+							eq.get(1), eq.get(2))));
 				} else {
 					// not an equation
-					throw new WrongArgumentType(eqns, eqns.get(i), i, "Equal[] expression (a==b) expected");
+					throw new WrongArgumentType(eqns, eqns.get(i), i,
+							"Equal[] expression (a==b) expected");
 				}
 			}
 		} else {
 			if (ast.get(position).isAST(F.Equal, 3)) {
 				eq = (IAST) ast.get(position);
-				termsEqualZeroList.add(F.evalExpandAll(F.Subtract(eq.get(1), eq.get(2))));
+				termsEqualZeroList.add(F.evalExpandAll(F.Subtract(eq.get(1), eq
+						.get(2))));
 			} else {
 				// not an equation
-				throw new WrongArgumentType(ast, ast.get(1), 1, "Equal[] expression (a==b) expected");
+				throw new WrongArgumentType(ast, ast.get(1), 1,
+						"Equal[] expression (a==b) expected");
 			}
 		}
 		return termsEqualZeroList;
@@ -485,7 +497,8 @@ public class Solve extends AbstractFunctionEvaluator {
 		IAST vector = F.List();
 		try {
 			IAST resultList = F.List();
-			resultList = analyzeSublist(analyzerList, vars, resultList, matrix, vector);
+			resultList = analyzeSublist(analyzerList, vars, resultList, matrix,
+					vector);
 
 			if (vector.size() > 1) {
 				// solve a linear equation <code>matrix.x == vector</code>

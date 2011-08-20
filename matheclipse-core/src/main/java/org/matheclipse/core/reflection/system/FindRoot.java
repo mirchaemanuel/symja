@@ -1,6 +1,5 @@
 package org.matheclipse.core.reflection.system;
 
-import org.apache.commons.math.ConvergenceException;
 import org.apache.commons.math.analysis.DifferentiableUnivariateRealFunction;
 import org.apache.commons.math.analysis.UnivariateRealFunction;
 import org.apache.commons.math.analysis.solvers.BaseAbstractUnivariateRealSolver;
@@ -13,8 +12,6 @@ import org.apache.commons.math.analysis.solvers.PegasusSolver;
 import org.apache.commons.math.analysis.solvers.RegulaFalsiSolver;
 import org.apache.commons.math.analysis.solvers.RiddersSolver;
 import org.apache.commons.math.analysis.solvers.SecantSolver;
-import org.apache.commons.math.exception.MaxCountExceededException;
-import org.matheclipse.core.basic.Config;
 import org.matheclipse.core.eval.EvalEngine;
 import org.matheclipse.core.eval.exception.Validate;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;

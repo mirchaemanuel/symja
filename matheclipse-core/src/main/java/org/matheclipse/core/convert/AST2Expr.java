@@ -30,39 +30,70 @@ import org.matheclipse.parser.client.ast.SymbolNode;
  */
 public class AST2Expr {
 
-	public static final String[] PREDEFINED_SYMBOLS = { "True", "False", "List", "Modulus", "Flat", "HoldAll", "HoldFirst",
-			"HoldRest", "Listable", "NumericFunction", "OneIdentity", "Orderless", "Slot", "SlotSequence", "Abs", "AddTo", "And",
-			"Apart", "Append", "AppendTo", "Apply", "ArcCos", "ArcSin", "ArcTan", "Arg", "Array", "AtomQ", "Binomial", "Blank", "Block",
-			"Boole", "Break", "Cancel", "CartesianProduct", "Cases", "Catalan", "CatalanNumber", "Catch", "Ceiling",
-			"CharacteristicPolynomial", "ChessboardDistance", "Chop", "Clear", "ClearAll", "Coefficient", "CoefficientList",
-			"Complement", "Complex", "ComplexInfinity", "ComposeList", "CompoundExpression", "Condition", "Conjugate", "ConstantArray",
-			"Continue", "ContinuedFraction", "CoprimeQ", "Cos", "Cosh", "Cot", "Count", "Cross", "Csc", "Curl", "D", "Decrement",
-			"Default", "Definition", "Degree", "Delete", "Denominator", "Depth", "Derivative", "Det", "DiagonalMatrix", "DigitQ",
-			"Dimensions", "Discriminant", "Distribute", "Divergence", "DivideBy", "Do", "Dot", "Drop", "E", "Eigenvalues",
-			"Eigenvectors", "Equal", "Erf", "EuclidianDistance", "EulerGamma", "EulerPhi", "EvenQ", "Exp", "Expand", "ExpandAll",
-			"Exponent", "ExtendedGCD", "Extract", "Factor", "Factorial", "Factorial2", "FactorInteger", "FactorSquareFree",
-			"FactorSquareFreeList", "FactorTerms", "Fibonacci", "FindRoot", "First", "Fit", "FixedPoint", "Floor", "Fold", "FoldList",
-			"For", "FractionalPart", "FreeQ", "FromCharacterCode", "FromContinuedFraction", "FullForm", "FullSimplify", "Function",
-			"Gamma", "GCD", "Glaisher", "GoldenRatio", "Greater", "GreaterEqual", "GroebnerBasis", "HarmonicNumber", "Head",
-			"HilbertMatrix", "Hold", "Horner", "I", "IdentityMatrix", "If", "Im", "Increment", "Infinity", "Inner", "IntegerPartitions",
-			"IntegerQ", "Integrate", "Intersection", "Inverse", "InverseFunction", "JacobiMatrix", "JacobiSymbol", "JavaForm", "Join",
-			"Khinchin", "KOrderlessPartitions", "KPartitions", "Last", "LCM", "LeafCount", "Length", "Less", "LessEqual", "LetterQ",
-			"Level", "Limit", "LinearProgramming", "LinearSolve", "Log", "LowerCaseQ", "LUDecomposition", "ManhattanDistance", "Map",
-			"MapAll", "MapThread", "MatchQ", "MatrixPower", "MatrixQ", "Max", "Mean", "Median", "MemberQ", "Min", "Mod", "Module",
-			"MoebiusMu", "Most", "Multinomial", "N", "Negative", "Nest", "NestList", "NextPrime", "NIntegrate", "NonCommutativeMultiply",
-			"NonNegative", "Norm", "Not", "NRoots", "NumberQ", "Numerator", "NumericQ", "OddQ", "Or", "Order", "OrderedQ", "Out",
-			"Outer", "Package", "PadLeft", "PadRight", "ParametricPlot", "Part", "Partition", "Pattern", "Permutations", "Pi", "Plot",
-			"Plot3D", "Plus", "PolynomialExtendedGCD", "PolynomialGCD", "PolynomialLCM", "PolynomialQ", "PolynomialQuotient",
-			"PolynomialQuotientRemainder", "PolynomialRemainder", "Position", "Positive", "PossibleZeroQ", "Power", "PowerExpand",
-			"PowerMod", "PreDecrement", "PreIncrement", "Prepend", "PrependTo", "PrimeQ", "PrimitiveRoots", "Print", "Product",
-			"Quotient", "RandomInteger", "RandomReal", "Range", "Rational", "Rationalize", "Re", "Reap", "ReplaceAll", "ReplacePart",
-			"ReplaceRepeated", "Rest", "Resultant", "Return", "Reverse", "Riffle", "RootIntervals", "Roots", "RotateLeft", "RotateRight",
-			"Round", "Rule", "RuleDelayed", "SameQ", "Scan", "Sec", "Select", "Set", "SetAttributes", "SetDelayed", "Sign", "SignCmp",
-			"Simplify", "Sin", "SingularValueDecomposition", "Sinh", "Solve", "Sort", "Sow", "Sqrt", "SquaredEuclidianDistance",
-			"SquareFreeQ", "StirlingS2", "StringDrop", "StringJoin", "StringLength", "StringTake", "Subsets", "SubtractFrom", "Sum",
-			"SyntaxLength", "SyntaxQ", "Table", "Take", "Tan", "Tanh", "Taylor", "Thread", "Through", "Throw", "Times", "TimesBy",
-			"Timing", "ToCharacterCode", "Together", "ToString", "Total", "ToUnicode", "Tr", "Trace", "Transpose", "TrigExpand",
-			"TrigReduce", "TrigToExp", "TrueQ", "Trunc", "Unequal", "Union", "UnsameQ", "UpperCaseQ", "ValueQ", "VandermondeMatrix",
+	public static final String[] PREDEFINED_SYMBOLS = { "True", "False",
+			"List", "Modulus", "Flat", "HoldAll", "HoldFirst", "HoldRest",
+			"Listable", "NumericFunction", "OneIdentity", "Orderless", "Slot",
+			"SlotSequence", "Abs", "AddTo", "And", "Apart", "Append",
+			"AppendTo", "Apply", "ArcCos", "ArcSin", "ArcTan", "Arg", "Array",
+			"AtomQ", "Binomial", "Blank", "Block", "Boole", "Break", "Cancel",
+			"CartesianProduct", "Cases", "Catalan", "CatalanNumber", "Catch",
+			"Ceiling", "CharacteristicPolynomial", "ChessboardDistance",
+			"Chop", "Clear", "ClearAll", "Coefficient", "CoefficientList",
+			"Complement", "Complex", "ComplexInfinity", "ComposeList",
+			"CompoundExpression", "Condition", "Conjugate", "ConstantArray",
+			"Continue", "ContinuedFraction", "CoprimeQ", "Cos", "Cosh", "Cot",
+			"Count", "Cross", "Csc", "Curl", "D", "Decrement", "Default",
+			"Definition", "Degree", "Delete", "Denominator", "Depth",
+			"Derivative", "Det", "DiagonalMatrix", "DigitQ", "Dimensions",
+			"Discriminant", "Distribute", "Divergence", "DivideBy", "Do",
+			"Dot", "Drop", "E", "Eigenvalues", "Eigenvectors", "Equal", "Erf",
+			"EuclidianDistance", "EulerGamma", "EulerPhi", "EvenQ", "Exp",
+			"Expand", "ExpandAll", "Exponent", "ExtendedGCD", "Extract",
+			"Factor", "Factorial", "Factorial2", "FactorInteger",
+			"FactorSquareFree", "FactorSquareFreeList", "FactorTerms",
+			"Fibonacci", "FindRoot", "First", "Fit", "FixedPoint", "Floor",
+			"Fold", "FoldList", "For", "FractionalPart", "FreeQ",
+			"FromCharacterCode", "FromContinuedFraction", "FullForm",
+			"FullSimplify", "Function", "Gamma", "GCD", "Glaisher",
+			"GoldenRatio", "Greater", "GreaterEqual", "GroebnerBasis",
+			"HarmonicNumber", "Head", "HilbertMatrix", "Hold", "Horner", "I",
+			"IdentityMatrix", "If", "Im", "Increment", "Infinity", "Inner",
+			"IntegerPartitions", "IntegerQ", "Integrate", "Intersection",
+			"Inverse", "InverseFunction", "JacobiMatrix", "JacobiSymbol",
+			"JavaForm", "Join", "Khinchin", "KOrderlessPartitions",
+			"KPartitions", "Last", "LCM", "LeafCount", "Length", "Less",
+			"LessEqual", "LetterQ", "Level", "Limit", "LinearProgramming",
+			"LinearSolve", "Log", "LowerCaseQ", "LUDecomposition",
+			"ManhattanDistance", "Map", "MapAll", "MapThread", "MatchQ",
+			"MatrixPower", "MatrixQ", "Max", "Mean", "Median", "MemberQ",
+			"Min", "Mod", "Module", "MoebiusMu", "Most", "Multinomial", "N",
+			"Negative", "Nest", "NestList", "NextPrime", "NIntegrate",
+			"NonCommutativeMultiply", "NonNegative", "Norm", "Not", "NRoots",
+			"NumberQ", "Numerator", "NumericQ", "OddQ", "Or", "Order",
+			"OrderedQ", "Out", "Outer", "Package", "PadLeft", "PadRight",
+			"ParametricPlot", "Part", "Partition", "Pattern", "Permutations",
+			"Pi", "Plot", "Plot3D", "Plus", "PolynomialExtendedGCD",
+			"PolynomialGCD", "PolynomialLCM", "PolynomialQ",
+			"PolynomialQuotient", "PolynomialQuotientRemainder",
+			"PolynomialRemainder", "Position", "Positive", "PossibleZeroQ",
+			"Power", "PowerExpand", "PowerMod", "PreDecrement", "PreIncrement",
+			"Prepend", "PrependTo", "PrimeQ", "PrimitiveRoots", "Print",
+			"Product", "Quotient", "RandomInteger", "RandomReal", "Range",
+			"Rational", "Rationalize", "Re", "Reap", "ReplaceAll",
+			"ReplacePart", "ReplaceRepeated", "Rest", "Resultant", "Return",
+			"Reverse", "Riffle", "RootIntervals", "Roots", "RotateLeft",
+			"RotateRight", "Round", "Rule", "RuleDelayed", "SameQ", "Scan",
+			"Sec", "Select", "Set", "SetAttributes", "SetDelayed", "Sign",
+			"SignCmp", "Simplify", "Sin", "SingularValueDecomposition", "Sinh",
+			"Solve", "Sort", "Sow", "Sqrt", "SquaredEuclidianDistance",
+			"SquareFreeQ", "StirlingS2", "StringDrop", "StringJoin",
+			"StringLength", "StringTake", "Subsets", "SubtractFrom", "Sum",
+			"SyntaxLength", "SyntaxQ", "Table", "Take", "Tan", "Tanh",
+			"Taylor", "Thread", "Through", "Throw", "Times", "TimesBy",
+			"Timing", "ToCharacterCode", "Together", "ToString", "Total",
+			"ToUnicode", "Tr", "Trace", "Transpose", "TrigExpand",
+			"TrigReduce", "TrigToExp", "TrueQ", "Trunc", "Unequal", "Union",
+			"UnsameQ", "UpperCaseQ", "ValueQ", "VandermondeMatrix",
 			"Variables", "VectorQ", "While" };;
 
 	static final Map<String, String> PREDEFINED_SYMBOLS_MAP = new HashMap<String, String>();
@@ -104,7 +135,8 @@ public class AST2Expr {
 	/**
 	 * Converts a parsed FunctionNode expression into an IAST expression
 	 */
-	public IAST convert(IAST ast, FunctionNode functionNode) throws ConversionException {
+	public IAST convert(IAST ast, FunctionNode functionNode)
+			throws ConversionException {
 		ast.set(0, convert(functionNode.get(0)));
 		for (int i = 1; i < functionNode.size(); i++) {
 			ast.add(convert(functionNode.get(i)));
@@ -119,15 +151,18 @@ public class AST2Expr {
 		if (node == null) {
 			return null;
 		}
-		if (node instanceof Pattern2Node) {
-			throw new UnsupportedOperationException("'__' pattern-matching expression not implemented");
-		}
+		// if (node instanceof Pattern2Node) {
+		// throw new
+		// UnsupportedOperationException("'__' pattern-matching expression not implemented");
+		// }
 		if (node instanceof Pattern3Node) {
-			throw new UnsupportedOperationException("'___' pattern-matching expression not implemented");
+			throw new UnsupportedOperationException(
+					"'___' pattern-matching expression not implemented");
 		}
 		if (node instanceof FunctionNode) {
 			final FunctionNode functionNode = (FunctionNode) node;
-			final IAST ast = F.ast(convert(functionNode.get(0)), functionNode.size(), false);
+			final IAST ast = F.ast(convert(functionNode.get(0)), functionNode
+					.size(), false);
 			for (int i = 1; i < functionNode.size(); i++) {
 				ast.add(convert(functionNode.get(i)));
 			}
@@ -186,10 +221,18 @@ public class AST2Expr {
 			}
 			return F.$s(nodeStr);
 		}
+		// because of inheritance check Pattern2Node before PatternNode
+		if (node instanceof Pattern2Node) {
+			final Pattern2Node p2n = (Pattern2Node) node;
+			return F.$ps((ISymbol) convert(p2n.getSymbol()), convert(p2n
+					.getConstraint()), p2n.isDefault());
+		}
 		if (node instanceof PatternNode) {
 			final PatternNode pn = (PatternNode) node;
-			return F.$p((ISymbol) convert(pn.getSymbol()), convert(pn.getConstraint()), pn.isDefault());
+			return F.$p((ISymbol) convert(pn.getSymbol()), convert(pn
+					.getConstraint()), pn.isDefault());
 		}
+
 		if (node instanceof IntegerNode) {
 			final IntegerNode integerNode = (IntegerNode) node;
 			final String iStr = integerNode.getString();
@@ -201,9 +244,11 @@ public class AST2Expr {
 		if (node instanceof FractionNode) {
 			FractionNode fr = (FractionNode) node;
 			if (fr.isSign()) {
-				return F.fraction((IInteger) convert(fr.getNumerator()), (IInteger) convert(fr.getDenominator())).negate();
+				return F.fraction((IInteger) convert(fr.getNumerator()),
+						(IInteger) convert(fr.getDenominator())).negate();
 			}
-			return F.fraction((IInteger) convert(((FractionNode) node).getNumerator()), (IInteger) convert(((FractionNode) node)
+			return F.fraction((IInteger) convert(((FractionNode) node)
+					.getNumerator()), (IInteger) convert(((FractionNode) node)
 					.getDenominator()));
 		}
 		if (node instanceof StringNode) {

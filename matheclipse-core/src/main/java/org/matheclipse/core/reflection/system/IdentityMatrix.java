@@ -22,13 +22,11 @@ public class IdentityMatrix extends AbstractFunctionEvaluator {
 	}
 
 	@Override
-	public IExpr evaluate(final IAST functionList) {
-		if (functionList.size() != 2) {
-			return null;
-		}
+	public IExpr evaluate(final IAST ast) {
+		Validate.checkSize(ast, 2);
 
-		if (functionList.get(1) instanceof IInteger) {
-			int indx = Validate.checkIntType(functionList, 1);
+		if (ast.get(1).isInteger()) {
+			int indx = Validate.checkIntType(ast, 1);
 			final IExpr[] valueArray = { F.C0, F.C1 };
 			return diagonalMatrix(valueArray, indx);
 		}
@@ -40,9 +38,9 @@ public class IdentityMatrix extends AbstractFunctionEvaluator {
 	 * elements) and <code>valueArray[1]</code> (diagonal elements).
 	 * 
 	 * @param valueArray
-	 *          2 values for non-diagonal and diagonal elemnets of the matrix.
+	 *            2 values for non-diagonal and diagonal elemnets of the matrix.
 	 * @param dimension
-	 *          of the square matrix
+	 *            of the square matrix
 	 * 
 	 * @return
 	 */
@@ -51,8 +49,9 @@ public class IdentityMatrix extends AbstractFunctionEvaluator {
 		final int[] indexArray = new int[2];
 		indexArray[0] = dimension;
 		indexArray[1] = dimension;
-		final IndexTableGenerator<IExpr, IAST> generator = new IndexTableGenerator<IExpr, IAST>(indexArray, resultList,
-				new UnaryIndexFunctionDiagonal(valueArray), AST.COPY);
+		final IndexTableGenerator<IExpr, IAST> generator = new IndexTableGenerator<IExpr, IAST>(
+				indexArray, resultList, new UnaryIndexFunctionDiagonal(
+						valueArray), AST.COPY);
 		final IAST matrix = (IAST) generator.table();
 		if (matrix != null) {
 			matrix.addEvalFlags(IAST.IS_MATRIX);

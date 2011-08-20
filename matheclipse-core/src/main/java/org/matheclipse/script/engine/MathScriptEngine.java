@@ -12,6 +12,7 @@ import javax.script.ScriptContext;
 import javax.script.ScriptEngineFactory;
 import javax.script.ScriptException;
 
+import org.apache.commons.math.exception.util.ExceptionContextProvider;
 import org.matheclipse.core.basic.Config;
 import org.matheclipse.core.convert.Object2Expr;
 import org.matheclipse.core.eval.EvalEngine;
@@ -44,7 +45,8 @@ public class MathScriptEngine extends AbstractScriptEngine {
 		return null;
 	}
 
-	public Object eval(final Reader reader, final ScriptContext context) throws ScriptException {
+	public Object eval(final Reader reader, final ScriptContext context)
+			throws ScriptException {
 		final BufferedReader f = new BufferedReader(reader);
 		final StringBuffer buff = new StringBuffer(1024);
 		String line;
@@ -60,17 +62,20 @@ public class MathScriptEngine extends AbstractScriptEngine {
 		return null;
 	}
 
-	public Object eval(final String script, final ScriptContext context) throws ScriptException {
+	public Object eval(final String script, final ScriptContext context)
+			throws ScriptException {
 		final ArrayList<ISymbol> list = new ArrayList<ISymbol>();
 		try {
 			// first assign the EvalEngine to the current thread:
 			fUtility.startRequest();
 
-			final Bindings bindings = context.getBindings(ScriptContext.ENGINE_SCOPE);
+			final Bindings bindings = context
+					.getBindings(ScriptContext.ENGINE_SCOPE);
 			ISymbol symbol;
 			for (Map.Entry<String, Object> currEntry : bindings.entrySet()) {
 				symbol = F.$s(currEntry.getKey());
-				symbol.pushLocalVariable(Object2Expr.CONST.convert(currEntry.getValue()));
+				symbol.pushLocalVariable(Object2Expr.CONST.convert(currEntry
+						.getValue()));
 				list.add(symbol);
 			}
 
@@ -104,7 +109,13 @@ public class MathScriptEngine extends AbstractScriptEngine {
 			// catch parser errors here
 			return e.getMessage();
 		} catch (final Exception e) {
-			if (Config.DEBUG) {
+			if (e instanceof ExceptionContextProvider) {
+				if (Config.DEBUG) {
+					e.printStackTrace();
+				}
+				return e.getMessage();
+			}
+			if (Config.SHOW_STACKTRACE) {
 				e.printStackTrace();
 			}
 			return e.getMessage();
