@@ -25,8 +25,12 @@ public class ParametricPlotWindow extends AbstractPlotWindow {
 
 	protected JPanel createMinMaxControls() {
 		JPanel controls = super.createMinMaxControls();
+		xMin.setValue(-2.0);
+		xMax.setValue(2.0);
+		yMin.setValue(-2.0);
+		yMax.setValue(2.0);
 		tMin = new SpinnerNumberModel(0.0, -999.0, 999.0, 1.0);
-		tMax = new SpinnerNumberModel(Math.PI*2.0, -999.0, 999.0, 1.0);
+		tMax = new SpinnerNumberModel(7, -999.0, 999.0, 1.0);
 
 		GridBagConstraints c = new GridBagConstraints();
 		c.fill = GridBagConstraints.BOTH;
@@ -49,26 +53,29 @@ public class ParametricPlotWindow extends AbstractPlotWindow {
 		tMin.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
 				double value = tMin.getNumber().doubleValue();
-				if (tMax.getNumber().doubleValue() <= value)
-					tMax.setValue(value + 1);
+//				if (tMax.getNumber().doubleValue() <= value)
+//					tMax.setValue(value + 1);
 				((ParametricPlotter)plot).setTMin(value);
 			}
 		});
 		tMax.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
 				double value = tMax.getNumber().doubleValue();
-				if (tMin.getNumber().doubleValue() >= value)
-					tMin.setValue(value - 1);
+				// if (tMin.getNumber().doubleValue() >= value)
+				// tMin.setValue(value - 1);
 				((ParametricPlotter)plot).setTMax(value);
 			}
 		});
-
+		tMin.setValue(0.0);
+		((ParametricPlotter)plot).setTMin(0.0);
+		tMax.setValue(7.0);
+		((ParametricPlotter)plot).setTMax(7.0);
 		return controls;
 	}
 
 
 	public void addField() {
-		addField("x(t) = ");
-		addField("y(t) = ");
+		addField("x(t) = ", "Sin[2*t]");
+		addField("y(t) = ", "Cos[3*t]");
 	}
 }
