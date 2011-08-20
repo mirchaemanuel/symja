@@ -12,7 +12,7 @@ Symja has an evaluation engine for mathematical expressions. A semicolon operato
 gives {{{42}}}.
 
 == Identifiers ==
-An identifier is a user-choosen or built-in name for a variable, function or constant. Symja distinguishes lower and upper case. All built-in functions are starting with an upper case charcter (Sin[], Cos[], Expand[], Inverse[], etc). Built-in constants are also starting with an upper case letter (E, Pi, Degree, etc). If you type SIN[x] or sin[x], Symja assumes you mean something other than the built-in Sin[] function. User-defined functions and variables typically start with a "$" character and can have names which are lower or upper case or both. $foo[x*y], $Foo[x*y], $FOO[x*y] are all different. 
+An identifier is a user-choosen or built-in name for a variable, function or constant. Symja distinguishes lower and upper case. All built-in functions are starting with an upper case charcter ({{{Sin[], Cos[], Expand[], Inverse[]}}}, etc). Built-in constants are also starting with an upper case letter ({{{E, Pi, Degree}}}, etc). If you type {{{SIN[x]}}} or {{{sin[x]}}}, Symja assumes you mean something other than the built-in {{{Sin[]}}} function. User-defined functions and variables typically start with a "$" character and can have names which are lower or upper case or both. {{{$foo[x*y], $Foo[x*y], $FOO[x*y]}}} are all different. 
 
 == Strings ==
 A string is a representation of text as a sequence of characters. Strings must be surrounded by double quotes. An example string:
