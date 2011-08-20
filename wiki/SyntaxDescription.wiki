@@ -93,4 +93,4 @@ Determinant of a matrix:
 Det[{{1,2},{3,4}}]
 }}}
 
-See the [http://code.google.com/p/symja/source/browse/trunk/matheclipse-core/src/test/java/org/matheclipse/core/system/SystemTestCase.java JUnit test cases] for more syntax examples.
+See the [http://symja.googlecode.com/svn/trunk/matheclipse-core/src/test/java/org/matheclipse/core/system/SystemTestCase.java JUnit test cases] for more syntax examples.
