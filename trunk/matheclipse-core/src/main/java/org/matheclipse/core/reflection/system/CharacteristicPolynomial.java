@@ -20,13 +20,14 @@ public class CharacteristicPolynomial extends AbstractFunctionEvaluator {
 	}
 
 	@Override
-	public IExpr evaluate(final IAST function) {
-		Validate.checkSize(function, 3);
-		int[] dim = function.get(1).isMatrix();
+	public IExpr evaluate(final IAST ast) {
+		Validate.checkSize(ast, 3);
+		int[] dim = ast.get(1).isMatrix();
 		if (dim != null && dim[0] == dim[1]) {
-			// a matrix with square dimension
-			final IExpr[] valuesForIdentityMatrix = { F.C0, function.get(2) };
-			return F.eval(F.Det(F.Subtract(function.get(1), IdentityMatrix.diagonalMatrix(valuesForIdentityMatrix, dim[0]))));
+			// a matrix with square dimensions
+			final IExpr[] valuesForIdentityMatrix = { F.C0, ast.get(2) };
+			return F.eval(F.Det(F.Subtract(ast.get(1), IdentityMatrix
+					.diagonalMatrix(valuesForIdentityMatrix, dim[0]))));
 		}
 
 		return null;

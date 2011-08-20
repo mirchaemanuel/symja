@@ -178,6 +178,8 @@ public class RulesData {
 					}
 				} else if (lhsAST.get(1).isPattern()) {
 					return true;
+				} else if (lhsAST.get(1).isPatternSequence()) {
+					return true;
 				}
 				for (int i = 2; i < lhsAST.size(); i++) {
 					if (lhsAST.get(i).isPattern() && ((IPattern) lhsAST.get(i)).isDefault()) {
@@ -186,6 +188,8 @@ public class RulesData {
 				}
 			}
 		} else if (lhsExpr.isPattern()) {
+			return true;
+		} else if (lhsExpr.isPatternSequence()) {
 			return true;
 		}
 		return false;

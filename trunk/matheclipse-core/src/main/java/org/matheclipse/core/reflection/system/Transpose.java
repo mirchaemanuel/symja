@@ -1,6 +1,6 @@
 package org.matheclipse.core.reflection.system;
 
-import org.matheclipse.core.eval.exception.WrongNumberOfArguments;
+import org.matheclipse.core.eval.exception.Validate;
 import org.matheclipse.core.eval.interfaces.IFunctionEvaluator;
 import org.matheclipse.core.expression.AST;
 import org.matheclipse.core.expression.F;
@@ -9,8 +9,8 @@ import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.ISymbol;
 
 /**
- * Transpose a matrix. 
- *
+ * Transpose a matrix.
+ * 
  * See <a href="http://en.wikipedia.org/wiki/Transpose">Transpose</a>
  */
 public class Transpose implements IFunctionEvaluator {
@@ -19,14 +19,13 @@ public class Transpose implements IFunctionEvaluator {
 
 	}
 
-	public IExpr evaluate(final IAST functionList) {
+	public IExpr evaluate(final IAST ast) {
 		// TODO generalize transpose for all levels
-		if (functionList.size() != 2) {
-			throw new WrongNumberOfArguments(functionList, 1, functionList.size() - 1);
-		}
-		final int[] dim = functionList.get(1).isMatrix();
+		Validate.checkRange(ast, 2);
+
+		final int[] dim = ast.get(1).isMatrix();
 		if (dim != null) {
-			final IAST mat = (IAST) functionList.get(1);
+			final IAST mat = (IAST) ast.get(1);
 			final IAST transposed = F.ast(F.List, dim[1], true);
 			for (int i = 1; i <= dim[1]; i++) {
 				transposed.set(i, F.ast(F.List, dim[0], true));
@@ -47,8 +46,8 @@ public class Transpose implements IFunctionEvaluator {
 		return null;
 	}
 
-	public IExpr numericEval(final IAST functionList) {
-		return evaluate(functionList);
+	public IExpr numericEval(final IAST ast) {
+		return evaluate(ast);
 	}
 
 	public void setUp(final ISymbol symbol) {

@@ -23,6 +23,7 @@ import org.matheclipse.core.interfaces.IFraction;
 import org.matheclipse.core.interfaces.IInteger;
 import org.matheclipse.core.interfaces.INum;
 import org.matheclipse.core.interfaces.IPattern;
+import org.matheclipse.core.interfaces.IPatternSequence;
 import org.matheclipse.core.interfaces.ISignedNumber;
 import org.matheclipse.core.interfaces.IStringX;
 import org.matheclipse.core.interfaces.ISymbol;
@@ -43,12 +44,14 @@ public class F {
 	 * The map for predefined strings for the
 	 * {@link IExpr#internalFormString(boolean, int)} method.
 	 */
-	public final static Map<String, String> PREDEFINED_INTERNAL_STRINGS = new HashMap<String, String>(61);
+	public final static Map<String, String> PREDEFINED_INTERNAL_STRINGS = new HashMap<String, String>(
+			61);
 
 	/**
 	 * The map for predefined symbols
 	 */
-	public final static Map<String, ISymbol> PREDEFINED_SYMBOLS_MAP = new HashMap<String, ISymbol>(557);
+	public final static Map<String, ISymbol> PREDEFINED_SYMBOLS_MAP = new HashMap<String, ISymbol>(
+			557);
 
 	public static ISymbolObserver SYMBOL_OBSERVER = new ISymbolObserver() {
 		@Override
@@ -285,6 +288,8 @@ public class F {
 
 	public static ISymbol Sec;
 
+	public static ISymbol Sequence;
+
 	public static ISymbol Set;
 
 	public static ISymbol SetAttributes;
@@ -448,12 +453,14 @@ public class F {
 	public static ISymbol HoldAll;
 
 	/**
-	 * Attribute for <i><b>don't evaluate the first argument</b></i> of a function
+	 * Attribute for <i><b>don't evaluate the first argument</b></i> of a
+	 * function
 	 */
 	public static ISymbol HoldFirst;
 
 	/**
-	 * Attribute for <i><b>only evaluate the first argument</b></i> of a function
+	 * Attribute for <i><b>only evaluate the first argument</b></i> of a
+	 * function
 	 */
 	public static ISymbol HoldRest;
 
@@ -669,6 +676,18 @@ public class F {
 		return unary(Sec, a0);
 	}
 
+	public static IAST Sequence() {
+		return function(Sequence);
+	}
+	
+	public static IAST Sequence(final IExpr a0) {
+		return unary(Sequence, a0);
+	}
+	
+	public static IAST Sequence(final IExpr... a) {
+		return ast(a, Sequence);
+	}
+
 	public static IAST Cross(final IExpr a0, final IExpr a1) {
 
 		return binary(Cross, a0, a1);
@@ -855,14 +874,15 @@ public class F {
 	 * Initialize the complete System
 	 * 
 	 * @param fileName
-	 *          <code>null</code> or optional text filename, which includes the
-	 *          preloaded system rules
+	 *            <code>null</code> or optional text filename, which includes
+	 *            the preloaded system rules
 	 * @param symbolObserver
-	 *          the observer for newly created <code>ISymbols</code>
+	 *            the observer for newly created <code>ISymbols</code>
 	 * @param noPackageLoading
-	 *          don't load any package at start up
+	 *            don't load any package at start up
 	 */
-	public synchronized static void initSymbols(String fileName, ISymbolObserver symbolObserver, boolean noPackageLoading) {
+	public synchronized static void initSymbols(String fileName,
+			ISymbolObserver symbolObserver, boolean noPackageLoading) {
 
 		if (!isSystemInitialized) {
 			try {
@@ -876,7 +896,8 @@ public class F {
 				// long start = System.currentTimeMillis();
 
 				// try {
-				// JSCL_LEXICOGRAPHIC = Variable.valueOf("lex").expressionValue();
+				// JSCL_LEXICOGRAPHIC =
+				// Variable.valueOf("lex").expressionValue();
 				// JSCL_DEGREE_LEXICOGRAPHIC =
 				// Variable.valueOf("tdl").expressionValue();
 				// JSCL_DEGREE_REVERSE_LEXICOGRAPHIC =
@@ -905,14 +926,15 @@ public class F {
 				CN1D4 = FractionSym.valueOf(-1, 4);
 
 				CI = ComplexSym.valueOf(BigInteger.ZERO, BigInteger.ONE);
-				CNI = ComplexSym.valueOf(BigInteger.ZERO, BigInteger.valueOf(-1L));
+				CNI = ComplexSym.valueOf(BigInteger.ZERO, BigInteger
+						.valueOf(-1L));
 
 				CD0 = Num.valueOf(0.0);
 				CD1 = Num.valueOf(1.0);
 
 				/**
-				 * Define the &quot;set symbols&quot; first, because of dependencies in
-				 * the predefined rules
+				 * Define the &quot;set symbols&quot; first, because of
+				 * dependencies in the predefined rules
 				 */
 				Set = predefinedSymbol("Set");
 				SetDelayed = predefinedSymbol("SetDelayed");
@@ -1038,9 +1060,11 @@ public class F {
 				IntegerQ = predefinedSymbol("IntegerQ");
 				Integrate = predefinedSymbol("Integrate");
 				Inverse = predefinedSymbol("Inverse");
-				// KOrderlessPartitions = predefinedSymbol("KOrderlessPartitions", new
+				// KOrderlessPartitions =
+				// predefinedSymbol("KOrderlessPartitions", new
 				// KOrderlessPartitions());
-				// KPartitions = predefinedSymbol("KPartitions", new KPartitions());
+				// KPartitions = predefinedSymbol("KPartitions", new
+				// KPartitions());
 				// KSubsets = predefinedSymbol("KSubsets", new KSubsets());
 				LeafCount = predefinedSymbol("LeafCount");
 				Length = predefinedSymbol("Length");
@@ -1072,7 +1096,8 @@ public class F {
 				OrderedQ = predefinedSymbol("OrderedQ");
 				Part = predefinedSymbol("Part");
 				// Partition = predefinedSymbol("Partition", new Partition());
-				// Permutations = predefinedSymbol("Permutations", new Permutations());
+				// Permutations = predefinedSymbol("Permutations", new
+				// Permutations());
 				Plot = predefinedSymbol("Plot");
 				Plot3D = predefinedSymbol("Plot3D");
 
@@ -1093,6 +1118,7 @@ public class F {
 				Rule = predefinedSymbol("Rule");
 				RuleDelayed = predefinedSymbol("RuleDelayed");
 				Sec = predefinedSymbol("Sec");
+				Sequence = predefinedSymbol("Sequence");
 				SetAttributes = predefinedSymbol("SetAttributes");
 				Sign = predefinedSymbol("Sign");
 				SignCmp = predefinedSymbol("SignCmp");
@@ -1133,7 +1159,8 @@ public class F {
 						}
 					}
 					if (reader == null) {
-						InputStream systemPackage = F.class.getResourceAsStream("/System.mep");
+						InputStream systemPackage = F.class
+								.getResourceAsStream("/System.mep");
 						if (systemPackage != null) {
 							reader = new InputStreamReader(systemPackage);
 						}
@@ -1148,11 +1175,14 @@ public class F {
 				PREDEFINED_INTERNAL_STRINGS.put("True", "True");
 
 				Plus.setDefaultValue(C0);
-				Plus.setEvaluator(org.matheclipse.core.reflection.system.Plus.CONST);
+				Plus
+						.setEvaluator(org.matheclipse.core.reflection.system.Plus.CONST);
 				Times.setDefaultValue(C1);
-				Times.setEvaluator(org.matheclipse.core.reflection.system.Times.CONST);
+				Times
+						.setEvaluator(org.matheclipse.core.reflection.system.Times.CONST);
 				Power.setDefaultValue(2, C1);
-				Power.setEvaluator(org.matheclipse.core.reflection.system.Power.CONST);
+				Power
+						.setEvaluator(org.matheclipse.core.reflection.system.Power.CONST);
 
 				// long end = System.currentTimeMillis();
 				// System.out.println("Init time: " + (end - start));
@@ -1367,6 +1397,10 @@ public class F {
 
 	public static IAST Part(final IExpr a0, final IExpr a1) {
 		return binary(Part, a0, a1);
+	}
+	
+	public static IAST Part(final IExpr a0, final IExpr a1, final IExpr a2) {
+		return ternary(Part, a0, a1, a2);
 	}
 
 	// public static IAST Partition(final IExpr a0) {
@@ -1594,14 +1628,15 @@ public class F {
 	}
 
 	/**
-	 * Creates a new AST from the given <code>ast</code> and <code>head</code>. if
-	 * <code>include</code> is set to <code>true </code> all arguments from index
-	 * first to last-1 are copied in the new list if <code>include</code> is set
-	 * to <code> false </code> all arguments excluded from index first to last-1
-	 * are copied in the new list
+	 * Creates a new AST from the given <code>ast</code> and <code>head</code>.
+	 * if <code>include</code> is set to <code>true </code> all arguments from
+	 * index first to last-1 are copied in the new list if <code>include</code>
+	 * is set to <code> false </code> all arguments excluded from index first to
+	 * last-1 are copied in the new list
 	 * 
 	 */
-	public static IAST ast(final IAST f, final IExpr head, final boolean include, final int first, final int last) {
+	public static IAST ast(final IAST f, final IExpr head,
+			final boolean include, final int first, final int last) {
 		AST ast = null;
 		if (include) {
 			ast = AST.newInstance(last - first, head);
@@ -1626,14 +1661,15 @@ public class F {
 	 * Create a new abstract syntax tree (AST).
 	 * 
 	 * @param intialArgumentsCapacity
-	 *          the initial capacity of arguments of the AST.
+	 *            the initial capacity of arguments of the AST.
 	 * @param head
-	 *          the header expression of the function. If the ast represents a
-	 *          function like <code>f[x,y], Sin[x],...</code>, the
-	 *          <code>head</code> will be an instance of type ISymbol.
+	 *            the header expression of the function. If the ast represents a
+	 *            function like <code>f[x,y], Sin[x],...</code>, the
+	 *            <code>head</code> will be an instance of type ISymbol.
 	 * @return
 	 */
-	public static IAST newInstance(final int intialArgumentsCapacity, final IExpr head) {
+	public static IAST newInstance(final int intialArgumentsCapacity,
+			final IExpr head) {
 		return AST.newInstance(intialArgumentsCapacity, head);
 	}
 
@@ -1641,9 +1677,9 @@ public class F {
 	 * Create a new abstract syntax tree (AST).
 	 * 
 	 * @param head
-	 *          the header expression of the function. If the ast represents a
-	 *          function like <code>f[x,y], Sin[x],...</code>, the
-	 *          <code>head</code> will be an instance of type ISymbol.
+	 *            the header expression of the function. If the ast represents a
+	 *            function like <code>f[x,y], Sin[x],...</code>, the
+	 *            <code>head</code> will be an instance of type ISymbol.
 	 * 
 	 */
 	public static IAST ast(final IExpr head) {
@@ -1654,9 +1690,9 @@ public class F {
 	 * Create a new abstract syntax tree (AST).
 	 * 
 	 * @param head
-	 *          the header expression of the function. If the ast represents a
-	 *          function like <code>f[x,y], Sin[x],...</code>, the
-	 *          <code>head</code> will be an instance of type ISymbol.
+	 *            the header expression of the function. If the ast represents a
+	 *            function like <code>f[x,y], Sin[x],...</code>, the
+	 *            <code>head</code> will be an instance of type ISymbol.
 	 * @param a
 	 * @return
 	 */
@@ -1668,17 +1704,18 @@ public class F {
 	 * Create a new abstract syntax tree (AST).
 	 * 
 	 * @param head
-	 *          the header expression of the function. If the ast represents a
-	 *          function like <code>f[x,y], Sin[x],...</code>, the
-	 *          <code>head</code> will be an instance of type ISymbol.
+	 *            the header expression of the function. If the ast represents a
+	 *            function like <code>f[x,y], Sin[x],...</code>, the
+	 *            <code>head</code> will be an instance of type ISymbol.
 	 * @param initialCapacity
-	 *          the initial capacity (i.e. number of arguments without the header
-	 *          element) of the list.
+	 *            the initial capacity (i.e. number of arguments without the
+	 *            header element) of the list.
 	 * @param initNull
-	 *          initialize all elements with <code>null</code>.
+	 *            initialize all elements with <code>null</code>.
 	 * @return
 	 */
-	public static IAST ast(final IExpr head, final int initialCapacity, final boolean initNull) {
+	public static IAST ast(final IExpr head, final int initialCapacity,
+			final boolean initNull) {
 		final AST ast = AST.newInstance(initialCapacity, head);
 		if (initNull) {
 			for (int i = 0; i < initialCapacity; i++) {
@@ -1693,9 +1730,9 @@ public class F {
 	 * 
 	 * @param arr
 	 * @param head
-	 *          the header expression of the function. If the ast represents a
-	 *          function like <code>f[x,y], Sin[x],...</code>, the
-	 *          <code>head</code> will be an instance of type ISymbol.
+	 *            the header expression of the function. If the ast represents a
+	 *            function like <code>f[x,y], Sin[x],...</code>, the
+	 *            <code>head</code> will be an instance of type ISymbol.
 	 * @return
 	 */
 	public static IAST ast(final IExpr[] arr, final IExpr head) {
@@ -1727,23 +1764,28 @@ public class F {
 	 * @param a1
 	 * @return
 	 */
-	public final static IAST binary(final IExpr head, final IExpr a0, final IExpr a1) {
+	public final static IAST binary(final IExpr head, final IExpr a0,
+			final IExpr a1) {
 		return ast(new IExpr[] { a0, a1 }, head);
 	}
 
-	public final static IAST ternary(final IExpr head, final IExpr a0, final IExpr a1, final IExpr a2) {
+	public final static IAST ternary(final IExpr head, final IExpr a0,
+			final IExpr a1, final IExpr a2) {
 		return ast(new IExpr[] { a0, a1, a2 }, head);
 	}
 
-	public final static IAST quaternary(final IExpr head, final IExpr a0, final IExpr a1, final IExpr a2, final IExpr a3) {
+	public final static IAST quaternary(final IExpr head, final IExpr a0,
+			final IExpr a1, final IExpr a2, final IExpr a3) {
 		return ast(new IExpr[] { a0, a1, a2, a3 }, head);
 	}
 
-	public final static IAST quinary(final IExpr head, final IExpr a0, final IExpr a1, final IExpr a2, final IExpr a3, final IExpr a4) {
+	public final static IAST quinary(final IExpr head, final IExpr a0,
+			final IExpr a1, final IExpr a2, final IExpr a3, final IExpr a4) {
 		return ast(new IExpr[] { a0, a1, a2, a3, a4 }, head);
 	}
 
-	public final static IAST senary(final IExpr head, final IExpr a0, final IExpr a1, final IExpr a2, final IExpr a3, final IExpr a4,
+	public final static IAST senary(final IExpr head, final IExpr a0,
+			final IExpr a1, final IExpr a2, final IExpr a3, final IExpr a4,
 			final IExpr a5) {
 		return ast(new IExpr[] { a0, a1, a2, a3, a4, a5 }, head);
 	}
@@ -1787,24 +1829,27 @@ public class F {
 	 * @param im
 	 * @return
 	 */
-	public static IComplex complex(final long real_numerator, final long real_denominator, final long imag_numerator,
+	public static IComplex complex(final long real_numerator,
+			final long real_denominator, final long imag_numerator,
 			final long imag_denominator) {
-		return ComplexSym.valueOf(real_numerator, real_denominator, imag_numerator, imag_denominator);
+		return ComplexSym.valueOf(real_numerator, real_denominator,
+				imag_numerator, imag_denominator);
 	}
 
 	/**
 	 * Create a symbolic complex number
 	 * 
 	 * @param realPart
-	 *          the real double value part which should be converted to a complex
-	 *          number
+	 *            the real double value part which should be converted to a
+	 *            complex number
 	 * @param imagPart
-	 *          the imaginary double value part which should be converted to a
-	 *          complex number
+	 *            the imaginary double value part which should be converted to a
+	 *            complex number
 	 * @return IFraction
 	 */
 	public static IComplex complex(final double realPart, final double imagPart) {
-		return ComplexSym.valueOf(FractionSym.valueOf(realPart), FractionSym.valueOf(imagPart));
+		return ComplexSym.valueOf(FractionSym.valueOf(realPart), FractionSym
+				.valueOf(imagPart));
 	}
 
 	/**
@@ -1822,7 +1867,7 @@ public class F {
 	 * Create a complex numeric number with imaginary part = 0.0
 	 * 
 	 * @param r
-	 *          the real part of the number
+	 *            the real part of the number
 	 * @return
 	 */
 	public static IComplexNum complexNum(final double r) {
@@ -1833,9 +1878,9 @@ public class F {
 	 * Create a complex numeric value
 	 * 
 	 * @param r
-	 *          real part
+	 *            real part
 	 * @param i
-	 *          imaginary part
+	 *            imaginary part
 	 * @return
 	 */
 	public static IComplexNum complexNum(final double r, final double i) {
@@ -1913,7 +1958,8 @@ public class F {
 	 * @param a2
 	 * @return the evaluated object
 	 */
-	public static IExpr eval(final ISymbol head, final IExpr a0, final IExpr a1, final IExpr a2) {
+	public static IExpr eval(final ISymbol head, final IExpr a0,
+			final IExpr a1, final IExpr a2) {
 		final IAST ast = ast(head);
 		ast.add(a0);
 		ast.add(a1);
@@ -1944,7 +1990,8 @@ public class F {
 	 * @return the evaluated object or <code>null</code> if no evaluation was
 	 *         possible.
 	 */
-	public static IExpr evalNull(final ISymbol head, final IExpr a0, final IExpr a1) {
+	public static IExpr evalNull(final ISymbol head, final IExpr a0,
+			final IExpr a1) {
 		final IAST ast = ast(head);
 		ast.add(a0);
 		ast.add(a1);
@@ -1961,7 +2008,8 @@ public class F {
 	 * @return the evaluated object or <code>null</code> if no evaluation was
 	 *         possible.
 	 */
-	public static IExpr evalNull(final ISymbol head, final IExpr a0, final IExpr a1, final IExpr a2) {
+	public static IExpr evalNull(final ISymbol head, final IExpr a0,
+			final IExpr a1, final IExpr a2) {
 		final IAST ast = ast(head);
 		ast.add(a0);
 		ast.add(a1);
@@ -1983,12 +2031,13 @@ public class F {
 	 * Create a "fractional" number
 	 * 
 	 * @param numerator
-	 *          numerator of the fractional number
+	 *            numerator of the fractional number
 	 * @param denominator
-	 *          denumerator of the fractional number
+	 *            denumerator of the fractional number
 	 * @return IFraction
 	 */
-	public static IFraction fraction(final IInteger numerator, final IInteger denominator) {
+	public static IFraction fraction(final IInteger numerator,
+			final IInteger denominator) {
 		return FractionSym.valueOf(numerator, denominator);
 	}
 
@@ -1996,12 +2045,13 @@ public class F {
 	 * Create a "fractional" number
 	 * 
 	 * @param numerator
-	 *          numerator of the fractional number
+	 *            numerator of the fractional number
 	 * @param denominator
-	 *          denumerator of the fractional number
+	 *            denumerator of the fractional number
 	 * @return IFraction
 	 */
-	public static IFraction fraction(final BigInteger numerator, final BigInteger denominator) {
+	public static IFraction fraction(final BigInteger numerator,
+			final BigInteger denominator) {
 		return FractionSym.valueOf(numerator, denominator);
 	}
 
@@ -2009,12 +2059,13 @@ public class F {
 	 * Create a "fractional" number
 	 * 
 	 * @param numerator
-	 *          numerator of the fractional number
+	 *            numerator of the fractional number
 	 * @param denominator
-	 *          denumerator of the fractional number
+	 *            denumerator of the fractional number
 	 * @return IFraction
 	 */
-	public static IFraction fraction(final long numerator, final long denominator) {
+	public static IFraction fraction(final long numerator,
+			final long denominator) {
 		return FractionSym.valueOf(numerator, denominator);
 	}
 
@@ -2022,8 +2073,8 @@ public class F {
 	 * Create a "fractional" number
 	 * 
 	 * @param value
-	 *          the rational value which should be converted to a fractional
-	 *          number
+	 *            the rational value which should be converted to a fractional
+	 *            number
 	 * @return IFraction
 	 */
 	public static IFraction fraction(final BigFraction value) {
@@ -2034,7 +2085,8 @@ public class F {
 	 * Create a "fractional" number
 	 * 
 	 * @param value
-	 *          the double value which should be converted to a fractional number
+	 *            the double value which should be converted to a fractional
+	 *            number
 	 * @return IFraction
 	 */
 	public static IFraction fraction(final double value) {
@@ -2070,12 +2122,13 @@ public class F {
 	 * 
 	 * @param head
 	 * @param arg0
-	 *          first argument of the function
+	 *            first argument of the function
 	 * @param arg1
-	 *          second argument of the function
+	 *            second argument of the function
 	 * @return
 	 */
-	public static IAST function(final IExpr head, final IExpr arg0, final IExpr arg1) {
+	public static IAST function(final IExpr head, final IExpr arg0,
+			final IExpr arg1) {
 		final IAST list = ast(head);
 		list.add(arg0);
 		list.add(arg1);
@@ -2114,7 +2167,8 @@ public class F {
 	 * @param arg1
 	 * @return
 	 */
-	public static IAST function(final ISymbol head, final IExpr arg0, final IExpr arg1) {
+	public static IAST function(final ISymbol head, final IExpr arg0,
+			final IExpr arg1) {
 		final IAST list = ast(head);
 		list.add(arg0);
 		list.add(arg1);
@@ -2125,7 +2179,7 @@ public class F {
 	 * Create a function
 	 * 
 	 * @param head
-	 *          usually a String which tags the function
+	 *            usually a String which tags the function
 	 * @return IAST
 	 * @see org.matheclipse.parser.client.IConstantHeaders
 	 */
@@ -2138,9 +2192,9 @@ public class F {
 	 * Create a unary function with 1 argument
 	 * 
 	 * @param head
-	 *          usually a String which tags the function
+	 *            usually a String which tags the function
 	 * @param arg0
-	 *          the argument of this function
+	 *            the argument of this function
 	 * @return IAST
 	 */
 	public static IAST function(final String head, final IExpr arg0) {
@@ -2153,14 +2207,15 @@ public class F {
 	 * Create a binary function with 2 arguments
 	 * 
 	 * @param head
-	 *          usually a String which tags the function
+	 *            usually a String which tags the function
 	 * @param arg0
-	 *          the first argument of this function
+	 *            the first argument of this function
 	 * @param arg1
-	 *          the second argument of this function
+	 *            the second argument of this function
 	 * @return IAST
 	 */
-	public static IAST function(final String head, final IExpr arg0, final IExpr arg1) {
+	public static IAST function(final String head, final IExpr arg0,
+			final IExpr arg1) {
 		final IAST list = ast($s(head));
 		list.add(arg0);
 		list.add(arg1);
@@ -2208,12 +2263,13 @@ public class F {
 	 * Create a large integer number.
 	 * 
 	 * @param integerString
-	 *          the integer number represented as a String
+	 *            the integer number represented as a String
 	 * @param numberFormat
-	 *          the format of the number (usually 10)
+	 *            the format of the number (usually 10)
 	 * @return Object
 	 */
-	public static IInteger integer(final String integerString, final int numberFormat) {
+	public static IInteger integer(final String integerString,
+			final int numberFormat) {
 		return IntegerSym.valueOf(integerString, numberFormat);
 	}
 
@@ -2265,13 +2321,15 @@ public class F {
 	 * 
 	 * @param symbol
 	 * @param check
-	 *          additional condition which should be checked in pattern-matching
+	 *            additional condition which should be checked in
+	 *            pattern-matching
 	 * @param def
-	 *          if <code>true</code>, the pattern can match to a default value
-	 *          associated with the AST's head the pattern is used in.
+	 *            if <code>true</code>, the pattern can match to a default value
+	 *            associated with the AST's head the pattern is used in.
 	 * @return IPattern
 	 */
-	public static IPattern $p(final ISymbol symbol, final IExpr check, final boolean def) {
+	public static IPattern $p(final ISymbol symbol, final IExpr check,
+			final boolean def) {
 		if (symbol == null) {
 			return Pattern.valueOf(null, check, def);
 		}
@@ -2283,7 +2341,8 @@ public class F {
 	 * 
 	 * @param symbol
 	 * @param check
-	 *          additional condition which should be checked in pattern-matching
+	 *            additional condition which should be checked in
+	 *            pattern-matching
 	 * @return IPattern
 	 */
 	public static IPattern $p(final ISymbol symbol, final IExpr check) {
@@ -2311,7 +2370,8 @@ public class F {
 	 * 
 	 * @param symbolName
 	 * @param check
-	 *          additional condition which should be checked in pattern-matching
+	 *            additional condition which should be checked in
+	 *            pattern-matching
 	 * @return IPattern
 	 */
 	public static IPattern $p(final String symbolName, final IExpr check) {
@@ -2326,9 +2386,10 @@ public class F {
 	 * 
 	 * @param symbolName
 	 * @param check
-	 *          additional condition which should be checked in pattern-matching
+	 *            additional condition which should be checked in
+	 *            pattern-matching
 	 * @param def
-	 *          use a default value for this pattern if necessary
+	 *            use a default value for this pattern if necessary
 	 * @return IPattern
 	 */
 	public static IPattern $p(final String symbolName, boolean def) {
@@ -2340,16 +2401,80 @@ public class F {
 	 * 
 	 * @param symbolName
 	 * @param check
-	 *          additional condition which should be checked in pattern-matching
+	 *            additional condition which should be checked in
+	 *            pattern-matching
 	 * @param def
-	 *          use a default value for this pattern if necessary
+	 *            use a default value for this pattern if necessary
 	 * @return IPattern
 	 */
-	public static IPattern $p(final String symbolName, final IExpr check, boolean def) {
+	public static IPattern $p(final String symbolName, final IExpr check,
+			boolean def) {
 		if (symbolName == null) {
 			return Pattern.valueOf(null, check, def);
 		}
 		return Pattern.valueOf((Symbol) $s(symbolName), check, def);
+	}
+
+	/**
+	 * Create a pattern for pattern-matching and term rewriting
+	 * 
+	 * @param symbol
+	 * @return IPattern
+	 */
+	public static IPatternSequence $ps(final ISymbol symbol) {
+		if (symbol == null) {
+			return PatternSequence.valueOf(null);
+		}
+		return PatternSequence.valueOf((Symbol) symbol);
+	}
+
+	/**
+	 * Create a pattern for pattern-matching and term rewriting
+	 * 
+	 * @param symbol
+	 * @param check
+	 *            additional condition which should be checked in
+	 *            pattern-matching
+	 * @param def
+	 *            if <code>true</code>, the pattern can match to a default value
+	 *            associated with the AST's head the pattern is used in.
+	 * @return IPattern
+	 */
+	public static IPatternSequence $ps(final ISymbol symbol, final IExpr check,
+			final boolean def) {
+		if (symbol == null) {
+			return PatternSequence.valueOf(null, check, def);
+		}
+		return PatternSequence.valueOf((Symbol) symbol, check, def);
+	}
+
+	/**
+	 * Create a pattern for pattern-matching and term rewriting
+	 * 
+	 * @param symbol
+	 * @param check
+	 *            additional condition which should be checked in
+	 *            pattern-matching
+	 * @return IPattern
+	 */
+	public static IPatternSequence $ps(final ISymbol symbol, final IExpr check) {
+		if (symbol == null) {
+			return PatternSequence.valueOf(null, check);
+		}
+		return PatternSequence.valueOf((Symbol) symbol, check);
+	}
+
+	/**
+	 * Create a pattern for pattern-matching and term rewriting
+	 * 
+	 * @param symbolName
+	 * @return IPattern
+	 */
+	public static IPatternSequence $ps(final String symbolName) {
+		if (symbolName == null) {
+			return PatternSequence.valueOf(null);
+		}
+		return PatternSequence.valueOf((Symbol) $s(symbolName));
 	}
 
 	/**
@@ -2403,11 +2528,14 @@ public class F {
 		return StringX.valueOf(str);
 	}
 
-	public static ISymbol method(final String symbolName, final String packageName, final String className, final String methodName) {
+	public static ISymbol method(final String symbolName,
+			final String packageName, final String className,
+			final String methodName) {
 		return new MethodSymbol(symbolName, packageName, className, methodName);
 	}
 
-	public static ISymbol method(final String symbolName, final String className, final String methodName) {
+	public static ISymbol method(final String symbolName,
+			final String className, final String methodName) {
 		return new MethodSymbol(symbolName, className, methodName);
 	}
 
@@ -2432,7 +2560,8 @@ public class F {
 		if (Config.SERVER_MODE) {
 			if (Character.isUpperCase(symbolName.charAt(0))) {
 				if (SYMBOL_OBSERVER.createPredefinedSymbol(symbolName)) {
-					// second try, because the symbol may now be added to fSymbolMap
+					// second try, because the symbol may now be added to
+					// fSymbolMap
 					ISymbol secondTry = PREDEFINED_SYMBOLS_MAP.get(symbolName);
 					if (secondTry != null) {
 						return secondTry;
@@ -2462,7 +2591,7 @@ public class F {
 	 * thread local variables map and push a value on the local stack;
 	 * 
 	 * @param symbolName
-	 *          the name of the symbol
+	 *            the name of the symbol
 	 * @return
 	 */
 	public static ISymbol local(final String symbolName, IExpr value) {
@@ -2480,11 +2609,11 @@ public class F {
 
 	/**
 	 * Create a local symbol which is created or retrieved from the eval engines
-	 * thread local variables map and push a <code>null</code> value on the local
-	 * stack;
+	 * thread local variables map and push a <code>null</code> value on the
+	 * local stack;
 	 * 
 	 * @param symbolName
-	 *          the name of the symbol
+	 *            the name of the symbol
 	 * @return
 	 */
 	public static ISymbol local(final String symbolName) {
@@ -2616,7 +2745,7 @@ public class F {
 	 * the given argument.
 	 * 
 	 * @param a
-	 *          the expression which should be evaluated
+	 *            the expression which should be evaluated
 	 * @return the evaluated expression
 	 * @see EvalEngine#eval(IExpr)
 	 */
@@ -2629,8 +2758,8 @@ public class F {
 	 * substitution matches, the method returns the given <code>expr</code>.
 	 * 
 	 * @param function
-	 *          if the unary functions <code>apply()</code> method returns
-	 *          <code>null</code> the expression isn't substituted.
+	 *            if the unary functions <code>apply()</code> method returns
+	 *            <code>null</code> the expression isn't substituted.
 	 * @return the input <code>expr</code> if no substitution of a
 	 *         (sub-)expression was possible or the substituted expression.
 	 */
@@ -2644,9 +2773,9 @@ public class F {
 	 * substitution matches, the method returns the given <code>expr</code>.
 	 * 
 	 * @param astRules
-	 *          rules of the form <code>x-&gt;y</code> or
-	 *          <code>{a-&gt;b, c-&gt;d}</code>; the left-hand-side of the rule
-	 *          can contain pattern objects.
+	 *            rules of the form <code>x-&gt;y</code> or
+	 *            <code>{a-&gt;b, c-&gt;d}</code>; the left-hand-side of the
+	 *            rule can contain pattern objects.
 	 * @return the input <code>expr</code> if no substitution of a
 	 *         (sub-)expression was possible or the substituted expression.
 	 */
@@ -2656,11 +2785,11 @@ public class F {
 	}
 
 	/**
-	 * Apply <code>ExpandAll[]</code> to the given expression and evaluate it. If
-	 * no evaluation was possible this method returns the given argument.
+	 * Apply <code>ExpandAll[]</code> to the given expression and evaluate it.
+	 * If no evaluation was possible this method returns the given argument.
 	 * 
 	 * @param a
-	 *          the expression which should be evaluated
+	 *            the expression which should be evaluated
 	 * @return the evaluated expression
 	 * @see EvalEngine#eval(IExpr)
 	 */
@@ -2673,11 +2802,11 @@ public class F {
 	 * 
 	 * 
 	 * @param expr
-	 *          the expression which should be evaluated for the given symbol
+	 *            the expression which should be evaluated for the given symbol
 	 * @param symbol
-	 *          the symbol which should be evaluated as a local variable
+	 *            the symbol which should be evaluated as a local variable
 	 * @param localValue
-	 *          the value
+	 *            the value
 	 */
 	public static IExpr evalBlock(IExpr expr, ISymbol symbol, IExpr localValue) {
 		try {
@@ -2779,7 +2908,8 @@ public class F {
 		return tempA.equals(tempB);
 	}
 
-	public static int compareTo(IExpr a, IExpr b) throws UnsupportedOperationException {
+	public static int compareTo(IExpr a, IExpr b)
+			throws UnsupportedOperationException {
 		if (a instanceof ISignedNumber && b instanceof ISignedNumber) {
 			return a.compareTo(b);
 		}
@@ -2788,10 +2918,12 @@ public class F {
 		if (tempA instanceof ISignedNumber && tempB instanceof ISignedNumber) {
 			return tempA.compareTo(tempB);
 		}
-		throw new UnsupportedOperationException("compareTo() - first or second argument could not be converted into a signed number.");
+		throw new UnsupportedOperationException(
+				"compareTo() - first or second argument could not be converted into a signed number.");
 	}
 
-	public static int compareTo(IExpr a, Integer i) throws UnsupportedOperationException {
+	public static int compareTo(IExpr a, Integer i)
+			throws UnsupportedOperationException {
 		if (a instanceof ISignedNumber) {
 			return a.compareTo(integer(i.longValue()));
 		}
@@ -2799,10 +2931,12 @@ public class F {
 		if (temp instanceof ISignedNumber) {
 			return temp.compareTo(integer(i.longValue()));
 		}
-		throw new UnsupportedOperationException("compareTo() - first argument could not be converted into a signed number.");
+		throw new UnsupportedOperationException(
+				"compareTo() - first argument could not be converted into a signed number.");
 	}
 
-	public static int compareTo(Integer i, IExpr b) throws UnsupportedOperationException {
+	public static int compareTo(Integer i, IExpr b)
+			throws UnsupportedOperationException {
 		if (b instanceof ISignedNumber) {
 			return integer(i.longValue()).compareTo(b);
 		}
@@ -2810,10 +2944,12 @@ public class F {
 		if (temp instanceof ISignedNumber) {
 			return integer(i.longValue()).compareTo(temp);
 		}
-		throw new UnsupportedOperationException("compareTo() - second argument could not be converted into a signed number.");
+		throw new UnsupportedOperationException(
+				"compareTo() - second argument could not be converted into a signed number.");
 	}
 
-	public static int compareTo(IExpr a, java.math.BigInteger i) throws UnsupportedOperationException {
+	public static int compareTo(IExpr a, java.math.BigInteger i)
+			throws UnsupportedOperationException {
 		if (a instanceof ISignedNumber) {
 			return a.compareTo(integer(i));
 		}
@@ -2821,10 +2957,12 @@ public class F {
 		if (temp instanceof ISignedNumber) {
 			return temp.compareTo(integer(i));
 		}
-		throw new UnsupportedOperationException("compareTo() - first argument could not be converted into a signed number.");
+		throw new UnsupportedOperationException(
+				"compareTo() - first argument could not be converted into a signed number.");
 	}
 
-	public static int compareTo(java.math.BigInteger i, IExpr b) throws UnsupportedOperationException {
+	public static int compareTo(java.math.BigInteger i, IExpr b)
+			throws UnsupportedOperationException {
 		if (b instanceof ISignedNumber) {
 			return integer(i).compareTo(b);
 		}
@@ -2832,7 +2970,8 @@ public class F {
 		if (temp instanceof ISignedNumber) {
 			return integer(i).compareTo(temp);
 		}
-		throw new UnsupportedOperationException("compareTo() - second argument could not be converted into a signed number.");
+		throw new UnsupportedOperationException(
+				"compareTo() - second argument could not be converted into a signed number.");
 	}
 
 	public static IExpr plus(java.math.BigInteger i, IExpr b) {

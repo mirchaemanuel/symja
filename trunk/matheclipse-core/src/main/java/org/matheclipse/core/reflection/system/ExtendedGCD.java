@@ -1,13 +1,13 @@
 package org.matheclipse.core.reflection.system;
 
+import java.math.BigInteger;
+
 import org.matheclipse.core.basic.Config;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.IInteger;
-
-import java.math.BigInteger;
 
 /**
  * Returns the gcd of two positive numbers plus the bezout relations
@@ -27,33 +27,33 @@ public class ExtendedGCD extends AbstractFunctionEvaluator {
 	}
 
 	@Override
-	public IExpr evaluate(final IAST functionList) {
-		if (functionList.size() < 3) {
+	public IExpr evaluate(final IAST ast) {
+		if (ast.size() < 3) {
 			// less than 2 arguments (0-th arg is the header ExtendedGCD)
 			return null;
 		}
-		for (int i = 1; i < functionList.size(); i++) {
-			if (!functionList.get(i).isInteger()) {
+		for (int i = 1; i < ast.size(); i++) {
+			if (!ast.get(i).isInteger()) {
 				return null;
 			}
-			if (!((IInteger) functionList.get(i)).isPositive()) {
+			if (!((IInteger) ast.get(i)).isPositive()) {
 				return null;
 			}
 		}
 		// all arguments are positive integers now
 
 		try {
-			BigInteger gcd = ((IInteger) functionList.get(1)).getBigNumerator();
+			BigInteger gcd = ((IInteger) ast.get(1)).getBigNumerator();
 			BigInteger factor = BigInteger.ONE;
-			BigInteger[] subBezouts = new BigInteger[functionList.size() - 1];
-			Object[] stepResult = extendedGCD(((IInteger) functionList.get(2)).getBigNumerator(), gcd);
+			BigInteger[] subBezouts = new BigInteger[ast.size() - 1];
+			Object[] stepResult = extendedGCD(((IInteger) ast.get(2)).getBigNumerator(), gcd);
 
 			gcd = (BigInteger) stepResult[0];
 			subBezouts[0] = ((BigInteger[]) stepResult[1])[0];
 			subBezouts[1] = ((BigInteger[]) stepResult[1])[1];
 
-			for (int i = 3; i < functionList.size(); i++) {
-				stepResult = extendedGCD(((IInteger) functionList.get(i)).getBigNumerator(), gcd);
+			for (int i = 3; i < ast.size(); i++) {
+				stepResult = extendedGCD(((IInteger) ast.get(i)).getBigNumerator(), gcd);
 				gcd = (BigInteger) stepResult[0];
 				factor = ((BigInteger[]) stepResult[1])[0];
 				for (int j = 0; j < i - 1; j++) {

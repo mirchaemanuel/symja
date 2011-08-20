@@ -17,7 +17,9 @@ public class DiagonalMatrix extends AbstractFunctionEvaluator {
 
 	@Override
 	public IExpr evaluate(final IAST ast) {
-		if (((ast.size() == 2) || (ast.size() == 3)) && (ast.get(1).isAST())) {
+		Validate.checkRange(ast, 2, 3);
+
+		if (ast.get(1).isAST()) {
 			IAST list = (IAST) ast.get(1);
 			int m = list.size();
 			IAST res = F.List();

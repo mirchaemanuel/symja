@@ -12,10 +12,10 @@ import org.matheclipse.core.generic.Functors;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.IInteger;
-import org.matheclipse.core.interfaces.INumber;
 import org.matheclipse.generic.combinatoric.KPermutationsIterable;
 
-public class Expand extends AbstractFunctionEvaluator implements IConstantHeaders {
+public class Expand extends AbstractFunctionEvaluator implements
+		IConstantHeaders {
 
 	private static class NumberPartititon {
 		IAST expandedResult;
@@ -39,7 +39,8 @@ public class Expand extends AbstractFunctionEvaluator implements IConstantHeader
 		}
 
 		private void addFactor(int[] j) {
-			final KPermutationsIterable perm = new KPermutationsIterable(j, m, m);
+			final KPermutationsIterable perm = new KPermutationsIterable(j, m,
+					m);
 			IInteger multinomial = F.integer(Multinomial.multinomial(j, n));
 			final IAST times = Times();
 			IAST temp;
@@ -148,7 +149,7 @@ public class Expand extends AbstractFunctionEvaluator implements IConstantHeader
 	 * 
 	 * @param plusAST
 	 * @param n
-	 *          <code>n &ge; 0</code>
+	 *            <code>n &ge; 0</code>
 	 * @return
 	 */
 	public static IExpr expandPower(final IAST plusAST, final int n) {
@@ -195,7 +196,8 @@ public class Expand extends AbstractFunctionEvaluator implements IConstantHeader
 		// (a+b)*(c+d) -> a*c+a*d+b*c+b*d
 		final IAST pList = Plus();
 		for (int i = 1; i < plusAST0.size(); i++) {
-			plusAST1.args().map(pList, Functors.replace2nd(Times(plusAST0.get(i), F.Null)));
+			plusAST1.args().map(pList,
+					Functors.replace2nd(Times(plusAST0.get(i), F.Null)));
 		}
 		return pList;
 	}
@@ -215,13 +217,10 @@ public class Expand extends AbstractFunctionEvaluator implements IConstantHeader
 
 	@Override
 	public IExpr evaluate(final IAST ast) {
-		if (ast.size() != 2) {
-			return null;
-		}
+		Validate.checkSize(ast, 2);
 
-		if (ast.get(1) instanceof IAST) {
-			final IAST arg1 = (IAST) ast.get(1);
-			IExpr temp = expand(arg1);
+		if (ast.get(1).isAST()) {
+			IExpr temp = expand((IAST) ast.get(1));
 			if (temp != null) {
 				return temp;
 			}

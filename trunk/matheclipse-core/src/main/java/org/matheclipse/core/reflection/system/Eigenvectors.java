@@ -28,9 +28,9 @@ public class Eigenvectors extends AbstractMatrix1Expr {
 	}
 
 	@Override
-	public IExpr evaluate(final IAST function) {
+	public IExpr evaluate(final IAST ast) {
 		// switch to numeric calculation
-		return numericEval(function);
+		return numericEval(ast);
 	}
 
 	public IAST realMatrixEval(RealMatrix matrix) {

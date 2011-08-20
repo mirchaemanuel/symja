@@ -9,8 +9,11 @@ import java.util.TreeMap;
 
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.generic.Functors;
+import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.IPattern;
+import org.matheclipse.core.interfaces.IPatternObject;
+import org.matheclipse.core.interfaces.IPatternSequence;
 import org.matheclipse.core.interfaces.ISymbol;
 
 /**
@@ -26,7 +29,7 @@ public class PatternMap implements Cloneable {
 	/**
 	 * Map a pattern-object to an index in the <code>fPatternValuesArray</code>.
 	 */
-	private TreeMap<IPattern, Integer> fPatternIndexMap;
+	private TreeMap<IPatternObject, Integer> fPatternIndexMap;
 
 	/**
 	 * Contains the current values of the patterns index stored in
@@ -35,7 +38,7 @@ public class PatternMap implements Cloneable {
 	private IExpr[] fPatternValuesArray;
 
 	public PatternMap() {
-		this.fPatternIndexMap = new TreeMap<IPattern, Integer>(PatternComparator.CONST);
+		this.fPatternIndexMap = new TreeMap<IPatternObject, Integer>(PatternComparator.CONST);
 		this.fPatternCounter = 0;
 		this.fPatternValuesArray = new IExpr[0];
 	}
@@ -47,7 +50,7 @@ public class PatternMap implements Cloneable {
 	 * @param pattern
 	 * @param patternIndexMap
 	 */
-	public void addPattern(IPattern pattern) {
+	public void addPattern(IPatternObject pattern) {
 		if (pattern.getSymbol() != null && fPatternIndexMap.get(pattern) != null) {
 			// for "named" patterns (i.e. "x_" or "x_IntegerQ")
 			return;
@@ -72,7 +75,7 @@ public class PatternMap implements Cloneable {
 			e.printStackTrace();
 		}
 		result.fPatternValuesArray = Arrays.copyOf(fPatternValuesArray, fPatternValuesArray.length);
-		result.fPatternIndexMap = (TreeMap<IPattern, Integer>) fPatternIndexMap.clone();
+		result.fPatternIndexMap = (TreeMap<IPatternObject, Integer>) fPatternIndexMap.clone();
 		result.fPatternCounter = fPatternCounter;
 		return result;
 	}
@@ -96,7 +99,7 @@ public class PatternMap implements Cloneable {
 	 * @param patternMap
 	 */
 	public void copyPatternValuesFromPatternMatcher(final PatternMap patternMap) {
-		for (IPattern pattern : patternMap.fPatternIndexMap.keySet()) {
+		for (IPatternObject pattern : patternMap.fPatternIndexMap.keySet()) {
 			if (pattern.getSymbol() != null) {
 				Integer indx = getIndex(pattern);
 				if (indx != null) {
@@ -106,13 +109,13 @@ public class PatternMap implements Cloneable {
 		}
 	}
 
-	public int getIndex(IPattern pattern) {
+	public int getIndex(IPatternObject pattern) {
 		return fPatternIndexMap.get(pattern);
 	}
 
 	private Map<ISymbol, IExpr> getRulesMap() {
 		final Map<ISymbol, IExpr> rulesMap = new HashMap<ISymbol, IExpr>();
-		for (IPattern pattern : fPatternIndexMap.keySet()) {
+		for (IPatternObject pattern : fPatternIndexMap.keySet()) {
 			ISymbol sym = pattern.getSymbol();
 			if (sym != null) {
 				Integer indx = fPatternIndexMap.get(pattern);
@@ -124,7 +127,7 @@ public class PatternMap implements Cloneable {
 		return rulesMap;
 	}
 
-	public IExpr getValue(IPattern pattern) {
+	public IExpr getValue(IPatternObject pattern) {
 		return fPatternValuesArray[getIndex(pattern)];
 	}
 
@@ -184,7 +187,7 @@ public class PatternMap implements Cloneable {
 		System.arraycopy(patternValuesArray, 0, fPatternValuesArray, 0, fPatternValuesArray.length);
 	}
 
-	public void setValue(IPattern pattern, IExpr expr) {
+	public void setValue(IPatternObject pattern, IExpr expr) {
 		fPatternValuesArray[getIndex(pattern)] = expr;
 	}
 

@@ -2,13 +2,14 @@ package org.matheclipse.core.patternmatching;
 
 import java.util.Comparator;
 
-import org.matheclipse.core.interfaces.IPattern;
+import org.matheclipse.core.interfaces.IPatternObject;
+import org.matheclipse.core.interfaces.IPatternSequence;
 
 /**
  * Compares two patterns.
  * 
  */
-public class PatternComparator implements Comparator<IPattern> {
+public class PatternComparator implements Comparator<IPatternObject> {
 	/**
 	 * The only <code>PatternComparator</code> instance.
 	 */
@@ -25,9 +26,15 @@ public class PatternComparator implements Comparator<IPattern> {
 	 * <code>System#identityHashCode()</code> value is used to compare them.
 	 */
 	@Override
-	public int compare(IPattern o1, IPattern o2) {
+	public int compare(IPatternObject o1, IPatternObject o2) {
 		if (o1 == o2) {
 			return 0;
+		}
+		if (!o1.getClass().equals(o2.getClass())) {
+			if (o1 instanceof IPatternSequence) {
+				return 1;
+			}
+			return -1;
 		}
 		if (o1.getSymbol() == null) {
 			if (o2.getSymbol() == null) {

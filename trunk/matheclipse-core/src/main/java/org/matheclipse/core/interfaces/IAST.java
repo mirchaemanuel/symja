@@ -53,17 +53,22 @@ public interface IAST extends IExpr, INestedList<IExpr> {
 	 * The head or one of the arguments of the list contains a pattern object
 	 */
 	public final int CONTAINS_PATTERN = 0x0001;
+	
+	/**
+	 * The head or one of the arguments of the list contains a pattern object
+	 */
+	public final int CONTAINS_PATTERN_SEQUENCE = 0x0002;
 
 	/**
 	 * One of the arguments of the list contains a pattern object which can be set
 	 * to a default value.
 	 */
-	public final int CONTAINS_DEFAULT_PATTERN = 0x0002;
+	public final int CONTAINS_DEFAULT_PATTERN = 0x0004;
 
 	/**
 	 * Negative flag mask for CONTAINS_DEFAULT_PATTERN
 	 */
-	public final int CONTAINS_NO_DEFAULT_PATTERN_MASK = 0xFFFD;
+	public final int CONTAINS_NO_DEFAULT_PATTERN_MASK = 0xFFFB;
 
 	/**
 	 * This expression represents a matrix
@@ -247,8 +252,12 @@ public interface IAST extends IExpr, INestedList<IExpr> {
 	 * @param head
 	 * @return
 	 */
-	public IAST map(final Function<IExpr, IExpr> function);
+	public IAST map(final Function<IExpr, IExpr> functor);
 
+	public IAST map(final IExpr head, final Function<IExpr, IExpr> functor);
+
+	public IAST map(final IAST resultAST, final Function<IExpr, IExpr> functor);
+	
 	/**
 	 * Maps the elements of this IAST with the elements of the
 	 * <code>secondAST</code>.

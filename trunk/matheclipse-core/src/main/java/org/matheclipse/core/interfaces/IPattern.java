@@ -1,13 +1,12 @@
 package org.matheclipse.core.interfaces;
 
-import org.matheclipse.core.patternmatching.PatternMatcher;
 
 /**
  * Interface for pattern objects. A pettern object cannot be shared between
  * multiple rules
  * 
  */
-public interface IPattern extends IExpr {
+public interface IPattern extends IPatternObject, IExpr {
 	/**
 	 * Get the index in which this pattern is stored during pattern-matching for a
 	 * given rule.
@@ -24,13 +23,6 @@ public interface IPattern extends IExpr {
 	 * @see PatternMatcher#determinePatternParameters()
 	 */
 //	public void setIndex(int index);
-
-	/**
-	 * Get the associated symbol for this pattern-object
-	 * 
-	 * @return
-	 */
-	public ISymbol getSymbol();
 
 	/**
 	 * Get the additional patterns condition expression

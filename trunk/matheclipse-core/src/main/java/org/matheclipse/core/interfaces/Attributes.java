@@ -1,5 +1,10 @@
 package org.matheclipse.core.interfaces;
 
+/**
+ * 
+ * @deprecated 
+ * @see ISymbol#FLAT, ISymbol#ORDERLESS,...
+ */
 public enum Attributes {
 
 	/**

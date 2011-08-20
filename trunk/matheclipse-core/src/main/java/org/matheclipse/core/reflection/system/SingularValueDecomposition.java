@@ -18,48 +18,48 @@ import org.matheclipse.core.interfaces.IExpr;
  */
 public class SingularValueDecomposition extends AbstractFunctionEvaluator {
 
-  public SingularValueDecomposition() {
-    super();
-  }
+	public SingularValueDecomposition() {
+		super();
+	}
 
-  @Override
-  public IExpr evaluate(final IAST function) {
-    RealMatrix matrix;
-    try {
-      if (function.size() == 2) {
-        final IAST list = (IAST) function.get(1);
-        matrix = Convert.list2RealMatrix(list);
-        final SingularValueDecompositionImpl svd = new SingularValueDecompositionImpl(
-            matrix);
-        final RealMatrix uMatrix = svd.getU();
-        final RealMatrix sMatrix = svd.getS();
-        final RealMatrix vMatrix = svd.getV();
+	@Override
+	public IExpr evaluate(final IAST ast) {
+		RealMatrix matrix;
+		try {
+			if (ast.size() == 2) {
+				final IAST list = (IAST) ast.get(1);
+				matrix = Convert.list2RealMatrix(list);
+				final SingularValueDecompositionImpl svd = new SingularValueDecompositionImpl(
+						matrix);
+				final RealMatrix uMatrix = svd.getU();
+				final RealMatrix sMatrix = svd.getS();
+				final RealMatrix vMatrix = svd.getV();
 
-        final IAST result = List();
-        final IAST uMatrixAST = Convert.realMatrix2List(uMatrix);
-        final IAST sMatrixAST = Convert.realMatrix2List(sMatrix);
-        final IAST vMatrixAST = Convert.realMatrix2List(vMatrix);
-        result.add(uMatrixAST);
-        result.add(sMatrixAST);
-        result.add(vMatrixAST);
-        return result;
-      }
-    } catch (final ClassCastException e) {
-      if (Config.SHOW_STACKTRACE) {
-        e.printStackTrace();
-      }
-    } catch (final IndexOutOfBoundsException e) {
-      if (Config.SHOW_STACKTRACE) {
-        e.printStackTrace();
-      }
-    }
+				final IAST result = List();
+				final IAST uMatrixAST = Convert.realMatrix2List(uMatrix);
+				final IAST sMatrixAST = Convert.realMatrix2List(sMatrix);
+				final IAST vMatrixAST = Convert.realMatrix2List(vMatrix);
+				result.add(uMatrixAST);
+				result.add(sMatrixAST);
+				result.add(vMatrixAST);
+				return result;
+			}
+		} catch (final ClassCastException e) {
+			if (Config.SHOW_STACKTRACE) {
+				e.printStackTrace();
+			}
+		} catch (final IndexOutOfBoundsException e) {
+			if (Config.SHOW_STACKTRACE) {
+				e.printStackTrace();
+			}
+		}
 
-    return null;
-  }
+		return null;
+	}
 
-  @Override
-  public IExpr numericEval(final IAST functionList) {
-    return evaluate(functionList);
-  }
- 
+	@Override
+	public IExpr numericEval(final IAST functionList) {
+		return evaluate(functionList);
+	}
+
 }

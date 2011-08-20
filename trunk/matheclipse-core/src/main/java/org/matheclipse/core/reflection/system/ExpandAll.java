@@ -1,20 +1,20 @@
 package org.matheclipse.core.reflection.system;
 
+import org.matheclipse.core.eval.exception.Validate;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
 import org.matheclipse.core.expression.IConstantHeaders;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
 
-public class ExpandAll extends AbstractFunctionEvaluator implements IConstantHeaders {
+public class ExpandAll extends AbstractFunctionEvaluator implements
+		IConstantHeaders {
 	public ExpandAll() {
 		super();
 	}
 
 	@Override
 	public IExpr evaluate(final IAST ast) {
-		if (ast.size() != 2) {
-			return null;
-		}
+		Validate.checkSize(ast, 2);
 
 		IExpr temp = expandAll(ast.get(1));
 		if (temp != null) {

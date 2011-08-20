@@ -29,7 +29,7 @@ public class Functors {
 		/**
 		 * 
 		 * @param ast
-		 *          the AST which should be cloned in the {@code apply} method
+		 *            the AST which should be cloned in the {@code apply} method
 		 */
 		public AppendFunctor(final IAST ast) {
 			fAST = ast;
@@ -65,11 +65,11 @@ public class Functors {
 		/**
 		 * 
 		 * @param ast
-		 *          the complete AST which should be cloned in the {@code apply}
-		 *          method
+		 *            the complete AST which should be cloned in the {@code
+		 *            apply} method
 		 * @param position
-		 *          the position which should be replaced in the
-		 *          <code>apply()</code> method.
+		 *            the position which should be replaced in the
+		 *            <code>apply()</code> method.
 		 */
 		public ReplaceArgFunctor(final IAST ast, int position) {
 			fConstant = ast;
@@ -85,17 +85,42 @@ public class Functors {
 
 	}
 
+	private static class ReplaceAllFunctor implements Function<IExpr, IExpr> {
+		private final IAST fConstant;
+		private final IExpr fLHS;
+
+		/**
+		 * 
+		 * @param ast
+		 *            the complete AST which should be cloned in the {@code
+		 *            apply} method
+		 * @param position
+		 *            the position which should be replaced in the
+		 *            <code>apply()</code> method.
+		 */
+		public ReplaceAllFunctor(final IAST ast, IExpr lhs) {
+			fConstant = ast;
+			fLHS = lhs;
+		}
+
+		@Override
+		public IExpr apply(final IExpr arg) {
+			return fConstant.replaceAll(F.Rule(fLHS, arg));
+		}
+
+	}
+
 	private static class RulesFunctor implements Function<IExpr, IExpr> {
 		private final Map<? extends IExpr, ? extends IExpr> fEqualRules;
 
 		/**
 		 * 
 		 * @param plusAST
-		 *          the complete AST which should be cloned in the {@code apply}
-		 *          method
+		 *            the complete AST which should be cloned in the {@code
+		 *            apply} method
 		 * @param position
-		 *          the position which should be replaced in the
-		 *          <code>apply()</code> method.
+		 *            the position which should be replaced in the
+		 *            <code>apply()</code> method.
 		 */
 		public RulesFunctor(Map<? extends IExpr, ? extends IExpr> rulesMap) {
 			fEqualRules = rulesMap;
@@ -115,13 +140,14 @@ public class Functors {
 		/**
 		 * 
 		 * @param plusAST
-		 *          the complete AST which should be cloned in the {@code apply}
-		 *          method
+		 *            the complete AST which should be cloned in the {@code
+		 *            apply} method
 		 * @param position
-		 *          the position which should be replaced in the
-		 *          <code>apply()</code> method.
+		 *            the position which should be replaced in the
+		 *            <code>apply()</code> method.
 		 */
-		public RulesPatternFunctor(Map<IExpr, IExpr> equalRules, List<PatternMatcherAndEvaluator> matchers) {
+		public RulesPatternFunctor(Map<IExpr, IExpr> equalRules,
+				List<PatternMatcherAndEvaluator> matchers) {
 			fEqualRules = equalRules;
 			fMatchers = matchers;
 		}
@@ -166,9 +192,30 @@ public class Functors {
 	}
 
 	/**
-	 * Replace the argument at the first position in the AST
+	 * Create a functor, which replaces all (sub-)expressions in
+	 * <code>ast</code> which equals <code>lhs</code> with the argument of the
+	 * functors <code>apply()</code> method.
 	 * 
 	 * @param ast
+	 *            an AST which contains the <code>lhs</code> as a placeholder in
+	 *            it's subexpressions.
+	 * @param lhs
+	 *            left-hand-side of a <code>Rule(lhs,...)</code>
+	 * @return
+	 */
+	public static Function<IExpr, IExpr> replaceAll(@Nonnull IAST ast,
+			@Nonnull IExpr lhs) {
+		return new ReplaceAllFunctor(ast, lhs);
+	}
+
+	/**
+	 * Create a functor, which replaces the argument at the first position in
+	 * the <code>ast</code> with the argument of the functors
+	 * <code>apply()</code> method.
+	 * 
+	 * @param ast
+	 *            an AST where the first argument is replaced with the argument
+	 *            of the functors <code>apply()</code> method.
 	 * @return
 	 */
 	public static Function<IExpr, IExpr> replace1st(@Nonnull IAST ast) {
@@ -176,9 +223,13 @@ public class Functors {
 	}
 
 	/**
-	 * Replace the argument at the second position in the AST
+	 * Create a functor, which replaces the argument at the second position in
+	 * the <code>ast</code> with the argument of the functors
+	 * <code>apply()</code> method.
 	 * 
 	 * @param ast
+	 *            an AST where the second argument is replaced with the argument
+	 *            of the functors <code>apply()</code> method.
 	 * @return
 	 */
 	public static Function<IExpr, IExpr> replace2nd(@Nonnull IAST ast) {
@@ -186,13 +237,21 @@ public class Functors {
 	}
 
 	/**
-	 * Replace the argument at the given position in the AST
+	 * Create a functor, which replaces the argument at the given position in
+	 * the <code>ast</code> with the argument of the functors
+	 * <code>apply()</code> method.
 	 * 
 	 * @param ast
-	 * @param ith
+	 *            an AST where the element at the given <code>position</code> is
+	 *            replaced with the argument of the functors
+	 *            <code>apply()</code> method.
+	 * @param position
+	 *            the position of the element, which should be replaced in the
+	 *            <code>ast</code>.
 	 * @return
 	 */
-	public static Function<IExpr, IExpr> replaceArg(@Nonnull IAST ast, int position) {
+	public static Function<IExpr, IExpr> replaceArg(@Nonnull IAST ast,
+			int position) {
 		return new ReplaceArgFunctor(ast, position);
 	}
 
@@ -203,20 +262,22 @@ public class Functors {
 	 * @param rulesMap
 	 * @return
 	 */
-	public static Function<IExpr, IExpr> rules(Map<? extends IExpr, ? extends IExpr> rulesMap) {
+	public static Function<IExpr, IExpr> rules(
+			Map<? extends IExpr, ? extends IExpr> rulesMap) {
 		return new RulesFunctor(rulesMap);
 	}
 
 	/**
-	 * Create a functor from the given rules. All strings in <code>strRules</code>
-	 * are parsed in internal rules form.
+	 * Create a functor from the given rules. All strings in
+	 * <code>strRules</code> are parsed in internal rules form.
 	 * 
 	 * @param strRules
-	 *          array of rules of the form &quot;<code>x-&gt;y</code>&quot;
+	 *            array of rules of the form &quot;<code>x-&gt;y</code>&quot;
 	 * @return
 	 * @throws WrongArgumentType
 	 */
-	public static Function<IExpr, IExpr> rules(@Nonnull String[] strRules) throws WrongArgumentType {
+	public static Function<IExpr, IExpr> rules(@Nonnull String[] strRules)
+			throws WrongArgumentType {
 		IAST astRules = F.List();
 		final Parser parser = new Parser();
 		final EvalEngine engine = EvalEngine.get();
@@ -231,15 +292,16 @@ public class Functors {
 
 	/**
 	 * Create a functor from the given rules. If <code>astRules</code> is a
-	 * <code>List[]</code> object, the elements of the list are taken as the rules
-	 * of the form <code>Rule[lhs, rhs]</code>, otherwise the
+	 * <code>List[]</code> object, the elements of the list are taken as the
+	 * rules of the form <code>Rule[lhs, rhs]</code>, otherwise the
 	 * <code>astRules</code> itself is taken as the <code>Rule[lhs, rhs]</code>.
 	 * 
 	 * @param astRules
 	 * @return
 	 * @throws WrongArgumentType
 	 */
-	public static Function<IExpr, IExpr> rules(@Nonnull IAST astRules) throws WrongArgumentType {
+	public static Function<IExpr, IExpr> rules(@Nonnull IAST astRules)
+			throws WrongArgumentType {
 		Map<IExpr, IExpr> equalRules = new HashMap<IExpr, IExpr>();
 		List<PatternMatcherAndEvaluator> matchers = new ArrayList<PatternMatcherAndEvaluator>();
 		if (astRules.isList()) {
@@ -251,14 +313,16 @@ public class Functors {
 					rule = (IAST) expr;
 					addRuleToCollection(equalRules, matchers, rule);
 				} else {
-					throw new WrongArgumentType(astRules, astRules, -1, "Rule expression (x->y) expected: ");
+					throw new WrongArgumentType(astRules, astRules, -1,
+							"Rule expression (x->y) expected: ");
 				}
 			}
 		} else {
 			if (astRules.isRuleAST()) {
 				addRuleToCollection(equalRules, matchers, astRules);
 			} else {
-				throw new WrongArgumentType(astRules, astRules, -1, "Rule expression (x->y) expected: ");
+				throw new WrongArgumentType(astRules, astRules, -1,
+						"Rule expression (x->y) expected: ");
 			}
 		}
 		if (matchers.size() > 0) {
@@ -274,15 +338,18 @@ public class Functors {
 		}
 	};
 
-	private static void addRuleToCollection(Map<IExpr, IExpr> equalRules, List<PatternMatcherAndEvaluator> matchers, IAST rule) {
+	private static void addRuleToCollection(Map<IExpr, IExpr> equalRules,
+			List<PatternMatcherAndEvaluator> matchers, IAST rule) {
 		if (rule.get(1).isFree(PATTERNQ_PREDICATE, true)) {
-			if (rule.get(1).isOrderlessAST()||rule.get(1).isFlatAST()) {
-				matchers.add(new PatternMatcherAndEvaluator(F.SetDelayed, rule.get(1), rule.get(2)));
+			if (rule.get(1).isOrderlessAST() || rule.get(1).isFlatAST()) {
+				matchers.add(new PatternMatcherAndEvaluator(F.SetDelayed, rule
+						.get(1), rule.get(2)));
 				return;
 			}
 			equalRules.put(rule.get(1), rule.get(2));
 		} else {
-			matchers.add(new PatternMatcherAndEvaluator(F.SetDelayed, rule.get(1), rule.get(2)));
+			matchers.add(new PatternMatcherAndEvaluator(F.SetDelayed, rule
+					.get(1), rule.get(2)));
 		}
 	}
 
