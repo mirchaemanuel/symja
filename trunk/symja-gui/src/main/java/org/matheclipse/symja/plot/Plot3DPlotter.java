@@ -19,22 +19,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
 
 package org.matheclipse.symja.plot;
 
-import java.awt.Color;
-import java.awt.EventQueue;
-import java.awt.Graphics2D;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
-
-import org.matheclipse.parser.client.eval.DoubleEvaluator;
-import org.matheclipse.parser.client.eval.DoubleVariable;
-
-import com.googlecode.surfaceplotter.AbstractSurfaceModel;
-import com.googlecode.surfaceplotter.JSurfacePanel;
-import com.googlecode.surfaceplotter.SurfaceModel;
-import com.googlecode.surfaceplotter.AbstractSurfaceModel.Plotter;
-import com.googlecode.surfaceplotter.SurfaceModel.PlotColor;
-import com.googlecode.surfaceplotter.SurfaceModel.PlotType;
 
 /**
  * Plots parametric shapes.

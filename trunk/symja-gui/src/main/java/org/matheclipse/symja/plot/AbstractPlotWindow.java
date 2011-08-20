@@ -39,13 +39,10 @@ public abstract class AbstractPlotWindow extends JDialog {
 	public AbstractPlotWindow(Frame parent) {
 		super(parent, "Plot");
 		
-		JPanel controls = createControls();
+		
 		plot = createPlot();
-		xMin.setValue(-1.0);
-		xMax.setValue(1.0);
-		yMin.setValue(-1.0);
-		yMax.setValue(1.0);
-
+		JPanel controls = createControls();
+		
 		JSplitPane split = new JSplitPane(
 			JSplitPane.HORIZONTAL_SPLIT, 
 			plot,
@@ -96,9 +93,9 @@ public abstract class AbstractPlotWindow extends JDialog {
 
 	public abstract void addField();
 
-	protected void addField(String label) {
+	protected void addField(String label, String defaultExpr) {
 		GridBagConstraints gbc = new GridBagConstraints();
-		JTextField field = new JTextField("");
+		JTextField field = new JTextField(defaultExpr);
 
 		gbc.fill = GridBagConstraints.BOTH;
 		gbc.weightx = 0.0;
@@ -181,7 +178,10 @@ public abstract class AbstractPlotWindow extends JDialog {
 				plot.setYMax(value);
 			}
 		});
-
+		xMin.setValue(-1.0);
+		xMax.setValue(1.0);
+		yMin.setValue(-1.0);
+		yMax.setValue(1.0);
 		return controls;
 	}
 
