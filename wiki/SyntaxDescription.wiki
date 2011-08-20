@@ -5,7 +5,15 @@
 <wiki:toc max_depth="2" />
 
 = Syntax Description =
-Symja has an evaluation engine for mathematical expressions. A semicolon operator ";" is used to separate multiple expressions. The following example shows two expressions separated by the ";" operator, only the result for the second expression will be returned back after evaluation: 
+Symja has an evaluation engine for mathematical expressions. The common arithmetic operations are:
+  * {{{+}}} addition
+  * {{{-}}} subtraction
+  * {{{*}}} scalar multiplication
+  * {{{/}}} division
+  * {{{^}}} exponentiation
+  * {{{.}}} matrix multiplication
+
+A semicolon operator ";" is used to separate multiple expressions. The following example shows two expressions separated by the ";" operator, only the result for the second expression will be returned back after evaluation: 
 {{{
     100!;32+8+2
 }}}
