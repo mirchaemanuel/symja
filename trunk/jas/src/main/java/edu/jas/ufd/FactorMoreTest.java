@@ -1,11 +1,13 @@
 /*
- * $Id: FactorMoreTest.java 3356 2010-10-23 16:41:01Z kredel $
+ * $Id: FactorMoreTest.java 3742 2011-08-20 20:14:04Z kredel $
  */
 
 package edu.jas.ufd;
 
 
 import java.util.SortedMap;
+
+import org.apache.log4j.BasicConfigurator;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -33,7 +35,7 @@ public class FactorMoreTest extends TestCase {
      * main.
      */
     public static void main(String[] args) {
-        //BasicConfigurator.configure();
+        BasicConfigurator.configure();
         junit.textui.TestRunner.run(suite());
     }
 
@@ -91,7 +93,6 @@ public class FactorMoreTest extends TestCase {
 
     /**
      * Test integral function factorization.
-     * 
      */
     public void testIntegralFunctionFactorization() {
 
@@ -159,7 +160,6 @@ public class FactorMoreTest extends TestCase {
 
     /**
      * Test integer integral function factorization.
-     * 
      */
     public void testIntegerIntegralFunctionFactorization() {
 
@@ -214,7 +214,7 @@ public class FactorMoreTest extends TestCase {
                 for (Long e : sm.values()) {
                     sf += e;
                 }
-                assertTrue("#facs < " + facs, sf >= facs);
+                assertTrue("#facs < " + facs + ", sm = " + sm, sf >= facs);
             }
 
             boolean tt = fac.isRecursiveFactorization(a, sm);
@@ -227,7 +227,6 @@ public class FactorMoreTest extends TestCase {
 
     /**
      * Test rational function factorization.
-     * 
      */
     public void testRationalFunctionFactorization() {
 
@@ -296,7 +295,6 @@ public class FactorMoreTest extends TestCase {
 
     /**
      * Test modular rational function factorization.
-     * 
      */
     public void testModularRationalFunctionFactorization() {
 

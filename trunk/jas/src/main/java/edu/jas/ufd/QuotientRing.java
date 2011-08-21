@@ -1,5 +1,5 @@
 /*
- * $Id: QuotientRing.java 3652 2011-06-02 18:17:04Z kredel $
+ * $Id: QuotientRing.java 3670 2011-06-25 19:04:28Z kredel $
  */
 
 package edu.jas.ufd;
@@ -12,7 +12,6 @@ import java.util.Random;
 
 import org.apache.log4j.Logger;
 
-//import edu.jas.application.Ideal;
 import edu.jas.kern.StringUtil;
 import edu.jas.poly.GenPolynomial;
 import edu.jas.poly.GenPolynomialRing;

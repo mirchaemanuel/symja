@@ -1,11 +1,14 @@
 /*
- * $Id: FactorIntegerTest.java 3295 2010-08-26 17:01:10Z kredel $
+ * $Id: FactorIntegerTest.java 3742 2011-08-20 20:14:04Z kredel $
  */
 
 package edu.jas.ufd;
 
 
 import java.util.SortedMap;
+import java.util.List;
+
+import org.apache.log4j.BasicConfigurator;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -32,7 +35,7 @@ public class FactorIntegerTest extends TestCase {
      * main.
      */
     public static void main(String[] args) {
-        //BasicConfigurator.configure();
+        BasicConfigurator.configure();
         junit.textui.TestRunner.run(suite());
     }
 
@@ -82,7 +85,6 @@ public class FactorIntegerTest extends TestCase {
 
     /**
      * Test dummy for Junit.
-     * 
      */
     public void testDummy() {
     }
@@ -90,10 +92,8 @@ public class FactorIntegerTest extends TestCase {
 
     /**
      * Test integer monic factorization.
-     * 
      */
     public void testIntegerMonicFactorization() {
-
         TermOrder to = new TermOrder(TermOrder.INVLEX);
         BigInteger cfac = new BigInteger(4);
         BigInteger one = cfac.getONE();
@@ -161,10 +161,8 @@ public class FactorIntegerTest extends TestCase {
 
     /**
      * Test integer factorization.
-     * 
      */
     public void testIntegerFactorization() {
-
         TermOrder to = new TermOrder(TermOrder.INVLEX);
         BigInteger cfac = new BigInteger(4);
         BigInteger one = cfac.getONE();
@@ -221,15 +219,14 @@ public class FactorIntegerTest extends TestCase {
 
     /**
      * Test integer factorization irreducible polynomial.
-     * 
      */
     public void testIntegerFactorizationIrred() {
         //BasicConfigurator.configure();
         TermOrder to = new TermOrder(TermOrder.INVLEX);
         BigInteger cfac = new BigInteger(4);
         BigInteger one = cfac.getONE();
-        GenPolynomialRing<BigInteger> pfac = new GenPolynomialRing<BigInteger>(cfac, 1, to,
-                new String[] { "x" });
+        String[] vars = new String[] { "x" };
+        GenPolynomialRing<BigInteger> pfac = new GenPolynomialRing<BigInteger>(cfac, 1, to, vars);
         FactorAbstract<BigInteger> fac = new FactorInteger<ModInteger>();
 
         for (int i = 1; i < 2; i++) {
@@ -255,19 +252,146 @@ public class FactorIntegerTest extends TestCase {
 
 
     /**
-     * Test multivariate integer factorization.
-     * 
+     * Test bi-variate integer factorization.
      */
-    public void testMultivariate2IntegerFactorization() {
-
+    public void testBivariateIntegerFactorization() {
         TermOrder to = new TermOrder(TermOrder.INVLEX);
         BigInteger cfac = new BigInteger(1);
-        GenPolynomialRing<BigInteger> pfac = new GenPolynomialRing<BigInteger>(cfac, 2, to);
+        String[] vars = new String[] { "x", "y" };
+        GenPolynomialRing<BigInteger> pfac = new GenPolynomialRing<BigInteger>(cfac, 2, to, vars);
+        //FactorAbstract<BigInteger> fac = new FactorInteger<ModInteger>();
+        FactorInteger<ModInteger> fac = new FactorInteger<ModInteger>();
+
+        for (int i = 1; i < 2; i++) {
+            GenPolynomial<BigInteger> b = pfac.random(kl, 3, el, q / 2.0f);
+            GenPolynomial<BigInteger> c = pfac.random(kl, 2, el, q);
+            GenPolynomial<BigInteger> d = pfac.random(kl, 2, el, q);
+            b = pfac.parse(" ( x y^2 - 1 ) "); 
+            c = pfac.parse(" ( 2 x y + 1 ) "); 
+            d = pfac.parse(" ( y^4 + 3 x )"); 
+
+            //b = pfac.parse(" ( y + x + 1 ) "); 
+            //c = pfac.parse(" ( y ) "); 
+            //d = pfac.parse(" ( 1 )"); 
+            GenPolynomial<BigInteger> a;
+            a = b.multiply(c).multiply(d);
+            //System.out.println("a = " + a);
+            //System.out.println("b = " + b);
+            //System.out.println("c = " + c);
+            //System.out.println("d = " + d);
+
+            List<GenPolynomial<BigInteger>> sm = fac.factorsSquarefreeHensel(a);
+            //System.out.println("sm = " + sm);
+            //sm = fac.factorsSquarefree(a);
+            //System.out.println("sm = " + sm);
+
+            boolean t = fac.isFactorization(a, sm);
+            //System.out.println("t        = " + t);
+            assertTrue("prod(factor(a)) = a", t);
+            assertTrue("#facs < 3, sm = " + sm, sm.size() >= 3);
+        }
+    }
+
+
+    /**
+     * Test tri-variate integer factorization.
+     */
+    public void ytestTrivariateIntegerFactorization() {
+        TermOrder to = new TermOrder(TermOrder.INVLEX);
+        BigInteger cfac = new BigInteger(1);
+        String[] vars = new String[] { "x", "y", "z"};
+        //vars = new String[] { "x", "y"};
+        GenPolynomialRing<BigInteger> pfac = new GenPolynomialRing<BigInteger>(cfac, vars.length, to, vars);
+        //FactorAbstract<BigInteger> fac = new FactorInteger<ModInteger>();
+        FactorInteger<ModInteger> fac = new FactorInteger<ModInteger>();
+
+        for (int i = 1; i < 2; i++) {
+            GenPolynomial<BigInteger> b = pfac.random(kl, 3, el, q / 2.0f);
+            GenPolynomial<BigInteger> c = pfac.random(kl, 2, el, q);
+            GenPolynomial<BigInteger> d = pfac.random(kl, 2, el, q);
+            b = pfac.parse(" ( 5 x y^2 - 1 ) "); 
+            c = pfac.parse(" ( 2 x y z^2 + 1 ) "); 
+            d = pfac.parse(" ( y^3 z + 3 x )"); 
+            GenPolynomial<BigInteger> a;
+            a = b.multiply(c).multiply(d);
+            //System.out.println("a = " + a);
+            //System.out.println("b = " + b);
+            //System.out.println("c = " + c);
+            //System.out.println("d = " + d);
+
+            List<GenPolynomial<BigInteger>> sm = fac.factorsSquarefreeHensel(a);
+            //System.out.println("sm = " + sm);
+            boolean t = fac.isFactorization(a, sm);
+            //System.out.println("t        = " + t);
+            assertTrue("prod(factor(a)) = a", t);
+            assertTrue("#facs < 3, sm = " + sm, sm.size() >= 3);
+
+            //sm = fac.factorsSquarefree(a);
+            //System.out.println("sm = " + sm);
+            //t = fac.isFactorization(a, sm);
+            //System.out.println("t        = " + t);
+            //assertTrue("prod(factor(a)) = a", t);
+        }
+    }
+
+
+    /**
+     * Test quad-variate integer factorization.
+     */
+    public void ytestQuadvariateIntegerFactorization() {
+        TermOrder to = new TermOrder(TermOrder.INVLEX);
+        BigInteger cfac = new BigInteger(1);
+        String[] vars = new String[] { "x", "y", "z", "w" };
+        //vars = new String[] { "x", "y", "z" };
+        GenPolynomialRing<BigInteger> pfac = new GenPolynomialRing<BigInteger>(cfac, vars.length, to, vars);
+        //FactorAbstract<BigInteger> fac = new FactorInteger<ModInteger>();
+        FactorInteger<ModInteger> fac = new FactorInteger<ModInteger>();
+
+        for (int i = 1; i < 2; i++) {
+            GenPolynomial<BigInteger> b = pfac.random(kl, 3, el, q / 2.0f);
+            GenPolynomial<BigInteger> c = pfac.random(kl, 2, el, q);
+            GenPolynomial<BigInteger> d = pfac.random(kl, 2, el, q);
+            b = pfac.parse(" ( 5 x y^2 - 1 ) "); 
+            c = pfac.parse(" ( 2 x z^2 + w^2 y ) "); 
+            d = pfac.parse(" ( y^3 z + 7 x )"); 
+            GenPolynomial<BigInteger> a;
+            a = b.multiply(c).multiply(d);
+            //System.out.println("a = " + a);
+            //System.out.println("b = " + b);
+            //System.out.println("c = " + c);
+            //System.out.println("d = " + d);
+
+            List<GenPolynomial<BigInteger>> sm = fac.factorsSquarefreeHensel(a);
+            //System.out.println("sm = " + sm);
+            boolean t = fac.isFactorization(a, sm);
+            //System.out.println("t        = " + t);
+            assertTrue("prod(factor(a)) = a", t);
+            assertTrue("#facs < 3, sm = " + sm, sm.size() >= 3);
+
+            //sm = fac.factorsSquarefree(a);
+            //System.out.println("sm = " + sm);
+            //t = fac.isFactorization(a, sm);
+            ////System.out.println("t        = " + t);
+            //assertTrue("prod(factor(a)) = a", t);
+        }
+    }
+
+
+    /**
+     * Test multivariate integer factorization.
+     */
+    public void testMultivariateIntegerFactorization() {
+        TermOrder to = new TermOrder(TermOrder.INVLEX);
+        BigInteger cfac = new BigInteger(1);
+        String[] vars = new String[] { "x", "y", "z" };
+        GenPolynomialRing<BigInteger> pfac = new GenPolynomialRing<BigInteger>(cfac, to, vars);
         FactorAbstract<BigInteger> fac = new FactorInteger<ModInteger>();
 
         for (int i = 1; i < 2; i++) {
             GenPolynomial<BigInteger> b = pfac.random(kl, 3, el, q / 2.0f);
             GenPolynomial<BigInteger> c = pfac.random(kl, 2, el, q);
+            b = pfac.parse("( z - y )"); 
+            c = pfac.parse("( z + x )"); 
             GenPolynomial<BigInteger> a;
             //             if ( !a.leadingBaseCoefficient().isUnit()) {
             //                 //continue;
@@ -275,15 +399,278 @@ public class FactorIntegerTest extends TestCase {
             //                 //a.doPutToMap(e,cfac.getONE());
             //             }
             a = b.multiply(c);
-            //System.out.println("\na = " + a);
+            //System.out.println("a = " + a);
+            //System.out.println("b = " + b);
+            //System.out.println("c = " + c);
 
             SortedMap<GenPolynomial<BigInteger>, Long> sm = fac.factors(a);
             //System.out.println("sm = " + sm);
-
             boolean t = fac.isFactorization(a, sm);
             //System.out.println("t        = " + t);
             assertTrue("prod(factor(a)) = a", t);
+            assertTrue("#facs < 2, sm = " + sm, sm.size() >= 2);
         }
+    }
+
+
+    /**
+     * Test integer factorization, example 1 from Wang.
+     */
+    public void testIntegerFactorizationEx1() {
+        TermOrder to = new TermOrder(TermOrder.INVLEX);
+        BigInteger cfac = new BigInteger(1);
+        String[] vars = new String[] { "x", "y", "z"};
+        GenPolynomialRing<BigInteger> pfac = new GenPolynomialRing<BigInteger>(cfac, vars.length, to, vars);
+        FactorInteger<ModInteger> fac = new FactorInteger<ModInteger>();
+        GenPolynomial<BigInteger> a, b, c, d;
+
+        // (z + xy + 10)(xz + y + 30)(yz + x + 20),
+        b = pfac.parse(" (z + x y + 10) "); 
+        c = pfac.parse(" (x z + y + 30) "); 
+        d = pfac.parse(" (y z + x + 20) "); 
+
+        a = b.multiply(c).multiply(d);
+        //System.out.println("a = " + a);
+        //System.out.println("b = " + b);
+        //System.out.println("c = " + c);
+        //System.out.println("d = " + d);
+
+        List<GenPolynomial<BigInteger>> sm = fac.factorsSquarefreeHensel(a);
+        //System.out.println("sm = " + sm);
+        boolean t = fac.isFactorization(a, sm);
+        //System.out.println("t        = " + t);
+        assertTrue("prod(factor(a)) = a", t);
+        assertTrue("#facs < 3, sm = " + sm, sm.size() >= 3);
+    }
+
+
+    /**
+     * Test integer factorization, example 2 from Wang.
+     */
+    public void testIntegerFactorizationEx2() {
+        TermOrder to = new TermOrder(TermOrder.INVLEX);
+        BigInteger cfac = new BigInteger(1);
+        String[] vars = new String[] { "x", "y", "z" };
+        GenPolynomialRing<BigInteger> pfac = new GenPolynomialRing<BigInteger>(cfac, vars.length, to, vars);
+        FactorInteger<ModInteger> fac = new FactorInteger<ModInteger>();
+        GenPolynomial<BigInteger> a, b, c, d;
+
+        // (x^3(z + y) + z - 11) (x^(z^2 + y^2) + y + 90),
+        b = pfac.parse(" (x^3 (z + y) + z - 11) "); 
+        c = pfac.parse(" (x^2 (z^2 + y^2) + y + 90) "); 
+
+        a = b.multiply(c);
+        //System.out.println("a = " + a);
+        //System.out.println("b = " + b);
+        //System.out.println("c = " + c);
+
+        List<GenPolynomial<BigInteger>> sm = fac.factorsSquarefreeHensel(a);
+        //System.out.println("sm = " + sm);
+        boolean t = fac.isFactorization(a, sm);
+        //System.out.println("t        = " + t);
+        assertTrue("prod(factor(a)) = a", t);
+        assertTrue("#facs < 2, sm = " + sm, sm.size() >= 2);
+    }
+
+
+    /**
+     * Test integer factorization, example 3 from Wang.
+     */
+    public void testIntegerFactorizationEx3() {
+        TermOrder to = new TermOrder(TermOrder.INVLEX);
+        BigInteger cfac = new BigInteger(1);
+        String[] vars = new String[] { "x", "y", "z"};
+        GenPolynomialRing<BigInteger> pfac = new GenPolynomialRing<BigInteger>(cfac, vars.length, to, vars);
+        FactorInteger<ModInteger> fac = new FactorInteger<ModInteger>();
+        GenPolynomial<BigInteger> a, b, c, d;
+
+        // (y z^3 + x y z + y^2 + x^3) (x (z^4 + 1) + z + x^3 y^2)
+
+        b = pfac.parse(" (y z^3 + x y z + y^2 + x^3) "); 
+        c = pfac.parse(" (x (z^4 + 1) + z + x^3 y^2) "); 
+
+        a = b.multiply(c);
+        //System.out.println("a = " + a);
+        //System.out.println("b = " + b);
+        //System.out.println("c = " + c);
+
+        List<GenPolynomial<BigInteger>> sm = fac.factorsSquarefreeHensel(a);
+        //System.out.println("sm = " + sm);
+        boolean t = fac.isFactorization(a, sm);
+        //System.out.println("t        = " + t);
+        assertTrue("prod(factor(a)) = a", t);
+        assertTrue("#facs < 2, sm = " + sm, sm.size() >= 2);
+    }
+
+
+    /** 
+     * Test integer factorization, example 4 from Wang.
+     */
+    public void testIntegerFactorizationEx4() {
+        TermOrder to = new TermOrder(TermOrder.INVLEX);
+        BigInteger cfac = new BigInteger(1);
+        String[] vars = new String[] { "x", "y", "z"};
+        GenPolynomialRing<BigInteger> pfac = new GenPolynomialRing<BigInteger>(cfac, vars.length, to, vars);
+        FactorInteger<ModInteger> fac = new FactorInteger<ModInteger>();
+        GenPolynomial<BigInteger> a, b, c, d, e;
+
+        // (z^2 - x^3 y + 3) (z^2 + x y^3) (z^2 + x^3 y^4) (y^4 z^2 + x^2 z + 5)
+
+        b = pfac.parse(" ( z^2 - x^3 y + 3 ) "); 
+        c = pfac.parse(" (z^2 + x y^3) "); 
+        d = pfac.parse(" (z^2 + x^3 y^4) "); 
+        e = pfac.parse(" (y^4 z^2 + x^2 z + 5) "); 
+
+        a = b.multiply(c).multiply(d).multiply(e);
+        //System.out.println("a = " + a);
+        //System.out.println("b = " + b);
+        //System.out.println("c = " + c);
+        //System.out.println("d = " + d);
+        //System.out.println("e = " + e);
+
+        //List<GenPolynomial<BigInteger>> sm = fac.factorsRadical(a); // will check squarefree 
+        List<GenPolynomial<BigInteger>> sm = fac.factorsSquarefreeHensel(a);
+        //System.out.println("sm = " + sm);
+        boolean t = fac.isFactorization(a, sm);
+        //System.out.println("t        = " + t);
+        assertTrue("prod(factor(a)) = a", t);
+        assertTrue("#facs < 4, sm = " + sm, sm.size() >= 4);
+    }
+
+
+    /** 
+     * Test integer factorization, example 5 from Wang.
+     */
+    public void testIntegerFactorizationEx5() {
+        TermOrder to = new TermOrder(TermOrder.INVLEX);
+        BigInteger cfac = new BigInteger(1);
+        String[] vars = new String[] { "x", "y", "z", "u"};
+        GenPolynomialRing<BigInteger> pfac = new GenPolynomialRing<BigInteger>(cfac, vars.length, to, vars);
+        FactorInteger<ModInteger> fac = new FactorInteger<ModInteger>();
+        GenPolynomial<BigInteger> a, b, c, d;
+
+        // (z^2 + x^3 y^4 + u^2) ( (y^2 + x) z^2 + 3 u^2 x^3 y^4 z + 19 y^2) (u^2 y^4 z^2 + x^2 z + 5),
+        b = pfac.parse(" (z^2 + x^3 y^4 + u^2) "); 
+        c = pfac.parse(" ( (y^2 + x ) z^2 + 3 u^2 x^3 y^4 z + 19 y^2 )"); 
+        d = pfac.parse(" (u^2 y^4 z^2 + x^2 z + 5) "); 
+
+        a = b.multiply(c); // .multiply(d); // all factors need 256 sec
+        //System.out.println("a = " + a);
+        //System.out.println("b = " + b);
+        //System.out.println("c = " + c);
+        //System.out.println("d = " + d);
+
+        List<GenPolynomial<BigInteger>> sm = fac.factorsSquarefreeHensel(a);
+        //System.out.println("sm = " + sm);
+        boolean t = fac.isFactorization(a, sm);
+        //System.out.println("t        = " + t);
+        assertTrue("prod(factor(a)) = a", t);
+        assertTrue("#facs < 2, sm = " + sm, sm.size() >= 2);
+    }
+
+
+    /** 
+     * Test integer factorization, example 6 from Wang.
+     */
+    public void testIntegerFactorizationEx6() {
+        TermOrder to = new TermOrder(TermOrder.INVLEX);
+        BigInteger cfac = new BigInteger(1);
+        String[] vars = new String[] { "x", "y", "z", "w"};
+        GenPolynomialRing<BigInteger> pfac = new GenPolynomialRing<BigInteger>(cfac, vars.length, to, vars);
+        FactorInteger<ModInteger> fac = new FactorInteger<ModInteger>();
+        GenPolynomial<BigInteger> a, b, c, d;
+
+        // (w^4 z^3 -x y^2 z^2 - w^4 x^5 y^6 - w^2 x^3 y) (- x^5 z^3 + y z + x^2 y^3) 
+        // . (w^4 z^6 + y^2 z^3 - w^2 x^2 y^2 z^2 + x^5 z - x^4 y^2  - w^3 x^3 y)
+        //b = pfac.parse(" (w^4 z^3 -x y^2 z^2 - w^4 x^5 y^6 - w^2 x^3 y) "); 
+        //c = pfac.parse(" (- x^5 z^3 + y z + x^2 y^3) "); 
+        //d = pfac.parse(" (w^4 z^6 + y^2 z^3 - w^2 x^2 y^2 z^2 + x^5 z - x^4 y^2  - w^3 x^3 y) "); 
+
+        // with smaller degrees:
+        b = pfac.parse(" (w z^2 - x y^1 z^1 - w x^5 y^2 - w x^3 y) "); 
+        c = pfac.parse(" (- x^5 z^2 + y z + x^2 y^1) "); 
+        d = pfac.parse(" (w z^3 + y^2 z^2 - w x^2 y^2 z^1 + x^5 - x^4 y^2  - w x^3 y) "); 
+
+        a = b.multiply(c); //.multiply(d); // all factors with small degrees need 684 sec
+        //System.out.println("a = " + a);
+        //System.out.println("b = " + b);
+        //System.out.println("c = " + c);
+        //System.out.println("d = " + d);
+
+        List<GenPolynomial<BigInteger>> sm = fac.factorsSquarefreeHensel(a);
+        //System.out.println("sm = " + sm);
+        boolean t = fac.isFactorization(a, sm);
+        //System.out.println("t        = " + t);
+        assertTrue("prod(factor(a)) = a", t);
+        assertTrue("#facs < 2, sm = " + sm, sm.size() >= 2);
+    }
+
+
+    /**
+     * Test integer factorization, example 7 from Wang.
+     */
+    public void testIntegerFactorizationEx7() {
+        TermOrder to = new TermOrder(TermOrder.INVLEX);
+        BigInteger cfac = new BigInteger(1);
+        String[] vars = new String[] { "x", "y", "z" };
+        GenPolynomialRing<BigInteger> pfac = new GenPolynomialRing<BigInteger>(cfac, vars.length, to, vars);
+        FactorInteger<ModInteger> fac = new FactorInteger<ModInteger>();
+        GenPolynomial<BigInteger> a, b, c, d;
+
+        // (z + y + x- 3)^3 (z + y + x-2)^2,
+
+        b = pfac.parse(" ( (z + y^2 + x - 3 )^3 ) "); 
+        c = pfac.parse(" ( (z + y + x^2 - 2 )^2 ) "); 
+
+        a = b.multiply(c);
+        //System.out.println("a = " + a);
+        //System.out.println("b = " + b);
+        //System.out.println("c = " + c);
+
+        SortedMap<GenPolynomial<BigInteger>,Long> sm = fac.factors(a);
+        //System.out.println("sm = " + sm);
+        boolean t = fac.isFactorization(a, sm);
+        //System.out.println("t        = " + t);
+        assertTrue("prod(factor(a)) = a", t);
+        assertTrue("#facs < 2, sm = " + sm, sm.size() >= 2);
+    }
+
+
+    /**
+     * Test integer factorization.
+     */
+    public void xtestIntegerFactorizationHk() {
+        TermOrder to = new TermOrder(TermOrder.INVLEX);
+        BigInteger cfac = new BigInteger(1);
+        String[] vars = new String[] { "t", "x" };
+        GenPolynomialRing<BigInteger> pfac = new GenPolynomialRing<BigInteger>(cfac, vars.length, to, vars);
+        FactorInteger<ModInteger> fac = new FactorInteger<ModInteger>();
+        GenPolynomial<BigInteger> a;
+
+        // 2 t * x^2 + 5 x^2 - 4 t * x - 4 x - 6 t - 9
+        // 2 t * x^2 - 5 x^2 + 8 t * x - 5 x + 6 t
+        // 7 t * x^3 + 7 x^3 + 7 t * x^2 + 7 x^2 + 8 x + 8 
+        // = ( x + { 1  } ) ( { 7 t + 7  } x^2 + { 8  } )
+        // 4 t * x^3 + 6 x^3 + 4 t * x^2 + 9 x^2 + 2 x - 1
+        // 2 t * x^2 - 7 x^2 + 2 t * x - 11 x - 4 // conter example to Wangs condition: [2 , x, x + 1 ]
+        // 3 x^4 - ( 7 t + 2  ) x^2 + ( 4 t^2 + 2 t )
+
+
+        //a = pfac.parse(" ( 2 t * x^2 + 5 x^2 - 4 t * x - 4 x - 6 t - 9 ) ");
+        //a = pfac.parse(" ( 2 t * x^2 - 5 x^2 + 8 t * x - 5 x + 6 t ) ");
+        //a = pfac.parse(" ( 7 t * x^3 + 7 x^3 + 7 t * x^2 + 7 x^2 + 8 x + 8 ) ");
+        //a = pfac.parse(" ( 4 t * x^3 + 6 x^3 + 4 t * x^2 + 9 x^2 + 2 x - 1 ) ");
+        a = pfac.parse(" ( 2 t * x^2 - 7 x^2 + 2 t * x - 11 x - 4 ) "); // example to parts of Wangs condition: [2 , x, x + 1 ]
+        a = pfac.parse(" ( 3 x^4 - ( 7 t + 2  ) x^2 + ( 4 t^2 + 2 t ) ) "); // not applicable or fails for t < x
+ 
+        //System.out.println("a = " + a);
+
+        SortedMap<GenPolynomial<BigInteger>,Long> sm = fac.factors(a);
+        //System.out.println("sm = " + sm);
+        boolean t = fac.isFactorization(a, sm);
+        //System.out.println("t        = " + t);
+        assertTrue("prod(factor(a)) = a", t);
+        assertTrue("#facs < 2, sm = " + sm, sm.size() >= 2);
     }
 
 }

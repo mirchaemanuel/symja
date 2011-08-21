@@ -1,5 +1,5 @@
 /*
- * $Id: GreatestCommonDivisorHensel.java 3563 2011-03-12 12:15:40Z kredel $
+ * $Id: GreatestCommonDivisorHensel.java 3718 2011-08-03 19:58:03Z kredel $
  */
 
 package edu.jas.ufd;
@@ -25,7 +25,7 @@ import edu.jas.structure.GcdRingElem;
 import edu.jas.structure.RingFactory;
 
 
-/**
+/** 
  * Greatest common divisor algorithms with subresultant polynomial remainder
  * sequence and univariate Hensel lifting.
  * @author Heinz Kredel
@@ -408,7 +408,7 @@ public class GreatestCommonDivisorHensel<MOD extends GcdRingElem<MOD> & Modular>
             }
             //System.out.println("cofac = " + cofac);
 
-            List<MOD> V = new ArrayList<MOD>(1);
+            List<MOD> V = new ArrayList<MOD>(P.ring.nvar);
             GenPolynomialRing<MOD> mfac = new GenPolynomialRing<MOD>(cofac, dfac);
             //System.out.println("mfac = " + mfac.toScript());
             GenPolynomial<MOD> qm = PolyUtil.<MOD> fromIntegerCoefficients(mfac, qd);
@@ -554,12 +554,15 @@ public class GreatestCommonDivisorHensel<MOD extends GcdRingElem<MOD> & Modular>
             //System.out.println("mn = " + mn);
             //System.out.println("k = " + k);
         
-            List<GenPolynomial<MOD>> F = new ArrayList<GenPolynomial<MOD>>();
+            List<GenPolynomial<MOD>> F = new ArrayList<GenPolynomial<MOD>>(2);
             F.add(ce);
             F.add(he);
+            List<GenPolynomial<BigInteger>> G = new ArrayList<GenPolynomial<BigInteger>>(2);
+            G.add(g.ring.getONE()); // TODO
+            G.add(g.ring.getONE());
             List<GenPolynomial<MOD>> lift;
             try {
-                lift = HenselMultUtil.<MOD> liftHenselFull(ui,F,V,k,g);
+                lift = HenselMultUtil.<MOD> liftHenselFull(ui,F,V,k,G);
                 logger.info("lift = " + lift);
             } catch ( NoLiftingException nle ) {
                 //System.out.println("exception : " + nle);
