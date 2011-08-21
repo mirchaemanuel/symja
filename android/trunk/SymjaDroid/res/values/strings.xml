@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">SymjaDroid</string>
+    <string name="app_desc">SymjaDroid - Computer Algebra System</string>
+    <string name="app_copy_symjaandroid">SymjaDroid Android Port Copyright (C) 2011 Axel Kramer. All Rights Reserved.</string>
+    <string name="file_name_scratch_input">symjadroid_scratch_input.txt"</string>
+    <string name="file_name_scratch_output">"symjadroid_scratch_output.txt"</string>
+    <string name="file_name_work">"symjadroid_work.txt"</string>
+    <string name="file_name_samples">"program_templates/symjadroid_templates.m"</string>
+    <string name="menu_work_load">Load Work</string>
+    <string name="menu_work_save">Save Work</string>
+    <string name="menu_samples_load">Load Samples</string>
+    <string name="menu_app_about">About SymjaDroid</string>
+    <string name="title_samples_file_load">Samples File Load</string>
+    <string name="title_scratch_files_load">Scratch Files Load</string>
+    <string name="title_scratch_files_save">Scratch Files Save</string>
+    <string name="title_work_file_load">Work File Load</string>
+    <string name="title_work_file_save">Work File Save</string>
+    <string name="exception_on_samples_file_load">The Samples File could not be loaded! Please check your SymjaDroid installation.</string>
+    <string name="exception_on_scratch_files_load">The Scratch Files could not be loaded! Save first.</string>
+    <string name="exception_on_scratch_files_save">The Scratch Files could not be saved!</string>
+    <string name="exception_on_work_file_load">The Work File could not be loaded! Save Work first.</string>
+    <string name="exception_on_work_file_save">The Work File could not be saved!</string>
+
+    <!-- Title for Latin keyboard  -->
+    <string name="ime_name">Symja Keyboard</string>
+
+    <!-- Symbols that are commonly considered word separators in this language -->
+    <string name="word_separators">\u0020.,;:!?\n()[]*&amp;@{}/&lt;&gt;_+=|&quot;</string>
+    
+    <!-- Labels on soft keys -->
+    <string name="label_go_key">Go</string>
+    <string name="label_next_key">Next</string>
+    <string name="label_send_key">Send</string>
+</resources>
