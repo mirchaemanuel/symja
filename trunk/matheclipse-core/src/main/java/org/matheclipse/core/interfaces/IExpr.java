@@ -403,7 +403,7 @@ public interface IExpr extends Comparable<IExpr>, RingElem<IExpr>, INestedListEl
 	 * elements are lists with the header <code>List</code> and have the same
 	 * size.
 	 * 
-	 * @return <code>null</code> if the expression is no matrix
+	 * @return <code>null</code> if the expression is not a matrix
 	 */
 	public int[] isMatrix();
 

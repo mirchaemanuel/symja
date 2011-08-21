@@ -79,7 +79,7 @@ public class Integrate extends AbstractFunctionEvaluator implements IConstantHea
 	 * Constructor for the singleton
 	 */
 	public final static Integrate CONST = new Integrate();
-	
+
 	public Integrate() {
 	}
 
@@ -149,8 +149,18 @@ public class Integrate extends AbstractFunctionEvaluator implements IConstantHea
 				// Integrate[x_,x_Symbol] -> x^2 / 2
 				return Times(F.C1D2, Power(fx, F.C2));
 			}
-			if (fx instanceof IAST) {
+			if (fx.isAST()) {
 				final IAST arg1 = (IAST) fx;
+
+				if (arg1.isPower() && symbol.equals(arg1.get(1)) && arg1.get(2).isInteger()) {
+					IInteger i = (IInteger) arg1.get(2);
+					if (i.isGreaterThan(F.C1)) {
+						// Integrate[x_ ^ i_IntegerQ, x_Symbol] -> 1/(i+1) * x ^ (i+1)
+						i = i.add(F.C1);
+						return F.Times(F.Power(i, F.CN1), F.Power(symbol, i));
+					}
+				}
+
 				if (arg1.isTimes()) {
 					// Integrate[a_*y_,x_Symbol] -> a*Integrate[y,x] /; FreeQ[a,x]
 					IAST filterCollector = F.Times();
@@ -287,7 +297,7 @@ public class Integrate extends AbstractFunctionEvaluator implements IConstantHea
 					}
 					result.add(F.Integrate(temp, x));
 				}
-				for (int i = 1; i < Ai.size(); i++) {
+				for (int i = 0; i < Ai.size(); i++) {
 					List<GenPolynomial<BigRational>> list = Ai.get(i);
 					long j = 0L;
 					for (GenPolynomial<BigRational> genPolynomial : list) {
