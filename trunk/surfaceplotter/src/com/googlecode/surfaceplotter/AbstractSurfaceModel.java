@@ -1,6 +1,5 @@
 package com.googlecode.surfaceplotter;
 
-import java.awt.Image;
 import java.io.File;
 import java.io.IOException;
 
@@ -113,8 +112,9 @@ public class AbstractSurfaceModel implements SurfaceModel {
 	}
 
 	public void autoScale() {
-		//compute  auto scale and repaint
-		if (! autoScaleZ ) return;
+		// compute auto scale and repaint
+		if (!autoScaleZ)
+			return;
 		if (plotFunction1 && plotFunction2) {
 			setZMin(Math.min(z1Min, z2Min));
 			setZMax(Math.max(z1Max, z2Max));
@@ -140,7 +140,8 @@ public class AbstractSurfaceModel implements SurfaceModel {
 		PlotType o = this.plotType;
 		this.plotType = v;
 		if (colorModel != null)
-			colorModel.setPlotType(plotType); //this should be handled by the model itself, without any
+			colorModel.setPlotType(plotType); // this should be handled by the model
+																				// itself, without any
 		property.firePropertyChange(PLOT_TYPE_PROPERTY, o, v);
 		fireAllType(o, v);
 	}
@@ -155,74 +156,129 @@ public class AbstractSurfaceModel implements SurfaceModel {
 		PlotColor o = this.plotColor;
 		this.plotColor = v;
 		if (colorModel != null)
-			colorModel.setPlotColor(plotColor); //this should be handled by the model itself, without any
+			colorModel.setPlotColor(plotColor); // this should be handled by the model
+																					// itself, without any
 		property.firePropertyChange(PLOT_COLOR_PROPERTY, o, v);
 		fireAllMode(o, v);
 	}
-	
+
 	private void fireAllMode(PlotColor oldValue, PlotColor newValue) {
-		for(PlotColor c: PlotColor.values())
-			property.firePropertyChange(c.getPropertyName(), oldValue == c, newValue==c);
+		for (PlotColor c : PlotColor.values())
+			property.firePropertyChange(c.getPropertyName(), oldValue == c, newValue == c);
 	}
-	
+
 	private void fireAllType(PlotType oldValue, PlotType newValue) {
-		for(PlotType c: PlotType.values())
-			property.firePropertyChange(c.getPropertyName(), oldValue == c, newValue==c);
+		for (PlotType c : PlotType.values())
+			property.firePropertyChange(c.getPropertyName(), oldValue == c, newValue == c);
 	}
-	
+
 	private void fireAllFunction(boolean oldHas1, boolean oldHas2) {
 		property.firePropertyChange("FirstFunctionOnly", (!oldHas2) && oldHas1, (!plotFunction2) && plotFunction1);
 		property.firePropertyChange("SecondFunctionOnly", (!oldHas1) && oldHas2, (!plotFunction1) && plotFunction2);
 		property.firePropertyChange("BothFunction", oldHas1 && oldHas2, plotFunction1 && plotFunction2);
-		autoScale() ;
-		
+		autoScale();
+
 	}
 
-	
-	
-	public boolean isHiddenMode() {return plotColor== PlotColor.OPAQUE;	}
-	public void setHiddenMode(boolean val) { setPlotColor(val?PlotColor.OPAQUE: PlotColor.SPECTRUM);}
+	public boolean isHiddenMode() {
+		return plotColor == PlotColor.OPAQUE;
+	}
 
-	public boolean isSpectrumMode() {return plotColor== PlotColor.SPECTRUM;	}
-	public void setSpectrumMode(boolean val) { setPlotColor(val?PlotColor.SPECTRUM: PlotColor.GRAYSCALE);}
+	public void setHiddenMode(boolean val) {
+		setPlotColor(val ? PlotColor.OPAQUE : PlotColor.SPECTRUM);
+	}
 
-	public boolean isGrayScaleMode() {return plotColor== PlotColor.GRAYSCALE;	}
-	public void setGrayScaleMode(boolean val) { setPlotColor(val?PlotColor.GRAYSCALE: PlotColor.SPECTRUM);}
+	public boolean isSpectrumMode() {
+		return plotColor == PlotColor.SPECTRUM;
+	}
 
-	public boolean isDualShadeMode() {return plotColor== PlotColor.DUALSHADE;	}
-	public void setDualShadeMode(boolean val) { setPlotColor(val?PlotColor.DUALSHADE: PlotColor.SPECTRUM);}
+	public void setSpectrumMode(boolean val) {
+		setPlotColor(val ? PlotColor.SPECTRUM : PlotColor.GRAYSCALE);
+	}
 
-	public boolean isFogMode() {return plotColor== PlotColor.FOG;	}
-	public void setFogMode(boolean val) { setPlotColor(val?PlotColor.FOG: PlotColor.SPECTRUM);}
+	public boolean isGrayScaleMode() {
+		return plotColor == PlotColor.GRAYSCALE;
+	}
 
-	public boolean isWireframeType() {return plotType == PlotType.WIREFRAME;	}
-	public void setWireframeType(boolean val) { if (val) setPlotType(PlotType.WIREFRAME);	else setPlotType(PlotType.SURFACE);}
+	public void setGrayScaleMode(boolean val) {
+		setPlotColor(val ? PlotColor.GRAYSCALE : PlotColor.SPECTRUM);
+	}
 
-	public boolean isSurfaceType() {return plotType== PlotType.SURFACE;	}
-	public void setSurfaceType(boolean val) { setPlotType(val?PlotType.SURFACE: PlotType.WIREFRAME);}
-	
-	public boolean isContourType() {return plotType== PlotType.CONTOUR;	}
-	public void setContourType(boolean val) { setPlotType(val?PlotType.CONTOUR: PlotType.SURFACE);}
+	public boolean isDualShadeMode() {
+		return plotColor == PlotColor.DUALSHADE;
+	}
 
-	public boolean isDensityType() {return plotType== PlotType.DENSITY;	}
-	public void setDensityType(boolean val) { setPlotType(val?PlotType.DENSITY: PlotType.SURFACE);}
-	
-	public boolean isFirstFunctionOnly() { return plotFunction1&& ! plotFunction2;	}
-	public void setFirstFunctionOnly(boolean val) { setPlotFunction12(val,!val);}
-	
-	public boolean isSecondFunctionOnly() { return (!plotFunction1) && plotFunction2;	}
-	public void setSecondFunctionOnly(boolean val) { setPlotFunction12(!val, val); }
+	public void setDualShadeMode(boolean val) {
+		setPlotColor(val ? PlotColor.DUALSHADE : PlotColor.SPECTRUM);
+	}
 
-	public boolean isBothFunction() { return plotFunction1&& plotFunction2;	}
-	public void setBothFunction(boolean val) { setPlotFunction12(val,val); }
-	
-	
-	
-	
-	
-	
-	
-	
+	public boolean isFogMode() {
+		return plotColor == PlotColor.FOG;
+	}
+
+	public void setFogMode(boolean val) {
+		setPlotColor(val ? PlotColor.FOG : PlotColor.SPECTRUM);
+	}
+
+	public boolean isWireframeType() {
+		return plotType == PlotType.WIREFRAME;
+	}
+
+	public void setWireframeType(boolean val) {
+		if (val)
+			setPlotType(PlotType.WIREFRAME);
+		else
+			setPlotType(PlotType.SURFACE);
+	}
+
+	public boolean isSurfaceType() {
+		return plotType == PlotType.SURFACE;
+	}
+
+	public void setSurfaceType(boolean val) {
+		setPlotType(val ? PlotType.SURFACE : PlotType.WIREFRAME);
+	}
+
+	public boolean isContourType() {
+		return plotType == PlotType.CONTOUR;
+	}
+
+	public void setContourType(boolean val) {
+		setPlotType(val ? PlotType.CONTOUR : PlotType.SURFACE);
+	}
+
+	public boolean isDensityType() {
+		return plotType == PlotType.DENSITY;
+	}
+
+	public void setDensityType(boolean val) {
+		setPlotType(val ? PlotType.DENSITY : PlotType.SURFACE);
+	}
+
+	public boolean isFirstFunctionOnly() {
+		return plotFunction1 && !plotFunction2;
+	}
+
+	public void setFirstFunctionOnly(boolean val) {
+		setPlotFunction12(val, !val);
+	}
+
+	public boolean isSecondFunctionOnly() {
+		return (!plotFunction1) && plotFunction2;
+	}
+
+	public void setSecondFunctionOnly(boolean val) {
+		setPlotFunction12(!val, val);
+	}
+
+	public boolean isBothFunction() {
+		return plotFunction1 && plotFunction2;
+	}
+
+	public void setBothFunction(boolean val) {
+		setPlotFunction12(val, val);
+	}
+
 	protected SurfaceVertex[][] vertex;
 
 	public SurfaceVertex[][] getSurfaceVertex() {
@@ -350,10 +406,10 @@ public class AbstractSurfaceModel implements SurfaceModel {
 		property.firePropertyChange(Y_MAX_PROPERTY, new Float(o), new Float(v));
 	}
 
-	protected float z1Max;//the max computed
-	protected float z1Min;//the min computed
-	protected float z2Max;//the max computed
-	protected float z2Min;//the min computed
+	protected float z1Max;// the max computed
+	protected float z1Min;// the min computed
+	protected float z2Max;// the max computed
+	protected float z2Min;// the min computed
 
 	protected float zMax;
 
@@ -385,7 +441,8 @@ public class AbstractSurfaceModel implements SurfaceModel {
 		SurfaceColor o = this.colorModel;
 		this.colorModel = v;
 		if (colorModel != null)
-			colorModel.setPlotColor(plotColor); //this shouls be handled by the model itself, without any
+			colorModel.setPlotColor(plotColor); // this shouls be handled by the model
+																					// itself, without any
 		if (colorModel != null)
 			colorModel.setPlotType(plotType);
 		property.firePropertyChange(COLOR_MODEL_PROPERTY, o, v);
@@ -395,12 +452,12 @@ public class AbstractSurfaceModel implements SurfaceModel {
 	 * Sets the text of status line
 	 * 
 	 * @param text
-	 *            new text to be displayed
+	 *          new text to be displayed
 	 */
 
 	public void setMessage(String text) {
-	//@todo
-	//System.out.println("Message"+text);
+		// @todo
+		// System.out.println("Message"+text);
 	}
 
 	/**
@@ -409,7 +466,7 @@ public class AbstractSurfaceModel implements SurfaceModel {
 
 	public void rotationStarts() {
 
-	//setting_panel.rotationStarts();
+		// setting_panel.rotationStarts();
 	}
 
 	/**
@@ -418,7 +475,7 @@ public class AbstractSurfaceModel implements SurfaceModel {
 
 	public void rotationStops() {
 
-	//setting_panel.rotationStops();
+		// setting_panel.rotationStops();
 	}
 
 	public void exportCSV(File file) throws IOException {
@@ -436,9 +493,9 @@ public class AbstractSurfaceModel implements SurfaceModel {
 		f2 = true; // until no method is defined to set functions ...
 		// image conversion
 
-		int[] pixels = null;
-		int imgwidth = 0;
-		int imgheight = 0;
+		// int[] pixels = null;
+		// int imgwidth = 0;
+		// int imgheight = 0;
 
 		try {
 			xi = getXMin();
@@ -453,7 +510,7 @@ public class AbstractSurfaceModel implements SurfaceModel {
 		}
 
 		calcDivisions = getCalcDivisions();
-		//func1calc = f1; func2calc = f2;
+		// func1calc = f1; func2calc = f2;
 
 		stepx = (xx - xi) / calcDivisions;
 		stepy = (yx - yi) / calcDivisions;
@@ -465,7 +522,7 @@ public class AbstractSurfaceModel implements SurfaceModel {
 		max = Float.NaN;
 		min = Float.NaN;
 
-		//		canvas.destroyImage();
+		// canvas.destroyImage();
 		i = 0;
 		j = 0;
 		k = 0;
@@ -486,7 +543,7 @@ public class AbstractSurfaceModel implements SurfaceModel {
 			k++;
 		}
 		w.write("\n");
-		//first line written
+		// first line written
 		i = 0;
 		j = 0;
 		k = 0;
@@ -503,10 +560,10 @@ public class AbstractSurfaceModel implements SurfaceModel {
 				j++;
 				y += stepy;
 				k++;
-				//setMessage("Calculating : " + k*100/total + "% completed");
+				// setMessage("Calculating : " + k*100/total + "% completed");
 			}
 			w.write('\n');
-			//first line written
+			// first line written
 			j = 0;
 			y = yi;
 			i++;
@@ -541,7 +598,7 @@ public class AbstractSurfaceModel implements SurfaceModel {
 		int calcDivisions;
 
 		public PlotterImpl() {
-			//reads the calcDivision that will be used
+			// reads the calcDivision that will be used
 			calcDivisions = getCalcDivisions();
 			setDataAvailable(false); // clean space
 			total = (calcDivisions + 1) * (calcDivisions + 1); // compute total size
@@ -568,7 +625,7 @@ public class AbstractSurfaceModel implements SurfaceModel {
 			xfactor = 20 / (xx - xi);
 			yfactor = 20 / (yx - yi);
 
-			//fill the surface vertex with NaN
+			// fill the surface vertex with NaN
 			for (int i = 0; i <= calcDivisions; i++)
 				for (int j = 0; j <= calcDivisions; j++) {
 					int k = i * (calcDivisions + 1) + j;
@@ -598,7 +655,7 @@ public class AbstractSurfaceModel implements SurfaceModel {
 		 * position i.
 		 * 
 		 * @param i
-		 *            index 0<=i<=calcDivisions.
+		 *          index 0<=i<=calcDivisions.
 		 * 
 		 * @author Eric
 		 * @date vendredi 9 avril 2004 13:26:14
@@ -612,7 +669,7 @@ public class AbstractSurfaceModel implements SurfaceModel {
 		 * position i.
 		 * 
 		 * @param j
-		 *            index 0<=j<=calcDivisions.
+		 *          index 0<=j<=calcDivisions.
 		 * 
 		 * @author Eric
 		 * @date vendredi 9 avril 2004 13:26:14
@@ -625,24 +682,24 @@ public class AbstractSurfaceModel implements SurfaceModel {
 		 * Short concise description. .
 		 * 
 		 * @param i
-		 *            index 0<=i<=calcDivisions.
+		 *          index 0<=i<=calcDivisions.
 		 * @param j
-		 *            index 0<=j<=calcDivisions.
+		 *          index 0<=j<=calcDivisions.
 		 * @param v
-		 *            value at that point.
+		 *          value at that point.
 		 * @see package.class
 		 * 
 		 * @author Eric
 		 * @date vendredi 9 avril 2004 13:26:14
 		 */
 		public void setValue(int i, int j, float v1, float v2) {
-			//v contains the value, and i, j the coordinate in the array
+			// v contains the value, and i, j the coordinate in the array
 			float x = getX(i);
 			float y = getY(j);
 			int k = i * (calcDivisions + 1) + j;
 			if (f1) {
 
-				//v = compute(x,y);
+				// v = compute(x,y);
 				if (Float.isInfinite(v1))
 					v1 = Float.NaN;
 				if (!Float.isNaN(v1)) {
@@ -654,7 +711,7 @@ public class AbstractSurfaceModel implements SurfaceModel {
 				vertex[0][k] = new SurfaceVertex((x - xi) * xfactor - 10, (y - yi) * yfactor - 10, v1);
 			}
 			if (f2) {
-				//v = (float)parser2.evaluate();
+				// v = (float)parser2.evaluate();
 				if (Float.isInfinite(v2))
 					v2 = Float.NaN;
 				if (!Float.isNaN(v2)) {
@@ -680,11 +737,11 @@ public class AbstractSurfaceModel implements SurfaceModel {
 			return d;
 		// computes order of magnitude
 		long og = (long) Math.ceil((Math.log(Math.abs(d)) / Math.log(10)));
-		
-		double factor = Math.pow(10, digits - og); 
+
+		double factor = Math.pow(10, digits - og);
 		// the matissa
-		double res = Math.floor((d * factor)) / factor; 
-		//res contains the closed power of ten
+		double res = Math.floor((d * factor)) / factor;
+		// res contains the closed power of ten
 		return res;
 	}
 
@@ -692,115 +749,64 @@ public class AbstractSurfaceModel implements SurfaceModel {
 		if (d == 0)
 			return d;
 		long og = (long) Math.ceil((Math.log(Math.abs(d)) / Math.log(10)));
-		double factor = Math.pow(10, digits - og); 
+		double factor = Math.pow(10, digits - og);
 		double res = Math.ceil((d * factor)) / factor;
 		return res;
 	}
 
-	
-
 	/**/
 	/*
-	public void run() 
-	{
-		float   stepx, stepy, x, y, v;
-		float   xi,xx,yi,yx;
-		float   min, max;
-		boolean f1, f2;
-		int     i,j,k,total;
-		
-		f1=plotFunction1;f2=plotFunction2; 
-		// image conversion
-		
-		int[]   pixels = null; 
-		int     imgwidth = 0;
-		int     imgheight = 0;
-		
-		
-		try {
-			xi = getXMin();
-			yi = getYMin();
-			xx = getXMax();
-			yx = getYMax();
-			if ((xi >= xx) || (yi >= yx)) throw new NumberFormatException();
-		}
-		catch(NumberFormatException e) {
-			setMessage("Error in ranges"); 
-			return;
-		}
-		Thread.yield();
-		calcDivisions = getCalcDivisions();
-		setDataAvailable(false); 
-		//func1calc = f1; func2calc = f2;
-		
-		stepx = (xx - xi) / calcDivisions; 
-		stepy = (yx - yi) / calcDivisions;
-		
-		total = (calcDivisions+1)*(calcDivisions+1);
-		
-		vertex = allocateMemory(f1,f2,total);
-		setSurfaceVertex(vertex);
-		if (vertex == null) return;
-		
-		max = Float.NaN;
-		min = Float.NaN;
-		
-		//		canvas.destroyImage();
-		
-		i = 0; j = 0; k = 0; x = xi; y = yi; 
-		
-		float xfactor = 20/(xx-xi);
-		float yfactor = 20/(yx-yi);
-		
-		
-		while (i <= calcDivisions) {
-			while (j <= calcDivisions) {
-				Thread.yield();
-				if (f1) {
-					//v = (float)parser1.evaluate();
-					v = compute(x,y);
-					if (Float.isInfinite(v)) v = Float.NaN;
-					if (!Float.isNaN(v)) {
-						if (Float.isNaN(max) || (v > max)) max = v; else
-							if (Float.isNaN(min) || (v < min)) min = v;
-					}
-					vertex[0][k] = new SurfaceVertex((x-xi)*xfactor-10,
-						(y-yi)*yfactor-10,v);
-				}
-				if (f2) {
-					//v = (float)parser2.evaluate();
-					v = compute2(x,y);
-					if (Float.isInfinite(v)) v = Float.NaN;
-					if (!Float.isNaN(v)) {
-						if (Float.isNaN(max) || (v > max)) max = v; else
-							if (Float.isNaN(min) || (v < min)) min = v;
-					}
-					vertex[1][k] = new SurfaceVertex((x-xi)*xfactor-10,
-						(y-yi)*yfactor-10,v);
-				}
-				j++; y += stepy;
-				k++;
-				//setMessage("Calculating : " + k*100/total + "% completed");
-			}
-			j = 0; y = yi; i++; x += stepx;
-		}
-		
-		
-		//setting_panel.setMinimumResult(Float.toString(min));
-		//setting_panel.setMaximumResult(Float.toString(max));
-		zMMin=(float) floor(min,2);
-		zMMax=(float) ceil(max,2);
-		if (autoScaleZ)
-		{
-			zMin=zMMin;
-			zMax=zMMax;
-		}
-		
-		//canvas.setValuesArray(vertex);
-		setDataAvailable(true);
-		//canvas.repaint(); 
-	}
-	/**/
+	 * public void run() { float stepx, stepy, x, y, v; float xi,xx,yi,yx; float
+	 * min, max; boolean f1, f2; int i,j,k,total;
+	 * 
+	 * f1=plotFunction1;f2=plotFunction2; // image conversion
+	 * 
+	 * int[] pixels = null; int imgwidth = 0; int imgheight = 0;
+	 * 
+	 * 
+	 * try { xi = getXMin(); yi = getYMin(); xx = getXMax(); yx = getYMax(); if
+	 * ((xi >= xx) || (yi >= yx)) throw new NumberFormatException(); }
+	 * catch(NumberFormatException e) { setMessage("Error in ranges"); return; }
+	 * Thread.yield(); calcDivisions = getCalcDivisions();
+	 * setDataAvailable(false); //func1calc = f1; func2calc = f2;
+	 * 
+	 * stepx = (xx - xi) / calcDivisions; stepy = (yx - yi) / calcDivisions;
+	 * 
+	 * total = (calcDivisions+1)*(calcDivisions+1);
+	 * 
+	 * vertex = allocateMemory(f1,f2,total); setSurfaceVertex(vertex); if (vertex
+	 * == null) return;
+	 * 
+	 * max = Float.NaN; min = Float.NaN;
+	 * 
+	 * // canvas.destroyImage();
+	 * 
+	 * i = 0; j = 0; k = 0; x = xi; y = yi;
+	 * 
+	 * float xfactor = 20/(xx-xi); float yfactor = 20/(yx-yi);
+	 * 
+	 * 
+	 * while (i <= calcDivisions) { while (j <= calcDivisions) { Thread.yield();
+	 * if (f1) { //v = (float)parser1.evaluate(); v = compute(x,y); if
+	 * (Float.isInfinite(v)) v = Float.NaN; if (!Float.isNaN(v)) { if
+	 * (Float.isNaN(max) || (v > max)) max = v; else if (Float.isNaN(min) || (v <
+	 * min)) min = v; } vertex[0][k] = new SurfaceVertex((x-xi)*xfactor-10,
+	 * (y-yi)*yfactor-10,v); } if (f2) { //v = (float)parser2.evaluate(); v =
+	 * compute2(x,y); if (Float.isInfinite(v)) v = Float.NaN; if (!Float.isNaN(v))
+	 * { if (Float.isNaN(max) || (v > max)) max = v; else if (Float.isNaN(min) ||
+	 * (v < min)) min = v; } vertex[1][k] = new SurfaceVertex((x-xi)*xfactor-10,
+	 * (y-yi)*yfactor-10,v); } j++; y += stepy; k++; //setMessage("Calculating : "
+	 * + k*100/total + "% completed"); } j = 0; y = yi; i++; x += stepx; }
+	 * 
+	 * 
+	 * //setting_panel.setMinimumResult(Float.toString(min));
+	 * //setting_panel.setMaximumResult(Float.toString(max)); zMMin=(float)
+	 * floor(min,2); zMMax=(float) ceil(max,2); if (autoScaleZ) { zMin=zMMin;
+	 * zMax=zMMax; }
+	 * 
+	 * //canvas.setValuesArray(vertex); setDataAvailable(true);
+	 * //canvas.repaint(); } /*
+	 */
 
 	/**
 	 * Determines whether the delay regeneration checkbox is checked.
@@ -969,19 +975,19 @@ public class AbstractSurfaceModel implements SurfaceModel {
 		boolean o = this.plotFunction1;
 		this.plotFunction1 = hasFunction1 && v;
 		property.firePropertyChange(PLOT_FUNCTION_1_PROPERTY, o, v);
-		fireAllFunction(o, plotFunction2  );
+		fireAllFunction(o, plotFunction2);
 	}
-	
+
 	public void setPlotFunction12(boolean p1, boolean p2) {
 		boolean o1 = this.plotFunction1;
 		boolean o2 = this.plotFunction2;
-		
+
 		this.plotFunction1 = hasFunction1 && p1;
 		property.firePropertyChange(PLOT_FUNCTION_1_PROPERTY, o1, p1);
-		
+
 		this.plotFunction2 = hasFunction2 && p2;
 		property.firePropertyChange(PLOT_FUNCTION_2_PROPERTY, o2, p2);
-		fireAllFunction(o1, o2 );
+		fireAllFunction(o1, o2);
 	}
 
 	public void togglePlotFunction1() {
@@ -1011,25 +1017,22 @@ public class AbstractSurfaceModel implements SurfaceModel {
 		boolean o = this.plotFunction2;
 		this.plotFunction2 = hasFunction2 && v;
 		property.firePropertyChange(PLOT_FUNCTION_2_PROPERTY, o, v);
-		fireAllFunction( plotFunction1, o  );
+		fireAllFunction(plotFunction1, o);
 	}
 
 	/**
 	 * Processes menu events
 	 * 
 	 * @param item
-	 *            the selected menu item
+	 *          the selected menu item
 	 */
 
 	/*
-	warning : pour faire la config (dans un menu ou dans un panel !! il y 
-		a plein de cas et de sous cas !
-	autour de ces trois actions l�
-	
-			canvas.setContour(false);
-			canvas.setDensity(false);
-			canvas.stopRotation();
-	*/
+	 * warning : pour faire la config (dans un menu ou dans un panel !! il y a
+	 * plein de cas et de sous cas ! autour de ces trois actions l�
+	 * 
+	 * canvas.setContour(false); canvas.setDensity(false); canvas.stopRotation();
+	 */
 
 	/**
 	 * Allocates Memory
@@ -1038,21 +1041,21 @@ public class AbstractSurfaceModel implements SurfaceModel {
 	private SurfaceVertex[][] allocateMemory(boolean f1, boolean f2, int total) {
 		SurfaceVertex[][] vertex = null;
 
-		// Releases memory being used    
-		//canvas.setValuesArray(null);
+		// Releases memory being used
+		// canvas.setValuesArray(null);
 
-		/* The following program:
-		
-			SurfaceVertex[][] vertex = new SurfaceVertex[2][];
-		
-			if (f1) vertex[0] = new SurfaceVertex[total];
-			if (f2) vertex[1] = new SurfaceVertex[total];
-			
-			
-			Didn't work with my Microsoft Internet Explorer v3.0b2.
-			It resulted in a "java.lang.ArrayStoreException"  :(
-			
-			*/
+		/*
+		 * The following program:
+		 * 
+		 * SurfaceVertex[][] vertex = new SurfaceVertex[2][];
+		 * 
+		 * if (f1) vertex[0] = new SurfaceVertex[total]; if (f2) vertex[1] = new
+		 * SurfaceVertex[total];
+		 * 
+		 * 
+		 * Didn't work with my Microsoft Internet Explorer v3.0b2. It resulted in a
+		 * "java.lang.ArrayStoreException" :(
+		 */
 
 		try {
 			vertex = new SurfaceVertex[2][total];
@@ -1113,4 +1116,4 @@ public class AbstractSurfaceModel implements SurfaceModel {
 		listenerList.remove(ChangeListener.class, ol);
 	}
 
-}//end of class
+}// end of class
