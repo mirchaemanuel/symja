@@ -13,3 +13,8 @@ The buttons are used for:
   * *Sym* - symbolic evaluation
   * *Num* - numeric evaluation
   * *Clear* - clears the input text area
+
+
+== SVN ==
+You can find the current sources in SVN:
+  * [https://symja.googlecode.com/svn/android/trunk/ https://symja.googlecode.com/svn/android/trunk/]
