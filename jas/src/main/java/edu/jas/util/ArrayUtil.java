@@ -1,5 +1,5 @@
 /*
- * $Id: ArrayUtil.java 3443 2010-12-25 16:49:30Z kredel $
+ * $Id: ArrayUtil.java 3681 2011-07-12 13:55:10Z kredel $
  */
 
 package edu.jas.util;
@@ -11,6 +11,7 @@ package edu.jas.util;
 /**
  * Array utilities.
  * For example copyOf from Java 6.
+ * <b>Note:</b> unused at the moment since it is not working in Java 5.
  * @author Heinz Kredel
  */
 public class ArrayUtil {

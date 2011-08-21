@@ -1,8 +1,8 @@
 /*
- * $Id: FactorTest.java 3673 2011-06-26 11:38:25Z kredel $
+ * $Id: FactorTest.java 3676 2011-07-02 10:51:16Z kredel $
  */
 
-package edu.jas.ufd;
+package edu.jas.application;
 
 
 import junit.framework.Test;
@@ -22,11 +22,19 @@ import edu.jas.poly.GenPolynomial;
 import edu.jas.poly.GenPolynomialRing;
 import edu.jas.poly.TermOrder;
 import edu.jas.structure.RingFactory;
+import edu.jas.ufd.FactorRational;
+import edu.jas.ufd.Factorization;
+import edu.jas.ufd.Quotient;
+import edu.jas.ufd.QuotientRing;
+import edu.jas.ufd.FactorAlgebraic;
+import edu.jas.ufd.FactorQuotient;
+import edu.jas.ufd.FactorModular;
+import edu.jas.ufd.FactorInteger;
 
 
 /**
  * Factor tests with JUnit.
- * @see edu.jas.application.FactorTest
+ * @see edu.jas.ufd.FactorTest
  * @author Heinz Kredel.
  */
 
@@ -87,7 +95,6 @@ public class FactorTest extends TestCase {
 
     /**
      * Test dummy for Junit.
-     * 
      */
     public void testDummy() {
     }
@@ -95,7 +102,6 @@ public class FactorTest extends TestCase {
 
     /**
      * Test factory.
-     * 
      */
     public void testFactory() {
         ModIntegerRing mi = new ModIntegerRing(19, true);
@@ -142,7 +148,6 @@ public class FactorTest extends TestCase {
 
     /**
      * Test factory generic.
-     * 
      */
     @SuppressWarnings("unchecked")
     public void testFactoryGeneric() {
@@ -199,7 +204,6 @@ public class FactorTest extends TestCase {
 
     /**
      * Test factory specific.
-     * 
      */
     public void testFactorySpecific() {
         ModIntegerRing mi = new ModIntegerRing(19, true);
@@ -250,50 +254,6 @@ public class FactorTest extends TestCase {
         //System.out.println("ufdrr = " + ufdrr);
         assertTrue("ufd != GenPolynomial<GenPolynomialBigRational>> " + ufdrr,
                 ufdrr instanceof FactorRational);
-    }
-
-
-    /**
-     * Test rational absolute factorization, Rothstein-Trager step.
-     * 
-     */
-    public void xtestBaseRationalAbsoluteFactorizationRoT() {
-
-        TermOrder to = new TermOrder(TermOrder.INVLEX);
-        BigRational cfac = new BigRational(1);
-        String[] alpha = new String[] { "alpha" };
-        String[] vars = new String[] { "x" };
-        GenPolynomialRing<BigRational> pfac = new GenPolynomialRing<BigRational>(cfac, 1, to, vars);
-        GenPolynomial<BigRational> agen = pfac.univariate(0, 4);
-        agen = agen.sum(pfac.fromInteger(4)); // x^4 + 4
-
-        //         GenPolynomial<BigRational> x6 = pfac.univariate(0, 6);
-        //         GenPolynomial<BigRational> x4 = pfac.univariate(0, 4);
-        //         GenPolynomial<BigRational> x2 = pfac.univariate(0, 2);
-        //         // x^6 - 5 x^4 + 5 x^2 + 4
-        //         agen = x6.subtract(x4.multiply(pfac.fromInteger(5))); 
-        //         agen = agen.sum(x2.multiply(pfac.fromInteger(5))); 
-        //         agen = agen.sum(pfac.fromInteger(4)); 
-
-        //         GenPolynomial<BigRational> x3 = pfac.univariate(0, 3);
-        //         GenPolynomial<BigRational> x = pfac.univariate(0);
-        //         // x^3 + x
-        //         agen = x3.sum(x); 
-
-        GenPolynomial<BigRational> x2 = pfac.univariate(0, 2);
-        // x^2 - 2
-        agen = x2.subtract(pfac.fromInteger(2));
-
-        GenPolynomial<BigRational> N = pfac.getONE();
-
-        FactorRational engine = new FactorRational();
-
-        PartialFraction<BigRational> F = engine.baseAlgebraicPartialFraction(N, agen);
-        //System.out.println("\npartial fraction = " + F);
-
-        //boolean t = engine.isAbsoluteFactorization(F);
-        //System.out.println("t        = " + t);
-        // assertTrue("prod(factor(a)) = a", t);
     }
 
 }

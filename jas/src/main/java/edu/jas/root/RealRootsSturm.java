@@ -1,5 +1,5 @@
 /*
- * $Id: RealRootsSturm.java 3662 2011-06-11 13:41:28Z kredel $
+ * $Id: RealRootsSturm.java 3677 2011-07-04 20:29:49Z kredel $
  */
 
 package edu.jas.root;
@@ -15,8 +15,6 @@ import edu.jas.poly.GenPolynomial;
 import edu.jas.poly.PolyUtil;
 import edu.jas.structure.RingElem;
 import edu.jas.structure.RingFactory;
-import edu.jas.ufd.Squarefree;
-import edu.jas.ufd.SquarefreeFactory;
 
 
 /**

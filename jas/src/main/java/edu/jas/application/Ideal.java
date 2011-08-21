@@ -1,5 +1,5 @@
 /*
- * $Id: Ideal.java 3636 2011-05-15 18:52:17Z kredel $
+ * $Id: Ideal.java 3671 2011-06-25 21:11:34Z kredel $
  */
 
 package edu.jas.application;
@@ -38,7 +38,7 @@ import edu.jas.structure.NotInvertibleException;
 import edu.jas.structure.Power;
 import edu.jas.structure.RingFactory;
 import edu.jas.ufd.FactorAbstract;
-import edu.jas.ufd.FactorFactory;
+//import edu.jas.ufd.FactorFactory;
 import edu.jas.ufd.GCDFactory;
 import edu.jas.ufd.GreatestCommonDivisor;
 import edu.jas.ufd.PolyUfdUtil;

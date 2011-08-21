@@ -1,5 +1,5 @@
 /*
- * $Id: ComplexRing.java 3659 2011-06-06 20:26:09Z kredel $
+ * $Id: ComplexRing.java 3694 2011-07-23 18:03:46Z kredel $
  */
 
 package edu.jas.poly;
@@ -60,15 +60,13 @@ public class ComplexRing<C extends RingElem<C>> implements RingFactory<Complex<C
      */
     public List<Complex<C>> generators() {
         List<C> gens = ring.generators();
-        Set<Complex<C>> g = new TreeSet<Complex<C>>(); // TODO
-        g.add(getONE());
-        gens.remove(0);
-        g.add(getIMAG());
+        List<Complex<C>> g = new ArrayList<Complex<C>>(gens.size()+1);
         for ( C x : gens ) {
             Complex<C> cx = new Complex<C>(this,x);
             g.add(cx);
         }
-        return new ArrayList<Complex<C>>(g);
+        g.add(getIMAG());
+        return g; 
     }
 
 

@@ -1,11 +1,12 @@
 /*
- * $Id: FactorRealAlgebraicTest.java 3676 2011-07-02 10:51:16Z kredel $
+ * $Id: FactorRealRealTest.java 3670 2011-06-25 19:04:28Z kredel $
  */
 
-package edu.jas.ufd;
+package edu.jas.application;
 
 
 import java.util.SortedMap;
+import java.util.List;
 
 import org.apache.log4j.BasicConfigurator;
 
@@ -20,8 +21,8 @@ import edu.jas.poly.AlgebraicNumberRing;
 import edu.jas.poly.GenPolynomial;
 import edu.jas.poly.GenPolynomialRing;
 import edu.jas.poly.TermOrder;
-import edu.jas.root.RealAlgebraicNumber;
-import edu.jas.root.RealAlgebraicRing;
+import edu.jas.poly.Complex;
+import edu.jas.poly.ComplexRing;
 import edu.jas.root.Interval;
 import edu.jas.root.RootUtil;
 
@@ -31,7 +32,7 @@ import edu.jas.root.RootUtil;
  * @author Heinz Kredel.
  */
 
-public class FactorRealAlgebraicTest extends TestCase {
+public class FactorRealRealTest extends TestCase {
 
 
     /**
@@ -44,10 +45,10 @@ public class FactorRealAlgebraicTest extends TestCase {
 
 
     /**
-     * Constructs a <CODE>FactorRealAlgebraicTest</CODE> object.
+     * Constructs a <CODE>FactorRealRealTest</CODE> object.
      * @param name String.
      */
-    public FactorRealAlgebraicTest(String name) {
+    public FactorRealRealTest(String name) {
         super(name);
     }
 
@@ -55,12 +56,12 @@ public class FactorRealAlgebraicTest extends TestCase {
     /**
      */
     public static Test suite() {
-        TestSuite suite = new TestSuite(FactorRealAlgebraicTest.class);
+        TestSuite suite = new TestSuite(FactorRealRealTest.class);
         return suite;
     }
 
 
-    int rl = 3;
+    int rl = 1;
 
 
     int kl = 5;
@@ -94,58 +95,45 @@ public class FactorRealAlgebraicTest extends TestCase {
 
 
     /**
-     * Test real algebraic factorization.
+     * Test real real algebraic factorization.
      */
-    public void testRealAlgebraicFactorization() {
+    public void testRealRealAlgebraicFactorization() {
 
         TermOrder to = new TermOrder(TermOrder.INVLEX);
-        BigRational cfac = new BigRational(1);
-        String[] alpha = new String[] { "alpha" };
+        BigRational bfac = new BigRational(1);
+
+        ComplexRing<BigRational> cfac = new ComplexRing<BigRational>(bfac);
         String[] vars = new String[] { "z" };
-        GenPolynomialRing<BigRational> pfac = new GenPolynomialRing<BigRational>(cfac, 1, to, alpha);
-        GenPolynomial<BigRational> agen = pfac.univariate(0, 2);
-        //agen = agen.subtract(pfac.getONE()); // x^2 - 1
-        agen = agen.subtract(pfac.fromInteger(2)); // x^2 - 2
-        AlgebraicNumberRing<BigRational> afac = new AlgebraicNumberRing<BigRational>(agen, true);
-        Interval<BigRational> iv = RootUtil.<BigRational>parseInterval(cfac, "[0,2]");
-        //System.out.println("iv = " + iv);
-        RealAlgebraicRing<BigRational> rfac = new RealAlgebraicRing<BigRational>(agen,iv,true);
+        GenPolynomialRing<Complex<BigRational>> dfac = new GenPolynomialRing<Complex<BigRational>>(cfac, to, vars);
+        GenPolynomial<Complex<BigRational>> ap = dfac.parse("z^3 - i2");
 
-        GenPolynomialRing<RealAlgebraicNumber<BigRational>> rpfac = new GenPolynomialRing<RealAlgebraicNumber<BigRational>>(
-                rfac, 1, to, vars); // univariate
+        List<Complex<RealAlgebraicNumber<BigRational>>> roots
+            = RootFactory.<BigRational> complexAlgebraicNumbersComplex(ap); 
+        //System.out.println("ap = " + ap);
+        //System.out.println("roots = " + roots);
+        assertTrue("#roots == deg(ap) ", roots.size() == ap.degree(0));
 
-        //System.out.println("agen  = " + agen);
-        //System.out.println("afac  = " + afac);
-        //System.out.println("rfac  = " + rfac);
-        //System.out.println("rpfac = " + rpfac);
+        for ( Complex<RealAlgebraicNumber<BigRational>> root : roots ) {
+            RealAlgebraicRing<BigRational> rfac = root.getRe().ring;
+            FactorRealReal<BigRational> fac = new FactorRealReal<BigRational>(rfac);
+            String[] var = new String[] { "t" };
+            GenPolynomialRing<RealAlgebraicNumber<BigRational>> rpfac 
+                = new GenPolynomialRing<RealAlgebraicNumber<BigRational>>(rfac, to, var); // univariate
 
-        FactorRealAlgebraic<BigRational> fac = new FactorRealAlgebraic<BigRational>(rfac);
-
-        for (int i = 1; i < 2; i++) {
-            int facs = 0;
             GenPolynomial<RealAlgebraicNumber<BigRational>> a;
-            GenPolynomial<RealAlgebraicNumber<BigRational>> c = rpfac.random(2, ll + i, el + i, q);
-            GenPolynomial<RealAlgebraicNumber<BigRational>> b = rpfac.random(2, ll + i, el + i, q);
+            GenPolynomial<RealAlgebraicNumber<BigRational>> b = rpfac.random(2, ll, el, q);
+            GenPolynomial<RealAlgebraicNumber<BigRational>> c = rpfac.random(2, ll, el, q);
             if (b.degree() == 0) {
                 b = b.multiply(rpfac.univariate(0));
             }
             //b = b.monic();
-            //if ( false && ! a.leadingBaseCoefficient().isONE() ) {
-            //continue;
-            //ExpVector e = a.leadingExpVector();
-            //a.doPutToMap(e,cfac.getONE());
-            //}
+            int facs = 0;
             if (c.degree() > 0) {
                 facs++;
             }
             if (b.degree() > 0) {
                 facs++;
             }
-            //a = apfac.univariate(0,2).sum( apfac.getONE() ); // x^2 + 1 
-            //a = a.multiply(a);
-            //a = a.multiply( apfac.univariate(0,2).subtract( apfac.getONE() ) ); // x^2 - 1 
-            //a = apfac.univariate(0,3).subtract( apfac.getONE() ); // x^3 - 1 
-            //a = apfac.univariate(0,3).sum( apfac.getONE() ); // x^3 + 1 
             a = c.multiply(b);
             //a = c;
             //a = a.monic();
@@ -166,6 +154,7 @@ public class FactorRealAlgebraicTest extends TestCase {
             boolean t = fac.isFactorization(a, sm);
             //System.out.println("t        = " + t);
             assertTrue("prod(factor(a)) = a", t);
+            break;
         }
     }
 

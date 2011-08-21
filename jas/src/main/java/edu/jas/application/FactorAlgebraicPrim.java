@@ -1,5 +1,5 @@
 /*
- * $Id: FactorAlgebraicPrim.java 3633 2011-05-15 18:46:00Z kredel $
+ * $Id: FactorAlgebraicPrim.java 3671 2011-06-25 21:11:34Z kredel $
  */
 
 package edu.jas.application;
@@ -19,7 +19,7 @@ import edu.jas.poly.TermOrder;
 import edu.jas.structure.GcdRingElem;
 import edu.jas.ufd.FactorAbstract;
 import edu.jas.ufd.FactorAbsolute;
-import edu.jas.ufd.FactorFactory;
+//import edu.jas.ufd.FactorFactory;
 import edu.jas.ufd.Squarefree;
 import edu.jas.ufd.SquarefreeFactory;
 import edu.jas.ufd.PolyUfdUtil;
