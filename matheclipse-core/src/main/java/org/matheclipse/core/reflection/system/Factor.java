@@ -40,9 +40,10 @@ public class Factor extends AbstractFunctionEvaluator {
 		}
 
 		ExprVariables eVar = new ExprVariables(ast.get(1));
-		if (!eVar.isSize(1)) {
-			throw new WrongArgumentType(ast, ast.get(1), 1, "Factorization only implemented for univariate polynomials");
-		}
+		// if (!eVar.isSize(1)) {
+		// throw new WrongArgumentType(ast, ast.get(1), 1,
+		// "Factorization only implemented for univariate polynomials");
+		// }
 		try {
 			IExpr expr = F.evalExpandAll(ast.get(1));
 			ASTRange r = new ASTRange(eVar.getVarList(), 1);
