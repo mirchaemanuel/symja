@@ -50,7 +50,7 @@ import org.apache.commons.math.exception.util.LocalizedFormats;
  * For details, see:
  * <ul>
  * <li>Bean, J.C.: Genetic algorithms and random keys for sequencing and
- * optimization. ORSA Journal on Computing 6 (1994) 154–160</li>
+ * optimization. ORSA Journal on Computing 6 (1994) 154-160</li>
  * <li>Rothlauf, F.: Representations for Genetic and Evolutionary Algorithms.
  * Volume 104 of Studies in Fuzziness and Soft Computing. Physica-Verlag,
  * Heidelberg (2002)</li>
@@ -60,7 +60,7 @@ import org.apache.commons.math.exception.util.LocalizedFormats;
  * @param <T>
  *            type of the permuted objects
  * @since 2.0
- * @version $Id: RandomKey.java 1139906 2011-06-26 18:42:32Z luc $
+ * @version $Id: RandomKey.java 1157540 2011-08-14 15:03:33Z sebb $
  */
 public abstract class RandomKey<T> extends AbstractListChromosome<Double> implements PermutationChromosome<T> {
 

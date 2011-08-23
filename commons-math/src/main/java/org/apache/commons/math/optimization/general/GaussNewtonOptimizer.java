@@ -28,6 +28,7 @@ import org.apache.commons.math.linear.RealMatrix;
 import org.apache.commons.math.linear.SingularMatrixException;
 import org.apache.commons.math.optimization.VectorialPointValuePair;
 import org.apache.commons.math.optimization.ConvergenceChecker;
+import org.apache.commons.math.optimization.SimpleVectorialValueChecker;
 
 /**
  * Gauss-Newton least-squares solver.
@@ -38,7 +39,7 @@ import org.apache.commons.math.optimization.ConvergenceChecker;
  * is faster but QR decomposition is more robust for difficult problems.
  * </p>
  *
- * @version $Id: GaussNewtonOptimizer.java 1131229 2011-06-03 20:49:25Z luc $
+ * @version $Id: GaussNewtonOptimizer.java 1159233 2011-08-18 14:10:28Z erans $
  * @since 2.0
  *
  */
@@ -49,14 +50,46 @@ public class GaussNewtonOptimizer extends AbstractLeastSquaresOptimizer {
 
     /**
      * Simple constructor with default settings.
-     * The convergence check is set to a {@link
-     * org.apache.commons.math.optimization.SimpleVectorialValueChecker}.
+     * The normal equations will be solved using LU decomposition and the
+     * convergence check is set to a {@link SimpleVectorialValueChecker}
+     * with default tolerances.
+     */
+    public GaussNewtonOptimizer() {
+        this(true);
+    }
+
+    /**
+     * Simple constructor with default settings.
+     * The normal equations will be solved using LU decomposition.
      *
-     * @param useLU if {@code true}, the normal equations will be solved
+     * @param checker Convergence checker.
+     */
+    public GaussNewtonOptimizer(ConvergenceChecker<VectorialPointValuePair> checker) {
+        this(true, checker);
+    }
+
+    /**
+     * Simple constructor with default settings.
+     * The convergence check is set to a {@link SimpleVectorialValueChecker}
+     * with default tolerances.
+     *
+     * @param useLU If {@code true}, the normal equations will be solved
      * using LU decomposition, otherwise they will be solved using QR
      * decomposition.
      */
     public GaussNewtonOptimizer(final boolean useLU) {
+        this(useLU, new SimpleVectorialValueChecker());
+    }
+
+    /**
+     * @param useLU If {@code true}, the normal equations will be solved
+     * using LU decomposition, otherwise they will be solved using QR
+     * decomposition.
+     * @param checker Convergence checker.
+     */
+    public GaussNewtonOptimizer(final boolean useLU,
+                                ConvergenceChecker<VectorialPointValuePair> checker) {
+        super(checker);
         this.useLU = useLU;
     }
 

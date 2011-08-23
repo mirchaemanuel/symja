@@ -31,7 +31,7 @@ import org.apache.commons.math.util.FastMath;
  * supplies them.</p>
  *
  * @since 1.1
- * @version $Id: AbstractRandomGenerator.java 1135007 2011-06-12 23:57:49Z psteitz $
+ * @version $Id: AbstractRandomGenerator.java 1153338 2011-08-03 04:16:23Z psteitz $
  */
 public abstract class AbstractRandomGenerator implements RandomGenerator {
 
@@ -134,7 +134,7 @@ public abstract class AbstractRandomGenerator implements RandomGenerator {
      *  value from this random number generator's sequence
      */
     public int nextInt() {
-        return (int) (nextDouble() * Integer.MAX_VALUE);
+        return (int) ((2d * nextDouble() - 1d) * Integer.MAX_VALUE);
     }
 
     /**
@@ -176,7 +176,7 @@ public abstract class AbstractRandomGenerator implements RandomGenerator {
      *value from this random number generator's sequence
      */
     public long nextLong() {
-        return (long) (nextDouble() * Long.MAX_VALUE);
+        return (long) ((2d * nextDouble() - 1d) * Long.MAX_VALUE);
     }
 
     /**

@@ -36,93 +36,9 @@ import org.apache.commons.math.exception.util.LocalizedFormats;
  */
 public class NonSelfAdjointLinearOperatorException
     extends MathIllegalArgumentException {
-    /** The offending linear operator, A. */
-    private final RealLinearOperator a;
-    /** The threshold. */
-    private final double threshold;
-    /** A reference to the first offending vector*/
-    private final RealVector x;
-    /** A reference to the second offending vector*/
-    private final RealVector y;
 
-    /**
-     * Creates a new instance of this class.
-     *
-     * @param a Offending linear operator.
-     * @param x First offending vector.
-     * @param y Second offending vector.
-     * @param threshold Threshold.
-     */
-    public NonSelfAdjointLinearOperatorException(final RealLinearOperator a,
-                                                 final double[] x,
-                                                 final double[] y,
-                                                 final double threshold) {
-        this(a,
-             new ArrayRealVector(x, false),
-             new ArrayRealVector(y, false),
-             threshold);
-    }
-
-    /**
-     * Creates a new instance of this class.
-     *
-     * @param a Offending linear operator.
-     * @param x First offending vector.
-     * @param y Second offending vector.
-     * @param threshold Threshold.
-     */
-    public NonSelfAdjointLinearOperatorException(final RealLinearOperator a,
-                                                 final RealVector x,
-                                                 final RealVector y,
-                                                 final double threshold) {
-        super(LocalizedFormats.NON_SELF_ADJOINT_LINEAR_OPERATOR, threshold, x, y);
-        this.a = a;
-        this.x = x;
-        this.y = y;
-        this.threshold = threshold;
-    }
-
-    /**
-     * Returns a reference to the first offending vector.
-     * If the exception was raised by a call to
-     * {@link #NonSelfAdjointLinearOperatorException(RealLinearOperator,
-     * double[], double[], double)}, then a new {@link ArrayRealVector}
-     * holding a reference to the actual {@code double[]} is returned.
-     *
-     * @return the first offending vector.
-     */
-    public RealVector getFirstOffendingVector() {
-        return x;
-    }
-
-    /**
-     * Returns a reference to the offending linear operator.
-     *
-     * @return the offending linear operator.
-     */
-    public RealLinearOperator getOffendingLinearOperator() {
-        return a;
-    }
-
-    /**
-     * Returns a copy of the second offending vector.
-     * If the exception was raised by a call to
-     * {@link #NonSelfAdjointLinearOperatorException(RealLinearOperator,
-     * double[], double[], double)}, then a new {@link ArrayRealVector}
-     * holding a reference to the actual {@code double[]} is returned.
-     *
-     * @return the second offending vector.
-     */
-    public RealVector getSecondOffendingVector() {
-        return y;
-    }
-
-    /**
-     * Returns the threshold.
-     *
-     * @return the threshold.
-     */
-    public double getThreshold() {
-        return threshold;
+    /** Creates a new instance of this class. */
+    public NonSelfAdjointLinearOperatorException() {
+        super(LocalizedFormats.NON_SELF_ADJOINT_LINEAR_OPERATOR);
     }
 }
