@@ -2886,7 +2886,7 @@ public class SystemTestCase extends AbstractTestCase {
 		check(
 				"Expand[(y+x)*(-y+x)*(y^4+x*y^3+x^2*y^2+x^3*y+x^4)*(y^4-x*y^3+x^2*y^2-x^3*y+x^4)]",
 				"-y^10+x^10");
-		 check("Factor[x^10-y^10]",
+	  check("Factor[x^10-y^10]",
 		 "(y-x)*(-y-x)*(y^4+x*y^3+x^2*y^2+x^3*y+x^4)*(y^4-x*y^3+x^2*y^2-x^3*y+x^4)");
 
 		check("Expand[(-1+x)*(1+x)*(1+x+x^2)*(1-x+x^2)]", "x^6-1");

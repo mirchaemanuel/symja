@@ -51,16 +51,6 @@ public class JASConvert<C extends RingElem<C>> {
 
 	private final List<? extends IExpr> fVariables;
 
-	/**
-	 * Constructor which uses edu.jas.arith.BigRational as ring factory.
-	 * 
-	 * @param variablesList
-	 */
-	// public JASConvert(final List<? extends IExpr> variablesList) {
-	// this(variablesList, (RingFactory<BigRational>)BigRational.ZERO, new
-	// TermOrder(TermOrder.INVLEX));
-	// };
-
 	public JASConvert(IExpr variable, RingFactory<C> ringFactory) {
 		List<IExpr> varList = new ArrayList<IExpr>();
 		varList.add(variable);
