@@ -37,7 +37,7 @@ public class ComputerThreads {
      * engine does not support threads.
      * @see edu.jas.ufd.GCDFactory#getProxy(edu.jas.structure.RingFactory)
      */
-    public static boolean NO_THREADS = false;
+    public static boolean NO_THREADS = true;
 
 
     /**
