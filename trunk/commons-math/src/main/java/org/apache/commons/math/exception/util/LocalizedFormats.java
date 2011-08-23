@@ -34,7 +34,7 @@ import java.util.ResourceBundle;
  * translation is missing.
  * </p>
  * @since 2.2
- * @version $Id: LocalizedFormats.java 1145559 2011-07-12 11:55:26Z erans $
+ * @version $Id: LocalizedFormats.java 1154543 2011-08-06 16:54:39Z erans $
  */
 public enum LocalizedFormats implements Localizable {
 
@@ -137,6 +137,7 @@ public enum LocalizedFormats implements Localizable {
     INVALID_ITERATIONS_LIMITS("invalid iteration limits: min={0}, max={1}"),
     INVALID_MAX_ITERATIONS("bad value for maximum iterations number: {0}"),
     INVALID_REGRESSION_ARRAY("input data array length = {0} does not match the number of observations = {1} and the number of regressors = {2}"),
+    INVALID_REGRESSION_OBSERVATION("length of regressor array = {0} does not match the number of variables = {1} in the model"),
     INVALID_ROUNDING_METHOD("invalid rounding method {0}, valid methods: {1} ({2}), {3} ({4}), {5} ({6}), {7} ({8}), {9} ({10}), {11} ({12}), {13} ({14}), {15} ({16})"),
     ITERATOR_EXHAUSTED("iterator exhausted"),
     LCM_OVERFLOW_32_BITS("overflow: lcm({0}, {1}) is 2^31"),
@@ -161,6 +162,7 @@ public enum LocalizedFormats implements Localizable {
     NEGATIVE_NUMBER_OF_SUCCESSES("number of successes must be non-negative ({0})"),
     NUMBER_OF_SUCCESSES("number of successes ({0})"), /* keep */
     NEGATIVE_NUMBER_OF_TRIALS("number of trials must be non-negative ({0})"),
+    NUMBER_OF_INTERPOLATION_POINTS("number of interpolation points ({0})"), /* keep */
     NUMBER_OF_TRIALS("number of trials ({0})"),
     ROBUSTNESS_ITERATIONS("number of robustness iterations ({0})"),
     START_POSITION("start position ({0})"), /* keep */
@@ -171,7 +173,7 @@ public enum LocalizedFormats implements Localizable {
     NON_REAL_FINITE_ABSCISSA("all abscissae must be finite real numbers, but {0}-th is {1}"),
     NON_REAL_FINITE_ORDINATE("all ordinatae must be finite real numbers, but {0}-th is {1}"),
     NON_REAL_FINITE_WEIGHT("all weights must be finite real numbers, but {0}-th is {1}"),
-    NON_SQUARE_MATRIX("a {0}x{1} matrix was provided instead of a square matrix"),
+    NON_SQUARE_MATRIX("non square ({0}x{1}) matrix"),
     NORMALIZE_INFINITE("Cannot normalize to an infinite value"),
     NORMALIZE_NAN("Cannot normalize to NaN"),
     NOT_ADDITION_COMPATIBLE_MATRICES("{0}x{1} and {2}x{3} matrices are not addition compatible"),
@@ -187,8 +189,9 @@ public enum LocalizedFormats implements Localizable {
     NOT_POSITIVE_COLUMNDIMENSION("invalid column dimension: {0} (must be positive)"),
     NOT_POSITIVE_DEFINITE_MATRIX("not positive definite matrix"),
     NON_POSITIVE_DEFINITE_MATRIX("not positive definite matrix: diagonal element at ({0},{0}) is larger than {2}"), /* keep */
-    NON_POSITIVE_DEFINITE_LINEAR_OPERATOR("non positive definite linear operator: x' A x <= 0 when x is {0}"),
-    NON_SELF_ADJOINT_LINEAR_OPERATOR("non self-adjoint linear operator: |x' A y - y' A x| > {0} when x is {1} and y is {2}"),
+    NON_POSITIVE_DEFINITE_LINEAR_OPERATOR("non positive definite linear operator"), /* keep */
+    NON_SELF_ADJOINT_LINEAR_OPERATOR("non self-adjoint linear operator"), /* keep */
+    NON_SQUARE_LINEAR_OPERATOR("non square ({0}x{1}) linear operator"), /* keep */
     DEGREES_OF_FREEDOM("degrees of freedom ({0})"), /* keep */
     NOT_POSITIVE_DEGREES_OF_FREEDOM("degrees of freedom must be positive ({0})"),
     NOT_POSITIVE_ELEMENT_AT_INDEX("element {0} is not positive: {1}"),
@@ -234,6 +237,7 @@ public enum LocalizedFormats implements Localizable {
     NO_DENSITY_FOR_THIS_DISTRIBUTION("This distribution does not have a density function implemented"),
     NO_FEASIBLE_SOLUTION("no feasible solution"),
     NO_OPTIMUM_COMPUTED_YET("no optimum computed yet"), /* keep */
+    NO_REGRESSORS("Regression model must include at least one regressor"),
     NO_RESULT_AVAILABLE("no result available"),
     NO_SUCH_MATRIX_ENTRY("no entry at indices ({0}, {1}) in a {2}x{3} matrix"),
     NULL_NOT_ALLOWED("null is not allowed"), /* keep */
@@ -258,6 +262,7 @@ public enum LocalizedFormats implements Localizable {
     N_POINTS_GAUSS_LEGENDRE_INTEGRATOR_NOT_SUPPORTED("{0} points Legendre-Gauss integrator not supported, number of points must be in the {1}-{2} range"),
     OBSERVED_COUNTS_ALL_ZERO("observed counts are all 0 in observed array {0}"),
     OBSERVED_COUNTS_BOTTH_ZERO_FOR_ENTRY("observed counts are both zero for entry {0}"),
+    BOBYQA_BOUND_DIFFERENCE_CONDITION("the difference between the upper and lower bound must be larger than twice the initial trust region radius ({0})"),
     OUT_OF_BOUNDS_QUANTILE_VALUE("out of bounds quantile value: {0}, must be in (0, 100]"),
     OUT_OF_BOUND_SIGNIFICANCE_LEVEL("out of bounds significance level {0}, must be between {1} and {2}"),
     SIGNIFICANCE_LEVEL("significance level ({0})"), /* keep */
@@ -292,10 +297,13 @@ public enum LocalizedFormats implements Localizable {
     SUBARRAY_ENDS_AFTER_ARRAY_END("subarray ends after array end"),
     TOO_LARGE_CUTOFF_SINGULAR_VALUE("cutoff singular value is {0}, should be at most {1}"),
     TOO_MANY_ELEMENTS_TO_DISCARD_FROM_ARRAY("cannot discard {0} elements from a {1} elements array"),
+    TOO_MUCH_CANCELLATION("too much cancellation in a denominator"),
+    TOO_MANY_REGRESSORS("too many regressors ({0}) specified, only {1} in the model"),
     TOO_SMALL_COST_RELATIVE_TOLERANCE("cost relative tolerance is too small ({0}), no further reduction in the sum of squares is possible"),
     TOO_SMALL_INTEGRATION_INTERVAL("too small integration interval: length = {0}"),
     TOO_SMALL_ORTHOGONALITY_TOLERANCE("orthogonality tolerance is too small ({0}), solution is orthogonal to the jacobian"),
     TOO_SMALL_PARAMETERS_RELATIVE_TOLERANCE("parameters relative tolerance is too small ({0}), no further improvement in the approximate solution is possible"),
+    TRUST_REGION_STEP_FAILED("trust region step has failed to reduce Q"),
     TWO_OR_MORE_CATEGORIES_REQUIRED("two or more categories required, got {0}"),
     TWO_OR_MORE_VALUES_IN_CATEGORY_REQUIRED("two or more values required in each category, one has {0}"),
     UNABLE_TO_BRACKET_OPTIMUM_IN_LINE_SEARCH("unable to bracket optimum in line search"),

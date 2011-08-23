@@ -43,7 +43,7 @@ import org.apache.commons.math.util.FastMath;
  * <li> When there are fewer than two observations in the model, or when
  * there is no variation in the x values (i.e. all x values are the same)
  * all statistics return <code>NaN</code>. At least two observations with
- * different x coordinates are requred to estimate a bivariate regression
+ * different x coordinates are required to estimate a bivariate regression
  * model.
  * </li>
  * <li> getters for the statistics always compute values based on the current
@@ -53,15 +53,12 @@ import org.apache.commons.math.util.FastMath;
  * the necessary computations to return the requested statistic.</li>
  * </ul></p>
  *
- * @version $Id: SimpleRegression.java 1131229 2011-06-03 20:49:25Z luc $
+ * @version $Id: SimpleRegression.java 1159918 2011-08-20 21:45:53Z psteitz $
  */
 public class SimpleRegression implements Serializable {
 
     /** Serializable version identifier */
     private static final long serialVersionUID = -3004689053607543335L;
-
-    /** the distribution used to compute inference statistics. */
-    private TDistribution distribution;
 
     /** sum of x values */
     private double sumX = 0d;
@@ -93,19 +90,7 @@ public class SimpleRegression implements Serializable {
      * Create an empty SimpleRegression instance
      */
     public SimpleRegression() {
-        this(1);
-    }
-
-    /**
-     * Create an empty SimpleRegression using the given distribution object to
-     * compute inference statistics.
-     *
-     * @param degrees Number of degrees of freedom of the distribution used
-     * to compute inference statistics.
-     * @since 2.2
-     */
-    public SimpleRegression(int degrees) {
-        distribution = new TDistributionImpl(degrees);
+        super();
     }
 
     /**
@@ -137,10 +122,6 @@ public class SimpleRegression implements Serializable {
         sumX += x;
         sumY += y;
         n++;
-
-        if (n > 2) {
-            distribution = new TDistributionImpl(n - 2);
-        }
     }
 
 
@@ -169,10 +150,6 @@ public class SimpleRegression implements Serializable {
             sumX -= x;
             sumY -= y;
             n--;
-
-            if (n > 2) {
-                distribution = new TDistributionImpl(n - 2);
-            }
         }
     }
 
@@ -553,6 +530,7 @@ public class SimpleRegression implements Serializable {
             throw new OutOfRangeException(LocalizedFormats.SIGNIFICANCE_LEVEL,
                                           alpha, 0, 1);
         }
+        TDistribution distribution = new TDistributionImpl(n - 2);
         return getSlopeStdErr() *
             distribution.inverseCumulativeProbability(1d - alpha / 2d);
     }
@@ -579,6 +557,7 @@ public class SimpleRegression implements Serializable {
      * @throws MathException if the significance level can not be computed.
      */
     public double getSignificance() throws MathException {
+        TDistribution distribution = new TDistributionImpl(n - 2);
         return 2d * (1.0 - distribution.cumulativeProbability(
                     FastMath.abs(getSlope()) / getSlopeStdErr()));
     }

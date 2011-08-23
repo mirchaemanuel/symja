@@ -36,7 +36,7 @@ import org.apache.commons.math.geometry.partitioning.AbstractRegion;
 import org.apache.commons.math.util.FastMath;
 
 /** This class represents a 3D region: a set of polyhedrons.
- * @version $Id: PolyhedronsSet.java 1131229 2011-06-03 20:49:25Z luc $
+ * @version $Id: PolyhedronsSet.java 1157932 2011-08-15 18:20:08Z luc $
  * @since 3.0
  */
 public class PolyhedronsSet extends AbstractRegion<Euclidean3D, Euclidean2D> {
@@ -175,7 +175,7 @@ public class PolyhedronsSet extends AbstractRegion<Euclidean3D, Euclidean2D> {
 
                 final Plane    plane  = (Plane) facet.getHyperplane();
                 final Vector3D facetB = plane.toSpace(polygon.getBarycenter());
-                double   scaled = area * Vector3D.dotProduct(facetB, plane.getNormal());
+                double   scaled = area * facetB.dotProduct(plane.getNormal());
                 if (reversed) {
                     scaled = -scaled;
                 }
@@ -341,11 +341,11 @@ public class PolyhedronsSet extends AbstractRegion<Euclidean3D, Euclidean2D> {
                 final Plane    oPlane = (Plane) original;
                 final Plane    tPlane = (Plane) transformed;
                 final Vector3D p00    = oPlane.getOrigin();
-                final Vector3D p10    = (Vector3D) oPlane.toSpace(new Vector2D(1.0, 0.0));
-                final Vector3D p01    = (Vector3D) oPlane.toSpace(new Vector2D(0.0, 1.0));
-                final Vector2D  tP00   = (Vector2D) tPlane.toSubSpace(apply(p00));
-                final Vector2D  tP10   = (Vector2D) tPlane.toSubSpace(apply(p10));
-                final Vector2D  tP01   = (Vector2D) tPlane.toSubSpace(apply(p01));
+                final Vector3D p10    = oPlane.toSpace(new Vector2D(1.0, 0.0));
+                final Vector3D p01    = oPlane.toSpace(new Vector2D(0.0, 1.0));
+                final Vector2D  tP00   = tPlane.toSubSpace(apply(p00));
+                final Vector2D  tP10   = tPlane.toSubSpace(apply(p10));
+                final Vector2D  tP01   = tPlane.toSubSpace(apply(p01));
                 final AffineTransform at =
                     new AffineTransform(tP10.getX() - tP00.getX(), tP10.getY() - tP00.getY(),
                                         tP01.getX() - tP00.getX(), tP01.getY() - tP00.getY(),
@@ -407,7 +407,7 @@ public class PolyhedronsSet extends AbstractRegion<Euclidean3D, Euclidean2D> {
 
                 final Plane   oPlane = (Plane) original;
                 final Plane   tPlane = (Plane) transformed;
-                final Vector2D shift  = (Vector2D) tPlane.toSubSpace(apply(oPlane.getOrigin()));
+                final Vector2D shift  = tPlane.toSubSpace(apply(oPlane.getOrigin()));
                 final AffineTransform at =
                     AffineTransform.getTranslateInstance(shift.getX(), shift.getY());
 

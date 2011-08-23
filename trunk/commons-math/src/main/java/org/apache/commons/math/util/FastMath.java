@@ -63,7 +63,7 @@ package org.apache.commons.math.util;
  * <li>{@link #nextUp(float)}</li>
  * <li>{@link #scalb(float, int)}</li>
  * </ul>
- * @version $Id: FastMath.java 1145004 2011-07-11 01:14:55Z psteitz $
+ * @version $Id: FastMath.java 1157739 2011-08-15 08:49:39Z luc $
  * @since 2.2
  */
 public class FastMath {
@@ -1005,7 +1005,7 @@ public class FastMath {
      *  For x between 0 and 1, returns exp(x), uses extended precision
      *  @param x argument of exponential
      *  @param result placeholder where to place exp(x) split in two terms
-     *  for extra precision (i.e. exp(x) = result[0] ° result[1]
+     *  for extra precision (i.e. exp(x) = result[0] + result[1]
      *  @return exp(x)
      */
     private static double slowexp(final double x, final double result[]) {

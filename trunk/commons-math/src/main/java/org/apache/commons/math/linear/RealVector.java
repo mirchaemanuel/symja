@@ -41,7 +41,7 @@ import org.apache.commons.math.analysis.UnivariateRealFunction;
  *   RealVector result = v.mapAddToSelf(3.4).mapToSelf(new Tan()).mapToSelf(new Power(2.3));
  * </pre>
  *
- * @version $Id: RealVector.java 1131229 2011-06-03 20:49:25Z luc $
+ * @version $Id: RealVector.java 1151665 2011-07-27 23:26:45Z erans $
  * @since 2.0
  */
 public interface RealVector {
@@ -597,4 +597,58 @@ public interface RealVector {
      * none are {@code NaN}, {@code false} otherwise.
      */
     boolean isInfinite();
+
+    /**
+     * Returns the linear combination of {@code this} and {@code y}.
+     *
+     * @param a Weight of {@code this}.
+     * @param b Weight of {@code y}.
+     * @param y Vector with which {@code this} is linearly combined.
+     * @return a vector containing {@code a * this[i] + b * y[i]} for all
+     * {@code i}.
+     * @throws org.apache.commons.math.exception.DimensionMismatchException
+     * if {@code y} is not the same size as this vector.
+     */
+    RealVector combine(double a, double b, double[] y);
+
+    /**
+     * Returns the linear combination of {@code this} and {@code y}.
+     *
+     * @param a Weight of {@code this}.
+     * @param b Weight of {@code y}.
+     * @param y Vector with which {@code this} is linearly combined.
+     * @return a vector containing {@code a * this[i] + b * y[i]} for all
+     * {@code i}.
+     * @throws org.apache.commons.math.exception.DimensionMismatchException
+     * if {@code y} is not the same size as this vector.
+     */
+    RealVector combine(double a, double b, RealVector y);
+
+    /**
+     * Updates {@code this} with the linear combination of {@code this} and
+     * {@code y}.
+     *
+     * @param a Weight of {@code this}.
+     * @param b Weight of {@code y}.
+     * @param y Vector with which {@code this} is linearly combined.
+     * @return {@code this}, with components equal to
+     * {@code a * this[i] + b * y[i]} for all {@code i}.
+     * @throws org.apache.commons.math.exception.DimensionMismatchException
+     * if {@code y} is not the same size as this vector.
+     */
+    RealVector combineToSelf(double a, double b, double[] y);
+
+    /**
+     * Updates {@code this} with the linear combination of {@code this} and
+     * {@code y}.
+     *
+     * @param a Weight of {@code this}.
+     * @param b Weight of {@code y}.
+     * @param y Vector with which {@code this} is linearly combined.
+     * @return {@code this}, with components equal to
+     * {@code a * this[i] + b * y[i]} for all {@code i}.
+     * @throws org.apache.commons.math.exception.DimensionMismatchException
+     * if {@code y} is not the same size as this vector.
+     */
+    RealVector combineToSelf(double a, double b, RealVector y);
 }

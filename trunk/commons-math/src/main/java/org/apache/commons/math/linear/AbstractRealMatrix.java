@@ -32,10 +32,12 @@ import org.apache.commons.math.util.FastMath;
  * <p>All the methods implemented here use {@link #getEntry(int, int)} to access
  * matrix elements. Derived class can provide faster implementations. </p>
  *
- * @version $Id: AbstractRealMatrix.java 1132432 2011-06-05 14:59:29Z luc $
+ * @version $Id: AbstractRealMatrix.java 1151806 2011-07-28 11:59:23Z erans $
  * @since 2.0
  */
-public abstract class AbstractRealMatrix implements RealMatrix {
+public abstract class AbstractRealMatrix
+    extends RealLinearOperator
+    implements RealMatrix {
     /**
      * Creates a matrix with no data
      */
@@ -591,9 +593,21 @@ public abstract class AbstractRealMatrix implements RealMatrix {
     }
 
     /** {@inheritDoc} */
+
+    /**
+     * Returns the number of rows of this matrix.
+     *
+     * @return the number of rows.
+     */
+    @Override
     public abstract int getRowDimension();
 
-    /** {@inheritDoc} */
+    /**
+     * Returns the number of columns of this matrix.
+     *
+     * @return the number of columns.
+     */
+    @Override
     public abstract int getColumnDimension();
 
     /** {@inheritDoc} */
@@ -611,6 +625,7 @@ public abstract class AbstractRealMatrix implements RealMatrix {
     }
 
     /** {@inheritDoc} */
+    @Override
     public double[] operate(final double[] v) {
         final int nRows = getRowDimension();
         final int nCols = getColumnDimension();
@@ -631,6 +646,7 @@ public abstract class AbstractRealMatrix implements RealMatrix {
     }
 
     /** {@inheritDoc} */
+    @Override
     public RealVector operate(final RealVector v) {
         try {
             return new ArrayRealVector(operate(((ArrayRealVector) v).getDataRef()), false);

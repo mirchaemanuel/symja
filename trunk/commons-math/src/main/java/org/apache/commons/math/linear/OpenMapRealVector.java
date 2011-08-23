@@ -27,7 +27,7 @@ import org.apache.commons.math.util.FastMath;
 /**
  * This class implements the {@link RealVector} interface with a
  * {@link OpenIntToDoubleHashMap} backing store.
- * @version $Id: OpenMapRealVector.java 1131229 2011-06-03 20:49:25Z luc $
+ * @version $Id: OpenMapRealVector.java 1157403 2011-08-13 18:10:13Z erans $
  * @since 2.0
 */
 public class OpenMapRealVector extends AbstractRealVector
@@ -342,7 +342,7 @@ public class OpenMapRealVector extends AbstractRealVector
     public OpenMapRealVector ebeDivide(RealVector v) {
         checkVectorDimensions(v.getDimension());
         OpenMapRealVector res = new OpenMapRealVector(this);
-        Iterator iter = res.entries.iterator();
+        Iterator iter = entries.iterator();
         while (iter.hasNext()) {
             iter.advance();
             res.setEntry(iter.key(), iter.value() / v.getEntry(iter.key()));
@@ -355,7 +355,7 @@ public class OpenMapRealVector extends AbstractRealVector
     public OpenMapRealVector ebeDivide(double[] v) {
         checkVectorDimensions(v.length);
         OpenMapRealVector res = new OpenMapRealVector(this);
-        Iterator iter = res.entries.iterator();
+        Iterator iter = entries.iterator();
         while (iter.hasNext()) {
             iter.advance();
             res.setEntry(iter.key(), iter.value() / v[iter.key()]);
@@ -367,7 +367,7 @@ public class OpenMapRealVector extends AbstractRealVector
     public OpenMapRealVector ebeMultiply(RealVector v) {
         checkVectorDimensions(v.getDimension());
         OpenMapRealVector res = new OpenMapRealVector(this);
-        Iterator iter = res.entries.iterator();
+        Iterator iter = entries.iterator();
         while (iter.hasNext()) {
             iter.advance();
             res.setEntry(iter.key(), iter.value() * v.getEntry(iter.key()));
@@ -380,7 +380,7 @@ public class OpenMapRealVector extends AbstractRealVector
     public OpenMapRealVector ebeMultiply(double[] v) {
         checkVectorDimensions(v.length);
         OpenMapRealVector res = new OpenMapRealVector(this);
-        Iterator iter = res.entries.iterator();
+        Iterator iter = entries.iterator();
         while (iter.hasNext()) {
             iter.advance();
             res.setEntry(iter.key(), iter.value() * v[iter.key()]);

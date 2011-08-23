@@ -14,27 +14,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package org.apache.commons.math.linear;
+package org.apache.commons.math.stat.regression;
 
 import org.apache.commons.math.exception.MathIllegalArgumentException;
-import org.apache.commons.math.exception.util.LocalizedFormats;
+import org.apache.commons.math.exception.util.Localizable;
 
 /**
- * Exception to be thrown when a symmetric, definite positive
- * {@link RealLinearOperator} is expected.
- * Since the coefficients of the matrix are not accessible, the most
- * general definition is used to check that {@code A} is not positive
- * definite, i.e.  there exists {@code x} such that {@code x' A x <= 0}.
- * In the terminology of this exception, {@code A} is the "offending"
- * linear operator and {@code x} the "offending" vector.
+ * Exception thrown when a regression model is not correctly specified.
  *
- * @version $Id$
+ * @since 3.0
+ * @version $Id: ModelSpecificationException.java 1151328 2011-07-27 04:11:21Z bayard $
  */
-public class NonPositiveDefiniteLinearOperatorException
-    extends MathIllegalArgumentException {
-    /** Creates a new instance of this class. */
-    public NonPositiveDefiniteLinearOperatorException() {
-        super(LocalizedFormats.NON_POSITIVE_DEFINITE_LINEAR_OPERATOR);
+public class ModelSpecificationException extends MathIllegalArgumentException {
+    /** Serializable version Id. */
+    private static final long serialVersionUID = 4206514456095401070L;
+
+    /**
+     * @param pattern message pattern describing the specification error.
+     *
+     * @param args arguments.
+     */
+    public ModelSpecificationException(Localizable pattern,
+                                        Object ... args) {
+        super(pattern, args);
     }
 }

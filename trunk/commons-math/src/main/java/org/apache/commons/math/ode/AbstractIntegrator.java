@@ -28,7 +28,7 @@ import java.util.TreeSet;
 
 import org.apache.commons.math.ConvergenceException;
 import org.apache.commons.math.MaxEvaluationsExceededException;
-import org.apache.commons.math.analysis.solvers.BrentSolver;
+import org.apache.commons.math.analysis.solvers.BracketingNthOrderBrentSolver;
 import org.apache.commons.math.analysis.solvers.UnivariateRealSolver;
 import org.apache.commons.math.exception.MathUserException;
 import org.apache.commons.math.exception.util.LocalizedFormats;
@@ -42,7 +42,7 @@ import org.apache.commons.math.util.MathUtils;
 
 /**
  * Base class managing common boilerplate for all integrators.
- * @version $Id: AbstractIntegrator.java 1139831 2011-06-26 16:26:48Z luc $
+ * @version $Id: AbstractIntegrator.java 1152283 2011-07-29 15:50:39Z luc $
  * @since 2.0
  */
 public abstract class AbstractIntegrator implements FirstOrderIntegrator {
@@ -126,7 +126,8 @@ public abstract class AbstractIntegrator implements FirstOrderIntegrator {
                                 final double convergence,
                                 final int maxIterationCount) {
         addEventHandler(handler, maxCheckInterval, convergence,
-                        maxIterationCount, new BrentSolver(convergence));
+                        maxIterationCount,
+                        new BracketingNthOrderBrentSolver(convergence, 5));
     }
 
     /** {@inheritDoc} */

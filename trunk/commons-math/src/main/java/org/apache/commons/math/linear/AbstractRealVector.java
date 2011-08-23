@@ -36,7 +36,7 @@ import org.apache.commons.math.util.FastMath;
  * This class provides default basic implementations for many methods in the
  * {@link RealVector} interface.
  *
- * @version $Id: AbstractRealVector.java 1131229 2011-06-03 20:49:25Z luc $
+ * @version $Id: AbstractRealVector.java 1151665 2011-07-27 23:26:45Z erans $
  * @since 2.1
  */
 public abstract class AbstractRealVector implements RealVector {
@@ -510,6 +510,32 @@ public abstract class AbstractRealVector implements RealVector {
         Entry e;
         while (it.hasNext() && (e = it.next()) != null) {
             e.setValue(function.value(e.getValue()));
+        }
+        return this;
+    }
+
+    /** {@inheritDoc} */
+    public RealVector combine(double a, double b, double[] y) {
+        return copy().combineToSelf(a, b, y);
+    }
+
+    /** {@inheritDoc} */
+    public RealVector combine(double a, double b, RealVector y) {
+        return copy().combineToSelf(a, b, y);
+    }
+
+    /** {@inheritDoc} */
+    public RealVector combineToSelf(double a, double b, double[] y) {
+        return combineToSelf(a, b, new ArrayRealVector(y, false));
+    }
+
+    /** {@inheritDoc} */
+    public RealVector combineToSelf(double a, double b, RealVector y) {
+        checkVectorDimensions(y);
+        for (int i = 0; i < getDimension(); i++) {
+            final double xi = getEntry(i);
+            final double yi = y.getEntry(i);
+            setEntry(i, a * xi + b * yi);
         }
         return this;
     }

@@ -65,7 +65,7 @@ import org.apache.commons.math.linear.RealMatrix;
  * <a href="https://issues.apache.org/jira/browse/MATH-437">MATH-437</a> for details.
  * </p>
  *
- * @version $Id: KolmogorovSmirnovDistributionImpl.java 1139906 2011-06-26 18:42:32Z luc $
+ * @version $Id: KolmogorovSmirnovDistributionImpl.java 1157539 2011-08-14 14:57:05Z sebb $
  */
 public class KolmogorovSmirnovDistributionImpl implements KolmogorovSmirnovDistribution, Serializable {
 
@@ -342,7 +342,7 @@ public class KolmogorovSmirnovDistributionImpl implements KolmogorovSmirnovDistr
 
         /*
          * Aside from the first column and last row, the (i, j)-th element is
-         * 1/(i - j + 1)! if i − j + 1 >= 0, else 0. 1's and 0's are already
+         * 1/(i - j + 1)! if i - j + 1 >= 0, else 0. 1's and 0's are already
          * put, so only division with (i - j + 1)! is needed in the elements
          * that have 1's. There is no need to calculate (i - j + 1)! and then
          * divide - small steps avoid overflows.
