@@ -209,11 +209,11 @@ public class ParserTestCase extends TestCase {
 		try {
 			Parser p = new Parser();
 			ASTNode obj = p.parse("f[[1,2]]");
-			assertEquals(obj.toString(), "Part[Part[f, 1], 2]");
+			assertEquals(obj.toString(), "Part[f, 1, 2]");
 			obj = p.parse("f[[1]][[2]]");
 			assertEquals(obj.toString(), "Part[Part[f, 1], 2]");
 			obj = p.parse("f[[1,2,f[x]]]");
-			assertEquals(obj.toString(), "Part[Part[Part[f, 1], 2], f[x]]");
+			assertEquals(obj.toString(), "Part[f, 1, 2, f[x]]");
 			obj = p.parse("f[[1]][[2]][[f[x]]]");
 			assertEquals(obj.toString(), "Part[Part[Part[f, 1], 2], f[x]]");
 		} catch (Exception e) {
