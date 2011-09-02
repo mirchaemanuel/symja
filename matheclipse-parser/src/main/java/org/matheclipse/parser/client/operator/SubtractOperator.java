@@ -19,15 +19,17 @@ import org.matheclipse.parser.client.ast.ASTNode;
 import org.matheclipse.parser.client.ast.IParserFactory;
 
 public class SubtractOperator extends InfixOperator {
-	public SubtractOperator(final String oper, final String functionName, final int precedence,
-			final int grouping) {
+	public SubtractOperator(final String oper, final String functionName, final int precedence, final int grouping) {
 		super(oper, functionName, precedence, grouping);
 	}
 
-	public ASTNode createFunction(final IParserFactory factory, final ASTNode lhs,
-			final ASTNode rhs) {
-		return factory.createFunction(factory.createSymbol("Plus"), lhs,
-				factory.createFunction(factory.createSymbol("Times"),
-						factory.createInteger(-1), rhs));
+	public ASTNode createFunction(final IParserFactory factory, final ASTNode lhs, final ASTNode rhs) {
+		return factory.createFunction(factory.createSymbol("Plus"), lhs, factory.createFunction(factory.createSymbol("Times"), factory
+				.createInteger(-1), rhs));
+
+		// alternatively we can introduce a Subtract operator.
+		// see http://code.google.com/p/symja/issues/detail?id=36
+		// return factory.createFunction(factory.createSymbol("Subtract"), lhs,
+		// rhs);
 	}
 }

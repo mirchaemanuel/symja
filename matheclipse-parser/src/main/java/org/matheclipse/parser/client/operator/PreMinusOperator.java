@@ -24,9 +24,11 @@ public class PreMinusOperator extends PrefixOperator {
 		super(oper, functionName, precedence);
 	}
 
-	public ASTNode createFunction(final IParserFactory factory,
-			final ASTNode argument) {
-		return factory.createFunction(factory.createSymbol("Times"),factory.createInteger(-1),
-				argument);
+	public ASTNode createFunction(final IParserFactory factory, final ASTNode argument) {
+		return factory.createFunction(factory.createSymbol("Times"), factory.createInteger(-1), argument);
+
+		// alternatively we can introduce a Minus operator.
+		// see http://code.google.com/p/symja/issues/detail?id=36
+		// return factory.createFunction(factory.createSymbol("Minus"), argument);
 	}
 }
