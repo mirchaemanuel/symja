@@ -1,5 +1,5 @@
 /*
- * $Id: GenPolynomial.java 3571 2011-03-18 22:02:51Z kredel $
+ * $Id: GenPolynomial.java 3749 2011-08-24 21:44:12Z kredel $
  */
 
 package edu.jas.poly;
@@ -1451,6 +1451,9 @@ Iterable<Monomial<C>> {
      * @return extended polynomial.
      */
     public GenPolynomial<C> extend(GenPolynomialRing<C> pfac, int j, long k) {
+        if (ring.equals(pfac)) { // nothing to do
+	    return this;
+        }
         GenPolynomial<C> Cp = pfac.getZERO().clone();
         if (this.isZERO()) {
             return Cp;
@@ -1477,6 +1480,9 @@ Iterable<Monomial<C>> {
      * @return extended polynomial.
      */
     public GenPolynomial<C> extendLower(GenPolynomialRing<C> pfac, int j, long k) {
+        if (ring.equals(pfac)) { // nothing to do
+	    return this;
+        }
         GenPolynomial<C> Cp = pfac.getZERO().clone();
         if (this.isZERO()) {
             return Cp;

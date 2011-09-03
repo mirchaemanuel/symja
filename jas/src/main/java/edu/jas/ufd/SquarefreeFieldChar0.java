@@ -1,5 +1,5 @@
 /*
- * $Id: SquarefreeFieldChar0.java 3715 2011-08-03 13:48:27Z kredel $
+ * $Id: SquarefreeFieldChar0.java 3752 2011-08-27 19:23:49Z kredel $
  */
 
 package edu.jas.ufd;
@@ -487,7 +487,7 @@ public class SquarefreeFieldChar0<C extends GcdRingElem<C>> extends SquarefreeAb
             sfactors.put(D, i);
         }
         if ( logger.isInfoEnabled() ) {
-            logger.info("squarefreeFactors(" + P + "= = " + sfactors);
+            logger.info("squarefreeFactors(" + P + ") = " + sfactors);
         }
         return sfactors;
     }
