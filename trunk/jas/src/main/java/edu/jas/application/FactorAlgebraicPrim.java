@@ -1,5 +1,5 @@
 /*
- * $Id: FactorAlgebraicPrim.java 3671 2011-06-25 21:11:34Z kredel $
+ * $Id: FactorAlgebraicPrim.java 3753 2011-08-27 20:34:30Z kredel $
  */
 
 package edu.jas.application;
@@ -147,8 +147,8 @@ public class FactorAlgebraicPrim<C extends GcdRingElem<C>> extends FactorAbsolut
         }
         GenPolynomial<AlgebraicNumber<C>> f = pfac.getONE();
         for (IdealWithUniv<C> Iu : Iul ) {
-            GenPolynomial<C> ag = PolyUtilApp.<C> selectWithVariable(Iu.ideal.getList(),1); 
-            GenPolynomial<C> pg = PolyUtilApp.<C> selectWithVariable(Iu.ideal.getList(),0); 
+            GenPolynomial<C> ag = PolyUtil.<C> selectWithVariable(Iu.ideal.getList(),1); 
+            GenPolynomial<C> pg = PolyUtil.<C> selectWithVariable(Iu.ideal.getList(),0); 
             //System.out.println("ag = " + ag.toScript());
             //System.out.println("pg = " + pg.toScript());
             if ( ag.equals(Ad) ) {

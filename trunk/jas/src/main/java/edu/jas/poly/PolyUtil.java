@@ -1,5 +1,5 @@
 /*
- * $Id: PolyUtil.java 3699 2011-07-30 20:22:15Z kredel $
+ * $Id: PolyUtil.java 3756 2011-09-03 11:37:03Z kredel $
  */
 
 package edu.jas.poly;
@@ -1795,6 +1795,38 @@ public class PolyUtil {
 
 
     /**
+     * Maximal degree of leading terms of a polynomial list.
+     * @return maximum degree of the leading terms of a polynomial list.
+     */
+    public static <C extends RingElem<C>> long totalDegreeLeadingTerm(List<GenPolynomial<C>> P){
+        long degree = 0;
+        for(GenPolynomial<C> g : P){
+            long total = g.leadingExpVector().totalDeg();
+            if ( degree < total ) {
+                degree = total;
+            }
+        }
+        return degree;
+    }
+
+
+    /**
+     * Maximal degree of polynomial list.
+     * @return maximum degree of the polynomial list.
+     */
+    public static <C extends RingElem<C>> long totalDegree(List<GenPolynomial<C>> P){
+        long degree = 0;
+        for(GenPolynomial<C> g : P){
+            long total = g.degree();
+            if ( degree < total ) {
+                degree = total;
+            }
+        }
+        return degree;
+    }
+
+
+    /**
      * Maximal degree in the coefficient polynomials.
      * @param <C> coefficient type.
      * @return maximal degree in the coefficients.
@@ -2024,6 +2056,107 @@ public class PolyUtil {
             list.add(b);
         }
         return list;
+    }
+
+
+    /**
+     * Remove all upper variables, which do not occur in polynomial.
+     * @param p polynomial.
+     * @return polynomial with removed variables
+     */
+    public static <C extends RingElem<C>> GenPolynomial<C> removeUnusedUpperVariables(GenPolynomial<C> p) {
+        GenPolynomialRing<C> fac = p.ring;
+        if (fac.nvar <= 1) { // univariate
+            return p;
+        }
+        int[] dep = p.degreeVector().dependencyOnVariables();
+        if (fac.nvar == dep.length) { // all variables appear
+            return p;
+        }
+        if (dep.length == 0) { // no variables
+            return p;
+        }
+        int l = dep[0]; // higher variable
+        int r = dep[dep.length - 1]; // lower variable
+        if (l == 0 /*|| l == fac.nvar-1*/) { // upper variable appears
+            return p;
+        }
+        int n = l;
+        GenPolynomialRing<C> facr = fac.contract(n);
+        Map<ExpVector, GenPolynomial<C>> mpr = p.contract(facr);
+        if (mpr.size() != 1) {
+            System.out.println("upper ex, l = " + l + ", r = " + r + ", p = " + p + ", fac = "
+                            + fac.toScript());
+            throw new RuntimeException("this should not happen " + mpr);
+        }
+        GenPolynomial<C> pr = mpr.values().iterator().next();
+        n = fac.nvar - 1 - r;
+        if (n == 0) {
+            return pr;
+        } // else case not implemented
+        return pr;
+    }
+
+
+    /**
+     * Remove all lower variables, which do not occur in polynomial.
+     * @param p polynomial.
+     * @return polynomial with removed variables
+     */
+    public static <C extends RingElem<C>> GenPolynomial<C> removeUnusedLowerVariables(GenPolynomial<C> p) {
+        GenPolynomialRing<C> fac = p.ring;
+        if (fac.nvar <= 1) { // univariate
+            return p;
+        }
+        int[] dep = p.degreeVector().dependencyOnVariables();
+        if (fac.nvar == dep.length) { // all variables appear
+            return p;
+        }
+        if (dep.length == 0) { // no variables
+            return p;
+        }
+        int l = dep[0]; // higher variable
+        int r = dep[dep.length - 1]; // lower variable
+        if (r == fac.nvar - 1) { // lower variable appears
+            return p;
+        }
+        int n = r + 1;
+        GenPolynomialRing<GenPolynomial<C>> rfac = fac.recursive(n);
+        GenPolynomial<GenPolynomial<C>> mpr = recursive(rfac, p);
+        if (mpr.length() != p.length()) {
+            System.out.println("lower ex, l = " + l + ", r = " + r + ", p = " + p + ", fac = "
+                            + fac.toScript());
+            throw new RuntimeException("this should not happen " + mpr);
+        }
+        RingFactory<C> cf = fac.coFac;
+        GenPolynomialRing<C> facl = new GenPolynomialRing<C>(cf, rfac);
+        GenPolynomial<C> pr = facl.getZERO().clone();
+        for (Monomial<GenPolynomial<C>> m : mpr) {
+            ExpVector e = m.e;
+            GenPolynomial<C> a = m.c;
+            if (!a.isConstant()) {
+                throw new RuntimeException("this can not happen " + a);
+            }
+            C c = a.leadingBaseCoefficient();
+            pr.doPutToMap(e, c);
+        }
+        return pr;
+    }
+
+
+    /**
+     * Select polynomial with univariate leading term in variable i.
+     * @param i variable index.
+     * @return polynomial with head term in variable i
+     */
+    public static <C extends RingElem<C>> GenPolynomial<C> selectWithVariable(List<GenPolynomial<C>> P, int i) {
+        for (GenPolynomial<C> p : P) {
+            int[] dep = p.leadingExpVector().dependencyOnVariables();
+            if (dep.length == 1 && dep[0] == i) {
+                return p;
+            }
+        }
+        return null; // not found       
     }
 
 }

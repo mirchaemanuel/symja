@@ -16,11 +16,6 @@ import org.matheclipse.parser.client.SyntaxError;
 
 public class Arg extends AbstractTrigArg1 implements INumeric {
 
-//	@Override
-//	public String[] getRules() {
-//		return null;
-//	}
-
 	public Arg() {
 	}
 
