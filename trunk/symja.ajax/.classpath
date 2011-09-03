@@ -16,8 +16,8 @@
 			<attribute name="javadoc_location" value="file:/C:/galileo/eclipse/plugins/com.google.gwt.eclipse.sdkbundle.2.0.3_2.0.3.v201002191036/gwt-2.0.3/doc/javadoc/"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="war/WEB-INF/lib/meconsole012.jar" sourcepath="/symja"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/objectify-3.0-retro.jar"/>
 	<classpathentry kind="con" path="com.google.appengine.eclipse.core.GAE_CONTAINER/App Engine"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/meconsole013.jar"/>
 	<classpathentry kind="output" path="war/WEB-INF/classes"/>
 </classpath>
