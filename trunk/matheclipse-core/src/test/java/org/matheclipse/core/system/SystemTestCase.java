@@ -2689,6 +2689,7 @@ public class SystemTestCase extends AbstractTestCase {
 	}
 
 	public void testSystem805() {
+		check("Solve[a+2x==0,x]", "{{x->(-1/2)*a}}");
 		check("Solve[(x^2-1)/(x-1)==0,x]", "{{x->-1}}");
 		check("Solve[4*x^(-2)-1==0,x]", "{{x->2},{x->-2}}");
 		check(
