@@ -553,4 +553,8 @@ public class Symbol extends ExprImpl implements ISymbol {
 		return null;
 	}
 
+	@Override
+	public IExpr negate() {
+		return F.function(F.Times, F.CN1, this);
+	}
 }
