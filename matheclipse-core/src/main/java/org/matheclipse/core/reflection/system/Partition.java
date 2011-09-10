@@ -18,15 +18,16 @@ public class Partition extends AbstractFunctionEvaluator {
 	@Override
 	public IExpr evaluate(final IAST ast) {
 		Validate.checkRange(ast, 3, 4);
+
 		if (ast.get(1).isAST()) {
-			if (ast.get(2) instanceof IInteger) {
+			if (ast.get(2).isInteger()) {
 				final IAST f = (IAST) ast.get(1);
 				final int n = ((IInteger) ast.get(2)).getBigNumerator().intValue();
 				final IAST result = F.ast(f.head());
 				IAST temp;
 				int i = n;
 				int v = n;
-				if ((ast.size() == 4) && (ast.get(3) instanceof IInteger)) {
+				if ((ast.size() == 4) && ast.get(3).isInteger()) {
 					v = ((IInteger) ast.get(3)).getBigNumerator().intValue();
 				}
 				while (i <= f.size() - 1) {

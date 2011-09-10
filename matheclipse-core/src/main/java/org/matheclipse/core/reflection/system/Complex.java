@@ -25,16 +25,15 @@ public class Complex extends AbstractFunctionEvaluator {
 				arg0 = engine.evaluate(arg0);
 				IExpr arg1 = ast.get(2);
 				arg1 = engine.evaluate(arg1);
-				if ((arg0 instanceof IInteger || arg0 instanceof IFraction)
-						&& (arg1 instanceof IInteger || arg1 instanceof IFraction)) {
+				if (arg0.isRational() && arg1.isRational()) {
 					IFraction re;
-					if (arg0 instanceof IInteger) {
+					if (arg0.isInteger()) {
 						re = F.fraction((IInteger) arg0, F.C1);
 					} else {
 						re = (IFraction) arg0;
 					}
 					IFraction im;
-					if (arg1 instanceof IInteger) {
+					if (arg1.isInteger()) {
 						im = F.fraction((IInteger) arg1, F.C1);
 					} else {
 						im = (IFraction) arg1;

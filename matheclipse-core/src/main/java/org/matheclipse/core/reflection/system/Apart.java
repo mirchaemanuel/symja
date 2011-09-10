@@ -110,7 +110,7 @@ public class Apart extends AbstractFunctionEvaluator {
 				IExpr temp;
 				if (!Ai.get(0).get(0).isZERO()) {
 					temp = F.eval(jas.poly2Expr(Ai.get(0).get(0), null));
-					if (temp instanceof IAST) {
+					if (temp.isAST()) {
 						((IAST) temp).addEvalFlags(IAST.IS_DECOMPOSED_PARTIAL_FRACTION);
 					}
 					result.add(temp);
@@ -123,7 +123,7 @@ public class Apart extends AbstractFunctionEvaluator {
 							temp = F.eval(F.Times(jas.poly2Expr(genPolynomial, null), F.Power(jas.poly2Expr(D.get(i - 1), null), F.integer(j
 									* (-1L)))));
 							if (!temp.equals(F.C0)) {
-								if (temp instanceof IAST) {
+								if (temp.isAST()) {
 									((IAST) temp).addEvalFlags(IAST.IS_DECOMPOSED_PARTIAL_FRACTION);
 								}
 								result.add(temp);
@@ -156,7 +156,7 @@ public class Apart extends AbstractFunctionEvaluator {
 			parts = Apart.getFractionalPartsTimes((IAST) arg, true);
 		} else if (arg.isPower()) {
 			IAST temp = (IAST) arg;
-			if (temp.get(2) instanceof ISignedNumber) {
+			if (temp.get(2).isSignedNumber()) {
 				ISignedNumber sn = (ISignedNumber) temp.get(2);
 				parts = new IExpr[2];
 				if (sn.equals(F.CN1)) {
@@ -248,7 +248,7 @@ public class Apart extends AbstractFunctionEvaluator {
 						}
 					}
 				}
-			} else if (splitFractionalNumbers && arg instanceof IRational) {
+			} else if (splitFractionalNumbers && arg.isRational()) {
 				IInteger numer = ((IRational) arg).getNumerator();
 				if (!numer.equals(F.C1)) {
 					numerator.add(numer);

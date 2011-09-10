@@ -3,7 +3,6 @@ package org.matheclipse.core.reflection.system;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.expression.StringX;
-import org.matheclipse.core.expression.Symbol;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.ISymbol;
@@ -55,9 +54,7 @@ public class Equal extends AbstractFunctionEvaluator {
 			return 1;
 		}
 
-		if ((o0 instanceof ISymbol)
-				&& ((ISymbol.CONSTANT & ((ISymbol) o0).getAttributes()) == ISymbol.CONSTANT)
-				&& (o1 instanceof ISymbol)
+		if ((o0.isSymbol()) && ((ISymbol.CONSTANT & ((ISymbol) o0).getAttributes()) == ISymbol.CONSTANT) && (o1.isSymbol())
 				&& ((ISymbol.CONSTANT & ((ISymbol) o1).getAttributes()) == ISymbol.CONSTANT)) {
 			return -1;
 		}
@@ -68,8 +65,7 @@ public class Equal extends AbstractFunctionEvaluator {
 
 		if ((o0 instanceof StringX) && (o1 instanceof StringX)) {
 
-			// SymbolImpl extends HString !!!
-			if ((o0 instanceof Symbol) || (o1 instanceof Symbol)) {
+			if (o0.isSymbol() || o1.isSymbol()) {
 				return 0;
 			}
 

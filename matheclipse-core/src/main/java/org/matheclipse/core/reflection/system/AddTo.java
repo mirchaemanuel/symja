@@ -5,7 +5,6 @@ import org.matheclipse.core.eval.interfaces.AbstractArg2;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.ISymbol;
-import org.matheclipse.core.reflection.system.Decrement.DecrementFunction;
 
 import com.google.common.base.Function;
 
@@ -39,8 +38,7 @@ public class AddTo extends AbstractArg2 {
 	@Override
 	public IExpr e2ObjArg(final IExpr o0, final IExpr o1) {
 		final EvalEngine engine = EvalEngine.get();
-		if (o0 instanceof ISymbol) {
-
+		if (o0.isSymbol()) {
 			final IExpr v1 = engine.evaluate(o1);
 			final ISymbol sym = (ISymbol) o0;
 

@@ -9,6 +9,7 @@ import java.util.HashSet;
 import org.matheclipse.core.basic.Config;
 import org.matheclipse.core.eval.EvalEngine;
 import org.matheclipse.core.eval.exception.RuleCreationError;
+import org.matheclipse.core.eval.exception.Validate;
 import org.matheclipse.core.eval.exception.WrongNumberOfArguments;
 import org.matheclipse.core.eval.interfaces.IFunctionEvaluator;
 import org.matheclipse.core.expression.F;
@@ -29,7 +30,9 @@ public class Package implements IFunctionEvaluator {
 	}
 
 	public IExpr evaluate(final IAST ast) {
-		if (ast.size() != 4 || !(ast.get(1) instanceof IStringX) || !ast.get(2).isList() || !ast.get(3).isList()) {
+		Validate.checkSize(ast, 4);
+
+		if (!(ast.get(1) instanceof IStringX) || !ast.get(2).isList() || !ast.get(3).isList()) {
 			throw new WrongNumberOfArguments(ast, 1, ast.size() - 1);
 		}
 		if (Config.SERVER_MODE) {
@@ -49,7 +52,7 @@ public class Package implements IFunctionEvaluator {
 		ISymbol toSymbol;
 		for (int i = 1; i < publicSymbols.size(); i++) {
 			IExpr expr = publicSymbols.get(i);
-			if (expr instanceof ISymbol) {
+			if (expr.isSymbol()) {
 				publicSymbolSet.add((ISymbol) expr);
 				toSymbol = F.predefinedSymbol(((ISymbol) expr).toString());
 				convertedSymbolMap.put((ISymbol) expr, toSymbol);
@@ -58,7 +61,7 @@ public class Package implements IFunctionEvaluator {
 
 		// determine "private package rule headers" in convertedSymbolMap
 		for (int i = 1; i < list.size(); i++) {
-			if (list.get(i) instanceof IAST) {
+			if (list.get(i).isAST()) {
 				determineRuleHead((IAST) list.get(i), publicSymbolSet, convertedSymbolMap);
 			}
 		}
@@ -93,9 +96,9 @@ public class Package implements IFunctionEvaluator {
 		if (rule.size() > 1 && (rule.head().equals(F.Set) || rule.head().equals(F.SetDelayed))) {
 			// determine the head to which this rule is associated
 			lhsHead = null;
-			if (rule.get(1) instanceof IAST) {
+			if (rule.get(1).isAST()) {
 				lhsHead = ((IAST) rule.get(1)).topHead();
-			} else if (rule.get(1) instanceof ISymbol) {
+			} else if (rule.get(1).isSymbol()) {
 				lhsHead = (ISymbol) rule.get(1);
 			}
 
@@ -121,9 +124,9 @@ public class Package implements IFunctionEvaluator {
 	 */
 	private static IExpr convertSymbolsInExpr(IExpr expr, HashMap<ISymbol, ISymbol> convertedSymbols) {
 		IExpr result = expr;
-		if (expr instanceof IAST) {
+		if (expr.isAST()) {
 			result = convertSymbolsInList((IAST) expr, convertedSymbols);
-		} else if (expr instanceof ISymbol) {
+		} else if (expr.isSymbol()) {
 			ISymbol toSymbol = convertedSymbols.get((ISymbol) expr);
 			if (toSymbol != null) {
 				result = toSymbol;
@@ -145,9 +148,9 @@ public class Package implements IFunctionEvaluator {
 		IAST result = ast.clone();
 		for (int i = 0; i < result.size(); i++) {
 			IExpr expr = result.get(i);
-			if (expr instanceof IAST) {
+			if (expr.isAST()) {
 				result.set(i, convertSymbolsInList((IAST) expr, convertedSymbols));
-			} else if (expr instanceof ISymbol) {
+			} else if (expr.isSymbol()) {
 				ISymbol toSymbol = convertedSymbols.get((ISymbol) expr);
 				if (toSymbol != null) {
 					result.set(i, toSymbol);
@@ -187,7 +190,7 @@ public class Package implements IFunctionEvaluator {
 			buf.setIgnoreNewLine(true);
 
 			IExpr parsedExpression = engine.parse(builder.toString());
-			if (parsedExpression != null && parsedExpression instanceof IAST) {
+			if (parsedExpression != null && parsedExpression.isAST()) {
 				IAST ast = (IAST) parsedExpression;
 				if (ast.size() != 4 || !(ast.get(1) instanceof IStringX) || !ast.get(2).isList() || !ast.get(3).isList()) {
 					throw new WrongNumberOfArguments(ast, 3, ast.size() - 1);

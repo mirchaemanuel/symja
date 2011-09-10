@@ -21,14 +21,13 @@ public class Norm implements IFunctionEvaluator {
 	public IExpr evaluate(final IAST ast) {
 		Validate.checkRange(ast, 2, 3);
 		IExpr arg = ast.get(1);
-		if (arg instanceof INumber) {
+		if (arg.isNumber()) {
 			// absolute Value of a number
 			return ((INumber) arg).eabs();
 		}
 		int dim = arg.isVector();
 		if (dim > (-1)) {
-			return F.Sqrt(((IAST) arg).map(F.Plus, Functors.replaceAll(F.Sqr(F
-					.Abs(F.Null)), F.Null)));
+			return F.Sqrt(((IAST) arg).map(F.Plus, Functors.replaceAll(F.Sqr(F.Abs(F.Null)), F.Null)));
 		}
 		return null;
 	}

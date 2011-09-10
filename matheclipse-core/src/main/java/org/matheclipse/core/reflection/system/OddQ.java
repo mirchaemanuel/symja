@@ -16,13 +16,12 @@ import com.google.common.base.Predicate;
  * Returns <code>True</code> if the 1st argument is an odd integer number;
  * <code>False</code> otherwise
  */
-public class OddQ extends AbstractFunctionEvaluator implements
-		Predicate<IExpr> {
+public class OddQ extends AbstractFunctionEvaluator implements Predicate<IExpr> {
 	/**
 	 * Constructor for the unary predicate
 	 */
 	public final static OddQ CONST = new OddQ();
-	
+
 	public OddQ() {
 	}
 
@@ -38,7 +37,7 @@ public class OddQ extends AbstractFunctionEvaluator implements
 	}
 
 	public boolean apply(final IExpr expr) {
-		return (expr instanceof IntegerSym) && ((IntegerSym) expr).isOdd();
+		return expr.isInteger() && ((IntegerSym) expr).isOdd();
 	}
 
 }

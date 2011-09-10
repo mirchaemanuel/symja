@@ -148,7 +148,7 @@ public class Plus extends AbstractArgMultiple implements INumeric {
 			} else if (o1.equals(F.CNInfinity)) {
 				EvalEngine.get().getOutPrintStream().println("Indeterminate expression Infinity-Infinity");
 				return F.Indeterminate;
-			} else if (o1 instanceof ISignedNumber) {
+			} else if (o1.isSignedNumber()) {
 				return F.CInfinity;
 			}
 		} else if (inf.equals(F.CNInfinity)) {
@@ -157,7 +157,7 @@ public class Plus extends AbstractArgMultiple implements INumeric {
 				return F.Indeterminate;
 			} else if (o1.equals(F.CNInfinity)) {
 				return F.CNInfinity;
-			} else if (o1 instanceof ISignedNumber) {
+			} else if (o1.isSignedNumber()) {
 				return F.CNInfinity;
 			}
 		}

@@ -43,20 +43,20 @@ public class FindRoot extends AbstractFunctionEvaluator implements IConstantHead
 	@Override
 	public IExpr evaluate(final IAST ast) {
 		Validate.checkRange(ast, 3);
-		
+
 		String method = "Newton";
 		int maxIterations = 100;
 		if (ast.size() >= 4) {
 			final Options options = new Options(ast.topHead(), ast, 3);
 			IExpr optionMaxIterations = options.getOption("MaxIterations");
-			if (optionMaxIterations != null && optionMaxIterations instanceof IInteger) {
+			if (optionMaxIterations != null && optionMaxIterations.isInteger()) {
 				maxIterations = ((IInteger) optionMaxIterations).toInt();
 			}
 			IExpr optionMethod = options.getOption("Method");
-			if (optionMethod != null && optionMethod instanceof ISymbol) {
+			if (optionMethod != null && optionMethod.isSymbol()) {
 				method = ((ISymbol) optionMethod).toString();
 			} else {
-				if (ast.get(3) instanceof ISymbol) {
+				if (ast.get(3).isSymbol()) {
 					method = ast.get(3).toString();
 				}
 			}
@@ -64,8 +64,7 @@ public class FindRoot extends AbstractFunctionEvaluator implements IConstantHead
 		if ((ast.get(2).isList())) {
 			IAST list = (IAST) ast.get(2);
 			IExpr function = ast.get(1);
-			if (list.size() == 4 && list.get(1) instanceof ISymbol && list.get(2) instanceof ISignedNumber
-					&& list.get(3) instanceof ISignedNumber) {
+			if (list.size() == 4 && list.get(1).isSymbol() && list.get(2).isSignedNumber() && list.get(3) instanceof ISignedNumber) {
 				if (function.isAST(Equal, 3)) {
 					function = F.Plus(((IAST) function).get(1), F.Times(F.CN1, ((IAST) function).get(2)));
 				}

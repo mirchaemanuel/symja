@@ -9,7 +9,6 @@ import org.matheclipse.core.interfaces.IInteger;
 import org.matheclipse.core.interfaces.ISymbol;
 import org.matheclipse.parser.client.SyntaxError;
 
-
 /**
  * Return the factors of an integer number
  * 
@@ -32,16 +31,16 @@ public class FactorInteger extends AbstractTrigArg1 {
 
 	@Override
 	public IExpr evaluateArg1(final IExpr arg1) {
-		if (arg1 instanceof IInteger) {
+		if (arg1.isInteger()) {
 			return ((IntegerSym) arg1).factorInteger();
 		}
 		return null;
 	}
-	
+
 	@Override
-  public void setUp(final ISymbol symbol) throws SyntaxError {
-    symbol.setAttributes(ISymbol.LISTABLE);
-    super.setUp(symbol);
-  }
+	public void setUp(final ISymbol symbol) throws SyntaxError {
+		symbol.setAttributes(ISymbol.LISTABLE);
+		super.setUp(symbol);
+	}
 
 }

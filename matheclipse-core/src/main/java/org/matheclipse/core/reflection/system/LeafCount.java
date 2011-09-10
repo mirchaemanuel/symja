@@ -56,12 +56,13 @@ public class LeafCount extends AbstractFunctionEvaluator {
 	@Override
 	public IExpr evaluate(final IAST ast) {
 		Validate.checkSize(ast, 2);
+		
 		return F.integer(leafCount(ast.get(1)));
 	}
 
 	public static int leafCount(IExpr expr) {
 		int leafCount = 0;
-		if (expr instanceof IAST) {
+		if (expr.isAST()) {
 			leafCount = expr.accept(new LeafCountVisitor(0));
 		} else {
 			leafCount = expr.isAtom() ? 1 : 0;

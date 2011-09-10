@@ -34,7 +34,7 @@ public class Min extends AbstractFunctionEvaluator {
 				} else {
 					if (comp == COMPARE_RESULT.UNDEFINED) {
 						// undetermined
-						if (max1 instanceof INumber) {
+						if (max1.isNumber()) {
 							f.add(max2);
 						} else {
 							f.add(max1);

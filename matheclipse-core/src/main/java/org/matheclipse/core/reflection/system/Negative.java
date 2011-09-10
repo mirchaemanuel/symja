@@ -5,7 +5,6 @@ import org.matheclipse.core.eval.interfaces.IFunctionEvaluator;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
-import org.matheclipse.core.interfaces.INumber;
 import org.matheclipse.core.interfaces.ISignedNumber;
 import org.matheclipse.core.interfaces.ISymbol;
 
@@ -16,13 +15,14 @@ public class Negative implements IFunctionEvaluator {
 
 	public IExpr evaluate(final IAST ast) {
 		Validate.checkSize(ast, 2);
-		if (ast.get(1) instanceof ISignedNumber) {
+		
+		if (ast.get(1).isSignedNumber()) {
 			if (((ISignedNumber) ast.get(1)).isNegative()) {
 				return F.True;
 			}
 			return F.False;
 		}
-		if (ast.get(1) instanceof INumber) {
+		if (ast.get(1).isNumber()) {
 			return F.False;
 		}
 		return null;

@@ -21,14 +21,14 @@ public class Arg extends AbstractTrigArg1 implements INumeric {
 
 	@Override
 	public IExpr evaluateArg1(final IExpr arg1) {
-		if (arg1 instanceof ISignedNumber) {
+		if (arg1.isSignedNumber()) {
 			final ISignedNumber in = (ISignedNumber) arg1;
 			if (in.isNegative()) {
 				return F.Pi;
 			} else if (!in.equals(F.C0)) {
 				return F.C0;
 			}
-		} else if (arg1 instanceof IComplex) {
+		} else if (arg1.isComplex()) {
 			final IComplex ic = (IComplex) arg1;
 			if (ic.getRealPart().equals(BigFraction.ZERO)) {
 				final BigFraction imaginaryPart = ic.getImaginaryPart();
@@ -53,9 +53,10 @@ public class Arg extends AbstractTrigArg1 implements INumeric {
 		return null;
 	}
 
-//	public IExpr numericEvalDC1(AbstractExpressionFactory f, DoubleComplexImpl arg1) {
-//		return f.createDouble(arg1.argument());
-//	}
+	// public IExpr numericEvalDC1(AbstractExpressionFactory f, DoubleComplexImpl
+	// arg1) {
+	// return f.createDouble(arg1.argument());
+	// }
 
 	public double evalReal(final double[] stack, final int top, final int size) {
 		if (size != 1) {
@@ -70,8 +71,8 @@ public class Arg extends AbstractTrigArg1 implements INumeric {
 	}
 
 	@Override
-  public void setUp(final ISymbol symbol) throws SyntaxError {
-    symbol.setAttributes(ISymbol.LISTABLE | ISymbol.NUMERICFUNCTION);
-    super.setUp(symbol);
-  }
+	public void setUp(final ISymbol symbol) throws SyntaxError {
+		symbol.setAttributes(ISymbol.LISTABLE | ISymbol.NUMERICFUNCTION);
+		super.setUp(symbol);
+	}
 }

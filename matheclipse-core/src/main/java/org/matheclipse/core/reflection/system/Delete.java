@@ -15,11 +15,11 @@ public class Delete extends AbstractFunctionEvaluator {
 	@Override
 	public IExpr evaluate(final IAST ast) {
 		Validate.checkSize(ast, 3);
-		if (ast.get(1) instanceof IAST) {
+		if (ast.get(1).isAST()) {
 			final IAST arg1 = (IAST) ast.get(1);
 			final IExpr arg2 = ast.get(2);
 
-			if (arg2 instanceof IInteger) {
+			if (arg2.isInteger()) {
 				try {
 					int indx = Validate.checkIntType(ast, 2, Integer.MIN_VALUE);
 					if (indx < 0) {

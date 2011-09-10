@@ -69,7 +69,7 @@ public class LinearProgramming extends AbstractFunctionEvaluator {
 							} else if (arg3D.length == 1) {
 								constraints.add(new LinearConstraint(arg2D, Relationship.GEQ, arg3D[0]));
 							}
-						} else if (arg3.get(i) instanceof ISignedNumber) {
+						} else if (arg3.get(i).isSignedNumber()) {
 							constraints.add(new LinearConstraint(arg2D, Relationship.GEQ, ((ISignedNumber) arg3.get(i)).doubleValue()));
 						} else {
 							throw new WrongArgumentType(arg3, arg3.get(i), i, "Numeric vector or number expected!");

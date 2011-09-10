@@ -21,12 +21,12 @@ public class Definition extends AbstractFunctionEvaluator {
 	@Override
 	public IExpr evaluate(final IAST ast) {
 		Validate.checkSize(ast, 2);
-		if (!(ast.get(1) instanceof ISymbol)) {
+		if (!ast.get(1).isSymbol()) {
 			return null;
 		}
 		final EvalEngine engine = EvalEngine.get();
 		PrintStream stream;
-		stream = engine.getOutPrintStream(); 
+		stream = engine.getOutPrintStream();
 		if (stream == null) {
 			stream = System.out;
 		}
@@ -46,7 +46,7 @@ public class Definition extends AbstractFunctionEvaluator {
 	@Override
 	public void setUp(ISymbol symbol) throws SyntaxError {
 		symbol.setAttributes(ISymbol.HOLDALL);
-    super.setUp(symbol);
+		super.setUp(symbol);
 	}
 
 }

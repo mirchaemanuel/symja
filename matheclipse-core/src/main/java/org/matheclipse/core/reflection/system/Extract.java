@@ -1,5 +1,6 @@
 package org.matheclipse.core.reflection.system;
 
+import org.matheclipse.core.eval.exception.Validate;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
 import org.matheclipse.core.expression.AST;
 import org.matheclipse.core.generic.PositionConverter;
@@ -14,13 +15,15 @@ public class Extract extends AbstractFunctionEvaluator {
 	}
 
 	@Override
-	public IExpr evaluate(final IAST functionList) {
-		if ((functionList.size() == 3) && (functionList.get(1) instanceof IAST) && (functionList.get(2) instanceof IAST)) {
-			return extract((IAST) functionList.get(1), (IAST) functionList.get(2));
+	public IExpr evaluate(final IAST ast) {
+		Validate.checkRange(ast, 3, 4);
+		
+		if (ast.get(1).isAST() && ast.get(2).isAST()) {
+			return extract((IAST) ast.get(1), (IAST) ast.get(2));
 		}
-		// if (list.size() == 4 && list.get(1) instanceof IAST) {
-		// LevelSpec level = new LevelSpecification(f, (IExpr) list.get(3));
-		// return extract((IAST) list.get(1), list.get(2), level);
+		// if (ast.size() == 4 && ast.get(1).isAST()) {
+		// LevelSpec level = new LevelSpecification(f, (IExpr) ast.get(3));
+		// return extract((IAST) ast.get(1), ast.get(2), level);
 		// }
 		return null;
 	}

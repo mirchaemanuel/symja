@@ -11,7 +11,7 @@ public class Append extends AbstractFunctionEvaluator {
 
 	@Override
 	public IExpr evaluate(final IAST ast) {
-		if ((ast.size() == 3) && (ast.get(1) instanceof IAST)) {
+		if ((ast.size() == 3) && (ast.get(1).isAST())) {
 			final IAST f0 = ((IAST) ast.get(1)).clone();
 			f0.add(ast.get(2));
 			return f0; 

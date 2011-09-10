@@ -19,6 +19,7 @@ public class Chop extends AbstractFunctionEvaluator {
 	@Override
 	public IExpr evaluate(final IAST ast) {
 		Validate.checkRange(ast, 2, 3);
+
 		IExpr arg1 = ast.get(1);
 		double delta = DEFAULT_CHOP_DELTA;
 		if (ast.size() == 3 && ast.get(2) instanceof INum) {

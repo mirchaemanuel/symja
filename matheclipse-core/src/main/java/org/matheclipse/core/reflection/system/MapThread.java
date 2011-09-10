@@ -22,9 +22,8 @@ public class MapThread extends AbstractFunctionEvaluator {
 		}
 
 		public IExpr apply(final IExpr firstArg) {
-			if (firstArg instanceof IAST) {
-				IExpr result = Thread.threadList((IAST) firstArg, F.List,
-						fConstant, 1);
+			if (firstArg.isAST()) {
+				IExpr result = Thread.threadList((IAST) firstArg, F.List, fConstant, 1);
 				if (result == null) {
 					return firstArg;
 				}
@@ -48,8 +47,7 @@ public class MapThread extends AbstractFunctionEvaluator {
 		} else {
 			level = new LevelSpec(0);
 		}
-		final IExpr result = Map.map(ast.get(2),
-				new UnaryMapThread(ast.get(1)), level, 1);
+		final IExpr result = Map.map(ast.get(2), new UnaryMapThread(ast.get(1)), level, 1);
 		return result == null ? ast.get(2) : result;
 	}
 

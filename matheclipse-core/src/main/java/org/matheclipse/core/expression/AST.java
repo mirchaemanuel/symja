@@ -885,15 +885,15 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 	/**
 	 * {@inheritDoc}
 	 */
-	public boolean isAST(final IExpr header, final int size) {
-		return (size() == size) && get(0).equals(header);
+	public boolean isAST(final IExpr header, final int length) {
+		return (size() == length) && get(0).equals(header);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public boolean isASTSizeGE(final IExpr header, final int size) {
-		return (size() >= size) && get(0).equals(header);
+	public boolean isASTSizeGE(final IExpr header, final int length) {
+		return (size() >= length) && get(0).equals(header);
 	}
 
 	/**
@@ -906,8 +906,8 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 	/**
 	 * {@inheritDoc}
 	 */
-	public boolean isAST(final String symbol, final int size) {
-		return (size() == size) && get(0).toString().equals(symbol);
+	public boolean isAST(final String symbol, final int length) {
+		return (size() == length) && get(0).toString().equals(symbol);
 	}
 
 	/** {@inheritDoc} */

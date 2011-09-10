@@ -19,9 +19,9 @@ public class FixedPoint extends AbstractFunctionEvaluator {
 	@Override
 	public IExpr evaluate(final IAST ast) {
 		Validate.checkRange(ast, 3, 4);
-		
+
 		try {
-			
+
 			final EvalEngine engine = EvalEngine.get();
 			final int iterationLimit = engine.getIterationLimit();
 			int iterationCounter = 1;
@@ -30,7 +30,7 @@ public class FixedPoint extends AbstractFunctionEvaluator {
 			IExpr current = ast.get(2);
 			int steps = Integer.MAX_VALUE;
 			if (ast.size() == 4) {
-				if (!(ast.get(3) instanceof IInteger)) {
+				if (!(ast.get(3).isInteger())) {
 					return null;
 				}
 				try {
@@ -51,8 +51,8 @@ public class FixedPoint extends AbstractFunctionEvaluator {
 
 		} finally {
 			EvalEngine.get().setNumericMode(false);
-		} 
-		
+		}
+
 	}
 
 	public void setUp(final ISymbol symbol) throws SyntaxError {

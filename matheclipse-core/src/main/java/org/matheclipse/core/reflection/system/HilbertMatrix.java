@@ -33,15 +33,17 @@ public class HilbertMatrix extends AbstractFunctionEvaluator {
 	}
 
 	@Override
-	public IExpr evaluate(final IAST functionList) {
+	public IExpr evaluate(final IAST ast) {
+		Validate.checkRange(ast, 2, 3);
+
 		int rowSize = 0;
 		int columnSize = 0;
-		if (functionList.size() == 2 && functionList.get(1) instanceof IInteger) {
-			rowSize = Validate.checkIntType(functionList, 1);
+		if (ast.size() == 2 && ast.get(1).isInteger()) {
+			rowSize = Validate.checkIntType(ast, 1);
 			columnSize = rowSize;
-		} else if (functionList.size() == 3 && functionList.get(1) instanceof IInteger && functionList.get(2) instanceof IInteger) {
-			rowSize = Validate.checkIntType(functionList, 1);
-			columnSize = Validate.checkIntType(functionList, 2);
+		} else if (ast.size() == 3 && ast.get(1).isInteger() && ast.get(2).isInteger()) {
+			rowSize = Validate.checkIntType(ast, 1);
+			columnSize = Validate.checkIntType(ast, 2);
 		} else {
 			return null;
 		}

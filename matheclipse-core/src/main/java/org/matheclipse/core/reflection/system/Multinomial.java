@@ -1,15 +1,15 @@
 package org.matheclipse.core.reflection.system;
 
+import java.math.BigInteger;
 import java.util.List;
 
+import org.matheclipse.core.eval.exception.Validate;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.IInteger;
 import org.matheclipse.core.interfaces.ISymbol;
-
-import java.math.BigInteger;
 
 /**
  * Returns the multinomial coefficient.
@@ -24,19 +24,19 @@ public class Multinomial extends AbstractFunctionEvaluator {
 
 	@Override
 	public IExpr evaluate(final IAST ast) {
-		if (ast.size() >= 3) {
-			for (int i = 1; i < ast.size(); i++) {
-				if (!(ast.get(i) instanceof IInteger)) {
-					return null;
-				}
-				if (((IInteger) ast.get(i)).isNegative()) {
-					return null;
-				}
-			}
+		Validate.checkRange(ast, 3);
 
-			return F.integer(multinomial(ast));
+		for (int i = 1; i < ast.size(); i++) {
+			if (!(ast.get(i).isInteger())) {
+				return null;
+			}
+			if (((IInteger) ast.get(i)).isNegative()) {
+				return null;
+			}
 		}
-		return null;
+
+		return F.integer(multinomial(ast));
+
 	}
 
 	public static BigInteger multinomial(final List<IExpr> ast) {

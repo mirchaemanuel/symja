@@ -28,7 +28,7 @@ public class HarmonicNumber implements IFunctionEvaluator {
 			throw new WrongNumberOfArguments(ast, 1, ast.size() - 1);
 		}
 		IExpr arg1 = ast.get(1);
-		if (arg1 instanceof IInteger) {
+		if (arg1.isInteger()) {
 
 			int n = Validate.checkIntType(ast, 1, Integer.MIN_VALUE);
 			if (n < 0) {

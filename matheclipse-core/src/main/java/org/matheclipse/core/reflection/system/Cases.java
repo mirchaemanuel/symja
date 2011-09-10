@@ -1,5 +1,6 @@
 package org.matheclipse.core.reflection.system;
 
+import org.matheclipse.core.eval.exception.Validate;
 import org.matheclipse.core.eval.interfaces.IFunctionEvaluator;
 import org.matheclipse.core.generic.Functors;
 import org.matheclipse.core.interfaces.IAST;
@@ -15,7 +16,9 @@ public class Cases implements IFunctionEvaluator {
 	}
 
 	public IExpr evaluate(final IAST ast) {
-		if ((ast.size() == 3) && (ast.get(1) instanceof IAST)) {
+		Validate.checkSize(ast, 3);
+		
+		if (ast.get(1).isAST()) {
 			return cases((IAST) ast.get(1), ast.get(2));
 		}
 		return null;

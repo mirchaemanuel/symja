@@ -1,5 +1,6 @@
 package org.matheclipse.core.reflection.system;
 
+import org.matheclipse.core.eval.exception.Validate;
 import org.matheclipse.core.eval.interfaces.IFunctionEvaluator;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.generic.BinaryMap;
@@ -17,11 +18,13 @@ public class Fold implements IFunctionEvaluator {
 	}
 
 	public static IExpr evaluateNestList(final IAST ast) {
+		Validate.checkSize(ast, 4);
 		try {
-			if ((ast.size() == 4) && (ast.get(3) instanceof IAST)) {
-				final IAST list = (IAST)ast.get(3);
-				return list.args().foldLeft(new BinaryMap(F.ast(ast.get(1))),ast.get(2));
-//				return Folding.fold(ast.get(2), list, 1, list.size(), new BinaryMap(f.createAST(ast.get(1))));
+			if (ast.get(3).isAST()) {
+				final IAST list = (IAST) ast.get(3);
+				return list.args().foldLeft(new BinaryMap(F.ast(ast.get(1))), ast.get(2));
+				// return Folding.fold(ast.get(2), list, 1, list.size(), new
+				// BinaryMap(f.createAST(ast.get(1))));
 			}
 		} catch (final ArithmeticException e) {
 

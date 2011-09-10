@@ -25,7 +25,8 @@ public class IntegerPartitions extends AbstractFunctionEvaluator {
 	@Override
 	public IExpr evaluate(final IAST ast) {
 		Validate.checkSize(ast, 2);
-		if (ast.get(1) instanceof IInteger) {
+
+		if (ast.get(1).isInteger()) {
 			final int n = ((IInteger) ast.get(1)).getBigNumerator().intValue();
 			final IAST result = F.function(F.List);
 			IAST temp;
