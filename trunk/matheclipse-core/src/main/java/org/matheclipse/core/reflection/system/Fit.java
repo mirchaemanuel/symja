@@ -1,6 +1,5 @@
 package org.matheclipse.core.reflection.system;
 
-import org.apache.commons.math.analysis.polynomials.PolynomialFunction;
 import org.apache.commons.math.optimization.fitting.PolynomialFitter;
 import org.apache.commons.math.optimization.general.LevenbergMarquardtOptimizer;
 import org.matheclipse.core.convert.Convert;
@@ -46,21 +45,17 @@ public class Fit extends AbstractFunctionEvaluator {
 	public IExpr numericEval(final IAST ast) {
 		Validate.checkSize(ast, 4);
 
-		if (ast.size() == 4 && ast.get(2) instanceof IInteger
-				&& ast.get(3) instanceof ISymbol) {
+		if (ast.get(2).isInteger() && ast.get(3).isSymbol()) {
 			int rowSize = -1;
 			int degree = ((IInteger) ast.get(2)).toInt();
-			PolynomialFitter fitter = new PolynomialFitter(degree,
-					new LevenbergMarquardtOptimizer());
+			PolynomialFitter fitter = new PolynomialFitter(degree, new LevenbergMarquardtOptimizer());
 			int[] im = ast.get(1).isMatrix();
 			if (im != null && im[1] == 2) {
 				IAST matrix = (IAST) ast.get(1);
 				IAST row;
 				for (int i = 1; i < matrix.size(); i++) {
 					row = matrix.getAST(i);
-					fitter.addObservedPoint(1.0, ((ISignedNumber) row.get(1))
-							.doubleValue(), ((ISignedNumber) row.get(2))
-							.doubleValue());
+					fitter.addObservedPoint(1.0, ((ISignedNumber) row.get(1)).doubleValue(), ((ISignedNumber) row.get(2)).doubleValue());
 				}
 			} else {
 				rowSize = ast.get(1).isVector();
@@ -69,12 +64,10 @@ public class Fit extends AbstractFunctionEvaluator {
 				}
 				IAST vector = (IAST) ast.get(1);
 				for (int i = 1; i < vector.size(); i++) {
-					fitter.addObservedPoint(1.0, i, ((ISignedNumber) vector
-							.get(i)).doubleValue());
+					fitter.addObservedPoint(1.0, i, ((ISignedNumber) vector.get(i)).doubleValue());
 				}
 			}
-			return Convert.polynomialFunction2Expr(fitter.fit(), (ISymbol) ast
-					.get(3));
+			return Convert.polynomialFunction2Expr(fitter.fit(), (ISymbol) ast.get(3));
 		}
 
 		return null;
