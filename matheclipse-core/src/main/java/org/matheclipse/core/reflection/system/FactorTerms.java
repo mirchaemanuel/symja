@@ -4,6 +4,7 @@ import org.matheclipse.core.basic.Config;
 import org.matheclipse.core.convert.ExprVariables;
 import org.matheclipse.core.convert.JASConvert;
 import org.matheclipse.core.eval.exception.JASConversionException;
+import org.matheclipse.core.eval.exception.Validate;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
 import org.matheclipse.core.expression.ASTRange;
 import org.matheclipse.core.expression.F;
@@ -20,23 +21,21 @@ public class FactorTerms extends AbstractFunctionEvaluator {
 	}
 
 	@Override
-	public IExpr evaluate(final IAST lst) {
-		if (lst.size() != 2 && lst.size() != 3) {
-			return null;
-		}
+	public IExpr evaluate(final IAST ast) {
+		Validate.checkRange(ast, 2, 3);
 
-		ExprVariables eVar = new ExprVariables(lst.get(1));
+		ExprVariables eVar = new ExprVariables(ast.get(1));
 		if (!eVar.isSize(1)) {
-			// partial fraction only possible for univariate polynomials
+			// only possible for univariate polynomials
 			return null;
 		}
 		IAST variableList = eVar.getVarList();
-		if (lst.size() == 3) {
-			if (lst.get(2) instanceof ISymbol) {
-				ISymbol variable = (ISymbol) lst.get(2);
+		if (ast.size() == 3) {
+			if (ast.get(2).isSymbol()) {
+				ISymbol variable = (ISymbol) ast.get(2);
 				variableList = F.List(variable);
-			} else if (lst.get(2).isList()) {
-				variableList = (IAST) lst.get(2);
+			} else if (ast.get(2).isList()) {
+				variableList = (IAST) ast.get(2);
 			} else {
 				return null;
 			}
@@ -47,7 +46,7 @@ public class FactorTerms extends AbstractFunctionEvaluator {
 		}
 		// IExpr variable = variableList.get(1);
 		try {
-			IExpr expr = F.evalExpandAll(lst.get(1));
+			IExpr expr = F.evalExpandAll(ast.get(1));
 			ASTRange r = new ASTRange(variableList, 1);
 			JASConvert<BigRational> jas = new JASConvert<BigRational>(r.toList(), BigRational.ZERO);
 			GenPolynomial<BigRational> poly = jas.expr2JAS(expr);
