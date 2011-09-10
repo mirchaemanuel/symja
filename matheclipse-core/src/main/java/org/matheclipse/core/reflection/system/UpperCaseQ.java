@@ -1,5 +1,6 @@
 package org.matheclipse.core.reflection.system;
 
+import org.matheclipse.core.eval.exception.Validate;
 import org.matheclipse.core.eval.exception.WrongNumberOfArguments;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
 import org.matheclipse.core.expression.F;
@@ -21,11 +22,13 @@ public class UpperCaseQ extends AbstractFunctionEvaluator implements Predicate<I
 	}
 
 	@Override
-	public IExpr evaluate(final IAST functionList) {
-		if ((functionList.size() != 2) || !(functionList.get(1) instanceof IStringX)) {
-			throw new WrongNumberOfArguments(functionList, 1, functionList.size() - 1);
+	public IExpr evaluate(final IAST ast) {
+		Validate.checkSize(ast, 2);
+		if (!(ast.get(1) instanceof IStringX)) {
+			throw new WrongNumberOfArguments(ast, 1, ast.size() - 1);
 		}
-		return F.bool(apply(functionList.get(1)));
+		
+		return F.bool(apply(ast.get(1)));
 	}
 
 	@Override

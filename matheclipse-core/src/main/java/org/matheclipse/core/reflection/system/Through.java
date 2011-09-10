@@ -16,10 +16,10 @@ public class Through extends AbstractFunctionEvaluator {
 	public IExpr evaluate(final IAST ast) {
 		Validate.checkRange(ast, 2, 3);
 
-		if ((ast.get(1) instanceof IAST)) {
+		if (ast.get(1).isAST()) {
 			IAST l1 = (IAST) ast.get(1);
 			IExpr h = l1.head();
-			if (h instanceof IAST) {
+			if (h.isAST()) {
 
 				IAST clonedList;
 				IAST l2 = (IAST) h;
@@ -28,7 +28,7 @@ public class Through extends AbstractFunctionEvaluator {
 				}
 				IAST result = F.ast(l2.head());
 				for (int i = 1; i < l2.size(); i++) {
-					if (l1.get(i) instanceof ISymbol || l2.get(i) instanceof IAST) {
+					if (l1.get(i).isSymbol() || l2.get(i).isAST()) {
 						clonedList = l1.clone();
 						clonedList.setHeader(l2.get(i));
 						result.add(clonedList);

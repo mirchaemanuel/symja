@@ -1,5 +1,6 @@
 package org.matheclipse.core.reflection.system;
 
+import org.matheclipse.core.eval.exception.Validate;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IAST;
@@ -12,19 +13,18 @@ public class StringJoin extends AbstractFunctionEvaluator {
 	}
 
 	@Override
-	public IExpr evaluate(final IAST lst) {
-		if (lst.size() > 2) {
-			StringBuffer buf = new StringBuffer();
-			for (int i = 1; i < lst.size(); i++) {
-				if (lst.get(i) instanceof IStringX) {
-					buf.append(lst.get(i).toString());
-				} else {
-					return null;
-				}
-			}
-			return F.stringx(buf.toString());
-		}
+	public IExpr evaluate(final IAST ast) {
+		Validate.checkRange(ast, 3);
 
-		return null;
+		StringBuffer buf = new StringBuffer();
+		for (int i = 1; i < ast.size(); i++) {
+			if (ast.get(i) instanceof IStringX) {
+				buf.append(ast.get(i).toString());
+			} else {
+				return null;
+			}
+		}
+		return F.stringx(buf.toString());
+ 
 	}
 }

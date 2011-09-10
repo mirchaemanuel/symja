@@ -37,7 +37,7 @@ public class Simplify extends AbstractFunctionEvaluator {
 				}
 				return true;
 			}
-			if (ast.isPower() && (ast.get(2) instanceof IInteger)) {
+			if (ast.isPower() && (ast.get(2).isInteger())) {
 				// check the arguments
 				return ast.get(1).accept(this);
 			}
@@ -104,7 +104,7 @@ public class Simplify extends AbstractFunctionEvaluator {
 
 		private IExpr tryTransformations(IExpr expr) {
 			IExpr result = null;
-			if (expr instanceof IAST) {
+			if (expr.isAST()) {
 				// try ExpandAll, Together, Apart, Factor to reduce the expression
 				int minCounter = LeafCount.leafCount(expr);
 				IExpr temp;
@@ -196,7 +196,7 @@ public class Simplify extends AbstractFunctionEvaluator {
 				IAST basicTimes = F.Times();
 				IAST restTimes = F.Times();
 				INumber number = null;
-				if (ast.get(1) instanceof INumber) {
+				if (ast.get(1).isNumber()) {
 					number = (INumber) ast.get(1);
 				}
 				IExpr reduced;

@@ -45,7 +45,7 @@ public class TrigReduce implements IFunctionEvaluator {
 					return result;
 				}
 			} else if (ast.isPower()) {
-				if (ast.get(1) instanceof IAST && ast.get(2) instanceof IInteger) {
+				if (ast.get(1).isAST() && ast.get(2).isInteger()) {
 					IInteger n = (IInteger) ast.get(2);
 					if (n.isPositive()) {
 						IAST powerArg1 = (IAST) ast.get(1);

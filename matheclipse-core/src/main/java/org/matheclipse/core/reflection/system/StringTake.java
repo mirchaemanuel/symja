@@ -5,7 +5,6 @@ import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
-import org.matheclipse.core.interfaces.IInteger;
 import org.matheclipse.core.interfaces.IStringX;
 
 public class StringTake extends AbstractFunctionEvaluator {
@@ -14,16 +13,16 @@ public class StringTake extends AbstractFunctionEvaluator {
 	}
 
 	@Override
-	public IExpr evaluate(final IAST lst) {
-		if (lst.size() == 3) {
-			if (lst.get(1) instanceof IStringX && lst.get(2) instanceof IInteger) {
-				String s = lst.get(1).toString();
-				final int n = Validate.checkIntType(lst, 2, Integer.MIN_VALUE);
-				if(n >= 0) {
-					return F.stringx(s.substring(0, n));
-				} else {
-					return F.stringx(s.substring(s.length() + n, s.length()));
-				}
+	public IExpr evaluate(final IAST ast) {
+		Validate.checkSize(ast, 3);
+
+		if (ast.get(1) instanceof IStringX && ast.get(2).isInteger()) {
+			String s = ast.get(1).toString();
+			final int n = Validate.checkIntType(ast, 2, Integer.MIN_VALUE);
+			if (n >= 0) {
+				return F.stringx(s.substring(0, n));
+			} else {
+				return F.stringx(s.substring(s.length() + n, s.length()));
 			}
 		}
 

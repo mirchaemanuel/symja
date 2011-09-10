@@ -5,14 +5,13 @@ import static org.matheclipse.core.expression.F.List;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 
+import org.matheclipse.core.eval.exception.Validate;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.IStringX;
 import org.matheclipse.core.interfaces.ISymbol;
-
-
 
 public class ToCharacterCode extends AbstractFunctionEvaluator {
 
@@ -21,10 +20,11 @@ public class ToCharacterCode extends AbstractFunctionEvaluator {
 
 	@Override
 	public IExpr evaluate(final IAST ast) {
-
-		if ((ast.size() != 2) || !(ast.get(1) instanceof IStringX)) {
+		Validate.checkSize(ast, 2);
+		if (!(ast.get(1) instanceof IStringX)) {
 			return null;
 		}
+		
 		IAST resultList = List();
 		resultList = (IAST) toCharacterCode(ast.get(1).toString(), "UTF-8", resultList);
 		return resultList;

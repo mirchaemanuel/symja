@@ -2,6 +2,7 @@ package org.matheclipse.core.reflection.system;
 
 import java.util.Random;
 
+import org.matheclipse.core.eval.exception.Validate;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IAST;
@@ -22,7 +23,9 @@ public class RandomInteger extends AbstractFunctionEvaluator {
 
 	@Override
 	public IExpr evaluate(final IAST ast) {
-		if (ast.size() == 2 && ast.get(1) instanceof IInteger) {
+		Validate.checkSize(ast, 2);
+
+		if (ast.get(1).isInteger()) {
 			// RandomInteger[100] gives an integer between 0 and 100
 			BigInteger n = ((IInteger) ast.get(1)).getBigNumerator();
 			BigInteger r;

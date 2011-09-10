@@ -3,7 +3,7 @@ package org.matheclipse.core.reflection.system;
 import org.matheclipse.core.basic.Config;
 import org.matheclipse.core.eval.EvalEngine;
 import org.matheclipse.core.eval.exception.RuleCreationError;
-import org.matheclipse.core.eval.exception.WrongNumberOfArguments;
+import org.matheclipse.core.eval.exception.Validate;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.expression.IConstantHeaders;
@@ -24,88 +24,86 @@ public class SetAttributes extends AbstractFunctionEvaluator implements IConstan
    *
    */
 	@Override
-	public IExpr evaluate(final IAST functionList) {
-		if (functionList.size() != 3) {
-			throw new WrongNumberOfArguments(functionList, 2, functionList.size() - 1);
-		}
+	public IExpr evaluate(final IAST ast) {
+		Validate.checkSize(ast, 3);
 
-		if (functionList.get(1) instanceof ISymbol) {
-			final ISymbol sym = ((ISymbol) functionList.get(1));
+		if (ast.get(1).isSymbol()) {
+			final ISymbol sym = ((ISymbol) ast.get(1));
 			if (!EvalEngine.get().isPackageMode()) {
 				if (Config.SERVER_MODE && (sym.toString().charAt(0) != '$')) {
 					throw new RuleCreationError(sym);
 				}
 			}
-			if (functionList.get(2) instanceof ISymbol) {
-				if (((ISymbol) functionList.get(2)) == F.Flat) {
+			if (ast.get(2).isSymbol()) {
+				if (((ISymbol) ast.get(2)) == F.Flat) {
 					sym.setAttributes(ISymbol.FLAT);
 
 					return F.Null;
 				}
 
-				if (((ISymbol) functionList.get(2)) == F.Listable) {
+				if (((ISymbol) ast.get(2)) == F.Listable) {
 					sym.setAttributes(ISymbol.LISTABLE);
 
 					return F.Null;
 				}
 
-				if (((ISymbol) functionList.get(2)) == F.OneIdentity) {
+				if (((ISymbol) ast.get(2)) == F.OneIdentity) {
 					sym.setAttributes(ISymbol.ONEIDENTITY);
 
 					return F.Null;
 				}
 
-				if (((ISymbol) functionList.get(2)) == F.Orderless) {
+				if (((ISymbol) ast.get(2)) == F.Orderless) {
 					sym.setAttributes(ISymbol.ORDERLESS);
 
 					return F.Null;
 				}
 
-				if (((ISymbol) functionList.get(2)) == F.HoldAll) {
+				if (((ISymbol) ast.get(2)) == F.HoldAll) {
 					sym.setAttributes(ISymbol.HOLDALL);
 
 					return F.Null;
 				}
 
-				if (((ISymbol) functionList.get(2)) == F.HoldFirst) {
+				if (((ISymbol) ast.get(2)) == F.HoldFirst) {
 					sym.setAttributes(ISymbol.HOLDFIRST);
 
 					return F.Null;
 				}
 
-				if (((ISymbol) functionList.get(2)) == F.HoldRest) {
+				if (((ISymbol) ast.get(2)) == F.HoldRest) {
 					sym.setAttributes(ISymbol.HOLDREST);
 
 					return F.Null;
 				}
 
-				if (((ISymbol) functionList.get(2)) == F.NHoldAll) {
+				if (((ISymbol) ast.get(2)) == F.NHoldAll) {
 					sym.setAttributes(ISymbol.NHOLDALL);
 
 					return F.Null;
 				}
 
-				if (((ISymbol) functionList.get(2)) == F.NHoldFirst) {
+				if (((ISymbol) ast.get(2)) == F.NHoldFirst) {
 					sym.setAttributes(ISymbol.NHOLDFIRST);
 
 					return F.Null;
 				}
 
-				if (((ISymbol) functionList.get(2)) == F.NHoldRest) {
+				if (((ISymbol) ast.get(2)) == F.NHoldRest) {
 					sym.setAttributes(ISymbol.NHOLDREST);
 
 					return F.Null;
 				}
 
-				if (((ISymbol) functionList.get(2)) == F.NumericFunction) {
+				if (((ISymbol) ast.get(2)) == F.NumericFunction) {
 					sym.setAttributes(ISymbol.NUMERICFUNCTION);
 
 					return F.Null;
 				}
 
 			} else {
-				if ((functionList.get(2) instanceof IAST) && (((IAST) functionList.get(2)).head() == F.List)) {
-					final IAST lst = (IAST) functionList.get(2);
+				if (ast.get(2).isList()) {
+					final IAST lst = (IAST) ast.get(2);
 					int symbolAttributes = ISymbol.NOATTRIBUTE;
 					for (int i = 1; i < lst.size(); i++) {
 

@@ -1,5 +1,6 @@
 package org.matheclipse.core.reflection.system;
 
+import org.matheclipse.core.eval.exception.Validate;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
@@ -17,12 +18,11 @@ public class Trunc extends AbstractFunctionEvaluator {
 		"Trunc[x_NumberQ*y_] := -Trunc[-x*y] /; SignCmp[x]<0"};
 
 	@Override
-	public IExpr evaluate(final IAST functionList) {
-		if (functionList.size() != 2) {
-			return null;
-		}
-		if (functionList.get(1) instanceof ISignedNumber) {
-			final ISignedNumber signedNumber = (ISignedNumber) functionList.get(1);
+	public IExpr evaluate(final IAST ast) {
+		Validate.checkSize(ast, 2);
+
+		if (ast.get(1).isSignedNumber()) {
+			final ISignedNumber signedNumber = (ISignedNumber) ast.get(1);
 			if ((signedNumber).isNegative()) {
 				return (signedNumber).ceil();
 			} else {
@@ -34,8 +34,8 @@ public class Trunc extends AbstractFunctionEvaluator {
 	}
 
 	@Override
-	public IExpr numericEval(final IAST functionList) {
-		return evaluate(functionList);
+	public IExpr numericEval(final IAST ast) {
+		return evaluate(ast);
 	}
 
 	@Override

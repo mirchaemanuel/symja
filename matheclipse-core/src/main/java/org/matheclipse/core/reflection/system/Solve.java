@@ -319,7 +319,7 @@ public class Solve extends AbstractFunctionEvaluator {
 				// check if the equation equals zero.
 				IExpr expr = exprAnalyzer.getNumerator();
 				if (!expr.isZero()) {
-					if (expr instanceof INumber) {
+					if (expr.isNumber()) {
 						throw new NoSolution(NoSolution.WRONG_SOLUTION);
 					}
 					if (!PossibleZeroQ.possibleZeroQ(expr)) {

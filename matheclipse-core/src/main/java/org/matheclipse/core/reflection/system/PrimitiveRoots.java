@@ -31,7 +31,7 @@ public class PrimitiveRoots extends AbstractTrigArg1 {
 
 	@Override
 	public IExpr evaluateArg1(final IExpr arg1) {
-		if (arg1 instanceof IInteger) {
+		if (arg1.isInteger()) {
 			try {
 				IInteger[] roots = ((IntegerSym) arg1).primitiveRoots();
 				IAST list = F.List();
