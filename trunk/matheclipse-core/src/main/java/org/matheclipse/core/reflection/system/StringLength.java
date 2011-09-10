@@ -1,5 +1,6 @@
 package org.matheclipse.core.reflection.system;
 
+import org.matheclipse.core.eval.exception.Validate;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IAST;
@@ -13,9 +14,11 @@ public class StringLength extends AbstractFunctionEvaluator {
 	}
 
 	@Override
-	public IExpr evaluate(final IAST lst) {
-		if (lst.size() == 2 && lst.get(1) instanceof IStringX) {
-			return F.integer(lst.get(1).toString().length());
+	public IExpr evaluate(final IAST ast) {
+		Validate.checkSize(ast, 2);
+
+		if (ast.get(1) instanceof IStringX) {
+			return F.integer(ast.get(1).toString().length());
 		}
 		return null;
 	}

@@ -22,7 +22,7 @@ public class Sign implements IFunctionEvaluator {
 		if (ast.size() != 2) {
 			return null;
 		}
-		if (ast.get(1) instanceof ISignedNumber) {
+		if (ast.get(1).isSignedNumber()) {
 			final int signum = ((ISignedNumber) ast.get(1)).sign();
 			return F.integer(signum);
 		}

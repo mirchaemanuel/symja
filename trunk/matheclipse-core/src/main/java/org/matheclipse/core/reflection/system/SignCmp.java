@@ -23,7 +23,7 @@ public class SignCmp implements IFunctionEvaluator {
   	if (ast.size()!=2) {
   		return null;
   	}
-  	if (ast.get(1) instanceof INumber) {
+  	if (ast.get(1).isNumber()) {
   		final int signum = ((INumber)ast.get(1)).complexSign();
   		return F.integer(signum);
   	}

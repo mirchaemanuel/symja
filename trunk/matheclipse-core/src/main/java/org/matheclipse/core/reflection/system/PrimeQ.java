@@ -27,9 +27,9 @@ public class PrimeQ extends AbstractFunctionEvaluator implements Predicate<IExpr
 	@Override
 	public IExpr evaluate(final IAST ast) {
 		Validate.checkSize(ast, 2);
-		if (!(ast.get(1) instanceof IInteger)) {
+		if (!ast.get(1).isInteger()) {
 			return F.False;
-		} 
+		}
 		return F.bool(apply(ast.get(1)));
 	}
 
@@ -44,7 +44,7 @@ public class PrimeQ extends AbstractFunctionEvaluator implements Predicate<IExpr
 		}
 		return false;
 	}
-	
+
 	@Override
 	public void setUp(final ISymbol symbol) {
 		symbol.setAttributes(ISymbol.LISTABLE);

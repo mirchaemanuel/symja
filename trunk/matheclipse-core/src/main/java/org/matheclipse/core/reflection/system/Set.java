@@ -70,7 +70,7 @@ public class Set implements IFunctionEvaluator, ICreatePatternMatcher {
 
 		result[0] = null; // IPatternMatcher
 		result[1] = rightHandSide;
-		if (leftHandSide instanceof ISymbol) {
+		if (leftHandSide.isSymbol()) {
 			final ISymbol lhsSymbol = (ISymbol) leftHandSide;
 
 			if (lhsSymbol.hasLocalVariableStack()) {
@@ -82,7 +82,7 @@ public class Set implements IFunctionEvaluator, ICreatePatternMatcher {
 			}
 		}
 
-		if (leftHandSide instanceof IAST) {
+		if (leftHandSide.isAST()) {
 			final ISymbol lhsSymbol = ((IAST) leftHandSide).topHead();
 			result[0] = lhsSymbol.putDownRule(F.Set, false, leftHandSide, rightHandSide);
 			return result;

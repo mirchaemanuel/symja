@@ -34,7 +34,7 @@ public class SetDelayed implements IFunctionEvaluator, ICreatePatternMatcher {
 
 		result[0] = null;
 		result[1] = rightHandSide;
-		if (leftHandSide instanceof ISymbol) {
+		if (leftHandSide.isSymbol()) {
 			final ISymbol lhsSymbol = (ISymbol) leftHandSide;
 			if (lhsSymbol.hasLocalVariableStack()) {
 				lhsSymbol.set(rightHandSide);
@@ -45,7 +45,7 @@ public class SetDelayed implements IFunctionEvaluator, ICreatePatternMatcher {
 			}
 		}
 
-		if (leftHandSide instanceof IAST) {
+		if (leftHandSide.isAST()) {
 			final ISymbol lhsSymbol = ((IAST) leftHandSide).topHead();
 
 			result[0] = lhsSymbol.putDownRule(F.SetDelayed, false, leftHandSide, rightHandSide);

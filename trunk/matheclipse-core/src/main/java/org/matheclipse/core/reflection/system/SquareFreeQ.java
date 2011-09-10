@@ -1,11 +1,13 @@
 package org.matheclipse.core.reflection.system;
 
+import java.math.BigInteger;
 import java.util.List;
 
 import org.matheclipse.core.basic.Config;
 import org.matheclipse.core.convert.ExprVariables;
 import org.matheclipse.core.convert.JASConvert;
 import org.matheclipse.core.eval.exception.JASConversionException;
+import org.matheclipse.core.eval.exception.Validate;
 import org.matheclipse.core.eval.exception.WrongArgumentType;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
 import org.matheclipse.core.eval.util.Options;
@@ -14,9 +16,7 @@ import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.IInteger;
-import org.matheclipse.core.interfaces.IRational;
 
-import java.math.BigInteger;
 import edu.jas.arith.BigRational;
 import edu.jas.arith.ModInteger;
 import edu.jas.arith.ModIntegerRing;
@@ -34,32 +34,30 @@ public class SquareFreeQ extends AbstractFunctionEvaluator {
 	}
 
 	@Override
-	public IExpr evaluate(final IAST lst) {
-		if (lst.size() != 2 && lst.size() != 3) {
-			return null;
-		}
+	public IExpr evaluate(final IAST ast) {
+		Validate.checkRange(ast, 2, 3);
 
-		if (lst.get(1) instanceof IRational) {
+		if (ast.get(1).isRational()) {
 			// check for integers not implemented yet
 			return null;
 		}
-		ExprVariables eVar = new ExprVariables(lst.get(1));
+		ExprVariables eVar = new ExprVariables(ast.get(1));
 		if (eVar.isSize(0)) {
-			if (lst.get(1).isAtom()) {
+			if (ast.get(1).isAtom()) {
 				return F.False;
 			}
 			eVar.add(F.$s("x"));
 		}
 		if (!eVar.isSize(1)) {
-			throw new WrongArgumentType(lst, lst.get(1), 1, "SquareFreeQ only implemented for univariate polynomials");
+			throw new WrongArgumentType(ast, ast.get(1), 1, "SquareFreeQ only implemented for univariate polynomials");
 		}
 		try {
-			IExpr expr = F.evalExpandAll(lst.get(1));
+			IExpr expr = F.evalExpandAll(ast.get(1));
 			ASTRange r = new ASTRange(eVar.getVarList(), 1);
 			List<IExpr> varList = r.toList();
 
-			if (lst.size() == 3) {
-				return F.bool(isSquarefreeWithOption(lst, expr, varList));
+			if (ast.size() == 3) {
+				return F.bool(isSquarefreeWithOption(ast, expr, varList));
 			}
 			return F.bool(isSquarefree(expr, varList));
 		} catch (JASConversionException e) {
@@ -81,7 +79,7 @@ public class SquareFreeQ extends AbstractFunctionEvaluator {
 	public static boolean isSquarefreeWithOption(final IAST lst, IExpr expr, List<IExpr> varList) throws JASConversionException {
 		final Options options = new Options(lst.topHead(), lst, 2);
 		IExpr option = options.getOption("Modulus");
-		if (option != null && option instanceof IInteger) {
+		if (option != null && option.isInteger()) {
 
 			// found "Modulus" option => use ModIntegerRing
 			final BigInteger value = ((IInteger) option).getBigNumerator();

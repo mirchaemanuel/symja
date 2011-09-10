@@ -21,12 +21,13 @@ public class Rationalize extends AbstractFunctionEvaluator {
 	@Override
 	public IExpr evaluate(final IAST ast) {
 		Validate.checkSize(ast, 2);
+		
 		IExpr arg1 = ast.get(1);
 		try {
 			// try to convert into a fractional number
 			final EvalEngine engine = EvalEngine.get();
 			arg1 = engine.evaluate(arg1);
-			if (arg1 instanceof IInteger || arg1 instanceof IRational) {
+			if (arg1.isRational()) {
 				return arg1;
 			}
 			if (arg1 instanceof INum) {

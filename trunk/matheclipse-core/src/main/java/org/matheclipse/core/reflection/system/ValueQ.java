@@ -1,6 +1,6 @@
 package org.matheclipse.core.reflection.system;
 
-import org.matheclipse.core.eval.exception.WrongNumberOfArguments;
+import org.matheclipse.core.eval.exception.Validate;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IAST;
@@ -31,17 +31,16 @@ public class ValueQ extends AbstractFunctionEvaluator implements
    */
   @Override
   public IExpr evaluate(final IAST ast) {
-    if (ast.size() != 2) {
-      throw new WrongNumberOfArguments(ast, 1, ast.size() - 1);
-    }
+  	Validate.checkSize(ast, 2);
+
     return F.bool(apply(ast.get(1)));
   }
 
   public boolean apply(final IExpr expr) {
-    if (expr instanceof ISymbol) {
+    if (expr.isSymbol()) {
       return ((ISymbol) expr).isValue();
     }
-    if (expr instanceof IAST) {
+    if (expr.isAST()) {
       return ((IAST) expr).topHead().isValue((IAST) expr);
     }
     return false;

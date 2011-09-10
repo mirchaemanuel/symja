@@ -55,7 +55,7 @@ public class Thread extends AbstractFunctionEvaluator {
     int listLength = 0;
 
     for (int i = 0; i < list.size(); i++) {
-      if ((list.get(i) instanceof IAST)
+      if ((list.get(i).isAST())
           && (((IAST) list.get(i)).head().equals(head))) {
         if (listLength == 0) {
           listLength = ((IAST) list.get(i)).size() - 1;
@@ -77,7 +77,7 @@ public class Thread extends AbstractFunctionEvaluator {
 
       for (int i = headOffset; i < list.size(); i++) {
          
-        if ((list.get(i) instanceof IAST)
+        if ((list.get(i).isAST())
             && (((IAST) list.get(i)).head().equals(head))) {
           final IAST arg = (IAST) list.get(i);
           subResult.set(i, arg.get(j));

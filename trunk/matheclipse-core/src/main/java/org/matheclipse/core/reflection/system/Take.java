@@ -1,6 +1,7 @@
 package org.matheclipse.core.reflection.system;
 
 import org.matheclipse.core.basic.Config;
+import org.matheclipse.core.eval.exception.Validate;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
 import org.matheclipse.core.eval.util.Sequence;
 import org.matheclipse.core.expression.AST;
@@ -16,8 +17,10 @@ public class Take extends AbstractFunctionEvaluator {
 
 	@Override
 	public IExpr evaluate(final IAST ast) {
+		Validate.checkRange(ast, 3);
+		
 		try {
-			if ((ast.size() >= 3) && (ast.get(1) instanceof IAST)) {
+			if (ast.get(1).isAST()) {
 				final ISequence[] sequ = Sequence.createSequences(ast, 2);
 				final IAST arg1 = (IAST) ast.get(1);
 				if (sequ != null) {
@@ -29,6 +32,7 @@ public class Take extends AbstractFunctionEvaluator {
 				e.printStackTrace();
 			}
 		}
+		
 		return null;
 	}
 	

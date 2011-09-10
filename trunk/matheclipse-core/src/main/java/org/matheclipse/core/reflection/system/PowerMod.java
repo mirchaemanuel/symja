@@ -23,7 +23,7 @@ public class PowerMod extends AbstractFunctionEvaluator {
 			return null;
 		}
 		for (int i = 1; i < functionList.size(); i++) {
-			if (!(functionList.get(i) instanceof IInteger)) {
+			if (!(functionList.get(i).isInteger())) {
 				return null;
 			}
 		}

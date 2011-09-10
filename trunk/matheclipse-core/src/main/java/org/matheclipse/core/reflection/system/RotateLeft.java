@@ -14,23 +14,22 @@ public class RotateLeft extends AbstractFunctionEvaluator {
 	}
 
 	@Override
-	public IExpr evaluate(final IAST functionList) {
-		if ((functionList.size() != 2) && (functionList.size() != 3)) {
-			return null;
-		}
+	public IExpr evaluate(final IAST ast) {
+		Validate.checkRange(ast, 2, 3);
+		 
 		try {
-			if (!functionList.get(1).isAtom()) {
-				final IAST result = F.ast(functionList.get(1).head());
-				if (functionList.size() == 2) {
-					ASTRange range = ((IAST) functionList.get(1)).args();
+			if (!ast.get(1).isAtom()) {
+				final IAST result = F.ast(ast.get(1).head());
+				if (ast.size() == 2) {
+					ASTRange range = ((IAST) ast.get(1)).args();
 					range.rotateLeft(result, 1);
 					// Rotating.rotateLeft((IAST) list.get(1), result, 2, 1);
 					return result;
 				} else {
-					if (functionList.get(2) instanceof IInteger) {
-						int n = Validate.checkIntType(functionList, 2, 1);
+					if (ast.get(2).isInteger()) {
+						int n = Validate.checkIntType(ast, 2, 1);
 				
-						ASTRange range = ((IAST) functionList.get(1)).args();
+						ASTRange range = ((IAST) ast.get(1)).args();
 						range.rotateLeft(result, n);
 						// Rotating.rotateLeft((IAST) list.get(1), result, n+1,
 						// 1);

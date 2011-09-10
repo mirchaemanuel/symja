@@ -1,5 +1,6 @@
 package org.matheclipse.core.reflection.system;
 
+import org.matheclipse.core.eval.exception.Validate;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IAST;
@@ -18,12 +19,13 @@ public class SyntaxLength extends AbstractFunctionEvaluator {
 	} 
 
 	@Override
-	public IExpr evaluate(final IAST functionList) {
-		if ((functionList.size() != 2) || !(functionList.get(1) instanceof IStringX)) {
+	public IExpr evaluate(final IAST ast) {
+		Validate.checkSize(ast,2);
+		if (!(ast.get(1) instanceof IStringX)) {
 			return null;
 		}
 
-		final String str = functionList.get(1).toString();
+		final String str = ast.get(1).toString();
 		try {
 			new Parser().parse(str);
 		} catch (final SyntaxError e) {

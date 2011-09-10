@@ -27,6 +27,7 @@ public class SyntaxQ extends AbstractFunctionEvaluator implements Predicate<Stri
 	@Override
 	public IExpr evaluate(final IAST ast) {
 		Validate.checkSize(ast, 2);
+		
 		if (!(ast.get(1) instanceof IStringX)) {
 			return F.False;
 		}
