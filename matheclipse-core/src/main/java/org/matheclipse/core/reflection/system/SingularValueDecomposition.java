@@ -6,6 +6,7 @@ import org.apache.commons.math.linear.RealMatrix;
 import org.apache.commons.math.linear.SingularValueDecompositionImpl;
 import org.matheclipse.core.basic.Config;
 import org.matheclipse.core.convert.Convert;
+import org.matheclipse.core.eval.exception.Validate;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
@@ -24,26 +25,27 @@ public class SingularValueDecomposition extends AbstractFunctionEvaluator {
 
 	@Override
 	public IExpr evaluate(final IAST ast) {
+		Validate.checkSize(ast, 2);
+
 		RealMatrix matrix;
 		try {
-			if (ast.size() == 2) {
-				final IAST list = (IAST) ast.get(1);
-				matrix = Convert.list2RealMatrix(list);
-				final SingularValueDecompositionImpl svd = new SingularValueDecompositionImpl(
-						matrix);
-				final RealMatrix uMatrix = svd.getU();
-				final RealMatrix sMatrix = svd.getS();
-				final RealMatrix vMatrix = svd.getV();
 
-				final IAST result = List();
-				final IAST uMatrixAST = Convert.realMatrix2List(uMatrix);
-				final IAST sMatrixAST = Convert.realMatrix2List(sMatrix);
-				final IAST vMatrixAST = Convert.realMatrix2List(vMatrix);
-				result.add(uMatrixAST);
-				result.add(sMatrixAST);
-				result.add(vMatrixAST);
-				return result;
-			}
+			final IAST list = (IAST) ast.get(1);
+			matrix = Convert.list2RealMatrix(list);
+			final SingularValueDecompositionImpl svd = new SingularValueDecompositionImpl(matrix);
+			final RealMatrix uMatrix = svd.getU();
+			final RealMatrix sMatrix = svd.getS();
+			final RealMatrix vMatrix = svd.getV();
+
+			final IAST result = List();
+			final IAST uMatrixAST = Convert.realMatrix2List(uMatrix);
+			final IAST sMatrixAST = Convert.realMatrix2List(sMatrix);
+			final IAST vMatrixAST = Convert.realMatrix2List(vMatrix);
+			result.add(uMatrixAST);
+			result.add(sMatrixAST);
+			result.add(vMatrixAST);
+			return result;
+
 		} catch (final ClassCastException e) {
 			if (Config.SHOW_STACKTRACE) {
 				e.printStackTrace();

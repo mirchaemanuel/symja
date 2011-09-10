@@ -15,16 +15,19 @@ public abstract class AbstractMatrix1Expr extends AbstractFunctionEvaluator {
 	}
 
 	@Override
-	public IExpr evaluate(final IAST function) {
+	public IExpr evaluate(final IAST ast) {
+		Validate.checkSize(ast, 2);
+
 		FieldMatrix<ExprFieldElement> matrix;
 		try {
-			Validate.checkSize(function, 2);
-			int[] dim = function.get(1).isMatrix();
+
+			int[] dim = ast.get(1).isMatrix();
 			if (dim != null) {
-				final IAST list = (IAST) function.get(1);
+				final IAST list = (IAST) ast.get(1);
 				matrix = Convert.list2Matrix(list);
 				return matrixEval(matrix).getExpr();
 			}
+
 		} catch (final ClassCastException e) {
 			if (Config.SHOW_STACKTRACE) {
 				e.printStackTrace();
@@ -39,14 +42,16 @@ public abstract class AbstractMatrix1Expr extends AbstractFunctionEvaluator {
 	}
 
 	@Override
-	public IExpr numericEval(final IAST function) {
+	public IExpr numericEval(final IAST ast) {
+		Validate.checkSize(ast, 2);
+
 		RealMatrix matrix;
 		try {
-			if (function.size() == 2) {
-				final IAST list = (IAST) function.get(1);
-				matrix = Convert.list2RealMatrix(list);
-				return realMatrixEval(matrix);
-			}
+
+			final IAST list = (IAST) ast.get(1);
+			matrix = Convert.list2RealMatrix(list);
+			return realMatrixEval(matrix);
+
 		} catch (final ClassCastException e) {
 			if (Config.SHOW_STACKTRACE) {
 				e.printStackTrace();
