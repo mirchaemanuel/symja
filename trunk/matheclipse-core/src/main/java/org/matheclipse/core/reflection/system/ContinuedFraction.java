@@ -33,7 +33,7 @@ public class ContinuedFraction implements IFunctionEvaluator {
 		if (arg1 instanceof INum) {
 			arg1 = F.fraction(((INum) arg1).getRealPart());
 		}
-		if (arg1 instanceof IRational) {
+		if (arg1.isRational()) {
 			IRational rat = (IRational) arg1;
 
 			IAST continuedFractionList = F.List();

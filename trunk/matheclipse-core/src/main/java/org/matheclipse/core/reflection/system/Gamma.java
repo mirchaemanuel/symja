@@ -27,6 +27,7 @@ public class Gamma extends AbstractTrigArg1 {
 	@Override
 	public IExpr evaluate(final IAST ast) {
 		Validate.checkRange(ast, 2, 4);
+		
 		if (ast.size() == 2) {
 			return evaluateArg1(ast.get(1));
 		}
@@ -56,7 +57,7 @@ public class Gamma extends AbstractTrigArg1 {
 
 	@Override
 	public IExpr evaluateArg1(final IExpr arg1) {
-		if (arg1 instanceof IInteger) {
+		if (arg1.isInteger()) {
 			BigInteger fac = gamma(((IInteger) arg1).getBigNumerator());
 			return F.integer(fac);
 		}

@@ -20,6 +20,7 @@ public class Dimensions extends AbstractFunctionEvaluator {
 	@Override
 	public IExpr evaluate(final IAST ast) {
 		Validate.checkSize(ast, 2);
+
 		if (ast.get(1).isAST()) {
 			IAST list = (IAST) ast.get(1);
 			int m = list.size();
@@ -40,7 +41,7 @@ public class Dimensions extends AbstractFunctionEvaluator {
 	}
 
 	private void getLevel1(IAST ast, ISymbol header, ArrayList<Integer> dims) {
-		if (ast.size() > 1 && (ast.get(1) instanceof IAST)) {
+		if (ast.size() > 1 && ast.get(1).isAST()) {
 			IAST list = (IAST) ast.get(1);
 			if (!header.equals(list.topHead())) {
 				return;
@@ -50,16 +51,14 @@ public class Dimensions extends AbstractFunctionEvaluator {
 		}
 	}
 
-	private void checkLevel(final IAST ast, ISymbol header,
-			ArrayList<Integer> dims, int index) {
+	private void checkLevel(final IAST ast, ISymbol header, ArrayList<Integer> dims, int index) {
 		if (ast.size() > 1) {
 			if (index < dims.size()) {
 				int dim = dims.get(index);
 				for (int i = 1; i < ast.size(); i++) {
 					if (ast.get(i) instanceof IAST) {
 						IAST list = (IAST) ast.get(i);
-						if (!header.equals(list.topHead())
-								|| dim != list.size() - 1) {
+						if (!header.equals(list.topHead()) || dim != list.size() - 1) {
 							while (index < dims.size()) {
 								dims.remove(index);
 							}
@@ -71,31 +70,6 @@ public class Dimensions extends AbstractFunctionEvaluator {
 			}
 		}
 	}
-
-	// private IExpr getDimensions(final AbstractExpressionFactory factory, IAST
-	// list, IAST res, ISymbol header) {
-	// int l = 0;
-	// for (int i = 1; i < list.size(); i++) {
-	// if (list.get(i) instanceof IAST) {
-	// if (!header.equals(((IAST) list.get(i)).headSymbol())) {
-	// return res;
-	// }
-	// if (i == 1) {
-	// l = ((IAST) list.get(1)).size() - 1;
-	// } else {
-	// if (l != (((IAST) list.get(i)).size() - 1)) {
-	// return res;
-	// }
-	// }
-	// } else {
-	// return res;
-	// }
-	// }
-	//
-	// res.add(factory.createInteger(l));
-	//
-	// return res;
-	// }
 
 	@Override
 	public void setUp(final ISymbol symbol) {

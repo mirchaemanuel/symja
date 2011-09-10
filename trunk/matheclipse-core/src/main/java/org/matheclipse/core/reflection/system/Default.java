@@ -19,7 +19,8 @@ public class Default extends AbstractFunctionEvaluator {
 	@Override
 	public IExpr evaluate(final IAST ast) {
 		Validate.checkRange(ast, 2, 4);
-		if (!(ast.get(1) instanceof ISymbol)) {
+		
+		if (!ast.get(1).isSymbol()) {
 			return null;
 		}
 		ISymbol symbol = (ISymbol) ast.get(1);

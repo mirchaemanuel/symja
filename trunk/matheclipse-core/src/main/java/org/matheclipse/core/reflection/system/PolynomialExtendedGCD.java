@@ -1,11 +1,13 @@
 package org.matheclipse.core.reflection.system;
 
+import java.math.BigInteger;
 import java.util.List;
 
 import org.matheclipse.core.basic.Config;
 import org.matheclipse.core.convert.ExprVariables;
 import org.matheclipse.core.convert.JASConvert;
 import org.matheclipse.core.eval.exception.JASConversionException;
+import org.matheclipse.core.eval.exception.Validate;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
 import org.matheclipse.core.eval.util.Options;
 import org.matheclipse.core.expression.ASTRange;
@@ -15,7 +17,6 @@ import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.IInteger;
 import org.matheclipse.core.interfaces.ISymbol;
 
-import java.math.BigInteger;
 import edu.jas.arith.BigRational;
 import edu.jas.arith.ModInteger;
 import edu.jas.arith.ModIntegerRing;
@@ -32,13 +33,15 @@ public class PolynomialExtendedGCD extends AbstractFunctionEvaluator {
 	}
 
 	@Override
-	public IExpr evaluate(final IAST lst) {
-		if (lst.size() != 4 && lst.size() != 5 && !(lst.get(3) instanceof ISymbol)) {
+	public IExpr evaluate(final IAST ast) {
+		Validate.checkRange(ast, 4, 5);
+		if (!(ast.get(3) instanceof ISymbol)) {
 			return null;
 		}
-		ISymbol x = (ISymbol) lst.get(3);
-		IExpr expr1 = F.evalExpandAll(lst.get(1));
-		IExpr expr2 = F.evalExpandAll(lst.get(2));
+
+		ISymbol x = (ISymbol) ast.get(3);
+		IExpr expr1 = F.evalExpandAll(ast.get(1));
+		IExpr expr2 = F.evalExpandAll(ast.get(2));
 		ExprVariables eVar = new ExprVariables(expr1);
 		if (!eVar.isSize(1) || !eVar.contains(x)) {
 			// egcd only possible for univariate polynomials
@@ -50,11 +53,11 @@ public class PolynomialExtendedGCD extends AbstractFunctionEvaluator {
 			return null;
 		}
 		ASTRange r = new ASTRange(eVar.getVarList(), 1);
-		if (lst.size() == 5) {
+		if (ast.size() == 5) {
 			List<IExpr> varList = r.toList();
-			final Options options = new Options(lst.topHead(), lst, 4);
+			final Options options = new Options(ast.topHead(), ast, 4);
 			IExpr option = options.getOption("Modulus");
-			if (option != null && option instanceof IInteger) {
+			if (option != null && option.isInteger()) {
 				try {
 					// found "Modulus" option => use ModIntegerRing
 					final BigInteger value = ((IInteger) option).getBigNumerator();
@@ -72,10 +75,10 @@ public class PolynomialExtendedGCD extends AbstractFunctionEvaluator {
 					list.add(subList);
 					return list;
 				} catch (JASConversionException e) {
-	        if (Config.DEBUG) {
-	          e.printStackTrace();
-	        }
-	      }
+					if (Config.DEBUG) {
+						e.printStackTrace();
+					}
+				}
 				return null;
 			}
 		}

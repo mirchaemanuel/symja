@@ -119,7 +119,7 @@ public class Factor extends AbstractFunctionEvaluator {
 			throws JASConversionException {
 		final Options options = new Options(ast.topHead(), ast, 2);
 		IExpr option = options.getOption("Modulus");
-		if (option != null && option instanceof IInteger) {
+		if (option != null && option.isInteger()) {
 			try {
 				// found "Modulus" option => use ModIntegerRing
 				final BigInteger value = ((IInteger) option).getBigNumerator();

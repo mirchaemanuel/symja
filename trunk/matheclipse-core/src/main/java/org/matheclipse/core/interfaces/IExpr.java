@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
+import org.hamcrest.core.IsAnything;
 import org.matheclipse.core.visit.IVisitor;
 import org.matheclipse.core.visit.IVisitorBoolean;
 import org.matheclipse.core.visit.IVisitorInt;
@@ -170,60 +171,103 @@ public interface IExpr extends Comparable<IExpr>, RingElem<IExpr>, INestedListEl
 	public boolean isArcTanh();
 
 	/**
-	 * Test if this expression is an AST (i.e. no atomic expression)
+	 * Test if this expression is an AST list, which contains a <b>header
+	 * element</b> (i.e. the function name) at index position <code>0</code> and
+	 * some optional <b>argument elements</b> at the index positions
+	 * <code>1..n</code>. Therefore this expression is no <b>atomic
+	 * expression</b>.
 	 * 
+	 * @see #isAtom()
 	 */
 	public boolean isAST();
 
 	/**
-	 * Test if this expression is an AST (i.e. no atomic expression) with attribute <code>Orderless</code>.
+	 * Test if this expression is an AST list, which contains a <b>header
+	 * element</b> (i.e. a function symbol like for example
+	 * <code>Plus or Times</code>) with attribute <code>Orderless</code> at index
+	 * position <code>0</code> and some optional <b>argument elements</b> at the
+	 * index positions <code>1..n</code>. Examples for <code>Orderless</code>
+	 * functions are <code>Plus[] or Times[]</code>. Therefore this expression is
+	 * no <b>atomic expression</b>.
+	 * 
+	 * @see #isAtom()
+	 */
+	public boolean isOrderlessAST();
+
+	/**
+	 * Test if this expression is an AST list, which contains a <b>header
+	 * element</b> (i.e. a function symbol like for example
+	 * <code>Dot, Plus or Times</code>) with attribute <code>Flat</code> at index
+	 * position <code>0</code> and some optional <b>argument elements</b> at the
+	 * index positions <code>1..(size()-1)</code>. Examples for <code>Flat</code>
+	 * functions are <code>Dot[], Plus[] or Times[]</code>. Therefore this
+	 * expression is no <b>atomic expression</b>.
+	 * 
+	 * @see #isAtom()
 	 * 
 	 */
-	public boolean isOrderlessAST(); 
-	
+	public boolean isFlatAST();
+
 	/**
-	 * Test if this expression is an AST (i.e. no atomic expression) with attribute <code>Flat</code>.
+	 * Test if this expression is an AST list, which contains the given <b>header
+	 * element</b> at index position <code>0</code> and some optional <b>argument
+	 * elements</b> at the index positions <code>1..(size()-1)</code>. Therefore
+	 * this expression is no <b>atomic expression</b>.
 	 * 
-	 */
-	public boolean isFlatAST(); 
-	
-	/**
-	 * Test if this expression is an AST (i.e. no atomic expression) with the
-	 * given head expression
+	 * @see #isAtom()
 	 * 
 	 */
 	public boolean isAST(IExpr header);
 
 	/**
-	 * Test if this expression is an AST (i.e. no atomic expression) with the
-	 * given head expression and the given size. The size includes the header
-	 * element. I.e. isAST("Sin", 2) gives true for Sin[0].
+	 * Test if this expression is an AST list, which contains the given <b>header
+	 * element</b> at index position <code>0</code> and optional <b>argument
+	 * elements</b> at the index positions <code>1..(length-1)</code>. Therefore
+	 * this expression is no <b>atomic expression</b>.
 	 * 
+	 * @see #isAtom()
 	 */
-	public boolean isAST(IExpr header, int size);
+	public boolean isAST(IExpr header, int length);
 
 	/**
-	 * Test if this expression is an AST (i.e. no atomic expression) with the
-	 * given string equal to the string representation of the head
+	 * Test if this expression is an AST list, where the string representation of
+	 * the <b>header element</b> at index position <code>0</code> equals the given
+	 * <code>symbol</code> and some optional <b>argument elements</b> at the index
+	 * positions <code>1..(size()-1)</code>. Therefore this expression is no
+	 * <b>atomic expression</b>. Example: <code>isAST("Sin")</code> gives
+	 * <code>true</code> for <code>Sin[Pi/2]</code>.
+	 * 
+	 * @see #isAtom()
 	 * 
 	 */
 	public boolean isAST(String symbol);
 
-	/**
-	 * Test if this expression is an AST (i.e. no atomic expression) with the
-	 * given head expression and the given size. The size includes the header
-	 * element. I.e. isAST("Sin", 2) gives true for Sin[0].
+	/** 
+	 * Test if this expression is an AST list, where the string representation of
+	 * the <b>header element</b> at index position <code>0</code> equals the given
+	 * <code>symbol</code> and some optional <b>argument elements</b> at the index
+	 * positions <code>1..(length-1)</code>. Therefore this expression is no
+	 * <b>atomic expression</b>. Example: <code>isAST("Sin", 2)</code> gives
+	 * <code>true</code> for <code>Sin[0]</code>.
 	 * 
+	 * @see #isAtom()
 	 */
-	public boolean isAST(String symbol, int size);
+	public boolean isAST(String symbol, int length);
 
 	/**
 	 * Test if this expression is an AST (i.e. no atomic expression) with the
 	 * given head expression and size of elements greater equal than the
 	 * AST#size()
 	 * 
+	 * Test if this expression is an AST list, which contains the given <b>header
+	 * element</b> at index position <code>0</code> and optional <b>argument
+	 * elements</b> at the index positions <code>1..n</code>. <code>n</code> must
+	 * be greater equal than the given <code>length</code>. Therefore this
+	 * expression is no <b>atomic expression</b>.
+	 * 
+	 * @see #isAtom()
 	 */
-	public boolean isASTSizeGE(IExpr header, int size);
+	public boolean isASTSizeGE(IExpr header, int length);
 
 	/**
 	 * Test if this expression is an atomic expression (i.e. no AST expression)
@@ -369,7 +413,7 @@ public interface IExpr extends Comparable<IExpr>, RingElem<IExpr>, INestedListEl
 	 * 
 	 */
 	public boolean isSequence();
-	
+
 	/**
 	 * Test if this expression is a list of lists
 	 * 
@@ -443,7 +487,7 @@ public interface IExpr extends Comparable<IExpr>, RingElem<IExpr>, INestedListEl
 	 * 
 	 */
 	public boolean isPatternSequence();
-	
+
 	/**
 	 * Test if this expression is the Condition function
 	 * <code>Condition[&lt;arg1&gt;, &lt;arg2&gt;]</code>

@@ -43,7 +43,7 @@ public class PolynomialLCM extends AbstractFunctionEvaluator {
 		if (ast.size() > 3) {
 			final Options options = new Options(ast.topHead(), ast, ast.size() - 1);
 			IExpr option = options.getOption("Modulus");
-			if (option != null && option instanceof IInteger) {
+			if (option != null && option.isInteger()) {
 				try {
 					// found "Modulus" option => use ModIntegerRing
 					final BigInteger value = ((IInteger) option).getBigNumerator();

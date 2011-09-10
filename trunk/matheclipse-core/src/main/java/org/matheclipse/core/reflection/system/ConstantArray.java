@@ -13,7 +13,6 @@ import org.matheclipse.core.expression.F;
 import org.matheclipse.core.generic.MultipleConstArrayFunction;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
-import org.matheclipse.core.interfaces.IInteger;
 import org.matheclipse.core.interfaces.ISymbol;
 import org.matheclipse.generic.interfaces.IIterator;
 import org.matheclipse.generic.nested.TableGenerator;
@@ -75,7 +74,7 @@ public class ConstantArray implements IFunctionEvaluator {
 				int indx1, indx2;
 				final EvalEngine engine = EvalEngine.get();
 				final List<ArrayIterator> iterList = new ArrayList<ArrayIterator>();
-				if ((ast.size() == 3) && (ast.get(2) instanceof IInteger)) {
+				if ((ast.size() == 3) && (ast.get(2).isInteger())) {
 					indx1 = Validate.checkIntType(ast, 2);
 					iterList.add(new ArrayIterator(indx1));
 				} else if ((ast.size() == 3) && ast.get(2).isList()) {
@@ -85,7 +84,7 @@ public class ConstantArray implements IFunctionEvaluator {
 						iterList.add(new ArrayIterator(indx1));
 					}
 				} else if (ast.size() >= 4) {
-					if ((ast.get(2) instanceof IInteger) && (ast.get(3) instanceof IInteger)) {
+					if (ast.get(2).isInteger() && ast.get(3).isInteger()) {
 						indx1 = Validate.checkIntType(ast, 3);
 						indx2 = Validate.checkIntType(ast, 2);
 						iterList.add(new ArrayIterator(indx1, indx2));

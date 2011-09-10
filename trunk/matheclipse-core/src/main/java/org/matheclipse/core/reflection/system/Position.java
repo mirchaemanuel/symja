@@ -2,6 +2,7 @@ package org.matheclipse.core.reflection.system;
 
 import static org.matheclipse.core.expression.F.List;
 
+import org.matheclipse.core.eval.exception.Validate;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
 import org.matheclipse.core.expression.AST;
 import org.matheclipse.core.generic.LevelSpecification;
@@ -10,6 +11,7 @@ import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.patternmatching.PatternMatcher;
 import org.matheclipse.generic.nested.LevelSpec;
+
 public class Position extends AbstractFunctionEvaluator {
 
 	public Position() {
@@ -17,13 +19,17 @@ public class Position extends AbstractFunctionEvaluator {
 
 	@Override
 	public IExpr evaluate(final IAST ast) {
-		if ((ast.size() == 3) && (ast.get(1) instanceof IAST)) {
-			final LevelSpec level = new LevelSpec(0, Integer.MAX_VALUE);
-			return position((IAST) ast.get(1), ast.get(2), level);
-		}
-		if ((ast.size() == 4) && (ast.get(1) instanceof IAST)) {
-			final LevelSpec level = new LevelSpecification(ast.get(3));
-			return position((IAST) ast.get(1), ast.get(2), level);
+		Validate.checkRange(ast, 3, 4);
+		
+		if (ast.get(1).isAST()) {
+			if (ast.size() == 3) {
+				final LevelSpec level = new LevelSpec(0, Integer.MAX_VALUE);
+				return position((IAST) ast.get(1), ast.get(2), level);
+			}
+			if (ast.size() == 4) {
+				final LevelSpec level = new LevelSpecification(ast.get(3));
+				return position((IAST) ast.get(1), ast.get(2), level);
+			}
 		}
 		return null;
 	}

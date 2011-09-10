@@ -225,7 +225,7 @@ public abstract class ExprImpl implements IExpr {
 	}
 
 	/** {@inheritDoc} */
-	public boolean isASTSizeGE(final IExpr header, final int size) {
+	public boolean isASTSizeGE(final IExpr header, final int length) {
 		return false;
 	}
 
@@ -235,7 +235,7 @@ public abstract class ExprImpl implements IExpr {
 	}
 
 	/** {@inheritDoc} */
-	public boolean isAST(final String symbol, final int size) {
+	public boolean isAST(final String symbol, final int length) {
 		return false;
 	}
 

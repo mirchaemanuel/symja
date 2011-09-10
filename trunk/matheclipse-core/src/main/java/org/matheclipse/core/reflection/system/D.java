@@ -8,8 +8,6 @@ import org.matheclipse.core.generic.BinaryEval;
 import org.matheclipse.core.generic.Functors;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
-import org.matheclipse.core.interfaces.IInteger;
-import org.matheclipse.core.interfaces.INumber;
 import org.matheclipse.core.interfaces.ISymbol;
 
 /**
@@ -70,7 +68,7 @@ public class D extends AbstractFunctionEvaluator {
 			if (xList.size() == 2 && xList.get(1).isList()) {
 				IAST subList = (IAST) xList.get(1);
 				return subList.args().mapLeft(F.List(), new BinaryEval(F.D), fx);
-			} else if (xList.size() == 3 && xList.get(2) instanceof IInteger) {
+			} else if (xList.size() == 3 && xList.get(2).isInteger()) {
 				n = Validate.checkIntType(xList, 2, 1);
 
 				if (xList.get(1).isList()) {
@@ -92,7 +90,7 @@ public class D extends AbstractFunctionEvaluator {
 		if (!(x.isList()) && fx.isFree(x, true)) {
 			return F.C0;
 		}
-		if (fx instanceof INumber) {
+		if (fx.isNumber()) {
 			// D[x_NumberQ,y_] -> 0
 			return F.C0;
 		}
@@ -104,7 +102,7 @@ public class D extends AbstractFunctionEvaluator {
 			return F.C0;
 		}
 
-		if (fx instanceof IAST) {
+		if (fx.isAST()) {
 			final ISymbol symbolD = F.D;
 			final IAST listArg1 = (IAST) fx;
 			final IExpr header = listArg1.head();
@@ -114,7 +112,7 @@ public class D extends AbstractFunctionEvaluator {
 			} else if (header == F.Times) {
 				return listArg1.args().map(F.Plus(), new BinaryBindIth1st(listArg1, F.D(F.Null, ast.get(2))));
 			} else if ((header == F.Power) && (listArg1.size() == 3)) {
-				if (listArg1.get(2) instanceof INumber) {
+				if (listArg1.get(2).isNumber()) {
 					// D[x_^i_NumberQ, z_]:= i*x^(i-1)*D[x,z];
 					final IAST timesList = F.Times();
 					timesList.add(listArg1.get(2));

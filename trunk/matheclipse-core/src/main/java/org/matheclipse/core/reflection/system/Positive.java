@@ -16,13 +16,14 @@ public class Positive implements IFunctionEvaluator {
 
 	public IExpr evaluate(final IAST ast) {
 		Validate.checkSize(ast, 2);
-		if (ast.get(1) instanceof ISignedNumber) {
+		
+		if (ast.get(1).isSignedNumber()) {
 			if (((ISignedNumber) ast.get(1)).isPositive()) {
 				return F.True;
 			}
 			return F.False;
 		}
-		if (ast.get(1) instanceof INumber) {
+		if (ast.get(1).isNumber()) {
 			return F.False;
 		}
 		return null;

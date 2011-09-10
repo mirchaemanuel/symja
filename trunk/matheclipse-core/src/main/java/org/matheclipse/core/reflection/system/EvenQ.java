@@ -38,6 +38,6 @@ public class EvenQ extends AbstractFunctionEvaluator implements
 	}
 
 	public boolean apply(final IExpr expr) {
-		return (expr instanceof IntegerSym) && ((IntegerSym) expr).isEven();
+		return (expr.isInteger()) && ((IntegerSym) expr).isEven();
 	}
 }

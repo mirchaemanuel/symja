@@ -1,6 +1,5 @@
 package org.matheclipse.core.reflection.system;
 
-import org.matheclipse.core.eval.EvalEngine;
 import org.matheclipse.core.eval.interfaces.AbstractArg1;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IExpr;
@@ -23,8 +22,8 @@ public class Decrement extends AbstractArg1 {
 
 	@Override
 	public IExpr e1ObjArg(final IExpr o0) {
-		final EvalEngine engine = EvalEngine.get();
-		if (o0 instanceof ISymbol) {
+		// final EvalEngine engine = EvalEngine.get();
+		if (o0.isSymbol()) {
 
 			final ISymbol sym = (ISymbol) o0;
 			IExpr[] results = sym.reassignSymbolValue(getFunction());

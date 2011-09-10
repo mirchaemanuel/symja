@@ -2,6 +2,7 @@ package org.matheclipse.core.reflection.system;
 
 import org.matheclipse.core.eval.EvalEngine;
 import org.matheclipse.core.eval.exception.RecursionLimitExceeded;
+import org.matheclipse.core.eval.exception.Validate;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.expression.IConstantHeaders;
@@ -57,7 +58,7 @@ public class Limit extends AbstractFunctionEvaluator implements IConstantHeaders
 			// Limit[x_,x_->lim] -> lim
 			return lim;
 		}
-		if (expr instanceof IAST) {
+		if (expr.isAST()) {
 			final IAST arg1 = (IAST) expr;
 			final IExpr header = arg1.head();
 			if (arg1.size() == 2) {
@@ -79,7 +80,7 @@ public class Limit extends AbstractFunctionEvaluator implements IConstantHeaders
 				}
 				return mapLimit(arg1, rule);
 			} else if (arg1.isAST(F.Power, 3)) {
-				if (arg1.get(2) instanceof IInteger) {
+				if (arg1.get(2).isInteger()) {
 					// Limit[a_^n_,sym->lim] -> Limit[a,sym->lim]^n
 					IInteger n = (IInteger) arg1.get(2);
 					IExpr temp = F.eval(F.Limit(arg1.get(1), rule));
@@ -150,23 +151,22 @@ public class Limit extends AbstractFunctionEvaluator implements IConstantHeaders
 		return F.Times(F.Limit(numerator, rule), F.Power(F.Limit(denominator, rule), F.CN1));
 	}
 
-	private String[] RULES = { 
-		"Limit[x_^n_IntegerQ, x_Symbol->Infinity]:= 0 /; Negative[n]",
-		"Limit[x_^n_IntegerQ, x_Symbol->DirectedInfinity[-1]]:= 0 /; Negative[n]", 
-		"Limit[(1+x_^(-1))^x_, x_Symbol->Infinity]=E",
-		"Limit[(1-x_^(-1))^x_, x_Symbol->Infinity]=E^(-1)",
-	};
+	private String[] RULES = { "Limit[x_^n_IntegerQ, x_Symbol->Infinity]:= 0 /; Negative[n]",
+			"Limit[x_^n_IntegerQ, x_Symbol->DirectedInfinity[-1]]:= 0 /; Negative[n]", "Limit[(1+x_^(-1))^x_, x_Symbol->Infinity]=E",
+			"Limit[(1-x_^(-1))^x_, x_Symbol->Infinity]=E^(-1)", };
 
 	public Limit() {
 	}
 
 	@Override
 	public IExpr evaluate(final IAST ast) {
-		if (ast.size() != 3 && ast.get(2).isRuleAST()) {
+		Validate.checkSize(ast, 3);
+
+		if (!ast.get(2).isRuleAST()) {
 			return null;
 		}
 		IAST rule = (IAST) ast.get(2);
-		if (!(rule.get(1) instanceof ISymbol)) {
+		if (!(rule.get(1).isSymbol())) {
 			return null;
 		}
 		ISymbol sym = (ISymbol) rule.get(1);

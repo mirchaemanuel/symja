@@ -1,5 +1,6 @@
 package org.matheclipse.core.reflection.system;
 
+import org.matheclipse.core.eval.exception.Validate;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
 import org.matheclipse.core.expression.AST;
 import org.matheclipse.core.expression.F;
@@ -15,14 +16,13 @@ public class Depth extends AbstractFunctionEvaluator {
 	}
 
 	@Override
-	public IExpr evaluate(final IAST functionList) {
-		if (functionList.size() != 2) {
-			return null;
-		}
-		if (!(functionList.get(1) instanceof IAST)) {
+	public IExpr evaluate(final IAST ast) {
+		Validate.checkSize(ast, 2);
+
+		if (!(ast.get(1).isAST())) {
 			return F.C1;
 		}
-		return F.integer(AST.COPY.depth((IAST) functionList.get(1), 1));
+		return F.integer(AST.COPY.depth((IAST) ast.get(1), 1));
 	}
 
 }

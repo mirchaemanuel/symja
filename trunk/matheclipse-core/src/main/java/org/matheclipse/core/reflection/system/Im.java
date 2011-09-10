@@ -25,10 +25,10 @@ public class Im implements IFunctionEvaluator {
 			throw new WrongNumberOfArguments(functionList, 1, functionList.size() - 1);
 		}
 		IExpr expr = functionList.get(1);
-		if (expr instanceof ISignedNumber) {
+		if (expr.isSignedNumber()) {
 			return F.C0;
 		}
-		if (expr instanceof IComplex) {
+		if (expr.isComplex()) {
 			return ((IComplex) expr).getIm();
 		}
 		if (expr instanceof IComplexNum) {

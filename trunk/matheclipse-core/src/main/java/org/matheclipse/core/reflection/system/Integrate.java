@@ -95,7 +95,7 @@ public class Integrate extends AbstractFunctionEvaluator implements IConstantHea
 			return ast.range(2).foldRight(new BinaryEval(F.Integrate), fx);
 		}
 
-		if (ast.get(1) instanceof IAST) {
+		if (ast.get(1).isAST()) {
 			fx = F.evalExpandAll(ast.get(1));
 			if (fx.isPlus()) {
 				// Integrate[a_+b_+...,x_] -> Integrate[a,x]+Integrate[b,x]+...
@@ -192,7 +192,7 @@ public class Integrate extends AbstractFunctionEvaluator implements IConstantHea
 				final IExpr header = arg1.head();
 				if (arg1.size() >= 3) {
 					if (header == F.Times || header == F.Power) {
-						if (!arg1.isEvalFlagOn(IAST.IS_DECOMPOSED_PARTIAL_FRACTION) && ast.get(2) instanceof ISymbol) {
+						if (!arg1.isEvalFlagOn(IAST.IS_DECOMPOSED_PARTIAL_FRACTION) && ast.get(2).isSymbol()) {
 							IExpr[] parts = Apart.getFractionalParts(arg1);
 							if (parts != null) {
 								IAST apartPlus = integrateByPartialFractions(parts, symbol);
@@ -292,7 +292,7 @@ public class Integrate extends AbstractFunctionEvaluator implements IConstantHea
 				IExpr temp;
 				if (!Ai.get(0).get(0).isZERO()) {
 					temp = F.eval(jas.poly2Expr(Ai.get(0).get(0)));
-					if (temp instanceof IAST) {
+					if (temp.isAST()) {
 						((IAST) temp).addEvalFlags(IAST.IS_DECOMPOSED_PARTIAL_FRACTION);
 					}
 					result.add(F.Integrate(temp, x));
@@ -380,7 +380,7 @@ public class Integrate extends AbstractFunctionEvaluator implements IConstantHea
 							} else {
 								temp = F.eval(F.Times(jas.poly2Expr(genPolynomial), F.Power(jas.poly2Expr(D.get(i - 1)), F.integer(j * (-1L)))));
 								if (!temp.equals(F.C0)) {
-									if (temp instanceof IAST) {
+									if (temp.isAST()) {
 										((IAST) temp).addEvalFlags(IAST.IS_DECOMPOSED_PARTIAL_FRACTION);
 									}
 									result.add(F.Integrate(temp, x));

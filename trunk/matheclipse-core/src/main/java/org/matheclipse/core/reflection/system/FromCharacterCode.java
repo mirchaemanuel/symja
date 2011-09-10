@@ -28,7 +28,7 @@ public class FromCharacterCode extends AbstractFunctionEvaluator {
 			final StringBuffer buffer = new StringBuffer();
 			char ch;
 			for (int i = 1; i < list.size(); i++) {
-				if (list.get(i) instanceof IInteger) {
+				if (list.get(i).isInteger()) {
 					ch = (char) Validate.checkIntType(list, i);
 					buffer.append(ch);
 				} else {
@@ -37,7 +37,7 @@ public class FromCharacterCode extends AbstractFunctionEvaluator {
 			}
 			return StringX.valueOf(buffer);
 		}
-		if (ast.get(1) instanceof IInteger) {
+		if (ast.get(1).isInteger()) {
 			final char ch = (char) Validate.checkIntType(ast, 1);
 			return StringX.valueOf(ch);
 		}

@@ -160,8 +160,7 @@ public class Module extends AbstractFunctionEvaluator {
 				variables.put(oldSymbol, newSymbol);
 				newSymbol.pushLocalVariable();
 			} else {
-				if ((variablesList.get(i) instanceof IAST) && ((IAST) variablesList.get(i)).isAST(F.Set)
-						&& (((IAST) variablesList.get(i)).size() == 3)) {
+				if (variablesList.get(i).isAST(F.Set, 3)) {
 					final IAST setFun = (IAST) variablesList.get(i);
 					if (setFun.get(1).isSymbol()) {
 						oldSymbol = (ISymbol) setFun.get(1);

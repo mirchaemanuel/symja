@@ -6,7 +6,6 @@ import org.matheclipse.core.expression.AST;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
-import org.matheclipse.core.interfaces.IInteger;
 import org.matheclipse.generic.combinatoric.KPermutationsList;
 
 /**
@@ -25,6 +24,7 @@ public class Permutations extends AbstractFunctionEvaluator {
 	@Override
 	public IExpr evaluate(final IAST ast) {
 		Validate.checkRange(ast, 2, 3);
+		
 		if (ast.get(1).isAST()) {
 			final IAST f = (IAST) ast.get(1);
 			final IAST result = F.ast(f.head());
@@ -37,7 +37,7 @@ public class Permutations extends AbstractFunctionEvaluator {
 
 			int k = f.size() - 1;
 			if (ast.size() == 3) {
-				if (!(ast.get(2) instanceof IInteger)) {
+				if (!ast.get(2).isInteger()) {
 					return null;
 				}
 				k = Validate.checkIntType(ast, 2);

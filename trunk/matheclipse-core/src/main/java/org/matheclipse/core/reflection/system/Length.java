@@ -14,9 +14,9 @@ public class Length extends AbstractFunctionEvaluator {
 	@Override
 	public IExpr evaluate(final IAST ast) {
 		Validate.checkSize(ast, 2);
-		
-		if (ast.get(1) instanceof IAST) {
-			return F.integer( ((IAST) ast.get(1)).size()-1 );
+
+		if (ast.get(1).isAST()) {
+			return F.integer(((IAST) ast.get(1)).size() - 1);
 		}
 		return F.C0;
 	}

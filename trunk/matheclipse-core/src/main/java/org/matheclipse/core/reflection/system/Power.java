@@ -191,21 +191,21 @@ public class Power extends AbstractArg2 implements INumeric {
 		if (o0.isAST()) {
 			IAST arg0 = (IAST) o0;
 			if (arg0.isTimes()) {
-				if (o1 instanceof IInteger) {
+				if (o1.isInteger()) {
 					// (a * b * c)^n => a^n * b^n * c^n
 					return arg0.map(Functors.replace1st(Power(F.Null, o1)));
 				}
-				if (o1 instanceof INumber) {
+				if (o1.isNumber()) {
 					final IAST f0 = arg0;
 
-					if ((f0.size() > 1) && (f0.get(1) instanceof INumber)) {
+					if ((f0.size() > 1) && (f0.get(1).isNumber())) {
 						return Times(Power(f0.get(1), o1), Power(F.ast(f0, F.Times, true, 2, f0.size()), o1));
 					}
 				}
 			}
 
 			if (arg0.isPower()) {
-				if (o1 instanceof IInteger) {
+				if (o1.isInteger()) {
 					// (a ^ b )^n => a ^ (b * n)
 					return F.Power(arg0.get(1), F.Times(o1, arg0.get(2)));
 				}

@@ -30,7 +30,8 @@ public class Block extends AbstractFunctionEvaluator {
 						variables.add(lst.get(i));
 						((Symbol) lst.get(i)).pushLocalVariable();
 					} else {
-						if ((lst.get(i) instanceof IAST) && ((IAST) lst.get(i)).isAST(F.Set) && (((IAST) lst.get(i)).size() == 3)) {
+						if (lst.get(i).isAST(F.Set, 3)) {
+							// lhs = rhs
 							final IAST setFun = (IAST) lst.get(i);
 							if (setFun.get(1).isSymbol()) {
 								variables.add(setFun.get(1));
