@@ -25,6 +25,7 @@ import org.matheclipse.core.patternmatching.PatternMatcher;
 import org.matheclipse.core.visit.IVisitor;
 import org.matheclipse.core.visit.IVisitorBoolean;
 import org.matheclipse.core.visit.IVisitorInt;
+import org.matheclipse.core.visit.IVisitorLevel;
 import org.matheclipse.core.visit.VisitorReplaceAll;
 import org.matheclipse.core.visit.VisitorReplacePart;
 import org.matheclipse.core.visit.VisitorReplaceSlots;
@@ -1516,25 +1517,26 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 	// FACTORY.recycle(this);
 	// }
 
+	/** {@inheritDoc} */
 	public <T> T accept(IVisitor<T> visitor) {
 		return visitor.visit(this);
 	}
 
+	/** {@inheritDoc} */
 	public boolean accept(IVisitorBoolean visitor) {
 		return visitor.visit(this);
 	}
 
+	/** {@inheritDoc} */
 	public int accept(IVisitorInt visitor) {
 		return visitor.visit(this);
 	}
 
-	// private void readObject(java.io.ObjectInputStream stream)
-	// throws IOException, ClassNotFoundException {
-	// stream.defaultReadObject();
-	// fEvalFlags = 0;
-	// fHashValue = 0;
-	// }
-
+	/** {@inheritDoc} */
+	public int accept(IVisitorLevel visitor) {
+	  return visitor.visit(this);
+	}
+	 
 	/**
 	 * Additional negative method, which works like opposite to fulfill groovy's
 	 * method signature

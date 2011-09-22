@@ -17,6 +17,7 @@ import org.matheclipse.core.interfaces.ISymbol;
 import org.matheclipse.core.visit.IVisitor;
 import org.matheclipse.core.visit.IVisitorBoolean;
 import org.matheclipse.core.visit.IVisitorInt;
+import org.matheclipse.core.visit.IVisitorLevel;
 
 
 /**
@@ -988,16 +989,31 @@ public class IntegerSym extends ExprImpl implements IInteger {
 		return "integer(" + value + "L)";
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public <T> T accept(IVisitor<T> visitor) {
 		return visitor.visit(this);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public boolean accept(IVisitorBoolean visitor) {
 		return visitor.visit(this);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public int accept(IVisitorInt visitor) {
 		return visitor.visit(this);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	public int accept(IVisitorLevel visitor) {
+	  return visitor.visit(this);
+	}
 }

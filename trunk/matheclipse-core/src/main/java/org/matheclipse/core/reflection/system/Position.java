@@ -13,7 +13,7 @@ import org.matheclipse.core.patternmatching.PatternMatcher;
 import org.matheclipse.generic.nested.LevelSpec;
 
 public class Position extends AbstractFunctionEvaluator {
-
+	
 	public Position() {
 	}
 
@@ -27,7 +27,7 @@ public class Position extends AbstractFunctionEvaluator {
 				return position((IAST) ast.get(1), ast.get(2), level);
 			}
 			if (ast.size() == 4) {
-				final LevelSpec level = new LevelSpecification(ast.get(3));
+				final LevelSpec level = new LevelSpecification(ast.get(3), false);
 				return position((IAST) ast.get(1), ast.get(2), level);
 			}
 		}

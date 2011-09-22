@@ -1833,7 +1833,7 @@ public class SystemTestCase extends AbstractTestCase {
 	}
 
 	public void testSystem309() {
-		check("Apply[g, {{{u[w]}}}, -2]", "g[g[g[g[w]]]]");
+		check("Apply[g, {{{u[w]}}}, -2]", "{g[g[g[w]]]}");
 	}
 
 	public void testSystem310() {
@@ -1852,8 +1852,7 @@ public class SystemTestCase extends AbstractTestCase {
 	}
 
 	public void testSystem313() {
-		check("Total[{2,4*x^5, y*x},{2}]", "y+x+4");
-		check("Total[{2,4*x^5, y*x},{2,3}]", "y+2*x+9");
+		check("Total[{{2,4*x^5, y*x}},{2}]", "{x*y+4*x^5+2}");
 		check("Total[w[{1,2,3},{4,5,6},{7,8,9}]]", "{12,15,18}");
 		check("Total[w[{1,2,3},{4,5,6},{7,8,9}],2]", "45");
 	}

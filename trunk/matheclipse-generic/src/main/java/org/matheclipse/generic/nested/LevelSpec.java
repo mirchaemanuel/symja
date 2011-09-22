@@ -86,11 +86,11 @@ public class LevelSpec {
 	public final void setFromLevelAsCurrent() {
 		fCurrentLevel = fFromLevel;
 	}
-	
+
 	public final void setToLevelAsCurrent() {
 		fCurrentLevel = fToLevel;
 	}
-	
+
 	public final void decCurrentDepth() {
 		fCurrentDepth--;
 	}
@@ -119,7 +119,7 @@ public class LevelSpec {
 	public boolean isInScope() {
 		return (fCurrentLevel <= fToLevel) && (fCurrentDepth <= fToDepth);
 	}
-	
+
 	public final int getCurrentDepth() {
 		return fCurrentDepth;
 	}
@@ -130,5 +130,40 @@ public class LevelSpec {
 
 	public final void setCurrentLevel(final int currentLevel) {
 		fCurrentLevel = currentLevel;
+	}
+
+	/**
+	 * @return the from level
+	 */
+	public int getFromLevel() {
+		return fFromLevel;
+	}
+
+	/**
+	 * @return the to level
+	 */
+	public int getToLevel() {
+		return fToLevel;
+	}
+
+	/**
+	 * @return the from depth
+	 */
+	public int getFromDepth() {
+		return fFromDepth;
+	}
+
+	/**
+	 * @return the to depth
+	 */
+	public int getToDepth() {
+		return fToDepth;
+	}
+
+	/**
+	 * @return if the level includes the heads of an expression
+	 */
+	public boolean isIncludeHeads() {
+		return fIncludeHeads;
 	}
 }

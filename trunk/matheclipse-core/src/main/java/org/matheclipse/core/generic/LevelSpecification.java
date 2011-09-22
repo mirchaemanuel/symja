@@ -5,6 +5,7 @@ import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.IInteger;
 import org.matheclipse.generic.nested.LevelSpec;
+import org.matheclipse.parser.client.math.MathException;
 
 /**
  * Level specification for expression trees
@@ -17,6 +18,7 @@ public class LevelSpecification extends LevelSpec {
 	 */
 	public LevelSpecification() {
 		super();
+		fFromLevel = 0;
 		fToLevel = Integer.MAX_VALUE;
 		fFromDepth = Integer.MIN_VALUE;
 		fToDepth = -1;
@@ -26,37 +28,41 @@ public class LevelSpecification extends LevelSpec {
 	 * Create a LevelSpecification from an IInteger or IAST list-object.<br>
 	 * <br>
 	 * 
-	 * If <code>obj</code> is a non-negative IInteger iValue set Level {0,iValue};<br>
-	 * If <code>obj</code> is a negative IInteger iValue set Level {iValue, 0};<br>
-	 * If <code>obj</code> is a List {i0Value, i1Value} set Level {i0Value,
+	 * If <code>expr</code> is a non-negative IInteger iValue set Level
+	 * {1,iValue};<br>
+	 * If <code>expr</code> is a negative IInteger iValue set Level {iValue, 0};<br>
+	 * If <code>expr</code> is a List {i0Value, i1Value} set Level {i0Value,
 	 * i1Value};<br>
 	 * 
-	 * @param obj
-	 * 
+	 * @param expr
+	 * @param includeHeads
+	 *          TODO
+	 * @throws MathException
+	 *           if the expr is not a <i>level specification</i>
 	 * @see
 	 */
-	public LevelSpecification(final IExpr obj) {
-		super();
+	public LevelSpecification(final IExpr expr, boolean includeHeads) {
+		super(0, includeHeads);
 		fFromLevel = fToLevel = -1;
 		fFromDepth = fToDepth = 0;
-		if (obj instanceof IInteger) {
-			final IInteger value = (IInteger) obj;
+		if (expr instanceof IInteger) {
+			final IInteger value = (IInteger) expr;
 
 			if (value.isNegative()) {
 				fFromDepth = Integer.MIN_VALUE;
 				fToDepth = value.getBigNumerator().intValue();
-				fFromLevel = 0;
+				fFromLevel = 1;
 				fToLevel = Integer.MAX_VALUE;
 			} else {
 				fToLevel = value.getBigNumerator().intValue();
-				fFromLevel = 0;
+				fFromLevel = 1;
 				fFromDepth = Integer.MIN_VALUE;
 				fToDepth = -1;
 			}
 			return;
 		}
-		if (obj.isList()) {
-			final IAST lst = (IAST) obj;
+		if (expr.isList()) {
+			final IAST lst = (IAST) expr;
 
 			if (lst.size() == 2) {
 				if (lst.get(1) instanceof IInteger) {
@@ -68,7 +74,7 @@ public class LevelSpecification extends LevelSpec {
 						fFromLevel = 0;
 						fToLevel = Integer.MAX_VALUE;
 						if (fToDepth < fFromDepth) {
-							throw new Error("Error in LevelSpecification 1");
+							throw new MathException("Invalid Level specification: " + expr.toString());
 						}
 					} else {
 						fToLevel = i.getBigNumerator().intValue();
@@ -76,7 +82,7 @@ public class LevelSpecification extends LevelSpec {
 						fFromDepth = Integer.MIN_VALUE;
 						fToDepth = -1;
 						if (fToLevel < fFromLevel) {
-							throw new Error("Error in LevelSpecification 2");
+							throw new MathException("Invalid Level specification: " + expr.toString());
 						}
 					}
 					return;
@@ -92,7 +98,7 @@ public class LevelSpecification extends LevelSpec {
 							fFromLevel = 0;
 							fToLevel = Integer.MAX_VALUE;
 						} else if (i0.isNegative()) {
-							throw new Error("Invalid Level specification!");
+							throw new MathException("Invalid Level specification: " + expr.toString());
 						} else if (i1.isNegative()) {
 							fFromDepth = Integer.MIN_VALUE;
 							fToDepth = i1.getBigNumerator().intValue();
@@ -108,7 +114,7 @@ public class LevelSpecification extends LevelSpec {
 					} else if ((lst.get(1) instanceof IInteger) && (lst.get(2).equals(F.CInfinity))) {
 						final IInteger i0 = (IInteger) lst.get(1);
 						if (i0.isNegative()) {
-							throw new Error("Invalid Level specification!");
+							throw new MathException("Invalid Level specification: " + expr.toString());
 						} else {
 							fFromDepth = Integer.MIN_VALUE;
 							fToDepth = -1;
@@ -120,14 +126,14 @@ public class LevelSpecification extends LevelSpec {
 				}
 			}
 		}
-		if (obj.equals(F.CInfinity)) {
+		if (expr.equals(F.CInfinity)) {
 			fToLevel = Integer.MAX_VALUE;
 			fFromLevel = 1;
 			fFromDepth = Integer.MIN_VALUE;
 			fToDepth = -1;
 			return;
 		}
-		throw new Error("Invalid Level specification!");
+		throw new MathException("Invalid Level specification: " + expr.toString());
 	}
 
 	/**
