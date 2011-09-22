@@ -1531,11 +1531,6 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 	public int accept(IVisitorInt visitor) {
 		return visitor.visit(this);
 	}
-
-	/** {@inheritDoc} */
-	public int accept(IVisitorLevel visitor) {
-	  return visitor.visit(this);
-	}
 	 
 	/**
 	 * Additional negative method, which works like opposite to fulfill groovy's

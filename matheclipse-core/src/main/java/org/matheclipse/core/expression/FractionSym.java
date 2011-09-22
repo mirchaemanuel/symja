@@ -454,9 +454,4 @@ public class FractionSym extends ExprImpl implements IFraction {
 	public int accept(IVisitorInt visitor) {
 		return visitor.visit(this);
 	}
-	
-	/** {@inheritDoc} */
-	public int accept(IVisitorLevel visitor) {
-	  return visitor.visit(this);
-	}
 }

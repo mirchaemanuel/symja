@@ -59,15 +59,6 @@ public interface IExpr extends Comparable<IExpr>, RingElem<IExpr>, INestedListEl
 	 * @return
 	 */
 	public int accept(IVisitorInt visitor);
-	
-	/**
-	 * Accept a level visitor 
-	 * 
-	 * @param visitor
-	 * @return TODO
-	 * @return
-	 */
-	public int accept(IVisitorLevel visitor);
 
 	public IExpr and(final IExpr that);
 

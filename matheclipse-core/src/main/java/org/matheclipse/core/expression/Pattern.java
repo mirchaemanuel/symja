@@ -420,13 +420,6 @@ public class Pattern extends ExprImpl implements IPattern {
 	public int accept(IVisitorInt visitor) {
 		return visitor.visit(this);
 	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public int accept(IVisitorLevel visitor) {
-	  return visitor.visit(this);
-	}
 	
 	/**
 	 * Use default value, if not matching was found.

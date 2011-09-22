@@ -571,11 +571,4 @@ public class StringX extends ExprImpl implements IStringX {
 	public int accept(IVisitorInt visitor) {
 		return visitor.visit(this);
 	}
-	
-	/**
-	 * {@inheritDoc}
-	 */
-	public int accept(IVisitorLevel visitor) {
-	  return visitor.visit(this);
-	}
 }

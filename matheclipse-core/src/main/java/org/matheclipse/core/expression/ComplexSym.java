@@ -384,11 +384,6 @@ public class ComplexSym extends ExprImpl implements IComplex {
 	public int accept(IVisitorInt visitor) {
 		return visitor.visit(this);
 	}
-
-	/** {@inheritDoc} */
-	public int accept(IVisitorLevel visitor) {
-	  return visitor.visit(this);
-	}
 	
 	@Override
 	public boolean equalsInt(int i) {
