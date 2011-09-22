@@ -4,10 +4,10 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
-import org.hamcrest.core.IsAnything;
 import org.matheclipse.core.visit.IVisitor;
 import org.matheclipse.core.visit.IVisitorBoolean;
 import org.matheclipse.core.visit.IVisitorInt;
+import org.matheclipse.core.visit.IVisitorLevel;
 import org.matheclipse.generic.nested.INestedListElement;
 
 import com.google.common.base.Function;
@@ -59,6 +59,15 @@ public interface IExpr extends Comparable<IExpr>, RingElem<IExpr>, INestedListEl
 	 * @return
 	 */
 	public int accept(IVisitorInt visitor);
+	
+	/**
+	 * Accept a level visitor 
+	 * 
+	 * @param visitor
+	 * @return TODO
+	 * @return
+	 */
+	public int accept(IVisitorLevel visitor);
 
 	public IExpr and(final IExpr that);
 

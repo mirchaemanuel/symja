@@ -2,14 +2,14 @@ package org.matheclipse.core.reflection.system;
 
 import org.matheclipse.core.eval.exception.Validate;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
-import org.matheclipse.core.expression.AST;
+import org.matheclipse.core.eval.util.Options;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.generic.Functors;
-import org.matheclipse.core.generic.LevelSpecification;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
-import org.matheclipse.core.interfaces.ISymbol;
-import org.matheclipse.generic.nested.LevelSpec;
+import org.matheclipse.core.visit.VisitorLevelSpecification;
+
+import com.google.common.base.Function;
 
 public class Apply extends AbstractFunctionEvaluator {
 
@@ -18,26 +18,36 @@ public class Apply extends AbstractFunctionEvaluator {
 
 	@Override
 	public IExpr evaluate(final IAST ast) {
-		Validate.checkRange(ast, 3, 4);
-
-		LevelSpec level = null;
-		if (ast.size() == 4) {
-			level = new LevelSpecification(ast.get(3));
+		Validate.checkRange(ast, 3, 5);
+		
+		int lastIndex = ast.size() - 1;
+		boolean heads = false;
+		final Options options = new Options(ast.topHead(), ast, lastIndex);
+		IExpr option = options.getOption("Heads");
+		if (option != null) {
+			lastIndex--;
+			if (option.isTrue()) {
+				heads = true;
+			}
 		} else {
-			level = new LevelSpec(0);
+			Validate.checkRange(ast, 3, 4);
+		}
+
+		VisitorLevelSpecification level = null;
+		Function<IExpr, IExpr> af = Functors.apply(ast.get(1));
+		if (lastIndex == 3) {
+			level = new VisitorLevelSpecification(af, ast.get(lastIndex), heads);
+		} else {
+			level = new VisitorLevelSpecification(af, 0);
 		}
 
 		try {
-			
+
 			if (!ast.get(2).isAtom()) {
-				final IExpr result = AST.COPY.apply(ast.get(2), Functors.constant(ast.get(1)), level, 1);
+				final IExpr result = ast.get(2).accept(level);
+
 				return result == null ? ast.get(2) : result;
 			} else if (ast.size() == 3) {
-//				if (!ast.get(1).isAtom()) {
-//					IAST fun = F.ast(ast.get(1));
-//					fun.add(ast.get(2));
-//					return fun;
-//				}
 				if (ast.get(1).isFunction()) {
 					IAST fun = F.ast(ast.get(1));
 					fun.add(ast.get(2));

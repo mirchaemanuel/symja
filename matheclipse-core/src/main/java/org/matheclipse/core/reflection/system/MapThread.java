@@ -3,10 +3,9 @@ package org.matheclipse.core.reflection.system;
 import org.matheclipse.core.eval.exception.Validate;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
 import org.matheclipse.core.expression.F;
-import org.matheclipse.core.generic.LevelSpecification;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
-import org.matheclipse.generic.nested.LevelSpec;
+import org.matheclipse.core.visit.VisitorLevelSpecification;
 
 import com.google.common.base.Function;
 
@@ -41,13 +40,15 @@ public class MapThread extends AbstractFunctionEvaluator {
 	public IExpr evaluate(final IAST ast) {
 		Validate.checkRange(ast, 3, 4);
 
-		LevelSpec level = null;
+		VisitorLevelSpecification level = null;
+		Function<IExpr, IExpr> umt = new UnaryMapThread(ast.get(1));
 		if (ast.size() == 4) {
-			level = new LevelSpecification(ast.get(3));
+			level = new VisitorLevelSpecification(umt, ast.get(3), false);
 		} else {
-			level = new LevelSpec(0);
+			level = new VisitorLevelSpecification(umt, 0);
 		}
-		final IExpr result = Map.map(ast.get(2), new UnaryMapThread(ast.get(1)), level, 1);
+		final IExpr result = ast.get(2).accept(level);
+
 		return result == null ? ast.get(2) : result;
 	}
 

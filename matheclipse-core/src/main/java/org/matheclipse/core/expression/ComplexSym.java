@@ -12,6 +12,7 @@ import org.matheclipse.core.interfaces.ISymbol;
 import org.matheclipse.core.visit.IVisitor;
 import org.matheclipse.core.visit.IVisitorBoolean;
 import org.matheclipse.core.visit.IVisitorInt;
+import org.matheclipse.core.visit.IVisitorLevel;
 
 /**
  * A concrete complex implementation
@@ -369,18 +370,26 @@ public class ComplexSym extends ExprImpl implements IComplex {
 		return F.ComplexHead;
 	}
 
+	/** {@inheritDoc} */
 	public <T> T accept(IVisitor<T> visitor) {
 		return visitor.visit(this);
 	}
 
+	/** {@inheritDoc} */
 	public boolean accept(IVisitorBoolean visitor) {
 		return visitor.visit(this);
 	}
 
+	/** {@inheritDoc} */
 	public int accept(IVisitorInt visitor) {
 		return visitor.visit(this);
 	}
 
+	/** {@inheritDoc} */
+	public int accept(IVisitorLevel visitor) {
+	  return visitor.visit(this);
+	}
+	
 	@Override
 	public boolean equalsInt(int i) {
 		return false;

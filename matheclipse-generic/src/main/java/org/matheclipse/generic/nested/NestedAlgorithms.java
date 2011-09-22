@@ -1,8 +1,7 @@
 package org.matheclipse.generic.nested;
 
 import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.List; 
 
 import org.matheclipse.generic.interfaces.IPositionConverter;
 import org.matheclipse.generic.interfaces.ISequence;
@@ -39,53 +38,55 @@ public abstract class NestedAlgorithms<T extends INestedListElement, L extends L
 	 * according to the level specification.
 	 * 
 	 */
-	public T apply(final T expr, final Function<T, T> function, final LevelSpec level) {
-		return apply(expr, function, level, 0);
-	}
+	// public T apply(final T expr, final Function<T, T> function, final LevelSpec
+	// level) {
+	// return apply(expr, function, level, 0);
+	// }
 
 	/**
 	 * Replace all headers in the nested list with the <code>newHead</code>,
 	 * according to the level specification.
 	 * 
 	 */
-	public T apply(final T expr, final Function<T, T> function, final LevelSpec level, final int headOffset) {
-		L result = null;
-		int minDepth = 0;
-
-		level.incCurrentLevel();
-
-		T temp;
-
-		if (isInstance(expr)) {
-			final L list = cast(expr);
-			for (int i = headOffset; i < list.size(); i++) {
-
-				temp = apply(list.get(i), function, level, headOffset);
-				if (temp != null) {
-					if (result == null) {
-						result = clone(list);
-					}
-					result.set(i, temp);
-				}
-				if (level.getCurrentDepth() < minDepth) {
-					minDepth = level.getCurrentDepth();
-				}
-			}
-
-			level.setCurrentDepth(--minDepth);
-			level.decCurrentLevel();
-			if (level.isInRange()) {
-				if (result == null) {
-					result = clone(list);
-				}
-				result.set(0, function.apply(result.get(0)));
-			}
-		} else {
-			level.setCurrentDepth(--minDepth);
-			level.decCurrentLevel();
-		}
-		return castList(result);
-	}
+	// public T apply(final T expr, final Function<T, T> function, final LevelSpec
+	// level, final int headOffset) {
+	// L result = null;
+	// int minDepth = 0;
+	//
+	// level.incCurrentLevel();
+	//
+	// T temp;
+	//
+	// if (isInstance(expr)) {
+	// final L list = cast(expr);
+	// for (int i = headOffset; i < list.size(); i++) {
+	//
+	// temp = apply(list.get(i), function, level, headOffset);
+	// if (temp != null) {
+	// if (result == null) {
+	// result = clone(list);
+	// }
+	// result.set(i, temp);
+	// }
+	// if (level.getCurrentDepth() < minDepth) {
+	// minDepth = level.getCurrentDepth();
+	// }
+	// }
+	//
+	// level.setCurrentDepth(--minDepth);
+	// level.decCurrentLevel();
+	// if (level.isInRange()) {
+	// if (result == null) {
+	// result = clone(list);
+	// }
+	// result.set(0, function.apply(result.get(0)));
+	// }
+	// } else {
+	// level.setCurrentDepth(--minDepth);
+	// level.decCurrentLevel();
+	// }
+	// return castList(result);
+	// }
 
 	/**
 	 * Count all elements and nested elements in the list, which satisfies the
@@ -327,9 +328,10 @@ public abstract class NestedAlgorithms<T extends INestedListElement, L extends L
 	 * @param level
 	 * @param resultCollection
 	 */
-	public Collection<? super T> level(final T expr, final LevelSpec level, final Collection<? super T> resultCollection) {
-		return level(expr, level, resultCollection, 0);
-	}
+	// public Collection<? super T> level(final T expr, final LevelSpec level,
+	// final Collection<? super T> resultCollection) {
+	// return level(expr, level, resultCollection, 0);
+	// }
 
 	/**
 	 * Add all expressions according to the level specification <code>level</code>
@@ -341,59 +343,60 @@ public abstract class NestedAlgorithms<T extends INestedListElement, L extends L
 	 * @param resultCollection
 	 * @param headOffset
 	 */
-	public Collection<? super T> level(final T expr, final LevelSpec level, final Collection<? super T> resultCollection,
-			int headOffset) {
-		int minDepth = 0;
-		level.incCurrentLevel();
-		L list;
-		if (isInstance(expr)) {
-			list = cast(expr);
-			for (int i = headOffset; i < list.size(); i++) {
+	// public Collection<? super T> level(final T expr, final LevelSpec level,
+	// final Collection<? super T> resultCollection,
+	// int headOffset) {
+	// int minDepth = 0;
+	// level.incCurrentLevel();
+	// L list;
+	// if (isInstance(expr)) {
+	// list = cast(expr);
+	// for (int i = headOffset; i < list.size(); i++) {
+	//
+	// level(list.get(i), level, resultCollection, headOffset);
+	// if (level.getCurrentDepth() < minDepth) {
+	// minDepth = level.getCurrentDepth();
+	// }
+	// }
+	//
+	// level.setCurrentDepth(--minDepth);
+	// level.decCurrentLevel();
+	// if (level.isInRange()) {
+	// resultCollection.add(expr);
+	// }
+	// } else {
+	// level.setCurrentDepth(--minDepth);
+	// level.decCurrentLevel();
+	// if (level.isInRange()) {
+	// resultCollection.add(expr);
+	// }
+	// }
+	// return resultCollection;
+	// }
 
-				level(list.get(i), level, resultCollection, headOffset);
-				if (level.getCurrentDepth() < minDepth) {
-					minDepth = level.getCurrentDepth();
-				}
-			}
-
-			level.setCurrentDepth(--minDepth);
-			level.decCurrentLevel();
-			if (level.isInRange()) {
-				resultCollection.add(expr);
-			}
-		} else {
-			level.setCurrentDepth(--minDepth);
-			level.decCurrentLevel();
-			if (level.isInRange()) {
-				resultCollection.add(expr);
-			}
-		}
-		return resultCollection;
-	}
-
-	public void total(final T expr, final LevelSpec level, final Function<T, T> function, int headOffset) {
-		int minDepth = 0;
-		level.incCurrentLevel();
-		L list;
-		if (isInstance(expr)) {
-			list = cast(expr);
-			for (int i = headOffset; i < list.size(); i++) {
-
-				total(list.get(i), level, function, headOffset);
-				if (level.getCurrentDepth() < minDepth) {
-					minDepth = level.getCurrentDepth();
-				}
-			}
-			level.setCurrentDepth(--minDepth);
-			level.decCurrentLevel();
-		} else {
-			level.setCurrentDepth(--minDepth);
-			level.decCurrentLevel();
-			if (level.isInRange()) {
-				function.apply(expr);
-			}
-		}
-	}
+//	public void total(final T expr, final LevelSpec level, final Function<T, T> function, int headOffset) {
+//		int minDepth = 0;
+//		level.incCurrentLevel();
+//		L list;
+//		if (isInstance(expr)) {
+//			list = cast(expr);
+//			for (int i = headOffset; i < list.size(); i++) {
+//
+//				total(list.get(i), level, function, headOffset);
+//				if (level.getCurrentDepth() < minDepth) {
+//					minDepth = level.getCurrentDepth();
+//				}
+//			}
+//			level.setCurrentDepth(--minDepth);
+//			level.decCurrentLevel();
+//		} else {
+//			level.setCurrentDepth(--minDepth);
+//			level.decCurrentLevel();
+//			if (level.isInRange()) {
+//				function.apply(expr);
+//			}
+//		}
+//	}
 
 	/**
 	 * Add the positions to the <code>resultCollection</code> where the matching
@@ -545,46 +548,47 @@ public abstract class NestedAlgorithms<T extends INestedListElement, L extends L
 	 * @param to
 	 * @return
 	 */
-//	public T replaceAll(final T expr, final L from, final L to) {
-//		return replaceAll(expr, from, to, 0);
-//	}
+	// public T replaceAll(final T expr, final L from, final L to) {
+	// return replaceAll(expr, from, to, 0);
+	// }
 
 	/**
 	 * Replace all elements in the <code>from</code> list, found in expression
 	 * <code>expr</code> with the corresponding elements in the <code>to</code>
 	 * list. If no replacement is found return <code>null</code>
 	 */
-//	public T replaceAll(final T expr, final L from, final L to, final int headOffset) {
-//		for (int i = headOffset; i < from.size(); i++) {
-//
-//			if (expr.equals(from.get(i))) {
-//				return to.get(i);
-//			}
-//		}
-//		L nestedList;
-//		if (isInstance(expr)) {
-//			nestedList = cast(expr);
-//			L result = null;
-//			final T head = nestedList.get(0);
-//			T temp = replaceAll(head, from, to, headOffset);
-//			if (temp != null) {
-//				result = clone(nestedList);
-//				result.set(0, temp);
-//			}
-//			for (int i = 1; i < nestedList.size(); i++) {
-//
-//				temp = replaceAll(nestedList.get(i), from, to, headOffset);
-//				if (temp != null) {
-//					if (result == null) {
-//						result = clone(nestedList);
-//					}
-//					result.set(i, temp);
-//				}
-//			}
-//			return castList(result);
-//		}
-//		return null;
-//	}
+	// public T replaceAll(final T expr, final L from, final L to, final int
+	// headOffset) {
+	// for (int i = headOffset; i < from.size(); i++) {
+	//
+	// if (expr.equals(from.get(i))) {
+	// return to.get(i);
+	// }
+	// }
+	// L nestedList;
+	// if (isInstance(expr)) {
+	// nestedList = cast(expr);
+	// L result = null;
+	// final T head = nestedList.get(0);
+	// T temp = replaceAll(head, from, to, headOffset);
+	// if (temp != null) {
+	// result = clone(nestedList);
+	// result.set(0, temp);
+	// }
+	// for (int i = 1; i < nestedList.size(); i++) {
+	//
+	// temp = replaceAll(nestedList.get(i), from, to, headOffset);
+	// if (temp != null) {
+	// if (result == null) {
+	// result = clone(nestedList);
+	// }
+	// result.set(i, temp);
+	// }
+	// }
+	// return castList(result);
+	// }
+	// return null;
+	// }
 
 	public L take(final L list, final int level, final ISequence[] sequ) {
 		sequ[level].setListSize(list.size());

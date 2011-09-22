@@ -6,7 +6,7 @@ import org.matheclipse.core.expression.F;
 import org.matheclipse.core.generic.Functors;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
-import org.matheclipse.generic.nested.LevelSpec;
+import org.matheclipse.core.visit.VisitorLevelSpecification;
 
 /**
  */
@@ -19,10 +19,10 @@ public class MapAll extends AbstractFunctionEvaluator {
 	public IExpr evaluate(final IAST ast) {
 		Validate.checkRange(ast, 3);
 
-		final LevelSpec level = new LevelSpec(0, Integer.MAX_VALUE);
 		final IAST arg1AST = F.ast(ast.get(1));
-		final IExpr result = Map.map(ast.get(2), Functors.append(arg1AST),
-				level, 1);
+		final VisitorLevelSpecification level = new VisitorLevelSpecification(Functors.append(arg1AST), 0, Integer.MAX_VALUE, false);
+
+		final IExpr result = ast.get(2).accept(level);
 		return result == null ? ast.get(2) : result;
 	}
 

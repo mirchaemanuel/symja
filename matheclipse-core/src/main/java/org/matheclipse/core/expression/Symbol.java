@@ -26,6 +26,7 @@ import org.matheclipse.core.patternmatching.RulesData;
 import org.matheclipse.core.visit.IVisitor;
 import org.matheclipse.core.visit.IVisitorBoolean;
 import org.matheclipse.core.visit.IVisitorInt;
+import org.matheclipse.core.visit.IVisitorLevel;
 import org.matheclipse.generic.interfaces.INumericFunction;
 import org.matheclipse.generic.interfaces.Pair;
 
@@ -536,6 +537,13 @@ public class Symbol extends ExprImpl implements ISymbol {
 		return visitor.visit(this);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	public int accept(IVisitorLevel visitor) {
+	  return visitor.visit(this);
+	}
+	
 	/**
 	 * {@inheritDoc}
 	 */
