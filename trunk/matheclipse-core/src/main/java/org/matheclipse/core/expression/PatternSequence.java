@@ -318,13 +318,6 @@ public class PatternSequence extends ExprImpl implements IPatternSequence {
 	public int accept(IVisitorInt visitor) {
 		return visitor.visit(this);
 	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public int accept(IVisitorLevel visitor) {
-	  return visitor.visit(this);
-	}
 	
 	/**
 	 * Use default value, if no matching was found.
