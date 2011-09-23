@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.matheclipse.core.eval.EvalEngine;
-import org.matheclipse.core.eval.exception.ConditionException;
 import org.matheclipse.core.generic.Predicates;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.IPattern;
@@ -13,7 +12,6 @@ import org.matheclipse.core.patternmatching.PatternMatcher;
 import org.matheclipse.core.visit.IVisitor;
 import org.matheclipse.core.visit.IVisitorBoolean;
 import org.matheclipse.core.visit.IVisitorInt;
-import org.matheclipse.core.visit.IVisitorLevel;
 
 import com.google.common.base.Predicate;
 

@@ -17,7 +17,6 @@ import org.matheclipse.core.interfaces.ISymbol;
 import org.matheclipse.core.visit.IVisitor;
 import org.matheclipse.core.visit.IVisitorBoolean;
 import org.matheclipse.core.visit.IVisitorInt;
-import org.matheclipse.core.visit.IVisitorLevel;
 
 
 /**
