@@ -26,7 +26,6 @@ import org.matheclipse.core.patternmatching.RulesData;
 import org.matheclipse.core.visit.IVisitor;
 import org.matheclipse.core.visit.IVisitorBoolean;
 import org.matheclipse.core.visit.IVisitorInt;
-import org.matheclipse.core.visit.IVisitorLevel;
 import org.matheclipse.generic.interfaces.INumericFunction;
 import org.matheclipse.generic.interfaces.Pair;
 
