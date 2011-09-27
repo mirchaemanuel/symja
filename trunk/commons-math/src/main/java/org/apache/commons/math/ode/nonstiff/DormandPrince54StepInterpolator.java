@@ -17,7 +17,6 @@
 
 package org.apache.commons.math.ode.nonstiff;
 
-import org.apache.commons.math.exception.MathUserException;
 import org.apache.commons.math.ode.AbstractIntegrator;
 import org.apache.commons.math.ode.sampling.StepInterpolator;
 
@@ -27,7 +26,7 @@ import org.apache.commons.math.ode.sampling.StepInterpolator;
  *
  * @see DormandPrince54Integrator
  *
- * @version $Id: DormandPrince54StepInterpolator.java 1131229 2011-06-03 20:49:25Z luc $
+ * @version $Id: DormandPrince54StepInterpolator.java 1165792 2011-09-06 19:17:52Z luc $
  * @since 1.2
  */
 
@@ -165,8 +164,7 @@ class DormandPrince54StepInterpolator
   /** {@inheritDoc} */
   @Override
   protected void computeInterpolatedStateAndDerivatives(final double theta,
-                                          final double oneMinusThetaH)
-    throws MathUserException {
+                                          final double oneMinusThetaH) {
 
     if (! vectorsInitialized) {
 

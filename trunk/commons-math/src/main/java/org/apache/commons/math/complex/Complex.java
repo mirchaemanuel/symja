@@ -51,7 +51,7 @@ import org.apache.commons.math.util.FastMath;
  * <br/>
  * Implements Serializable since 2.0
  *
- * @version $Id: Complex.java 1154392 2011-08-05 22:07:31Z erans $
+ * @version $Id: Complex.java 1164923 2011-09-03 20:06:24Z psteitz $
  */
 public class Complex implements FieldElement<Complex>, Serializable  {
     /** The square root of -1. A number representing "0.0 + 1.0i" */

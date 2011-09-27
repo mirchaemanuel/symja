@@ -17,7 +17,8 @@
 
 package org.apache.commons.math.ode;
 
-import org.apache.commons.math.exception.MathUserException;
+import org.apache.commons.math.exception.MathIllegalArgumentException;
+import org.apache.commons.math.exception.MathIllegalStateException;
 
 /** This interface represents a first order integrator for
  * differential equations.
@@ -30,7 +31,7 @@ import org.apache.commons.math.exception.MathUserException;
  * @see FirstOrderDifferentialEquations
  * @see org.apache.commons.math.ode.sampling.StepHandler
  * @see org.apache.commons.math.ode.events.EventHandler
- * @version $Id: FirstOrderIntegrator.java 1131229 2011-06-03 20:49:25Z luc $
+ * @version $Id: FirstOrderIntegrator.java 1164573 2011-09-02 15:11:31Z luc $
  * @since 1.2
  */
 
@@ -51,12 +52,12 @@ public interface FirstOrderIntegrator extends ODEIntegrator {
    * @return stop time, will be the same as target time if integration reached its
    * target, but may be different if some {@link
    * org.apache.commons.math.ode.events.EventHandler} stops it at some point.
-   * @throws IntegratorException if the integrator cannot perform integration
-   * @throws MathUserException this exception is propagated to the caller if
-   * the underlying user function triggers one
+   * @throws MathIllegalStateException if the integrator cannot perform integration
+   * @throws MathIllegalArgumentException if integration parameters are wrong (typically
+   * too small integration span)
    */
   double integrate (FirstOrderDifferentialEquations equations,
-                    double t0, double[] y0,
-                    double t, double[] y) throws MathUserException, IntegratorException;
+                    double t0, double[] y0, double t, double[] y)
+      throws MathIllegalStateException, MathIllegalArgumentException;
 
 }

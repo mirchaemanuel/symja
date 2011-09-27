@@ -31,10 +31,10 @@ import org.apache.commons.math.util.FastMath;
 
 /**
  * This class implements the {@link RealVector} interface with a double array.
- * @version $Id: ArrayRealVector.java 1151665 2011-07-27 23:26:45Z erans $
+ * @version $Id: ArrayRealVector.java 1166629 2011-09-08 11:15:02Z erans $
  * @since 2.0
  */
-public class ArrayRealVector extends AbstractRealVector implements Serializable {
+public class ArrayRealVector extends RealVector implements Serializable {
     /** Serializable version identifier. */
     private static final long serialVersionUID = -1097961340710804027L;
     /** Default format. */
@@ -47,9 +47,8 @@ public class ArrayRealVector extends AbstractRealVector implements Serializable 
      * Zero-length vectors may be used to initialized construction of vectors
      * by data gathering. We start with zero-length and use either the {@link
      * #ArrayRealVector(ArrayRealVector, ArrayRealVector)} constructor
-     * or one of the {@code append} method ({@link #append(double)}, {@link
-     * #append(double[])}, {@link #append(ArrayRealVector)}) to gather data
-     * into this vector.
+     * or one of the {@code append} method ({@link #append(double)},
+     * {@link #append(ArrayRealVector)}) to gather data into this vector.
      */
     public ArrayRealVector() {
         data = new double[0];
@@ -129,7 +128,8 @@ public class ArrayRealVector extends AbstractRealVector implements Serializable 
 
     /**
      * Construct a vector from an array.
-     * @param d array of Doubles.
+     *
+     * @param d Array of {@code Double}s.
      */
     public ArrayRealVector(Double[] d) {
         data = new double[d.length];
@@ -286,9 +286,17 @@ public class ArrayRealVector extends AbstractRealVector implements Serializable 
 
     /** {@inheritDoc} */
     @Override
-    public RealVector add(RealVector v) {
+    public ArrayRealVector add(RealVector v) {
         if (v instanceof ArrayRealVector) {
-            return add(((ArrayRealVector) v).data);
+            final double[] vData = ((ArrayRealVector) v).data;
+            final int dim = vData.length;
+            checkVectorDimensions(dim);
+            ArrayRealVector result = new ArrayRealVector(dim);
+            double[] resultData = result.data;
+            for (int i = 0; i < dim; i++) {
+                resultData[i] = data[i] + vData[i];
+            }
+            return result;
         } else {
             checkVectorDimensions(v);
             double[] out = data.clone();
@@ -303,34 +311,17 @@ public class ArrayRealVector extends AbstractRealVector implements Serializable 
 
     /** {@inheritDoc} */
     @Override
-    public RealVector add(double[] v) {
-        final int dim = v.length;
-        checkVectorDimensions(dim);
-        ArrayRealVector result = new ArrayRealVector(dim);
-        double[] resultData = result.data;
-        for (int i = 0; i < dim; i++) {
-            resultData[i] = data[i] + v[i];
-        }
-        return result;
-    }
-
-    /**
-     * Add {@code v} to this vector.
-     *
-     * @param v Vector to be added
-     * @return {@code this} + v.
-     * @throws DimensionMismatchException if {@code v} is not the same
-     * size as this vector.
-     */
-    public ArrayRealVector add(ArrayRealVector v) {
-        return (ArrayRealVector) add(v.data);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public RealVector subtract(RealVector v) {
+    public ArrayRealVector subtract(RealVector v) {
         if (v instanceof ArrayRealVector) {
-            return subtract(((ArrayRealVector) v).data);
+            final double[] vData = ((ArrayRealVector) v).data;
+            final int dim = vData.length;
+            checkVectorDimensions(dim);
+            ArrayRealVector result = new ArrayRealVector(dim);
+            double[] resultData = result.data;
+            for (int i = 0; i < dim; i++) {
+                resultData[i] = data[i] - vData[i];
+            }
+            return result;
         } else {
             checkVectorDimensions(v);
             double[] out = data.clone();
@@ -341,31 +332,6 @@ public class ArrayRealVector extends AbstractRealVector implements Serializable 
             }
             return new ArrayRealVector(out, false);
         }
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public RealVector subtract(double[] v) {
-        final int dim = v.length;
-        checkVectorDimensions(dim);
-        ArrayRealVector result = new ArrayRealVector(dim);
-        double[] resultData = result.data;
-        for (int i = 0; i < dim; i++) {
-            resultData[i] = data[i] - v[i];
-        }
-        return result;
-    }
-
-    /**
-     * Subtract {@code v} from this vector.
-     *
-     * @param v Vector to be subtracted.
-     * @return {@code this} - v.
-     * @throws DimensionMismatchException if {@code v} is not the
-     * same size as this vector.
-     */
-    public ArrayRealVector subtract(ArrayRealVector v) {
-        return (ArrayRealVector) subtract(v.data);
     }
 
     /** {@inheritDoc} */
@@ -420,9 +386,18 @@ public class ArrayRealVector extends AbstractRealVector implements Serializable 
     }
 
     /** {@inheritDoc} */
-    public RealVector ebeMultiply(RealVector v) {
+    @Override
+    public ArrayRealVector ebeMultiply(RealVector v) {
         if (v instanceof ArrayRealVector) {
-            return ebeMultiply(((ArrayRealVector) v).data);
+            final double[] vData = ((ArrayRealVector) v).data;
+            final int dim = vData.length;
+            checkVectorDimensions(dim);
+            ArrayRealVector result = new ArrayRealVector(dim);
+            double[] resultData = result.data;
+            for (int i = 0; i < dim; i++) {
+                resultData[i] = data[i] * vData[i];
+            }
+            return result;
         } else {
             checkVectorDimensions(v);
             double[] out = data.clone();
@@ -434,33 +409,17 @@ public class ArrayRealVector extends AbstractRealVector implements Serializable 
     }
 
     /** {@inheritDoc} */
-    @Override
-    public RealVector ebeMultiply(double[] v) {
-        final int dim = v.length;
-        checkVectorDimensions(dim);
-        ArrayRealVector result = new ArrayRealVector(dim);
-        double[] resultData = result.data;
-        for (int i = 0; i < dim; i++) {
-            resultData[i] = data[i] * v[i];
-        }
-        return result;
-    }
-
-    /**
-     * Element-by-element multiplication.
-     * @param v Vector by which instance elements must be multiplied.
-     * @return a Vector containing {@code this[i] * v[i]} for all {@code i}.
-     * @exception DimensionMismatchException if {@code v} is not the same
-     * size as this vector.
-     */
-    public ArrayRealVector ebeMultiply(ArrayRealVector v) {
-        return (ArrayRealVector) ebeMultiply(v.data);
-    }
-
-    /** {@inheritDoc} */
-    public RealVector ebeDivide(RealVector v) {
+    public ArrayRealVector ebeDivide(RealVector v) {
         if (v instanceof ArrayRealVector) {
-            return ebeDivide(((ArrayRealVector) v).data);
+            final double[] vData = ((ArrayRealVector) v).data;
+            final int dim = vData.length;
+            checkVectorDimensions(dim);
+            ArrayRealVector result = new ArrayRealVector(dim);
+            double[] resultData = result.data;
+            for (int i = 0; i < dim; i++) {
+                resultData[i] = data[i] / vData[i];
+            }
+            return result;
         } else {
             checkVectorDimensions(v);
             double[] out = data.clone();
@@ -469,37 +428,6 @@ public class ArrayRealVector extends AbstractRealVector implements Serializable 
             }
             return new ArrayRealVector(out, false);
         }
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public RealVector ebeDivide(double[] v) {
-        final int dim = v.length;
-        checkVectorDimensions(dim);
-        ArrayRealVector result = new ArrayRealVector(dim);
-        double[] resultData = result.data;
-        for (int i = 0; i < dim; i++) {
-            resultData[i] = data[i] / v[i];
-        }
-        return result;
-    }
-
-    /**
-     * Element-by-element division.
-     *
-     * @param v Vector by which instance elements must be divided.
-     * @return a vector containing {@code this[i] / v[i]} for all {@code i}.
-     * @exception DimensionMismatchException if {@code v} is not the same
-     * size as this vector.
-     */
-    public ArrayRealVector ebeDivide(ArrayRealVector v) {
-        return (ArrayRealVector) ebeDivide(v.data);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public double[] getData() {
-        return data.clone();
     }
 
     /**
@@ -516,7 +444,13 @@ public class ArrayRealVector extends AbstractRealVector implements Serializable 
     @Override
     public double dotProduct(RealVector v) {
         if (v instanceof ArrayRealVector) {
-            return dotProduct(((ArrayRealVector) v).data);
+            final double[] vData = ((ArrayRealVector) v).data;
+            checkVectorDimensions(vData.length);
+            double dot = 0;
+            for (int i = 0; i < data.length; i++) {
+                dot += data[i] * vData[i];
+            }
+            return dot;
         } else {
             checkVectorDimensions(v);
             double dot = 0;
@@ -527,29 +461,6 @@ public class ArrayRealVector extends AbstractRealVector implements Serializable 
             }
             return dot;
         }
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public double dotProduct(double[] v) {
-        checkVectorDimensions(v.length);
-        double dot = 0;
-        for (int i = 0; i < data.length; i++) {
-            dot += data[i] * v[i];
-        }
-        return dot;
-    }
-
-    /**
-     * Compute the dot product.
-     *
-     * @param v Vector with which dot product should be computed
-     * @return the scalar dot product between instance and {@code v}.
-     * @throws DimensionMismatchException if {@code v} is not the same
-     * size as this vector.
-     */
-    public double dotProduct(ArrayRealVector v) {
-        return dotProduct(v.data);
     }
 
     /** {@inheritDoc} */
@@ -586,7 +497,14 @@ public class ArrayRealVector extends AbstractRealVector implements Serializable 
     @Override
     public double getDistance(RealVector v) {
         if (v instanceof ArrayRealVector) {
-            return getDistance(((ArrayRealVector) v).data);
+            final double[] vData = ((ArrayRealVector) v).data;
+            checkVectorDimensions(vData.length);
+            double sum = 0;
+            for (int i = 0; i < data.length; ++i) {
+                final double delta = data[i] - vData[i];
+                sum += delta * delta;
+            }
+            return FastMath.sqrt(sum);
         } else {
             checkVectorDimensions(v);
             double sum = 0;
@@ -600,40 +518,16 @@ public class ArrayRealVector extends AbstractRealVector implements Serializable 
 
     /** {@inheritDoc} */
     @Override
-    public double getDistance(double[] v) {
-        checkVectorDimensions(v.length);
-        double sum = 0;
-        for (int i = 0; i < data.length; ++i) {
-            final double delta = data[i] - v[i];
-            sum += delta * delta;
-        }
-        return FastMath.sqrt(sum);
-    }
-
-   /**
-     * Distance between two vectors.
-     * This method computes the distance consistent with the
-     * L<sub>2</sub> norm, i.e. the square root of the sum of
-     * elements differences, or euclidian distance.
-     *
-     * @param v Vector to which distance is requested.
-     * @return the distance between two vectors.
-     * @throws DimensionMismatchException if {@code v} is not the same size as
-     * this vector.
-     * @see #getDistance(RealVector)
-     * @see #getL1Distance(ArrayRealVector)
-     * @see #getLInfDistance(ArrayRealVector)
-     * @see #getNorm()
-     */
-    public double getDistance(ArrayRealVector v) {
-        return getDistance(v.data);
-    }
-
-    /** {@inheritDoc} */
-    @Override
     public double getL1Distance(RealVector v) {
         if (v instanceof ArrayRealVector) {
-            return getL1Distance(((ArrayRealVector) v).data);
+            final double[] vData = ((ArrayRealVector) v).data;
+            checkVectorDimensions(vData.length);
+            double sum = 0;
+            for (int i = 0; i < data.length; ++i) {
+                final double delta = data[i] - vData[i];
+                sum += FastMath.abs(delta);
+            }
+            return sum;
         } else {
             checkVectorDimensions(v);
             double sum = 0;
@@ -647,40 +541,16 @@ public class ArrayRealVector extends AbstractRealVector implements Serializable 
 
     /** {@inheritDoc} */
     @Override
-    public double getL1Distance(double[] v) {
-        checkVectorDimensions(v.length);
-        double sum = 0;
-        for (int i = 0; i < data.length; ++i) {
-            final double delta = data[i] - v[i];
-            sum += FastMath.abs(delta);
-        }
-        return sum;
-    }
-
-    /**
-     * Distance between two vectors.
-     * This method computes the distance consistent with
-     * L<sub>1</sub> norm, i.e. the sum of the absolute values of
-     * elements differences.
-     *
-     * @param v Vector to which distance is requested.
-     * @return the distance between two vectors.
-     * @throws DimensionMismatchException if {@code v} is not the same size
-     * as this vector.
-     * @see #getDistance(RealVector)
-     * @see #getL1Distance(ArrayRealVector)
-     * @see #getLInfDistance(ArrayRealVector)
-     * @see #getNorm()
-     */
-    public double getL1Distance(ArrayRealVector v) {
-        return getL1Distance(v.data);
-    }
-
-    /** {@inheritDoc} */
-    @Override
     public double getLInfDistance(RealVector v) {
         if (v instanceof ArrayRealVector) {
-            return getLInfDistance(((ArrayRealVector) v).data);
+            final double[] vData = ((ArrayRealVector) v).data;
+            checkVectorDimensions(vData.length);
+            double max = 0;
+            for (int i = 0; i < data.length; ++i) {
+                final double delta = data[i] - vData[i];
+                max = FastMath.max(max, FastMath.abs(delta));
+            }
+            return max;
         } else {
             checkVectorDimensions(v);
             double max = 0;
@@ -690,36 +560,6 @@ public class ArrayRealVector extends AbstractRealVector implements Serializable 
             }
             return max;
         }
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public double getLInfDistance(double[] v) {
-        checkVectorDimensions(v.length);
-        double max = 0;
-        for (int i = 0; i < data.length; ++i) {
-            final double delta = data[i] - v[i];
-            max = FastMath.max(max, FastMath.abs(delta));
-        }
-        return max;
-    }
-
-    /**
-     * Distance between two vectors.
-     * This method computes the distance consistent with
-     * L<sub>&infin;</sub> norm, i.e. the max of the absolute values of
-     * elements differences.
-     *
-     * @param v Vector to which distance is requested.
-     * @return the distance between two vectors.
-     * @exception IllegalArgumentException if {@code v} is not the same size as this
-     * @see #getDistance(RealVector)
-     * @see #getL1Distance(ArrayRealVector)
-     * @see #getLInfDistance(ArrayRealVector)
-     * @see #getNorm()
-     */
-    public double getLInfDistance(ArrayRealVector v) {
-        return getLInfDistance(v.data);
     }
 
     /** {@inheritDoc} */
@@ -749,27 +589,18 @@ public class ArrayRealVector extends AbstractRealVector implements Serializable 
 
     /** {@inheritDoc} */
     @Override
-    public RealVector projection(double[] v) {
-        return projection(new ArrayRealVector(v, false));
-    }
-
-    /**
-     * Find the orthogonal projection of this vector onto another vector.
-     *
-     * @param v Vector onto which instance must be projected.
-     * @return Projection of this instance onto {@code v}.
-     * @throws DimensionMismatchException if {@code v} is not the same size as
-     * this vector.
-     */
-    public ArrayRealVector projection(ArrayRealVector v) {
-        return (ArrayRealVector) v.mapMultiply(dotProduct(v) / v.dotProduct(v));
-    }
-
-    /** {@inheritDoc} */
-    @Override
     public RealMatrix outerProduct(RealVector v) {
         if (v instanceof ArrayRealVector) {
-            return outerProduct(((ArrayRealVector) v).data);
+            final double[] vData = ((ArrayRealVector) v).data;
+            final int m = data.length;
+            final int n = vData.length;
+            final RealMatrix out = MatrixUtils.createRealMatrix(m, n);
+            for (int i = 0; i < m; i++) {
+                for (int j = 0; j < n; j++) {
+                    out.setEntry(i, j, data[i] * vData[j]);
+                }
+            }
+            return out;
         } else {
             final int m = data.length;
             final int n = v.getDimension();
@@ -781,31 +612,6 @@ public class ArrayRealVector extends AbstractRealVector implements Serializable 
             }
             return out;
         }
-    }
-
-    /**
-     * Compute the outer product.
-     * @param v Vector with which outer product should be computed.
-     * @return the square matrix outer product between this instance and {@code v}.
-     * @throws DimensionMismatchException if {@code v} is not the same
-     * size as this vector.
-     */
-    public RealMatrix outerProduct(ArrayRealVector v) {
-        return outerProduct(v.data);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public RealMatrix outerProduct(double[] v) {
-        final int m = data.length;
-        final int n = v.length;
-        final RealMatrix out = MatrixUtils.createRealMatrix(m, n);
-        for (int i = 0; i < m; i++) {
-            for (int j = 0; j < n; j++) {
-                out.setEntry(i, j, data[i] * v[j]);
-            }
-        }
-        return out;
     }
 
     /** {@inheritDoc} */
@@ -846,11 +652,6 @@ public class ArrayRealVector extends AbstractRealVector implements Serializable 
     }
 
     /** {@inheritDoc} */
-    public RealVector append(double[] in) {
-        return new ArrayRealVector(this, in);
-    }
-
-    /** {@inheritDoc} */
     public RealVector getSubVector(int index, int n) {
         ArrayRealVector out = new ArrayRealVector(n);
         try {
@@ -874,28 +675,17 @@ public class ArrayRealVector extends AbstractRealVector implements Serializable 
     /** {@inheritDoc} */
     @Override
     public void setSubVector(int index, RealVector v) {
-        try {
+        if (v instanceof ArrayRealVector) {
+            setSubVector(index, ((ArrayRealVector) v).data);
+        } else {
             try {
-                set(index, (ArrayRealVector) v);
-            } catch (ClassCastException cce) {
                 for (int i = index; i < index + v.getDimension(); ++i) {
                     data[i] = v.getEntry(i - index);
                 }
+            } catch (IndexOutOfBoundsException e) {
+                checkIndex(index);
+                checkIndex(index + v.getDimension() - 1);
             }
-        } catch (IndexOutOfBoundsException e) {
-            checkIndex(index);
-            checkIndex(index + v.getDimension() - 1);
-        }
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void setSubVector(int index, double[] v) {
-        try {
-            System.arraycopy(v, 0, data, index, v.length);
-        } catch (IndexOutOfBoundsException e) {
-            checkIndex(index);
-            checkIndex(index + v.length - 1);
         }
     }
 
@@ -907,8 +697,13 @@ public class ArrayRealVector extends AbstractRealVector implements Serializable 
      * @throws org.apache.commons.math.exception.OutOfRangeException
      * if the index is inconsistent with the vector size.
      */
-    public void set(int index, ArrayRealVector v) {
-        setSubVector(index, v.data);
+    public void setSubVector(int index, double[] v) {
+        try {
+            System.arraycopy(v, 0, data, index, v.length);
+        } catch (IndexOutOfBoundsException e) {
+            checkIndex(index);
+            checkIndex(index + v.length - 1);
+        }
     }
 
     /** {@inheritDoc} */
@@ -1046,59 +841,27 @@ public class ArrayRealVector extends AbstractRealVector implements Serializable 
         return MathUtils.hash(data);
     }
 
-    /**
-     * Returns the linear combination of {@code this} and {@code y}.
-     *
-     * @param a Weight of {@code this}.
-     * @param b Weight of {@code y}.
-     * @param y Vector with which {@code this} is linearly combined.
-     * @return a vector containing {@code a * this[i] + b * y[i]} for all
-     * {@code i}.
-     * @throws org.apache.commons.math.exception.DimensionMismatchException
-     * if {@code y} is not the same size as this vector.
-     */
-    public ArrayRealVector combine(double a, double b, ArrayRealVector y) {
-        return (ArrayRealVector) copy().combineToSelf(a, b, y.data);
+    /** {@inheritDoc} */
+    @Override
+    public ArrayRealVector combine(double a, double b, RealVector y) {
+        return copy().combineToSelf(a, b, y);
     }
 
     /** {@inheritDoc} */
     @Override
-    public RealVector combineToSelf(double a, double b, double[] y) {
-        checkVectorDimensions(y.length);
-        for (int i = 0; i < this.data.length; i++) {
-            data[i] = a * data[i] + b * y[i];
-        }
-        return this;
-    }
-
-    /**
-     * Updates {@code this} with the linear combination of {@code this} and
-     * {@code y}.
-     *
-     * @param a Weight of {@code this}.
-     * @param b Weight of {@code y}.
-     * @param y Vector with which {@code this} is linearly combined.
-     * @return {@code this}, with components equal to
-     * {@code a * this[i] + b * y[i]} for all {@code i}.
-     * @throws org.apache.commons.math.exception.DimensionMismatchException
-     * if {@code y} is not the same size as this vector.
-     */
-    public ArrayRealVector combineToSelf(double a, double b, ArrayRealVector y) {
-        combineToSelf(a, b, y.data);
-        return this;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public RealVector combineToSelf(double a, double b, RealVector y) {
+    public ArrayRealVector combineToSelf(double a, double b, RealVector y) {
         if (y instanceof ArrayRealVector) {
-            return combineToSelf(a, b, ((ArrayRealVector) y).data);
+            final double[] yData = ((ArrayRealVector) y).data;
+            checkVectorDimensions(yData.length);
+            for (int i = 0; i < this.data.length; i++) {
+                data[i] = a * data[i] + b * yData[i];
+            }
         } else {
             checkVectorDimensions(y);
             for (int i = 0; i < this.data.length; i++) {
                 data[i] = a * data[i] + b * y.getEntry(i);
             }
-            return this;
         }
+        return this;
     }
 }

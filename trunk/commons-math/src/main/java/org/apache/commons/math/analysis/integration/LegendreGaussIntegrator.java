@@ -16,11 +16,11 @@
  */
 package org.apache.commons.math.analysis.integration;
 
-import org.apache.commons.math.ConvergenceException;
 import org.apache.commons.math.MathRuntimeException;
-import org.apache.commons.math.analysis.UnivariateRealFunction;
 import org.apache.commons.math.exception.MaxCountExceededException;
-import org.apache.commons.math.exception.MathUserException;
+import org.apache.commons.math.exception.NotStrictlyPositiveException;
+import org.apache.commons.math.exception.NumberIsTooSmallException;
+import org.apache.commons.math.exception.TooManyEvaluationsException;
 import org.apache.commons.math.exception.util.LocalizedFormats;
 import org.apache.commons.math.util.FastMath;
 
@@ -47,7 +47,7 @@ import org.apache.commons.math.util.FastMath;
  * &prod; (x-x<sub>k</sub>)/(x<sub>i</sub>-x<sub>k</sub>) for k != i.
  * </p>
  * <p>
- * @version $Id: LegendreGaussIntegrator.java 1131229 2011-06-03 20:49:25Z luc $
+ * @version $Id: LegendreGaussIntegrator.java 1171111 2011-09-15 14:27:41Z celestin $
  * @since 1.2
  */
 
@@ -119,15 +119,25 @@ public class LegendreGaussIntegrator extends UnivariateRealIntegratorImpl {
     /** Weights for the current method. */
     private final double[] weights;
 
-    /** Build a Legendre-Gauss integrator.
+    /**
+     * Build a Legendre-Gauss integrator with given accuracies and iterations counts.
      * @param n number of points desired (must be between 2 and 5 inclusive)
-     * @param defaultMaximalIterationCount maximum number of iterations
-     * @exception IllegalArgumentException if the number of points is not
-     * in the supported range
+     * @param relativeAccuracy relative accuracy of the result
+     * @param absoluteAccuracy absolute accuracy of the result
+     * @param minimalIterationCount minimum number of iterations
+     * @param maximalIterationCount maximum number of iterations
+     * @exception NotStrictlyPositiveException if minimal number of iterations
+     * is not strictly positive
+     * @exception NumberIsTooSmallException if maximal number of iterations
+     * is lesser than or equal to the minimal number of iterations
      */
-    public LegendreGaussIntegrator(final int n, final int defaultMaximalIterationCount)
-        throws IllegalArgumentException {
-        super(defaultMaximalIterationCount);
+    public LegendreGaussIntegrator(final int n,
+                                   final double relativeAccuracy,
+                                   final double absoluteAccuracy,
+                                   final int minimalIterationCount,
+                                   final int maximalIterationCount)
+        throws NotStrictlyPositiveException, NumberIsTooSmallException {
+        super(relativeAccuracy, absoluteAccuracy, minimalIterationCount, maximalIterationCount);
         switch(n) {
         case 2 :
             abscissas = ABSCISSAS_2;
@@ -153,22 +163,48 @@ public class LegendreGaussIntegrator extends UnivariateRealIntegratorImpl {
 
     }
 
-    /** {@inheritDoc} */
-    public double integrate(final UnivariateRealFunction f, final double min, final double max)
-        throws ConvergenceException,  MathUserException, IllegalArgumentException {
+    /**
+     * Build a Legendre-Gauss integrator with given accuracies.
+     * @param n number of points desired (must be between 2 and 5 inclusive)
+     * @param relativeAccuracy relative accuracy of the result
+     * @param absoluteAccuracy absolute accuracy of the result
+     */
+    public LegendreGaussIntegrator(final int n,
+                                   final double relativeAccuracy,
+                                   final double absoluteAccuracy) {
+        this(n, relativeAccuracy, absoluteAccuracy,
+             DEFAULT_MIN_ITERATIONS_COUNT, DEFAULT_MAX_ITERATIONS_COUNT);
+    }
 
-        clearResult();
-        verifyInterval(min, max);
-        verifyIterationCount();
+    /**
+     * Build a Legendre-Gauss integrator with given iteration counts.
+     * @param n number of points desired (must be between 2 and 5 inclusive)
+     * @param minimalIterationCount minimum number of iterations
+     * @param maximalIterationCount maximum number of iterations
+     * @exception NotStrictlyPositiveException if minimal number of iterations
+     * is not strictly positive
+     * @exception NumberIsTooSmallException if maximal number of iterations
+     * is lesser than or equal to the minimal number of iterations
+     */
+    public LegendreGaussIntegrator(final int n,
+                                   final int minimalIterationCount,
+                                   final int maximalIterationCount) {
+        this(n, DEFAULT_RELATIVE_ACCURACY, DEFAULT_ABSOLUTE_ACCURACY,
+             minimalIterationCount, maximalIterationCount);
+    }
+
+    /** {@inheritDoc} */
+    protected double doIntegrate()
+        throws TooManyEvaluationsException, MaxCountExceededException {
 
         // compute first estimate with a single step
-        double oldt = stage(f, min, max, 1);
+        double oldt = stage(1);
 
         int n = 2;
-        for (int i = 0; i < maximalIterationCount; ++i) {
+        while (true) {
 
             // improve integral with a larger number of steps
-            final double t = stage(f, min, max, n);
+            final double t = stage(n);
 
             // estimate error
             final double delta = FastMath.abs(t - oldt);
@@ -177,35 +213,29 @@ public class LegendreGaussIntegrator extends UnivariateRealIntegratorImpl {
                          relativeAccuracy * (FastMath.abs(oldt) + FastMath.abs(t)) * 0.5);
 
             // check convergence
-            if ((i + 1 >= minimalIterationCount) && (delta <= limit)) {
-                setResult(t, i);
-                return result;
+            if ((iterations.getCount() + 1 >= minimalIterationCount) && (delta <= limit)) {
+                return t;
             }
 
             // prepare next iteration
             double ratio = FastMath.min(4, FastMath.pow(delta / limit, 0.5 / abscissas.length));
             n = FastMath.max((int) (ratio * n), n + 1);
             oldt = t;
+            iterations.incrementCount();
 
         }
-
-        throw new MaxCountExceededException(maximalIterationCount);
 
     }
 
     /**
      * Compute the n-th stage integral.
-     * @param f the integrand function
-     * @param min the lower bound for the interval
-     * @param max the upper bound for the interval
      * @param n number of steps
      * @return the value of n-th stage integral
-     * @throws MathUserException if an error occurs evaluating the
-     * function
+     * @throws TooManyEvaluationsException if the maximal number of evaluations
+     * is exceeded.
      */
-    private double stage(final UnivariateRealFunction f,
-                         final double min, final double max, final int n)
-        throws MathUserException {
+    private double stage(final int n)
+        throws TooManyEvaluationsException {
 
         // set up the step for the current stage
         final double step     = (max - min) / n;
@@ -216,7 +246,7 @@ public class LegendreGaussIntegrator extends UnivariateRealIntegratorImpl {
         double sum = 0.0;
         for (int i = 0; i < n; ++i) {
             for (int j = 0; j < abscissas.length; ++j) {
-                sum += weights[j] * f.value(midPoint + halfStep * abscissas[j]);
+                sum += weights[j] * computeObjectiveValue(midPoint + halfStep * abscissas[j]);
             }
             midPoint += step;
         }

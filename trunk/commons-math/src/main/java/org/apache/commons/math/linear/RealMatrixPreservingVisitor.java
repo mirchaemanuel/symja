@@ -21,7 +21,7 @@ package org.apache.commons.math.linear;
  * Interface defining a visitor for matrix entries.
  *
  * @see DefaultRealMatrixPreservingVisitor
- * @version $Id: RealMatrixPreservingVisitor.java 1131229 2011-06-03 20:49:25Z luc $
+ * @version $Id: RealMatrixPreservingVisitor.java 1165822 2011-09-06 20:19:37Z luc $
  * @since 2.0
  */
 public interface RealMatrixPreservingVisitor {
@@ -43,8 +43,6 @@ public interface RealMatrixPreservingVisitor {
      * @param row row index of the entry
      * @param column column index of the entry
      * @param value current value of the entry
-     * @throws org.apache.commons.math.exception.MathUserException if the visitor
-     * cannot process an entry.
      */
     void visit(int row, int column, double value);
 

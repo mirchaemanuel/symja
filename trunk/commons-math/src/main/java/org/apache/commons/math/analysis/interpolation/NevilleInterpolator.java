@@ -29,7 +29,7 @@ import org.apache.commons.math.analysis.polynomials.PolynomialFunctionLagrangeFo
  * The actual code of Neville's evalution is in PolynomialFunctionLagrangeForm,
  * this class provides an easy-to-use interface to it.</p>
  *
- * @version $Id: NevilleInterpolator.java 1131229 2011-06-03 20:49:25Z luc $
+ * @version $Id: NevilleInterpolator.java 1174731 2011-09-23 13:08:58Z erans $
  * @since 1.2
  */
 public class NevilleInterpolator implements UnivariateRealInterpolator,
@@ -48,7 +48,7 @@ public class NevilleInterpolator implements UnivariateRealInterpolator,
      * the array lengths are different.
      * @throws org.apache.commons.math.exception.NumberIsTooSmallException if
      * the number of points is less than 2.
-     * @throws org.apache.commons.math.exception.NonMonotonousSequenceException
+     * @throws org.apache.commons.math.exception.NonMonotonicSequenceException
      * if two abscissae have the same value.
      */
     public PolynomialFunctionLagrangeForm interpolate(double x[], double y[]) {

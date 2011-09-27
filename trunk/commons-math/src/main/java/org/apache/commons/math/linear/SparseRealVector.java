@@ -17,11 +17,9 @@
 package org.apache.commons.math.linear;
 
 /**
- * Marker interface for RealVectors that require sparse backing storage
- * @version $Id: SparseRealVector.java 1131229 2011-06-03 20:49:25Z luc $
+ * Marker class for RealVectors that require sparse backing storage
+ * @version $Id: SparseRealVector.java 1162511 2011-08-28 12:58:57Z erans $
  * @since 2.0
  *
  */
-public interface SparseRealVector extends RealVector {
-
-}
+public abstract class SparseRealVector extends RealVector {}

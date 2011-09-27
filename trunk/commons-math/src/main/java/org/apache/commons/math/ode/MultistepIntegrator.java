@@ -18,7 +18,7 @@
 package org.apache.commons.math.ode;
 
 import org.apache.commons.math.MathRuntimeException;
-import org.apache.commons.math.exception.MathUserException;
+import org.apache.commons.math.exception.MathIllegalStateException;
 import org.apache.commons.math.exception.util.LocalizedFormats;
 import org.apache.commons.math.linear.Array2DRowRealMatrix;
 import org.apache.commons.math.ode.nonstiff.AdaptiveStepsizeIntegrator;
@@ -55,7 +55,7 @@ import org.apache.commons.math.util.FastMath;
  *
  * @see org.apache.commons.math.ode.nonstiff.AdamsBashforthIntegrator
  * @see org.apache.commons.math.ode.nonstiff.AdamsMoultonIntegrator
- * @version $Id: MultistepIntegrator.java 1139831 2011-06-26 16:26:48Z luc $
+ * @version $Id: MultistepIntegrator.java 1175409 2011-09-25 15:04:39Z luc $
  * @since 2.0
  */
 public abstract class MultistepIntegrator extends AdaptiveStepsizeIntegrator {
@@ -204,12 +204,10 @@ public abstract class MultistepIntegrator extends AdaptiveStepsizeIntegrator {
      * @param y0 initial value of the state vector at t0
      * @param t target time for the integration
      * (can be set to a value smaller than <code>t0</code> for backward integration)
-     * @throws IntegratorException if the integrator cannot perform integration
-     * @throws MathUserException this exception is propagated to the caller if
-     * the underlying user function triggers one
+     * @throws MathIllegalStateException if the integrator cannot perform integration
      */
     protected void start(final double t0, final double[] y0, final double t)
-        throws MathUserException, IntegratorException {
+        throws MathIllegalStateException {
 
         // make sure NO user event nor user step handler is triggered,
         // this is the task of the top level integrator, not the task
@@ -405,7 +403,7 @@ public abstract class MultistepIntegrator extends AdaptiveStepsizeIntegrator {
     }
 
     /** Wrapper for differential equations, ensuring start evaluations are counted. */
-    private class CountingDifferentialEquations implements ExtendedFirstOrderDifferentialEquations {
+    private class CountingDifferentialEquations implements FirstOrderDifferentialEquations {
 
         /** Dimension of the problem. */
         private final int dimension;
@@ -418,8 +416,7 @@ public abstract class MultistepIntegrator extends AdaptiveStepsizeIntegrator {
         }
 
         /** {@inheritDoc} */
-        public void computeDerivatives(double t, double[] y, double[] dot)
-                throws MathUserException {
+        public void computeDerivatives(double t, double[] y, double[] dot) {
             MultistepIntegrator.this.computeDerivatives(t, y, dot);
         }
 
@@ -428,10 +425,6 @@ public abstract class MultistepIntegrator extends AdaptiveStepsizeIntegrator {
             return dimension;
         }
 
-        /** {@inheritDoc} */
-        public int getMainSetDimension() {
-            return mainSetDimension;
-        }
     }
 
 }

@@ -20,7 +20,6 @@ package org.apache.commons.math.optimization;
 import org.apache.commons.math.analysis.MultivariateRealFunction;
 import org.apache.commons.math.analysis.MultivariateVectorialFunction;
 import org.apache.commons.math.exception.DimensionMismatchException;
-import org.apache.commons.math.exception.MathUserException;
 import org.apache.commons.math.linear.RealMatrix;
 
 /** This class converts {@link MultivariateVectorialFunction vectorial
@@ -50,7 +49,7 @@ import org.apache.commons.math.linear.RealMatrix;
   *
  * @see MultivariateRealFunction
  * @see MultivariateVectorialFunction
- * @version $Id: LeastSquaresConverter.java 1131229 2011-06-03 20:49:25Z luc $
+ * @version $Id: LeastSquaresConverter.java 1166311 2011-09-07 18:48:06Z luc $
  * @since 2.0
  */
 
@@ -150,7 +149,7 @@ public class LeastSquaresConverter implements MultivariateRealFunction {
     }
 
     /** {@inheritDoc} */
-    public double value(final double[] point) throws MathUserException {
+    public double value(final double[] point) {
         // compute residuals
         final double[] residuals = function.value(point);
         if (residuals.length != observations.length) {

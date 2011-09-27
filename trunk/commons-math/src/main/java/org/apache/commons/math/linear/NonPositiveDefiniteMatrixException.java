@@ -16,16 +16,17 @@
  */
 package org.apache.commons.math.linear;
 
-import org.apache.commons.math.exception.MathIllegalArgumentException;
+import org.apache.commons.math.exception.NumberIsTooSmallException;
 import org.apache.commons.math.exception.util.LocalizedFormats;
+import org.apache.commons.math.exception.util.ExceptionContext;
 
 /**
- * Exception to be thrown when a symmetric matrix is expected.
+ * Exception to be thrown when a positive definite matrix is expected.
  *
  * @since 3.0
  * @version $Id$
  */
-public class NonPositiveDefiniteMatrixException extends MathIllegalArgumentException {
+public class NonPositiveDefiniteMatrixException extends NumberIsTooSmallException {
     /** Serializable version Id. */
     private static final long serialVersionUID = 1641613838113738061L;
     /** Index (diagonal element). */
@@ -36,14 +37,20 @@ public class NonPositiveDefiniteMatrixException extends MathIllegalArgumentExcep
     /**
      * Construct an exception.
      *
+     * @param wrong Value that fails the positivity check.
      * @param index Row (and column) index.
      * @param threshold Absolute positivity threshold.
      */
-    public NonPositiveDefiniteMatrixException(int index,
+    public NonPositiveDefiniteMatrixException(double wrong,
+                                              int index,
                                               double threshold) {
-        super(LocalizedFormats.NON_POSITIVE_DEFINITE_MATRIX, index, threshold);
+        super(wrong, threshold, false);
         this.index = index;
         this.threshold = threshold;
+
+        final ExceptionContext context = getContext();
+        context.addMessage(LocalizedFormats.NOT_POSITIVE_DEFINITE_MATRIX);
+        context.addMessage(LocalizedFormats.ARRAY_ELEMENT, wrong, index);
     }
 
     /**

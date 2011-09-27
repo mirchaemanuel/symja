@@ -25,29 +25,17 @@ import org.apache.commons.math.FieldElement;
  * <p>Decomposition algorithms decompose an A matrix has a product of several specific
  * matrices from which they can solve A &times; X = B in least squares sense: they find X
  * such that ||A &times; X - B|| is minimal.</p>
- * <p>Some solvers like {@link LUDecomposition} can only find the solution for
+ * <p>Some solvers like {@link FieldLUDecomposition} can only find the solution for
  * square matrices and when the solution is an exact linear solution, i.e. when
  * ||A &times; X - B|| is exactly 0. Other solvers can also find solutions
  * with non-square matrix A and with non-null minimal norm. If an exact linear
  * solution exists it is also the minimal norm solution.</p>
  *
  * @param <T> the type of the field elements
- * @version $Id: FieldDecompositionSolver.java 1131229 2011-06-03 20:49:25Z luc $
+ * @version $Id: FieldDecompositionSolver.java 1175097 2011-09-24 04:01:05Z celestin $
  * @since 2.0
  */
 public interface FieldDecompositionSolver<T extends FieldElement<T>> {
-
-    /** Solve the linear equation A &times; X = B for matrices A.
-     * <p>The A matrix is implicit, it is provided by the underlying
-     * decomposition algorithm.</p>
-     * @param b right-hand side of the equation A &times; X = B
-     * @return a vector X that minimizes the two norm of A &times; X - B
-     * @throws org.apache.commons.math.exception.DimensionMismatchException
-     * if the matrices dimensions do not match.
-     * @throws SingularMatrixException
-     * if the decomposed matrix is singular.
-     */
-    T[] solve(final T[] b);
 
     /** Solve the linear equation A &times; X = B for matrices A.
      * <p>The A matrix is implicit, it is provided by the underlying

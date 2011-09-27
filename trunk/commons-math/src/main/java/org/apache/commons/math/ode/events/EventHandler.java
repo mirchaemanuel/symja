@@ -43,44 +43,49 @@ package org.apache.commons.math.ode.events;
  * error (this event handling feature is available for all integrators,
  * including fixed step ones).</p>
  *
- * @version $Id: EventHandler.java 1131229 2011-06-03 20:49:25Z luc $
+ * @version $Id: EventHandler.java 1175379 2011-09-25 12:39:09Z luc $
  * @since 1.2
  */
 
 public interface EventHandler  {
 
-  /** Stop indicator.
-   * <p>This value should be used as the return value of the {@link
-   * #eventOccurred eventOccurred} method when the integration should be
-   * stopped after the event ending the current step.</p>
-   */
-  int STOP = 0;
+    /** Enumerate for actions to be performed when an event occurs. */
+    public enum Action {
 
-  /** Reset state indicator.
-   * <p>This value should be used as the return value of the {@link
-   * #eventOccurred eventOccurred} method when the integration should
-   * go on after the event ending the current step, with a new state
-   * vector (which will be retrieved thanks to the {@link #resetState
-   * resetState} method).</p>
-   */
-  int RESET_STATE = 1;
+        /** Stop indicator.
+         * <p>This value should be used as the return value of the {@link
+         * #eventOccurred eventOccurred} method when the integration should be
+         * stopped after the event ending the current step.</p>
+         */
+        STOP,
 
-  /** Reset derivatives indicator.
-   * <p>This value should be used as the return value of the {@link
-   * #eventOccurred eventOccurred} method when the integration should
-   * go on after the event ending the current step, with a new derivatives
-   * vector (which will be retrieved thanks to the {@link
-   * org.apache.commons.math.ode.FirstOrderDifferentialEquations#computeDerivatives}
-   * method).</p>
-   */
-  int RESET_DERIVATIVES = 2;
+        /** Reset state indicator.
+         * <p>This value should be used as the return value of the {@link
+         * #eventOccurred eventOccurred} method when the integration should
+         * go on after the event ending the current step, with a new state
+         * vector (which will be retrieved thanks to the {@link #resetState
+         * resetState} method).</p>
+         */
+        RESET_STATE,
 
-  /** Continue indicator.
-   * <p>This value should be used as the return value of the {@link
-   * #eventOccurred eventOccurred} method when the integration should go
-   * on after the event ending the current step.</p>
-   */
-  int CONTINUE = 3;
+        /** Reset derivatives indicator.
+         * <p>This value should be used as the return value of the {@link
+         * #eventOccurred eventOccurred} method when the integration should
+         * go on after the event ending the current step, with a new derivatives
+         * vector (which will be retrieved thanks to the {@link
+         * org.apache.commons.math.ode.FirstOrderDifferentialEquations#computeDerivatives}
+         * method).</p>
+         */
+        RESET_DERIVATIVES,
+
+        /** Continue indicator.
+         * <p>This value should be used as the return value of the {@link
+         * #eventOccurred eventOccurred} method when the integration should go
+         * on after the event ending the current step.</p>
+         */
+        CONTINUE;
+
+    }
 
   /** Compute the value of the switching function.
 
@@ -94,9 +99,8 @@ public interface EventHandler  {
    * @param t current value of the independent <i>time</i> variable
    * @param y array containing the current value of the state vector
    * @return value of the g switching function
-   * @exception EventException if the switching function cannot be evaluated
    */
-  double g(double t, double[] y) throws EventException;
+  double g(double t, double[] y);
 
   /** Handle an event and choose what to do next.
 
@@ -158,9 +162,8 @@ public interface EventHandler  {
    * @return indication of what the integrator should do next, this
    * value must be one of {@link #STOP}, {@link #RESET_STATE},
    * {@link #RESET_DERIVATIVES} or {@link #CONTINUE}
-   * @exception EventException if the event occurrence triggers an error
    */
-  int eventOccurred(double t, double[] y, boolean increasing) throws EventException;
+  Action eventOccurred(double t, double[] y, boolean increasing);
 
   /** Reset the state prior to continue the integration.
 
@@ -176,8 +179,7 @@ public interface EventHandler  {
    * @param t current value of the independent <i>time</i> variable
    * @param y array containing the current value of the state vector
    * the new state should be put in the same array
-   * @exception EventException if the state cannot be reseted
    */
-  void resetState(double t, double[] y) throws EventException;
+  void resetState(double t, double[] y);
 
 }

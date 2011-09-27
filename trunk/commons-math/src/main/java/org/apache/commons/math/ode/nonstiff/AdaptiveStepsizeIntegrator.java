@@ -17,12 +17,14 @@
 
 package org.apache.commons.math.ode.nonstiff;
 
-import org.apache.commons.math.exception.MathUserException;
+import org.apache.commons.math.exception.DimensionMismatchException;
+import org.apache.commons.math.exception.MathIllegalArgumentException;
+import org.apache.commons.math.exception.MathIllegalStateException;
+import org.apache.commons.math.exception.NumberIsTooSmallException;
 import org.apache.commons.math.exception.util.LocalizedFormats;
 import org.apache.commons.math.ode.AbstractIntegrator;
-import org.apache.commons.math.ode.ExtendedFirstOrderDifferentialEquations;
+import org.apache.commons.math.ode.ExpandableFirstOrderDifferentialEquations;
 import org.apache.commons.math.ode.FirstOrderDifferentialEquations;
-import org.apache.commons.math.ode.IntegratorException;
 import org.apache.commons.math.util.FastMath;
 
 /**
@@ -40,12 +42,11 @@ import org.apache.commons.math.util.FastMath;
  * component. The user can also use only two scalar values absTol and
  * relTol which will be used for all components.
  * </p>
- *
- * <p>If the Ordinary Differential Equations is an {@link ExtendedFirstOrderDifferentialEquations
- * extended ODE} rather than a {@link FirstOrderDifferentialEquations basic ODE},
- * then <em>only</em> the {@link ExtendedFirstOrderDifferentialEquations#getMainSetDimension()
- * main set} part of the state vector is used for stepsize control, not the complete
- * state vector.
+ * <p>
+ * If the Ordinary Differential Equations is an {@link ExpandableFirstOrderDifferentialEquations
+ * extended ODE} rather than a {@link FirstOrderDifferentialEquations basic ODE}, then
+ * <em>only</em> the {@link ExpandableFirstOrderDifferentialEquations#getMainSet() main part}
+ * of the state vector is used for stepsize control, not the complete state vector.
  * </p>
  *
  * <p>If the estimated error for ym+1 is such that
@@ -57,7 +58,7 @@ import org.apache.commons.math.util.FastMath;
  * otherwise the step is rejected and a new attempt is made with a new
  * stepsize.</p>
  *
- * @version $Id: AdaptiveStepsizeIntegrator.java 1131229 2011-06-03 20:49:25Z luc $
+ * @version $Id: AdaptiveStepsizeIntegrator.java 1175409 2011-09-25 15:04:39Z luc $
  * @since 1.2
  *
  */
@@ -218,36 +219,30 @@ public abstract class AdaptiveStepsizeIntegrator
    * @param y0 state vector at t0
    * @param t target time for the integration
    * @param y placeholder where to put the state vector
-   * @exception IntegratorException if some inconsistency is detected
+   * @exception DimensionMismatchException if some inconsistency is detected
+   * @exception NumberIsTooSmallException if integration span is too small
    */
   @Override
-  protected void sanityChecks(final FirstOrderDifferentialEquations equations,
+  protected void sanityChecks(final ExpandableFirstOrderDifferentialEquations equations,
                               final double t0, final double[] y0,
                               final double t, final double[] y)
-      throws IntegratorException {
+      throws DimensionMismatchException, NumberIsTooSmallException {
 
       super.sanityChecks(equations, t0, y0, t, y);
 
-      if (equations instanceof ExtendedFirstOrderDifferentialEquations) {
-          mainSetDimension = ((ExtendedFirstOrderDifferentialEquations) equations).getMainSetDimension();
-      } else {
-          mainSetDimension = equations.getDimension();
-      }
+      mainSetDimension = equations.getMainSetDimension();
 
       if ((vecAbsoluteTolerance != null) && (vecAbsoluteTolerance.length != mainSetDimension)) {
-          throw new IntegratorException(
-                  LocalizedFormats.DIMENSIONS_MISMATCH_SIMPLE, mainSetDimension, vecAbsoluteTolerance.length);
+          throw new DimensionMismatchException(mainSetDimension, vecAbsoluteTolerance.length);
       }
 
       if ((vecRelativeTolerance != null) && (vecRelativeTolerance.length != mainSetDimension)) {
-          throw new IntegratorException(
-                  LocalizedFormats.DIMENSIONS_MISMATCH_SIMPLE, mainSetDimension, vecRelativeTolerance.length);
+          throw new DimensionMismatchException(mainSetDimension, vecRelativeTolerance.length);
       }
 
   }
 
   /** Initialize the integration step.
-   * @param equations differential equations set
    * @param forward forward integration indicator
    * @param order order of the method
    * @param scale scaling vector for the state vector (can be shorter than state vector)
@@ -257,14 +252,10 @@ public abstract class AdaptiveStepsizeIntegrator
    * @param y1 work array for a state vector
    * @param yDot1 work array for the first time derivative of y1
    * @return first integration step
-   * @exception MathUserException this exception is propagated to
-   * the caller if the underlying user function triggers one
    */
-  public double initializeStep(final FirstOrderDifferentialEquations equations,
-                               final boolean forward, final int order, final double[] scale,
+  public double initializeStep(final boolean forward, final int order, final double[] scale,
                                final double t0, final double[] y0, final double[] yDot0,
-                               final double[] y1, final double[] yDot1)
-      throws MathUserException {
+                               final double[] y1, final double[] yDot1) {
 
     if (initialStep > 0) {
       // use the user provided value
@@ -332,19 +323,18 @@ public abstract class AdaptiveStepsizeIntegrator
    * are silently increased up to this value, if false such small
    * steps generate an exception
    * @return a bounded integration step (h if no bound is reach, or a bounded value)
-   * @exception IntegratorException if the step is too small and acceptSmall is false
+   * @exception NumberIsTooSmallException if the step is too small and acceptSmall is false
    */
   protected double filterStep(final double h, final boolean forward, final boolean acceptSmall)
-    throws IntegratorException {
+    throws MathIllegalArgumentException {
 
       double filteredH = h;
       if (FastMath.abs(h) < minStep) {
           if (acceptSmall) {
               filteredH = forward ? minStep : -minStep;
           } else {
-              throw new IntegratorException(
-                      LocalizedFormats.MINIMAL_STEPSIZE_REACHED_DURING_INTEGRATION,
-                      minStep, FastMath.abs(h));
+              throw new NumberIsTooSmallException(LocalizedFormats.MINIMAL_STEPSIZE_REACHED_DURING_INTEGRATION,
+                                                  minStep, FastMath.abs(h), true);
           }
       }
 
@@ -359,10 +349,10 @@ public abstract class AdaptiveStepsizeIntegrator
   }
 
   /** {@inheritDoc} */
-  public abstract double integrate (FirstOrderDifferentialEquations equations,
+  public abstract double integrate (ExpandableFirstOrderDifferentialEquations equations,
                                     double t0, double[] y0,
                                     double t, double[] y)
-    throws MathUserException, IntegratorException;
+    throws MathIllegalStateException, MathIllegalArgumentException;
 
   /** {@inheritDoc} */
   @Override

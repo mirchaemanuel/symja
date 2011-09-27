@@ -32,7 +32,7 @@ import org.apache.commons.math.util.FastMath;
  * <p>All the methods implemented here use {@link #getEntry(int, int)} to access
  * matrix elements. Derived class can provide faster implementations. </p>
  *
- * @version $Id: AbstractRealMatrix.java 1151806 2011-07-28 11:59:23Z erans $
+ * @version $Id: AbstractRealMatrix.java 1163515 2011-08-31 07:41:25Z celestin $
  * @since 2.0
  */
 public abstract class AbstractRealMatrix
@@ -625,7 +625,6 @@ public abstract class AbstractRealMatrix
     }
 
     /** {@inheritDoc} */
-    @Override
     public double[] operate(final double[] v) {
         final int nRows = getRowDimension();
         final int nCols = getColumnDimension();

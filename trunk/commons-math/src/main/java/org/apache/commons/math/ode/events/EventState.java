@@ -17,14 +17,14 @@
 
 package org.apache.commons.math.ode.events;
 
-import org.apache.commons.math.ConvergenceException;
 import org.apache.commons.math.analysis.UnivariateRealFunction;
 import org.apache.commons.math.analysis.solvers.AllowedSolution;
 import org.apache.commons.math.analysis.solvers.BracketedUnivariateRealSolver;
 import org.apache.commons.math.analysis.solvers.PegasusSolver;
 import org.apache.commons.math.analysis.solvers.UnivariateRealSolver;
 import org.apache.commons.math.analysis.solvers.UnivariateRealSolverUtils;
-import org.apache.commons.math.exception.MathUserException;
+import org.apache.commons.math.exception.ConvergenceException;
+import org.apache.commons.math.ode.events.EventHandler;
 import org.apache.commons.math.ode.sampling.StepInterpolator;
 import org.apache.commons.math.util.FastMath;
 
@@ -38,7 +38,7 @@ import org.apache.commons.math.util.FastMath;
  * decide if the handler should trigger an event or not during the
  * proposed step.</p>
  *
- * @version $Id: EventState.java 1152644 2011-07-31 21:27:39Z erans $
+ * @version $Id: EventState.java 1175379 2011-09-25 12:39:09Z luc $
  * @since 1.2
  */
 public class EventState {
@@ -82,7 +82,7 @@ public class EventState {
     private boolean increasing;
 
     /** Next action indicator. */
-    private int nextAction;
+    private EventHandler.Action nextAction;
 
     /** Root-finding algorithm to use to detect state events. */
     private final UnivariateRealSolver solver;
@@ -114,7 +114,7 @@ public class EventState {
         pendingEventTime  = Double.NaN;
         previousEventTime = Double.NaN;
         increasing        = true;
-        nextAction        = EventHandler.CONTINUE;
+        nextAction        = EventHandler.Action.CONTINUE;
 
     }
 
@@ -148,57 +148,44 @@ public class EventState {
 
     /** Reinitialize the beginning of the step.
      * @param interpolator valid for the current step
-     * @exception EventException if the event handler
-     * value cannot be evaluated at the beginning of the step
      */
-    public void reinitializeBegin(final StepInterpolator interpolator)
-        throws EventException {
-        try {
+    public void reinitializeBegin(final StepInterpolator interpolator) {
 
-            t0 = interpolator.getPreviousTime();
-            interpolator.setInterpolatedTime(t0);
-            g0 = handler.g(t0, interpolator.getInterpolatedState());
-            if (g0 == 0) {
-                // excerpt from MATH-421 issue:
-                // If an ODE solver is setup with an EventHandler that return STOP
-                // when the even is triggered, the integrator stops (which is exactly
-                // the expected behavior). If however the user wants to restart the
-                // solver from the final state reached at the event with the same
-                // configuration (expecting the event to be triggered again at a
-                // later time), then the integrator may fail to start. It can get stuck
-                // at the previous event. The use case for the bug MATH-421 is fairly
-                // general, so events occurring exactly at start in the first step should
-                // be ignored.
+        t0 = interpolator.getPreviousTime();
+        interpolator.setInterpolatedTime(t0);
+        g0 = handler.g(t0, interpolator.getInterpolatedState());
+        if (g0 == 0) {
+            // excerpt from MATH-421 issue:
+            // If an ODE solver is setup with an EventHandler that return STOP
+            // when the even is triggered, the integrator stops (which is exactly
+            // the expected behavior). If however the user wants to restart the
+            // solver from the final state reached at the event with the same
+            // configuration (expecting the event to be triggered again at a
+            // later time), then the integrator may fail to start. It can get stuck
+            // at the previous event. The use case for the bug MATH-421 is fairly
+            // general, so events occurring exactly at start in the first step should
+            // be ignored.
 
-                // extremely rare case: there is a zero EXACTLY at interval start
-                // we will use the sign slightly after step beginning to force ignoring this zero
-                final double epsilon = FastMath.max(solver.getAbsoluteAccuracy(),
-                                                    FastMath.abs(solver.getRelativeAccuracy() * t0));
-                final double tStart = t0 + 0.5 * epsilon;
-                interpolator.setInterpolatedTime(tStart);
-                g0 = handler.g(tStart, interpolator.getInterpolatedState());
-            }
-            g0Positive = g0 >= 0;
-
-        } catch (MathUserException mue) {
-            throw new EventException(mue);
+            // extremely rare case: there is a zero EXACTLY at interval start
+            // we will use the sign slightly after step beginning to force ignoring this zero
+            final double epsilon = FastMath.max(solver.getAbsoluteAccuracy(),
+                                                FastMath.abs(solver.getRelativeAccuracy() * t0));
+            final double tStart = t0 + 0.5 * epsilon;
+            interpolator.setInterpolatedTime(tStart);
+            g0 = handler.g(tStart, interpolator.getInterpolatedState());
         }
+        g0Positive = g0 >= 0;
+
     }
 
     /** Evaluate the impact of the proposed step on the event handler.
      * @param interpolator step interpolator for the proposed step
      * @return true if the event handler triggers an event before
      * the end of the proposed step
-     * @exception MathUserException if the interpolator fails to
-     * compute the switching function somewhere within the step
-     * @exception EventException if the switching function
-     * cannot be evaluated
      * @exception ConvergenceException if an event cannot be located
      */
     public boolean evaluateStep(final StepInterpolator interpolator)
-        throws MathUserException, EventException, ConvergenceException {
-
-        try {
+        throws ConvergenceException {
 
             forward = interpolator.isForward();
             final double t1 = interpolator.getCurrentTime();
@@ -212,12 +199,8 @@ public class EventState {
 
             final UnivariateRealFunction f = new UnivariateRealFunction() {
                 public double value(final double t) {
-                    try {
-                        interpolator.setInterpolatedTime(t);
-                        return handler.g(t, interpolator.getInterpolatedState());
-                    } catch (EventException e) {
-                        throw new ConveyedException(e);
-                    }
+                    interpolator.setInterpolatedTime(t);
+                    return handler.g(t, interpolator.getInterpolatedState());
                 }
             };
 
@@ -292,10 +275,6 @@ public class EventState {
             pendingEventTime = Double.NaN;
             return false;
 
-        } catch (ConveyedException ce) {
-            throw ce.getConveyedException();
-        }
-
     }
 
     /** Get the occurrence time of the event triggered in the current step.
@@ -313,11 +292,8 @@ public class EventState {
      * end of the step
      * @param y array containing the current value of the state vector
      * at the end of the step
-     * @exception EventException if the value of the event
-     * handler cannot be evaluated
      */
-    public void stepAccepted(final double t, final double[] y)
-        throws EventException {
+    public void stepAccepted(final double t, final double[] y) {
 
         t0 = t;
         g0 = handler.g(t, y);
@@ -329,7 +305,7 @@ public class EventState {
             nextAction        = handler.eventOccurred(t, y, !(increasing ^ forward));
         } else {
             g0Positive = g0 >= 0;
-            nextAction = EventHandler.CONTINUE;
+            nextAction = EventHandler.Action.CONTINUE;
         }
     }
 
@@ -338,7 +314,7 @@ public class EventState {
      * @return true if the integration should be stopped
      */
     public boolean stop() {
-        return nextAction == EventHandler.STOP;
+        return nextAction == EventHandler.Action.STOP;
     }
 
     /** Let the event handler reset the state if it wants.
@@ -347,49 +323,21 @@ public class EventState {
      * @param y array were to put the desired state vector at the beginning
      * of the next step
      * @return true if the integrator should reset the derivatives too
-     * @exception EventException if the state cannot be reseted by the event
-     * handler
      */
-    public boolean reset(final double t, final double[] y)
-        throws EventException {
+    public boolean reset(final double t, final double[] y) {
 
         if (!(pendingEvent && (FastMath.abs(pendingEventTime - t) <= convergence))) {
             return false;
         }
 
-        if (nextAction == EventHandler.RESET_STATE) {
+        if (nextAction == EventHandler.Action.RESET_STATE) {
             handler.resetState(t, y);
         }
         pendingEvent      = false;
         pendingEventTime  = Double.NaN;
 
-        return (nextAction == EventHandler.RESET_STATE) ||
-               (nextAction == EventHandler.RESET_DERIVATIVES);
-
-    }
-
-    /** Local exception to convey EventException instances through root finding algorithms. */
-    private static class ConveyedException extends RuntimeException {
-
-        /** Serializable uid. */
-        private static final long serialVersionUID = 2668348550531980574L;
-
-        /** Conveyed exception. */
-        private final EventException conveyedException;
-
-        /** Simple constructor.
-         * @param conveyedException conveyed exception
-         */
-        public ConveyedException(final EventException conveyedException) {
-            this.conveyedException = conveyedException;
-        }
-
-        /** Get the conveyed exception.
-         * @return conveyed exception
-         */
-        public EventException getConveyedException() {
-            return conveyedException;
-        }
+        return (nextAction == EventHandler.Action.RESET_STATE) ||
+               (nextAction == EventHandler.Action.RESET_DERIVATIVES);
 
     }
 
