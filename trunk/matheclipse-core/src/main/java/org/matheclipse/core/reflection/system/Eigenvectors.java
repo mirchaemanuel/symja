@@ -1,6 +1,6 @@
 package org.matheclipse.core.reflection.system;
 
-import org.apache.commons.math.linear.EigenDecompositionImpl;
+import org.apache.commons.math.linear.EigenDecomposition;
 import org.apache.commons.math.linear.FieldMatrix;
 import org.apache.commons.math.linear.InvalidMatrixException;
 import org.apache.commons.math.linear.RealMatrix;
@@ -36,7 +36,7 @@ public class Eigenvectors extends AbstractMatrix1Expr {
 	public IAST realMatrixEval(RealMatrix matrix) {
 		try {
 			IAST list = F.List();
-			EigenDecompositionImpl ed = new EigenDecompositionImpl(matrix, MathUtils.SAFE_MIN);
+			EigenDecomposition ed = new EigenDecomposition(matrix, MathUtils.SAFE_MIN);
 			for (int i = 0; i < matrix.getColumnDimension(); i++) {
 				RealVector rv = ed.getEigenvector(i);
 				list.add(Convert.realVector2List(rv));

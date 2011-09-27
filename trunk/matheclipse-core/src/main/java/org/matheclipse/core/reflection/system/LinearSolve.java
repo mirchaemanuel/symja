@@ -1,7 +1,7 @@
 package org.matheclipse.core.reflection.system;
 
 import org.apache.commons.math.linear.FieldDecompositionSolver;
-import org.apache.commons.math.linear.FieldLUDecompositionImpl;
+import org.apache.commons.math.linear.FieldLUDecomposition;
 import org.apache.commons.math.linear.FieldMatrix;
 import org.apache.commons.math.linear.FieldVector;
 import org.matheclipse.core.basic.Config;
@@ -34,7 +34,7 @@ public class LinearSolve extends AbstractFunctionEvaluator {
 
 			aMatrix = Convert.list2Matrix((IAST) ast.get(1));
 			bVector = Convert.list2Vector((IAST) ast.get(2));
-			final FieldLUDecompositionImpl<ExprFieldElement> lu = new FieldLUDecompositionImpl<ExprFieldElement>(aMatrix);
+			final FieldLUDecomposition<ExprFieldElement> lu = new FieldLUDecomposition<ExprFieldElement>(aMatrix);
 
 			FieldDecompositionSolver<ExprFieldElement> fds = lu.getSolver();
 			FieldVector<ExprFieldElement> xVector = fds.solve(bVector);

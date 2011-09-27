@@ -1,7 +1,7 @@
 package edu.jas.commons.math;
 
 import org.apache.commons.math.linear.FieldDecompositionSolver;
-import org.apache.commons.math.linear.FieldLUDecompositionImpl;
+import org.apache.commons.math.linear.FieldLUDecomposition;
 import org.apache.commons.math.linear.FieldMatrix;
 import org.apache.commons.math.linear.FieldVector;
 
@@ -29,7 +29,7 @@ public class GaussElimination<C extends RingElem<C>> {
   public C determinant(GenMatrix<C> a) {
     FieldMatrix<CMFieldElement<C>> am = CMFieldElementUtil.<C> toCMFieldMatrix(a);
 
-    final FieldLUDecompositionImpl<CMFieldElement<C>> lu = new FieldLUDecompositionImpl<CMFieldElement<C>>(
+    final FieldLUDecomposition<CMFieldElement<C>> lu = new FieldLUDecomposition<CMFieldElement<C>>(
         am);
     CMFieldElement<C> dm = lu.getDeterminant();
     C d = dm.val;
@@ -48,7 +48,7 @@ public class GaussElimination<C extends RingElem<C>> {
    */
   public GenMatrix<C> inverse(GenMatrix<C> a) {
     FieldMatrix<CMFieldElement<C>> am = CMFieldElementUtil.<C> toCMFieldMatrix(a);
-    final FieldLUDecompositionImpl<CMFieldElement<C>> lu = new FieldLUDecompositionImpl<CMFieldElement<C>>(
+    final FieldLUDecomposition<CMFieldElement<C>> lu = new FieldLUDecomposition<CMFieldElement<C>>(
         am);
     FieldDecompositionSolver<CMFieldElement<C>> fds = lu.getSolver();
     FieldMatrix<CMFieldElement<C>> bm = fds.getInverse();
@@ -89,7 +89,7 @@ public class GaussElimination<C extends RingElem<C>> {
     FieldMatrix<CMFieldElement<C>> am = CMFieldElementUtil.<C> toCMFieldMatrix(a);
     FieldVector<CMFieldElement<C>> bv = CMFieldElementUtil.<C> toCMFieldElementVector(b);
 
-    final FieldLUDecompositionImpl<CMFieldElement<C>> lu = new FieldLUDecompositionImpl<CMFieldElement<C>>(
+    final FieldLUDecomposition<CMFieldElement<C>> lu = new FieldLUDecomposition<CMFieldElement<C>>(
         am);
     FieldDecompositionSolver<CMFieldElement<C>> fds = lu.getSolver();
     FieldVector<CMFieldElement<C>> xv = fds.solve(bv);

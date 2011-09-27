@@ -2,7 +2,7 @@ package org.matheclipse.core.reflection.system;
 
 import static org.matheclipse.core.expression.F.List;
 
-import org.apache.commons.math.linear.FieldLUDecompositionImpl;
+import org.apache.commons.math.linear.FieldLUDecomposition;
 import org.apache.commons.math.linear.FieldMatrix;
 import org.matheclipse.core.basic.Config;
 import org.matheclipse.core.convert.Convert;
@@ -27,7 +27,7 @@ public class LUDecomposition extends AbstractFunctionEvaluator {
 		try {
 			final IAST list = (IAST) ast.get(1);
 			matrix = Convert.list2Matrix(list);
-			final FieldLUDecompositionImpl<ExprFieldElement> lu = new FieldLUDecompositionImpl<ExprFieldElement>(matrix);
+			final FieldLUDecomposition<ExprFieldElement> lu = new FieldLUDecomposition<ExprFieldElement>(matrix);
 			final FieldMatrix<ExprFieldElement> lMatrix = lu.getL();
 			final FieldMatrix<ExprFieldElement> uMatrix = lu.getU();
 			final int[] iArr = lu.getPivot();

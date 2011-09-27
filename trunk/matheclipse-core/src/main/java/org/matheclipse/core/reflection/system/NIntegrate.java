@@ -78,13 +78,14 @@ public class NIntegrate extends AbstractFunctionEvaluator implements IConstantHe
 		if (method.equals("Simpson")) {
 			integrator = new SimpsonIntegrator();
 		} else if (method.equals("LegendreGauss")) {
-			integrator = new LegendreGaussIntegrator(3, 64);
+			integrator = new LegendreGaussIntegrator(3, UnivariateRealIntegratorImpl.DEFAULT_RELATIVE_ACCURACY,
+					UnivariateRealIntegratorImpl.DEFAULT_ABSOLUTE_ACCURACY, UnivariateRealIntegratorImpl.DEFAULT_MIN_ITERATIONS_COUNT, 64);
 		} else if (method.equals("Romberg")) {
 			integrator = new RombergIntegrator();
 		} else {
 			// default: TrapezoidIntegrator
 		}
-		return integrator.integrate(f, min.doubleValue(), max.doubleValue());
+		return integrator.integrate(10000, f, min.doubleValue(), max.doubleValue());
 
 	}
 

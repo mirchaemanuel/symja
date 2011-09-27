@@ -2,9 +2,9 @@ package org.matheclipse.core.reflection.system;
 
 import org.apache.commons.math.linear.DecompositionSolver;
 import org.apache.commons.math.linear.FieldDecompositionSolver;
-import org.apache.commons.math.linear.FieldLUDecompositionImpl;
+import org.apache.commons.math.linear.FieldLUDecomposition;
 import org.apache.commons.math.linear.FieldMatrix;
-import org.apache.commons.math.linear.LUDecompositionImpl;
+import org.apache.commons.math.linear.LUDecomposition;
 import org.apache.commons.math.linear.RealMatrix;
 import org.matheclipse.core.eval.interfaces.AbstractMatrix1Matrix;
 import org.matheclipse.core.expression.ExprFieldElement;
@@ -23,7 +23,7 @@ public class Inverse extends AbstractMatrix1Matrix {
 
   @Override
   public FieldMatrix<ExprFieldElement> matrixEval(FieldMatrix<ExprFieldElement> matrix) {
-    final FieldLUDecompositionImpl<ExprFieldElement> lu = new FieldLUDecompositionImpl<ExprFieldElement>(
+    final FieldLUDecomposition<ExprFieldElement> lu = new FieldLUDecomposition<ExprFieldElement>(
         matrix);
     FieldDecompositionSolver<ExprFieldElement> solver = lu.getSolver();
     if (!solver.isNonSingular()) {
@@ -34,7 +34,7 @@ public class Inverse extends AbstractMatrix1Matrix {
 
   @Override
   public RealMatrix realMatrixEval(RealMatrix matrix) {
-    final LUDecompositionImpl lu = new LUDecompositionImpl(matrix);
+    final LUDecomposition lu = new LUDecomposition(matrix);
     DecompositionSolver solver = lu.getSolver();
     if (!solver.isNonSingular()) {
       return null;
