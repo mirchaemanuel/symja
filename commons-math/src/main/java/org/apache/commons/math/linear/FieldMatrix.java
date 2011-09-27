@@ -28,7 +28,7 @@ import org.apache.commons.math.FieldElement;
  * returns the element in the first row, first column of the matrix.</p>
  *
  * @param <T> the type of the field elements
- * @version $Id: FieldMatrix.java 1131229 2011-06-03 20:49:25Z luc $
+ * @version $Id: FieldMatrix.java 1165822 2011-09-06 20:19:37Z luc $
  */
 public interface FieldMatrix<T extends FieldElement<T>> extends AnyMatrix {
     /**
@@ -481,8 +481,6 @@ public interface FieldMatrix<T extends FieldElement<T>> extends AnyMatrix {
      * of a row from left to right before going to the leftmost element
      * of the next row.</p>
      * @param visitor visitor used to process all matrix entries
-     * @throws org.apache.commons.math.exception.MathUserException if the visitor
-     * cannot process an entry.
      * @see #walkInRowOrder(FieldMatrixPreservingVisitor)
      * @see #walkInRowOrder(FieldMatrixChangingVisitor, int, int, int, int)
      * @see #walkInRowOrder(FieldMatrixPreservingVisitor, int, int, int, int)
@@ -505,8 +503,6 @@ public interface FieldMatrix<T extends FieldElement<T>> extends AnyMatrix {
      * of a row from left to right before going to the leftmost element
      * of the next row.</p>
      * @param visitor visitor used to process all matrix entries
-     * @throws org.apache.commons.math.exception.MathUserException if the visitor
-     * cannot process an entry.
      * @see #walkInRowOrder(FieldMatrixChangingVisitor)
      * @see #walkInRowOrder(FieldMatrixChangingVisitor, int, int, int, int)
      * @see #walkInRowOrder(FieldMatrixPreservingVisitor, int, int, int, int)
@@ -533,8 +529,6 @@ public interface FieldMatrix<T extends FieldElement<T>> extends AnyMatrix {
      * @param endRow Final row index (inclusive)
      * @param startColumn Initial column index
      * @param endColumn Final column index
-     * @throws org.apache.commons.math.exception.MathUserException if the visitor
-     * cannot process an entry.
      * @throws org.apache.commons.math.exception.OutOfRangeException
      * if the indices are not valid.
      * @see #walkInRowOrder(FieldMatrixChangingVisitor)
@@ -564,8 +558,6 @@ public interface FieldMatrix<T extends FieldElement<T>> extends AnyMatrix {
      * @param endRow Final row index (inclusive)
      * @param startColumn Initial column index
      * @param endColumn Final column index
-     * @throws org.apache.commons.math.exception.MathUserException if the visitor
-     * cannot process an entry.
      * @throws org.apache.commons.math.exception.OutOfRangeException
      * if the indices are not valid.
      * @see #walkInRowOrder(FieldMatrixChangingVisitor)
@@ -591,8 +583,6 @@ public interface FieldMatrix<T extends FieldElement<T>> extends AnyMatrix {
      * of a column from top to bottom before going to the topmost element
      * of the next column.</p>
      * @param visitor visitor used to process all matrix entries
-     * @throws org.apache.commons.math.exception.MathUserException if the visitor
-     * cannot process an entry.
      * @see #walkInRowOrder(FieldMatrixChangingVisitor)
      * @see #walkInRowOrder(FieldMatrixPreservingVisitor)
      * @see #walkInRowOrder(FieldMatrixChangingVisitor, int, int, int, int)
@@ -615,8 +605,6 @@ public interface FieldMatrix<T extends FieldElement<T>> extends AnyMatrix {
      * of a column from top to bottom before going to the topmost element
      * of the next column.</p>
      * @param visitor visitor used to process all matrix entries
-     * @throws org.apache.commons.math.exception.MathUserException if the visitor
-     * cannot process an entry.
      * @see #walkInRowOrder(FieldMatrixChangingVisitor)
      * @see #walkInRowOrder(FieldMatrixPreservingVisitor)
      * @see #walkInRowOrder(FieldMatrixChangingVisitor, int, int, int, int)
@@ -643,8 +631,6 @@ public interface FieldMatrix<T extends FieldElement<T>> extends AnyMatrix {
      * @param endRow Final row index (inclusive)
      * @param startColumn Initial column index
      * @param endColumn Final column index
-     * @throws org.apache.commons.math.exception.MathUserException if the visitor
-     * cannot process an entry.
      * @throws org.apache.commons.math.exception.OutOfRangeException
      * if the indices are not valid.
      * @see #walkInRowOrder(FieldMatrixChangingVisitor)
@@ -674,8 +660,6 @@ public interface FieldMatrix<T extends FieldElement<T>> extends AnyMatrix {
      * @param endRow Final row index (inclusive)
      * @param startColumn Initial column index
      * @param endColumn Final column index
-     * @throws org.apache.commons.math.exception.MathUserException if the visitor
-     * cannot process an entry.
      * @throws org.apache.commons.math.exception.OutOfRangeException
      * if the indices are not valid.
      * @see #walkInRowOrder(FieldMatrixChangingVisitor)
@@ -700,8 +684,6 @@ public interface FieldMatrix<T extends FieldElement<T>> extends AnyMatrix {
      * <p>The fastest walking order depends on the exact matrix class. It may be
      * different from traditional row or column orders.</p>
      * @param visitor visitor used to process all matrix entries
-     * @throws org.apache.commons.math.exception.MathUserException if the visitor
-     * cannot process an entry.
      * @see #walkInRowOrder(FieldMatrixChangingVisitor)
      * @see #walkInRowOrder(FieldMatrixPreservingVisitor)
      * @see #walkInRowOrder(FieldMatrixChangingVisitor, int, int, int, int)
@@ -723,8 +705,6 @@ public interface FieldMatrix<T extends FieldElement<T>> extends AnyMatrix {
      * <p>The fastest walking order depends on the exact matrix class. It may be
      * different from traditional row or column orders.</p>
      * @param visitor visitor used to process all matrix entries
-     * @throws org.apache.commons.math.exception.MathUserException if the visitor
-     * cannot process an entry.
      * @see #walkInRowOrder(FieldMatrixChangingVisitor)
      * @see #walkInRowOrder(FieldMatrixPreservingVisitor)
      * @see #walkInRowOrder(FieldMatrixChangingVisitor, int, int, int, int)
@@ -750,8 +730,6 @@ public interface FieldMatrix<T extends FieldElement<T>> extends AnyMatrix {
      * @param endRow Final row index (inclusive)
      * @param startColumn Initial column index
      * @param endColumn Final column index (inclusive)
-     * @throws org.apache.commons.math.exception.MathUserException if the visitor
-     * cannot process an entry.
      * @throws org.apache.commons.math.exception.OutOfRangeException
      * if the indices are not valid.
      * @see #walkInRowOrder(FieldMatrixChangingVisitor)
@@ -780,8 +758,6 @@ public interface FieldMatrix<T extends FieldElement<T>> extends AnyMatrix {
      * @param endRow Final row index (inclusive)
      * @param startColumn Initial column index
      * @param endColumn Final column index (inclusive)
-     * @throws org.apache.commons.math.exception.MathUserException if the visitor
-     * cannot process an entry.
      * @throws org.apache.commons.math.exception.OutOfRangeException
      * if the indices are not valid.
      * @see #walkInRowOrder(FieldMatrixChangingVisitor)

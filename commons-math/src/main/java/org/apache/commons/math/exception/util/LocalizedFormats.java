@@ -34,7 +34,7 @@ import java.util.ResourceBundle;
  * translation is missing.
  * </p>
  * @since 2.2
- * @version $Id: LocalizedFormats.java 1154543 2011-08-06 16:54:39Z erans $
+ * @version $Id: LocalizedFormats.java 1175409 2011-09-25 15:04:39Z luc $
  */
 public enum LocalizedFormats implements Localizable {
 
@@ -42,6 +42,7 @@ public enum LocalizedFormats implements Localizable {
     // CHECKSTYLE: stop JavadocVariable
 
     ARGUMENT_OUTSIDE_DOMAIN("Argument {0} outside domain [{1} ; {2}]"),
+    ARRAY_SIZE_EXCEEDS_MAX_VARIABLES("array size cannot be greater than {0}"),
     ARRAY_SIZES_SHOULD_HAVE_DIFFERENCE_1("array sizes should have difference 1 ({0} != {1} + 1)"),
     ARRAY_SUMS_TO_ZERO("array sums to zero"),
     ASSYMETRIC_EIGEN_NOT_SUPPORTED("eigen decomposition of assymetric matrices not supported yet"),
@@ -95,7 +96,6 @@ public enum LocalizedFormats implements Localizable {
     ENDPOINTS_NOT_AN_INTERVAL("endpoints do not specify an interval: [{0}, {1}]"),
     EQUAL_VERTICES_IN_SIMPLEX("equal vertices {0} and {1} in simplex configuration"),
     EULER_ANGLES_SINGULARITY("Euler angles singularity"),
-    EVALUATION_FAILED("evaluation failed for argument = {0}"),
     EVALUATION("evaluation"), /* keep */
     EXPANSION_FACTOR_SMALLER_THAN_ONE("expansion factor smaller than one ({0})"),
     FACTORIAL_NEGATIVE_PARAMETER("must have n >= 0 for n!, got n = {0}"),
@@ -136,6 +136,7 @@ public enum LocalizedFormats implements Localizable {
     INVALID_INTERVAL_INITIAL_VALUE_PARAMETERS("invalid interval, initial value parameters:  lower={0}, initial={1}, upper={2}"),
     INVALID_ITERATIONS_LIMITS("invalid iteration limits: min={0}, max={1}"),
     INVALID_MAX_ITERATIONS("bad value for maximum iterations number: {0}"),
+    NOT_ENOUGH_DATA_REGRESSION("the number of observations is not sufficient to conduct regression"),
     INVALID_REGRESSION_ARRAY("input data array length = {0} does not match the number of observations = {1} and the number of regressors = {2}"),
     INVALID_REGRESSION_OBSERVATION("length of regressor array = {0} does not match the number of variables = {1} in the model"),
     INVALID_ROUNDING_METHOD("invalid rounding method {0}, valid methods: {1} ({2}), {3} ({4}), {5} ({6}), {7} ({8}), {9} ({10}), {11} ({12}), {13} ({14}), {15} ({16})"),
@@ -149,9 +150,8 @@ public enum LocalizedFormats implements Localizable {
     MAP_MODIFIED_WHILE_ITERATING("map has been modified while iterating"),
     EVALUATIONS("evaluations"), /* keep */
     MAX_COUNT_EXCEEDED("maximal count ({0}) exceeded"), /* keep */
-    MAX_EVALUATIONS_EXCEEDED("maximal number of evaluations ({0}) exceeded"),
     MAX_ITERATIONS_EXCEEDED("maximal number of iterations ({0}) exceeded"),
-    MINIMAL_STEPSIZE_REACHED_DURING_INTEGRATION("minimal step size ({0,number,0.00E00}) reached, integration needs {1,number,0.00E00}"),
+    MINIMAL_STEPSIZE_REACHED_DURING_INTEGRATION("minimal step size ({1,number,0.00E00}) reached, integration needs {0,number,0.00E00}"),
     MISMATCHED_LOESS_ABSCISSA_ORDINATE_ARRAYS("Loess expects the abscissa and ordinate arrays to be of the same size, but got {0} abscissae and {1} ordinatae"),
     NAN_ELEMENT_AT_INDEX("element {0} is NaN"),
     NAN_VALUE_CONVERSION("cannot convert NaN value"),
@@ -187,8 +187,8 @@ public enum LocalizedFormats implements Localizable {
     ALPHA("alpha"), /* keep */
     BETA("beta"), /* keep */
     NOT_POSITIVE_COLUMNDIMENSION("invalid column dimension: {0} (must be positive)"),
-    NOT_POSITIVE_DEFINITE_MATRIX("not positive definite matrix"),
-    NON_POSITIVE_DEFINITE_MATRIX("not positive definite matrix: diagonal element at ({0},{0}) is larger than {2}"), /* keep */
+    NOT_POSITIVE_DEFINITE_MATRIX("not positive definite matrix"), /* keep */
+    NON_POSITIVE_DEFINITE_MATRIX("not positive definite matrix: diagonal element at ({1},{1}) is smaller than {2} ({0})"),
     NON_POSITIVE_DEFINITE_LINEAR_OPERATOR("non positive definite linear operator"), /* keep */
     NON_SELF_ADJOINT_LINEAR_OPERATOR("non self-adjoint linear operator"), /* keep */
     NON_SQUARE_LINEAR_OPERATOR("non square ({0}x{1}) linear operator"), /* keep */
@@ -241,6 +241,7 @@ public enum LocalizedFormats implements Localizable {
     NO_RESULT_AVAILABLE("no result available"),
     NO_SUCH_MATRIX_ENTRY("no entry at indices ({0}, {1}) in a {2}x{3} matrix"),
     NULL_NOT_ALLOWED("null is not allowed"), /* keep */
+    ARRAY_ZERO_LENGTH_OR_NULL_NOTALLOWED("A null or zero length array not allowed"),
     COVARIANCE_MATRIX("covariance matrix"), /* keep */
     DENOMINATOR("denominator"), /* keep */
     DENOMINATOR_FORMAT("denominator format"), /* keep */
@@ -314,6 +315,9 @@ public enum LocalizedFormats implements Localizable {
     UNABLE_TO_SOLVE_SINGULAR_PROBLEM("unable to solve: singular problem"),
     UNBOUNDED_SOLUTION("unbounded solution"),
     UNKNOWN_MODE("unknown mode {0}, known modes: {1} ({2}), {3} ({4}), {5} ({6}), {7} ({8}), {9} ({10}) and {11} ({12})"),
+    UNKNOWN_ADDITIONAL_EQUATION("unknown additional equation"),
+    UNKNOWN_PARAMETER("unknown parameter {0}"),
+    UNMATCHED_ODE_IN_EXTENDED_SET("ode does not match the main ode set in the extended set"),
     CANNOT_PARSE_AS_TYPE("string {0} unparseable (from position {1}) as an object of type {2}"), /* keep */
     CANNOT_PARSE("string {0} unparseable (from position {1})"), /* keep */
     UNPARSEABLE_3D_VECTOR("unparseable 3D vector: \"{0}\""),

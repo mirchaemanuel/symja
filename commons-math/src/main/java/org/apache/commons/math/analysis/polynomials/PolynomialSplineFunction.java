@@ -59,7 +59,7 @@ import org.apache.commons.math.exception.util.LocalizedFormats;
  * than or equal to <code>x</code>.  The value returned is <br>
  * <code>polynomials[j](x - knot[j])</code></li></ol></p>
  *
- * @version $Id: PolynomialSplineFunction.java 1131229 2011-06-03 20:49:25Z luc $
+ * @version $Id: PolynomialSplineFunction.java 1174731 2011-09-23 13:08:58Z erans $
  */
 public class PolynomialSplineFunction implements DifferentiableUnivariateRealFunction {
     /**
@@ -93,7 +93,7 @@ public class PolynomialSplineFunction implements DifferentiableUnivariateRealFun
      * @throws NullArgumentException if either of the input arrays is {@code null}.
      * @throws NumberIsTooSmallException if knots has length less than 2.
      * @throws DimensionMismatchException if {@code polynomials.length != knots.length - 1}.
-     * @throws org.apache.commons.math.exception.NonMonotonousSequenceException if
+     * @throws org.apache.commons.math.exception.NonMonotonicSequenceException if
      * the {@code knots} array is not strictly increasing.
      *
      */

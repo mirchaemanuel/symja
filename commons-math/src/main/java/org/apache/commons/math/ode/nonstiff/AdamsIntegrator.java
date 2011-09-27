@@ -17,16 +17,16 @@
 
 package org.apache.commons.math.ode.nonstiff;
 
-import org.apache.commons.math.exception.MathUserException;
+import org.apache.commons.math.exception.MathIllegalArgumentException;
+import org.apache.commons.math.exception.MathIllegalStateException;
 import org.apache.commons.math.linear.Array2DRowRealMatrix;
-import org.apache.commons.math.ode.FirstOrderDifferentialEquations;
-import org.apache.commons.math.ode.IntegratorException;
+import org.apache.commons.math.ode.ExpandableFirstOrderDifferentialEquations;
 import org.apache.commons.math.ode.MultistepIntegrator;
 
 
 /** Base class for {@link AdamsBashforthIntegrator Adams-Bashforth} and
  * {@link AdamsMoultonIntegrator Adams-Moulton} integrators.
- * @version $Id: AdamsIntegrator.java 1131229 2011-06-03 20:49:25Z luc $
+ * @version $Id: AdamsIntegrator.java 1175409 2011-09-25 15:04:39Z luc $
  * @since 2.0
  */
 public abstract class AdamsIntegrator extends MultistepIntegrator {
@@ -86,10 +86,10 @@ public abstract class AdamsIntegrator extends MultistepIntegrator {
 
     /** {@inheritDoc} */
     @Override
-    public abstract double integrate(final FirstOrderDifferentialEquations equations,
+    public abstract double integrate(final ExpandableFirstOrderDifferentialEquations equations,
                                      final double t0, final double[] y0,
                                      final double t, final double[] y)
-        throws MathUserException, IntegratorException;
+        throws MathIllegalStateException, MathIllegalArgumentException;
 
     /** {@inheritDoc} */
     @Override

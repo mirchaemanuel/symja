@@ -24,12 +24,13 @@ import java.util.Map;
 import org.apache.commons.math.fraction.BigFraction;
 import org.apache.commons.math.linear.Array2DRowFieldMatrix;
 import org.apache.commons.math.linear.Array2DRowRealMatrix;
+import org.apache.commons.math.linear.ArrayFieldVector;
 import org.apache.commons.math.linear.FieldDecompositionSolver;
-import org.apache.commons.math.linear.FieldLUDecompositionImpl;
+import org.apache.commons.math.linear.FieldLUDecomposition;
 import org.apache.commons.math.linear.FieldMatrix;
 import org.apache.commons.math.linear.MatrixUtils;
 import org.apache.commons.math.linear.QRDecomposition;
-import org.apache.commons.math.linear.QRDecompositionImpl;
+import org.apache.commons.math.linear.RealMatrix;
 
 /** Transformer to Nordsieck vectors for Adams integrators.
  * <p>This class is used by {@link AdamsBashforthIntegrator Adams-Bashforth} and
@@ -128,7 +129,7 @@ import org.apache.commons.math.linear.QRDecompositionImpl;
  * vector and a P<sup>-1</sup> A P matrix are used that do not depend on the state,
  * they only depend on k. This class handles these transformations.</p>
  *
- * @version $Id: AdamsNordsieckTransformer.java 1131229 2011-06-03 20:49:25Z luc $
+ * @version $Id: AdamsNordsieckTransformer.java 1175100 2011-09-24 04:47:38Z celestin $
  * @since 2.0
  */
 public class AdamsNordsieckTransformer {
@@ -152,11 +153,12 @@ public class AdamsNordsieckTransformer {
         // compute exact coefficients
         FieldMatrix<BigFraction> bigP = buildP(nSteps);
         FieldDecompositionSolver<BigFraction> pSolver =
-            new FieldLUDecompositionImpl<BigFraction>(bigP).getSolver();
+            new FieldLUDecomposition<BigFraction>(bigP).getSolver();
 
         BigFraction[] u = new BigFraction[nSteps];
         Arrays.fill(u, BigFraction.ONE);
-        BigFraction[] bigC1 = pSolver.solve(u);
+        BigFraction[] bigC1 = pSolver
+            .solve(new ArrayFieldVector<BigFraction>(u, false)).toArray();
 
         // update coefficients are computed by combining transform from
         // Nordsieck to multistep, then shifting rows to represent step advance
@@ -288,9 +290,10 @@ public class AdamsNordsieckTransformer {
 
         // solve the rectangular system in the least square sense
         // to get the best estimate of the Nordsieck vector [s2 ... sk]
-        QRDecomposition decomposition = new QRDecompositionImpl(new Array2DRowRealMatrix(a, false));
-        return new Array2DRowRealMatrix(decomposition.getSolver().solve(b), false);
-
+        QRDecomposition decomposition;
+        decomposition = new QRDecomposition(new Array2DRowRealMatrix(a, false));
+        RealMatrix x = decomposition.getSolver().solve(new Array2DRowRealMatrix(b, false));
+        return new Array2DRowRealMatrix(x.getData(), false);
     }
 
     /** Update the high order scaled derivatives for Adams integrators (phase 1).

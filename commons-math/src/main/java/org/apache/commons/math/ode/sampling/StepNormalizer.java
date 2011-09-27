@@ -17,10 +17,6 @@
 
 package org.apache.commons.math.ode.sampling;
 
-import org.apache.commons.math.exception.MathUserException;
-import org.apache.commons.math.ode.sampling.FixedStepHandler;
-import org.apache.commons.math.ode.sampling.StepHandler;
-import org.apache.commons.math.ode.sampling.StepInterpolator;
 import org.apache.commons.math.util.FastMath;
 import org.apache.commons.math.util.MathUtils;
 
@@ -88,7 +84,7 @@ import org.apache.commons.math.util.MathUtils;
  * @see FixedStepHandler
  * @see StepNormalizerMode
  * @see StepNormalizerBounds
- * @version $Id: StepNormalizer.java 1148736 2011-07-20 12:47:11Z luc $
+ * @version $Id: StepNormalizer.java 1165792 2011-09-06 19:17:52Z luc $
  * @since 1.2
  */
 
@@ -194,11 +190,8 @@ public class StepNormalizer implements StepHandler {
      * should build a local copy using the clone method and store this
      * copy.
      * @param isLast true if the step is the last one
-     * @throws MathUserException this exception is propagated to the
-     * caller if the underlying user function triggers one
      */
-    public void handleStep(final StepInterpolator interpolator,
-                           final boolean isLast) throws MathUserException {
+    public void handleStep(final StepInterpolator interpolator, final boolean isLast) {
         // The first time, update the last state with the start information.
         if (lastState == null) {
             firstTime = interpolator.getPreviousTime();
@@ -270,10 +263,8 @@ public class StepNormalizer implements StepHandler {
     /**
      * Invokes the underlying step handler for the current normalized step.
      * @param isLast true if the step is the last one
-     * @throws MathUserException this exception is propagated to the
-     * caller if the underlying user function triggers one
      */
-    private void doNormalizedStep(boolean isLast) throws MathUserException {
+    private void doNormalizedStep(boolean isLast) {
         if (!bounds.firstIncluded() && firstTime == lastTime) {
             return;
         }

@@ -26,26 +26,28 @@ import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import org.apache.commons.math.ConvergenceException;
-import org.apache.commons.math.MaxEvaluationsExceededException;
 import org.apache.commons.math.analysis.solvers.BracketingNthOrderBrentSolver;
 import org.apache.commons.math.analysis.solvers.UnivariateRealSolver;
-import org.apache.commons.math.exception.MathUserException;
+import org.apache.commons.math.exception.DimensionMismatchException;
+import org.apache.commons.math.exception.MathIllegalArgumentException;
+import org.apache.commons.math.exception.MathIllegalStateException;
+import org.apache.commons.math.exception.MaxCountExceededException;
+import org.apache.commons.math.exception.NumberIsTooSmallException;
 import org.apache.commons.math.exception.util.LocalizedFormats;
-import org.apache.commons.math.ode.events.EventException;
 import org.apache.commons.math.ode.events.EventHandler;
 import org.apache.commons.math.ode.events.EventState;
 import org.apache.commons.math.ode.sampling.AbstractStepInterpolator;
 import org.apache.commons.math.ode.sampling.StepHandler;
 import org.apache.commons.math.util.FastMath;
+import org.apache.commons.math.util.Incrementor;
 import org.apache.commons.math.util.MathUtils;
 
 /**
  * Base class managing common boilerplate for all integrators.
- * @version $Id: AbstractIntegrator.java 1152283 2011-07-29 15:50:39Z luc $
+ * @version $Id: AbstractIntegrator.java 1175409 2011-09-25 15:04:39Z luc $
  * @since 2.0
  */
-public abstract class AbstractIntegrator implements FirstOrderIntegrator {
+public abstract class AbstractIntegrator implements ExpandableFirstOrderIntegrator {
 
     /** Step handler. */
     protected Collection<StepHandler> stepHandlers;
@@ -71,14 +73,11 @@ public abstract class AbstractIntegrator implements FirstOrderIntegrator {
     /** Name of the method. */
     private final String name;
 
-    /** Maximal number of evaluations allowed. */
-    private int maxEvaluations;
-
-    /** Number of evaluations already performed. */
-    private int evaluations;
+    /** Counter for number of evaluations. */
+    private Incrementor evaluations;
 
     /** Differential equations to integrate. */
-    private transient FirstOrderDifferentialEquations equations;
+    private transient ExpandableFirstOrderDifferentialEquations equations;
 
     /** Build an instance.
      * @param name name of the method
@@ -90,6 +89,7 @@ public abstract class AbstractIntegrator implements FirstOrderIntegrator {
         stepSize  = Double.NaN;
         eventsStates = new ArrayList<EventState>();
         statesInitialized = false;
+        evaluations = new Incrementor();
         setMaxEvaluations(-1);
         resetEvaluations();
     }
@@ -166,45 +166,49 @@ public abstract class AbstractIntegrator implements FirstOrderIntegrator {
 
     /** {@inheritDoc} */
     public void setMaxEvaluations(int maxEvaluations) {
-        this.maxEvaluations = (maxEvaluations < 0) ? Integer.MAX_VALUE : maxEvaluations;
+        evaluations.setMaximalCount((maxEvaluations < 0) ? Integer.MAX_VALUE : maxEvaluations);
     }
 
     /** {@inheritDoc} */
     public int getMaxEvaluations() {
-        return maxEvaluations;
+        return evaluations.getMaximalCount();
     }
 
     /** {@inheritDoc} */
     public int getEvaluations() {
-        return evaluations;
+        return evaluations.getCount();
     }
 
     /** Reset the number of evaluations to zero.
      */
     protected void resetEvaluations() {
-        evaluations = 0;
+        evaluations.resetCount();
     }
 
     /** Set the differential equations.
      * @param equations differential equations to integrate
      * @see #computeDerivatives(double, double[], double[])
      */
-    protected void setEquations(final FirstOrderDifferentialEquations equations) {
+    protected void setEquations(final ExpandableFirstOrderDifferentialEquations equations) {
         this.equations = equations;
+    }
+
+    /** {@inheritDoc} */
+    public double integrate(FirstOrderDifferentialEquations equations,
+                            double t0, double[] y0, double t, double[] y)
+        throws MathIllegalStateException, MathIllegalArgumentException {
+        return integrate(new ExpandableFirstOrderDifferentialEquations(equations), t0, y0, t, y);
     }
 
     /** Compute the derivatives and check the number of evaluations.
      * @param t current value of the independent <I>time</I> variable
      * @param y array containing the current value of the state vector
      * @param yDot placeholder array where to put the time derivative of the state vector
-     * @throws MathUserException this user-defined exception should be used if an error is
-     * is triggered by user code
+     * @exception MaxCountExceededException if the number of functions evaluations is exceeded
      */
     public void computeDerivatives(final double t, final double[] y, final double[] yDot)
-        throws MathUserException {
-        if (++evaluations > maxEvaluations) {
-            throw new MathUserException(new MaxEvaluationsExceededException(maxEvaluations));
-        }
+        throws MaxCountExceededException {
+        evaluations.incrementCount();
         equations.computeDerivatives(t, y, yDot);
     }
 
@@ -226,14 +230,13 @@ public abstract class AbstractIntegrator implements FirstOrderIntegrator {
      * @param yDot placeholder array where to put the time derivative of the state vector
      * @param tEnd final integration time
      * @return time at end of step
-     * @exception IntegratorException if the value of one event state cannot be evaluated
+     * @exception MathIllegalStateException if the value of one event state cannot be evaluated
      * @since 2.2
      */
     protected double acceptStep(final AbstractStepInterpolator interpolator,
                                 final double[] y, final double[] yDot, final double tEnd)
-        throws IntegratorException {
+        throws MathIllegalStateException {
 
-        try {
             double previousT = interpolator.getGlobalPreviousTime();
             final double currentT = interpolator.getGlobalCurrentTime();
             resetOccurred = false;
@@ -329,15 +332,6 @@ public abstract class AbstractIntegrator implements FirstOrderIntegrator {
             }
 
             return currentT;
-        } catch (EventException se) {
-            final Throwable cause = se.getCause();
-            if ((cause != null) && (cause instanceof MathUserException)) {
-                throw (MathUserException) cause;
-            }
-            throw new IntegratorException(se);
-        } catch (ConvergenceException ce) {
-            throw new IntegratorException(ce);
-        }
 
     }
 
@@ -347,27 +341,27 @@ public abstract class AbstractIntegrator implements FirstOrderIntegrator {
      * @param y0 state vector at t0
      * @param t target time for the integration
      * @param y placeholder where to put the state vector
-     * @exception IntegratorException if some inconsistency is detected
+     * @exception DimensionMismatchException if some inconsistency is detected
+     * @exception NumberIsTooSmallException if integration span is too small
      */
-    protected void sanityChecks(final FirstOrderDifferentialEquations ode,
+    protected void sanityChecks(final ExpandableFirstOrderDifferentialEquations ode,
                                 final double t0, final double[] y0,
                                 final double t, final double[] y)
-        throws IntegratorException {
+        throws DimensionMismatchException, NumberIsTooSmallException {
 
-        if (ode.getDimension() != y0.length) {
-            throw new IntegratorException(
-                    LocalizedFormats.DIMENSIONS_MISMATCH_SIMPLE, ode.getDimension(), y0.length);
+        if (ode.getMainSetDimension() != y0.length) {
+            throw new DimensionMismatchException(ode.getDimension(), y0.length);
         }
 
-        if (ode.getDimension() != y.length) {
-            throw new IntegratorException(
-                    LocalizedFormats.DIMENSIONS_MISMATCH_SIMPLE, ode.getDimension(), y.length);
+        if (ode.getMainSetDimension() != y.length) {
+            throw new DimensionMismatchException(ode.getDimension(), y.length);
         }
 
         if (FastMath.abs(t - t0) <= 1.0e-12 * FastMath.max(FastMath.abs(t0), FastMath.abs(t))) {
-            throw new IntegratorException(
-                    LocalizedFormats.TOO_SMALL_INTEGRATION_INTERVAL,
-                    FastMath.abs(t - t0));
+            throw new NumberIsTooSmallException(LocalizedFormats.TOO_SMALL_INTEGRATION_INTERVAL,
+                                                FastMath.abs(t - t0),
+                                                1.0e-12 * FastMath.max(FastMath.abs(t0), FastMath.abs(t)),
+                                                false);
         }
 
     }

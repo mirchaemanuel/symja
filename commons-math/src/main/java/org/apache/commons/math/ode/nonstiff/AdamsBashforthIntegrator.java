@@ -17,10 +17,10 @@
 
 package org.apache.commons.math.ode.nonstiff;
 
-import org.apache.commons.math.exception.MathUserException;
+import org.apache.commons.math.exception.MathIllegalArgumentException;
+import org.apache.commons.math.exception.MathIllegalStateException;
 import org.apache.commons.math.linear.Array2DRowRealMatrix;
-import org.apache.commons.math.ode.FirstOrderDifferentialEquations;
-import org.apache.commons.math.ode.IntegratorException;
+import org.apache.commons.math.ode.ExpandableFirstOrderDifferentialEquations;
 import org.apache.commons.math.ode.sampling.NordsieckStepInterpolator;
 import org.apache.commons.math.ode.sampling.StepHandler;
 import org.apache.commons.math.util.FastMath;
@@ -135,7 +135,7 @@ import org.apache.commons.math.util.FastMath;
  * <p>The P<sup>-1</sup>u vector and the P<sup>-1</sup> A P matrix do not depend on the state,
  * they only depend on k and therefore are precomputed once for all.</p>
  *
- * @version $Id: AdamsBashforthIntegrator.java 1131229 2011-06-03 20:49:25Z luc $
+ * @version $Id: AdamsBashforthIntegrator.java 1175409 2011-09-25 15:04:39Z luc $
  * @since 2.0
  */
 public class AdamsBashforthIntegrator extends AdamsIntegrator {
@@ -189,22 +189,27 @@ public class AdamsBashforthIntegrator extends AdamsIntegrator {
 
     /** {@inheritDoc} */
     @Override
-    public double integrate(final FirstOrderDifferentialEquations equations,
-                            final double t0, final double[] y0,
-                            final double t, final double[] y)
-        throws MathUserException, IntegratorException {
+    public double integrate(final ExpandableFirstOrderDifferentialEquations equations,
+                            final double t0, final double[] z0,
+                            final double t, final double[] z)
+        throws MathIllegalStateException, MathIllegalArgumentException {
 
-        final int n = y0.length;
-        sanityChecks(equations, t0, y0, t, y);
+        sanityChecks(equations, t0, z0, t, z);
         setEquations(equations);
         resetEvaluations();
         final boolean forward = t > t0;
 
         // initialize working arrays
+        final int totalDim = equations.getDimension();
+        final int mainDim  = equations.getMainSetDimension();
+        final double[] y0  = new double[totalDim];
+        final double[] y   = new double[totalDim];
+        System.arraycopy(z0, 0, y0, 0, mainDim);
+        System.arraycopy(equations.getCurrentAdditionalStates(), 0, y0, mainDim, totalDim - mainDim);
         if (y != y0) {
-            System.arraycopy(y0, 0, y, 0, n);
+            System.arraycopy(y0, 0, y, 0, totalDim);
         }
-        final double[] yDot = new double[n];
+        final double[] yDot = new double[totalDim];
 
         // set up an interpolator sharing the integrator arrays
         final NordsieckStepInterpolator interpolator = new NordsieckStepInterpolator();
@@ -311,6 +316,10 @@ public class AdamsBashforthIntegrator extends AdamsIntegrator {
             }
 
         } while (!isLastStep);
+
+        // dispatch result between main and additional states
+        System.arraycopy(y, 0, z, 0, z.length);
+        equations.setCurrentAdditionalState(y);
 
         final double stopTime = stepStart;
         resetInternalState();

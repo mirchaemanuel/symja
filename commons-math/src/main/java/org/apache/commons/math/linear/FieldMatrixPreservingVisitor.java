@@ -23,7 +23,7 @@ import org.apache.commons.math.FieldElement;
  * Interface defining a visitor for matrix entries.
  *
  * @param <T> the type of the field elements
- * @version $Id: FieldMatrixPreservingVisitor.java 1131229 2011-06-03 20:49:25Z luc $
+ * @version $Id: FieldMatrixPreservingVisitor.java 1165822 2011-09-06 20:19:37Z luc $
  * @since 2.0
  */
 public interface FieldMatrixPreservingVisitor<T extends FieldElement<?>> {
@@ -45,8 +45,6 @@ public interface FieldMatrixPreservingVisitor<T extends FieldElement<?>> {
      * @param row row index of the entry
      * @param column column index of the entry
      * @param value current value of the entry
-     * @throws org.apache.commons.math.exception.MathUserException if the visitor
-     * cannot process an entry.
      */
     void visit(int row, int column, T value);
 

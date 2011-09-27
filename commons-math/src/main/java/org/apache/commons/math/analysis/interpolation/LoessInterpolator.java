@@ -42,7 +42,7 @@ import org.apache.commons.math.util.MathUtils;
  * This class implements both the loess method and serves as an interpolation
  * adapter to it, allowing to build a spline on the obtained loess fit.
  *
- * @version $Id: LoessInterpolator.java 1132439 2011-06-05 15:59:26Z luc $
+ * @version $Id: LoessInterpolator.java 1174731 2011-09-23 13:08:58Z erans $
  * @since 2.0
  */
 public class LoessInterpolator
@@ -165,7 +165,7 @@ public class LoessInterpolator
      * @param xval the arguments for the interpolation points
      * @param yval the values for the interpolation points
      * @return A cubic spline built upon a loess fit to the data at the original abscissae
-     * @throws org.apache.commons.math.exception.NonMonotonousSequenceException
+     * @throws org.apache.commons.math.exception.NonMonotonicSequenceException
      * if {@code xval} not sorted in strictly increasing order.
      * @throws DimensionMismatchException if {@code xval} and {@code yval} have
      * different sizes.
@@ -188,7 +188,7 @@ public class LoessInterpolator
      * @param weights point weights: coefficients by which the robustness weight
      * of a point is multiplied.
      * @return the values of the loess fit at corresponding original abscissae.
-     * @throws org.apache.commons.math.exception.NonMonotonousSequenceException
+     * @throws org.apache.commons.math.exception.NonMonotonicSequenceException
      * if {@code xval} not sorted in strictly increasing order.
      * @throws DimensionMismatchException if {@code xval} and {@code yval} have
      * different sizes.
@@ -352,7 +352,7 @@ public class LoessInterpolator
      * @param xval the arguments for the interpolation points
      * @param yval the values for the interpolation points
      * @return values of the loess fit at corresponding original abscissae
-     * @throws org.apache.commons.math.exception.NonMonotonousSequenceException
+     * @throws org.apache.commons.math.exception.NonMonotonicSequenceException
      * if {@code xval} not sorted in strictly increasing order.
      * @throws DimensionMismatchException if {@code xval} and {@code yval} have
      * different sizes.

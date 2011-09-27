@@ -30,7 +30,7 @@ import org.apache.commons.math.analysis.polynomials.PolynomialFunctionNewtonForm
  * The actual code of Neville's evaluation is in PolynomialFunctionLagrangeForm,
  * this class provides an easy-to-use interface to it.</p>
  *
- * @version $Id: DividedDifferenceInterpolator.java 1148685 2011-07-20 10:24:15Z luc $
+ * @version $Id: DividedDifferenceInterpolator.java 1174731 2011-09-23 13:08:58Z erans $
  * @since 1.2
  */
 public class DividedDifferenceInterpolator
@@ -48,7 +48,7 @@ public class DividedDifferenceInterpolator
      * if the array lengths are different.
      * @throws org.apache.commons.math.exception.NumberIsTooSmallException
      * if the number of points is less than 2.
-     * @throws org.apache.commons.math.exception.NonMonotonousSequenceException
+     * @throws org.apache.commons.math.exception.NonMonotonicSequenceException
      * if {@code x} is not sorted in strictly increasing order.
      */
     public PolynomialFunctionNewtonForm interpolate(double x[], double y[]) {
@@ -91,7 +91,7 @@ public class DividedDifferenceInterpolator
      * if the array lengths are different.
      * @throws org.apache.commons.math.exception.NumberIsTooSmallException
      * if the number of points is less than 2.
-     * @throws org.apache.commons.math.exception.NonMonotonousSequenceException
+     * @throws org.apache.commons.math.exception.NonMonotonicSequenceException
      * if {@code x} is not sorted in strictly increasing order.
      */
     protected static double[] computeDividedDifference(final double x[], final double y[]) {

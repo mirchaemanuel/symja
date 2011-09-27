@@ -18,10 +18,10 @@
 package org.apache.commons.math.ode.nonstiff;
 
 
-import org.apache.commons.math.exception.MathUserException;
+import org.apache.commons.math.exception.MathIllegalArgumentException;
+import org.apache.commons.math.exception.MathIllegalStateException;
 import org.apache.commons.math.ode.AbstractIntegrator;
-import org.apache.commons.math.ode.FirstOrderDifferentialEquations;
-import org.apache.commons.math.ode.IntegratorException;
+import org.apache.commons.math.ode.ExpandableFirstOrderDifferentialEquations;
 import org.apache.commons.math.ode.sampling.StepHandler;
 import org.apache.commons.math.util.FastMath;
 
@@ -46,7 +46,7 @@ import org.apache.commons.math.util.FastMath;
  * @see ClassicalRungeKuttaIntegrator
  * @see GillIntegrator
  * @see MidpointIntegrator
- * @version $Id: RungeKuttaIntegrator.java 1139831 2011-06-26 16:26:48Z luc $
+ * @version $Id: RungeKuttaIntegrator.java 1175409 2011-09-25 15:04:39Z luc $
  * @since 1.2
  */
 
@@ -90,17 +90,23 @@ public abstract class RungeKuttaIntegrator extends AbstractIntegrator {
   }
 
   /** {@inheritDoc} */
-  public double integrate(final FirstOrderDifferentialEquations equations,
-                          final double t0, final double[] y0,
-                          final double t, final double[] y)
-  throws MathUserException, IntegratorException {
+  public double integrate(final ExpandableFirstOrderDifferentialEquations equations,
+                          final double t0, final double[] z0,
+                          final double t, final double[] z)
+      throws MathIllegalStateException, MathIllegalArgumentException {
 
-    sanityChecks(equations, t0, y0, t, y);
+    sanityChecks(equations, t0, z0, t, z);
     setEquations(equations);
     resetEvaluations();
     final boolean forward = t > t0;
 
     // create some internal working arrays
+    final int totalDim = equations.getDimension();
+    final int mainDim  = equations.getMainSetDimension();
+    final double[] y0  = new double[totalDim];
+    final double[] y   = new double[totalDim];
+    System.arraycopy(z0, 0, y0, 0, mainDim);
+    System.arraycopy(equations.getCurrentAdditionalStates(), 0, y0, mainDim, totalDim - mainDim);
     final int stages = c.length + 1;
     if (y != y0) {
       System.arraycopy(y0, 0, y, 0, y0.length);
@@ -178,6 +184,10 @@ public abstract class RungeKuttaIntegrator extends AbstractIntegrator {
       }
 
     } while (!isLastStep);
+
+    // dispatch result between main and additional states
+    System.arraycopy(y, 0, z, 0, z.length);
+    equations.setCurrentAdditionalState(y);
 
     final double stopTime = stepStart;
     stepStart = Double.NaN;

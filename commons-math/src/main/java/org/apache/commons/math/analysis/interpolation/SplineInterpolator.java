@@ -47,7 +47,7 @@ import org.apache.commons.math.util.MathUtils;
  * <u>Numerical Analysis</u>, 4th Ed., 1989, PWS-Kent, ISBN 0-53491-585-X, pp 126-131.
  * </p>
  *
- * @version $Id: SplineInterpolator.java 1131229 2011-06-03 20:49:25Z luc $
+ * @version $Id: SplineInterpolator.java 1174731 2011-09-23 13:08:58Z erans $
  *
  */
 public class SplineInterpolator implements UnivariateRealInterpolator {
@@ -59,7 +59,7 @@ public class SplineInterpolator implements UnivariateRealInterpolator {
      * @return a function which interpolates the data set
      * @throws DimensionMismatchException if {@code x} and {@code y}
      * have different sizes.
-     * @throws org.apache.commons.math.exception.NonMonotonousSequenceException
+     * @throws org.apache.commons.math.exception.NonMonotonicSequenceException
      * if {@code x} is not sorted in strict increasing order.
      * @throws NumberIsTooSmallException if the size of {@code x} is smaller
      * than 3.

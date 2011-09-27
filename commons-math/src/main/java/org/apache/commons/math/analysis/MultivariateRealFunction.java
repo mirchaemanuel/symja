@@ -20,7 +20,7 @@ package org.apache.commons.math.analysis;
 /**
  * An interface representing a multivariate real function.
  *
- * @version $Id: MultivariateRealFunction.java 1131229 2011-06-03 20:49:25Z luc $
+ * @version $Id: MultivariateRealFunction.java 1165809 2011-09-06 20:00:37Z luc $
  * @since 2.0
  */
 public interface MultivariateRealFunction {
@@ -30,8 +30,6 @@ public interface MultivariateRealFunction {
      *
      * @param point Point at which the function must be evaluated.
      * @return the function value for the given point.
-     * @throws org.apache.commons.math.exception.MathUserException if
-     * the function evaluation fails.
      * @throws org.apache.commons.math.exception.DimensionMismatchException
      * if the parameter's dimension is wrong for the function being evaluated.
      * @throws  org.apache.commons.math.exception.MathIllegalArgumentException

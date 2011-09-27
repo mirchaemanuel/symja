@@ -17,12 +17,9 @@
 
 package org.apache.commons.math.analysis;
 
-import org.apache.commons.math.exception.MathUserException;
-
-
 /**
  * An interface representing a multivariate matrix function.
- * @version $Id: MultivariateMatrixFunction.java 1131229 2011-06-03 20:49:25Z luc $
+ * @version $Id: MultivariateMatrixFunction.java 1165809 2011-09-06 20:00:37Z luc $
  * @since 2.0
  */
 public interface MultivariateMatrixFunction {
@@ -31,10 +28,9 @@ public interface MultivariateMatrixFunction {
      * Compute the value for the function at the given point.
      * @param point point at which the function must be evaluated
      * @return function value for the given point
-     * @exception MathUserException if the function evaluation fails
      * @exception IllegalArgumentException if points dimension is wrong
      */
     double[][] value(double[] point)
-        throws MathUserException, IllegalArgumentException;
+        throws IllegalArgumentException;
 
 }

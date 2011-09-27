@@ -30,7 +30,7 @@ package org.apache.commons.math.linear;
  * with non-square matrix A and with non-null minimal norm. If an exact linear
  * solution exists it is also the minimal norm solution.</p>
  *
- * @version $Id: DecompositionSolver.java 1131229 2011-06-03 20:49:25Z luc $
+ * @version $Id: DecompositionSolver.java 1166960 2011-09-09 02:09:44Z celestin $
  * @since 2.0
  */
 public interface DecompositionSolver {
@@ -45,31 +45,7 @@ public interface DecompositionSolver {
      * @throws SingularMatrixException
      * if the decomposed matrix is singular.
      */
-    double[] solve(final double[] b);
-
-    /** Solve the linear equation A &times; X = B for matrices A.
-     * <p>The A matrix is implicit, it is provided by the underlying
-     * decomposition algorithm.</p>
-     * @param b right-hand side of the equation A &times; X = B
-     * @return a vector X that minimizes the two norm of A &times; X - B
-     * @throws org.apache.commons.math.exception.DimensionMismatchException
-     * if the matrices dimensions do not match.
-     * @throws SingularMatrixException
-     * if the decomposed matrix is singular.
-     */
     RealVector solve(final RealVector b);
-
-    /** Solve the linear equation A &times; X = B for matrices A.
-     * <p>The A matrix is implicit, it is provided by the underlying
-     * decomposition algorithm.</p>
-     * @param b right-hand side of the equation A &times; X = B
-     * @return a matrix X that minimizes the two norm of A &times; X - B
-     * @throws org.apache.commons.math.exception.DimensionMismatchException
-     * if the matrices dimensions do not match.
-     * @throws SingularMatrixException
-     * if the decomposed matrix is singular.
-     */
-    double[][] solve(final double[][] b);
 
     /** Solve the linear equation A &times; X = B for matrices A.
      * <p>The A matrix is implicit, it is provided by the underlying
