@@ -1,5 +1,5 @@
 /*
- * $Id: GenPolynomialTokenizer.java 3660 2011-06-11 12:17:33Z kredel $
+ * $Id: GenPolynomialTokenizer.java 3782 2011-09-28 20:53:51Z kredel $
  */
 
 package edu.jas.poly;
@@ -653,7 +653,7 @@ public class GenPolynomialTokenizer {
 
     /**
      * Parsing method for coefficient ring. syntax: Rat | Q | Int | Z | Mod
-     * modul | Complex | C | D | Quat | AN[ (var) ( poly ) | AN[ modul (var) (
+     * modul | Complex | C | D | Quat | AN[ (var) ( poly ) ] | AN[ modul (var) (
      * poly ) ] | IntFunc (var_list)
      * @return the next coefficient factory.
      * @throws IOException

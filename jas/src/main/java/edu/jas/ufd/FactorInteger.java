@@ -1,5 +1,5 @@
 /*
- * $Id: FactorInteger.java 3753 2011-08-27 20:34:30Z kredel $
+ * $Id: FactorInteger.java 3776 2011-09-23 20:08:13Z kredel $
  */
 
 package edu.jas.ufd;
@@ -23,6 +23,8 @@ import edu.jas.poly.ExpVector;
 import edu.jas.poly.GenPolynomial;
 import edu.jas.poly.GenPolynomialRing;
 import edu.jas.poly.PolyUtil;
+import edu.jas.poly.OptimizedPolynomialList;
+import edu.jas.poly.TermOrderOptimization;
 import edu.jas.structure.GcdRingElem;
 import edu.jas.structure.Power;
 import edu.jas.structure.RingElem;
@@ -305,7 +307,7 @@ public class FactorInteger<MOD extends GcdRingElem<MOD> & Modular> extends Facto
                 t = System.currentTimeMillis() - t;
                 //System.out.println("non monic time = " + t);
             }
-            return factors;
+            return normalizeFactorization(factors);
         }
 
         // search longest factor list
@@ -319,7 +321,7 @@ public class FactorInteger<MOD extends GcdRingElem<MOD> & Modular> extends Facto
                 ilist = intfac[k];
             }
         }
-        factors = ilist;
+        factors = normalizeFactorization(ilist);
         return factors;
     }
 
@@ -487,7 +489,7 @@ public class FactorInteger<MOD extends GcdRingElem<MOD> & Modular> extends Facto
             //System.out.println("irred u = " + u);
             factors.add(PP);
         }
-        return factors;
+        return normalizeFactorization(factors);
     }
 
 
@@ -621,7 +623,7 @@ public class FactorInteger<MOD extends GcdRingElem<MOD> & Modular> extends Facto
             //System.out.println("irred u = " + u);
             factors.add(PP);
         }
-        return factors;
+        return normalizeFactorization(factors);
     }
 
 
@@ -634,6 +636,18 @@ public class FactorInteger<MOD extends GcdRingElem<MOD> & Modular> extends Facto
      */
     @Override
     public List<GenPolynomial<BigInteger>> factorsSquarefree(GenPolynomial<BigInteger> P) {
+        GenPolynomialRing<BigInteger> pfac = P.ring;
+        if ( pfac.nvar <= 1 ) {
+            return baseFactorsSquarefree(P);
+        }
+        List<GenPolynomial<BigInteger>> topt = new ArrayList<GenPolynomial<BigInteger>>(1);
+        topt.add(P);
+        OptimizedPolynomialList<BigInteger> opt = TermOrderOptimization.<BigInteger> optimizeTermOrder(pfac,topt);
+        P = opt.list.get(0);
+        logger.info("optimized polynomial: " + P);
+        List<Integer> iperm = TermOrderOptimization.inversePermutation(opt.perm);
+        logger.info("optimize perm: " + opt.perm + ", de-optimize perm: " + iperm);
+
         ExpVector degv = P.degreeVector();
         int[] donv = degv.dependencyOnVariables();
         List<GenPolynomial<BigInteger>> facs = null;
@@ -647,7 +661,7 @@ public class FactorInteger<MOD extends GcdRingElem<MOD> & Modular> extends Facto
             }
         } else { // not all variables appear, remove unused variables, hack for Hensel, TODO check
             GenPolynomial<BigInteger> pu = PolyUtil.<BigInteger> removeUnusedUpperVariables(P);
-            GenPolynomial<BigInteger> pl = PolyUtil.<BigInteger> removeUnusedLowerVariables(pu);
+            GenPolynomial<BigInteger> pl = PolyUtil.<BigInteger> removeUnusedLowerVariables(pu); // not useful
             try {
                 logger.info("try factorsSquarefreeHensel: " + pl);
                 facs = factorsSquarefreeHensel(pu);
@@ -666,7 +680,11 @@ public class FactorInteger<MOD extends GcdRingElem<MOD> & Modular> extends Facto
                 //e.printStackTrace();
             }
         }
-        if (facs == null) {
+        if (facs != null) {
+            List<GenPolynomial<BigInteger>> iopt = TermOrderOptimization. <BigInteger> permutation(iperm,pfac,facs);
+            logger.info("de-optimized polynomials: " + iopt);
+            facs = normalizeFactorization(iopt);
+        } else {
             logger.info("factorsSquarefreeHensel not applicable or failed, reverting to Kronecker for: " + P);
             facs = super.factorsSquarefree(P);
         }
@@ -1287,7 +1305,7 @@ public class FactorInteger<MOD extends GcdRingElem<MOD> & Modular> extends Facto
                         cfactors.addAll(factors);
                         factors = cfactors;
                     }
-                    return factors;
+                    return normalizeFactorization(factors);
                 }
             }
         }
@@ -1304,7 +1322,7 @@ public class FactorInteger<MOD extends GcdRingElem<MOD> & Modular> extends Facto
             cfactors.addAll(factors);
             factors = cfactors;
         }
-        return factors;
+        return normalizeFactorization(factors);
     }
 
 

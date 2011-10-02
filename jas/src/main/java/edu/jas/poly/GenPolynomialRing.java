@@ -1,5 +1,5 @@
 /*
- * $Id: GenPolynomialRing.java 3641 2011-05-22 12:23:54Z kredel $
+ * $Id: GenPolynomialRing.java 3767 2011-09-18 11:42:39Z kredel $
  */
 
 package edu.jas.poly;
@@ -500,6 +500,37 @@ public class GenPolynomialRing<C extends RingElem<C>> implements RingFactory<Gen
      */
     public java.math.BigInteger characteristic() {
         return coFac.characteristic();
+    }
+
+
+    /**
+     * Get a (constant) GenPolynomial&lt;C&gt; element from a coefficient value.
+     * @param a coefficient.
+     * @return a GenPolynomial&lt;C&gt;.
+     */
+    public GenPolynomial<C> valueOf(C a) {
+        return new GenPolynomial<C>(this, a);
+    }
+
+
+    /**
+     * Get a GenPolynomial&lt;C&gt; element from an exponent vector.
+     * @param e exponent vector.
+     * @return a GenPolynomial&lt;C&gt;.
+     */
+    public GenPolynomial<C> valueOf(ExpVector e) {
+        return new GenPolynomial<C>(this, coFac.getONE(), e);
+    }
+
+
+    /**
+     * Get a GenPolynomial&lt;C&gt; element from a coeffcient and an exponent vector.
+     * @param a coefficient.
+     * @param e exponent vector.
+     * @return a GenPolynomial&lt;C&gt;.
+     */
+    public GenPolynomial<C> valueOf(C a, ExpVector e) {
+        return new GenPolynomial<C>(this, a, e);
     }
 
 

@@ -1,5 +1,5 @@
 /*
- * $Id: TermOrderOptimization.java 3446 2010-12-25 21:57:09Z kredel $
+ * $Id: TermOrderOptimization.java 3778 2011-09-25 17:35:12Z kredel $
  */
 
 package edu.jas.poly;
@@ -197,13 +197,68 @@ public class TermOrderOptimization {
 
 
     /**
+     * Inverse of a permutation.
+     * @param P permutation.
+     * @return S with S*P = id.
+     */
+    public static List<Integer> inversePermutation( List<Integer> P ) {
+        if ( P == null || P.size() <= 1 ) {
+           return P;
+        }
+        List<Integer> ip = new ArrayList<Integer>(P); // ensure size and content
+        for ( int i = 0; i < P.size(); i++ ) {
+	    ip.set(P.get(i),i); // inverse
+        }
+        return ip;
+    }
+
+
+    /**
+     * Test for identity permutation.
+     * @param P permutation.
+     * @return true , if P = id, else false.
+     */
+    public static boolean isIdentityPermutation( List<Integer> P ) {
+        if ( P == null || P.size() <= 1 ) {
+           return true;
+        }
+        for ( int i = 0; i < P.size(); i++ ) {
+	    if ( P.get(i).intValue() != i ) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+
+    /**
+     * Multiplication permutations.
+     * @param P permutation.
+     * @param S permutation.
+     * @return P*S.
+     */
+    public static List<Integer> multiplyPermutation( List<Integer> P, List<Integer> S ) {
+        if ( P == null || S == null ) {
+           return null;
+        }
+        if ( P.size() != S.size() ) {
+	    throw new IllegalArgumentException("#P != #S: P =" + P + ", S = " + S);
+        }
+        List<Integer> ip = new ArrayList<Integer>(P); // ensure size and content
+        for ( int i = 0; i < P.size(); i++ ) {
+	    ip.set(i,S.get(P.get(i))); 
+        }
+        return ip;
+    }
+
+
+    /**
      * Permutation of a list.
      * @param L list.
      * @param P permutation.
      * @return P(L).
      */
-    public static <T> 
-        List<T> listPermutation( List<Integer> P, List<T> L ) {
+    public static <T> List<T> listPermutation( List<Integer> P, List<T> L ) {
         if ( L == null || L.size() <= 1 ) {
            return L;
         }
@@ -223,8 +278,7 @@ public class TermOrderOptimization {
      * @return P(a).
      */
     @SuppressWarnings("unchecked") 
-    public static <T>
-        T[] arrayPermutation( List<Integer> P, T[] a ) {
+    public static <T> T[] arrayPermutation( List<Integer> P, T[] a ) {
         if ( a == null || a.length <= 1 ) {
            return a;
         }
@@ -245,8 +299,7 @@ public class TermOrderOptimization {
      * @param P permutation.
      * @return P(a).
      */
-    public static
-        String[] stringArrayPermutation( List<Integer> P, String[] a ) {
+    public static String[] stringArrayPermutation( List<Integer> P, String[] a ) {
         if ( a == null || a.length <= 1 ) {
            return a;
         }
@@ -267,8 +320,7 @@ public class TermOrderOptimization {
      * @param P permutation.
      * @return P(a).
      */
-    public static 
-        long[] longArrayPermutation( List<Integer> P, long[] a ) {
+    public static long[] longArrayPermutation( List<Integer> P, long[] a ) {
         if ( a == null || a.length <= 1 ) {
            return a;
         }
@@ -421,8 +473,8 @@ public class TermOrderOptimization {
         TermOrder tord = R.tord;
         if ( tord.getEvord2() != 0 ) {
             //throw new IllegalArgumentException("split term orders not permutable");
-            logger.warn("split term orders not permutable, resetting to base term order");
-            tord = new TermOrder( tord.getEvord() );
+            tord = new TermOrder( tord.getEvord2() );
+            logger.warn("split term order '" + R.tord + "' not permutable, resetting to most base term order " + tord);
         }
         long[][] weight = tord.getWeight();
         if ( weight != null ) {
@@ -454,16 +506,11 @@ public class TermOrderOptimization {
      */
     public static <C extends RingElem<C>> 
        OptimizedPolynomialList<C>
-       optimizeTermOrder( GenPolynomialRing<C> R, List<GenPolynomial<C>> L ) {
+      optimizeTermOrder( GenPolynomialRing<C> R, List<GenPolynomial<C>> L ) {
        List<Integer> perm = optimalPermutation( degreeMatrix(L) );
-       GenPolynomialRing<C> pring;
-       pring = TermOrderOptimization.<C>permutation( perm, R );
-
-       List<GenPolynomial<C>> ppolys;
-       ppolys = TermOrderOptimization.<C>permutation( perm, pring, L );
-
-       OptimizedPolynomialList<C> op 
-           = new OptimizedPolynomialList<C>(perm,pring,ppolys);
+       GenPolynomialRing<C> pring = TermOrderOptimization.<C>permutation( perm, R );
+       List<GenPolynomial<C>> ppolys = TermOrderOptimization.<C>permutation( perm, pring, L );
+       OptimizedPolynomialList<C> op = new OptimizedPolynomialList<C>(perm,pring,ppolys);
        return op;
     }
 
@@ -478,16 +525,7 @@ public class TermOrderOptimization {
        if ( P == null ) {
           return null;
        }
-       List<Integer> perm = optimalPermutation( degreeMatrix( P.list ) );
-       GenPolynomialRing<C> pring;
-       pring = TermOrderOptimization.<C>permutation( perm, P.ring );
-
-       List<GenPolynomial<C>> ppolys;
-       ppolys = TermOrderOptimization.<C>permutation( perm, pring, P.list );
-
-       OptimizedPolynomialList<C> op 
-           = new OptimizedPolynomialList<C>(perm,pring,ppolys);
-       return op;
+       return optimizeTermOrder( P.ring, P.list );
     }
 
 
