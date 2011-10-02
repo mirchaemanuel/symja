@@ -6,7 +6,6 @@ import org.matheclipse.core.expression.F;
 import org.matheclipse.core.generic.ITernaryComparator.COMPARE_RESULT;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
-import org.matheclipse.core.interfaces.INumber;
 
 public class Min extends AbstractFunctionEvaluator {
 	public Min() {
