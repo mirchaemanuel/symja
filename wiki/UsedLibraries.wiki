@@ -44,6 +44,7 @@ The following functions are based on commons-math implementations:
 
   * {{{Apart}}} - ([http://code.google.com/p/symja/source/browse/trunk/matheclipse-core/src/main/java/org/matheclipse/core/reflection/system/Apart.java SVN])
   * {{{Factor}}} - ([http://code.google.com/p/symja/source/browse/trunk/matheclipse-core/src/main/java/org/matheclipse/core/reflection/system/Factor.java SVN])
+    * {{{Factor[x^2-y^2] gives (y+x)*(-y+x)}}}
   * {{{GroebnerBasis}}} - ([http://code.google.com/p/symja/source/browse/trunk/matheclipse-core/src/main/java/org/matheclipse/core/reflection/system/GroebnerBasis.java SVN])
   * {{{FactorTerms}}} - ([http://code.google.com/p/symja/source/browse/trunk/matheclipse-core/src/main/java/org/matheclipse/core/reflection/system/FactorTerms.java SVN])
   * {{{Integrate}}} - ([http://code.google.com/p/symja/source/browse/trunk/matheclipse-core/src/main/java/org/matheclipse/core/reflection/system/Integrate.java SVN])
