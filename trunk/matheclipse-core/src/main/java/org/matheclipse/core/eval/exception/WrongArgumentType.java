@@ -32,6 +32,10 @@ public class WrongArgumentType extends MathException {
 		this(expr, arg, position, null);
 	}
 
+	public WrongArgumentType(final IExpr arg, String message) {
+		this(null, arg, 0, message);
+	}
+
 	/**
 	 * The function {@code expr} has wrong argument {@code arg} at position:
 	 * {@code position}: {@code message}
@@ -50,6 +54,9 @@ public class WrongArgumentType extends MathException {
 
 	@Override
 	public String getMessage() {
+		if (fExpr == null) {
+			return "The expression: " + fArg.toString() + " has a wrong type:\n" + fMessage;
+		}
 		if (fMessage == null) {
 			return "The function: " + fExpr.toString() + " has wrong argument " + fArg.toString() + " at position:"
 					+ Integer.toString(fPosition);

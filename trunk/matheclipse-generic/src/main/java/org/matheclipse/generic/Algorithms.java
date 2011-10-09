@@ -34,8 +34,8 @@ public class Algorithms {
 	}
 
 	/**
-	 * Return the number of elements in the <code>list</code> that match the
-	 * given predicate.
+	 * Return the number of elements in the <code>list</code> that match the given
+	 * predicate.
 	 */
 	public static <T> int count(final List<T> list, final int start, final int end, final Predicate<T> fn) {
 		int counter = 0;
@@ -129,9 +129,9 @@ public class Algorithms {
 	/**
 	 * Fold the list from <code>start</code> index including to <code>end</code>
 	 * index excluding into the <code>resultCollection</code>. If the
-	 * <i>binaryFunction</i> returns <code>null</code>, the left element will
-	 * be added to the result list, otherwise the result will be <i>folded</i>
-	 * again with the next element in the list.
+	 * <i>binaryFunction</i> returns <code>null</code>, the left element will be
+	 * added to the result list, otherwise the result will be <i>folded</i> again
+	 * with the next element in the list.
 	 * 
 	 * @param <T>
 	 * @param list
@@ -207,13 +207,14 @@ public class Algorithms {
 	 * @param n
 	 * @param cloneList
 	 */
-	public static <T> T nest(final T expr, final int n, final Function<T, ? extends T> fn) {
-		T temp = expr;
-		for (int i = 0; i < n; i++) {
-			temp = fn.apply(temp);
-		}
-		return temp;
-	}
+	// public static <T> T nest(final T expr, final int n, final Function<T, ?
+	// extends T> fn) {
+	// T temp = expr;
+	// for (int i = 0; i < n; i++) {
+	// temp = fn.apply(temp);
+	// }
+	// return temp;
+	// }
 
 	/**
 	 * Return a resultList by folding <code>expr</code> n times
@@ -224,18 +225,19 @@ public class Algorithms {
 	 * @param cloneList
 	 * @param resultList
 	 */
-	public static <T> void nestList(final T expr, final int n, final Function<T, ? extends T> fn, final Collection<T> resultList) {
-		T temp = expr;
-		resultList.add(temp);
-		for (int i = 0; i < n; i++) {
-			temp = fn.apply(temp);
-			resultList.add(temp);
-		}
-	}
+	// public static <T> void nestList(final T expr, final int n, final
+	// Function<T, ? extends T> fn, final Collection<T> resultList) {
+	// T temp = expr;
+	// resultList.add(temp);
+	// for (int i = 0; i < n; i++) {
+	// temp = fn.apply(temp);
+	// resultList.add(temp);
+	// }
+	// }
 
 	/**
-	 * Add the list elements to the <code>resultCollection</code> according to
-	 * the <code>sequenceSpecification</code> for the list indexes.
+	 * Add the list elements to the <code>resultCollection</code> according to the
+	 * <code>sequenceSpecification</code> for the list indexes.
 	 * 
 	 * @param <T>
 	 * @param list
@@ -253,8 +255,8 @@ public class Algorithms {
 
 	/**
 	 * Transform applies the unary <code>function</code> to each element in the
-	 * <code>iterable</code>. The return value of the <code>function</code>
-	 * is appended to the <code>resultCollection</code>.
+	 * <code>iterable</code>. The return value of the <code>function</code> is
+	 * appended to the <code>resultCollection</code>.
 	 * 
 	 * @param <T>
 	 * @param iterable
@@ -272,8 +274,8 @@ public class Algorithms {
 
 	/**
 	 * Transform applies the unary <code>function</code> to each element in the
-	 * <code>list</code> in the range <code>[start .. list.size()[</code>.
-	 * The return value of the <code>function</code> is appended to the
+	 * <code>list</code> in the range <code>[start .. list.size()[</code>. The
+	 * return value of the <code>function</code> is appended to the
 	 * <code>resultCollection</code>.
 	 * 
 	 * @param <T>
