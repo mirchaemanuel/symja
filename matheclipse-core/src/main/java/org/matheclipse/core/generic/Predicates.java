@@ -7,11 +7,12 @@ import java.io.Serializable;
 import javax.annotation.Nullable;
 
 import org.matheclipse.core.eval.EvalEngine;
-import org.matheclipse.core.eval.exception.FlowControlException;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IAST;
+import org.matheclipse.core.interfaces.IEvaluator;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.IPattern;
+import org.matheclipse.core.interfaces.ISymbol;
 
 import com.google.common.base.Predicate;
 
@@ -66,7 +67,6 @@ public class Predicates {
 	 * 
 	 */
 	private static class IsUnaryTrue<E extends IExpr> implements Predicate<E> {
-		// UnaryEval implements IUnaryPredicate<IExpr> {
 		protected final EvalEngine fEngine;
 
 		protected final IAST fAST;
@@ -116,6 +116,12 @@ public class Predicates {
 	 * @return
 	 */
 	public static Predicate<IExpr> isTrue(IExpr head) {
+		if (head.isSymbol()) {
+			IEvaluator eval = ((ISymbol) head).getEvaluator();
+			if (eval != null && (eval instanceof Predicate<?>)) {
+				return (Predicate<IExpr>) eval;
+			}
+		}
 		return new IsUnaryTrue<IExpr>(head);
 	}
 
@@ -127,6 +133,12 @@ public class Predicates {
 	 * @return
 	 */
 	public static Predicate<IExpr> isTrue(final EvalEngine engine, final IExpr head) {
+		if (head.isSymbol()) {
+			IEvaluator eval = ((ISymbol) head).getEvaluator();
+			if (eval != null && (eval instanceof Predicate<?>)) {
+				return (Predicate<IExpr>) eval;
+			}
+		}
 		return new IsUnaryTrue<IExpr>(engine, head);
 	}
 
@@ -187,7 +199,7 @@ public class Predicates {
 			}
 		};
 	}
-	
+
 	/**
 	 * Returns a predicate that evaluates to {@code true} if
 	 * <code>input.isSignedNumber()</code> gives {@code true}.

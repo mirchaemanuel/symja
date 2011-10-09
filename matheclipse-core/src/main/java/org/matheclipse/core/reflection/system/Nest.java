@@ -7,7 +7,8 @@ import org.matheclipse.core.generic.Functors;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.ISymbol;
-import org.matheclipse.generic.Algorithms;
+
+import com.google.common.base.Function;
 
 public class Nest implements IFunctionEvaluator {
 
@@ -21,12 +22,20 @@ public class Nest implements IFunctionEvaluator {
 	}
 
 	public static IExpr evaluateNest(final IAST ast) {
-		if (ast.get(3).isInteger()) {
-			final int n = Validate.checkIntType(ast, 3);
-			return Algorithms.nest(ast.get(2), n, Functors.append(F.ast(ast.get(1))));
+		IExpr arg3 = F.eval(ast.get(3));
+		if (arg3.isInteger()) {
+			final int n = Validate.checkIntType(arg3);
+			return nest(ast.get(2), n, Functors.append(F.ast(ast.get(1))));
 		}
-
 		return null;
+	}
+
+	public static IExpr nest(final IExpr expr, final int n, final Function<IExpr, IExpr> fn) {
+		IExpr temp = expr;
+		for (int i = 0; i < n; i++) {
+			temp = F.eval(fn.apply(temp));
+		}
+		return temp;
 	}
 
 	public IExpr numericEval(final IAST functionList) {
@@ -34,5 +43,6 @@ public class Nest implements IFunctionEvaluator {
 	}
 
 	public void setUp(final ISymbol symbol) {
+		symbol.setAttributes(ISymbol.HOLDALL);
 	}
 }

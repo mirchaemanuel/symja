@@ -5,7 +5,6 @@ import org.matheclipse.core.eval.interfaces.IFunctionEvaluator;
 import org.matheclipse.core.generic.Predicates;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
-import org.matheclipse.core.interfaces.IInteger;
 import org.matheclipse.core.interfaces.ISymbol;
 
 public class Select implements IFunctionEvaluator {

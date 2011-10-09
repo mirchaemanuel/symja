@@ -2,6 +2,7 @@ package org.matheclipse.core.eval.exception;
 
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IAST;
+import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.IInteger;
 import org.matheclipse.core.interfaces.ISymbol;
 
@@ -16,7 +17,6 @@ public final class Validate {
 	 * Integer.MAX_VALUE]
 	 * 
 	 * @throws WrongArgumentType
-	 *           if {@code size} unequals the list size
 	 */
 	public static int checkIntType(IAST ast, int pos) {
 		return checkIntType(ast, pos, 0);
@@ -27,7 +27,6 @@ public final class Validate {
 	 * startValue}, Integer.MAX_VALUE]
 	 * 
 	 * @throws WrongArgumentType
-	 *           if {@code size} unequals the list size
 	 */
 	public static int checkIntType(IAST ast, int pos, int startValue) {
 		if (ast.get(pos).isInteger()) {
@@ -46,7 +45,35 @@ public final class Validate {
 		throw new WrongArgumentType(ast, ast.get(pos), pos, "Trying to convert the argument into the integer range: " + startValue
 				+ " - " + Integer.MAX_VALUE);
 	}
-	
+
+	public static int checkIntType(IExpr expr) {
+		return checkIntType(expr, 0);
+	}
+
+	/**
+	 * Check the expression, if it's a Java {@code int} value in the range [
+	 * {@code startValue}, Integer.MAX_VALUE]
+	 * 
+	 * @throws WrongArgumentType
+	 */
+	public static int checkIntType(IExpr expr, int startValue) {
+		if (expr.isInteger()) {
+			try {
+				int result = ((IInteger) expr).toInt();
+				if (startValue > result) {
+					throw new WrongArgumentType(expr, "Trying to convert the expression into the integer range: " + startValue + " - "
+							+ Integer.MAX_VALUE);
+				}
+				return result;
+			} catch (ArithmeticException ae) {
+				throw new WrongArgumentType(expr, "Trying to convert the expression into the integer range: " + startValue + " - "
+						+ Integer.MAX_VALUE);
+			}
+		}
+		throw new WrongArgumentType(expr, "Trying to convert the expression into the integer range: " + startValue + " - "
+				+ Integer.MAX_VALUE);
+	}
+
 	/**
 	 * Check if the argument at the given position is a integer.
 	 * 
