@@ -4,3 +4,5 @@
 == Powered by ==
   * [http://code.google.com/p/engineeringsuite/ engineeringsuite - Program for solving non-linear equation systems]  
   * [http://github.com/iee github.com/iee - Integrated Engineering Environment (Eclipse Plugin)]
+  * [http://code.google.com/p/scalalab ScalaLab]
+  * [http://code.google.com/p/jlabgroovy GroovyLab]
