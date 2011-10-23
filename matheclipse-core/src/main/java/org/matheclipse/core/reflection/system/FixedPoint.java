@@ -5,11 +5,14 @@ import org.matheclipse.core.eval.exception.IterationLimitExceeded;
 import org.matheclipse.core.eval.exception.Validate;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
 import org.matheclipse.core.expression.F;
+import org.matheclipse.core.generic.Functors;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.IInteger;
 import org.matheclipse.core.interfaces.ISymbol;
 import org.matheclipse.parser.client.SyntaxError;
+
+import com.google.common.base.Function;
 
 public class FixedPoint extends AbstractFunctionEvaluator {
 
@@ -42,7 +45,7 @@ public class FixedPoint extends AbstractFunctionEvaluator {
 			IExpr last;
 			do {
 				last = current;
-				current = engine.evaluate(F.Apply(f, current));
+				current = engine.evaluate(F.Apply(f, F.List(current)));
 				if (iterationLimit >= 0 && iterationLimit <= ++iterationCounter) {
 					IterationLimitExceeded.throwIt(iterationCounter, ast);
 				}

@@ -14,17 +14,16 @@ public class Fold implements IFunctionEvaluator {
 	}
 
 	public IExpr evaluate(final IAST ast) {
+		Validate.checkSize(ast, 4);
 		return evaluateNestList(ast);
 	}
 
 	public static IExpr evaluateNestList(final IAST ast) {
-		Validate.checkSize(ast, 4);
+		 
 		try {
 			if (ast.get(3).isAST()) {
 				final IAST list = (IAST) ast.get(3);
 				return list.args().foldLeft(new BinaryMap(F.ast(ast.get(1))), ast.get(2));
-				// return Folding.fold(ast.get(2), list, 1, list.size(), new
-				// BinaryMap(f.createAST(ast.get(1))));
 			}
 		} catch (final ArithmeticException e) {
 
