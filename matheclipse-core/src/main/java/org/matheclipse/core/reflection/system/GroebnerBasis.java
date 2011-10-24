@@ -13,7 +13,7 @@ import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.ISymbol;
 
 import edu.jas.arith.BigRational;
-import edu.jas.gb.GroebnerBasePartial;
+import edu.jas.gbufd.GroebnerBasePartial;
 import edu.jas.poly.GenPolynomial;
 import edu.jas.poly.OptimizedPolynomialList;
 

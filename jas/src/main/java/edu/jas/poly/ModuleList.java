@@ -1,5 +1,5 @@
 /*
- * $Id: ModuleList.java 3654 2011-06-02 18:19:30Z kredel $
+ * $Id: ModuleList.java 3796 2011-10-10 10:07:19Z kredel $
  */
 
 package edu.jas.poly;
@@ -229,7 +229,14 @@ public class ModuleList<C extends RingElem<C> > implements Serializable {
             s.append(")");
             return s.toString();
         }
-        s.append(",list=[");
+        switch (Scripting.getLang() ) {
+        case Ruby:
+            s.append(",\"\",[");
+            break;
+        case Python:
+        default:
+            s.append(",list=[");
+        }
         boolean first = true;
         for ( List< GenPolynomial<C> > row: list ) {
             if ( first ) {
