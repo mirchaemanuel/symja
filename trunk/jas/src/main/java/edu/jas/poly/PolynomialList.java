@@ -1,5 +1,5 @@
 /*
- * $Id: PolynomialList.java 3470 2011-01-06 19:19:11Z kredel $
+ * $Id: PolynomialList.java 3796 2011-10-10 10:07:19Z kredel $
  */
 
 package edu.jas.poly;
@@ -190,7 +190,7 @@ public class PolynomialList<C extends RingElem<C> >
         StringBuffer s = new StringBuffer();
         switch (Scripting.getLang() ) {
         case Ruby:
-            s.append("Ideal.new(");
+            s.append("SimIdeal.new(");
             break;
         case Python:
         default:
@@ -203,7 +203,14 @@ public class PolynomialList<C extends RingElem<C> >
             s.append(")");
             return s.toString();
         }
-        s.append(",list=[");
+        switch (Scripting.getLang() ) {
+        case Ruby:
+            s.append(",\"\",[");
+            break;
+        case Python:
+        default:
+            s.append(",list=[");
+        }
         boolean first = true;
         String sa = null;
         for ( GenPolynomial<C> oa: list ) {

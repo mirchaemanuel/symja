@@ -1,5 +1,5 @@
 /*
- * $Id: GenPolynomial.java 3749 2011-08-24 21:44:12Z kredel $
+ * $Id: GenPolynomial.java 3800 2011-10-12 21:36:11Z kredel $
  */
 
 package edu.jas.poly;
@@ -105,6 +105,16 @@ Iterable<Monomial<C>> {
      */
     public GenPolynomial(GenPolynomialRing<C> r, C c) {
         this(r, c, r.evzero);
+    }
+
+
+    /**
+     * Constructor for GenPolynomial x<sup>e</sup>.
+     * @param r polynomial ring factory.
+     * @param e exponent.
+     */
+    public GenPolynomial(GenPolynomialRing<C> r, ExpVector e) {
+        this(r, r.coFac.getONE(), e);
     }
 
 

@@ -1,5 +1,5 @@
 /*
- * $Id: MonoidElem.java 1708 2008-02-24 17:28:36Z kredel $
+ * $Id: MonoidElem.java 3803 2011-10-16 21:49:23Z kredel $
  */
 
 package edu.jas.structure;
@@ -60,6 +60,6 @@ public interface MonoidElem<C extends MonoidElem<C>>
      * Some implementing classes will throw NotInvertibleException if the element is not invertible.
      * @return x with this * x = 1, if it exists.
      */
-    public C inverse() /*throws NotInvertibleException*/;
+    public C inverse(); /*throws NotInvertibleException*/
 
 }
