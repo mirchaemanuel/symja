@@ -272,8 +272,8 @@ public class EvalPanel extends JPanel { // implements DocumentListener {
 
 				// use evalStepByStep method
 				final IExpr expr = EVAL.constrainedEval(buf0, command, true // use
-																																		// evalStepByStep
-																																		// method
+						// evalStepByStep
+						// method
 						);
 				// eval(buf0, command);
 
@@ -309,7 +309,10 @@ public class EvalPanel extends JPanel { // implements DocumentListener {
 					}
 				} else {
 					String result = buf0.toString();
-					jInputArea.setText(result);
+					if (expr != null) {
+						// use the FullForm[] string to avoid problems with Flat and Orderless from input format
+						jInputArea.setText(expr.fullFormString());
+					}
 					jOutputPane.printOutColored("Out[" + commandHistoryStoreIndex + "]=" + result + "\n");
 				}
 			} catch (final MathException ex) {

@@ -319,15 +319,15 @@ public class SystemTestCase extends AbstractTestCase {
 		check("D[Sin[x]^Cos[x],x]", "(-Log[Sin[x]]*Sin[x]+Csc[x]*Cos[x]^2)*Sin[x]^Cos[x]");
 		check(
 				"Trace[D[Sin[x]^Cos[x],x]]",
-				"{D[Sin[x]^Cos[x],x],Sin[x]^Cos[x]*(Log[Sin[x]]*D[Cos[x],x]+Cos[x]*D[Sin[x],x]*Sin[x]^(\n"
-						+ "-1)),{Derivative[Sin],Cos[#1]&},{x&,Cos[x]},{D[Sin[x],x],Cos[x]*D[x,x],{D[x,x],1},\n"
-						+ "1*Cos[x],Cos[x]},{-1<0,True},{(-1)*(-1),(-1)^2,1},{Csc[x]^((-1)*(-1)),Csc[x]^1,{\n"
-						+ "1<0,False},Csc[x]},{Csc[x]^((-1)*(-1))/;-1<0,Csc[x]},{Sin[x]^(-1),Csc[x]},{Cos[x]*D[Sin[x],x]*Sin[x]^(\n"
-						+ "-1),Cos[x]*Cos[x]*Csc[x],Csc[x]*Cos[x]^2,{2<0,False}},{Derivative[Cos],(-1)*Sin[#1]&},{x&,(\n"
-						+ "-1)*Sin[x]},{D[Cos[x],x],(-1)*Sin[x]*D[x,x],{D[x,x],1},(-1)*1*Sin[x],(-1)*Sin[x]},{Log[Sin[x]]*D[Cos[x],x],Log[Sin[x]]*(\n"
-						+ "-1)*Sin[x],(-1)*Log[Sin[x]]*Sin[x]},{Log[Sin[x]]*D[Cos[x],x]+Cos[x]*D[Sin[x],x]*Sin[x]^(\n"
-						+ "-1),-Log[Sin[x]]*Sin[x]+Csc[x]*Cos[x]^2,{2<0,False}},(-Log[Sin[x]]*Sin[x]+Csc[x]*Cos[x]^\n"
-						+ "2)*Sin[x]^Cos[x],{2<0,False}}");
+				"{D[Sin[x]^Cos[x],x],Sin[x]^Cos[x]*(Log[Sin[x]]*D[Cos[x],x]+Cos[x]*D[Sin[x],x]*Sin[x]^(\n" + 
+				"-1)),{Derivative[Sin],Cos[#1]&},{x&,Cos[x]},{D[Sin[x],x],Cos[x]*D[x,x],{D[x,x],1},\n" + 
+				"1*Cos[x],Cos[x]},{-1<0,True},{(-1)*(-1),(-1)^2,1},{Csc[x]^((-1)*(-1)),Csc[x]^1,{\n" + 
+				"1<0,False},Csc[x]},{Csc[x]^((-1)*(-1))/;-1<0,Csc[x]},{Sin[x]^(-1),Csc[x]},{Cos[x]*D[Sin[x],x]*Sin[x]^(\n" + 
+				"-1),Cos[x]*Cos[x]*Csc[x],Csc[x]*Cos[x]^2,{2<0,False}},{Derivative[Cos],(-1)*Sin[#1]&},{x&,(\n" + 
+				"-1)*Sin[x]},{D[Cos[x],x],(-1)*Sin[x]*D[x,x],{D[x,x],1},(-1)*1*Sin[x],(-1)*Sin[x]},{Log[Sin[x]]*D[Cos[x],x],Log[Sin[x]]*(\n" + 
+				"-1)*Sin[x],(-1)*Log[Sin[x]]*Sin[x]},{Log[Sin[x]]*D[Cos[x],x]+Cos[x]*D[Sin[x],x]*Sin[x]^(\n" + 
+				"-1),-Log[Sin[x]]*Sin[x]+Csc[x]*Cos[x]^2,{2<0,False}},(-Log[Sin[x]]*Sin[x]+Csc[x]*Cos[x]^\n" + 
+				"2)*Sin[x]^Cos[x],{2<0,False}}");
 	}
 
 	public void testSystem039() {
