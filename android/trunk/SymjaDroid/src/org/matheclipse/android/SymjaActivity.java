@@ -51,6 +51,8 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -68,13 +70,13 @@ import android.widget.TextView;
 /**
  * Main Symja activity.
  * 
- * Derived from Pieter Greyling's <code>CocoaDroidActivity.java</code> from the book
- * &quot;Practical Android Projects&quot;
+ * Derived from Pieter Greyling's <code>CocoaDroidActivity.java</code> from the
+ * book &quot;Practical Android Projects&quot;
  */
 public class SymjaActivity extends Activity implements View.OnClickListener {
 	protected static final String TAG = "SymjaActivity";
 
-	protected EditText _txtInput = null;
+	protected EditTextExtend _txtInput = null;
 	protected EditText _txtOutput = null;
 	protected Button _symEnter = null;
 	protected Button _numEnter = null;
@@ -82,6 +84,11 @@ public class SymjaActivity extends Activity implements View.OnClickListener {
 	protected Button _cmdSaveScratch = null;
 	protected Button _cmdClear = null;
 	protected ListView _outputListView = null;
+
+	int _suggestionCursorPos = 0;
+	boolean _suggestionTaken = false;
+	boolean _backUpOne = false;
+	private CandidateView _mCandidateView;
 
 	OutputStringArrayAdapter _outputArrayAdapter = null;
 	ArrayList<String> _outputArrayList = new ArrayList<String>();
@@ -115,8 +122,10 @@ public class SymjaActivity extends Activity implements View.OnClickListener {
 		// set a custom title from the strings table
 		setTitle(getString(R.string.app_desc));
 
+		_mCandidateView = (CandidateView) findViewById(R.id.candidate);
+
 		// get a handle on and configure the input and text fields
-		_txtInput = (EditText) findViewById(R.id.txt_input);
+		_txtInput = (EditTextExtend) findViewById(R.id.txt_input);
 		_txtInput.setTextSize(TextSize.NORMAL);
 		_txtInput.setTypeface(Typeface.MONOSPACE);
 
@@ -147,8 +156,7 @@ public class SymjaActivity extends Activity implements View.OnClickListener {
 		// set up and get a handle on the output list view using an array
 		// adapter
 		_outputListView = (ListView) findViewById(R.id.lst_output);
-		_outputArrayAdapter = new OutputStringArrayAdapter(this,
-				_outputArrayList);
+		_outputArrayAdapter = new OutputStringArrayAdapter(this, _outputArrayList);
 		_outputListView.setAdapter(_outputArrayAdapter);
 
 		// keyboard = (KeyboardView) findViewById(R.id.calcKeyboard);
@@ -176,27 +184,20 @@ public class SymjaActivity extends Activity implements View.OnClickListener {
 							_txtInput.setSelection(_toggleHistoryEntry.length());
 						} else {
 							_txtInputIndex = _txtInputIndex - 1;
-							_txtInput.setText(_txtInputHistory
-									.get(_txtInputIndex));
-							_txtInput.setSelection(_txtInputHistory.get(
-									_txtInputIndex).length());
+							_txtInput.setText(_txtInputHistory.get(_txtInputIndex));
+							_txtInput.setSelection(_txtInputHistory.get(_txtInputIndex).length());
 						}
 					} else if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {
 						if ((_txtInputIndex + 1) < _txtInputHistory.size()) {
 							if (_txtInputIndex == -1) {
-								_toggleHistoryEntry = _txtInput.getText()
-										.toString();
+								_toggleHistoryEntry = _txtInput.getText().toString();
 								_txtInputIndex = 0;
-								_txtInput.setText(_txtInputHistory
-										.get(_txtInputIndex));
-								_txtInput.setSelection(_txtInputHistory.get(
-										_txtInputIndex).length());
+								_txtInput.setText(_txtInputHistory.get(_txtInputIndex));
+								_txtInput.setSelection(_txtInputHistory.get(_txtInputIndex).length());
 							} else {
 								_txtInputIndex = _txtInputIndex + 1;
-								_txtInput.setText(_txtInputHistory
-										.get(_txtInputIndex));
-								_txtInput.setSelection(_txtInputHistory.get(
-										_txtInputIndex).length());
+								_txtInput.setText(_txtInputHistory.get(_txtInputIndex));
+								_txtInput.setSelection(_txtInputHistory.get(_txtInputIndex).length());
 							}
 						}
 						// } else if (keyCode == KeyEvent.KEYCODE_ENTER) {
@@ -206,6 +207,38 @@ public class SymjaActivity extends Activity implements View.OnClickListener {
 				return false;
 			}
 
+		});
+
+		_txtInput.addTextChangedListener(new TextWatcher() {
+
+			@Override
+			public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+			}
+
+			@Override
+			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+			}
+
+			@Override
+			public void afterTextChanged(Editable arg0) {
+				if (_suggestionTaken == false) {
+					updateSuggestions();
+				}
+				if (_suggestionTaken == true) {
+					_txtInput.setSelection(_suggestionCursorPos, _suggestionCursorPos);
+				}
+				_suggestionTaken = false;
+				if (_backUpOne == true) {
+					int start = _txtInput.getSelectionStart();
+					if (start > 0) {
+						_txtInput.setSelection(start - 1, start - 1);
+					}
+				}
+				_backUpOne = false;
+				_txtInput._prevPos = _txtInput.getSelectionStart();
+			}
 		});
 
 		try {
@@ -226,7 +259,7 @@ public class SymjaActivity extends Activity implements View.OnClickListener {
 			input3.close();
 		} catch (java.io.IOException except) {
 		}
-	 
+
 	}
 
 	/** Called when the activity is put into background. */
@@ -237,8 +270,7 @@ public class SymjaActivity extends Activity implements View.OnClickListener {
 
 			String fileName3 = "symjaHistory";
 
-			OutputStreamWriter out3 = new OutputStreamWriter(openFileOutput(
-					fileName3, MODE_PRIVATE));
+			OutputStreamWriter out3 = new OutputStreamWriter(openFileOutput(fileName3, MODE_PRIVATE));
 
 			for (int lineLoop = 0; lineLoop < _txtInputHistory.size(); lineLoop++) {
 				out3.write(_txtInputHistory.get(lineLoop));
@@ -252,9 +284,9 @@ public class SymjaActivity extends Activity implements View.OnClickListener {
 	}
 
 	/**
-	 * Start up our script engine with a copyright notice. This also
-	 * demonstrates the general principle of reusing the BASIC interpreter by
-	 * passing commands into the input stream and letting it do the work.
+	 * Start up our script engine with a copyright notice. This also demonstrates
+	 * the general principle of reusing the BASIC interpreter by passing commands
+	 * into the input stream and letting it do the work.
 	 */
 	protected void showAbout() {
 		writeOutput("Symja - Computer Algebra System");
@@ -365,98 +397,85 @@ public class SymjaActivity extends Activity implements View.OnClickListener {
 	private void loadSamplesAssetFile() {
 		String buffer = "";
 		try {
-			buffer = stringFromAssetFile(this,
-					getString(R.string.file_name_samples));
+			buffer = stringFromAssetFile(this, getString(R.string.file_name_samples));
 			_txtInput.setText(buffer);
 		} catch (Throwable t) {
 			Log.e(TAG, "loadSamplesAssetFile(): LOAD FAILED!", t);
-			showOkAlertDialog(this, String.format("%s\n%s",
-					getString(R.string.exception_on_samples_file_load),
-					t.toString()), getString(R.string.title_samples_file_load));
+			showOkAlertDialog(this, String.format("%s\n%s", getString(R.string.exception_on_samples_file_load), t.toString()),
+					getString(R.string.title_samples_file_load));
 		}
 	}
 
 	/**
 	 * Reads work previously saved to the scratch files. Note that we provide
-	 * illustrative exception alerts which might or might not be a wise thing
-	 * for end-user applications in general.
+	 * illustrative exception alerts which might or might not be a wise thing for
+	 * end-user applications in general.
 	 */
 	protected void loadScratchFiles() {
 		String scratch_input = "";
 		String scratch_output = "";
 		try {
-			scratch_input = stringFromPrivateApplicationFile(this,
-					getString(R.string.file_name_scratch_input));
-			scratch_output = stringFromPrivateApplicationFile(this,
-					getString(R.string.file_name_scratch_output));
+			scratch_input = stringFromPrivateApplicationFile(this, getString(R.string.file_name_scratch_input));
+			scratch_output = stringFromPrivateApplicationFile(this, getString(R.string.file_name_scratch_output));
 			_txtInput.setText(scratch_input);
 			_txtOutput.setText(scratch_output);
 		} catch (Throwable t) {
 			Log.e(TAG, "loadScratchFiles(): LOAD FAILED!", t);
-			showOkAlertDialog(this, String.format("%s\n%s",
-					getString(R.string.exception_on_scratch_files_load),
-					t.toString()), getString(R.string.title_scratch_files_load));
+			showOkAlertDialog(this, String.format("%s\n%s", getString(R.string.exception_on_scratch_files_load), t.toString()),
+					getString(R.string.title_scratch_files_load));
 		}
 	}
 
 	/**
 	 * Writes work to be saved to the scratch files. Note that we provide
-	 * illustrative exception alerts which might or might not be a wise thing
-	 * for end-user applications in general.
+	 * illustrative exception alerts which might or might not be a wise thing for
+	 * end-user applications in general.
 	 */
 	protected void saveScratchFiles() {
 		String scratch_input = _txtInput.getText().toString();
 		String scratch_output = _txtOutput.getText().toString();
 		try {
-			stringToPrivateApplicationFile(this,
-					getString(R.string.file_name_scratch_input), scratch_input);
-			stringToPrivateApplicationFile(this,
-					getString(R.string.file_name_scratch_output),
-					scratch_output);
+			stringToPrivateApplicationFile(this, getString(R.string.file_name_scratch_input), scratch_input);
+			stringToPrivateApplicationFile(this, getString(R.string.file_name_scratch_output), scratch_output);
 			makeToast(this, "Scratch Files saved");
 		} catch (Throwable t) {
 			Log.e(TAG, "saveScratchFiles(): SAVE FAILED!", t);
-			showOkAlertDialog(this, String.format("%s\n%s",
-					getString(R.string.exception_on_scratch_files_save),
-					t.toString()), getString(R.string.title_scratch_files_save));
+			showOkAlertDialog(this, String.format("%s\n%s", getString(R.string.exception_on_scratch_files_save), t.toString()),
+					getString(R.string.title_scratch_files_save));
 		}
 	}
 
 	/**
 	 * Reads work previously saved to the work file. Note that we provide
-	 * illustrative exception alerts which might or might not be a wise thing
-	 * for end-user applications in general.
+	 * illustrative exception alerts which might or might not be a wise thing for
+	 * end-user applications in general.
 	 */
 	protected void loadWorkFile() {
 		String buffer = "";
 		try {
-			buffer = stringFromPrivateApplicationFile(this,
-					getString(R.string.file_name_work));
+			buffer = stringFromPrivateApplicationFile(this, getString(R.string.file_name_work));
 			_txtInput.setText(buffer);
 		} catch (Throwable t) {
 			Log.e(TAG, "loadWorkFile(): LOAD FAILED!", t);
-			showOkAlertDialog(this, String.format("%s\n%s",
-					getString(R.string.exception_on_work_file_load),
-					t.toString()), getString(R.string.title_work_file_load));
+			showOkAlertDialog(this, String.format("%s\n%s", getString(R.string.exception_on_work_file_load), t.toString()),
+					getString(R.string.title_work_file_load));
 		}
 	}
 
 	/**
-	 * Writes work to be saved to the work file. Note that we provide
-	 * illustrative exception alerts which might or might not be a wise thing
-	 * for end-user applications in general.
+	 * Writes work to be saved to the work file. Note that we provide illustrative
+	 * exception alerts which might or might not be a wise thing for end-user
+	 * applications in general.
 	 */
 	protected void saveWorkFile() {
 		String work = _txtInput.getText().toString();
 		try {
-			stringToPrivateApplicationFile(this,
-					getString(R.string.file_name_work), work);
+			stringToPrivateApplicationFile(this, getString(R.string.file_name_work), work);
 			makeToast(this, "Work File saved");
 		} catch (Throwable t) {
 			Log.e(TAG, "saveWorkFile(): SAVE FAILED!", t);
-			showOkAlertDialog(this, String.format("%s\n%s",
-					getString(R.string.exception_on_work_file_save),
-					t.toString()), getString(R.string.title_work_file_save));
+			showOkAlertDialog(this, String.format("%s\n%s", getString(R.string.exception_on_work_file_save), t.toString()),
+					getString(R.string.title_work_file_save));
 		}
 	}
 
@@ -487,8 +506,8 @@ public class SymjaActivity extends Activity implements View.OnClickListener {
 	}
 
 	/**
-	 * Interpret and execute (evaluate) the given code fragment. It is invoked
-	 * by the EvalCodeStringAsyncTask.
+	 * Interpret and execute (evaluate) the given code fragment. It is invoked by
+	 * the EvalCodeStringAsyncTask.
 	 * 
 	 * @param codeString
 	 * @return The result of the evaluation drawn off the interpreter output
@@ -512,26 +531,18 @@ public class SymjaActivity extends Activity implements View.OnClickListener {
 
 			// fire up the command interpreter to evaluate the source code
 			// buffer
-			_commandInterpreter = new SymjaInterpreter(codeString,
-					_outputStream);
+			_commandInterpreter = new SymjaInterpreter(codeString, _outputStream);
 			try {
 				_commandInterpreter.eval();
 				// extract the resulting text output from the stream
 				result = stringFromOutputStream(_outputStream);
 			} catch (Throwable t) {
-				Log.e(TAG,
-						String.format(
-								"evalCodeString(): UNSUPPORTED OPERATION!\n[\n%s\n]\n%s",
-								codeString, t.toString()), t);
-				result = ("UNSUPPORTED OPERATION!\n[\n" + codeString + "\n]\n" + t
-						.toString());
+				Log.e(TAG, String.format("evalCodeString(): UNSUPPORTED OPERATION!\n[\n%s\n]\n%s", codeString, t.toString()), t);
+				result = ("UNSUPPORTED OPERATION!\n[\n" + codeString + "\n]\n" + t.toString());
 			}
 		} catch (Throwable t) {
-			Log.e(TAG, String.format(
-					"evalCodeString(): UNSUPPORTED OPERATION!\n[\n%s\n]\n%s",
-					codeString, t.toString()), t);
-			result = ("UNSUPPORTED OPERATION!\n[\n" + codeString + "\n]\n" + t
-					.toString());
+			Log.e(TAG, String.format("evalCodeString(): UNSUPPORTED OPERATION!\n[\n%s\n]\n%s", codeString, t.toString()), t);
+			result = ("UNSUPPORTED OPERATION!\n[\n" + codeString + "\n]\n" + t.toString());
 		}
 
 		return result;
@@ -554,8 +565,7 @@ public class SymjaActivity extends Activity implements View.OnClickListener {
 	 * http://developer.android.com/reference/android/os/AsyncTask.html
 	 * android.os.AsyncTask<Params, Progress, Result>
 	 */
-	protected class EvalCodeStringAsyncTask extends
-			AsyncTask<String, Integer, String> {
+	protected class EvalCodeStringAsyncTask extends AsyncTask<String, Integer, String> {
 		protected String doInBackground(String... codeString) {
 			String result = "";
 			publishProgress((int) (10)); // just to demonstrate how
@@ -567,8 +577,8 @@ public class SymjaActivity extends Activity implements View.OnClickListener {
 		}
 
 		/**
-		 * We leave this here for the sake of completeness. Progress update is
-		 * not implemented.
+		 * We leave this here for the sake of completeness. Progress update is not
+		 * implemented.
 		 * 
 		 * @param progress
 		 */
@@ -593,8 +603,7 @@ public class SymjaActivity extends Activity implements View.OnClickListener {
 	 * colors etc.
 	 */
 	protected class OutputStringArrayAdapter extends ArrayAdapter<String> {
-		OutputStringArrayAdapter(Context context,
-				ArrayList<String> stringArrayList) {
+		OutputStringArrayAdapter(Context context, ArrayList<String> stringArrayList) {
 			super(context, android.R.layout.simple_list_item_1, stringArrayList);
 		}
 
@@ -613,49 +622,92 @@ public class SymjaActivity extends Activity implements View.OnClickListener {
 		protected static final int LARGE = 18;
 	}
 
-	 
-	/*
-	 * 
-	 * protected void onEnter(){}
-	 * 
-	 * 
-	 * protected void updateValidity(){}
-	 * 
-	 * 
-	 * protected void setInput(EditText cEdit){ _txtInput = cEdit; //Suppresses
-	 * android soft keyboard _txtInput.setInputType(0); }
-	 * 
-	 * 
-	 * protected void setUp(EditText[] editArray, KeyboardView key){ keyboard =
-	 * key; for(EditText eT : editArray){ eT.setOnFocusChangeListener(new
-	 * OnFocusChangeListener(){
-	 * 
-	 * @Override public void onFocusChange(View thisView, boolean focused) {
-	 * if(focused){ setInput((EditText)thisView); if(keyboard != null){
-	 * keyboard.setVisibility(View.VISIBLE); } } } }); eT.setOnClickListener(new
-	 * OnClickListener(){
-	 * 
-	 * @Override public void onClick(View thisView) {
-	 * setInput((EditText)thisView); keyboard.setVisibility(View.VISIBLE); } });
-	 * eT.addTextChangedListener(new TextWatcher() {
-	 * 
-	 * @Override public void afterTextChanged(Editable arg0) { updateValidity();
-	 * }
-	 * 
-	 * @Override public void beforeTextChanged(CharSequence s, int start, int
-	 * count, int after) {}
-	 * 
-	 * @Override public void onTextChanged(CharSequence s, int start, int
-	 * before, int count) {}
-	 * 
-	 * }); } }
-	 * 
-	 * 
-	 * public void type(String s){ if(_txtInput != null){ int cur =
-	 * _txtInput.getSelectionStart(); if(s.equals("del")||s.equals("del(")){
-	 * if(cur != 0){ _txtInput.getText().delete(cur-1, cur); } }else
-	 * if(s.equals("clear")){ _txtInput.setText(""); }else
-	 * if(s.equals("ENTER")){ onEnter(); }else{ _txtInput.getText().insert(cur,
-	 * s); } } }
-	 */
+	public void sendSuggestionText(String textToInsert) {
+		int start = _txtInput.getSelectionStart();
+		_mCandidateView.clear();
+
+		Character tempChar;
+		int reverse;
+		int forward;
+		// scan forwards and backwards and find the full word, then update
+		// suggestions
+		for (reverse = start - 1; reverse >= 0; reverse--) {
+			tempChar = _txtInput.getText().toString().charAt(reverse);
+			if (Character.isLetter(tempChar) || Character.isDigit(tempChar) || (tempChar == '_')) {
+				continue;
+			} else {
+				reverse++;
+				break;
+			}
+		}
+		if (reverse < 0) {
+			reverse = 0;
+		}
+		for (forward = start; forward < _txtInput.getText().toString().length(); forward++) {
+			tempChar = _txtInput.getText().toString().charAt(forward);
+			if (Character.isLetter(tempChar) || Character.isDigit(tempChar) || (tempChar == '_')) {
+				continue;
+			} else {
+				break;
+			}
+		}
+		if (forward > _txtInput.getText().toString().length()) {
+			forward = _txtInput.getText().toString().length() - 1;
+		}
+		if (forward < 0) {
+			forward = 0;
+		}
+		if (textToInsert.endsWith("()") || textToInsert.endsWith("[]") || textToInsert.endsWith("[,")) {
+			_suggestionCursorPos = reverse + textToInsert.length() - 1;
+		} else {
+			_suggestionCursorPos = reverse + textToInsert.length();
+		}
+		_suggestionTaken = true;
+		_txtInput.getText().replace(reverse, forward, textToInsert, 0, textToInsert.length());
+
+	}
+
+	public void updateSuggestions() {
+		int start = _txtInput.getSelectionStart();
+		int end = _txtInput.getSelectionEnd();
+
+		if (start != end) {
+			_mCandidateView.clear();
+			return;
+		}
+
+		Character tempChar;
+		int reverse;
+		int forward;
+		// scan forwards and backwards and find the full word, then update
+		// suggestions
+		for (reverse = start - 1; reverse >= 0; reverse--) {
+			tempChar = _txtInput.getText().toString().charAt(reverse);
+			if (Character.isLetter(tempChar) || Character.isDigit(tempChar) || (tempChar == '_')) {
+				continue;
+			} else {
+				reverse++;
+				break;
+			}
+		}
+		if (reverse < 0) {
+			reverse = 0;
+		}
+		for (forward = start; forward < _txtInput.getText().toString().length(); forward++) {
+			tempChar = _txtInput.getText().toString().charAt(forward);
+			if (Character.isLetter(tempChar) || Character.isDigit(tempChar) || (tempChar == '_')) {
+				continue;
+			} else {
+				break;
+			}
+		}
+		if (forward > _txtInput.getText().toString().length()) {
+			forward = _txtInput.getText().toString().length() - 1;
+		}
+		if (forward < 0) {
+			forward = 0;
+		}
+		_mCandidateView.updateSuggestions(_txtInput.getText().toString().substring(reverse, forward), true, true);
+	}
+
 }

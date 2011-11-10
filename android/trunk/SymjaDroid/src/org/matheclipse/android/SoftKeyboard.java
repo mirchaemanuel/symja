@@ -52,7 +52,7 @@ public class SoftKeyboard extends InputMethodService
     static final boolean PROCESS_HARD_KEYS = true;
     
     private KeyboardView mInputView;
-    private CandidateView mCandidateView;
+//    private CandidateView mCandidateView;
     private CompletionInfo[] mCompletions;
     
     private StringBuilder mComposing = new StringBuilder();
@@ -116,11 +116,11 @@ public class SoftKeyboard extends InputMethodService
      * Called by the framework when your view for showing candidates needs to
      * be generated, like {@link #onCreateInputView}.
      */
-    @Override public View onCreateCandidatesView() {
-        mCandidateView = new CandidateView(this);
-        mCandidateView.setService(this);
-        return mCandidateView;
-    }
+	// @Override public View onCreateCandidatesView() {
+	// mCandidateView = new CandidateView(this);
+	// mCandidateView.setService(this);
+	// return mCandidateView;
+	// }
 
     /**
      * This is the main point where we do our initialization of the input method
@@ -554,9 +554,9 @@ public class SoftKeyboard extends InputMethodService
         } else if (isExtractViewShown()) {
             setCandidatesViewShown(true);
         }
-        if (mCandidateView != null) {
-            mCandidateView.setSuggestions(suggestions, completions, typedWordValid);
-        }
+//        if (mCandidateView != null) {
+//            mCandidateView.setSuggestions(suggestions, completions, typedWordValid);
+//        }
     }
     
     private void handleBackspace() {
@@ -647,9 +647,9 @@ public class SoftKeyboard extends InputMethodService
                 && index < mCompletions.length) {
             CompletionInfo ci = mCompletions[index];
             getCurrentInputConnection().commitCompletion(ci);
-            if (mCandidateView != null) {
-                mCandidateView.clear();
-            }
+//            if (mCandidateView != null) {
+//                mCandidateView.clear();
+//            }
             updateShiftKeyState(getCurrentInputEditorInfo());
         } else if (mComposing.length() > 0) {
             // If we were generating candidate suggestions for the current
