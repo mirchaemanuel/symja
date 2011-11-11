@@ -74,7 +74,9 @@ public class PatternMap implements Cloneable {
 		} catch (CloneNotSupportedException e) {
 			e.printStackTrace();
 		}
-		result.fPatternValuesArray = Arrays.copyOf(fPatternValuesArray, fPatternValuesArray.length);
+		// avoid Arrays.copyOf because of Android version
+		result.fPatternValuesArray = new IExpr[fPatternValuesArray.length];
+		System.arraycopy(fPatternValuesArray, 0, result.fPatternValuesArray, 0, fPatternValuesArray.length);
 		result.fPatternIndexMap = (TreeMap<IPatternObject, Integer>) fPatternIndexMap.clone();
 		result.fPatternCounter = fPatternCounter;
 		return result;
