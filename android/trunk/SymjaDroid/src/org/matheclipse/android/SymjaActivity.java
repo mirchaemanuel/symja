@@ -45,21 +45,20 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnKeyListener;
+import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -73,10 +72,9 @@ import android.widget.TextView;
  * Derived from Pieter Greyling's <code>CocoaDroidActivity.java</code> from the
  * book &quot;Practical Android Projects&quot;
  */
-public class SymjaActivity extends Activity implements View.OnClickListener {
+public class SymjaActivity extends SymjaBase implements View.OnClickListener {
 	protected static final String TAG = "SymjaActivity";
 
-	protected EditTextExtend _txtInput = null;
 	protected EditText _txtOutput = null;
 	protected Button _symEnter = null;
 	protected Button _numEnter = null;
@@ -85,16 +83,10 @@ public class SymjaActivity extends Activity implements View.OnClickListener {
 	protected Button _cmdClear = null;
 	protected ListView _outputListView = null;
 
-	int _suggestionCursorPos = 0;
-	boolean _suggestionTaken = false;
-	boolean _backUpOne = false;
-	private CandidateView _mCandidateView;
-
 	OutputStringArrayAdapter _outputArrayAdapter = null;
 	ArrayList<String> _outputArrayList = new ArrayList<String>();
-	// The input and output streams that form the communications
-	// channels with the Symja interpreter
-	// protected ByteArrayInputStream _inputStream = null;
+	// The output stream that forms the communication
+	// channel with the Symja interpreter
 	protected ByteArrayOutputStream _outputStream = null;
 
 	// The embedded Symja interpreter instance reference
@@ -109,9 +101,10 @@ public class SymjaActivity extends Activity implements View.OnClickListener {
 	 */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-		Log.d(TAG, "onCreate(): ...");
-		super.onCreate(savedInstanceState);
+		// Log.d(TAG, "onCreate(): ...");
 		setContentView(R.layout.main);
+		super.onCreate(savedInstanceState);
+
 		initialize();
 	}
 
@@ -121,13 +114,6 @@ public class SymjaActivity extends Activity implements View.OnClickListener {
 	protected void initialize() {
 		// set a custom title from the strings table
 		setTitle(getString(R.string.app_desc));
-
-		_mCandidateView = (CandidateView) findViewById(R.id.candidate);
-
-		// get a handle on and configure the input and text fields
-		_txtInput = (EditTextExtend) findViewById(R.id.txt_input);
-		_txtInput.setTextSize(TextSize.NORMAL);
-		_txtInput.setTypeface(Typeface.MONOSPACE);
 
 		_txtOutput = (EditText) findViewById(R.id.txt_output);
 		_txtOutput.setTextSize(TextSize.NORMAL);
@@ -161,6 +147,14 @@ public class SymjaActivity extends Activity implements View.OnClickListener {
 
 		// keyboard = (KeyboardView) findViewById(R.id.calcKeyboard);
 		// setUp(new EditText[]{_txtInput},keyboard);
+
+		_outputListView.setOnTouchListener(new OnTouchListener() {
+			@Override
+			public boolean onTouch(View view, MotionEvent event) {
+				enableKeyboardVisibility();
+				return false;
+			}
+		});
 
 		// show the startup about banner
 		showAbout();
@@ -207,38 +201,6 @@ public class SymjaActivity extends Activity implements View.OnClickListener {
 				return false;
 			}
 
-		});
-
-		_txtInput.addTextChangedListener(new TextWatcher() {
-
-			@Override
-			public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-			}
-
-			@Override
-			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-			}
-
-			@Override
-			public void afterTextChanged(Editable arg0) {
-				if (_suggestionTaken == false) {
-					updateSuggestions();
-				}
-				if (_suggestionTaken == true) {
-					_txtInput.setSelection(_suggestionCursorPos, _suggestionCursorPos);
-				}
-				_suggestionTaken = false;
-				if (_backUpOne == true) {
-					int start = _txtInput.getSelectionStart();
-					if (start > 0) {
-						_txtInput.setSelection(start - 1, start - 1);
-					}
-				}
-				_backUpOne = false;
-				_txtInput._prevPos = _txtInput.getSelectionStart();
-			}
 		});
 
 		try {
@@ -620,94 +582,6 @@ public class SymjaActivity extends Activity implements View.OnClickListener {
 		protected static final int SMALL = 14;
 		protected static final int NORMAL = 16;
 		protected static final int LARGE = 18;
-	}
-
-	public void sendSuggestionText(String textToInsert) {
-		int start = _txtInput.getSelectionStart();
-		_mCandidateView.clear();
-
-		Character tempChar;
-		int reverse;
-		int forward;
-		// scan forwards and backwards and find the full word, then update
-		// suggestions
-		for (reverse = start - 1; reverse >= 0; reverse--) {
-			tempChar = _txtInput.getText().toString().charAt(reverse);
-			if (Character.isLetter(tempChar) || Character.isDigit(tempChar) || (tempChar == '_')) {
-				continue;
-			} else {
-				reverse++;
-				break;
-			}
-		}
-		if (reverse < 0) {
-			reverse = 0;
-		}
-		for (forward = start; forward < _txtInput.getText().toString().length(); forward++) {
-			tempChar = _txtInput.getText().toString().charAt(forward);
-			if (Character.isLetter(tempChar) || Character.isDigit(tempChar) || (tempChar == '_')) {
-				continue;
-			} else {
-				break;
-			}
-		}
-		if (forward > _txtInput.getText().toString().length()) {
-			forward = _txtInput.getText().toString().length() - 1;
-		}
-		if (forward < 0) {
-			forward = 0;
-		}
-		if (textToInsert.endsWith("()") || textToInsert.endsWith("[]") || textToInsert.endsWith("[,")) {
-			_suggestionCursorPos = reverse + textToInsert.length() - 1;
-		} else {
-			_suggestionCursorPos = reverse + textToInsert.length();
-		}
-		_suggestionTaken = true;
-		_txtInput.getText().replace(reverse, forward, textToInsert, 0, textToInsert.length());
-
-	}
-
-	public void updateSuggestions() {
-		int start = _txtInput.getSelectionStart();
-		int end = _txtInput.getSelectionEnd();
-
-		if (start != end) {
-			_mCandidateView.clear();
-			return;
-		}
-
-		Character tempChar;
-		int reverse;
-		int forward;
-		// scan forwards and backwards and find the full word, then update
-		// suggestions
-		for (reverse = start - 1; reverse >= 0; reverse--) {
-			tempChar = _txtInput.getText().toString().charAt(reverse);
-			if (Character.isLetter(tempChar) || Character.isDigit(tempChar) || (tempChar == '_')) {
-				continue;
-			} else {
-				reverse++;
-				break;
-			}
-		}
-		if (reverse < 0) {
-			reverse = 0;
-		}
-		for (forward = start; forward < _txtInput.getText().toString().length(); forward++) {
-			tempChar = _txtInput.getText().toString().charAt(forward);
-			if (Character.isLetter(tempChar) || Character.isDigit(tempChar) || (tempChar == '_')) {
-				continue;
-			} else {
-				break;
-			}
-		}
-		if (forward > _txtInput.getText().toString().length()) {
-			forward = _txtInput.getText().toString().length() - 1;
-		}
-		if (forward < 0) {
-			forward = 0;
-		}
-		_mCandidateView.updateSuggestions(_txtInput.getText().toString().substring(reverse, forward), true, true);
 	}
 
 }
