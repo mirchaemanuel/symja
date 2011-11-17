@@ -77,7 +77,7 @@
     
     <Row android:rowEdgeFlags="bottom">
         <Key android:codes="-100" android:keyLabel="sym" android:keyWidth="20%p" android:keyEdgeFlags="left"/>
-        <Key android:keyOutputText="." android:keyLabel="." android:popupKeyboard="@xml/keyboard_space" android:keyWidth="20%p"/>
+        <Key android:keyOutputText="," android:keyLabel="," android:popupKeyboard="@xml/keyboard_space" android:keyWidth="20%p"/>
         <Key android:codes="32" android:keyIcon="@drawable/sym_keyboard_space" android:keyWidth="35%p" android:isRepeatable="true"/>
         <Key android:codes="10" android:keyIcon="@drawable/sym_keyboard_return" android:keyWidth="25%p" android:keyEdgeFlags="right"/>
     </Row>

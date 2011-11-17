@@ -45,7 +45,7 @@
         <Key android:keyOutputText=":>" android:keyLabel=":>"/>
         <Key android:keyOutputText="===" android:keyLabel="==="/> 
         <Key android:keyOutputText="=!=" android:keyLabel="=!="/>
-        <Key android:keyOutputText=".&apos;" android:keyLabel=".&apos;"/>
+        <Key android:keyOutputText="{}" android:keyLabel="{}"/>
         <Key android:keyOutputText="[]" android:keyLabel="[]" android:popupKeyboard="@xml/keyboard_brackets"/>
         <Key android:keyOutputText="()" android:keyLabel="()" android:popupKeyboard="@xml/keyboard_brackets" android:keyEdgeFlags="right"/>
     </Row>
@@ -64,7 +64,7 @@
     </Row>
     
     <Row>
-        <Key android:keyOutputText="," android:keyLabel="," android:keyEdgeFlags="left"/>
+        <Key android:keyOutputText="." android:keyLabel="." android:keyEdgeFlags="left"/>
         <Key android:keyOutputText=";" android:keyLabel=";"/>
         <Key android:keyOutputText="&amp;&amp;" android:keyLabel="&amp;&amp;"/>
         <Key android:keyOutputText="||" android:keyLabel="||"/>
