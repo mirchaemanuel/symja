@@ -323,9 +323,8 @@ public class SystemTestCase extends AbstractTestCase {
 				"-1)),{Derivative[Sin],Cos[#1]&},{x&,Cos[x]},{D[Sin[x],x],Cos[x]*D[x,x],{D[x,x],1},\n" + 
 				"1*Cos[x],Cos[x]},{-1<0,True},{(-1)*(-1),(-1)^2,1},{Csc[x]^((-1)*(-1)),Csc[x]^1,{\n" + 
 				"1<0,False},Csc[x]},{Csc[x]^((-1)*(-1))/;-1<0,Csc[x]},{Sin[x]^(-1),Csc[x]},{Cos[x]*D[Sin[x],x]*Sin[x]^(\n" + 
-				"-1),Cos[x]*Cos[x]*Csc[x],Csc[x]*Cos[x]^2,{2<0,False}},{Derivative[Cos],(-1)*Sin[#1]&},{x&,(\n" + 
-				"-1)*Sin[x]},{D[Cos[x],x],(-1)*Sin[x]*D[x,x],{D[x,x],1},(-1)*1*Sin[x],(-1)*Sin[x]},{Log[Sin[x]]*D[Cos[x],x],Log[Sin[x]]*(\n" + 
-				"-1)*Sin[x],(-1)*Log[Sin[x]]*Sin[x]},{Log[Sin[x]]*D[Cos[x],x]+Cos[x]*D[Sin[x],x]*Sin[x]^(\n" + 
+				"-1),Cos[x]*Cos[x]*Csc[x],Csc[x]*Cos[x]^2,{2<0,False}},{Derivative[Cos],-Sin[#1]&},{x&,-Sin[x]},{D[Cos[x],x],-Sin[x]*D[x,x],{D[x,x],\n" + 
+				"1},(-1)*1*Sin[x],-Sin[x]},{Log[Sin[x]]*D[Cos[x],x],Log[Sin[x]]*-Sin[x],-Log[Sin[x]]*Sin[x]},{Log[Sin[x]]*D[Cos[x],x]+Cos[x]*D[Sin[x],x]*Sin[x]^(\n" + 
 				"-1),-Log[Sin[x]]*Sin[x]+Csc[x]*Cos[x]^2,{2<0,False}},(-Log[Sin[x]]*Sin[x]+Csc[x]*Cos[x]^\n" + 
 				"2)*Sin[x]^Cos[x],{2<0,False}}");
 	}
@@ -573,10 +572,10 @@ public class SystemTestCase extends AbstractTestCase {
 		check("D[x^2*Sin[y], x, y]", "2*x*Cos[y]");
 		check("D[x^2*Sin[y], y, x]", "2*x*Cos[y]");
 		check("D[x^2*Sin[y], {{x, y}}]", "{2*x*Sin[y],Cos[y]*x^2}");
-		check("D[{Sin[y], Sin[x] + Cos[y]}, {{x, y}}, {{x,y}}]", "{{{0,0},{0,(-1)*Sin[y]}},{{(-1)*Sin[x],0},{0,(-1)*Cos[y]}}}");
-		check("D[Sin[y],{{x,y}},{{x,y}}]", "{{0,0},{0,(-1)*Sin[y]}}");
-		check("D[Sin[y],{{x,y},2}]", "{{0,0},{0,(-1)*Sin[y]}}");
-		check("D[{Sin[y], Sin[x] + Cos[y]}, {{x, y}, 2}]", "{{{0,0},{0,(-1)*Sin[y]}},{{(-1)*Sin[x],0},{0,(-1)*Cos[y]}}}");
+		check("D[{Sin[y], Sin[x] + Cos[y]}, {{x, y}}, {{x,y}}]", "{{{0,0},{0,-Sin[y]}},{{-Sin[x],0},{0,-Cos[y]}}}");
+		check("D[Sin[y],{{x,y}},{{x,y}}]", "{{0,0},{0,-Sin[y]}}");
+		check("D[Sin[y],{{x,y},2}]", "{{0,0},{0,-Sin[y]}}");
+		check("D[{Sin[y], Sin[x] + Cos[y]}, {{x, y}, 2}]", "{{{0,0},{0,-Sin[y]}},{{-Sin[x],0},{0,-Cos[y]}}}");
 	}
 
 	public void testSystem079() {
@@ -1559,7 +1558,7 @@ public class SystemTestCase extends AbstractTestCase {
 	}
 
 	public void testSystem265() {
-		check("Trunc[-42*x]", "(-1)*Trunc[42*x]");
+		check("Trunc[-42*x]", "-Trunc[42*x]");
 	}
 
 	public void testSystem266() {
@@ -1820,11 +1819,11 @@ public class SystemTestCase extends AbstractTestCase {
 	}
 
 	public void testSystem322() {
-		check("ArcSin[-3*f]", "(-1)*ArcSin[3*f]");
+		check("ArcSin[-3*f]", "-ArcSin[3*f]");
 	}
 
 	public void testSystem323() {
-		check("ArcTan[-3*f]", "(-1)*ArcTan[3*f]");
+		check("ArcTan[-3*f]", "-ArcTan[3*f]");
 	}
 
 	public void testSystem324() {
@@ -2555,7 +2554,7 @@ public class SystemTestCase extends AbstractTestCase {
 				"{{x->1.5730872961765547E-15+I*25.69046515733025},{x->-1.5730872961765547E-15+I*(-25.69046515733025)}}");
 		check("Solve[x+5==a,x]", "{{x->a-5}}");
 		check("Solve[x+5==10,x]", "{{x->5}}");
-		check("Solve[x^2==a,x]", "{{x->a^(1/2)},{x->(-1)*a^(1/2)}}");
+		check("Solve[x^2==a,x]", "{{x->a^(1/2)},{x->-a^(1/2)}}");
 		check("Solve[x^2+b*c*x+3==0, x]", "{{x->1/2*((b^2*c^2-12)^(1/2)-b*c)},{x->1/2*(-(b^2*c^2-12)^(1/2)-b*c)}}");
 		check("Solve[{x+2*y==10,3*x+y==20},{x,y}]", "{{x->6,y->2}}");
 		check("Solve[x^2==0,{x,y,z}]", "{{x->0}}");

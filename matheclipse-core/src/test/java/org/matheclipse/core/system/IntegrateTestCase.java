@@ -24,7 +24,7 @@ public class IntegrateTestCase extends AbstractTestCase {
 		check("Integrate[1/(x^5+x-7),x]", "Integrate[(x^5+x-7)^(-1),x]");
 		check("Integrate[1/(x^5-7),x]", "Integrate[(x^5-7)^(-1),x]");
 		check("Integrate[1/(x-2),x]", "Log[x-2]");
-		check("Integrate[(x-2)^(-2),x]", "(-1)*(x-2)^(-1)");
+		check("Integrate[(x-2)^(-2),x]", "-(x-2)^(-1)");
 		check("Integrate[(x-2)^(-3),x]", "(-1/2)*(x-2)^(-2)");
 		check("Integrate[(x^2+2*x+3)^(-1),x]", "ArcTan[1/2*(2*x+2)*(1/2)^(1/2)]*(1/2)^(1/2)");
 		check("Integrate[1/(x^2+1),x]", "ArcTan[x]");
@@ -49,7 +49,7 @@ public class IntegrateTestCase extends AbstractTestCase {
 		check("Integrate[2x,x]", "x^2");
 		check("Integrate[h[x],x]", "Integrate[h[x],x]");
 		check("Integrate[f[x]+g[x]+h[x],x]", "Integrate[h[x],x]+Integrate[g[x],x]+Integrate[f[x],x]");
-		check("Integrate[Sin[x],x]", "(-1)*Cos[x]");
+		check("Integrate[Sin[x],x]", "-Cos[x]");
 		check("Integrate[Sin[10*x],x]", "(-1/10)*Cos[10*x]");
 		check("Integrate[Sin[Pi+10*x],x]", "(-1/10)*Cos[10*x+Pi]");
 		check("Integrate[E^(a*x),x]", "E^(a*x)*a^(-1)");

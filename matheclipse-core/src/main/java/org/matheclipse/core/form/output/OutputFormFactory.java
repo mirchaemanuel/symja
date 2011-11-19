@@ -247,7 +247,7 @@ public class OutputFormFactory implements IConstantHeaders {
 		convert(buf, obj);
 	}
 
-	public void convertPlusOperator(final Writer buf, final IAST plusAST, final InfixOperator oper, final int precedence)
+	private void convertPlusOperator(final Writer buf, final IAST plusAST, final InfixOperator oper, final int precedence)
 			throws IOException {
 		if (oper.getPrecedence() < precedence) {
 			buf.write("(");
@@ -279,7 +279,7 @@ public class OutputFormFactory implements IConstantHeaders {
 					}
 				} else {
 					if (i < size) {
-						buf.write(ASTNodeFactory.MMA_STYLE_FACTORY.get("Plus").getOperatorString());
+						buf.write(oper.getOperatorString());
 					}
 					convert(buf, temp1, ASTNodeFactory.TIMES_PRECEDENCE);
 				}
@@ -300,7 +300,7 @@ public class OutputFormFactory implements IConstantHeaders {
 					convert(buf, temp);
 				} else {
 					if (i < size) {
-						buf.write(ASTNodeFactory.MMA_STYLE_FACTORY.get("Plus").getOperatorString());
+						buf.write(oper.getOperatorString());
 					}
 
 					convert(buf, temp, ASTNodeFactory.PLUS_PRECEDENCE);
@@ -310,6 +310,43 @@ public class OutputFormFactory implements IConstantHeaders {
 		}
 
 		if (oper.getPrecedence() < precedence) {
+			buf.write(")");
+		}
+	}
+
+	private void convertTimesOperator(final Writer buf, final IAST list, final InfixOperator oper, final int precedence)
+			throws IOException {
+		boolean showOperator = true;
+		int currPrecedence = oper.getPrecedence();
+		if (currPrecedence < precedence) {
+			buf.write("(");
+		}
+
+		if (list.size() > 1) {
+			if (list.get(1).isSignedNumber() && list.size() > 2 && !list.get(2).isNumber()) {
+				if (list.get(1).equals(F.CN1)) {
+					buf.write("-");
+					showOperator = false;
+				} else {
+					if (((ISignedNumber) list.get(1)).isNegative()) {
+						convertNumber(buf, (INumber) list.get(1), oper.getPrecedence());
+					} else {
+						convert(buf, list.get(1), oper.getPrecedence());
+					}
+				}
+			} else {
+				convert(buf, list.get(1), oper.getPrecedence());
+			}
+		}
+		for (int i = 2; i < list.size(); i++) {
+			if (showOperator) {
+				buf.write(oper.getOperatorString());
+			} else {
+				showOperator = true;
+			}
+			convert(buf, list.get(i), oper.getPrecedence());
+		}
+		if (currPrecedence < precedence) {
 			buf.write(")");
 		}
 	}
@@ -395,6 +432,9 @@ public class OutputFormFactory implements IConstantHeaders {
 				if ((operator instanceof InfixOperator) && (list.size() > 2)) {
 					if (header.equals(Plus)) {
 						convertPlusOperator(buf, list, (InfixOperator) operator, precedence);
+						return;
+					} else if (header.equals(Times)) {
+						convertTimesOperator(buf, list, (InfixOperator) operator, precedence);
 						return;
 					}
 					convertBinaryOperator(buf, list, (InfixOperator) operator, precedence);
