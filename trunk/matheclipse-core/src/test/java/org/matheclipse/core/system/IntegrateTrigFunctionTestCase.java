@@ -31,7 +31,7 @@ public class IntegrateTrigFunctionTestCase extends AbstractTestCase {
 		check("$h[$g[a_.+b_.*c_]]:={a,b,c};$h[$g[x]]", "{0,1,x}");
 		check("Integrate[Sin[b*x^2],x]", "FresnelS[b^(1/2)*x*(1/2)^(-1/2)*Pi^(-1/2)]*(1/2)^(1/2)*Pi^(1/2)*b^(-1/2)");
 
-		check("Integrate[Sin[a + b*x],x]", "(-1)*Cos[b*x+a]*b^(-1)");
+		check("Integrate[Sin[a + b*x],x]", "-Cos[b*x+a]*b^(-1)");
 		check("Integrate[Sin[a + b*x]^2,x]", "-1/2*Cos[b*x+a]*b^(-1)*Sin[b*x+a]+1/2*x");
 		check("Integrate[Sin[a + b*x]^3,x]", "1/3*b^(-1)*Cos[b*x+a]^3-Cos[b*x+a]*b^(-1)");
 		check("Integrate[Sin[a + b*x]^4,x]", "-3/8*Cos[b*x+a]*b^(-1)*Sin[b*x+a]-1/4*Cos[b*x+a]*b^(-1)*Sin[b*x+a]^3+3/8*x");
@@ -59,7 +59,7 @@ public class IntegrateTrigFunctionTestCase extends AbstractTestCase {
 		check("Integrate[(a + b*Sin[c + d*x])^2,x]", "a^2*x-2*a*b*Cos[d*x+c]*d^(-1)+(-1/2*Cos[d*x+c]*d^(-1)*Sin[d*x+c]+1/2*x)*b^2");
 
 		// TODO wrong result?
-		check("Integrate[Sqrt[a*Sin[x]^2],x]", "(-1)*Cos[x]*a^(1/2)");
+		check("Integrate[Sqrt[a*Sin[x]^2],x]", "-Cos[x]*a^(1/2)");
 
 		// TODO
     // check("Integrate[1/(a + b*Cos[x]^3),x]", "Integrate[(b*Cos[x]^3+a)^(-1),x]");

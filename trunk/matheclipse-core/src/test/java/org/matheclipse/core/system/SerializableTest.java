@@ -59,8 +59,8 @@ public class SerializableTest extends SpecialTestCase {
 				" Sin[ArcSin[x_]]:=x,\n" + 
 				" Sin[ArcCos[x_]]:=(-x^2+1)^(1/2),\n" + 
 				" Sin[ArcTan[x_]]:=x*(x^2+1)^(1/2)^(-1),\n" + 
-				" Sin[x_NumberQ*y_]:=(-1)*Sin[(-1)*x*y]/;SignCmp[x]<0,\n" + 
-				" Sin[Pi*x_NumberQ]:=If[x<1,Sin[(-x+1)*Pi],If[x<2,(-1)*Sin[(-x+2)*Pi],Sin[(-2*Quotient[Trunc[x],2]+x)*Pi]]]/;x>=1/2}\n" + 
+				" Sin[x_NumberQ*y_]:=-Sin[-x*y]/;SignCmp[x]<0,\n" + 
+				" Sin[Pi*x_NumberQ]:=If[x<1,Sin[(-x+1)*Pi],If[x<2,-Sin[(-x+2)*Pi],Sin[(-2*Quotient[Trunc[x],2]+x)*Pi]]]/;x>=1/2}\n" + 
 				"");
 
 		check(engine, false, "Sin[3/10*Pi]", "1/4*5^(1/2)+1/4");

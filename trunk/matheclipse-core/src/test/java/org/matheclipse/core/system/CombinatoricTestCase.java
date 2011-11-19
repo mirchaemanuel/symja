@@ -40,10 +40,5 @@ public class CombinatoricTestCase extends AbstractTestCase {
 				+ "2,3,2,1},{3,1,2,2},{3,2,1,2},{3,2,2,1}}");
 		check("Partition[{a,b,c,d,e,f,g},3,2]", "{{a,b,c},{c,d,e},{e,f,g}}");
 
-		check("Subsets[{a,b,c,d},3]", "{{},{a},{b},{c},{d},{a,b},{a,c},{a,d},{b,c},{b,d},{c,d},{a,b,c},{a,b,d},{a,c,d},{b,c,d}}");
-		check("Subsets[{a,b,c,d},2]", "{{},{a},{b},{c},{d},{a,b},{a,c},{a,d},{b,c},{b,d},{c,d}}");
-		check("Subsets[{a,b,c,d},{2,3}]", "{{a,b},{a,c},{a,d},{b,c},{b,d},{c,d},{a,b,c},{a,b,d},{a,c,d},{b,c,d}}");
-		check("Subsets[{a,b,c,d},{2}]", "{{a,b},{a,c},{a,d},{b,c},{b,d},{c,d}}");
-		check("Subsets[{a,b,c}]", "{{},{a},{b},{c},{a,b},{a,c},{b,c},{a,b,c}}");
 	}
 }
