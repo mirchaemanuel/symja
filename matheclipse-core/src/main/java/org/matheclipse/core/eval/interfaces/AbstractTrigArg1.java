@@ -19,6 +19,7 @@ public abstract class AbstractTrigArg1 extends AbstractFunctionEvaluator {
 	@Override
 	public IExpr evaluate(final IAST ast) {
 		Validate.checkSize(ast, 2);
+
 		return evaluateArg1(ast.get(1));
 	}
 
@@ -95,5 +96,33 @@ public abstract class AbstractTrigArg1 extends AbstractFunctionEvaluator {
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * Check if the first argument of the given AST is canonical negative. If yes,
+	 * return the number and the rest expression in an array with size 2.
+	 * 
+	 * @return <code>null</code> if the first argument isn't canonical negative
+	 */
+	public static IExpr[] isNegativeExpr(final IExpr expr) {
+		if (expr.isTimes()) {
+			IAST times = (IAST) expr;
+			if (times.get(1).isNumber()) {
+				int signum = ((INumber) times.get(1)).complexSign();
+				if (signum < 0) {
+					IAST clon = times.clone();
+					clon.remove(1);
+					return new IExpr[] { times.get(1), clon };
+				}
+			}
+			return null;
+		}
+		if (expr.isNumber()) {
+			int signum = ((INumber) expr).complexSign();
+			if (signum < 0) {
+				return new IExpr[] { expr, F.C1 };
+			}
+		}
+		return null;
 	}
 }

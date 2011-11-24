@@ -110,10 +110,12 @@ public class F {
 
 	public static ISymbol Cos;
 
-	public static ISymbol Cot;
-
 	public static ISymbol Cosh;
 
+	public static ISymbol Cot;
+	
+	public static ISymbol Coth;
+	
 	public static ISymbol Cross;
 
 	public static ISymbol Csc;
@@ -1028,6 +1030,7 @@ public class F {
 				Cos = predefinedSymbol("Cos");
 				Cosh = predefinedSymbol("Cosh");
 				Cot = predefinedSymbol("Cot");
+				Coth = predefinedSymbol("Coth");
 				Cross = predefinedSymbol("Cross");
 				D = predefinedSymbol("D");
 				Denominator = predefinedSymbol("Denominator");
@@ -1580,7 +1583,11 @@ public class F {
 	public static IAST Cot(final IExpr a0) {
 		return unary(Cot, a0);
 	}
-
+	
+	public static IAST Coth(final IExpr a0) {
+		return unary(Coth, a0);
+	}
+	
 	public static IAST Tan(final IExpr a0) {
 
 		return unary(Tan, a0);

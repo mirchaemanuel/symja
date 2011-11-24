@@ -1,8 +1,6 @@
 package org.matheclipse.core.reflection.system;
 
-import static org.matheclipse.core.expression.F.CN1;
-import static org.matheclipse.core.expression.F.Sinh;
-import static org.matheclipse.core.expression.F.Times;
+import static org.matheclipse.core.expression.F.*;
 
 import org.matheclipse.core.eval.interfaces.AbstractTrigArg1;
 import org.matheclipse.core.eval.interfaces.INumeric;
@@ -10,45 +8,44 @@ import org.matheclipse.core.expression.ComplexUtils;
 import org.matheclipse.core.expression.ComplexNum;
 import org.matheclipse.core.expression.Num;
 import org.matheclipse.core.expression.F;
+import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.ISymbol;
 import org.matheclipse.parser.client.SyntaxError;
 
 /**
- * Hyperbolic sine
+ * Arccotangent
  * 
- * See <a href="http://en.wikipedia.org/wiki/Hyperbolic_function">Hyperbolic
- * function</a>
+ * See <a href="http://en.wikipedia.org/wiki/Inverse_trigonometric functions">
+ * Inverse_trigonometric functions</a>
  */
-public class Sinh extends AbstractTrigArg1 implements INumeric {
-
-	public Sinh() {
+public class ArcCot extends AbstractTrigArg1 {
+	/**
+	 * <pre>
+	 *   ArcCot[0]=0,
+	 *   ArcCot[1]=1/4*Pi
+	 * </pre>
+	 */
+	final static IAST RULES = List(
+			Set(ArcCot(C0), Times(C1D2, Pi)),
+			Set(ArcCot(C1), Times(C1D4, Pi))
+	);
+	
+	@Override
+	public IAST getRuleAST() {
+		return RULES;
+	}
+	
+	public ArcCot() {
 	}
 
 	@Override
 	public IExpr evaluateArg1(final IExpr arg1) {
 		IExpr[] result = isNegativeExpr(arg1);
 		if (result != null) {
-			return Times(CN1, Sinh(Times(CN1, arg1)));
+			return Times(CN1, ArcCot(Times(CN1, arg1)));
 		}
 		return null;
-	}
-
-	@Override
-	public IExpr numericEvalD1(final Num arg1) {
-		return F.num(Math.sinh(arg1.getRealPart()));
-	}
-
-	@Override
-	public IExpr numericEvalDC1(final ComplexNum arg1) {
-		return ComplexUtils.sinh(arg1);
-	}
-
-	public double evalReal(final double[] stack, final int top, final int size) {
-		if (size != 1) {
-			throw new UnsupportedOperationException();
-		}
-		return Math.sinh(stack[top]);
 	}
 
 	@Override

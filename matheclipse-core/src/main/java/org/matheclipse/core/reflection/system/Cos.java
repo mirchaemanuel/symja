@@ -85,11 +85,11 @@ public class Cos extends AbstractTrigArg1 implements INumeric {
 			Set(Cos(Times(fraction(2L,5L),Pi)),Plus(Times(C1D4,Power(C5,C1D2)),Times(CN1,C1D4))),
 			Set(Cos(Times(fraction(1L,5L),Pi)),Plus(Times(C1D4,Power(C5,C1D2)),C1D4)),
 			SetDelayed(Cos(ArcTan($p("x"))),Power(Plus(C1,Power($s("x"),C2)),CN1D2)),
-			SetDelayed(Cos(Times($p("x",$s("NumberQ")),$p("y"))),Condition(Cos(Times(Times(CN1,$s("x")),$s("y"))),Less(SignCmp($s("x")),C0))),
+//			SetDelayed(Cos(Times($p("x",$s("NumberQ")),$p("y"))),Condition(Cos(Times(Times(CN1,$s("x")),$s("y"))),Less(SignCmp($s("x")),C0))),
 			SetDelayed(Cos(Times(Pi,$p("x",$s("NumberQ")))),Condition(If(Less($s("x"),C1),Times(CN1,Cos(Times(Plus(Times(CN1,$s("x")),C1),Pi))),If(Less($s("x"),C2),Cos(Times(Plus(Times(CN1,$s("x")),C2),Pi)),Cos(Times(Plus(Times(integer(-2L),Quotient(Trunc($s("x")),C2)),$s("x")),Pi)))),GreaterEqual($s("x"),C1D2))),
 			SetDelayed(Cos(ArcCos($p("x"))),$s("x")),
-			SetDelayed(Cos(ArcSin($p("x"))),Power(Plus(Times(CN1,Power($s("x"),C2)),C1),C1D2)),
-			SetDelayed(Cos($p("x",$s("NumberQ"))),Condition(Cos(Times(CN1,$s("x"))),Less(SignCmp($s("x")),C0)))
+			SetDelayed(Cos(ArcSin($p("x"))),Power(Plus(Times(CN1,Power($s("x"),C2)),C1),C1D2))
+//			SetDelayed(Cos($p("x",$s("NumberQ"))),Condition(Cos(Times(CN1,$s("x"))),Less(SignCmp($s("x")),C0)))
 			);
 
 	@Override
@@ -99,7 +99,16 @@ public class Cos extends AbstractTrigArg1 implements INumeric {
 
 	public Cos() {
 	}
-
+	
+	@Override
+	public IExpr evaluateArg1(final IExpr arg1) {
+		IExpr[] result = isNegativeExpr(arg1);
+		if (result != null) {
+			return Cos(Times(CN1, arg1));
+		}
+		return null;
+	}
+	
 	@Override
 	public IExpr numericEvalD1(final Num arg1) {
 		return F.num(Math.cos(arg1.getRealPart()));
