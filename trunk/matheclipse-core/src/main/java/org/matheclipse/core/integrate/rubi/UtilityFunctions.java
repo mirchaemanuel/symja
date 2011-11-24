@@ -414,10 +414,6 @@ public class UtilityFunctions {
 		return unary($s("TrigReduce"), v);
 	}
 
-	public static IAST Coth(final IExpr a) {
-		return unary($s("Coth"), a);
-	}
-
 	public static IAST Csch(final IExpr a) {
 		return unary($s("Csch"), a);
 	}

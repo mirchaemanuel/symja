@@ -66,9 +66,9 @@ public class Sin extends AbstractTrigArg1 implements INumeric {
 				SetDelayed(Sin(ArcSin($p("x"))),$s("x")),
 				SetDelayed(Sin(ArcCos($p("x"))),Power(Plus(C1,Times(CN1,Power($s("x"),C2))),C1D2)),
 				SetDelayed(Sin(ArcTan($p("x"))),Times($s("x"),Power(Plus(C1,Power($s("x"),C2)),Power(C1D2,CN1)))),
-				SetDelayed(Sin(Times($p("x",$s("NumberQ")),$p("y"))),Condition(Times(CN1,Sin(Times(Times(CN1,$s("x")),$s("y")))),Less(SignCmp($s("x")),C0))),
-				SetDelayed(Sin(Times(Pi,$p("x",$s("NumberQ")))),Condition(If(Less($s("x"),C1),Sin(Times(Plus(C1,Times(CN1,$s("x"))),Pi)),If(Less($s("x"),C2),Times(CN1,Sin(Times(Plus(C2,Times(CN1,$s("x"))),Pi))),Sin(Times(Plus($s("x"),Times(CN1,Times(C2,Quotient(Trunc($s("x")),C2)))),Pi)))),GreaterEqual($s("x"),C1D2))),
-				SetDelayed(Sin($p("x",$s("NumberQ"))),Condition(Times(CN1,Sin(Times(CN1,$s("x")))),Less(SignCmp($s("x")),C0)))
+//				SetDelayed(Sin(Times($p("x",$s("NumberQ")),$p("y"))),Condition(Times(CN1,Sin(Times(Times(CN1,$s("x")),$s("y")))),Less(SignCmp($s("x")),C0))),
+				SetDelayed(Sin(Times(Pi,$p("x",$s("NumberQ")))),Condition(If(Less($s("x"),C1),Sin(Times(Plus(C1,Times(CN1,$s("x"))),Pi)),If(Less($s("x"),C2),Times(CN1,Sin(Times(Plus(C2,Times(CN1,$s("x"))),Pi))),Sin(Times(Plus($s("x"),Times(CN1,Times(C2,Quotient(Trunc($s("x")),C2)))),Pi)))),GreaterEqual($s("x"),C1D2)))
+//				SetDelayed(Sin($p("x",$s("NumberQ"))),Condition(Times(CN1,Sin(Times(CN1,$s("x")))),Less(SignCmp($s("x")),C0)))
 				);
 				
 	public Sin() {
@@ -78,6 +78,15 @@ public class Sin extends AbstractTrigArg1 implements INumeric {
 	// public String[] getRules() {
 	// return RULES;
 	// }
+
+	@Override
+	public IExpr evaluateArg1(final IExpr arg1) {
+		IExpr[] result = isNegativeExpr(arg1);
+		if (result != null) {
+			return Times(CN1, Sin(Times(CN1, arg1)));
+		}
+		return null;
+	}
 
 	@Override
 	public IAST getRuleAST() {

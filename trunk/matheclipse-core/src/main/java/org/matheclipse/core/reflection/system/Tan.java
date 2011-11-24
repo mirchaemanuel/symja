@@ -80,12 +80,12 @@ public class Tan extends AbstractTrigArg1 implements INumeric {
 			Set(Tan(Times(fraction(1L,12L),Pi)),Plus(Times(CN1,Power(C3,C1D2)),C2)),
 			Set(Tan(Pi),C0),
 			SetDelayed(Tan(ArcSin($p("x"))),Times($s("x"),Power(Plus(Times(CN1,Power($s("x"),C2)),C1),Power(C1D2,CN1)))),
-			SetDelayed(Tan(Times($p("x",$s("NumberQ")),$p("y"))),Condition(Times(CN1,Tan(Times(Times(CN1,$s("x")),$s("y")))),Less(SignCmp($s("x")),C0))),
+//			SetDelayed(Tan(Times($p("x",$s("NumberQ")),$p("y"))),Condition(Times(CN1,Tan(Times(Times(CN1,$s("x")),$s("y")))),Less(SignCmp($s("x")),C0))),
 			SetDelayed(Tan(Times(Pi,$p("x",$s("NumberQ")))),Condition(If(Less($s("x"),C1),Times(CN1,Tan(Times(Plus(Times(CN1,$s("x")),C1),Pi))),If(Less($s("x"),C2),Tan(Times(Plus(CN1,$s("x")),Pi)),Tan(Times(Plus(Times(integer(-2L),Quotient(Trunc($s("x")),C2)),$s("x")),Pi)))),Greater($s("x"),C1D2))),
 			SetDelayed(Tan(ArcTan($p("x"))),$s("x")),
 			SetDelayed(Tan(ArcCos($p("x"))),Times(Power(Plus(Times(CN1,Power($s("x"),C2)),C1),C1D2),Power($s("x"),CN1))),
-			SetDelayed(Tan(ArcCot($p("x"))),Power($s("x"),CN1)),
-			SetDelayed(Tan($p("x",$s("NumberQ"))),Condition(Times(CN1,Tan(Times(CN1,$s("x")))),Less(SignCmp($s("x")),C0)))
+			SetDelayed(Tan(ArcCot($p("x"))),Power($s("x"),CN1))
+//			SetDelayed(Tan($p("x",$s("NumberQ"))),Condition(Times(CN1,Tan(Times(CN1,$s("x")))),Less(SignCmp($s("x")),C0)))
 			);
 
 	@Override
@@ -95,7 +95,16 @@ public class Tan extends AbstractTrigArg1 implements INumeric {
 	
 	public Tan() {
 	}
-
+	
+	@Override
+	public IExpr evaluateArg1(final IExpr arg1) {
+		IExpr[] result = isNegativeExpr(arg1);
+		if (result != null) {
+			return Times(CN1, Tan(Times(CN1, arg1)));
+		}
+		return null;
+	}
+	
 	@Override
 	public IExpr numericEvalD1(final Num arg1) {
 		return F.num(Math.tan(arg1.getRealPart()));

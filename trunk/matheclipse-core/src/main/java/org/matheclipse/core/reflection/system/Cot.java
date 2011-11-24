@@ -1,38 +1,28 @@
 package org.matheclipse.core.reflection.system;
 
-import static org.matheclipse.core.expression.F.*;
-import static org.matheclipse.core.expression.F.ArcCot;
+import static org.matheclipse.core.expression.F.$p;
+import static org.matheclipse.core.expression.F.$s;
 import static org.matheclipse.core.expression.F.ArcSin;
-import static org.matheclipse.core.expression.F.ArcTan;
 import static org.matheclipse.core.expression.F.C0;
 import static org.matheclipse.core.expression.F.C1;
 import static org.matheclipse.core.expression.F.C1D2;
-import static org.matheclipse.core.expression.F.C1D3;
 import static org.matheclipse.core.expression.F.C1D4;
 import static org.matheclipse.core.expression.F.C2;
 import static org.matheclipse.core.expression.F.C3;
-import static org.matheclipse.core.expression.F.C5;
-import static org.matheclipse.core.expression.F.CI;
 import static org.matheclipse.core.expression.F.CN1;
+import static org.matheclipse.core.expression.F.ComplexInfinity;
 import static org.matheclipse.core.expression.F.Condition;
-import static org.matheclipse.core.expression.F.Greater;
-import static org.matheclipse.core.expression.F.If;
+import static org.matheclipse.core.expression.F.Cot;
 import static org.matheclipse.core.expression.F.Less;
 import static org.matheclipse.core.expression.F.List;
 import static org.matheclipse.core.expression.F.Pi;
 import static org.matheclipse.core.expression.F.Plus;
 import static org.matheclipse.core.expression.F.Power;
-import static org.matheclipse.core.expression.F.Quotient;
 import static org.matheclipse.core.expression.F.Set;
 import static org.matheclipse.core.expression.F.SetDelayed;
 import static org.matheclipse.core.expression.F.SignCmp;
-import static org.matheclipse.core.expression.F.Tan;
-import static org.matheclipse.core.expression.F.Tanh;
 import static org.matheclipse.core.expression.F.Times;
-import static org.matheclipse.core.expression.F.Trunc;
 import static org.matheclipse.core.expression.F.fraction;
-import static org.matheclipse.core.expression.F.integer; 
-import static org.matheclipse.core.expression.F.$s;
 
 import org.matheclipse.core.eval.interfaces.AbstractTrigArg1;
 import org.matheclipse.core.eval.interfaces.INumeric;
@@ -69,9 +59,9 @@ public class Cot extends AbstractTrigArg1 implements INumeric {
 			Set(Cot(Times(fraction(1L,6L),Pi)),Power(C3,C1D2)),
 			Set(Cot(Times(fraction(1L, 8L), Pi)), Plus(Power(C2, C1D2), C1)),
 			Set(Cot(Times(fraction(1L,12L),Pi)),Plus(Power(C3,C1D2),C2)),
-			Set(Cot(C0), ComplexInfinity),
-			SetDelayed(Cot($p("x",$s("NumberQ"))),Condition(Times(CN1,Cot(Times(CN1,$s("x")))),Less(SignCmp($s("x")),C0))),
-			SetDelayed(Cot(Times($p("x",$s("NumberQ")),$p("y"))),Condition(Times(CN1,Cot(Times(Times(CN1,$s("x")),$s("y")))),Less(SignCmp($s("x")),C0)))
+			Set(Cot(C0), ComplexInfinity)
+//			SetDelayed(Cot($p("x",$s("NumberQ"))),Condition(Times(CN1,Cot(Times(CN1,$s("x")))),Less(SignCmp($s("x")),C0))),
+//			SetDelayed(Cot(Times($p("x",$s("NumberQ")),$p("y"))),Condition(Times(CN1,Cot(Times(Times(CN1,$s("x")),$s("y")))),Less(SignCmp($s("x")),C0)))
 			);
 
 	@Override
@@ -81,7 +71,16 @@ public class Cot extends AbstractTrigArg1 implements INumeric {
 
 	public Cot() {
 	}
-
+	
+	@Override
+	public IExpr evaluateArg1(final IExpr arg1) {
+		IExpr[] result = isNegativeExpr(arg1);
+		if (result != null) { 
+			return Times(CN1, Cot(Times(CN1, arg1)));
+		}
+		return null;
+	}
+	
 	@Override
 	public IExpr numericEvalD1(final Num arg1) {
 		return F.num(1.0D / Math.tan(arg1.getRealPart()));
