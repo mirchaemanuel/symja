@@ -7,6 +7,9 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 
+import org.matheclipse.parser.client.Parser;
+import org.matheclipse.parser.client.ast.ASTNode;
+
 import com.google.api.client.extensions.android2.AndroidHttp;
 import com.google.api.client.http.ByteArrayContent;
 import com.google.api.client.http.GenericUrl;
@@ -94,6 +97,14 @@ public class WebInterpreter {
 	}
 
 	public void eval() {
+		try {
+			Parser p = new Parser();
+			// throws SyntaxError exception, if syntax isn't valid
+			p.parse(codeString);
+		} catch (Exception e) {
+			outStream.println(e.getMessage());
+			return;
+		}
 		String result = interpreter(codeString);
 		outStream.println(result);
 	}
