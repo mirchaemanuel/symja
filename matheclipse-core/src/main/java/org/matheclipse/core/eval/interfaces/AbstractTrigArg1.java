@@ -68,61 +68,31 @@ public abstract class AbstractTrigArg1 extends AbstractFunctionEvaluator {
 	}
 
 	/**
-	 * Check if the given expression is canonical negative.
+	 * Check if the expression is canonical negative.
 	 * 
-	 * @return
+	 * @return <code>true</code> if the first argument is canonical negative
 	 */
 	public static boolean isNegativeExpression(final IExpr expr) {
-		if (expr instanceof INumber) {
-			return (((INumber) expr).complexSign() == (-1));
-		} else if (expr instanceof AST) {
-			final AST exprAST = (AST) expr;
-			if ((exprAST.head() == F.Times) && (exprAST.size() > 1)) {
-				if (exprAST.get(1) instanceof INumber) {
-					return (((INumber) exprAST.get(1)).complexSign() == (-1));
-				}
-			} else if ((exprAST.head() == F.Plus) && (exprAST.size() > 2)) {
-				if (exprAST.get(1) instanceof INumber) {
-					return (((INumber) exprAST.get(1)).complexSign() == (-1));
-					// } else if (exprAST.get(0) instanceof AST) {
-					// AST subAST = (AST) exprAST.get(0);
-					// if (subAST.getHeader() == ft.Times && subAST.size() > 1)
-					// {
-					// if (subAST.get(0) instanceof INumber) {
-					// return (((INumber) subAST.get(0)).complexSign() == (-1));
-					// }
-					// }
-				}
+		if (expr.isNumber()) {
+			if (((INumber) expr).complexSign() < 0) {
+				return true;
 			}
-		}
-		return false;
-	}
-
-	/**
-	 * Check if the first argument of the given AST is canonical negative. If yes,
-	 * return the number and the rest expression in an array with size 2.
-	 * 
-	 * @return <code>null</code> if the first argument isn't canonical negative
-	 */
-	public static IExpr[] isNegativeExpr(final IExpr expr) {
-		if (expr.isTimes()) {
+		} else if (expr.isTimes()) {
 			IAST times = (IAST) expr;
 			if (times.get(1).isNumber()) {
-				int signum = ((INumber) times.get(1)).complexSign();
-				if (signum < 0) {
-					IAST clon = times.clone();
-					clon.remove(1);
-					return new IExpr[] { times.get(1), clon };
+				if (((INumber) times.get(1)).complexSign() < 0) {
+					return true;
 				}
 			}
-			return null;
-		}
-		if (expr.isNumber()) {
-			int signum = ((INumber) expr).complexSign();
-			if (signum < 0) {
-				return new IExpr[] { expr, F.C1 };
+		} else if (expr.isPlus()) {
+			IAST plus = (IAST) expr;
+			if (plus.get(1).isNumber()) {
+				if (((INumber) plus.get(1)).complexSign() < 0) {
+					return true;
+				}
 			}
 		}
-		return null;
+
+		return false;
 	}
 }
