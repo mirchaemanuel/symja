@@ -84,9 +84,8 @@ public class ArcCos extends AbstractTrigArg1 implements INumeric {
 
 	@Override
 	public IExpr evaluateArg1(final IExpr arg1) {
-		IExpr[] result = isNegativeExpr(arg1);
-		if (result != null) {
-			return Plus(ArcSin(Times(CN1, result[0], result[1])), Times(C1D2, Pi));
+		if (isNegativeExpression(arg1)) {
+			return Plus(ArcSin(Times(CN1, arg1)), Times(C1D2, Pi));
 		}
 		return null;
 	}

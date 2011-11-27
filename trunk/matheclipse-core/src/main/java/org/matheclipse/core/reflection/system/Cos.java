@@ -102,8 +102,7 @@ public class Cos extends AbstractTrigArg1 implements INumeric {
 	
 	@Override
 	public IExpr evaluateArg1(final IExpr arg1) {
-		IExpr[] result = isNegativeExpr(arg1);
-		if (result != null) {
+		if (isNegativeExpression(arg1)) {
 			return Cos(Times(CN1, arg1));
 		}
 		return null;

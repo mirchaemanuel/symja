@@ -41,8 +41,7 @@ public class ArcCot extends AbstractTrigArg1 {
 
 	@Override
 	public IExpr evaluateArg1(final IExpr arg1) {
-		IExpr[] result = isNegativeExpr(arg1);
-		if (result != null) {
+		if (isNegativeExpression(arg1)) {
 			return Times(CN1, ArcCot(Times(CN1, arg1)));
 		}
 		return null;
