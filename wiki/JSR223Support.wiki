@@ -5,6 +5,8 @@
 
 MathEclipse is usable as a [http://en.wikipedia.org/wiki/JSR_223 JSR 223] scripting engine. For using the scripting engine with the Java *jrunscript* tool see the document about [RunSymja running Symja].
 
+* The [http://www.kobrix.com/seco.jsp Seco] project also has an interesting JSR 223 interface. Watch the video tutorials at [http://code.google.com/p/seco/ Seco at Kobrix.com]
+
 Example:
 {{{
 ...
