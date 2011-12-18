@@ -6,7 +6,7 @@
 = Links to external open source libraries =
 Used core libraries:
   * [http://commons.apache.org/math/ Commons-Math - The Apache Commons Mathematics Library] (Apache software licence)
-  * [http://krum.rz.uni-mannheim.de/jas/ JAS - Java Algebra System] (LGPL software licence)
+  * [http://krum.rz.uni-mannheim.de/jas/ JAS - Java Algebra System] (LGPL software licence) [http://code.google.com/p/java-algebra-system/ JAS Google Code project]
 
 Used libraries for the Symja-GUI
   * [http://code.google.com/p/surfaceplotter/ Surfaceplotter] (LGPL software licence)
