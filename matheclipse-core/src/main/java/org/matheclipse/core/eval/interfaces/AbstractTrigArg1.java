@@ -1,9 +1,7 @@
 package org.matheclipse.core.eval.interfaces;
 
 import org.matheclipse.core.eval.exception.Validate;
-import org.matheclipse.core.expression.AST;
 import org.matheclipse.core.expression.ComplexNum;
-import org.matheclipse.core.expression.F;
 import org.matheclipse.core.expression.Num;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;

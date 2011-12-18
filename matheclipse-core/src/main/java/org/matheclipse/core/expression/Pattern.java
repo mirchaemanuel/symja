@@ -1,5 +1,6 @@
 package org.matheclipse.core.expression;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -23,6 +24,11 @@ public class Pattern extends ExprImpl implements IPattern {
 
 	private static final long serialVersionUID = 7617138748475243L;
 
+	private static HashMap<String, Pattern> PREDEFINED_PATTERN_MAP = new HashMap<String, Pattern>();
+
+	private static String[] PREDEFINED_PATTERN_STRINGS = { "a", "b", "c", "d", "e", "f", "g", "h", "u", "v", "w", "x", "y", "z" };
+
+	private static Pattern NULL_PATTERN = new Pattern(null);
 	//
 	// private static final ObjectFactory<Pattern> FACTORY = new
 	// ObjectFactory<Pattern>() {
@@ -37,14 +43,19 @@ public class Pattern extends ExprImpl implements IPattern {
 	// }
 	// };
 
+	static {
+		for (int i = 0; i < PREDEFINED_PATTERN_STRINGS.length; i++) {
+			PREDEFINED_PATTERN_MAP.put(PREDEFINED_PATTERN_STRINGS[i], new Pattern(F.$s(PREDEFINED_PATTERN_STRINGS[i])));
+		}
+	}
+
 	/**
 	 * 
 	 */
-	public static Pattern valueOf(final Symbol symbol, final IExpr check, final boolean def) {
+	public static Pattern valueOf(final ISymbol symbol, final IExpr check, final boolean def) {
 		Pattern p = new Pattern();
 		p.fSymbol = symbol;
 		p.fCondition = check;
-//		p.fIndex = 0;
 		p.fDefault = def;
 		return p;
 	}
@@ -54,20 +65,22 @@ public class Pattern extends ExprImpl implements IPattern {
 	 * @param numerator
 	 * @return
 	 */
-	public static Pattern valueOf(final Symbol symbol, final IExpr check) {
+	public static Pattern valueOf(final ISymbol symbol, final IExpr check) {
 		Pattern p = new Pattern();
 		p.fSymbol = symbol;
 		p.fCondition = check;
-//		p.fIndex = 0;
 		return p;
 	}
 
-	public static Pattern valueOf(final Symbol symbol) {
-		Pattern p = new Pattern();
-		p.fSymbol = symbol;
-		p.fCondition = null;
-//		p.fIndex = 0;
-		return p;
+	public static Pattern valueOf(final ISymbol symbol) {
+		if (symbol == null) {
+			return NULL_PATTERN;
+		}
+		Pattern value = PREDEFINED_PATTERN_MAP.get(symbol.toString());
+		if (value != null) {
+			return value;
+		}
+		return new Pattern(symbol);
 	}
 
 	/**
@@ -80,23 +93,25 @@ public class Pattern extends ExprImpl implements IPattern {
 	 * 
 	 * @see org.matheclipse.core.patternmatching.PatternMatcher
 	 */
-//	int fIndex = 0;
+	// int fIndex = 0;
 
 	/**
 	 * The associated symbol for this pattern
 	 */
-	Symbol fSymbol;
+	ISymbol fSymbol;
 
 	/**
 	 * Use default value, if not matching was found
 	 */
 	boolean fDefault = false;
 
-	// public PatternImpl(final SymbolImpl symbol) {
-	// this(symbol, null);
-	// }
-
 	private Pattern() {
+	}
+
+	private Pattern(final ISymbol symbol) {
+		fSymbol = symbol;
+		fCondition = null;
+		fDefault = false;
 	}
 
 	@Override
@@ -130,9 +145,9 @@ public class Pattern extends ExprImpl implements IPattern {
 	/**
 	 * @return
 	 */
-//	public int getIndex() {
-//		return fIndex;
-//	}
+	// public int getIndex() {
+	// return fIndex;
+	// }
 
 	/**
 	 * @return
@@ -165,9 +180,9 @@ public class Pattern extends ExprImpl implements IPattern {
 	// return fSymbol.toString().equals(str);
 	// }
 
-//	public void setIndex(final int i) {
-//		fIndex = i;
-//	}
+	// public void setIndex(final int i) {
+	// fIndex = i;
+	// }
 
 	// public String toString() {
 	// if (fCheck == null) {
@@ -418,7 +433,7 @@ public class Pattern extends ExprImpl implements IPattern {
 	public int accept(IVisitorInt visitor) {
 		return visitor.visit(this);
 	}
-	
+
 	/**
 	 * Use default value, if not matching was found.
 	 * 
