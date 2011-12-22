@@ -1,5 +1,5 @@
 /*
- * $Id: FactorAbstract.java 3771 2011-09-18 20:29:35Z kredel $
+ * $Id: FactorAbstract.java 3819 2011-10-30 12:04:10Z kredel $
  */
 
 package edu.jas.ufd;
@@ -268,7 +268,7 @@ public abstract class FactorAbstract<C extends GcdRingElem<C>> implements Factor
             //System.out.println("irred u = " + u);
             factors.add(P);
         }
-        return factors;
+        return normalizeFactorization(factors);
     }
 
 
