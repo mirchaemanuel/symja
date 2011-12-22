@@ -1,5 +1,5 @@
 /*
- * $Id: SquarefreeRingChar0.java 3297 2010-08-26 19:09:03Z kredel $
+ * $Id: SquarefreeRingChar0.java 3819 2011-10-30 12:04:10Z kredel $
  */
 
 package edu.jas.ufd;
@@ -164,7 +164,7 @@ public class SquarefreeRingChar0<C extends GcdRingElem<C>> extends SquarefreeAbs
                 sfactors.put(z, k);
             }
         }
-        return sfactors;
+        return normalizeFactorization(sfactors);
     }
 
 
@@ -372,7 +372,7 @@ public class SquarefreeRingChar0<C extends GcdRingElem<C>> extends SquarefreeAbs
             GenPolynomial<C> D = PolyUtil.<C> distribute(pfac, Dr);
             sfactors.put(D, i);
         }
-        return sfactors;
+        return normalizeFactorization(sfactors);
     }
 
 

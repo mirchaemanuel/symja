@@ -1,5 +1,5 @@
 /*
- * $Id: BigComplex.java 3354 2010-10-23 15:51:37Z kredel $
+ * $Id: BigComplex.java 3827 2011-12-15 21:57:54Z kredel $
  */
 
 package edu.jas.arith;
@@ -22,8 +22,9 @@ import edu.jas.structure.RingFactory;
 
 /**
  * BigComplex class based on BigRational implementing the RingElem
- * interface and with the familiar SAC static method names.
+ * respectively the StarRingElem interface.
  * Objects of this class are immutable.
+ * The SAC2 static methods are also provided.
  * @author Heinz Kredel
  */
 public final class BigComplex implements StarRingElem<BigComplex>,

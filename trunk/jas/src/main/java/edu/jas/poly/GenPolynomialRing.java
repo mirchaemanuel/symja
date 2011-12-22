@@ -1,5 +1,5 @@
 /*
- * $Id: GenPolynomialRing.java 3767 2011-09-18 11:42:39Z kredel $
+ * $Id: GenPolynomialRing.java 3826 2011-12-15 21:08:20Z kredel $
  */
 
 package edu.jas.poly;
@@ -211,6 +211,18 @@ public class GenPolynomialRing<C extends RingElem<C>> implements RingFactory<Gen
      */
     public GenPolynomialRing(RingFactory<C> cf, GenPolynomialRing o) {
         this(cf, o.nvar, o.tord, o.getVars());
+    }
+
+
+    /**
+     * The constructor creates a polynomial factory object with the the same
+     * coefficient factory, number of variables and variable names as the given
+     * polynomial factory, only the term order differs.
+     * @param to term order.
+     * @param o other polynomial ring.
+     */
+    public GenPolynomialRing(GenPolynomialRing<C> o, TermOrder to) {
+        this(o.coFac, o.nvar, to, o.getVars());
     }
 
 
