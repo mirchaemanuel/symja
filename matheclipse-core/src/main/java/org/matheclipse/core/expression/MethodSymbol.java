@@ -61,7 +61,10 @@ public class MethodSymbol extends Symbol {
 		if (this == obj) {
 			return true;
 		}
-		if (!(obj instanceof MethodSymbol)) {
+		if (obj == null) {
+			return false;
+		}
+		if (!(this.getClass().equals(obj.getClass()))) {
 			return false;
 		}
 		if (fMethod.equals(((MethodSymbol) obj).fMethod)) {

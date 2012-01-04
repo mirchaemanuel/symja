@@ -72,15 +72,15 @@ public class Cancel extends AbstractFunctionEvaluator {
 		Validate.checkRange(ast, 2, 3);
 		IExpr arg = F.evalExpandAll(ast.get(1));
 		try {
-			final IExpr header = arg.head();
-			if (header == F.Times || header == F.Power) {
-				IExpr[] parts = Apart.getFractionalParts(ast.get(1));
+			if (arg.isTimes() || arg.isPower()) {
+				IExpr[] parts = Apart.getFractionalParts(arg);
 				if (parts != null) {
 					if (parts[0].isPlus() && parts[1].isPlus()) {
 						IAST[] numParts = ((IAST) parts[0]).split(new PolynomialPredicate());
 						IAST[] denParts = ((IAST) parts[1]).split(new PolynomialPredicate());
-						if (!denParts[0].equals(F.C1)) {
-							IExpr[] result = Cancel.cancelGCD(numParts[0], denParts[0]);
+						IExpr denParts0 = F.eval(denParts[0]);
+						if (!denParts0.equals(F.C1)) {
+							IExpr[] result = Cancel.cancelGCD(numParts[0], denParts0);
 							if (result != null) {
 								return F.Times(result[0], numParts[1], F.Power(F.Times(result[1], denParts[1]), F.CN1));
 							}

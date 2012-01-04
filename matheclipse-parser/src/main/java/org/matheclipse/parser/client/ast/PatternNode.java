@@ -70,7 +70,10 @@ public class PatternNode extends ASTNode {
 		if (this == obj) {
 			return true;
 		}
-		if (obj instanceof PatternNode) {
+		if (obj == null) {
+			return false;
+		}
+		if (this.getClass().equals(obj.getClass())) {
 			PatternNode pn = (PatternNode) obj;
 			if (fSymbol == pn.fSymbol) {
 				if (fConstraint == null || pn.fConstraint == null) {

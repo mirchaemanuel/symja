@@ -57,8 +57,6 @@ public abstract class AbstractTestCase extends TestCase {
 	public void check(EvalEngine engine, boolean configMode, IAST ast, String strResult) {
 		boolean mode = Config.SERVER_MODE;
 		try {
-
-			IExpr result;
 			StringBufferWriter buf = new StringBufferWriter();
 			buf.setIgnoreNewLine(true);
 			Config.SERVER_MODE = configMode;
@@ -67,11 +65,10 @@ public abstract class AbstractTestCase extends TestCase {
 				// ASTNode node = parser.parse(strEval);
 				IAST inExpr = ast;
 				TimeConstrainedEvaluator utility = new TimeConstrainedEvaluator(engine, false, Config.FOREVER);
-				result = utility.constrainedEval(buf, inExpr);
+				utility.constrainedEval(buf, inExpr);
 			} else {
-				result = ast;
-				if ((result != null) && !result.equals(F.Null)) {
-					OutputFormFactory.get().convert(buf, result);
+				if (ast != null) {
+					OutputFormFactory.get().convert(buf, ast);
 				}
 			}
 
