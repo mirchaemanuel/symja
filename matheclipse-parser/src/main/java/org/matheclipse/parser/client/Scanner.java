@@ -453,11 +453,14 @@ public class Scanner {
 					fCurrentPosition++;
 					if (level == 0) {
 						break;
-					} else {
-						level--;
 					}
+					level--;
+					continue;
 				} else if (fInputString.charAt(fCurrentPosition) == '(' && fInputString.charAt(fCurrentPosition + 1) == '*') {
+					fCurrentPosition++;
+					fCurrentPosition++;
 					level++;
+					continue;
 				}
 				fCurrentPosition++;
 			}
