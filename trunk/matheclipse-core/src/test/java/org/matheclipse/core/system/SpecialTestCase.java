@@ -105,7 +105,6 @@ public class SpecialTestCase extends TestCase {
 	public void check(EvalEngine engine, boolean configMode, IAST ast, String strResult) {
 		try {
 
-			IExpr result;
 			StringBufferWriter buf = new StringBufferWriter();
 			buf.setIgnoreNewLine(true);
 			// F.initSymbols();
@@ -115,11 +114,10 @@ public class SpecialTestCase extends TestCase {
 				// ASTNode node = parser.parse(strEval);
 				IAST inExpr = ast;
 				TimeConstrainedEvaluator utility = new TimeConstrainedEvaluator(engine, false, Config.FOREVER);
-				result = utility.constrainedEval(buf, inExpr);
+				utility.constrainedEval(buf, inExpr);
 			} else {
-				result = ast;
-				if ((result != null) && !result.equals(F.Null)) {
-					OutputFormFactory.get().convert(buf, result);
+				if (ast != null) {
+					OutputFormFactory.get().convert(buf, ast);
 				}
 			}
 

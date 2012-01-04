@@ -52,8 +52,8 @@ public class Apart extends AbstractFunctionEvaluator {
 			variableList = eVar.getVarList();
 		}
 
-		final IExpr header = ast.get(1).head();
-		if (header == F.Times || header == F.Power) {
+		final IExpr arg = ast.get(1);
+		if (arg.isTimes() || arg.isPower()) {
 			IExpr[] parts = Apart.getFractionalParts(ast.get(1));
 			if (parts != null) {
 				IAST plusResult = apart(parts, variableList);
@@ -120,8 +120,8 @@ public class Apart extends AbstractFunctionEvaluator {
 					long j = 0L;
 					for (GenPolynomial<BigRational> genPolynomial : list) {
 						if (!genPolynomial.isZERO()) {
-							temp = F.eval(F.Times(jas.poly2Expr(genPolynomial, null), F.Power(jas.poly2Expr(D.get(i - 1), null), F.integer(j
-									* (-1L)))));
+							temp = F.eval(F.Times(jas.poly2Expr(genPolynomial, null),
+									F.Power(jas.poly2Expr(D.get(i - 1), null), F.integer(j * (-1L)))));
 							if (!temp.equals(F.C0)) {
 								if (temp.isAST()) {
 									((IAST) temp).addEvalFlags(IAST.IS_DECOMPOSED_PARTIAL_FRACTION);

@@ -1,5 +1,6 @@
 package org.matheclipse.core.patternmatching;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -9,18 +10,15 @@ import java.util.TreeMap;
 
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.generic.Functors;
-import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
-import org.matheclipse.core.interfaces.IPattern;
 import org.matheclipse.core.interfaces.IPatternObject;
-import org.matheclipse.core.interfaces.IPatternSequence;
 import org.matheclipse.core.interfaces.ISymbol;
 
 /**
  * A map from a pattern to a possibly found value during pattern-matching.
  * 
  */
-public class PatternMap implements Cloneable {
+public class PatternMap implements Cloneable, Serializable {
 	/**
 	 * Count the number of patterns in the pattern map.
 	 */

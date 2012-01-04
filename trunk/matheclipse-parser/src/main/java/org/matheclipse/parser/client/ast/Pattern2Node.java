@@ -16,7 +16,8 @@
 package org.matheclipse.parser.client.ast;
 
 /**
- * A node for a parsed pattern expression (i.e. <code>__</code> or  <code>x__</code>)
+ * A node for a parsed pattern expression (i.e. <code>__</code> or
+ * <code>x__</code>)
  * 
  */
 public class Pattern2Node extends PatternNode {
@@ -48,7 +49,10 @@ public class Pattern2Node extends PatternNode {
 		if (this == obj) {
 			return true;
 		}
-		if (obj instanceof Pattern2Node) {
+		if (obj == null) {
+			return false;
+		}
+		if (this.getClass().equals(obj.getClass())) {
 			Pattern2Node pn = (Pattern2Node) obj;
 			if (fSymbol == pn.fSymbol) {
 				if (fConstraint == null || pn.fConstraint == null) {
@@ -72,7 +76,7 @@ public class Pattern2Node extends PatternNode {
 
 	public int hashCode() {
 		if (fSymbol != null) {
-			return fSymbol.hashCode()*41;
+			return fSymbol.hashCode() * 41;
 		}
 		return 19;
 	}

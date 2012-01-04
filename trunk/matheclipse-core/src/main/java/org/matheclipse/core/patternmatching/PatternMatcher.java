@@ -353,8 +353,8 @@ public class PatternMatcher extends IPatternMatcher<IExpr> implements Serializab
 					if (partitionStartIndex + 1 == fPartitionsIndex[i]) {
 						// OneIdentity check here
 						if (fOneIdentity) {
-							if (!stackMatcher.push(fLhsPatternAST.get(partitionElementCounter + 1), fLhsEvalAST
-									.get(fPermutationsIndex[partitionStartIndex] + 1))) {
+							if (!stackMatcher.push(fLhsPatternAST.get(partitionElementCounter + 1),
+									fLhsEvalAST.get(fPermutationsIndex[partitionStartIndex] + 1))) {
 								matched = false;
 								return false;
 							}
@@ -394,8 +394,8 @@ public class PatternMatcher extends IPatternMatcher<IExpr> implements Serializab
 				if (partitionStartIndex + 1 == n) {
 					// OneIdentity check here
 					if (fOneIdentity) {
-						if (!stackMatcher.push(fLhsPatternAST.get(partitionElementCounter + 1), fLhsEvalAST
-								.get(fPermutationsIndex[partitionStartIndex] + 1))) {
+						if (!stackMatcher.push(fLhsPatternAST.get(partitionElementCounter + 1),
+								fLhsEvalAST.get(fPermutationsIndex[partitionStartIndex] + 1))) {
 							matched = false;
 							return false;
 						}
@@ -557,7 +557,9 @@ public class PatternMatcher extends IPatternMatcher<IExpr> implements Serializab
 	 * @param patternExpr
 	 */
 	public PatternMatcher() {
-		this(null);
+		this.fLhsPatternExpr = null;
+		this.fPatternCondition = null;
+		this.fPatternMap = new PatternMap();
 	}
 
 	public PatternMatcher(final IExpr patternExpr) {

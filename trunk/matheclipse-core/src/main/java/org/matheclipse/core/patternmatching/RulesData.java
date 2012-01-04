@@ -1,6 +1,7 @@
 package org.matheclipse.core.patternmatching;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -9,7 +10,6 @@ import java.util.Map;
 
 import org.matheclipse.core.basic.Config;
 import org.matheclipse.core.eval.EvalEngine;
-import org.matheclipse.core.eval.exception.RuleCreationError;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IEvaluationEngine;
@@ -24,13 +24,18 @@ import com.google.common.collect.ArrayListMultimap;
 /**
  * The pattern matching rules associated with a symbol.
  */
-public class RulesData {
-	private Map<IExpr, Pair<ISymbol, IExpr>> fEqualRules;
-	private ArrayListMultimap<Integer, IPatternMatcher<IExpr>> fSimplePatternRules;
-	private List<IPatternMatcher<IExpr>> fPatternRules;
+public class RulesData implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8843909916823779295L;
+	
+	private transient Map<IExpr, Pair<ISymbol, IExpr>> fEqualRules;
+	private transient ArrayListMultimap<Integer, IPatternMatcher<IExpr>> fSimplePatternRules;
+	private transient List<IPatternMatcher<IExpr>> fPatternRules;
 
 	public RulesData() {
-		this.fEqualRules = null;
+		this.fEqualRules = null; 
 		this.fSimplePatternRules = null;
 		this.fPatternRules = null;
 	}

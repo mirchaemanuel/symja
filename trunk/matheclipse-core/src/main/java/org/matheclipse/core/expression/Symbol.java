@@ -74,7 +74,7 @@ public class Symbol extends ExprImpl implements ISymbol {
 	/**
 	 * The pattern matching rules associated with this symbol.
 	 */
-	private RulesData fRulesData = new RulesData();
+	private transient RulesData fRulesData = new RulesData();
 
 	/**
 	 * {@inheritDoc}
@@ -189,7 +189,10 @@ public class Symbol extends ExprImpl implements ISymbol {
 		if (this == obj) {
 			return true;
 		}
-		if (!(obj instanceof Symbol)) {
+		if (obj == null) {
+			return false;
+		}
+		if (!(this.getClass().equals(obj.getClass()))) {
 			return false;
 		}
 		// if (hash != ((SymbolImpl) obj).hash) {
@@ -535,7 +538,7 @@ public class Symbol extends ExprImpl implements ISymbol {
 	public int accept(IVisitorInt visitor) {
 		return visitor.visit(this);
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */

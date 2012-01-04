@@ -48,7 +48,10 @@ public class Pattern3Node extends PatternNode {
 		if (this == obj) {
 			return true;
 		}
-		if (obj instanceof Pattern3Node) {
+		if (obj == null) {
+			return false;
+		}
+		if (this.getClass().equals(obj.getClass())) {
 			Pattern3Node pn = (Pattern3Node) obj;
 			if (fSymbol == pn.fSymbol) {
 				if (fConstraint == null || pn.fConstraint == null) {

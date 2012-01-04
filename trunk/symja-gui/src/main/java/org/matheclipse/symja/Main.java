@@ -230,7 +230,8 @@ public class Main extends JApplet {
 	 */
 	protected JToolBar createToolbar() {
 		JToolBar tools = new JToolBar();
-		JButton insert = new JButton(new ImageIcon(getClass().getResource("Import24.gif")));
+		// JButton insert = new JButton(new
+		// ImageIcon(getClass().getResource("Import24.gif")));
 		JButton preferences = new JButton(new ImageIcon(getClass().getResource("Preferences24.gif")));
 		JButton about = new JButton(new ImageIcon(getClass().getResource("About24.gif")));
 		// InsertListener il = new InsertListener(commandLine, this);
@@ -323,7 +324,7 @@ public class Main extends JApplet {
 			}
 		});
 		plot.add(plot3D);
-		
+
 		// JMenuItem plot3D = new JMenuItem("New 3D Plot ...");
 		// plot3D.addActionListener(new ActionListener() {
 		// public void actionPerformed(ActionEvent e) {

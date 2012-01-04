@@ -117,9 +117,7 @@ public class KPermutationsIterable implements Iterator<int[]>, Iterable<int[]> {
 
 	public int[] next() {
 		System.arraycopy(fResultIndex, 0, fCopiedResultIndex, 0, fResultIndex.length);
-		if (fResultIndex != null) {
-			fResultIndex = nextBeforehand();
-		}
+		fResultIndex = nextBeforehand();
 		return fCopiedResultIndex;
 	}
 
