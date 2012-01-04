@@ -89,11 +89,6 @@ public class RulesData implements Serializable {
 
 	public PatternMatcher putDownRule(ISymbol setSymbol, final boolean equalRule, final IExpr leftHandSide,
 			final IExpr rightHandSide, final int priority) {
-		if (Config.DEBUG) {
-			if (rightHandSide.isAST("Condition")) {
-				throw new RuntimeException("Condition not allowed in right-hand-side");
-			}
-		}
 		if (equalRule) {
 			fEqualRules = getEqualRules();
 			fEqualRules.put(leftHandSide, new Pair<ISymbol, IExpr>(setSymbol, rightHandSide));
