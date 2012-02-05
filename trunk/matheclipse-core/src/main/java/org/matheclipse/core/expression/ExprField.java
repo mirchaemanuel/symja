@@ -1,6 +1,7 @@
 package org.matheclipse.core.expression;
 
 import org.apache.commons.math.Field;
+import org.apache.commons.math.FieldElement;
 
 public class ExprField implements Field<ExprFieldElement> {
   public final static ExprField CONST = new ExprField();
@@ -22,5 +23,10 @@ public class ExprField implements Field<ExprFieldElement> {
   public ExprFieldElement getZero() {
     return ZERO;
   }
+
+	@Override
+	public Class<? extends FieldElement<ExprFieldElement>> getRuntimeClass() {
+		return ExprFieldElement.class;
+	}
 
 }

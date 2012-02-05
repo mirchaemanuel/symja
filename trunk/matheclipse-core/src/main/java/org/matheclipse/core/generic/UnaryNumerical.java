@@ -1,7 +1,7 @@
 package org.matheclipse.core.generic;
 
-import org.apache.commons.math.analysis.DifferentiableUnivariateRealFunction;
-import org.apache.commons.math.analysis.UnivariateRealFunction;
+import org.apache.commons.math.analysis.DifferentiableUnivariateFunction;
+import org.apache.commons.math.analysis.UnivariateFunction;
 import org.matheclipse.core.basic.Alloc;
 import org.matheclipse.core.eval.EvalDouble;
 import org.matheclipse.core.eval.EvalEngine;
@@ -19,7 +19,7 @@ import com.google.common.base.Function;
  * 
  * @see org.matheclipse.core.reflection.system.Plot
  */
-public class UnaryNumerical implements Function<IExpr, IExpr>, DifferentiableUnivariateRealFunction {
+public class UnaryNumerical implements Function<IExpr, IExpr>, DifferentiableUnivariateFunction {
 	IExpr fFunction;
 
 	ISymbol fVariable;
@@ -53,7 +53,7 @@ public class UnaryNumerical implements Function<IExpr, IExpr>, DifferentiableUni
 	/**
 	 * First derivative of unary function
 	 */
-	public UnivariateRealFunction derivative() {
+	public UnivariateFunction derivative() {
 		IExpr expr = F.eval(F.D, fFunction, fVariable);
 		return new UnaryNumerical(expr, fVariable, fEngine);
 	}

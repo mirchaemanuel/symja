@@ -54,6 +54,14 @@ public class Multinomial extends AbstractFunctionEvaluator {
 		return result;
 	}
 
+	/**
+	 * 
+	 * @param indices
+	 *          the non-negative coefficients
+	 * @param n
+	 *          the sum of the non-negative coefficients
+	 * @return
+	 */
 	public static BigInteger multinomial(final int[] indices, final int n) {
 		BigInteger bn = BigInteger.valueOf(n);
 		BigInteger result = Factorial.factorial(bn);

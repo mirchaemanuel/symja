@@ -2,12 +2,13 @@ package org.matheclipse.core.reflection.system;
 
 import org.apache.commons.math.ConvergenceException;
 import org.apache.commons.math.MathException;
-import org.apache.commons.math.analysis.DifferentiableUnivariateRealFunction;
+import org.apache.commons.math.analysis.DifferentiableUnivariateFunction;
+import org.apache.commons.math.analysis.integration.BaseAbstractUnivariateIntegrator;
 import org.apache.commons.math.analysis.integration.LegendreGaussIntegrator;
 import org.apache.commons.math.analysis.integration.RombergIntegrator;
 import org.apache.commons.math.analysis.integration.SimpsonIntegrator;
 import org.apache.commons.math.analysis.integration.TrapezoidIntegrator;
-import org.apache.commons.math.analysis.integration.UnivariateRealIntegratorImpl;
+import org.apache.commons.math.analysis.integration.UnivariateIntegrator;
 import org.matheclipse.core.basic.Config;
 import org.matheclipse.core.eval.EvalEngine;
 import org.matheclipse.core.eval.exception.Validate;
@@ -73,13 +74,13 @@ public class NIntegrate extends AbstractFunctionEvaluator implements IConstantHe
 		ISignedNumber max = (ISignedNumber) list.get(3);
 		final EvalEngine engine = EvalEngine.get();
 		function = F.eval(function);
-		DifferentiableUnivariateRealFunction f = new UnaryNumerical(function, xVar, engine);
-		UnivariateRealIntegratorImpl integrator = new TrapezoidIntegrator();
+		DifferentiableUnivariateFunction f = new UnaryNumerical(function, xVar, engine);
+		UnivariateIntegrator integrator = new TrapezoidIntegrator();
 		if (method.equals("Simpson")) {
 			integrator = new SimpsonIntegrator();
 		} else if (method.equals("LegendreGauss")) {
-			integrator = new LegendreGaussIntegrator(3, UnivariateRealIntegratorImpl.DEFAULT_RELATIVE_ACCURACY,
-					UnivariateRealIntegratorImpl.DEFAULT_ABSOLUTE_ACCURACY, UnivariateRealIntegratorImpl.DEFAULT_MIN_ITERATIONS_COUNT, 64);
+			integrator = new LegendreGaussIntegrator(3, BaseAbstractUnivariateIntegrator.DEFAULT_RELATIVE_ACCURACY,
+					BaseAbstractUnivariateIntegrator.DEFAULT_ABSOLUTE_ACCURACY, BaseAbstractUnivariateIntegrator.DEFAULT_MIN_ITERATIONS_COUNT, 64);
 		} else if (method.equals("Romberg")) {
 			integrator = new RombergIntegrator();
 		} else {

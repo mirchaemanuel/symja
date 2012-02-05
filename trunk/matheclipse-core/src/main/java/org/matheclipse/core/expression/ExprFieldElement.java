@@ -53,8 +53,26 @@ public class ExprFieldElement implements FieldElement<ExprFieldElement>, Compara
 	}
 
 	@Override
+	public ExprFieldElement multiply(int a) {
+//		if (val.isAtom()) {
+//			return new ExprFieldElement(val.times(a.val));
+//		}
+		return new ExprFieldElement(F.evalExpandAll(val.times(F.integer(a))));
+	}
+	
+	@Override
 	public int compareTo(ExprFieldElement o) {
 		return val.compareTo(o.val);
+	}
+
+	@Override
+	public ExprFieldElement negate() {
+		return new ExprFieldElement(F.evalExpandAll(val.times(F.CN1)));
+	}
+
+	@Override 
+	public ExprFieldElement reciprocal() {
+		return new ExprFieldElement(F.evalExpandAll(val.power(-1)));
 	}
 
 }
