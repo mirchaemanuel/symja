@@ -16,62 +16,60 @@
  */
 package org.apache.commons.math.transform;
 
-import org.apache.commons.math.analysis.UnivariateRealFunction;
+import org.apache.commons.math.analysis.UnivariateFunction;
 
 /**
- * Interface for one-dimensional data sets transformations producing real results.
+ * <p>Interface for one-dimensional data sets transformations producing real
+ * results.</p>
  * <p>Such transforms include {@link FastSineTransformer sine transform},
  * {@link FastCosineTransformer cosine transform} or {@link
  * FastHadamardTransformer Hadamard transform}. {@link FastFourierTransformer
  * Fourier transform} is of a different kind and does not implement this
- * interface since it produces {@link org.apache.commons.math.complex.Complex complex}
- * results instead of real ones.
- * </p>
- * @version $Id: RealTransformer.java 1165808 2011-09-06 19:59:47Z luc $
+ * interface since it produces {@link org.apache.commons.math.complex.Complex}
+ * results instead of real ones.</p>
+ *
+ * @version $Id: RealTransformer.java 1226359 2012-01-02 07:19:58Z celestin $
  * @since 2.0
  */
 public interface RealTransformer  {
 
     /**
-     * Transform the given real data set.
+     * Returns the forward transform of the specified real data set.
+     *
      * @param f the real data array to be transformed (signal)
      * @return the real transformed array (spectrum)
-     * @throws IllegalArgumentException if any parameters are invalid
      */
-    double[] transform(double f[])
-        throws IllegalArgumentException;
+    double[] transform(double[] f);
 
     /**
-     * Transform the given real function, sampled on the given interval.
+     * Returns the forward transform of the specified real function, sampled on
+     * the specified interval.
+     *
      * @param f the function to be sampled and transformed
-     * @param min the lower bound for the interval
-     * @param max the upper bound for the interval
+     * @param min the (inclusive) lower bound for the interval
+     * @param max the (exclusive) upper bound for the interval
      * @param n the number of sample points
      * @return the real transformed array
-     * @throws IllegalArgumentException if any parameters are invalid
      */
-    double[] transform(UnivariateRealFunction f, double min, double max, int n)
-        throws IllegalArgumentException;
+    double[] transform(UnivariateFunction f, double min, double max, int n);
 
     /**
-     * Inversely transform the given real data set.
-     * @param f the real data array to be inversely transformed (spectrum)
-     * @return the real inversely transformed array (signal)
-     * @throws IllegalArgumentException if any parameters are invalid
+     * Returns the inverse transform of the specified real data set.
+     *
+     * @param f the real data array to be inversely transformed
+     * @return the real inversely transformed array
      */
-    double[] inversetransform(double f[])
-        throws IllegalArgumentException;
+    double[] inverseTransform(double[] f);
 
     /**
-     * Inversely transform the given real function, sampled on the given interval.
+     * Returns the inverse transform of the specified real function, sampled
+     * on the given interval.
+     *
      * @param f the function to be sampled and inversely transformed
-     * @param min the lower bound for the interval
-     * @param max the upper bound for the interval
+     * @param min the (inclusive) lower bound for the interval
+     * @param max the (exclusive) upper bound for the interval
      * @param n the number of sample points
      * @return the real inversely transformed array
-     * @throws IllegalArgumentException if any parameters are invalid
      */
-    double[] inversetransform(UnivariateRealFunction f, double min, double max, int n)
-        throws IllegalArgumentException;
-
+    double[] inverseTransform(UnivariateFunction f, double min, double max, int n);
 }

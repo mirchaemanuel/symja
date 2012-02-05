@@ -17,7 +17,8 @@
 
 package org.apache.commons.math.analysis.function;
 
-import org.apache.commons.math.analysis.UnivariateRealFunction;
+import org.apache.commons.math.analysis.UnivariateFunction;
+import org.apache.commons.math.analysis.DifferentiableUnivariateFunction;
 import org.apache.commons.math.util.FastMath;
 
 /**
@@ -26,9 +27,19 @@ import org.apache.commons.math.util.FastMath;
  * @version $Id$
  * @since 3.0
  */
-public class Asinh implements UnivariateRealFunction {
+public class Asinh implements DifferentiableUnivariateFunction {
     /** {@inheritDoc} */
     public double value(double x) {
         return FastMath.asinh(x);
+    }
+
+    /** {@inheritDoc} */
+    public UnivariateFunction derivative() {
+        return new UnivariateFunction() {
+            /** {@inheritDoc} */
+            public double value(double x) {
+                return 1 / FastMath.sqrt(1 + x * x);
+            }
+        };
     }
 }

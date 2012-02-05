@@ -24,7 +24,7 @@ import org.apache.commons.math.exception.util.LocalizedFormats;
 /**
  * Chromosome represented by a vector of 0s and 1s.
  *
- * @version $Id: BinaryChromosome.java 1139906 2011-06-26 18:42:32Z luc $
+ * @version $Id: BinaryChromosome.java 1235038 2012-01-23 22:26:37Z tn $
  * @since 2.0
  */
 public abstract class BinaryChromosome extends AbstractListChromosome<Integer> {
@@ -32,6 +32,8 @@ public abstract class BinaryChromosome extends AbstractListChromosome<Integer> {
     /**
      * Constructor.
      * @param representation list of {0,1} values representing the chromosome
+     * @throws InvalidRepresentationException iff the <code>representation</code> can not represent
+     *         a valid chromosome
      */
     public BinaryChromosome(List<Integer> representation) {
         super(representation);
@@ -40,6 +42,8 @@ public abstract class BinaryChromosome extends AbstractListChromosome<Integer> {
     /**
      * Constructor.
      * @param representation array of {0,1} values representing the chromosome
+     * @throws InvalidRepresentationException iff the <code>representation</code> can not represent
+     *         a valid chromosome
      */
     public BinaryChromosome(Integer[] representation) {
         super(representation);

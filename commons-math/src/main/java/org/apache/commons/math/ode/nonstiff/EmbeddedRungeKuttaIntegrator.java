@@ -19,8 +19,7 @@ package org.apache.commons.math.ode.nonstiff;
 
 import org.apache.commons.math.exception.MathIllegalArgumentException;
 import org.apache.commons.math.exception.MathIllegalStateException;
-import org.apache.commons.math.ode.ExpandableFirstOrderDifferentialEquations;
-import org.apache.commons.math.ode.sampling.StepHandler;
+import org.apache.commons.math.ode.ExpandableStatefulODE;
 import org.apache.commons.math.util.FastMath;
 
 /**
@@ -56,7 +55,7 @@ import org.apache.commons.math.util.FastMath;
  * evaluation is saved. For an <i>fsal</i> method, we have cs = 1 and
  * asi = bi for all i.</p>
  *
- * @version $Id: EmbeddedRungeKuttaIntegrator.java 1175409 2011-09-25 15:04:39Z luc $
+ * @version $Id: EmbeddedRungeKuttaIntegrator.java 1215524 2011-12-17 16:55:25Z luc $
  * @since 1.2
  */
 
@@ -189,44 +188,32 @@ public abstract class EmbeddedRungeKuttaIntegrator
 
   /** {@inheritDoc} */
   @Override
-  public double integrate(final ExpandableFirstOrderDifferentialEquations equations,
-                          final double t0, final double[] z0,
-                          final double t, final double[] z)
+  public void integrate(final ExpandableStatefulODE equations, final double t)
       throws MathIllegalStateException, MathIllegalArgumentException {
 
-    sanityChecks(equations, t0, z0, t, z);
+    sanityChecks(equations, t);
     setEquations(equations);
-    resetEvaluations();
-    final boolean forward = t > t0;
+    final boolean forward = t > equations.getTime();
 
     // create some internal working arrays
-    final int totalDim = equations.getDimension();
-    final int mainDim  = equations.getMainSetDimension();
-    final double[] y0  = new double[totalDim];
-    final double[] y   = new double[totalDim];
-    System.arraycopy(z0, 0, y0, 0, mainDim);
-    System.arraycopy(equations.getCurrentAdditionalStates(), 0, y0, mainDim, totalDim - mainDim);
+    final double[] y0  = equations.getCompleteState();
+    final double[] y = y0.clone();
     final int stages = c.length + 1;
-    if (y != y0) {
-      System.arraycopy(y0, 0, y, 0, totalDim);
-    }
-    final double[][] yDotK = new double[stages][totalDim];
-    final double[] yTmp    = new double[totalDim];
-    final double[] yDotTmp = new double[totalDim];
+    final double[][] yDotK = new double[stages][y.length];
+    final double[] yTmp    = y0.clone();
+    final double[] yDotTmp = new double[y.length];
 
     // set up an interpolator sharing the integrator arrays
     final RungeKuttaStepInterpolator interpolator = (RungeKuttaStepInterpolator) prototype.copy();
-    interpolator.reinitialize(this, yTmp, yDotK, forward);
-    interpolator.storeTime(t0);
+    interpolator.reinitialize(this, yTmp, yDotK, forward,
+                              equations.getPrimaryMapper(), equations.getSecondaryMappers());
+    interpolator.storeTime(equations.getTime());
 
     // set up integration control objects
-    stepStart         = t0;
+    stepStart         = equations.getTime();
     double  hNew      = 0;
     boolean firstTime = true;
-    for (StepHandler handler : stepHandlers) {
-        handler.reset();
-    }
-    setStateInitialized(false);
+    initIntegration(equations.getTime(), y0, t);
 
     // main integration loop
     isLastStep = false;
@@ -260,6 +247,15 @@ public abstract class EmbeddedRungeKuttaIntegrator
         }
 
         stepSize = hNew;
+        if (forward) {
+            if (stepStart + stepSize >= t) {
+                stepSize = t - stepStart;
+            }
+        } else {
+            if (stepStart + stepSize <= t) {
+                stepSize = t - stepStart;
+            }
+        }
 
         // next stages
         for (int k = 1; k < stages; ++k) {
@@ -302,6 +298,7 @@ public abstract class EmbeddedRungeKuttaIntegrator
       System.arraycopy(yTmp, 0, y, 0, y0.length);
       System.arraycopy(yDotK[stages - 1], 0, yDotTmp, 0, y0.length);
       stepStart = acceptStep(interpolator, y, yDotTmp, t);
+      System.arraycopy(y, 0, yTmp, 0, y.length);
 
       if (!isLastStep) {
 
@@ -331,13 +328,11 @@ public abstract class EmbeddedRungeKuttaIntegrator
 
     } while (!isLastStep);
 
-    // dispatch result between main and additional states
-    System.arraycopy(y, 0, z, 0, z.length);
-    equations.setCurrentAdditionalState(y);
+    // dispatch results
+    equations.setTime(stepStart);
+    equations.setCompleteState(y);
 
-    final double stopTime = stepStart;
     resetInternalState();
-    return stopTime;
 
   }
 

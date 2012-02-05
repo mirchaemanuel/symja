@@ -18,7 +18,7 @@ package org.apache.commons.math.stat.descriptive.moment;
 
 import java.io.Serializable;
 
-import org.apache.commons.math.MathRuntimeException;
+import org.apache.commons.math.exception.MathIllegalStateException;
 import org.apache.commons.math.exception.NullArgumentException;
 import org.apache.commons.math.exception.util.LocalizedFormats;
 import org.apache.commons.math.stat.descriptive.AbstractStorelessUnivariateStatistic;
@@ -49,7 +49,7 @@ import org.apache.commons.math.util.MathUtils;
  * <code>clear()</code> method, it must be synchronized externally.</p>
  *
  *
- * @version $Id: GeometricMean.java 1132432 2011-06-05 14:59:29Z luc $
+ * @version $Id: GeometricMean.java 1178202 2011-10-02 16:20:04Z psteitz $
  */
 public class GeometricMean extends AbstractStorelessUnivariateStatistic implements Serializable {
 
@@ -201,7 +201,7 @@ public class GeometricMean extends AbstractStorelessUnivariateStatistic implemen
      */
     private void checkEmpty() {
         if (getN() > 0) {
-            throw MathRuntimeException.createIllegalStateException(
+            throw new MathIllegalStateException(
                     LocalizedFormats.VALUES_ADDED_BEFORE_CONFIGURING_STATISTIC,
                     getN());
         }

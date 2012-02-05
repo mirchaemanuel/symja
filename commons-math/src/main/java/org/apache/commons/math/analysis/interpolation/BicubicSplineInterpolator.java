@@ -16,20 +16,20 @@
  */
 package org.apache.commons.math.analysis.interpolation;
 
-import org.apache.commons.math.analysis.UnivariateRealFunction;
+import org.apache.commons.math.analysis.UnivariateFunction;
 import org.apache.commons.math.analysis.polynomials.PolynomialSplineFunction;
 import org.apache.commons.math.exception.DimensionMismatchException;
 import org.apache.commons.math.exception.NoDataException;
-import org.apache.commons.math.util.MathUtils;
+import org.apache.commons.math.util.MathArrays;
 
 /**
  * Generates a bicubic interpolating function.
  *
- * @version $Id: BicubicSplineInterpolator.java 1131229 2011-06-03 20:49:25Z luc $
+ * @version $Id: BicubicSplineInterpolator.java 1238279 2012-01-31 08:56:19Z erans $
  * @since 2.2
  */
 public class BicubicSplineInterpolator
-    implements BivariateRealGridInterpolator {
+    implements BivariateGridInterpolator {
     /**
      * {@inheritDoc}
      */
@@ -43,8 +43,8 @@ public class BicubicSplineInterpolator
             throw new DimensionMismatchException(xval.length, fval.length);
         }
 
-        MathUtils.checkOrder(xval);
-        MathUtils.checkOrder(yval);
+        MathArrays.checkOrder(xval);
+        MathArrays.checkOrder(yval);
 
         final int xLen = xval.length;
         final int yLen = yval.length;
@@ -83,7 +83,7 @@ public class BicubicSplineInterpolator
         // Partial derivatives with respect to x at the grid knots
         final double[][] dFdX = new double[xLen][yLen];
         for (int j = 0; j < yLen; j++) {
-            final UnivariateRealFunction f = ySplineX[j].derivative();
+            final UnivariateFunction f = ySplineX[j].derivative();
             for (int i = 0; i < xLen; i++) {
                 dFdX[i][j] = f.value(xval[i]);
             }
@@ -92,7 +92,7 @@ public class BicubicSplineInterpolator
         // Partial derivatives with respect to y at the grid knots
         final double[][] dFdY = new double[xLen][yLen];
         for (int i = 0; i < xLen; i++) {
-            final UnivariateRealFunction f = xSplineY[i].derivative();
+            final UnivariateFunction f = xSplineY[i].derivative();
             for (int j = 0; j < yLen; j++) {
                 dFdY[i][j] = f.value(yval[j]);
             }

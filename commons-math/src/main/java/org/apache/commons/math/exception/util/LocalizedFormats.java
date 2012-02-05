@@ -34,7 +34,7 @@ import java.util.ResourceBundle;
  * translation is missing.
  * </p>
  * @since 2.2
- * @version $Id: LocalizedFormats.java 1175409 2011-09-25 15:04:39Z luc $
+ * @version $Id: LocalizedFormats.java 1235197 2012-01-24 10:17:13Z tn $
  */
 public enum LocalizedFormats implements Localizable {
 
@@ -56,7 +56,6 @@ public enum LocalizedFormats implements Localizable {
     CANNOT_COMPUTE_BETA_DENSITY_AT_0_FOR_SOME_ALPHA("cannot compute beta density at 0 when alpha = {0,number}"),
     CANNOT_COMPUTE_BETA_DENSITY_AT_1_FOR_SOME_BETA("cannot compute beta density at 1 when beta = %.3g"),
     CANNOT_COMPUTE_NTH_ROOT_FOR_NEGATIVE_N("cannot compute nth root for null or negative n: {0}"),
-    CANNOT_CONVERT_OBJECT_TO_FRACTION("cannot convert given object to a fraction number: {0}"),
     CANNOT_DISCARD_NEGATIVE_NUMBER_OF_ELEMENTS("cannot discard a negative number of elements ({0})"),
     CANNOT_FORMAT_INSTANCE_AS_3D_VECTOR("cannot format a {0} instance as a 3D vector"),
     CANNOT_FORMAT_INSTANCE_AS_COMPLEX("cannot format a {0} instance as a complex number"),
@@ -79,8 +78,10 @@ public enum LocalizedFormats implements Localizable {
     CONTRACTION_CRITERIA_SMALLER_THAN_ONE("contraction criteria smaller than one ({0}).  This would lead to a never ending loop of expansion and contraction as an internal storage array length equal to the number of elements would satisfy the contraction criteria."),
     CONVERGENCE_FAILED("convergence failed"), /* keep */
     CROSSING_BOUNDARY_LOOPS("some outline boundary loops cross each other"),
+    CROSSOVER_RATE("crossover rate ({0})"),
     CUMULATIVE_PROBABILITY_RETURNED_NAN("Cumulative probability function returned NaN for argument {0} p = {1}"),
     DIFFERENT_ROWS_LENGTHS("some rows have length {0} while others have length {1}"),
+    DIFFERENT_ORIG_AND_PERMUTED_DATA("original and permuted data must contain the same elements"),
     DIGEST_NOT_INITIALIZED("digest not initialized"),
     DIMENSIONS_MISMATCH_2x2("got {0}x{1} but expected {2}x{3}"), /* keep */
     DIMENSIONS_MISMATCH_SIMPLE("{0} != {1}"), /* keep */
@@ -88,6 +89,7 @@ public enum LocalizedFormats implements Localizable {
     DISCRETE_CUMULATIVE_PROBABILITY_RETURNED_NAN("Discrete cumulative probability function returned NaN for argument {0}"),
     DISTRIBUTION_NOT_LOADED("distribution not loaded"),
     DUPLICATED_ABSCISSA("Abscissa {0} is duplicated at both indices {1} and {2}"),
+    ELITISM_RATE("elitism rate ({0})"),
     EMPTY_CLUSTER_IN_K_MEANS("empty cluster in k-means"),
     EMPTY_POLYNOMIALS_COEFFICIENTS_ARRAY("empty polynomials coefficients array"), /* keep */
     EMPTY_SELECTED_COLUMN_INDEX_ARRAY("empty selected column index array"),
@@ -111,11 +113,13 @@ public enum LocalizedFormats implements Localizable {
     GCD_OVERFLOW_64_BITS("overflow: gcd({0}, {1}) is 2^63"),
     HOLE_BETWEEN_MODELS_TIME_RANGES("{0} wide hole between models time ranges"),
     IDENTICAL_ABSCISSAS_DIVISION_BY_ZERO("identical abscissas x[{0}] == x[{1}] == {2} cause division by zero"),
+    ILL_CONDITIONED_OPERATOR("condition number {1} is too high "),
     INDEX_LARGER_THAN_MAX("the index specified: {0} is larger than the current maximal index {1}"),
     INDEX_NOT_POSITIVE("index ({0}) is not positive"),
     INDEX_OUT_OF_RANGE("index {0} out of allowed range [{1}, {2}]"),
     INDEX("index ({0})"), /* keep */
     NOT_FINITE_NUMBER("{0} is not a finite number"), /* keep */
+    INFINITE_BOUND("interval bounds must be finite"),
     ARRAY_ELEMENT("value {0} at index {1}"), /* keep */
     INFINITE_ARRAY_ELEMENT("Array contains an infinite element, {0} at index {1}"),
     INFINITE_VALUE_CONVERSION("cannot convert infinite value"),
@@ -132,7 +136,9 @@ public enum LocalizedFormats implements Localizable {
     INTEGRATION_METHOD_NEEDS_AT_LEAST_TWO_PREVIOUS_POINTS("{0} method needs at least two previous points"),
     INTERNAL_ERROR("internal error, please fill a bug report at {0}"),
     INVALID_BINARY_DIGIT("invalid binary digit: {0}"),
+    INVALID_BINARY_CHROMOSOME("binary mutation works on BinaryChromosome only"),
     INVALID_BRACKETING_PARAMETERS("invalid bracketing parameters:  lower bound={0},  initial={1}, upper bound={2}"),
+    INVALID_FIXED_LENGTH_CHROMOSOME("one-point crossover only works with fixed-length chromosomes"),
     INVALID_INTERVAL_INITIAL_VALUE_PARAMETERS("invalid interval, initial value parameters:  lower={0}, initial={1}, upper={2}"),
     INVALID_ITERATIONS_LIMITS("invalid iteration limits: min={0}, max={1}"),
     INVALID_MAX_ITERATIONS("bad value for maximum iterations number: {0}"),
@@ -153,6 +159,7 @@ public enum LocalizedFormats implements Localizable {
     MAX_ITERATIONS_EXCEEDED("maximal number of iterations ({0}) exceeded"),
     MINIMAL_STEPSIZE_REACHED_DURING_INTEGRATION("minimal step size ({1,number,0.00E00}) reached, integration needs {0,number,0.00E00}"),
     MISMATCHED_LOESS_ABSCISSA_ORDINATE_ARRAYS("Loess expects the abscissa and ordinate arrays to be of the same size, but got {0} abscissae and {1} ordinatae"),
+    MUTATION_RATE("mutation rate ({0})"),
     NAN_ELEMENT_AT_INDEX("element {0} is NaN"),
     NAN_VALUE_CONVERSION("cannot convert NaN value"),
     NEGATIVE_BRIGHTNESS_EXPONENT("brightness exponent should be positive or null, but got {0}"),
@@ -189,9 +196,9 @@ public enum LocalizedFormats implements Localizable {
     NOT_POSITIVE_COLUMNDIMENSION("invalid column dimension: {0} (must be positive)"),
     NOT_POSITIVE_DEFINITE_MATRIX("not positive definite matrix"), /* keep */
     NON_POSITIVE_DEFINITE_MATRIX("not positive definite matrix: diagonal element at ({1},{1}) is smaller than {2} ({0})"),
-    NON_POSITIVE_DEFINITE_LINEAR_OPERATOR("non positive definite linear operator"), /* keep */
-    NON_SELF_ADJOINT_LINEAR_OPERATOR("non self-adjoint linear operator"), /* keep */
-    NON_SQUARE_LINEAR_OPERATOR("non square ({0}x{1}) linear operator"), /* keep */
+    NON_POSITIVE_DEFINITE_OPERATOR("non positive definite linear operator"), /* keep */
+    NON_SELF_ADJOINT_OPERATOR("non self-adjoint linear operator"), /* keep */
+    NON_SQUARE_OPERATOR("non square ({0}x{1}) linear operator"), /* keep */
     DEGREES_OF_FREEDOM("degrees of freedom ({0})"), /* keep */
     NOT_POSITIVE_DEGREES_OF_FREEDOM("degrees of freedom must be positive ({0})"),
     NOT_POSITIVE_ELEMENT_AT_INDEX("element {0} is not positive: {1}"),
@@ -240,6 +247,7 @@ public enum LocalizedFormats implements Localizable {
     NO_REGRESSORS("Regression model must include at least one regressor"),
     NO_RESULT_AVAILABLE("no result available"),
     NO_SUCH_MATRIX_ENTRY("no entry at indices ({0}, {1}) in a {2}x{3} matrix"),
+    NAN_NOT_ALLOWED("NaN is not allowed"),
     NULL_NOT_ALLOWED("null is not allowed"), /* keep */
     ARRAY_ZERO_LENGTH_OR_NULL_NOTALLOWED("A null or zero length array not allowed"),
     COVARIANCE_MATRIX("covariance matrix"), /* keep */
@@ -271,7 +279,10 @@ public enum LocalizedFormats implements Localizable {
     OUT_OF_RANGE_ROOT_OF_UNITY_INDEX("out of range root of unity index {0} (must be in [{1};{2}])"),
     OUT_OF_RANGE("out of range"), /* keep */
     OUT_OF_RANGE_SIMPLE("{0} out of [{1}, {2}] range"), /* keep */
+    OUT_OF_RANGE_LEFT("{0} out of ({1}, {2}] range"),
+    OUT_OF_RANGE_RIGHT("{0} out of [{1}, {2}) range"),
     OUTLINE_BOUNDARY_LOOP_OPEN("an outline boundary loop is open"),
+    OVERFLOW("overflow"), /* keep */
     OVERFLOW_IN_FRACTION("overflow in fraction {0}/{1}, cannot negate"),
     OVERFLOW_IN_ADDITION("overflow in addition: {0} + {1}"),
     OVERFLOW_IN_SUBTRACTION("overflow in subtraction: {0} - {1}"),
@@ -295,8 +306,10 @@ public enum LocalizedFormats implements Localizable {
     SIMPLEX_NEED_ONE_POINT("simplex must contain at least one point"),
     SIMPLE_MESSAGE("{0}"),
     SINGULAR_MATRIX("matrix is singular"), /* keep */
+    SINGULAR_OPERATOR("operator is singular"),
     SUBARRAY_ENDS_AFTER_ARRAY_END("subarray ends after array end"),
     TOO_LARGE_CUTOFF_SINGULAR_VALUE("cutoff singular value is {0}, should be at most {1}"),
+    TOO_LARGE_TOURNAMENT_ARITY("tournament arity ({0}) cannot be bigger than population size ({1})"),
     TOO_MANY_ELEMENTS_TO_DISCARD_FROM_ARRAY("cannot discard {0} elements from a {1} elements array"),
     TOO_MUCH_CANCELLATION("too much cancellation in a denominator"),
     TOO_MANY_REGRESSORS("too many regressors ({0}) specified, only {1} in the model"),
@@ -315,14 +328,12 @@ public enum LocalizedFormats implements Localizable {
     UNABLE_TO_SOLVE_SINGULAR_PROBLEM("unable to solve: singular problem"),
     UNBOUNDED_SOLUTION("unbounded solution"),
     UNKNOWN_MODE("unknown mode {0}, known modes: {1} ({2}), {3} ({4}), {5} ({6}), {7} ({8}), {9} ({10}) and {11} ({12})"),
-    UNKNOWN_ADDITIONAL_EQUATION("unknown additional equation"),
     UNKNOWN_PARAMETER("unknown parameter {0}"),
-    UNMATCHED_ODE_IN_EXTENDED_SET("ode does not match the main ode set in the extended set"),
-    CANNOT_PARSE_AS_TYPE("string {0} unparseable (from position {1}) as an object of type {2}"), /* keep */
-    CANNOT_PARSE("string {0} unparseable (from position {1})"), /* keep */
+    UNMATCHED_ODE_IN_EXPANDED_SET("ode does not match the main ode set in the extended set"),
+    CANNOT_PARSE_AS_TYPE("string \"{0}\" unparseable (from position {1}) as an object of type {2}"), /* keep */
+    CANNOT_PARSE("string \"{0}\" unparseable (from position {1})"), /* keep */
     UNPARSEABLE_3D_VECTOR("unparseable 3D vector: \"{0}\""),
     UNPARSEABLE_COMPLEX_NUMBER("unparseable complex number: \"{0}\""),
-    UNPARSEABLE_FRACTION_NUMBER("unparseable fraction number: \"{0}\""),
     UNPARSEABLE_REAL_VECTOR("unparseable real vector: \"{0}\""),
     UNSUPPORTED_EXPANSION_MODE("unsupported expansion mode {0}, supported modes are {1} ({2}) and {3} ({4})"),
     UNSUPPORTED_OPERATION("unsupported operation"), /* keep */

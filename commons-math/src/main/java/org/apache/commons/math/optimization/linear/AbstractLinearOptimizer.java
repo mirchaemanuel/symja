@@ -19,16 +19,16 @@ package org.apache.commons.math.optimization.linear;
 
 import java.util.Collection;
 
+import org.apache.commons.math.exception.MathIllegalStateException;
 import org.apache.commons.math.exception.MaxCountExceededException;
 import org.apache.commons.math.optimization.GoalType;
-import org.apache.commons.math.optimization.OptimizationException;
 import org.apache.commons.math.optimization.RealPointValuePair;
 
 /**
  * Base class for implementing linear optimizers.
  * <p>This base class handles the boilerplate methods associated to thresholds
  * settings and iterations counters.</p>
- * @version $Id: AbstractLinearOptimizer.java 1131229 2011-06-03 20:49:25Z luc $
+ * @version $Id: AbstractLinearOptimizer.java 1178006 2011-10-01 14:52:21Z luc $
  * @since 2.0
  *
  */
@@ -90,13 +90,13 @@ public abstract class AbstractLinearOptimizer implements LinearOptimizer {
     }
 
     /** Increment the iterations counter by 1.
-     * @exception OptimizationException if the maximal number
+     * @exception MaxCountExceededException if the maximal number
      * of iterations is exceeded
      */
     protected void incrementIterationsCounter()
-        throws OptimizationException {
+        throws MaxCountExceededException {
         if (++iterations > maxIterations) {
-            throw new OptimizationException(new MaxCountExceededException(maxIterations));
+            throw new MaxCountExceededException(maxIterations);
         }
     }
 
@@ -104,7 +104,7 @@ public abstract class AbstractLinearOptimizer implements LinearOptimizer {
     public RealPointValuePair optimize(final LinearObjectiveFunction f,
                                        final Collection<LinearConstraint> constraints,
                                        final GoalType goalType, final boolean restrictToNonNegative)
-         throws OptimizationException {
+         throws MathIllegalStateException {
 
         // store linear problem characteristics
         this.function          = f;
@@ -121,10 +121,10 @@ public abstract class AbstractLinearOptimizer implements LinearOptimizer {
 
     /** Perform the bulk of optimization algorithm.
      * @return the point/value pair giving the optimal value for objective function
-     * @exception OptimizationException if no solution fulfilling the constraints
+     * @exception MathIllegalStateException if no solution fulfilling the constraints
      * can be found in the allowed number of iterations
      */
     protected abstract RealPointValuePair doOptimize()
-        throws OptimizationException;
+        throws MathIllegalStateException;
 
 }

@@ -17,13 +17,13 @@
 
 package org.apache.commons.math.optimization;
 
-import org.apache.commons.math.analysis.MultivariateRealFunction;
-import org.apache.commons.math.analysis.MultivariateVectorialFunction;
+import org.apache.commons.math.analysis.MultivariateFunction;
+import org.apache.commons.math.analysis.MultivariateVectorFunction;
 import org.apache.commons.math.exception.DimensionMismatchException;
 import org.apache.commons.math.linear.RealMatrix;
 
-/** This class converts {@link MultivariateVectorialFunction vectorial
- * objective functions} to {@link MultivariateRealFunction scalar objective functions}
+/** This class converts {@link MultivariateVectorFunction vectorial
+ * objective functions} to {@link MultivariateFunction scalar objective functions}
  * when the goal is to minimize them.
  * <p>
  * This class is mostly used when the vectorial objective function represents
@@ -37,7 +37,7 @@ import org.apache.commons.math.linear.RealMatrix;
  * This class computes a possibly weighted squared sum of the residuals, which is
  * a scalar value. The residuals are the difference between the theoretical model
  * (i.e. the output of the vectorial objective function) and the observations. The
- * class implements the {@link MultivariateRealFunction} interface and can therefore be
+ * class implements the {@link MultivariateFunction} interface and can therefore be
  * minimized by any optimizer supporting scalar objectives functions.This is one way
  * to perform a least square estimation. There are other ways to do this without using
  * this converter, as some optimization algorithms directly support vectorial objective
@@ -47,16 +47,16 @@ import org.apache.commons.math.linear.RealMatrix;
  * This class support combination of residuals with or without weights and correlations.
  * </p>
   *
- * @see MultivariateRealFunction
- * @see MultivariateVectorialFunction
- * @version $Id: LeastSquaresConverter.java 1166311 2011-09-07 18:48:06Z luc $
+ * @see MultivariateFunction
+ * @see MultivariateVectorFunction
+ * @version $Id: LeastSquaresConverter.java 1207671 2011-11-28 22:41:41Z erans $
  * @since 2.0
  */
 
-public class LeastSquaresConverter implements MultivariateRealFunction {
+public class LeastSquaresConverter implements MultivariateFunction {
 
     /** Underlying vectorial function. */
-    private final MultivariateVectorialFunction function;
+    private final MultivariateVectorFunction function;
 
     /** Observations to be compared to objective function to compute residuals. */
     private final double[] observations;
@@ -71,7 +71,7 @@ public class LeastSquaresConverter implements MultivariateRealFunction {
      * @param function vectorial residuals function to wrap
      * @param observations observations to be compared to objective function to compute residuals
      */
-    public LeastSquaresConverter(final MultivariateVectorialFunction function,
+    public LeastSquaresConverter(final MultivariateVectorFunction function,
                                  final double[] observations) {
         this.function     = function;
         this.observations = observations.clone();
@@ -107,7 +107,7 @@ public class LeastSquaresConverter implements MultivariateRealFunction {
      * vector dimensions do not match (objective function dimension is checked only when
      * the {@link #value(double[])} method is called)
      */
-    public LeastSquaresConverter(final MultivariateVectorialFunction function,
+    public LeastSquaresConverter(final MultivariateVectorFunction function,
                                  final double[] observations, final double[] weights) {
         if (observations.length != weights.length) {
             throw new DimensionMismatchException(observations.length, weights.length);
@@ -137,7 +137,7 @@ public class LeastSquaresConverter implements MultivariateRealFunction {
      * matrix dimensions do not match (objective function dimension is checked only when
      * the {@link #value(double[])} method is called)
      */
-    public LeastSquaresConverter(final MultivariateVectorialFunction function,
+    public LeastSquaresConverter(final MultivariateVectorFunction function,
                                  final double[] observations, final RealMatrix scale) {
         if (observations.length != scale.getColumnDimension()) {
             throw new DimensionMismatchException(observations.length, scale.getColumnDimension());

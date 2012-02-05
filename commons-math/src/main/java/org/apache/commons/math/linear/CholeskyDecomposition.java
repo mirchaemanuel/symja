@@ -42,7 +42,7 @@ import org.apache.commons.math.util.FastMath;
  *
  * @see <a href="http://mathworld.wolfram.com/CholeskyDecomposition.html">MathWorld</a>
  * @see <a href="http://en.wikipedia.org/wiki/Cholesky_decomposition">Wikipedia</a>
- * @version $Id: CholeskyDecomposition.java 1173788 2011-09-21 18:45:42Z celestin $
+ * @version $Id: CholeskyDecomposition.java 1178173 2011-10-02 10:18:14Z luc $
  * @since 2.0 (changed to concrete class in 3.0)
  */
 public class CholeskyDecomposition {
@@ -67,7 +67,7 @@ public class CholeskyDecomposition {
      * Calculates the Cholesky decomposition of the given matrix.
      * <p>
      * Calling this constructor is equivalent to call {@link
-     * #CholeskyDecompositionImpl(RealMatrix, double, double)} with the
+     * #CholeskyDecomposition(RealMatrix, double, double)} with the
      * thresholds set to the default values {@link
      * #DEFAULT_RELATIVE_SYMMETRY_THRESHOLD} and {@link
      * #DEFAULT_ABSOLUTE_POSITIVITY_THRESHOLD}
@@ -77,7 +77,7 @@ public class CholeskyDecomposition {
      * @throws NonSymmetricMatrixException if the matrix is not symmetric.
      * @throws NonPositiveDefiniteMatrixException if the matrix is not
      * strictly positive definite.
-     * @see #CholeskyDecompositionImpl(RealMatrix, double, double)
+     * @see #CholeskyDecomposition(RealMatrix, double, double)
      * @see #DEFAULT_RELATIVE_SYMMETRY_THRESHOLD
      * @see #DEFAULT_ABSOLUTE_POSITIVITY_THRESHOLD
      */
@@ -97,7 +97,7 @@ public class CholeskyDecomposition {
      * @throws NonSymmetricMatrixException if the matrix is not symmetric.
      * @throws NonPositiveDefiniteMatrixException if the matrix is not
      * strictly positive definite.
-     * @see #CholeskyDecompositionImpl(RealMatrix)
+     * @see #CholeskyDecomposition(RealMatrix)
      * @see #DEFAULT_RELATIVE_SYMMETRY_THRESHOLD
      * @see #DEFAULT_ABSOLUTE_POSITIVITY_THRESHOLD
      */

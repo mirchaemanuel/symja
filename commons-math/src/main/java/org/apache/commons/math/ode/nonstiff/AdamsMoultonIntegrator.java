@@ -23,9 +23,8 @@ import org.apache.commons.math.exception.MathIllegalArgumentException;
 import org.apache.commons.math.exception.MathIllegalStateException;
 import org.apache.commons.math.linear.Array2DRowRealMatrix;
 import org.apache.commons.math.linear.RealMatrixPreservingVisitor;
-import org.apache.commons.math.ode.ExpandableFirstOrderDifferentialEquations;
+import org.apache.commons.math.ode.ExpandableStatefulODE;
 import org.apache.commons.math.ode.sampling.NordsieckStepInterpolator;
-import org.apache.commons.math.ode.sampling.StepHandler;
 import org.apache.commons.math.util.FastMath;
 
 
@@ -151,7 +150,7 @@ import org.apache.commons.math.util.FastMath;
  * <p>The P<sup>-1</sup>u vector and the P<sup>-1</sup> A P matrix do not depend on the state,
  * they only depend on k and therefore are precomputed once for all.</p>
  *
- * @version $Id: AdamsMoultonIntegrator.java 1175409 2011-09-25 15:04:39Z luc $
+ * @version $Id: AdamsMoultonIntegrator.java 1207054 2011-11-28 10:20:51Z luc $
  * @since 2.0
  */
 public class AdamsMoultonIntegrator extends AdamsIntegrator {
@@ -206,43 +205,31 @@ public class AdamsMoultonIntegrator extends AdamsIntegrator {
 
     /** {@inheritDoc} */
     @Override
-    public double integrate(final ExpandableFirstOrderDifferentialEquations equations,
-                            final double t0, final double[] z0,
-                            final double t, final double[] z)
+    public void integrate(final ExpandableStatefulODE equations,final double t)
         throws MathIllegalStateException, MathIllegalArgumentException {
 
-        sanityChecks(equations, t0, z0, t, z);
+        sanityChecks(equations, t);
         setEquations(equations);
-        resetEvaluations();
-        final boolean forward = t > t0;
+        final boolean forward = t > equations.getTime();
 
         // initialize working arrays
-        final int totalDim = equations.getDimension();
-        final int mainDim  = equations.getMainSetDimension();
-        final double[] y0  = new double[totalDim];
-        final double[] y   = new double[totalDim];
-        System.arraycopy(z0, 0, y0, 0, mainDim);
-        System.arraycopy(equations.getCurrentAdditionalStates(), 0, y0, mainDim, totalDim - mainDim);
-        if (y != y0) {
-            System.arraycopy(y0, 0, y, 0, totalDim);
-        }
-        final double[] yDot = new double[totalDim];
-        final double[] yTmp = new double[totalDim];
-        final double[] predictedScaled = new double[totalDim];
+        final double[] y0   = equations.getCompleteState();
+        final double[] y    = y0.clone();
+        final double[] yDot = new double[y.length];
+        final double[] yTmp = new double[y.length];
+        final double[] predictedScaled = new double[y.length];
         Array2DRowRealMatrix nordsieckTmp = null;
 
         // set up two interpolators sharing the integrator arrays
         final NordsieckStepInterpolator interpolator = new NordsieckStepInterpolator();
-        interpolator.reinitialize(y, forward);
+        interpolator.reinitialize(y, forward,
+                                  equations.getPrimaryMapper(), equations.getSecondaryMappers());
 
         // set up integration control objects
-        for (StepHandler handler : stepHandlers) {
-            handler.reset();
-        }
-        setStateInitialized(false);
+        initIntegration(equations.getTime(), y0, t);
 
         // compute the initial Nordsieck vector using the configured starter integrator
-        start(t0, y, t);
+        start(equations.getTime(), y, t);
         interpolator.reinitialize(stepStart, stepSize, scaled, nordsieck);
         interpolator.storeTime(stepStart);
 
@@ -295,7 +282,7 @@ public class AdamsMoultonIntegrator extends AdamsIntegrator {
             updateHighOrderDerivativesPhase2(predictedScaled, correctedScaled, nordsieckTmp);
 
             // discrete events handling
-            System.arraycopy(yTmp, 0, y, 0, totalDim);
+            System.arraycopy(yTmp, 0, y, 0, y.length);
             interpolator.reinitialize(stepEnd, stepSize, correctedScaled, nordsieckTmp);
             interpolator.storeTime(stepStart);
             interpolator.shift();
@@ -335,14 +322,11 @@ public class AdamsMoultonIntegrator extends AdamsIntegrator {
 
         } while (!isLastStep);
 
-        // dispatch result between main and additional states
-        System.arraycopy(y, 0, z, 0, z.length);
-        equations.setCurrentAdditionalState(y);
+        // dispatch results
+        equations.setTime(stepStart);
+        equations.setCompleteState(y);
 
-        final double stopTime  = stepStart;
-        stepStart = Double.NaN;
-        stepSize  = Double.NaN;
-        return stopTime;
+        resetInternalState();
 
     }
 

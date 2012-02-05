@@ -18,9 +18,9 @@
 package org.apache.commons.math.optimization.general;
 
 import org.apache.commons.math.exception.MathIllegalStateException;
-import org.apache.commons.math.analysis.UnivariateRealFunction;
+import org.apache.commons.math.analysis.UnivariateFunction;
 import org.apache.commons.math.analysis.solvers.BrentSolver;
-import org.apache.commons.math.analysis.solvers.UnivariateRealSolver;
+import org.apache.commons.math.analysis.solvers.UnivariateSolver;
 import org.apache.commons.math.exception.util.LocalizedFormats;
 import org.apache.commons.math.optimization.GoalType;
 import org.apache.commons.math.optimization.RealPointValuePair;
@@ -36,7 +36,7 @@ import org.apache.commons.math.util.FastMath;
  * optional preconditioning.
  * </p>
  *
- * @version $Id: NonLinearConjugateGradientOptimizer.java 1166311 2011-09-07 18:48:06Z luc $
+ * @version $Id: NonLinearConjugateGradientOptimizer.java 1234784 2012-01-23 13:33:30Z erans $
  * @since 2.0
  *
  */
@@ -47,7 +47,7 @@ public class NonLinearConjugateGradientOptimizer
     /** Preconditioner (may be null). */
     private final Preconditioner preconditioner;
     /** solver to use in the line search (may be null). */
-    private final UnivariateRealSolver solver;
+    private final UnivariateSolver solver;
     /** Initial step used to bracket the optimum in line search. */
     private double initialStep;
     /** Current point. */
@@ -96,7 +96,7 @@ public class NonLinearConjugateGradientOptimizer
      */
     public NonLinearConjugateGradientOptimizer(final ConjugateGradientFormula updateFormula,
                                                ConvergenceChecker<RealPointValuePair> checker,
-                                               final UnivariateRealSolver lineSearchSolver) {
+                                               final UnivariateSolver lineSearchSolver) {
         this(updateFormula,
              checker,
              lineSearchSolver,
@@ -113,7 +113,7 @@ public class NonLinearConjugateGradientOptimizer
      */
     public NonLinearConjugateGradientOptimizer(final ConjugateGradientFormula updateFormula,
                                                ConvergenceChecker<RealPointValuePair> checker,
-                                               final UnivariateRealSolver lineSearchSolver,
+                                               final UnivariateSolver lineSearchSolver,
                                                final Preconditioner preconditioner) {
         super(checker);
 
@@ -144,7 +144,7 @@ public class NonLinearConjugateGradientOptimizer
     /** {@inheritDoc} */
     @Override
     protected RealPointValuePair doOptimize() {
-        final ConvergenceChecker checker = getConvergenceChecker();
+        final ConvergenceChecker<RealPointValuePair> checker = getConvergenceChecker();
         point = getStartPoint();
         final GoalType goal = getGoalType();
         final int n = point.length;
@@ -181,7 +181,7 @@ public class NonLinearConjugateGradientOptimizer
             }
 
             // Find the optimal step in the search direction.
-            final UnivariateRealFunction lsf = new LineSearchFunction(searchDirection);
+            final UnivariateFunction lsf = new LineSearchFunction(searchDirection);
             final double uB = findUpperBound(lsf, 0, initialStep);
             // XXX Last parameters is set to a value close to zero in order to
             // work around the divergence problem in the "testCircleFitting"
@@ -244,7 +244,7 @@ public class NonLinearConjugateGradientOptimizer
      * @return b such that f(a) and f(b) have opposite signs.
      * @throws MathIllegalStateException if no bracket can be found.
      */
-    private double findUpperBound(final UnivariateRealFunction f,
+    private double findUpperBound(final UnivariateFunction f,
                                   final double a, final double h) {
         final double yA = f.value(a);
         double yB = yA;
@@ -276,7 +276,7 @@ public class NonLinearConjugateGradientOptimizer
      * extremum along the search direction.
      * </p>
      */
-    private class LineSearchFunction implements UnivariateRealFunction {
+    private class LineSearchFunction implements UnivariateFunction {
         /** Search direction. */
         private final double[] searchDirection;
 

@@ -45,9 +45,9 @@ import org.apache.commons.math.util.MathUtils;
  * one of the threads invokes the <code>increment()</code> or
  * <code>clear()</code> method, it must be synchronized externally.</p>
  *
- * @version $Id: ThirdMoment.java 1132432 2011-06-05 14:59:29Z luc $
+ * @version $Id: ThirdMoment.java 1206658 2011-11-27 03:15:46Z psteitz $
  */
-public class ThirdMoment extends SecondMoment implements Serializable {
+class ThirdMoment extends SecondMoment implements Serializable {
 
     /** Serializable version identifier */
     private static final long serialVersionUID = -7818711964045118679L;

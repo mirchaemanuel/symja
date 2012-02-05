@@ -25,7 +25,7 @@ import org.apache.commons.math.geometry.partitioning.BSPTree;
 import org.apache.commons.math.geometry.partitioning.SubHyperplane;
 
 /** This class represents a 1D region: a set of intervals.
- * @version $Id: IntervalsSet.java 1131153 2011-06-03 19:23:56Z luc $
+ * @version $Id: IntervalsSet.java 1197468 2011-11-04 09:54:30Z sebb $
  * @since 3.0
  */
 public class IntervalsSet extends AbstractRegion<Euclidean1D, Euclidean1D> {
@@ -127,11 +127,13 @@ public class IntervalsSet extends AbstractRegion<Euclidean1D, Euclidean1D> {
     }
 
     /** {@inheritDoc} */
+    @Override
     public IntervalsSet buildNew(final BSPTree<Euclidean1D> tree) {
         return new IntervalsSet(tree);
     }
 
     /** {@inheritDoc} */
+    @Override
     protected void computeGeometricalProperties() {
         if (getTree(false).getCut() == null) {
             setBarycenter(Vector1D.NaN);
@@ -232,7 +234,7 @@ public class IntervalsSet extends AbstractRegion<Euclidean1D, Euclidean1D> {
             if ((checkPoint(low,  loc) == Location.INSIDE) &&
                 (checkPoint(high, loc) == Location.INSIDE)) {
                 // merge the last interval added and the first one of the high sub-tree
-                x = ((Interval) list.remove(list.size() - 1)).getLower();
+                x = list.remove(list.size() - 1).getLower();
             }
             recurseList(high, list, x, upper);
 

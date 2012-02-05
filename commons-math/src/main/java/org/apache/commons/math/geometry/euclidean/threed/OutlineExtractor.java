@@ -32,7 +32,7 @@ import org.apache.commons.math.util.FastMath;
 /** Extractor for {@link PolygonsSet polyhedrons sets} outlines.
  * <p>This class extracts the 2D outlines from {{@link PolygonsSet
  * polyhedrons sets} in a specified projection plane.</p>
- * @version $Id: OutlineExtractor.java 1157932 2011-08-15 18:20:08Z luc $
+ * @version $Id: OutlineExtractor.java 1197468 2011-11-04 09:54:30Z sebb $
  * @since 3.0
  */
 public class OutlineExtractor {
@@ -199,13 +199,13 @@ public class OutlineExtractor {
                 for (Vector2D[] loop : vertices) {
                     final boolean closed = loop[0] != null;
                     int previous         = closed ? (loop.length - 1) : 1;
-                    Vector3D previous3D  = (Vector3D) plane.toSpace(loop[previous]);
+                    Vector3D previous3D  = plane.toSpace(loop[previous]);
                     int current          = (previous + 1) % loop.length;
                     Vector2D pPoint       = new Vector2D(previous3D.dotProduct(u),
                                                          previous3D.dotProduct(v));
                     while (current < loop.length) {
 
-                        final Vector3D current3D = (Vector3D) plane.toSpace(loop[current]);
+                        final Vector3D current3D = plane.toSpace(loop[current]);
                         final Vector2D  cPoint    = new Vector2D(current3D.dotProduct(u),
                                                                  current3D.dotProduct(v));
                         final org.apache.commons.math.geometry.euclidean.twod.Line line =

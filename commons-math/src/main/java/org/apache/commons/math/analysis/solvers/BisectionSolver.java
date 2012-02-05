@@ -24,9 +24,9 @@ import org.apache.commons.math.util.FastMath;
  * <p>
  * The function should be continuous but not necessarily smooth.</p>
  *
- * @version $Id: BisectionSolver.java 1131229 2011-06-03 20:49:25Z luc $
+ * @version $Id: BisectionSolver.java 1234784 2012-01-23 13:33:30Z erans $
  */
-public class BisectionSolver extends AbstractUnivariateRealSolver {
+public class BisectionSolver extends AbstractUnivariateSolver {
     /** Default absolute accuracy. */
     private static final double DEFAULT_ABSOLUTE_ACCURACY = 1e-6;
 
@@ -69,7 +69,7 @@ public class BisectionSolver extends AbstractUnivariateRealSolver {
         double fmin;
 
         while (true) {
-            m = UnivariateRealSolverUtils.midpoint(min, max);
+            m = UnivariateSolverUtils.midpoint(min, max);
             fmin = computeObjectiveValue(min);
             fm = computeObjectiveValue(m);
 
@@ -82,7 +82,7 @@ public class BisectionSolver extends AbstractUnivariateRealSolver {
             }
 
             if (FastMath.abs(max - min) <= absoluteAccuracy) {
-                m = UnivariateRealSolverUtils.midpoint(min, max);
+                m = UnivariateSolverUtils.midpoint(min, max);
                 return m;
             }
         }

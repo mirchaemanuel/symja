@@ -16,7 +16,7 @@
  */
 package org.apache.commons.math.analysis.interpolation;
 
-import org.apache.commons.math.analysis.MultivariateRealFunction;
+import org.apache.commons.math.analysis.MultivariateFunction;
 import org.apache.commons.math.exception.NotPositiveException;
 import org.apache.commons.math.exception.NotStrictlyPositiveException;
 import org.apache.commons.math.random.UnitSphereRandomVectorGenerator;
@@ -27,10 +27,10 @@ import org.apache.commons.math.random.UnitSphereRandomVectorGenerator;
  * <a href="http://www.dudziak.com/microsphere.pdf">MS thesis</a>.
  * @since 2.1
  *
- * @version $Id: MicrosphereInterpolator.java 1131229 2011-06-03 20:49:25Z luc $
+ * @version $Id: MicrosphereInterpolator.java 1238279 2012-01-31 08:56:19Z erans $
  */
 public class MicrosphereInterpolator
-    implements MultivariateRealInterpolator {
+    implements MultivariateInterpolator {
     /**
      * Default number of surface elements that composes the microsphere.
      */
@@ -83,7 +83,7 @@ public class MicrosphereInterpolator
     /**
      * {@inheritDoc}
      */
-    public MultivariateRealFunction interpolate(final double[][] xval,
+    public MultivariateFunction interpolate(final double[][] xval,
                                                 final double[] yval) {
         final UnitSphereRandomVectorGenerator rand
             = new UnitSphereRandomVectorGenerator(xval[0].length);

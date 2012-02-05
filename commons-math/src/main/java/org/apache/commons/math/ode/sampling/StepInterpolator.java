@@ -40,7 +40,7 @@ import java.io.Externalizable;
  * @see org.apache.commons.math.ode.FirstOrderIntegrator
  * @see org.apache.commons.math.ode.SecondOrderIntegrator
  * @see StepHandler
- * @version $Id: StepInterpolator.java 1165792 2011-09-06 19:17:52Z luc $
+ * @version $Id: StepInterpolator.java 1178076 2011-10-01 19:41:34Z luc $
  * @since 1.2
  */
 
@@ -100,6 +100,40 @@ public interface StepInterpolator extends Externalizable {
    * @since 2.0
    */
   double[] getInterpolatedDerivatives();
+
+  /** Get the interpolated secondary state corresponding to the secondary equations.
+   * <p>The returned vector is a reference to a reused array, so
+   * it should not be modified and it should be copied if it needs
+   * to be preserved across several calls.</p>
+   * @param index index of the secondary set, as returned by {@link
+   * org.apache.commons.math.ode.ExpandableStatefulODE#addSecondaryEquations(
+   * org.apache.commons.math.ode.SecondaryEquations)
+   * ExpandableStatefulODE.addSecondaryEquations(SecondaryEquations)}
+   * @return interpolated secondary state at the current interpolation date
+   * @see #getInterpolatedState()
+   * @see #getInterpolatedDerivatives()
+   * @see #getInterpolatedSecondaryDerivatives(int)
+   * @see #setInterpolatedTime(double)
+   * @since 3.0
+   */
+  double[] getInterpolatedSecondaryState(int index);
+
+  /** Get the interpolated secondary derivatives corresponding to the secondary equations.
+   * <p>The returned vector is a reference to a reused array, so
+   * it should not be modified and it should be copied if it needs
+   * to be preserved across several calls.</p>
+   * @param index index of the secondary set, as returned by {@link
+   * org.apache.commons.math.ode.ExpandableStatefulODE#addSecondaryEquations(
+   * org.apache.commons.math.ode.SecondaryEquations)
+   * ExpandableStatefulODE.addSecondaryEquations(SecondaryEquations)}
+   * @return interpolated secondary derivatives at the current interpolation date
+   * @see #getInterpolatedState()
+   * @see #getInterpolatedDerivatives()
+   * @see #getInterpolatedSecondaryState(int)
+   * @see #setInterpolatedTime(double)
+   * @since 3.0
+   */
+  double[] getInterpolatedSecondaryDerivatives(int index);
 
   /** Check if the natural integration direction is forward.
    * <p>This method provides the integration direction as specified by

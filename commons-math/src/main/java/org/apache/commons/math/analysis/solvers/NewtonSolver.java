@@ -17,7 +17,7 @@
 
 package org.apache.commons.math.analysis.solvers;
 
-import org.apache.commons.math.analysis.DifferentiableUnivariateRealFunction;
+import org.apache.commons.math.analysis.DifferentiableUnivariateFunction;
 import org.apache.commons.math.util.FastMath;
 
 /**
@@ -26,9 +26,9 @@ import org.apache.commons.math.util.FastMath;
  * <p>
  * The function should be continuous but not necessarily smooth.</p>
  *
- * @version $Id: NewtonSolver.java 1143729 2011-07-07 09:36:54Z erans $
+ * @version $Id: NewtonSolver.java 1234784 2012-01-23 13:33:30Z erans $
  */
-public class NewtonSolver extends AbstractDifferentiableUnivariateRealSolver {
+public class NewtonSolver extends AbstractDifferentiableUnivariateSolver {
     /** Default absolute accuracy. */
     private static final double DEFAULT_ABSOLUTE_ACCURACY = 1e-6;
 
@@ -61,9 +61,9 @@ public class NewtonSolver extends AbstractDifferentiableUnivariateRealSolver {
      * if {@code min >= max}.
      */
     @Override
-    public double solve(int maxEval, final DifferentiableUnivariateRealFunction f,
+    public double solve(int maxEval, final DifferentiableUnivariateFunction f,
                         final double min, final double max) {
-        return super.solve(maxEval, f, UnivariateRealSolverUtils.midpoint(min, max));
+        return super.solve(maxEval, f, UnivariateSolverUtils.midpoint(min, max));
     }
 
     /**

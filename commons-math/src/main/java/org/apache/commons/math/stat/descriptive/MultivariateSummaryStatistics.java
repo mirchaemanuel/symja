@@ -19,9 +19,9 @@ package org.apache.commons.math.stat.descriptive;
 import java.io.Serializable;
 import java.util.Arrays;
 
-import org.apache.commons.math.MathRuntimeException;
 import org.apache.commons.math.exception.util.LocalizedFormats;
 import org.apache.commons.math.exception.DimensionMismatchException;
+import org.apache.commons.math.exception.MathIllegalStateException;
 import org.apache.commons.math.linear.RealMatrix;
 import org.apache.commons.math.stat.descriptive.moment.GeometricMean;
 import org.apache.commons.math.stat.descriptive.moment.Mean;
@@ -32,6 +32,8 @@ import org.apache.commons.math.stat.descriptive.summary.Sum;
 import org.apache.commons.math.stat.descriptive.summary.SumOfLogs;
 import org.apache.commons.math.stat.descriptive.summary.SumOfSquares;
 import org.apache.commons.math.util.MathUtils;
+import org.apache.commons.math.util.MathArrays;
+import org.apache.commons.math.util.Precision;
 import org.apache.commons.math.util.FastMath;
 
 /**
@@ -65,7 +67,7 @@ import org.apache.commons.math.util.FastMath;
  * threads is required.</p>
  *
  * @since 1.2
- * @version $Id: MultivariateSummaryStatistics.java 1131229 2011-06-03 20:49:25Z luc $
+ * @version $Id: MultivariateSummaryStatistics.java 1240291 2012-02-03 18:57:35Z tn $
  */
 public class MultivariateSummaryStatistics
     implements StatisticalMultivariateSummary, Serializable {
@@ -372,14 +374,14 @@ public class MultivariateSummaryStatistics
             return false;
         }
         MultivariateSummaryStatistics stat = (MultivariateSummaryStatistics) object;
-        return MathUtils.equalsIncludingNaN(stat.getGeometricMean(), getGeometricMean()) &&
-               MathUtils.equalsIncludingNaN(stat.getMax(),           getMax())           &&
-               MathUtils.equalsIncludingNaN(stat.getMean(),          getMean())          &&
-               MathUtils.equalsIncludingNaN(stat.getMin(),           getMin())           &&
-               MathUtils.equalsIncludingNaN(stat.getN(),             getN())             &&
-               MathUtils.equalsIncludingNaN(stat.getSum(),           getSum())           &&
-               MathUtils.equalsIncludingNaN(stat.getSumSq(),         getSumSq())         &&
-               MathUtils.equalsIncludingNaN(stat.getSumLog(),        getSumLog())        &&
+        return MathArrays.equalsIncludingNaN(stat.getGeometricMean(), getGeometricMean()) &&
+               MathArrays.equalsIncludingNaN(stat.getMax(),           getMax())           &&
+               MathArrays.equalsIncludingNaN(stat.getMean(),          getMean())          &&
+               MathArrays.equalsIncludingNaN(stat.getMin(),           getMin())           &&
+               Precision.equalsIncludingNaN(stat.getN(),             getN())             &&
+               MathArrays.equalsIncludingNaN(stat.getSum(),           getSum())           &&
+               MathArrays.equalsIncludingNaN(stat.getSumSq(),         getSumSq())         &&
+               MathArrays.equalsIncludingNaN(stat.getSumLog(),        getSumLog())        &&
                stat.getCovariance().equals( getCovariance());
     }
 
@@ -603,13 +605,13 @@ public class MultivariateSummaryStatistics
     }
 
     /**
-     * Throws IllegalStateException if n > 0.
+     * Throws MathIllegalStateException if the statistic is not empty.
+     * @throws MathIllegalStateException if n > 0.
      */
     private void checkEmpty() {
         if (n > 0) {
-            throw MathRuntimeException.createIllegalStateException(
-                    LocalizedFormats.VALUES_ADDED_BEFORE_CONFIGURING_STATISTIC,
-                    n);
+            throw new MathIllegalStateException(
+                    LocalizedFormats.VALUES_ADDED_BEFORE_CONFIGURING_STATISTIC, n);
         }
     }
 

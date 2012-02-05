@@ -16,6 +16,8 @@
  */
 package org.apache.commons.math.genetics;
 
+import org.apache.commons.math.exception.NumberIsTooSmallException;
+
 /**
  * Stops after a fixed number of generations.  Each time
  * {@link #isSatisfied(Population)} is invoked, a generation counter is
@@ -23,7 +25,7 @@ package org.apache.commons.math.genetics;
  * <code>maxGenerations</code> value, {@link #isSatisfied(Population)} returns
  * true.
  *
- * @version $Id: FixedGenerationCount.java 1139906 2011-06-26 18:42:32Z luc $
+ * @version $Id: FixedGenerationCount.java 1235197 2012-01-24 10:17:13Z tn $
  * @since 2.0
  */
 public class FixedGenerationCount implements StoppingCondition {
@@ -37,10 +39,11 @@ public class FixedGenerationCount implements StoppingCondition {
      * Create a new FixedGenerationCount instance.
      *
      * @param maxGenerations number of generations to evolve
+     * @throws NumberIsTooSmallException if the number of generations is &lt; 1
      */
-    public FixedGenerationCount(int maxGenerations) {
+    public FixedGenerationCount(final int maxGenerations) {
         if (maxGenerations <= 0) {
-            throw new IllegalArgumentException("The number of generations has to be >= 0");
+            throw new NumberIsTooSmallException(maxGenerations, 1, true);
         }
         this.maxGenerations = maxGenerations;
     }
@@ -53,7 +56,7 @@ public class FixedGenerationCount implements StoppingCondition {
      * @param population ignored (no impact on result)
      * @return <code>true</code> IFF the maximum number of generations has been exceeded
      */
-    public boolean isSatisfied(Population population) {
+    public boolean isSatisfied(final Population population) {
         if (this.numGenerations < this.maxGenerations) {
             numGenerations++;
             return false;

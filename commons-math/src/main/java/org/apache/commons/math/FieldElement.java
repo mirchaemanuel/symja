@@ -21,7 +21,7 @@ package org.apache.commons.math;
  * Interface representing <a href="http://mathworld.wolfram.com/Field.html">field</a> elements.
  * @param <T> the type of the field elements
  * @see Field
- * @version $Id: FieldElement.java 1131229 2011-06-03 20:49:25Z luc $
+ * @version $Id: FieldElement.java 1180312 2011-10-08 04:21:00Z celestin $
  * @since 2.0
  */
 public interface FieldElement<T> {
@@ -38,6 +38,22 @@ public interface FieldElement<T> {
      */
     T subtract(T a);
 
+    /**
+     * Returns the additive inverse of {@code this} element.
+     * @return the opposite of {@code this}.
+     */
+    T negate();
+
+    /** Compute n &times; this. Multiplication by an integer number is defined
+     * as the following sum
+     * <center>
+     * n &times; this = &sum;<sub>i=1</sub><sup>n</sup> this.
+     * </center>
+     * @param n Number of times {@code this} must be added to itself.
+     * @return A new element representing n &times; this.
+     */
+    T multiply(int n);
+
     /** Compute this &times; a.
      * @param a element to multiply
      * @return a new element representing this &times; a
@@ -52,9 +68,14 @@ public interface FieldElement<T> {
      */
     T divide(T a) throws ArithmeticException;
 
+    /**
+     * Returns the multiplicative inverse of {@code this} element.
+     * @return the inverse of {@code this}.
+     */
+    T reciprocal();
+
     /** Get the {@link Field} to which the instance belongs.
      * @return {@link Field} to which the instance belongs
      */
     Field<T> getField();
-
 }

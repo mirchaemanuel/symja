@@ -28,7 +28,7 @@ import org.apache.commons.math.geometry.partitioning.Side;
 import org.apache.commons.math.geometry.partitioning.SubHyperplane;
 
 /** This class represents a sub-hyperplane for {@link Plane}.
- * @version $Id: SubPlane.java 1157932 2011-08-15 18:20:08Z luc $
+ * @version $Id: SubPlane.java 1197468 2011-11-04 09:54:30Z sebb $
  * @since 3.0
  */
 public class SubPlane extends AbstractSubHyperplane<Euclidean3D, Euclidean2D> {
@@ -43,17 +43,19 @@ public class SubPlane extends AbstractSubHyperplane<Euclidean3D, Euclidean2D> {
     }
 
     /** {@inheritDoc} */
+    @Override
     protected AbstractSubHyperplane<Euclidean3D, Euclidean2D> buildNew(final Hyperplane<Euclidean3D> hyperplane,
                                                                        final Region<Euclidean2D> remainingRegion) {
         return new SubPlane(hyperplane, remainingRegion);
     }
 
     /** {@inheritDoc} */
+    @Override
     public Side side(Hyperplane<Euclidean3D> hyperplane) {
 
         final Plane otherPlane = (Plane) hyperplane;
         final Plane thisPlane  = (Plane) getHyperplane();
-        final Line  inter      = (Line) otherPlane.intersection(thisPlane);
+        final Line  inter      = otherPlane.intersection(thisPlane);
 
         if (inter == null) {
             // the hyperplanes are parallel,
@@ -91,11 +93,12 @@ public class SubPlane extends AbstractSubHyperplane<Euclidean3D, Euclidean2D> {
      * on the plus side of the instance and the part of the
      * instance on the minus side of the instance
      */
+    @Override
     public SplitSubHyperplane<Euclidean3D> split(Hyperplane<Euclidean3D> hyperplane) {
 
         final Plane otherPlane = (Plane) hyperplane;
         final Plane thisPlane  = (Plane) getHyperplane();
-        final Line  inter      = (Line) otherPlane.intersection(thisPlane);
+        final Line  inter      = otherPlane.intersection(thisPlane);
 
         if (inter == null) {
             // the hyperplanes are parallel

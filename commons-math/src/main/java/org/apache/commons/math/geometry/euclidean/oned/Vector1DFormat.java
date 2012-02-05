@@ -38,7 +38,7 @@ import org.apache.commons.math.util.CompositeFormat;
  * returned. In the second case, however, the parse position after parsing will be
  * just after the closing curly brace, i.e. just before the trailing space.</p>
  *
- * @version $Id: Vector1DFormat.java 1131229 2011-06-03 20:49:25Z luc $
+ * @version $Id: Vector1DFormat.java 1197464 2011-11-04 09:49:06Z sebb $
  * @since 3.0
  */
 public class Vector1DFormat extends VectorFormat<Euclidean1D> {
@@ -100,6 +100,7 @@ public class Vector1DFormat extends VectorFormat<Euclidean1D> {
     }
 
     /** {@inheritDoc} */
+    @Override
     public StringBuffer format(final Vector<Euclidean1D> vector, final StringBuffer toAppendTo,
                                final FieldPosition pos) {
         final Vector1D p1 = (Vector1D) vector;
@@ -107,6 +108,7 @@ public class Vector1DFormat extends VectorFormat<Euclidean1D> {
     }
 
     /** {@inheritDoc} */
+    @Override
     public Vector1D parse(final String source) {
         ParsePosition parsePosition = new ParsePosition(0);
         Vector1D result = parse(source, parsePosition);
@@ -119,6 +121,7 @@ public class Vector1DFormat extends VectorFormat<Euclidean1D> {
     }
 
     /** {@inheritDoc} */
+    @Override
     public Vector1D parse(final String source, final ParsePosition pos) {
         final double[] coordinates = parseCoordinates(1, source, pos);
         if (coordinates == null) {

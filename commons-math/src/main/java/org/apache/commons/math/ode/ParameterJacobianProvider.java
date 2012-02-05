@@ -18,26 +18,27 @@ package org.apache.commons.math.ode;
 
 import org.apache.commons.math.exception.MathIllegalArgumentException;
 
-/** Interface to compute exactly jacobian matrix for some parameter
+/** Interface to compute exactly Jacobian matrix for some parameter
  *  when computing {@link JacobianMatrices partial derivatives equations}.
- * 
- * @version $Id: ParameterJacobianProvider.java 1175409 2011-09-25 15:04:39Z luc $
+ *
+ * @version $Id: ParameterJacobianProvider.java 1178235 2011-10-02 19:43:17Z luc $
  * @since 3.0
  */
 public interface ParameterJacobianProvider extends Parameterizable {
 
-    /** Compute the jacobian matrix of ODE with respect to one parameter.
+    /** Compute the Jacobian matrix of ODE with respect to one parameter.
      * <p>The parameter must be one given by {@link #getParametersNames()}.</p>
      * @param t current value of the independent <I>time</I> variable
      * @param y array containing the current value of the main state vector
      * @param yDot array containing the current value of the time derivative
      * of the main state vector
      * @param paramName name of the parameter to consider
-     * @param dFdP placeholder array where to put the jacobian matrix of the
+     * @param dFdP placeholder array where to put the Jacobian matrix of the
      * ODE with respect to the parameter
      * @throws MathIllegalArgumentException if the parameter is not supported
      */
     void computeParameterJacobian(double t, double[] y, double[] yDot,
                                   String paramName, double[] dFdP)
         throws MathIllegalArgumentException;
+
 }

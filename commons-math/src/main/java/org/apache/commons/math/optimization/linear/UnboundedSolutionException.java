@@ -17,16 +17,16 @@
 
 package org.apache.commons.math.optimization.linear;
 
+import org.apache.commons.math.exception.MathIllegalStateException;
 import org.apache.commons.math.exception.util.LocalizedFormats;
-import org.apache.commons.math.optimization.OptimizationException;
 
 /**
  * This class represents exceptions thrown by optimizers when a solution
  * escapes to infinity.
- * @version $Id: UnboundedSolutionException.java 1131229 2011-06-03 20:49:25Z luc $
+ * @version $Id: UnboundedSolutionException.java 1178006 2011-10-01 14:52:21Z luc $
  * @since 2.0
  */
-public class UnboundedSolutionException extends OptimizationException {
+public class UnboundedSolutionException extends MathIllegalStateException {
 
     /** Serializable version identifier. */
     private static final long serialVersionUID = 940539497277290619L;

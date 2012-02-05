@@ -25,8 +25,6 @@ import java.util.NoSuchElementException;
 
 import org.apache.commons.math.Field;
 import org.apache.commons.math.FieldElement;
-import org.apache.commons.math.MathRuntimeException;
-import org.apache.commons.math.exception.util.LocalizedFormats;
 
 /**
  * Open addressed map from int to FieldElement.
@@ -37,7 +35,7 @@ import org.apache.commons.math.exception.util.LocalizedFormats;
  * <code>ConcurrentModificationException</code> when they detect the map has been
  * modified during iteration.</p>
  * @param <T> the type of the field elements
- * @version $Id: OpenIntToFieldHashMap.java 1131229 2011-06-03 20:49:25Z luc $
+ * @version $Id: OpenIntToFieldHashMap.java 1240280 2012-02-03 18:19:21Z tn $
  * @since 2.0
  */
 public class OpenIntToFieldHashMap<T extends FieldElement<T>> implements Serializable {
@@ -102,7 +100,7 @@ public class OpenIntToFieldHashMap<T extends FieldElement<T>> implements Seriali
         this(field, DEFAULT_EXPECTED_SIZE, field.getZero());
     }
 
-    /**
+    /** 
      * Build an empty map with default size
      * @param field field to which the elements belong
      * @param missingEntries value to return when a missing entry is fetched
@@ -539,10 +537,10 @@ public class OpenIntToFieldHashMap<T extends FieldElement<T>> implements Seriali
         public int key()
             throws ConcurrentModificationException, NoSuchElementException {
             if (referenceCount != count) {
-                throw MathRuntimeException.createConcurrentModificationException(LocalizedFormats.MAP_MODIFIED_WHILE_ITERATING);
+                throw new ConcurrentModificationException();
             }
             if (current < 0) {
-                throw MathRuntimeException.createNoSuchElementException(LocalizedFormats.ITERATOR_EXHAUSTED);
+                throw new NoSuchElementException();
             }
             return keys[current];
         }
@@ -556,10 +554,10 @@ public class OpenIntToFieldHashMap<T extends FieldElement<T>> implements Seriali
         public T value()
             throws ConcurrentModificationException, NoSuchElementException {
             if (referenceCount != count) {
-                throw MathRuntimeException.createConcurrentModificationException(LocalizedFormats.MAP_MODIFIED_WHILE_ITERATING);
+                throw new ConcurrentModificationException();
             }
             if (current < 0) {
-                throw MathRuntimeException.createNoSuchElementException(LocalizedFormats.ITERATOR_EXHAUSTED);
+                throw new NoSuchElementException();
             }
             return values[current];
         }
@@ -573,7 +571,7 @@ public class OpenIntToFieldHashMap<T extends FieldElement<T>> implements Seriali
             throws ConcurrentModificationException, NoSuchElementException {
 
             if (referenceCount != count) {
-                throw MathRuntimeException.createConcurrentModificationException(LocalizedFormats.MAP_MODIFIED_WHILE_ITERATING);
+                throw new ConcurrentModificationException();
             }
 
             // advance on step
@@ -587,7 +585,7 @@ public class OpenIntToFieldHashMap<T extends FieldElement<T>> implements Seriali
             } catch (ArrayIndexOutOfBoundsException e) {
                 next = -2;
                 if (current < 0) {
-                    throw MathRuntimeException.createNoSuchElementException(LocalizedFormats.ITERATOR_EXHAUSTED);
+                    throw new NoSuchElementException();
                 }
             }
 
@@ -614,7 +612,7 @@ public class OpenIntToFieldHashMap<T extends FieldElement<T>> implements Seriali
      */
     @SuppressWarnings("unchecked") // field is of type T
     private T[] buildArray(final int length) {
-        return (T[]) Array.newInstance(field.getZero().getClass(), length);
+        return (T[]) Array.newInstance(field.getRuntimeClass(), length);
     }
 
 }

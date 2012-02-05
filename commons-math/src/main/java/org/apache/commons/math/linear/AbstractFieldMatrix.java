@@ -38,7 +38,7 @@ import org.apache.commons.math.exception.util.LocalizedFormats;
  *
  * @param <T> Type of the field elements.
  *
- * @version $Id: AbstractFieldMatrix.java 1131229 2011-06-03 20:49:25Z luc $
+ * @version $Id: AbstractFieldMatrix.java 1178009 2011-10-01 15:15:00Z luc $
  * @since 2.0
  */
 public abstract class AbstractFieldMatrix<T extends FieldElement<T>>
@@ -137,11 +137,11 @@ public abstract class AbstractFieldMatrix<T extends FieldElement<T>>
                                                                   final int rows,
                                                                   final int columns) {
         if (columns < 0) {
-            T[] dummyRow = (T[]) Array.newInstance(field.getZero().getClass(), 0);
+            T[] dummyRow = (T[]) Array.newInstance(field.getRuntimeClass(), 0);
             return (T[][]) Array.newInstance(dummyRow.getClass(), rows);
         }
         T[][] array =
-            (T[][]) Array.newInstance(field.getZero().getClass(), new int[] { rows, columns });
+            (T[][]) Array.newInstance(field.getRuntimeClass(), new int[] { rows, columns });
         for (int i = 0; i < array.length; ++i) {
             Arrays.fill(array[i], field.getZero());
         }
@@ -160,7 +160,7 @@ public abstract class AbstractFieldMatrix<T extends FieldElement<T>>
     protected static <T extends FieldElement<T>> T[] buildArray(final Field<T> field,
                                                                 final int length) {
         @SuppressWarnings("unchecked") // OK because field must be correct class
-        T[] array = (T[]) Array.newInstance(field.getZero().getClass(), length);
+        T[] array = (T[]) Array.newInstance(field.getRuntimeClass(), length);
         Arrays.fill(array, field.getZero());
         return array;
     }

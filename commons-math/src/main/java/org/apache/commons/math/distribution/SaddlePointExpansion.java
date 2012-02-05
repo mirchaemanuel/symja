@@ -41,7 +41,7 @@ import org.apache.commons.math.util.MathUtils;
  * </p>
  *
  * @since 2.1
- * @version $Id$
+ * @version $Id: SaddlePointExpansion.java 1210359 2011-12-05 08:15:38Z celestin $
  */
 final class SaddlePointExpansion {
 
@@ -166,8 +166,8 @@ final class SaddlePointExpansion {
     }
 
     /**
-     * Compute the PMF for a binomial distribution using the saddle point
-     * expansion.
+     * Compute the logarithm of the PMF for a binomial distribution
+     * using the saddle point expansion.
      *
      * @param x the value at which the probability is evaluated.
      * @param n the number of trials.

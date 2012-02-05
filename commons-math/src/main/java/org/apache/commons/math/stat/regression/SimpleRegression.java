@@ -18,15 +18,13 @@
 package org.apache.commons.math.stat.regression;
 import java.io.Serializable;
 
-import org.apache.commons.math.MathException;
 import org.apache.commons.math.exception.OutOfRangeException;
 import org.apache.commons.math.distribution.TDistribution;
-import org.apache.commons.math.distribution.TDistributionImpl;
 import org.apache.commons.math.exception.MathIllegalArgumentException;
 import org.apache.commons.math.exception.NoDataException;
 import org.apache.commons.math.exception.util.LocalizedFormats;
 import org.apache.commons.math.util.FastMath;
-import org.apache.commons.math.util.MathUtils;
+import org.apache.commons.math.util.Precision;
 
 /**
  * Estimates an ordinary least squares regression model
@@ -49,14 +47,19 @@ import org.apache.commons.math.util.MathUtils;
  * different x coordinates are required to estimate a bivariate regression
  * model.
  * </li>
- * <li> getters for the statistics always compute values based on the current
+ * <li> Getters for the statistics always compute values based on the current
  * set of observations -- i.e., you can get statistics, then add more data
  * and get updated statistics without using a new instance.  There is no
  * "compute" method that updates all statistics.  Each of the getters performs
- * the necessary computations to return the requested statistic.</li>
+ * the necessary computations to return the requested statistic.
+ * </li>
+ * <li> The intercept term may be suppressed by passing {@code false} to
+ * the {@link #SimpleRegression(boolean)} constructor.  When the
+ * {@code hasIntercept} property is false, the model is estimated without a
+ * constant term and {@link #getIntercept()} returns {@code 0}.</li>
  * </ul></p>
  *
- * @version $Id: SimpleRegression.java 1174509 2011-09-23 03:36:11Z gregs $
+ * @version $Id: SimpleRegression.java 1239842 2012-02-02 21:02:54Z tn $
  */
 public class SimpleRegression implements Serializable, UpdatingMultipleLinearRegression {
 
@@ -98,8 +101,15 @@ public class SimpleRegression implements Serializable, UpdatingMultipleLinearReg
         this(true);
     }
     /**
-    * Secondary constructor which allows the user the ability to include/exclude const
-    * @param includeIntercept boolean flag, true includes an intercept
+    * Create a SimpleRegression instance, specifying whether or not to estimate
+    * an intercept.
+    *
+    * <p>Use {@code false} to estimate a model with no intercept.  When the
+    * {@code hasIntercept} property is false, the model is estimated without a
+    * constant term and {@link #getIntercept()} returns {@code 0}.</p>
+    *
+    * @param includeIntercept whether or not to include an intercept term in
+    * the regression model
     */
     public SimpleRegression(boolean includeIntercept) {
         super();
@@ -125,8 +135,8 @@ public class SimpleRegression implements Serializable, UpdatingMultipleLinearReg
             ybar = y;
         } else {
             if( hasIntercept ){
-                final double fact1 = 1.0 + (double) n;
-                final double fact2 = ((double) n) / (1.0 + (double) n);
+                final double fact1 = 1.0 + n;
+                final double fact2 = n / (1.0 + n);
                 final double dx = x - xbar;
                 final double dy = y - ybar;
                 sumXX += dx * dx * fact2;
@@ -164,8 +174,8 @@ public class SimpleRegression implements Serializable, UpdatingMultipleLinearReg
     public void removeData(final double x,final double y) {
         if (n > 0) {
             if (hasIntercept) {
-                final double fact1 = (double) n - 1.0;
-                final double fact2 = ((double) n) / ((double) n - 1.0);
+                final double fact1 = n - 1.0;
+                final double fact2 = n / (n - 1.0);
                 final double dx = x - xbar;
                 final double dy = y - ybar;
                 sumXX -= dx * dx * fact2;
@@ -174,7 +184,7 @@ public class SimpleRegression implements Serializable, UpdatingMultipleLinearReg
                 xbar -= dx / fact1;
                 ybar -= dy / fact1;
             } else {
-                final double fact1 = (double) n - 1.0;
+                final double fact1 = n - 1.0;
                 sumXX -= x * x;
                 sumYY -= y * y;
                 sumXY -= x * y;
@@ -333,7 +343,8 @@ public class SimpleRegression implements Serializable, UpdatingMultipleLinearReg
     }
 
     /**
-     * Returns the intercept of the estimated regression line.
+     * Returns the intercept of the estimated regression line, if
+     * {@link #hasIntercept()} is true; otherwise 0.
      * <p>
      * The least squares estimate of the intercept is computed using the
      * <a href="http://www.xycoon.com/estimation4.htm">normal equations</a>.
@@ -346,16 +357,19 @@ public class SimpleRegression implements Serializable, UpdatingMultipleLinearReg
      * returned.
      * </li></ul></p>
      *
-     * @return the intercept of the regression line
+     * @return the intercept of the regression line if the model includes an
+     * intercept; 0 otherwise
+     * @see #SimpleRegression(boolean)
      */
     public double getIntercept() {
         return hasIntercept ? getIntercept(getSlope()) : 0.0;
     }
 
     /**
-     * Returns true if a constant has been included false otherwise.
+     * Returns true if the model includes an intercept term.
      *
-     * @return true if constant exists, false otherwise
+     * @return true if the regression includes an intercept; false otherwise
+     * @see #SimpleRegression(boolean)
      */
     public boolean hasIntercept() {
         return hasIntercept;
@@ -556,7 +570,7 @@ public class SimpleRegression implements Serializable, UpdatingMultipleLinearReg
             return Double.NaN;
         }
         return FastMath.sqrt(
-            getMeanSquareError() * ((1d / (double) n) + (xbar * xbar) / sumXX));
+            getMeanSquareError() * ((1d / n) + (xbar * xbar) / sumXX));
     }
 
     /**
@@ -594,9 +608,9 @@ public class SimpleRegression implements Serializable, UpdatingMultipleLinearReg
      * Bivariate Normal Distribution</a>.</p>
      *
      * @return half-width of 95% confidence interval for the slope estimate
-     * @throws MathException if the confidence interval can not be computed.
+     * @throws OutOfRangeException if the confidence interval can not be computed.
      */
-    public double getSlopeConfidenceInterval() throws MathException {
+    public double getSlopeConfidenceInterval() {
         return getSlopeConfidenceInterval(0.05d);
     }
 
@@ -624,20 +638,19 @@ public class SimpleRegression implements Serializable, UpdatingMultipleLinearReg
      * <code>Double.NaN</code>.
      * </li>
      * <li><code>(0 < alpha < 1)</code>; otherwise an
-     * <code>IllegalArgumentException</code> is thrown.
+     * <code>OutOfRangeException</code> is thrown.
      * </li></ul></p>
      *
      * @param alpha the desired significance level
      * @return half-width of 95% confidence interval for the slope estimate
-     * @throws MathException if the confidence interval can not be computed.
+     * @throws OutOfRangeException if the confidence interval can not be computed.
      */
-    public double getSlopeConfidenceInterval(final double alpha)
-        throws MathException {
+    public double getSlopeConfidenceInterval(final double alpha) {
         if (alpha >= 1 || alpha <= 0) {
             throw new OutOfRangeException(LocalizedFormats.SIGNIFICANCE_LEVEL,
                                           alpha, 0, 1);
         }
-        TDistribution distribution = new TDistributionImpl(n - 2);
+        TDistribution distribution = new TDistribution(n - 2);
         return getSlopeStdErr() *
             distribution.inverseCumulativeProbability(1d - alpha / 2d);
     }
@@ -661,10 +674,11 @@ public class SimpleRegression implements Serializable, UpdatingMultipleLinearReg
      * <code>Double.NaN</code>.</p>
      *
      * @return significance level for slope/correlation
-     * @throws MathException if the significance level can not be computed.
+     * @throws org.apache.commons.math.exception.MaxCountExceededException
+     * if the significance level can not be computed.
      */
-    public double getSignificance() throws MathException {
-        TDistribution distribution = new TDistributionImpl(n - 2);
+    public double getSignificance() {
+        TDistribution distribution = new TDistribution(n - 2);
         return 2d * (1.0 - distribution.cumulativeProbability(
                     FastMath.abs(getSlope()) / getSlopeStdErr()));
     }
@@ -706,22 +720,22 @@ public class SimpleRegression implements Serializable, UpdatingMultipleLinearReg
           if( n < 3 ){
               throw new NoDataException( LocalizedFormats.NOT_ENOUGH_DATA_REGRESSION );
           }
-          if( FastMath.abs( sumXX ) > MathUtils.SAFE_MIN ){
+          if( FastMath.abs( sumXX ) > Precision.SAFE_MIN ){
               final double[] params = new double[]{ getIntercept(), getSlope() };
               final double mse = getMeanSquareError();
-              final double _syy = sumYY + sumY * sumY / ((double) n);
+              final double _syy = sumYY + sumY * sumY / n;
               final double[] vcv = new double[]{
-                mse * (xbar *xbar /sumXX + 1.0 / ((double) n)),
+                mse * (xbar *xbar /sumXX + 1.0 / n),
                 -xbar*mse/sumXX,
                 mse/sumXX };
               return new RegressionResults(
                       params, new double[][]{vcv}, true, n, 2,
                       sumY, _syy, getSumSquaredErrors(),true,false);
           }else{
-              final double[] params = new double[]{ sumY/((double) n), Double.NaN };
+              final double[] params = new double[]{ sumY / n, Double.NaN };
               //final double mse = getMeanSquareError();
               final double[] vcv = new double[]{
-                ybar / ((double) n - 1.0),
+                ybar / (n - 1.0),
                 Double.NaN,
                 Double.NaN };
               return new RegressionResults(
@@ -782,11 +796,11 @@ public class SimpleRegression implements Serializable, UpdatingMultipleLinearReg
                 if( variablesToInclude[0] != 1 && variablesToInclude[0] != 0 ){
                      throw new OutOfRangeException( variablesToInclude[0],0,1 );
                 }
-                final double _mean = sumY * sumY / ((double) n);
+                final double _mean = sumY * sumY / n;
                 final double _syy = sumYY + _mean;
                 if( variablesToInclude[0] == 0 ){
                     //just the mean
-                    final double[] vcv = new double[]{ sumYY/((double)((n-1)*n)) };
+                    final double[] vcv = new double[]{ sumYY/(((n-1)*n)) };
                     final double[] params = new double[]{ ybar };
                     return new RegressionResults(
                       params, new double[][]{vcv}, true, n, 1,
@@ -794,10 +808,10 @@ public class SimpleRegression implements Serializable, UpdatingMultipleLinearReg
 
                 }else if( variablesToInclude[0] == 1){
                     //final double _syy = sumYY + sumY * sumY / ((double) n);
-                    final double _sxx = sumXX + sumX * sumX / ((double) n);
-                    final double _sxy = sumXY + sumX * sumY / ((double) n);
+                    final double _sxx = sumXX + sumX * sumX / n;
+                    final double _sxy = sumXY + sumX * sumY / n;
                     final double _sse = FastMath.max(0d, _syy - _sxy * _sxy / _sxx);
-                    final double _mse = _sse/((double)(n-1));
+                    final double _mse = _sse/((n-1));
                     if( !Double.isNaN(_sxx) ){
                         final double[] vcv = new double[]{ _mse / _sxx };
                         final double[] params = new double[]{ _sxy/_sxx };

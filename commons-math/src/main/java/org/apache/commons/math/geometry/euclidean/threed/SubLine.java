@@ -22,11 +22,10 @@ import java.util.List;
 import org.apache.commons.math.geometry.euclidean.oned.Interval;
 import org.apache.commons.math.geometry.euclidean.oned.IntervalsSet;
 import org.apache.commons.math.geometry.euclidean.oned.Vector1D;
-import org.apache.commons.math.geometry.partitioning.Hyperplane;
 import org.apache.commons.math.geometry.partitioning.Region.Location;
 
 /** This class represents a subset of a {@link Line}.
- * @version $Id: SubLine.java 1159353 2011-08-18 18:50:08Z luc $
+ * @version $Id: SubLine.java 1178172 2011-10-02 10:11:43Z luc $
  * @since 3.0
  */
 public class SubLine {
@@ -92,7 +91,7 @@ public class SubLine {
 
     /** Get the intersection of the instance and another sub-line.
      * <p>
-     * This method is related to the {@link Line#intersection(Hyperplane)
+     * This method is related to the {@link Line#intersection(Line)
      * intersection} method in the {@link Line Line} class, but in addition
      * to compute the point along infinite lines, it also checks the point
      * lies on both sub-line ranges.

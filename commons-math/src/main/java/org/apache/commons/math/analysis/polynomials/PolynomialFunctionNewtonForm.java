@@ -18,7 +18,7 @@ package org.apache.commons.math.analysis.polynomials;
 
 import org.apache.commons.math.exception.NoDataException;
 import org.apache.commons.math.exception.DimensionMismatchException;
-import org.apache.commons.math.analysis.UnivariateRealFunction;
+import org.apache.commons.math.analysis.UnivariateFunction;
 import org.apache.commons.math.exception.util.LocalizedFormats;
 
 /**
@@ -31,10 +31,10 @@ import org.apache.commons.math.exception.util.LocalizedFormats;
  *            a[n](x-c[0])(x-c[1])...(x-c[n-1])
  * Note that the length of a[] is one more than the length of c[]</p>
  *
- * @version $Id: PolynomialFunctionNewtonForm.java 1131229 2011-06-03 20:49:25Z luc $
+ * @version $Id: PolynomialFunctionNewtonForm.java 1206867 2011-11-27 22:18:30Z erans $
  * @since 1.2
  */
-public class PolynomialFunctionNewtonForm implements UnivariateRealFunction {
+public class PolynomialFunctionNewtonForm implements UnivariateFunction {
 
     /**
      * The coefficients of the polynomial, ordered by degree -- i.e.

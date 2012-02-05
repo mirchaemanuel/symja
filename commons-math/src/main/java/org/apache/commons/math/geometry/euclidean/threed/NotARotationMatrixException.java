@@ -17,19 +17,19 @@
 
 package org.apache.commons.math.geometry.euclidean.threed;
 
-import org.apache.commons.math.MathException;
+import org.apache.commons.math.exception.MathIllegalArgumentException;
 import org.apache.commons.math.exception.util.Localizable;
 
 /**
  * This class represents exceptions thrown while building rotations
  * from matrices.
  *
- * @version $Id: NotARotationMatrixException.java 1131229 2011-06-03 20:49:25Z luc $
+ * @version $Id: NotARotationMatrixException.java 1178082 2011-10-01 20:01:22Z luc $
  * @since 1.2
  */
 
 public class NotARotationMatrixException
-  extends MathException {
+  extends MathIllegalArgumentException {
 
     /** Serializable version identifier */
     private static final long serialVersionUID = 5647178478658937642L;

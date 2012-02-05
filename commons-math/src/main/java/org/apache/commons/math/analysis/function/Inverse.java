@@ -17,7 +17,8 @@
 
 package org.apache.commons.math.analysis.function;
 
-import org.apache.commons.math.analysis.UnivariateRealFunction;
+import org.apache.commons.math.analysis.UnivariateFunction;
+import org.apache.commons.math.analysis.DifferentiableUnivariateFunction;
 
 /**
  * Inverse function.
@@ -25,9 +26,19 @@ import org.apache.commons.math.analysis.UnivariateRealFunction;
  * @version $Id$
  * @since 3.0
  */
-public class Inverse implements UnivariateRealFunction {
+public class Inverse implements DifferentiableUnivariateFunction {
     /** {@inheritDoc} */
     public double value(double x) {
         return 1 / x;
+    }
+
+    /** {@inheritDoc} */
+    public UnivariateFunction derivative() {
+        return new UnivariateFunction() {
+            /** {@inheritDoc} */
+            public double value(double x) {
+                return -1 / (x * x);
+            }
+        };
     }
 }

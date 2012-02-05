@@ -18,7 +18,7 @@
 package org.apache.commons.math.optimization;
 
 /** This interface specifies how to check if a {@link
- * DifferentiableMultivariateVectorialOptimizer optimization algorithm} has converged.
+ * DifferentiableMultivariateVectorOptimizer optimization algorithm} has converged.
  *
  * <p>Deciding if convergence has been reached is a problem-dependent issue. The
  * user should provide a class implementing this interface to allow the optimization
@@ -30,7 +30,7 @@ package org.apache.commons.math.optimization;
  * considers convergence is reached when the input point set does not change
  * much anymore, it does not use objective function value at all.</p>
  *
- * @version $Id: VectorialConvergenceChecker.java 1131229 2011-06-03 20:49:25Z luc $
+ * @version $Id: VectorialConvergenceChecker.java 1212361 2011-12-09 12:22:10Z erans $
  * @since 2.0
  */
 

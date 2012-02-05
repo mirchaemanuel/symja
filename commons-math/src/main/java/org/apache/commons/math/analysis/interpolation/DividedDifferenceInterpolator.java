@@ -22,7 +22,7 @@ import org.apache.commons.math.analysis.polynomials.PolynomialFunctionNewtonForm
 
 /**
  * Implements the <a href="
- * "http://mathworld.wolfram.com/NewtonsDividedDifferenceInterpolationFormula.html">
+ * http://mathworld.wolfram.com/NewtonsDividedDifferenceInterpolationFormula.html">
  * Divided Difference Algorithm</a> for interpolation of real univariate
  * functions. For reference, see <b>Introduction to Numerical Analysis</b>,
  * ISBN 038795452X, chapter 2.
@@ -30,11 +30,11 @@ import org.apache.commons.math.analysis.polynomials.PolynomialFunctionNewtonForm
  * The actual code of Neville's evaluation is in PolynomialFunctionLagrangeForm,
  * this class provides an easy-to-use interface to it.</p>
  *
- * @version $Id: DividedDifferenceInterpolator.java 1174731 2011-09-23 13:08:58Z erans $
+ * @version $Id: DividedDifferenceInterpolator.java 1238279 2012-01-31 08:56:19Z erans $
  * @since 1.2
  */
 public class DividedDifferenceInterpolator
-    implements UnivariateRealInterpolator, Serializable {
+    implements UnivariateInterpolator, Serializable {
     /** serializable version identifier */
     private static final long serialVersionUID = 107049519551235069L;
 

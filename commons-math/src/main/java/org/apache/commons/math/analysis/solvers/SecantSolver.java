@@ -36,9 +36,9 @@ import org.apache.commons.math.util.FastMath;
  * {@link IllinoisSolver <em>Illinois</em>} algorithm or the
  * {@link PegasusSolver <em>Pegasus</em>} algorithm.</p>
  *
- * @version $Id: SecantSolver.java 1145146 2011-07-11 12:32:14Z erans $
+ * @version $Id: SecantSolver.java 1234784 2012-01-23 13:33:30Z erans $
  */
-public class SecantSolver extends AbstractUnivariateRealSolver {
+public class SecantSolver extends AbstractUnivariateSolver {
 
     /** Default absolute accuracy. */
     protected static final double DEFAULT_ABSOLUTE_ACCURACY = 1e-6;

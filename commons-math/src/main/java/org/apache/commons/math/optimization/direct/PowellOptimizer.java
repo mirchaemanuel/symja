@@ -18,15 +18,15 @@
 package org.apache.commons.math.optimization.direct;
 
 import org.apache.commons.math.util.FastMath;
-import org.apache.commons.math.util.MathUtils;
-import org.apache.commons.math.analysis.UnivariateRealFunction;
-import org.apache.commons.math.analysis.MultivariateRealFunction;
+import org.apache.commons.math.util.MathArrays;
+import org.apache.commons.math.analysis.UnivariateFunction;
+import org.apache.commons.math.analysis.MultivariateFunction;
 import org.apache.commons.math.exception.NumberIsTooSmallException;
 import org.apache.commons.math.exception.NotStrictlyPositiveException;
 import org.apache.commons.math.optimization.GoalType;
 import org.apache.commons.math.optimization.RealPointValuePair;
 import org.apache.commons.math.optimization.ConvergenceChecker;
-import org.apache.commons.math.optimization.MultivariateRealOptimizer;
+import org.apache.commons.math.optimization.MultivariateOptimizer;
 import org.apache.commons.math.optimization.univariate.BracketFinder;
 import org.apache.commons.math.optimization.univariate.BrentOptimizer;
 import org.apache.commons.math.optimization.univariate.UnivariateRealPointValuePair;
@@ -46,8 +46,8 @@ import org.apache.commons.math.optimization.univariate.UnivariateRealPointValueP
  * @since 2.2
  */
 public class PowellOptimizer
-    extends BaseAbstractScalarOptimizer<MultivariateRealFunction>
-    implements MultivariateRealOptimizer {
+    extends BaseAbstractMultivariateOptimizer<MultivariateFunction>
+    implements MultivariateOptimizer {
     /**
      * Minimum relative tolerance.
      */
@@ -141,7 +141,7 @@ public class PowellOptimizer
             double alphaMin = 0;
 
             for (int i = 0; i < n; i++) {
-                final double[] d = MathUtils.copyOf(direc[i]);
+                final double[] d = MathArrays.copyOf(direc[i]);
 
                 fX2 = fVal;
 
@@ -264,7 +264,7 @@ public class PowellOptimizer
          */
         public UnivariateRealPointValuePair search(final double[] p, final double[] d) {
             final int n = p.length;
-            final UnivariateRealFunction f = new UnivariateRealFunction() {
+            final UnivariateFunction f = new UnivariateFunction() {
                     public double value(double alpha) {
                         final double[] x = new double[n];
                         for (int i = 0; i < n; i++) {

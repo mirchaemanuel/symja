@@ -30,7 +30,7 @@ import org.apache.commons.math.geometry.Vector;
  * @param <S> Type of the space.
  * @param <T> Type of the sub-space.
 
- * @version $Id: AbstractRegion.java 1139915 2011-06-26 19:13:06Z luc $
+ * @version $Id: AbstractRegion.java 1197468 2011-11-04 09:54:30Z sebb $
  * @since 3.0
  */
 public abstract class AbstractRegion<S extends Space, T extends Space> implements Region<S> {
@@ -605,7 +605,7 @@ public abstract class AbstractRegion<S extends Space, T extends Space> implement
      * transform to the instance
      */
     public AbstractRegion<S, T> applyTransform(final Transform<S, T> transform) {
-        return (AbstractRegion<S, T>) buildNew(recurseTransform(getTree(false), transform));
+        return buildNew(recurseTransform(getTree(false), transform));
     }
 
     /** Recursively transform an inside/outside BSP-tree.

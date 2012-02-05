@@ -33,10 +33,10 @@ import org.apache.commons.math.util.FastMath;
  * rule to remove error terms less than order O(N^(-2k)). Simpson's rule
  * is a special case of k = 2.</p>
  *
- * @version $Id: RombergIntegrator.java 1171111 2011-09-15 14:27:41Z celestin $
+ * @version $Id: RombergIntegrator.java 1239390 2012-02-01 23:04:20Z erans $
  * @since 1.2
  */
-public class RombergIntegrator extends UnivariateRealIntegratorImpl {
+public class RombergIntegrator extends BaseAbstractUnivariateIntegrator {
 
     /** Maximal number of iterations for Romberg. */
     public static final int ROMBERG_MAX_ITERATIONS_COUNT = 32;
@@ -98,6 +98,7 @@ public class RombergIntegrator extends UnivariateRealIntegratorImpl {
     }
 
     /** {@inheritDoc} */
+    @Override
     protected double doIntegrate()
         throws TooManyEvaluationsException, MaxCountExceededException {
 

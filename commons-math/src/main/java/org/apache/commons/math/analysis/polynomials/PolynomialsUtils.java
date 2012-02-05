@@ -17,29 +17,36 @@
 package org.apache.commons.math.analysis.polynomials;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.math.fraction.BigFraction;
+import org.apache.commons.math.util.ArithmeticUtils;
 import org.apache.commons.math.util.FastMath;
 
 /**
  * A collection of static methods that operate on or return polynomials.
  *
- * @version $Id: PolynomialsUtils.java 1131229 2011-06-03 20:49:25Z luc $
+ * @version $Id: PolynomialsUtils.java 1197464 2011-11-04 09:49:06Z sebb $
  * @since 2.0
  */
 public class PolynomialsUtils {
 
     /** Coefficients for Chebyshev polynomials. */
-    private static final ArrayList<BigFraction> CHEBYSHEV_COEFFICIENTS;
+    private static final List<BigFraction> CHEBYSHEV_COEFFICIENTS;
 
     /** Coefficients for Hermite polynomials. */
-    private static final ArrayList<BigFraction> HERMITE_COEFFICIENTS;
+    private static final List<BigFraction> HERMITE_COEFFICIENTS;
 
     /** Coefficients for Laguerre polynomials. */
-    private static final ArrayList<BigFraction> LAGUERRE_COEFFICIENTS;
+    private static final List<BigFraction> LAGUERRE_COEFFICIENTS;
 
     /** Coefficients for Legendre polynomials. */
-    private static final ArrayList<BigFraction> LEGENDRE_COEFFICIENTS;
+    private static final List<BigFraction> LEGENDRE_COEFFICIENTS;
+
+    /** Coefficients for Jacobi polynomials. */
+    private static final Map<JacobiKey, List<BigFraction>> JACOBI_COEFFICIENTS;
 
     static {
 
@@ -70,6 +77,9 @@ public class PolynomialsUtils {
         LEGENDRE_COEFFICIENTS.add(BigFraction.ONE);
         LEGENDRE_COEFFICIENTS.add(BigFraction.ZERO);
         LEGENDRE_COEFFICIENTS.add(BigFraction.ONE);
+
+        // initialize map for Jacobi polynomials
+        JACOBI_COEFFICIENTS = new HashMap<JacobiKey, List<BigFraction>>();
 
     }
 
@@ -184,6 +194,162 @@ public class PolynomialsUtils {
         });
     }
 
+    /**
+     * Create a Jacobi polynomial.
+     * <p><a href="http://mathworld.wolfram.com/JacobiPolynomial.html">Jacobi
+     * polynomials</a> are orthogonal polynomials.
+     * They can be defined by the following recurrence relations:
+     * <pre>
+     *        P<sub>0</sub><sup>vw</sup>(X)   = 1
+     *        P<sub>-1</sub><sup>vw</sup>(X)  = 0
+     *  2k(k + v + w)(2k + v + w - 2) P<sub>k</sub><sup>vw</sup>(X) =
+     *  (2k + v + w - 1)[(2k + v + w)(2k + v + w - 2) X + v<sup>2</sup> - w<sup>2</sup>] P<sub>k-1</sub><sup>vw</sup>(X)
+     *  - 2(k + v - 1)(k + w - 1)(2k + v + w) P<sub>k-2</sub><sup>vw</sup>(X)
+     * </pre></p>
+     * @param degree degree of the polynomial
+     * @param v first exponent
+     * @param w second exponent
+     * @return Jacobi polynomial of specified degree
+     */
+    public static PolynomialFunction createJacobiPolynomial(final int degree, final int v, final int w) {
+
+        // select the appropriate list
+        final JacobiKey key = new JacobiKey(v, w);
+
+        if (!JACOBI_COEFFICIENTS.containsKey(key)) {
+
+            // allocate a new list for v, w
+            final List<BigFraction> list = new ArrayList<BigFraction>();
+            JACOBI_COEFFICIENTS.put(key, list);
+
+            // Pv,w,0(x) = 1;
+            list.add(BigFraction.ONE);
+
+            // P1(x) = (v - w) / 2 + (2 + v + w) * X / 2
+            list.add(new BigFraction(v - w, 2));
+            list.add(new BigFraction(2 + v + w, 2));
+
+        }
+
+        return buildPolynomial(degree, JACOBI_COEFFICIENTS.get(key),
+                               new RecurrenceCoefficientsGenerator() {
+            /** {@inheritDoc} */
+            public BigFraction[] generate(int k) {
+                k++;
+                final int kvw      = k + v + w;
+                final int twoKvw   = kvw + k;
+                final int twoKvwM1 = twoKvw - 1;
+                final int twoKvwM2 = twoKvw - 2;
+                final int den      = 2 * k *  kvw * twoKvwM2;
+
+                return new BigFraction[] {
+                    new BigFraction(twoKvwM1 * (v * v - w * w), den),
+                    new BigFraction(twoKvwM1 * twoKvw * twoKvwM2, den),
+                    new BigFraction(2 * (k + v - 1) * (k + w - 1) * twoKvw, den)
+                };
+            }
+        });
+
+    }
+
+    /** Inner class for Jacobi polynomials keys. */
+    private static class JacobiKey {
+
+        /** First exponent. */
+        private final int v;
+
+        /** Second exponent. */
+        private final int w;
+
+        /** Simple constructor.
+         * @param v first exponent
+         * @param w second exponent
+         */
+        public JacobiKey(final int v, final int w) {
+            this.v = v;
+            this.w = w;
+        }
+
+        /** Get hash code.
+         * @return hash code
+         */
+        @Override
+        public int hashCode() {
+            return (v << 16) ^ w;
+        }
+
+        /** Check if the instance represent the same key as another instance.
+         * @param key other key
+         * @return true if the instance and the other key refer to the same polynomial
+         */
+        @Override
+        public boolean equals(final Object key) {
+
+            if ((key == null) || !(key instanceof JacobiKey)) {
+                return false;
+            }
+
+            final JacobiKey otherK = (JacobiKey) key;
+            return (v == otherK.v) && (w == otherK.w);
+
+        }
+    }
+
+    /**
+     * Compute the coefficients of the polynomial <code>P<sub>s</sub>(x)</code>
+     * whose values at point {@code x} will be the same as the those from the
+     * original polynomial <code>P(x)</code> when computed at {@code x + shift}.
+     * Thus, if <code>P(x) = &Sigma;<sub>i</sub> a<sub>i</sub> x<sup>i</sup></code>,
+     * then
+     * <pre>
+     *  <table>
+     *   <tr>
+     *    <td><code>P<sub>s</sub>(x)</td>
+     *    <td>= &Sigma;<sub>i</sub> b<sub>i</sub> x<sup>i</sup></code></td>
+     *   </tr>
+     *   <tr>
+     *    <td></td>
+     *    <td>= &Sigma;<sub>i</sub> a<sub>i</sub> (x + shift)<sup>i</sup></code></td>
+     *   </tr>
+     *  </table>
+     * </pre>
+     *
+     * @param coefficients Coefficients of the original polynomial.
+     * @param shift Shift value.
+     * @return the coefficients <code>b<sub>i</sub></code> of the shifted
+     * polynomial.
+     */
+    public static double[] shift(final double[] coefficients,
+                                 final double shift) {
+        final int dp1 = coefficients.length;
+        final double[] newCoefficients = new double[dp1];
+
+        // Pascal triangle.
+        final int[][] coeff = new int[dp1][dp1];
+        for (int i = 0; i < dp1; i++){
+            for(int j = 0; j <= i; j++){
+                coeff[i][j] = (int) ArithmeticUtils.binomialCoefficient(i, j);
+            }
+        }
+
+        // First polynomial coefficient.
+        for (int i = 0; i < dp1; i++){
+            newCoefficients[0] += coefficients[i] * FastMath.pow(shift, i);
+        }
+
+        // Superior order.
+        final int d = dp1 - 1;
+        for (int i = 0; i < d; i++) {
+            for (int j = i; j < d; j++){
+                newCoefficients[i + 1] += coeff[j + 1][j - i] *
+                    coefficients[j + 1] * FastMath.pow(shift, j - i);
+            }
+        }
+
+        return newCoefficients;
+    }
+
+
     /** Get the coefficients array for a given degree.
      * @param degree degree of the polynomial
      * @param coefficients list where the computed coefficients are stored
@@ -191,7 +357,7 @@ public class PolynomialsUtils {
      * @return coefficients array
      */
     private static PolynomialFunction buildPolynomial(final int degree,
-                                                      final ArrayList<BigFraction> coefficients,
+                                                      final List<BigFraction> coefficients,
                                                       final RecurrenceCoefficientsGenerator generator) {
 
         final int maxDegree = (int) FastMath.floor(FastMath.sqrt(2 * coefficients.size())) - 1;
@@ -229,7 +395,7 @@ public class PolynomialsUtils {
      */
     private static void computeUpToDegree(final int degree, final int maxDegree,
                                           final RecurrenceCoefficientsGenerator generator,
-                                          final ArrayList<BigFraction> coefficients) {
+                                          final List<BigFraction> coefficients) {
 
         int startK = (maxDegree - 1) * maxDegree / 2;
         for (int k = maxDegree; k < degree; ++k) {
@@ -268,7 +434,7 @@ public class PolynomialsUtils {
     }
 
     /** Interface for recurrence coefficients generation. */
-    private static interface RecurrenceCoefficientsGenerator {
+    private interface RecurrenceCoefficientsGenerator {
         /**
          * Generate recurrence coefficients.
          * @param k highest degree of the polynomials used in the recurrence

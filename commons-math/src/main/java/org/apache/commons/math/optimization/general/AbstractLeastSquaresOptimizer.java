@@ -19,16 +19,16 @@ package org.apache.commons.math.optimization.general;
 
 import org.apache.commons.math.exception.NumberIsTooSmallException;
 import org.apache.commons.math.exception.DimensionMismatchException;
-import org.apache.commons.math.analysis.DifferentiableMultivariateVectorialFunction;
+import org.apache.commons.math.analysis.DifferentiableMultivariateVectorFunction;
 import org.apache.commons.math.analysis.MultivariateMatrixFunction;
 import org.apache.commons.math.exception.util.LocalizedFormats;
-import org.apache.commons.math.linear.LUDecomposition;
+import org.apache.commons.math.linear.QRDecomposition;
 import org.apache.commons.math.linear.DecompositionSolver;
 import org.apache.commons.math.linear.MatrixUtils;
 import org.apache.commons.math.optimization.ConvergenceChecker;
-import org.apache.commons.math.optimization.DifferentiableMultivariateVectorialOptimizer;
+import org.apache.commons.math.optimization.DifferentiableMultivariateVectorOptimizer;
 import org.apache.commons.math.optimization.VectorialPointValuePair;
-import org.apache.commons.math.optimization.direct.BaseAbstractVectorialOptimizer;
+import org.apache.commons.math.optimization.direct.BaseAbstractMultivariateVectorOptimizer;
 import org.apache.commons.math.util.FastMath;
 
 /**
@@ -36,21 +36,21 @@ import org.apache.commons.math.util.FastMath;
  * It handles the boilerplate methods associated to thresholds settings,
  * jacobian and error estimation.
  * <br/>
- * This class uses the {@link DifferentiableMultivariateVectorialFunction#jacobian()}
+ * This class uses the {@link DifferentiableMultivariateVectorFunction#jacobian()}
  * of the function argument in method
- * {@link #optimize(int,DifferentiableMultivariateVectorialFunction,double[],double[],double[])
+ * {@link #optimize(int,DifferentiableMultivariateVectorFunction,double[],double[],double[])
  * optimize} and assumes that, in the matrix returned by the
  * {@link MultivariateMatrixFunction#value(double[]) value} method, the rows
  * iterate on the model functions while the columns iterate on the parameters; thus,
  * the numbers of rows is equal to the length of the {@code target} array while the
  * number of columns is equal to the length of the {@code startPoint} array.
  *
- * @version $Id: AbstractLeastSquaresOptimizer.java 1175099 2011-09-24 04:28:36Z celestin $
+ * @version $Id: AbstractLeastSquaresOptimizer.java 1239404 2012-02-01 23:35:46Z erans $
  * @since 1.2
  */
 public abstract class AbstractLeastSquaresOptimizer
-    extends BaseAbstractVectorialOptimizer<DifferentiableMultivariateVectorialFunction>
-    implements DifferentiableMultivariateVectorialOptimizer {
+    extends BaseAbstractMultivariateVectorOptimizer<DifferentiableMultivariateVectorFunction>
+    implements DifferentiableMultivariateVectorOptimizer {
     /** Singularity threshold (cf. {@link #getCovariances(double)}). */
     private static final double DEFAULT_SINGULARITY_THRESHOLD = 1e-14;
     /**
@@ -180,6 +180,8 @@ public abstract class AbstractLeastSquaresOptimizer
      * @return the covariance matrix.
      * @throws org.apache.commons.math.linear.SingularMatrixException
      * if the covariance matrix cannot be computed (singular problem).
+     *
+     * @see #getCovariances(double)
      */
     public double[][] getCovariances() {
         return getCovariances(DEFAULT_SINGULARITY_THRESHOLD);
@@ -187,6 +189,13 @@ public abstract class AbstractLeastSquaresOptimizer
 
     /**
      * Get the covariance matrix of the optimized parameters.
+     * <br/>
+     * Note that this operation involves the inversion of the
+     * <code>J<sup>T</sup>J</code> matrix, where {@code J} is the
+     * Jacobian matrix.
+     * The {@code threshold} parameter is a way for the caller to specify
+     * that the result of this computation should be considered meaningless,
+     * and thus trigger an exception.
      *
      * @param threshold Singularity threshold.
      * @return the covariance matrix.
@@ -212,7 +221,7 @@ public abstract class AbstractLeastSquaresOptimizer
 
         // Compute the covariances matrix.
         final DecompositionSolver solver
-            = new LUDecomposition(MatrixUtils.createRealMatrix(jTj), threshold).getSolver();
+            = new QRDecomposition(MatrixUtils.createRealMatrix(jTj), threshold).getSolver();
         return solver.getInverse().getData();
     }
 
@@ -244,7 +253,7 @@ public abstract class AbstractLeastSquaresOptimizer
     /** {@inheritDoc} */
     @Override
     public VectorialPointValuePair optimize(int maxEval,
-                                            final DifferentiableMultivariateVectorialFunction f,
+                                            final DifferentiableMultivariateVectorFunction f,
                                             final double[] target, final double[] weights,
                                             final double[] startPoint) {
         // Reset counter.

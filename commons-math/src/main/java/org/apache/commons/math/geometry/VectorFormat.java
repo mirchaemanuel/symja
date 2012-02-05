@@ -37,7 +37,7 @@ import org.apache.commons.math.exception.MathParseException;
  * just after the closing curly brace, i.e. just before the trailing space.</p>
  *
  * @param <S> Type of the space.
- * @version $Id: VectorFormat.java 1131153 2011-06-03 19:23:56Z luc $
+ * @version $Id: VectorFormat.java 1180381 2011-10-08 14:25:58Z psteitz $
  * @since 3.0
  */
 public abstract class VectorFormat<S extends Space> {
@@ -225,7 +225,7 @@ public abstract class VectorFormat<S extends Space> {
     /**
      * Parses a string to produce a {@link Vector} object.
      * @param source the string to parse
-     * @param pos input/ouput parsing parameter.
+     * @param pos input/output parsing parameter.
      * @return the parsed {@link Vector} object.
      */
     public abstract Vector<S> parse(String source, ParsePosition pos);
@@ -234,7 +234,7 @@ public abstract class VectorFormat<S extends Space> {
      * Parses a string to produce an array of coordinates.
      * @param dimension dimension of the space
      * @param source the string to parse
-     * @param pos input/ouput parsing parameter.
+     * @param pos input/output parsing parameter.
      * @return coordinates array.
      */
     protected double[] parseCoordinates(int dimension, String source, ParsePosition pos) {

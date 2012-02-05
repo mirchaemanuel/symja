@@ -16,7 +16,7 @@
  */
 package org.apache.commons.math.analysis.integration;
 
-import org.apache.commons.math.MathRuntimeException;
+import org.apache.commons.math.exception.MathIllegalArgumentException;
 import org.apache.commons.math.exception.MaxCountExceededException;
 import org.apache.commons.math.exception.NotStrictlyPositiveException;
 import org.apache.commons.math.exception.NumberIsTooSmallException;
@@ -29,13 +29,13 @@ import org.apache.commons.math.util.FastMath;
  * Legendre-Gauss</a> quadrature formula.
  * <p>
  * Legendre-Gauss integrators are efficient integrators that can
- * accurately integrate functions with few functions evaluations. A
+ * accurately integrate functions with few function evaluations. A
  * Legendre-Gauss integrator using an n-points quadrature formula can
- * integrate exactly 2n-1 degree polynomialss.
+ * integrate 2n-1 degree polynomials exactly.
  * </p>
  * <p>
  * These integrators evaluate the function on n carefully chosen
- * abscissas in each step interval (mapped to the canonical [-1  1] interval).
+ * abscissas in each step interval (mapped to the canonical [-1,1] interval).
  * The evaluation abscissas are not evenly spaced and none of them are
  * at the interval endpoints. This implies the function integrated can be
  * undefined at integration interval endpoints.
@@ -47,11 +47,11 @@ import org.apache.commons.math.util.FastMath;
  * &prod; (x-x<sub>k</sub>)/(x<sub>i</sub>-x<sub>k</sub>) for k != i.
  * </p>
  * <p>
- * @version $Id: LegendreGaussIntegrator.java 1171111 2011-09-15 14:27:41Z celestin $
+ * @version $Id: LegendreGaussIntegrator.java 1239390 2012-02-01 23:04:20Z erans $
  * @since 1.2
  */
 
-public class LegendreGaussIntegrator extends UnivariateRealIntegratorImpl {
+public class LegendreGaussIntegrator extends BaseAbstractUnivariateIntegrator {
 
     /** Abscissas for the 2 points method. */
     private static final double[] ABSCISSAS_2 = {
@@ -156,7 +156,7 @@ public class LegendreGaussIntegrator extends UnivariateRealIntegratorImpl {
             weights   = WEIGHTS_5;
             break;
         default :
-            throw MathRuntimeException.createIllegalArgumentException(
+            throw new MathIllegalArgumentException(
                     LocalizedFormats.N_POINTS_GAUSS_LEGENDRE_INTEGRATOR_NOT_SUPPORTED,
                     n, 2, 5);
         }
@@ -194,6 +194,7 @@ public class LegendreGaussIntegrator extends UnivariateRealIntegratorImpl {
     }
 
     /** {@inheritDoc} */
+    @Override
     protected double doIntegrate()
         throws TooManyEvaluationsException, MaxCountExceededException {
 
@@ -231,7 +232,7 @@ public class LegendreGaussIntegrator extends UnivariateRealIntegratorImpl {
      * Compute the n-th stage integral.
      * @param n number of steps
      * @return the value of n-th stage integral
-     * @throws TooManyEvaluationsException if the maximal number of evaluations
+     * @throws TooManyEvaluationsException if the maximum number of evaluations
      * is exceeded.
      */
     private double stage(final int n)

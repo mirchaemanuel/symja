@@ -33,7 +33,7 @@ import org.apache.commons.math.FieldElement;
  * in order to implement the {@link FieldElement} interface.
  * </p>
  * @since 2.0
- * @version $Id: BigReal.java 1131229 2011-06-03 20:49:25Z luc $
+ * @version $Id: BigReal.java 1180312 2011-10-08 04:21:00Z celestin $
  */
 public class BigReal implements FieldElement<BigReal>, Comparable<BigReal>, Serializable {
 
@@ -237,13 +237,28 @@ public class BigReal implements FieldElement<BigReal>, Comparable<BigReal>, Seri
     }
 
     /** {@inheritDoc} */
+    public BigReal negate() {
+        return new BigReal(d.negate());
+    }
+
+    /** {@inheritDoc} */
     public BigReal divide(BigReal a) throws ArithmeticException {
         return new BigReal(d.divide(a.d, scale, roundingMode));
+    }
+
+    /** {@inheritDoc}} */
+    public BigReal reciprocal(){
+        return new BigReal(BigDecimal.ONE.divide(d, scale, roundingMode));
     }
 
     /** {@inheritDoc} */
     public BigReal multiply(BigReal a) {
         return new BigReal(d.multiply(a.d));
+    }
+
+    /** {@inheritDoc} */
+    public BigReal multiply(final int n) {
+        return new BigReal(d.multiply(new BigDecimal(n)));
     }
 
     /** {@inheritDoc} */
@@ -288,5 +303,4 @@ public class BigReal implements FieldElement<BigReal>, Comparable<BigReal>, Seri
     public Field<BigReal> getField() {
         return BigRealField.getInstance();
     }
-
 }

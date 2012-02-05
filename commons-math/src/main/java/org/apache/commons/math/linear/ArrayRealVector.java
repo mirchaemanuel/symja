@@ -20,7 +20,7 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Iterator;
 
-import org.apache.commons.math.analysis.UnivariateRealFunction;
+import org.apache.commons.math.analysis.UnivariateFunction;
 import org.apache.commons.math.exception.NullArgumentException;
 import org.apache.commons.math.exception.DimensionMismatchException;
 import org.apache.commons.math.exception.NumberIsTooLargeException;
@@ -31,7 +31,7 @@ import org.apache.commons.math.util.FastMath;
 
 /**
  * This class implements the {@link RealVector} interface with a double array.
- * @version $Id: ArrayRealVector.java 1166629 2011-09-08 11:15:02Z erans $
+ * @version $Id: ArrayRealVector.java 1206867 2011-11-27 22:18:30Z erans $
  * @since 2.0
  */
 public class ArrayRealVector extends RealVector implements Serializable {
@@ -336,13 +336,13 @@ public class ArrayRealVector extends RealVector implements Serializable {
 
     /** {@inheritDoc} */
     @Override
-    public ArrayRealVector map(UnivariateRealFunction function) {
+    public ArrayRealVector map(UnivariateFunction function) {
         return copy().mapToSelf(function);
     }
 
     /** {@inheritDoc} */
     @Override
-    public ArrayRealVector mapToSelf(UnivariateRealFunction function) {
+    public ArrayRealVector mapToSelf(UnivariateFunction function) {
         for (int i = 0; i < data.length; i++) {
             data[i] = function.value(data[i]);
         }
@@ -409,6 +409,7 @@ public class ArrayRealVector extends RealVector implements Serializable {
     }
 
     /** {@inheritDoc} */
+    @Override
     public ArrayRealVector ebeDivide(RealVector v) {
         if (v instanceof ArrayRealVector) {
             final double[] vData = ((ArrayRealVector) v).data;
@@ -583,6 +584,7 @@ public class ArrayRealVector extends RealVector implements Serializable {
     }
 
     /** {@inheritDoc} */
+    @Override
     public RealVector projection(RealVector v) {
         return v.mapMultiply(dotProduct(v) / v.dotProduct(v));
     }
@@ -615,16 +617,19 @@ public class ArrayRealVector extends RealVector implements Serializable {
     }
 
     /** {@inheritDoc} */
+    @Override
     public double getEntry(int index) {
         return data[index];
     }
 
     /** {@inheritDoc} */
+    @Override
     public int getDimension() {
         return data.length;
     }
 
     /** {@inheritDoc} */
+    @Override
     public RealVector append(RealVector v) {
         try {
             return new ArrayRealVector(this, (ArrayRealVector) v);
@@ -644,6 +649,7 @@ public class ArrayRealVector extends RealVector implements Serializable {
     }
 
     /** {@inheritDoc} */
+    @Override
     public RealVector append(double in) {
         final double[] out = new double[data.length + 1];
         System.arraycopy(data, 0, out, 0, data.length);
@@ -652,6 +658,7 @@ public class ArrayRealVector extends RealVector implements Serializable {
     }
 
     /** {@inheritDoc} */
+    @Override
     public RealVector getSubVector(int index, int n) {
         ArrayRealVector out = new ArrayRealVector(n);
         try {
@@ -664,12 +671,19 @@ public class ArrayRealVector extends RealVector implements Serializable {
     }
 
     /** {@inheritDoc} */
+    @Override
     public void setEntry(int index, double value) {
         try {
             data[index] = value;
         } catch (IndexOutOfBoundsException e) {
             checkIndex(index);
         }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void addToEntry(int index, double increment) {
+        data[index] += increment;
     }
 
     /** {@inheritDoc} */
@@ -756,6 +770,7 @@ public class ArrayRealVector extends RealVector implements Serializable {
      * @return {@code true} if any coordinate of this vector is {@code NaN},
      * {@code false} otherwise.
      */
+    @Override
     public boolean isNaN() {
         for (double v : data) {
             if (Double.isNaN(v)) {
@@ -772,6 +787,7 @@ public class ArrayRealVector extends RealVector implements Serializable {
      * @return {@code true} if any coordinate of this vector is infinite and
      * none are {@code NaN}, {@code false} otherwise.
      */
+    @Override
     public boolean isInfinite() {
         if (isNaN()) {
             return false;

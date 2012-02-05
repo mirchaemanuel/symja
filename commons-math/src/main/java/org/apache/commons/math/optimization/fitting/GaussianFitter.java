@@ -21,14 +21,14 @@ import java.util.Arrays;
 import java.util.Comparator;
 
 import org.apache.commons.math.analysis.function.Gaussian;
-import org.apache.commons.math.analysis.ParametricUnivariateRealFunction;
+import org.apache.commons.math.analysis.ParametricUnivariateFunction;
 import org.apache.commons.math.exception.NullArgumentException;
 import org.apache.commons.math.exception.NumberIsTooSmallException;
 import org.apache.commons.math.exception.OutOfRangeException;
 import org.apache.commons.math.exception.ZeroException;
 import org.apache.commons.math.exception.NotStrictlyPositiveException;
 import org.apache.commons.math.exception.util.LocalizedFormats;
-import org.apache.commons.math.optimization.DifferentiableMultivariateVectorialOptimizer;
+import org.apache.commons.math.optimization.DifferentiableMultivariateVectorOptimizer;
 import org.apache.commons.math.optimization.fitting.CurveFitter;
 import org.apache.commons.math.optimization.fitting.WeightedObservedPoint;
 
@@ -56,7 +56,7 @@ import org.apache.commons.math.optimization.fitting.WeightedObservedPoint;
  * </pre>
  *
  * @since 2.2
- * @version $Id: GaussianFitter.java 1131229 2011-06-03 20:49:25Z luc $
+ * @version $Id: GaussianFitter.java 1212361 2011-12-09 12:22:10Z erans $
  */
 public class GaussianFitter extends CurveFitter {
     /**
@@ -64,7 +64,7 @@ public class GaussianFitter extends CurveFitter {
      *
      * @param optimizer Optimizer to use for the fitting.
      */
-    public GaussianFitter(DifferentiableMultivariateVectorialOptimizer optimizer) {
+    public GaussianFitter(DifferentiableMultivariateVectorOptimizer optimizer) {
         super(optimizer);
     }
 
@@ -79,10 +79,11 @@ public class GaussianFitter extends CurveFitter {
      * </ul>
      * @return the parameters of the Gaussian function that best fits the
      * observed points (in the same order as above).
+     * @since 3.0
      */
     public double[] fit(double[] initialGuess) {
-        final ParametricUnivariateRealFunction f = new ParametricUnivariateRealFunction() {
-                private final ParametricUnivariateRealFunction g = new Gaussian.Parametric();
+        final ParametricUnivariateFunction f = new ParametricUnivariateFunction() {
+                private final ParametricUnivariateFunction g = new Gaussian.Parametric();
 
                 public double value(double x, double ... p) {
                     double v = Double.POSITIVE_INFINITY;

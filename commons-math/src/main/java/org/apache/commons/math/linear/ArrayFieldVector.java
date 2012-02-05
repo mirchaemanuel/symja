@@ -32,7 +32,7 @@ import org.apache.commons.math.exception.util.LocalizedFormats;
 /**
  * This class implements the {@link FieldVector} interface with a {@link FieldElement} array.
  * @param <T> the type of the field elements
- * @version $Id: ArrayFieldVector.java 1172044 2011-09-17 18:42:03Z celestin $
+ * @version $Id: ArrayFieldVector.java 1178172 2011-10-02 10:11:43Z luc $
  * @since 2.0
  */
 public class ArrayFieldVector<T extends FieldElement<T>> implements FieldVector<T>, Serializable {
@@ -48,9 +48,8 @@ public class ArrayFieldVector<T extends FieldElement<T>> implements FieldVector<
      * Zero-length vectors may be used to initialized construction of vectors
      * by data gathering. We start with zero-length and use either the {@link
      * #ArrayFieldVector(ArrayFieldVector, ArrayFieldVector)} constructor
-     * or one of the {@code append} methods ({@link #append(FieldElement[])},
-     * {@link #add(FieldVector)}, {@link #append(ArrayFieldVector)}) to gather data
-     * into this vector.
+     * or one of the {@code append} methods ({@link #add(FieldVector)} or
+     * {@link #append(ArrayFieldVector)}) to gather data into this vector.
      *
      * @param field field to which the elements belong
      */
@@ -383,7 +382,7 @@ public class ArrayFieldVector<T extends FieldElement<T>> implements FieldVector<
      */
     @SuppressWarnings("unchecked") // field is of type T
     private T[] buildArray(final int length) {
-        return (T[]) Array.newInstance(field.getZero().getClass(), length);
+        return (T[]) Array.newInstance(field.getRuntimeClass(), length);
     }
 
     /** {@inheritDoc} */

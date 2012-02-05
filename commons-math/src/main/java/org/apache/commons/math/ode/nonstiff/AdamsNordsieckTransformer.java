@@ -68,7 +68,7 @@ import org.apache.commons.math.linear.RealMatrix;
  * computed from s<sub>1</sub>(n), s<sub>2</sub>(n) ... s<sub>k</sub>(n), the formula being exact
  * for degree k polynomials.
  * <pre>
- * s<sub>1</sub>(n-i) = s<sub>1</sub>(n) + &sum;<sub>j</sub> j (-i)<sup>j-1</sup> s<sub>j</sub>(n)
+ * s<sub>1</sub>(n-i) = s<sub>1</sub>(n) + &sum;<sub>j&gt;1</sub> j (-i)<sup>j-1</sup> s<sub>j</sub>(n)
  * </pre>
  * The previous formula can be used with several values for i to compute the transform between
  * classical representation and Nordsieck vector at step end. The transform between r<sub>n</sub>
@@ -129,7 +129,7 @@ import org.apache.commons.math.linear.RealMatrix;
  * vector and a P<sup>-1</sup> A P matrix are used that do not depend on the state,
  * they only depend on k. This class handles these transformations.</p>
  *
- * @version $Id: AdamsNordsieckTransformer.java 1175100 2011-09-24 04:47:38Z celestin $
+ * @version $Id: AdamsNordsieckTransformer.java 1204269 2011-11-20 21:40:43Z luc $
  * @since 2.0
  */
 public class AdamsNordsieckTransformer {

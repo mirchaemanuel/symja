@@ -23,6 +23,7 @@ import java.io.ObjectOutput;
 import java.util.Arrays;
 
 import org.apache.commons.math.linear.Array2DRowRealMatrix;
+import org.apache.commons.math.ode.EquationsMapper;
 import org.apache.commons.math.util.FastMath;
 
 /**
@@ -33,7 +34,7 @@ import org.apache.commons.math.util.FastMath;
  *
  * @see org.apache.commons.math.ode.nonstiff.AdamsBashforthIntegrator
  * @see org.apache.commons.math.ode.nonstiff.AdamsMoultonIntegrator
- * @version $Id: NordsieckStepInterpolator.java 1165792 2011-09-06 19:17:52Z luc $
+ * @version $Id: NordsieckStepInterpolator.java 1176734 2011-09-28 05:56:42Z luc $
  * @since 2.0
  */
 
@@ -104,10 +105,14 @@ public class NordsieckStepInterpolator extends AbstractStepInterpolator {
      * @param y reference to the integrator array holding the state at
      * the end of the step
      * @param forward integration direction indicator
+     * @param primaryMapper equations mapper for the primary equations set
+     * @param secondaryMappers equations mappers for the secondary equations sets
      */
     @Override
-    public void reinitialize(final double[] y, final boolean forward) {
-        super.reinitialize(y, forward);
+    public void reinitialize(final double[] y, final boolean forward,
+                             final EquationsMapper primaryMapper,
+                             final EquationsMapper[] secondaryMappers) {
+        super.reinitialize(y, forward, primaryMapper, secondaryMappers);
         stateVariation = new double[y.length];
     }
 

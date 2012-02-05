@@ -21,8 +21,7 @@ package org.apache.commons.math.ode.nonstiff;
 import org.apache.commons.math.exception.MathIllegalArgumentException;
 import org.apache.commons.math.exception.MathIllegalStateException;
 import org.apache.commons.math.ode.AbstractIntegrator;
-import org.apache.commons.math.ode.ExpandableFirstOrderDifferentialEquations;
-import org.apache.commons.math.ode.sampling.StepHandler;
+import org.apache.commons.math.ode.ExpandableStatefulODE;
 import org.apache.commons.math.util.FastMath;
 
 /**
@@ -46,7 +45,7 @@ import org.apache.commons.math.util.FastMath;
  * @see ClassicalRungeKuttaIntegrator
  * @see GillIntegrator
  * @see MidpointIntegrator
- * @version $Id: RungeKuttaIntegrator.java 1175409 2011-09-25 15:04:39Z luc $
+ * @version $Id: RungeKuttaIntegrator.java 1207054 2011-11-28 10:20:51Z luc $
  * @since 1.2
  */
 
@@ -90,46 +89,35 @@ public abstract class RungeKuttaIntegrator extends AbstractIntegrator {
   }
 
   /** {@inheritDoc} */
-  public double integrate(final ExpandableFirstOrderDifferentialEquations equations,
-                          final double t0, final double[] z0,
-                          final double t, final double[] z)
+  @Override
+  public void integrate(final ExpandableStatefulODE equations, final double t)
       throws MathIllegalStateException, MathIllegalArgumentException {
 
-    sanityChecks(equations, t0, z0, t, z);
+    sanityChecks(equations, t);
     setEquations(equations);
-    resetEvaluations();
-    final boolean forward = t > t0;
+    final boolean forward = t > equations.getTime();
 
     // create some internal working arrays
-    final int totalDim = equations.getDimension();
-    final int mainDim  = equations.getMainSetDimension();
-    final double[] y0  = new double[totalDim];
-    final double[] y   = new double[totalDim];
-    System.arraycopy(z0, 0, y0, 0, mainDim);
-    System.arraycopy(equations.getCurrentAdditionalStates(), 0, y0, mainDim, totalDim - mainDim);
-    final int stages = c.length + 1;
-    if (y != y0) {
-      System.arraycopy(y0, 0, y, 0, y0.length);
-    }
+    final double[] y0      = equations.getCompleteState();
+    final double[] y       = y0.clone();
+    final int stages       = c.length + 1;
     final double[][] yDotK = new double[stages][];
     for (int i = 0; i < stages; ++i) {
       yDotK [i] = new double[y0.length];
     }
-    final double[] yTmp    = new double[y0.length];
+    final double[] yTmp    = y0.clone();
     final double[] yDotTmp = new double[y0.length];
 
     // set up an interpolator sharing the integrator arrays
     final RungeKuttaStepInterpolator interpolator = (RungeKuttaStepInterpolator) prototype.copy();
-    interpolator.reinitialize(this, yTmp, yDotK, forward);
-    interpolator.storeTime(t0);
+    interpolator.reinitialize(this, yTmp, yDotK, forward,
+                              equations.getPrimaryMapper(), equations.getSecondaryMappers());
+    interpolator.storeTime(equations.getTime());
 
     // set up integration control objects
-    stepStart = t0;
+    stepStart = equations.getTime();
     stepSize  = forward ? step : -step;
-    for (StepHandler handler : stepHandlers) {
-        handler.reset();
-    }
-    setStateInitialized(false);
+    initIntegration(equations.getTime(), y0, t);
 
     // main integration loop
     isLastStep = false;
@@ -185,14 +173,12 @@ public abstract class RungeKuttaIntegrator extends AbstractIntegrator {
 
     } while (!isLastStep);
 
-    // dispatch result between main and additional states
-    System.arraycopy(y, 0, z, 0, z.length);
-    equations.setCurrentAdditionalState(y);
+    // dispatch results
+    equations.setTime(stepStart);
+    equations.setCompleteState(y);
 
-    final double stopTime = stepStart;
     stepStart = Double.NaN;
     stepSize  = Double.NaN;
-    return stopTime;
 
   }
 

@@ -36,7 +36,7 @@ import org.apache.commons.math.geometry.partitioning.AbstractRegion;
 import org.apache.commons.math.util.FastMath;
 
 /** This class represents a 3D region: a set of polyhedrons.
- * @version $Id: PolyhedronsSet.java 1157932 2011-08-15 18:20:08Z luc $
+ * @version $Id: PolyhedronsSet.java 1197464 2011-11-04 09:49:06Z sebb $
  * @since 3.0
  */
 public class PolyhedronsSet extends AbstractRegion<Euclidean3D, Euclidean2D> {
@@ -105,11 +105,13 @@ public class PolyhedronsSet extends AbstractRegion<Euclidean3D, Euclidean2D> {
     }
 
     /** {@inheritDoc} */
+    @Override
     public PolyhedronsSet buildNew(final BSPTree<Euclidean3D> tree) {
         return new PolyhedronsSet(tree);
     }
 
     /** {@inheritDoc} */
+    @Override
     protected void computeGeometricalProperties() {
 
         // compute the contribution of all boundary facets

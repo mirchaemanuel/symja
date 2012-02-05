@@ -30,7 +30,7 @@ import org.apache.commons.math.util.MathUtils;
  * the instance nor compute another statistic.
  *
  * @since 1.2
- * @version $Id: SynchronizedSummaryStatistics.java 1132432 2011-06-05 14:59:29Z luc $
+ * @version $Id: SynchronizedSummaryStatistics.java 1206596 2011-11-26 21:23:22Z psteitz $
  */
 public class SynchronizedSummaryStatistics extends SummaryStatistics {
 
@@ -115,6 +115,14 @@ public class SynchronizedSummaryStatistics extends SummaryStatistics {
     @Override
     public synchronized double getVariance() {
         return super.getVariance();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public synchronized double getPopulationVariance() {
+        return super.getPopulationVariance();
     }
 
     /**

@@ -21,7 +21,7 @@ import java.text.NumberFormat;
 
 /** This interface represents a generic vector in a vectorial space or a point in an affine space.
  * @param <S> Type of the space.
- * @version $Id: Vector.java 1131152 2011-06-03 19:22:20Z luc $
+ * @version $Id: Vector.java 1180316 2011-10-08 05:23:06Z psteitz $
  * @see Space
  * @see Vector
  * @since 3.0
@@ -33,8 +33,8 @@ public interface Vector<S extends Space> extends Serializable {
      */
     Space getSpace();
 
-    /** Get the null vector of the vetorial space or origin point of the affine space.
-     * @return null vector of the vetorial space or origin point of the affine space
+    /** Get the null vector of the vectorial space or origin point of the affine space.
+     * @return null vector of the vectorial space or origin point of the affine space
      */
     Vector<S> getZero();
 

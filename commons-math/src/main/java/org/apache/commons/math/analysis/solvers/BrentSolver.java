@@ -19,7 +19,7 @@ package org.apache.commons.math.analysis.solvers;
 
 import org.apache.commons.math.exception.NoBracketingException;
 import org.apache.commons.math.util.FastMath;
-import org.apache.commons.math.util.MathUtils;
+import org.apache.commons.math.util.Precision;
 
 /**
  * This class implements the <a href="http://mathworld.wolfram.com/BrentsMethod.html">
@@ -31,9 +31,9 @@ import org.apache.commons.math.util.MathUtils;
  * {@code t} is the absolute accuracy.
  * The given interval must bracket the root.
  *
- * @version $Id: BrentSolver.java 1141921 2011-07-01 12:44:47Z luc $
+ * @version $Id: BrentSolver.java 1234784 2012-01-23 13:33:30Z erans $
  */
-public class BrentSolver extends AbstractUnivariateRealSolver {
+public class BrentSolver extends AbstractUnivariateSolver {
 
     /** Default absolute accuracy. */
     private static final double DEFAULT_ABSOLUTE_ACCURACY = 1e-6;
@@ -162,7 +162,7 @@ public class BrentSolver extends AbstractUnivariateRealSolver {
             final double m = 0.5 * (c - b);
 
             if (FastMath.abs(m) <= tol ||
-                MathUtils.equals(fb, 0))  {
+                Precision.equals(fb, 0))  {
                 return b;
             }
             if (FastMath.abs(e) < tol ||

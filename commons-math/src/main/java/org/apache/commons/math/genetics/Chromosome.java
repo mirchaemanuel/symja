@@ -23,13 +23,11 @@ package org.apache.commons.math.genetics;
  * therefore it can be cached.
  *
  * @since 2.0
- * @version $Id: Chromosome.java 1139906 2011-06-26 18:42:32Z luc $
+ * @version $Id: Chromosome.java 1235038 2012-01-23 22:26:37Z tn $
  */
 public abstract class Chromosome implements Comparable<Chromosome>,Fitness {
 
-    /**
-     * Cached value of the fitness of this chromosome.
-     */
+    /** Cached value of the fitness of this chromosome. */
     private double fitness = Double.MIN_VALUE;
 
     /**
@@ -61,7 +59,7 @@ public abstract class Chromosome implements Comparable<Chromosome>,Fitness {
      *     <li>0 if the two chromosomes have the same fitness</li>
      * </ul>
      */
-    public int compareTo(Chromosome another) {
+    public int compareTo(final Chromosome another) {
         return ((Double)this.getFitness()).compareTo(another.getFitness());
     }
 
@@ -72,7 +70,7 @@ public abstract class Chromosome implements Comparable<Chromosome>,Fitness {
      * @param another chromosome to compare
      * @return true if <code>another</code> is equivalent to this chromosome
      */
-    protected boolean isSame(Chromosome another) {
+    protected boolean isSame(final Chromosome another) {
         return false;
     }
 
@@ -81,12 +79,11 @@ public abstract class Chromosome implements Comparable<Chromosome>,Fitness {
      * representation. If such chromosome is found, it is returned, if no such
      * chromosome exists, returns <code>null</code>.
      *
-     * @param population
-     *            Population to search
+     * @param population Population to search
      * @return Chromosome with the same representation, or <code>null</code> if
      *         no such chromosome exists.
      */
-    protected Chromosome findSameChromosome(Population population) {
+    protected Chromosome findSameChromosome(final Population population) {
         for (Chromosome anotherChr : population) {
             if (this.isSame(anotherChr)) {
                 return anotherChr;
@@ -99,10 +96,9 @@ public abstract class Chromosome implements Comparable<Chromosome>,Fitness {
      * Searches the population for a chromosome representing the same solution,
      * and if it finds one, updates the fitness to its value.
      *
-     * @param population
-     *            Population to search
+     * @param population Population to search
      */
-    public void searchForFitnessUpdate(Population population) {
+    public void searchForFitnessUpdate(final Population population) {
         Chromosome sameChromosome = findSameChromosome(population);
         if (sameChromosome != null) {
             fitness = sameChromosome.getFitness();

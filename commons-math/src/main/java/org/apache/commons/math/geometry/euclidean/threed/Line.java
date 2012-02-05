@@ -24,7 +24,7 @@ import org.apache.commons.math.geometry.euclidean.oned.IntervalsSet;
 import org.apache.commons.math.geometry.euclidean.oned.Vector1D;
 import org.apache.commons.math.geometry.partitioning.Embedding;
 import org.apache.commons.math.util.FastMath;
-import org.apache.commons.math.util.MathUtils;
+import org.apache.commons.math.util.Precision;
 
 /** The class represent lines in a three dimensional space.
 
@@ -35,7 +35,7 @@ import org.apache.commons.math.util.MathUtils;
  * which is closest to the origin. Abscissa increases in the line
  * direction.</p>
 
- * @version $Id: Line.java 1159353 2011-08-18 18:50:08Z luc $
+ * @version $Id: Line.java 1189593 2011-10-27 03:11:54Z psteitz $
  * @since 3.0
  */
 public class Line implements Embedding<Euclidean3D, Euclidean1D> {
@@ -113,7 +113,7 @@ public class Line implements Embedding<Euclidean3D, Euclidean1D> {
     }
 
     /** Get one point from the line.
-     * @param point desired abscissa for the point
+     * @param abscissa desired abscissa for the point
      * @return one point belonging to the line, at specified abscissa
      */
     public Vector3D pointAt(final double abscissa) {
@@ -172,7 +172,7 @@ public class Line implements Embedding<Euclidean3D, Euclidean1D> {
 
         final Vector3D normal = Vector3D.crossProduct(direction, line.direction);
         final double n = normal.getNorm();
-        if (n < MathUtils.SAFE_MIN) {
+        if (n < Precision.SAFE_MIN) {
             // lines are parallel
             return distance(line.zero);
         }
@@ -192,7 +192,7 @@ public class Line implements Embedding<Euclidean3D, Euclidean1D> {
 
         final double cos = direction.dotProduct(line.direction);
         final double n = 1 - cos * cos;
-        if (n < MathUtils.EPSILON) {
+        if (n < Precision.EPSILON) {
             // the lines are parallel
             return zero;
         }

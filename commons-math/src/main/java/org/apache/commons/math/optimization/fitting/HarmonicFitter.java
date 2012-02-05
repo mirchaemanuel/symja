@@ -17,7 +17,7 @@
 
 package org.apache.commons.math.optimization.fitting;
 
-import org.apache.commons.math.optimization.DifferentiableMultivariateVectorialOptimizer;
+import org.apache.commons.math.optimization.DifferentiableMultivariateVectorOptimizer;
 import org.apache.commons.math.analysis.function.HarmonicOscillator;
 import org.apache.commons.math.exception.ZeroException;
 import org.apache.commons.math.exception.NumberIsTooSmallException;
@@ -33,7 +33,7 @@ import org.apache.commons.math.util.FastMath;
  * searched by a least square estimator initialized with a rough guess
  * based on integrals.
  *
- * @version $Id: HarmonicFitter.java 1131229 2011-06-03 20:49:25Z luc $
+ * @version $Id: HarmonicFitter.java 1212361 2011-12-09 12:22:10Z erans $
  * @since 2.0
  */
 public class HarmonicFitter extends CurveFitter {
@@ -41,7 +41,7 @@ public class HarmonicFitter extends CurveFitter {
      * Simple constructor.
      * @param optimizer Optimizer to use for the fitting.
      */
-    public HarmonicFitter(final DifferentiableMultivariateVectorialOptimizer optimizer) {
+    public HarmonicFitter(final DifferentiableMultivariateVectorOptimizer optimizer) {
         super(optimizer);
     }
 

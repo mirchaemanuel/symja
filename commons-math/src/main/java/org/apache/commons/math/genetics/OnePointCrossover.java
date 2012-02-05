@@ -19,6 +19,10 @@ package org.apache.commons.math.genetics;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.math.exception.DimensionMismatchException;
+import org.apache.commons.math.exception.MathIllegalArgumentException;
+import org.apache.commons.math.exception.util.LocalizedFormats;
+
 
 /**
  * One point crossover policy. A random crossover point is selected and the
@@ -42,7 +46,7 @@ import java.util.List;
  *
  * @param <T> generic type of the {@link AbstractListChromosome}s for crossover
  * @since 2.0
- * @version $Id: OnePointCrossover.java 1139906 2011-06-26 18:42:32Z luc $
+ * @version $Id: OnePointCrossover.java 1235197 2012-01-24 10:17:13Z tn $
  *
  */
 public class OnePointCrossover<T> implements CrossoverPolicy {
@@ -65,11 +69,14 @@ public class OnePointCrossover<T> implements CrossoverPolicy {
      * @param first first parent (p1)
      * @param second second parent (p2)
      * @return pair of two children (c1,c2)
+     * @throws MathIllegalArgumentException iff one of the chromosomes is
+     *         not an instance of {@link AbstractListChromosome}
+     * @throws DimensionMismatchException if the length of the two chromosomes is different
      */
     @SuppressWarnings("unchecked") // OK because of instanceof checks
-    public ChromosomePair crossover(Chromosome first, Chromosome second) {
+    public ChromosomePair crossover(final Chromosome first, final Chromosome second) {
         if (! (first instanceof AbstractListChromosome<?> && second instanceof AbstractListChromosome<?>)) {
-            throw new IllegalArgumentException("One point crossover works on FixedLengthChromosomes only.");
+            throw new MathIllegalArgumentException(LocalizedFormats.INVALID_FIXED_LENGTH_CHROMOSOME);
         }
         return crossover((AbstractListChromosome<T>) first, (AbstractListChromosome<T>) second);
     }
@@ -81,11 +88,13 @@ public class OnePointCrossover<T> implements CrossoverPolicy {
      * @param first the first chromosome.
      * @param second the second chromosome.
      * @return the pair of new chromosomes that resulted from the crossover.
+     * @throws DimensionMismatchException if the length of the two chromosomes is different
      */
-    private ChromosomePair crossover(AbstractListChromosome<T> first, AbstractListChromosome<T> second) {
+    private ChromosomePair crossover(final AbstractListChromosome<T> first,
+                                     final AbstractListChromosome<T> second) {
         int length = first.getLength();
         if (length != second.getLength()) {
-            throw new IllegalArgumentException("Both chromosomes must have same lengths.");
+            throw new DimensionMismatchException(second.getLength(), length);
         }
 
         // array representations of the parents
@@ -109,10 +118,8 @@ public class OnePointCrossover<T> implements CrossoverPolicy {
             child2Rep.add(parent1Rep.get(i));
         }
 
-        return new ChromosomePair(
-                first.newFixedLengthChromosome(child1Rep),
-                second.newFixedLengthChromosome(child2Rep)
-                );
+        return new ChromosomePair(first.newFixedLengthChromosome(child1Rep),
+                                  second.newFixedLengthChromosome(child2Rep));
     }
 
 }

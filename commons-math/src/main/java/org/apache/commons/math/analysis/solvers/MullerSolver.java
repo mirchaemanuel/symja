@@ -17,7 +17,6 @@
 package org.apache.commons.math.analysis.solvers;
 
 import org.apache.commons.math.util.FastMath;
-import org.apache.commons.math.util.MathUtils;
 
 /**
  * This class implements the <a href="http://mathworld.wolfram.com/MullersMethod.html">
@@ -41,11 +40,11 @@ import org.apache.commons.math.util.MathUtils;
  * <p>
  * The formulas here use divided differences directly.</p>
  *
- * @version $Id: MullerSolver.java 1141880 2011-07-01 09:05:20Z luc $
+ * @version $Id: MullerSolver.java 1234784 2012-01-23 13:33:30Z erans $
  * @since 1.2
  * @see MullerSolver2
  */
-public class MullerSolver extends AbstractUnivariateRealSolver {
+public class MullerSolver extends AbstractUnivariateSolver {
 
     /** Default absolute accuracy. */
     private static final double DEFAULT_ABSOLUTE_ACCURACY = 1e-6;
@@ -181,7 +180,7 @@ public class MullerSolver extends AbstractUnivariateRealSolver {
             } else {
                 double xm = 0.5 * (x0 + x2);
                 double ym = computeObjectiveValue(xm);
-                if (MathUtils.sign(y0) + MathUtils.sign(ym) == 0.0) {
+                if (FastMath.signum(y0) + FastMath.signum(ym) == 0.0) {
                     x2 = xm; y2 = ym;
                 } else {
                     x0 = xm; y0 = ym;

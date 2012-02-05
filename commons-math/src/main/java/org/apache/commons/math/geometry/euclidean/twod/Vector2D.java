@@ -18,6 +18,7 @@ package org.apache.commons.math.geometry.euclidean.twod;
 
 import java.text.NumberFormat;
 
+import org.apache.commons.math.exception.DimensionMismatchException;
 import org.apache.commons.math.exception.MathArithmeticException;
 import org.apache.commons.math.exception.util.LocalizedFormats;
 import org.apache.commons.math.geometry.Space;
@@ -27,7 +28,7 @@ import org.apache.commons.math.util.MathUtils;
 
 /** This class represents a 2D vector.
  * <p>Instances of this class are guaranteed to be immutable.</p>
- * @version $Id: Vector2D.java 1131152 2011-06-03 19:22:20Z luc $
+ * @version $Id: Vector2D.java 1200546 2011-11-10 21:03:55Z luc $
  * @since 3.0
  */
 public class Vector2D implements Vector<Euclidean2D> {
@@ -67,6 +68,20 @@ public class Vector2D implements Vector<Euclidean2D> {
     public Vector2D(double x, double y) {
         this.x = x;
         this.y = y;
+    }
+
+    /** Simple constructor.
+     * Build a vector from its coordinates
+     * @param v coordinates array
+     * @exception DimensionMismatchException if array does not have 2 elements
+     * @see #toArray()
+     */
+    public Vector2D(double[] v) throws DimensionMismatchException {
+        if (v.length != 2) {
+            throw new DimensionMismatchException(v.length, 2);
+        }
+        this.x = v[0];
+        this.y = v[1];
     }
 
     /** Multiplicative constructor
@@ -141,6 +156,14 @@ public class Vector2D implements Vector<Euclidean2D> {
      */
     public double getY() {
         return y;
+    }
+
+    /** Get the vector coordinates as a dimension 2 array.
+     * @return vector coordinates
+     * @see #Vector2D(double[])
+     */
+    public double[] toArray() {
+        return new double[] { x, y };
     }
 
     /** {@inheritDoc} */

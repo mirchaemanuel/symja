@@ -17,7 +17,8 @@
 
 package org.apache.commons.math.analysis.function;
 
-import org.apache.commons.math.analysis.UnivariateRealFunction;
+import org.apache.commons.math.analysis.UnivariateFunction;
+import org.apache.commons.math.analysis.DifferentiableUnivariateFunction;
 import org.apache.commons.math.util.FastMath;
 
 /**
@@ -26,9 +27,20 @@ import org.apache.commons.math.util.FastMath;
  * @version $Id$
  * @since 3.0
  */
-public class Tanh implements UnivariateRealFunction {
+public class Tanh implements DifferentiableUnivariateFunction {
     /** {@inheritDoc} */
     public double value(double x) {
         return FastMath.tanh(x);
+    }
+
+    /** {@inheritDoc} */
+    public UnivariateFunction derivative() {
+        return new UnivariateFunction() {
+            /** {@inheritDoc} */
+            public double value(double x) {
+                final double tanhX = FastMath.tanh(x);
+                return 1 - tanhX * tanhX;
+            }
+        };
     }
 }

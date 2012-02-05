@@ -17,16 +17,16 @@
 
 package org.apache.commons.math.optimization.linear;
 
+import org.apache.commons.math.exception.MathIllegalStateException;
 import org.apache.commons.math.exception.util.LocalizedFormats;
-import org.apache.commons.math.optimization.OptimizationException;
 
 /**
  * This class represents exceptions thrown by optimizers when no solution
  * fulfills the constraints.
- * @version $Id: NoFeasibleSolutionException.java 1131229 2011-06-03 20:49:25Z luc $
+ * @version $Id: NoFeasibleSolutionException.java 1178006 2011-10-01 14:52:21Z luc $
  * @since 2.0
  */
-public class NoFeasibleSolutionException extends OptimizationException {
+public class NoFeasibleSolutionException extends MathIllegalStateException {
 
     /** Serializable version identifier. */
     private static final long serialVersionUID = -3044253632189082760L;

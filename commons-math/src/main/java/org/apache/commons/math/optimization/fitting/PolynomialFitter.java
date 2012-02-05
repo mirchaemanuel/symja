@@ -18,13 +18,13 @@
 package org.apache.commons.math.optimization.fitting;
 
 import org.apache.commons.math.analysis.polynomials.PolynomialFunction;
-import org.apache.commons.math.optimization.DifferentiableMultivariateVectorialOptimizer;
+import org.apache.commons.math.optimization.DifferentiableMultivariateVectorOptimizer;
 
 /** This class implements a curve fitting specialized for polynomials.
  * <p>Polynomial fitting is a very simple case of curve fitting. The
  * estimated coefficients are the polynomial coefficients. They are
  * searched by a least square estimator.</p>
- * @version $Id: PolynomialFitter.java 1131229 2011-06-03 20:49:25Z luc $
+ * @version $Id: PolynomialFitter.java 1212361 2011-12-09 12:22:10Z erans $
  * @since 2.0
  */
 
@@ -40,7 +40,7 @@ public class PolynomialFitter extends CurveFitter {
      * @param degree Maximal degree of the polynomial.
      * @param optimizer Optimizer to use for the fitting.
      */
-    public PolynomialFitter(int degree, final DifferentiableMultivariateVectorialOptimizer optimizer) {
+    public PolynomialFitter(int degree, final DifferentiableMultivariateVectorOptimizer optimizer) {
         super(optimizer);
         this.degree = degree;
     }

@@ -64,7 +64,7 @@ import org.apache.commons.math.util.MathUtils;
  * one of the threads invokes the <code>increment()</code> or
  * <code>clear()</code> method, it must be synchronized externally.</p>
  *
- * @version $Id: Variance.java 1132432 2011-06-05 14:59:29Z luc $
+ * @version $Id: Variance.java 1208291 2011-11-30 06:24:04Z psteitz $
  */
 public class Variance extends AbstractStorelessUnivariateStatistic implements Serializable, WeightedEvaluation {
 
@@ -75,15 +75,17 @@ public class Variance extends AbstractStorelessUnivariateStatistic implements Se
     protected SecondMoment moment = null;
 
     /**
-     * Boolean test to determine if this Variance should also increment
-     * the second moment, this evaluates to false when this Variance is
-     * constructed with an external SecondMoment as a parameter.
+     * Whether or not {@link #increment(double)} should increment
+     * the internal second moment. When a Variance is constructed with an
+     * external SecondMoment as a constructor parameter, this property is
+     * set to false and increments must be applied to the second moment
+     * directly.
      */
     protected boolean incMoment = true;
 
     /**
-     * Determines whether or not bias correction is applied when computing the
-     * value of the statisic.  True means that bias is corrected.  See
+     * Whether or not bias correction is applied when computing the
+     * value of the statistic. True means that bias is corrected.  See
      * {@link Variance} for details on the formula.
      */
     private boolean isBiasCorrected = true;
@@ -98,6 +100,10 @@ public class Variance extends AbstractStorelessUnivariateStatistic implements Se
 
     /**
      * Constructs a Variance based on an external second moment.
+     * When this constructor is used, the statistic may only be
+     * incremented via the moment, i.e., {@link #increment(double)}
+     * does nothing; whereas {@code m2.increment(value)} increments
+     * both {@code m2} and the Variance instance constructed from it.
      *
      * @param m2 the SecondMoment (Third or Fourth moments work
      * here as well.)
@@ -153,6 +159,10 @@ public class Variance extends AbstractStorelessUnivariateStatistic implements Se
      * <code>evaluate</code> leverages the fact that is has the full
      * list of values together to execute a two-pass algorithm.
      * See {@link Variance}.</p>
+     *
+     * <p>Note also that when {@link #Variance(SecondMoment)} is used to
+     * create a Variance, this method does nothing. In that case, the
+     * SecondMoment should be incremented directly.</p>
      */
     @Override
     public void increment(final double d) {
@@ -273,7 +283,7 @@ public class Variance extends AbstractStorelessUnivariateStatistic implements Se
      * weights are to be treated as "expansion values," as will be the case if for example
      * the weights represent frequency counts. To normalize weights so that the denominator
      * in the variance computation equals the length of the input vector minus one, use <pre>
-     *   <code>evaluate(values, MathUtils.normalizeArray(weights, values.length)); </code>
+     *   <code>evaluate(values, MathArrays.normalizeArray(weights, values.length)); </code>
      * </pre>
      * <p>
      * Returns 0 for a single-value (i.e. length = 1) sample.</p>
@@ -332,7 +342,7 @@ public class Variance extends AbstractStorelessUnivariateStatistic implements Se
      * weights are to be treated as "expansion values," as will be the case if for example
      * the weights represent frequency counts. To normalize weights so that the denominator
      * in the variance computation equals the length of the input vector minus one, use <pre>
-     *   <code>evaluate(values, MathUtils.normalizeArray(weights, values.length)); </code>
+     *   <code>evaluate(values, MathArrays.normalizeArray(weights, values.length)); </code>
      * </pre>
      * <p>
      * Returns 0 for a single-value (i.e. length = 1) sample.</p>
@@ -462,7 +472,7 @@ public class Variance extends AbstractStorelessUnivariateStatistic implements Se
      * weights are to be treated as "expansion values," as will be the case if for example
      * the weights represent frequency counts. To normalize weights so that the denominator
      * in the variance computation equals the length of the input vector minus one, use <pre>
-     *   <code>evaluate(values, MathUtils.normalizeArray(weights, values.length), mean); </code>
+     *   <code>evaluate(values, MathArrays.normalizeArray(weights, values.length), mean); </code>
      * </pre>
      * <p>
      * Returns 0 for a single-value (i.e. length = 1) sample.</p>
@@ -507,7 +517,7 @@ public class Variance extends AbstractStorelessUnivariateStatistic implements Se
                 }
 
                 double sumWts = 0;
-                for (int i = 0; i < weights.length; i++) {
+                for (int i = begin; i < begin + length; i++) {
                     sumWts += weights[i];
                 }
 
@@ -539,7 +549,7 @@ public class Variance extends AbstractStorelessUnivariateStatistic implements Se
      * weights are to be treated as "expansion values," as will be the case if for example
      * the weights represent frequency counts. To normalize weights so that the denominator
      * in the variance computation equals the length of the input vector minus one, use <pre>
-     *   <code>evaluate(values, MathUtils.normalizeArray(weights, values.length), mean); </code>
+     *   <code>evaluate(values, MathArrays.normalizeArray(weights, values.length), mean); </code>
      * </pre>
      * <p>
      * Returns 0 for a single-value (i.e. length = 1) sample.</p>

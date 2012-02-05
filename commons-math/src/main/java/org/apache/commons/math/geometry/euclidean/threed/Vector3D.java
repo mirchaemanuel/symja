@@ -20,17 +20,19 @@ package org.apache.commons.math.geometry.euclidean.threed;
 import java.io.Serializable;
 import java.text.NumberFormat;
 
+import org.apache.commons.math.exception.DimensionMismatchException;
 import org.apache.commons.math.exception.MathArithmeticException;
 import org.apache.commons.math.exception.util.LocalizedFormats;
 import org.apache.commons.math.geometry.Vector;
 import org.apache.commons.math.geometry.Space;
 import org.apache.commons.math.util.FastMath;
 import org.apache.commons.math.util.MathUtils;
+import org.apache.commons.math.util.MathArrays;
 
 /**
  * This class implements vectors in a three-dimensional space.
  * <p>Instance of this class are guaranteed to be immutable.</p>
- * @version $Id: Vector3D.java 1154253 2011-08-05 15:02:56Z luc $
+ * @version $Id: Vector3D.java 1200546 2011-11-10 21:03:55Z luc $
  * @since 1.2
  */
 public class Vector3D implements Serializable, Vector<Euclidean3D> {
@@ -97,6 +99,21 @@ public class Vector3D implements Serializable, Vector<Euclidean3D> {
     }
 
     /** Simple constructor.
+     * Build a vector from its coordinates
+     * @param v coordinates array
+     * @exception DimensionMismatchException if array does not have 3 elements
+     * @see #toArray()
+     */
+    public Vector3D(double[] v) throws DimensionMismatchException {
+        if (v.length != 3) {
+            throw new DimensionMismatchException(v.length, 3);
+        }
+        this.x = v[0];
+        this.y = v[1];
+        this.z = v[2];
+    }
+
+    /** Simple constructor.
      * Build a vector from its azimuthal coordinates
      * @param alpha azimuth (&alpha;) around Z
      *              (0 is +X, &pi;/2 is +Y, &pi; is -X and 3&pi;/2 is -Y)
@@ -132,9 +149,9 @@ public class Vector3D implements Serializable, Vector<Euclidean3D> {
      * @param u2 second base (unscaled) vector
      */
     public Vector3D(double a1, Vector3D u1, double a2, Vector3D u2) {
-        this.x = MathUtils.linearCombination(a1, u1.x, a2, u2.x);
-        this.y = MathUtils.linearCombination(a1, u1.y, a2, u2.y);
-        this.z = MathUtils.linearCombination(a1, u1.z, a2, u2.z);
+        this.x = MathArrays.linearCombination(a1, u1.x, a2, u2.x);
+        this.y = MathArrays.linearCombination(a1, u1.y, a2, u2.y);
+        this.z = MathArrays.linearCombination(a1, u1.z, a2, u2.z);
     }
 
     /** Linear constructor
@@ -149,9 +166,9 @@ public class Vector3D implements Serializable, Vector<Euclidean3D> {
      */
     public Vector3D(double a1, Vector3D u1, double a2, Vector3D u2,
                     double a3, Vector3D u3) {
-        this.x = MathUtils.linearCombination(a1, u1.x, a2, u2.x, a3, u3.x);
-        this.y = MathUtils.linearCombination(a1, u1.y, a2, u2.y, a3, u3.y);
-        this.z = MathUtils.linearCombination(a1, u1.z, a2, u2.z, a3, u3.z);
+        this.x = MathArrays.linearCombination(a1, u1.x, a2, u2.x, a3, u3.x);
+        this.y = MathArrays.linearCombination(a1, u1.y, a2, u2.y, a3, u3.y);
+        this.z = MathArrays.linearCombination(a1, u1.z, a2, u2.z, a3, u3.z);
     }
 
     /** Linear constructor
@@ -168,9 +185,9 @@ public class Vector3D implements Serializable, Vector<Euclidean3D> {
      */
     public Vector3D(double a1, Vector3D u1, double a2, Vector3D u2,
                     double a3, Vector3D u3, double a4, Vector3D u4) {
-        this.x = MathUtils.linearCombination(a1, u1.x, a2, u2.x, a3, u3.x, a4, u4.x);
-        this.y = MathUtils.linearCombination(a1, u1.y, a2, u2.y, a3, u3.y, a4, u4.y);
-        this.z = MathUtils.linearCombination(a1, u1.z, a2, u2.z, a3, u3.z, a4, u4.z);
+        this.x = MathArrays.linearCombination(a1, u1.x, a2, u2.x, a3, u3.x, a4, u4.x);
+        this.y = MathArrays.linearCombination(a1, u1.y, a2, u2.y, a3, u3.y, a4, u4.y);
+        this.z = MathArrays.linearCombination(a1, u1.z, a2, u2.z, a3, u3.z, a4, u4.z);
     }
 
     /** Get the abscissa of the vector.
@@ -195,6 +212,14 @@ public class Vector3D implements Serializable, Vector<Euclidean3D> {
      */
     public double getZ() {
         return z;
+    }
+
+    /** Get the vector coordinates as a dimension 3 array.
+     * @return vector coordinates
+     * @see #Vector3D(double[])
+     */
+    public double[] toArray() {
+        return new double[] { x, y, z };
     }
 
     /** {@inheritDoc} */
@@ -422,11 +447,11 @@ public class Vector3D implements Serializable, Vector<Euclidean3D> {
      * algorithms to preserve accuracy and reduce cancellation effects.
      * It should be very accurate even for nearly orthogonal vectors.
      * </p>
-     * @see MathUtils#linearCombination(double, double, double, double, double, double)
+     * @see MathArrays#linearCombination(double, double, double, double, double, double)
      */
     public double dotProduct(final Vector<Euclidean3D> v) {
         final Vector3D v3 = (Vector3D) v;
-        return MathUtils.linearCombination(x, v3.x, y, v3.y, z, v3.z);
+        return MathArrays.linearCombination(x, v3.x, y, v3.y, z, v3.z);
     }
 
     /** Compute the cross-product of the instance with another vector.
@@ -435,9 +460,9 @@ public class Vector3D implements Serializable, Vector<Euclidean3D> {
      */
     public Vector3D crossProduct(final Vector<Euclidean3D> v) {
         final Vector3D v3 = (Vector3D) v;
-        return new Vector3D(MathUtils.linearCombination(y, v3.z, -z, v3.y),
-                            MathUtils.linearCombination(z, v3.x, -x, v3.z),
-                            MathUtils.linearCombination(x, v3.y, -y, v3.x));
+        return new Vector3D(MathArrays.linearCombination(y, v3.z, -z, v3.y),
+                            MathArrays.linearCombination(z, v3.x, -x, v3.z),
+                            MathArrays.linearCombination(x, v3.y, -y, v3.x));
     }
 
     /** {@inheritDoc} */
