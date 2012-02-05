@@ -18,6 +18,7 @@
 package org.apache.commons.math.ode.nonstiff;
 
 import org.apache.commons.math.ode.AbstractIntegrator;
+import org.apache.commons.math.ode.EquationsMapper;
 import org.apache.commons.math.ode.sampling.StepInterpolator;
 
 /**
@@ -26,7 +27,7 @@ import org.apache.commons.math.ode.sampling.StepInterpolator;
  *
  * @see DormandPrince54Integrator
  *
- * @version $Id: DormandPrince54StepInterpolator.java 1165792 2011-09-06 19:17:52Z luc $
+ * @version $Id: DormandPrince54StepInterpolator.java 1206723 2011-11-27 14:32:00Z luc $
  * @since 1.2
  */
 
@@ -70,8 +71,8 @@ class DormandPrince54StepInterpolator
     /** Shampine (1986) Dense output, element 6. */
     private static final double D6 =      69997945.0 /     29380423.0;
 
-    /** Serializable version identifier */
-    private static final long serialVersionUID = 4104157279605906956L;
+    /** Serializable version identifier. */
+    private static final long serialVersionUID = 20111120L;
 
     /** First vector for interpolation. */
     private double[] v1;
@@ -145,8 +146,10 @@ class DormandPrince54StepInterpolator
   /** {@inheritDoc} */
   @Override
   public void reinitialize(final AbstractIntegrator integrator,
-                           final double[] y, final double[][] yDotK, final boolean forward) {
-    super.reinitialize(integrator, y, yDotK, forward);
+                           final double[] y, final double[][] yDotK, final boolean forward,
+                           final EquationsMapper primaryMapper,
+                           final EquationsMapper[] secondaryMappers) {
+    super.reinitialize(integrator, y, yDotK, forward, primaryMapper, secondaryMappers);
     v1 = null;
     v2 = null;
     v3 = null;
@@ -201,10 +204,18 @@ class DormandPrince54StepInterpolator
     final double dot2 = 1 - twoTheta;
     final double dot3 = theta * (2 - 3 * theta);
     final double dot4 = twoTheta * (1 + theta * (twoTheta - 3));
-    for (int i = 0; i < interpolatedState.length; ++i) {
-      interpolatedState[i] =
-          currentState[i] - oneMinusThetaH * (v1[i] - theta * (v2[i] + theta * (v3[i] + eta * v4[i])));
-      interpolatedDerivatives[i] = v1[i] + dot2 * v2[i] + dot3 * v3[i] + dot4 * v4[i];
+    if ((previousState != null) && (theta <= 0.5)) {
+        for (int i = 0; i < interpolatedState.length; ++i) {
+            interpolatedState[i] =
+                    previousState[i] + theta * h * (v1[i] + eta * (v2[i] + theta * (v3[i] + eta * v4[i])));
+            interpolatedDerivatives[i] = v1[i] + dot2 * v2[i] + dot3 * v3[i] + dot4 * v4[i];
+        }
+    } else {
+        for (int i = 0; i < interpolatedState.length; ++i) {
+            interpolatedState[i] =
+                    currentState[i] - oneMinusThetaH * (v1[i] - theta * (v2[i] + theta * (v3[i] + eta * v4[i])));
+            interpolatedDerivatives[i] = v1[i] + dot2 * v2[i] + dot3 * v3[i] + dot4 * v4[i];
+        }
     }
 
   }

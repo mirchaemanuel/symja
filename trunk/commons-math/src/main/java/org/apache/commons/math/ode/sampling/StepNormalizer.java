@@ -18,7 +18,7 @@
 package org.apache.commons.math.ode.sampling;
 
 import org.apache.commons.math.util.FastMath;
-import org.apache.commons.math.util.MathUtils;
+import org.apache.commons.math.util.Precision;
 
 /**
  * This class wraps an object implementing {@link FixedStepHandler}
@@ -84,7 +84,7 @@ import org.apache.commons.math.util.MathUtils;
  * @see FixedStepHandler
  * @see StepNormalizerMode
  * @see StepNormalizerBounds
- * @version $Id: StepNormalizer.java 1165792 2011-09-06 19:17:52Z luc $
+ * @version $Id: StepNormalizer.java 1207066 2011-11-28 10:56:30Z luc $
  * @since 1.2
  */
 
@@ -161,23 +161,29 @@ public class StepNormalizer implements StepHandler {
     public StepNormalizer(final double h, final FixedStepHandler handler,
                           final StepNormalizerMode mode,
                           final StepNormalizerBounds bounds) {
-        this.h       = FastMath.abs(h);
-        this.handler = handler;
-        this.mode    = mode;
-        this.bounds  = bounds;
-        reset();
-    }
-
-    /** Reset the step handler.
-     * Initialize the internal data as required before the first step is
-     * handled.
-     */
-    public void reset() {
+        this.h          = FastMath.abs(h);
+        this.handler    = handler;
+        this.mode       = mode;
+        this.bounds     = bounds;
         firstTime       = Double.NaN;
         lastTime        = Double.NaN;
         lastState       = null;
         lastDerivatives = null;
         forward         = true;
+    }
+
+    /** {@inheritDoc} */
+    public void init(double t0, double[] y0, double t) {
+
+        firstTime       = Double.NaN;
+        lastTime        = Double.NaN;
+        lastState       = null;
+        lastDerivatives = null;
+        forward         = true;
+
+        // initialize the underlying handler
+        handler.init(t0, y0, t);
+
     }
 
     /**
@@ -212,7 +218,7 @@ public class StepNormalizer implements StepHandler {
                           lastTime + h :
                           (FastMath.floor(lastTime / h) + 1) * h;
         if (mode == StepNormalizerMode.MULTIPLES &&
-            MathUtils.equals(nextTime, lastTime, 1)) {
+            Precision.equals(nextTime, lastTime, 1)) {
             nextTime += h;
         }
 

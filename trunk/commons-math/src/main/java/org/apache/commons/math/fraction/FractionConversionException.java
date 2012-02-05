@@ -17,14 +17,14 @@
 
 package org.apache.commons.math.fraction;
 
-import org.apache.commons.math.ConvergenceException;
+import org.apache.commons.math.exception.ConvergenceException;
 import org.apache.commons.math.exception.util.LocalizedFormats;
 
 /**
  * Error thrown when a double value cannot be converted to a fraction
  * in the allowed number of iterations.
  *
- * @version $Id: FractionConversionException.java 1131229 2011-06-03 20:49:25Z luc $
+ * @version $Id: FractionConversionException.java 1177986 2011-10-01 14:16:50Z luc $
  * @since 1.2
  */
 public class FractionConversionException extends ConvergenceException {

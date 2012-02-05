@@ -18,11 +18,11 @@
 package org.apache.commons.math.analysis.function;
 
 import java.util.Arrays;
-import org.apache.commons.math.analysis.UnivariateRealFunction;
+import org.apache.commons.math.analysis.UnivariateFunction;
 import org.apache.commons.math.exception.DimensionMismatchException;
 import org.apache.commons.math.exception.NullArgumentException;
 import org.apache.commons.math.exception.NoDataException;
-import org.apache.commons.math.util.MathUtils;
+import org.apache.commons.math.util.MathArrays;
 
 /**
  * <a href="http://en.wikipedia.org/wiki/Step_function">
@@ -31,22 +31,31 @@ import org.apache.commons.math.util.MathUtils;
  * @version $Id$
  * @since 3.0
  */
-public class StepFunction implements UnivariateRealFunction {
+public class StepFunction implements UnivariateFunction {
     /** Abscissae. */
     private final double[] abscissa;
     /** Ordinates. */
     private final double[] ordinate;
 
     /**
-     * Builds a step function from a list of abscissae and the corresponding
-     * ordinates.
+     * Builds a step function from a list of arguments and the corresponding
+     * values. Specifically, returns the function h(x) defined by <pre><code>
+     * h(x) = y[0] for all x < x[1]
+     *        y[1] for x[1] <= x < x[2]
+     *        ...
+     *        y[y.length - 1] for x >= x[x.length - 1]
+     * </code></pre>
+     * The value of {@code x[0]} is ignored, but it must be strictly less than
+     * {@code x[1]}.
      *
-     * @param x Abscissae.
-     * @param y Ordinates.
+     * @param x Domain values where the function changes value.
+     * @param y Values of the function.
      * @throws org.apache.commons.math.exception.NonMonotonicSequenceException
      * if the {@code x} array is not sorted in strictly increasing order.
      * @throws NullArgumentException if {@code x} or {@code y} are {@code null}.
      * @throws NoDataException if {@code x} or {@code y} are zero-length.
+     * @throws DimensionMismatchException if {@code x} and {@code y} do not
+     * have the same length.
      */
     public StepFunction(double[] x,
                         double[] y) {
@@ -61,10 +70,10 @@ public class StepFunction implements UnivariateRealFunction {
         if (y.length != x.length) {
             throw new DimensionMismatchException(y.length, x.length);
         }
-        MathUtils.checkOrder(x);
+        MathArrays.checkOrder(x);
 
-        abscissa = MathUtils.copyOf(x);
-        ordinate = MathUtils.copyOf(y);
+        abscissa = MathArrays.copyOf(x);
+        ordinate = MathArrays.copyOf(y);
     }
 
     /** {@inheritDoc} */

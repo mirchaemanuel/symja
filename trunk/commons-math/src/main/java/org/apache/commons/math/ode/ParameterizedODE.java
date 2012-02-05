@@ -16,10 +16,10 @@
  */
 package org.apache.commons.math.ode;
 
-/** Interface to compute by finite difference jacobian matrix for some parameter
+/** Interface to compute by finite difference Jacobian matrix for some parameter
  *  when computing {@link JacobianMatrices partial derivatives equations}.
- * 
- * @version $Id: ParameterizedODE.java 1175409 2011-09-25 15:04:39Z luc $
+ *
+ * @version $Id: ParameterizedODE.java 1178235 2011-10-02 19:43:17Z luc $
  * @since 3.0
  */
 

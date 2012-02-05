@@ -22,9 +22,9 @@ package org.apache.commons.math.optimization;
  * Commons-Math. Users of the API are advised to base their code on
  * the following interfaces:
  * <ul>
- *  <li>{@link org.apache.commons.math.optimization.MultivariateRealOptimizer}</li>
- *  <li>{@link org.apache.commons.math.optimization.DifferentiableMultivariateRealOptimizer}</li>
- *  <li>{@link org.apache.commons.math.optimization.DifferentiableMultivariateVectorialOptimizer}</li>
+ *  <li>{@link org.apache.commons.math.optimization.MultivariateOptimizer}</li>
+ *  <li>{@link org.apache.commons.math.optimization.DifferentiableMultivariateOptimizer}</li>
+ *  <li>{@link org.apache.commons.math.optimization.DifferentiableMultivariateVectorOptimizer}</li>
  *  <li>{@link org.apache.commons.math.optimization.univariate.UnivariateRealOptimizer}</li>
  * </ul>
  *
@@ -50,13 +50,6 @@ public interface BaseOptimizer<PAIR> {
      * @return the number of evaluations of the objective function.
      */
     int getEvaluations();
-
-    /**
-     * Set the convergence checker.
-     *
-     * @param checker Object to use to check for convergence.
-     */
-    void setConvergenceChecker(ConvergenceChecker<PAIR> checker);
 
     /**
      * Get the convergence checker.

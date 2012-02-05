@@ -17,12 +17,12 @@
 package org.apache.commons.math.analysis.solvers;
 
 
-import org.apache.commons.math.analysis.UnivariateRealFunction;
+import org.apache.commons.math.analysis.UnivariateFunction;
 import org.apache.commons.math.exception.MathInternalError;
 import org.apache.commons.math.exception.NoBracketingException;
 import org.apache.commons.math.exception.NumberIsTooSmallException;
 import org.apache.commons.math.util.FastMath;
-import org.apache.commons.math.util.MathUtils;
+import org.apache.commons.math.util.Precision;
 
 /**
  * This class implements a modification of the <a
@@ -38,11 +38,11 @@ import org.apache.commons.math.util.MathUtils;
  * </p>
  * The given interval must bracket the root.
  *
- * @version $Id: BracketingNthOrderBrentSolver.java 1152644 2011-07-31 21:27:39Z erans $
+ * @version $Id: BracketingNthOrderBrentSolver.java 1234784 2012-01-23 13:33:30Z erans $
  */
 public class BracketingNthOrderBrentSolver
-    extends AbstractUnivariateRealSolver
-    implements BracketedUnivariateRealSolver<UnivariateRealFunction> {
+    extends AbstractUnivariateSolver
+    implements BracketedUnivariateSolver<UnivariateFunction> {
 
     /** Default absolute accuracy. */
     private static final double DEFAULT_ABSOLUTE_ACCURACY = 1e-6;
@@ -152,14 +152,14 @@ public class BracketingNthOrderBrentSolver
 
         // evaluate initial guess
         y[1] = computeObjectiveValue(x[1]);
-        if (MathUtils.equals(y[1], 0.0, 1)) {
+        if (Precision.equals(y[1], 0.0, 1)) {
             // return the initial guess if it is a perfect root.
             return x[1];
         }
 
         // evaluate first  endpoint
         y[0] = computeObjectiveValue(x[0]);
-        if (MathUtils.equals(y[0], 0.0, 1)) {
+        if (Precision.equals(y[0], 0.0, 1)) {
             // return the first endpoint if it is a perfect root.
             return x[0];
         }
@@ -176,7 +176,7 @@ public class BracketingNthOrderBrentSolver
 
             // evaluate second endpoint
             y[2] = computeObjectiveValue(x[2]);
-            if (MathUtils.equals(y[2], 0.0, 1)) {
+            if (Precision.equals(y[2], 0.0, 1)) {
                 // return the second endpoint if it is a perfect root.
                 return x[2];
             }
@@ -232,10 +232,16 @@ public class BracketingNthOrderBrentSolver
             double targetY;
             if (agingA >= MAXIMAL_AGING) {
                 // we keep updating the high bracket, try to compensate this
-                targetY = -REDUCTION_FACTOR * yB;
+                final int p = agingA - MAXIMAL_AGING;
+                final double weightA = (1 << p) - 1;
+                final double weightB = p + 1;
+                targetY = (weightA * yA - weightB * REDUCTION_FACTOR * yB) / (weightA + weightB);
             } else if (agingB >= MAXIMAL_AGING) {
                 // we keep updating the low bracket, try to compensate this
-                targetY = -REDUCTION_FACTOR * yA;
+                final int p = agingB - MAXIMAL_AGING;
+                final double weightA = p + 1;
+                final double weightB = (1 << p) - 1;
+                targetY = (weightB * yB - weightA * REDUCTION_FACTOR * yA) / (weightA + weightB);
             } else {
                 // bracketing is balanced, try to find the root itself
                 targetY = 0;
@@ -281,7 +287,7 @@ public class BracketingNthOrderBrentSolver
 
             // evaluate the function at the guessed root
             final double nextY = computeObjectiveValue(nextX);
-            if (MathUtils.equals(nextY, 0.0, 1)) {
+            if (Precision.equals(nextY, 0.0, 1)) {
                 // we have found an exact root, since it is not an approximation
                 // we don't need to bother about the allowed solutions setting
                 return nextX;
@@ -380,14 +386,14 @@ public class BracketingNthOrderBrentSolver
     }
 
     /** {@inheritDoc} */
-    public double solve(int maxEval, UnivariateRealFunction f, double min,
+    public double solve(int maxEval, UnivariateFunction f, double min,
                         double max, AllowedSolution allowedSolution) {
         this.allowed = allowedSolution;
         return super.solve(maxEval, f, min, max);
     }
 
     /** {@inheritDoc} */
-    public double solve(int maxEval, UnivariateRealFunction f, double min,
+    public double solve(int maxEval, UnivariateFunction f, double min,
                         double max, double startValue,
                         AllowedSolution allowedSolution) {
         this.allowed = allowedSolution;

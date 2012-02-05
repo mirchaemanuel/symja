@@ -45,13 +45,14 @@ import org.apache.commons.math.util.FastMath;
  * Note that this is in contradiction with the IEEE-754 standard for floating
  * point numbers (according to which the test {@code x == x} must fail if
  * {@code x} is {@code NaN}). The method
- * {@link MathUtils#equals(double,double,int) equals for primitive double} in
- * {@link MathUtils} conforms with IEEE-754 while this class conforms with
- * the standard behavior for Java object types.
+ * {@link org.apache.commons.math.util.Precision#equals(double,double,int)
+ * equals for primitive double} in {@link org.apache.commons.math.util.Precision}
+ * conforms with IEEE-754 while this class conforms with the standard behavior
+ * for Java object types.
  * <br/>
  * Implements Serializable since 2.0
  *
- * @version $Id: Complex.java 1164923 2011-09-03 20:06:24Z psteitz $
+ * @version $Id: Complex.java 1236548 2012-01-27 07:00:19Z celestin $
  */
 public class Complex implements FieldElement<Complex>, Serializable  {
     /** The square root of -1. A number representing "0.0 + 1.0i" */
@@ -294,6 +295,31 @@ public class Complex implements FieldElement<Complex>, Serializable  {
                              imaginary  / divisor);
     }
 
+    /** {@inheritDoc} */
+    public Complex reciprocal() {
+        if (isNaN) {
+            return NaN;
+        }
+
+        if (real == 0.0 && imaginary == 0.0) {
+            return NaN;
+        }
+
+        if (isInfinite) {
+            return ZERO;
+        }
+
+        if (FastMath.abs(real) < FastMath.abs(imaginary)) {
+            double q = real / imaginary;
+            double scale = 1. / (real * q + imaginary);
+            return createComplex(scale * q, -scale);
+        } else {
+            double q = imaginary / real;
+            double scale = 1. / (imaginary * q + real);
+            return createComplex(scale, -scale * q);
+        }
+    }
+
     /**
      * Test for the equality of two Complex objects.
      * If both the real and imaginary parts of two complex numbers
@@ -422,6 +448,25 @@ public class Complex implements FieldElement<Complex>, Serializable  {
         }
         return createComplex(real * factor.real - imaginary * factor.imaginary,
                              real * factor.imaginary + imaginary * factor.real);
+    }
+
+    /**
+     * Returns a {@code Complex} whose value is {@code this * factor}, with {@code factor}
+     * interpreted as a integer number.
+     *
+     * @param  factor value to be multiplied by this {@code Complex}.
+     * @return {@code this * factor}.
+     * @see #multiply(Complex)
+     */
+    public Complex multiply(final int factor) {
+        if (isNaN) {
+            return NaN;
+        }
+        if (Double.isInfinite(real) ||
+            Double.isInfinite(imaginary)) {
+            return INF;
+        }
+        return createComplex(real * factor, imaginary * factor);
     }
 
     /**
@@ -592,7 +637,7 @@ public class Complex implements FieldElement<Complex>, Serializable  {
      * </pre>
      * where the (real) functions on the right-hand side are
      * {@link java.lang.Math#sin}, {@link java.lang.Math#cos},
-     * {@link MathUtils#cosh} and {@link MathUtils#sinh}.
+     * {@link FastMath#cosh} and {@link FastMath#sinh}.
      * <br/>
      * Returns {@link Complex#NaN} if either real or imaginary part of the
      * input argument is {@code NaN}.
@@ -616,8 +661,8 @@ public class Complex implements FieldElement<Complex>, Serializable  {
             return NaN;
         }
 
-        return createComplex(FastMath.cos(real) * MathUtils.cosh(imaginary),
-                             -FastMath.sin(real) * MathUtils.sinh(imaginary));
+        return createComplex(FastMath.cos(real) * FastMath.cosh(imaginary),
+                             -FastMath.sin(real) * FastMath.sinh(imaginary));
     }
 
     /**
@@ -632,7 +677,7 @@ public class Complex implements FieldElement<Complex>, Serializable  {
      * </pre>
      * where the (real) functions on the right-hand side are
      * {@link java.lang.Math#sin}, {@link java.lang.Math#cos},
-     * {@link MathUtils#cosh} and {@link MathUtils#sinh}.
+     * {@link FastMath#cosh} and {@link FastMath#sinh}.
      * <br/>
      * Returns {@link Complex#NaN} if either real or imaginary part of the
      * input argument is {@code NaN}.
@@ -656,8 +701,8 @@ public class Complex implements FieldElement<Complex>, Serializable  {
             return NaN;
         }
 
-        return createComplex(MathUtils.cosh(real) * FastMath.cos(imaginary),
-                             MathUtils.sinh(real) * FastMath.sin(imaginary));
+        return createComplex(FastMath.cosh(real) * FastMath.cos(imaginary),
+                             FastMath.sinh(real) * FastMath.sin(imaginary));
     }
 
     /**
@@ -796,7 +841,7 @@ public class Complex implements FieldElement<Complex>, Serializable  {
      * </pre>
      * where the (real) functions on the right-hand side are
      * {@link java.lang.Math#sin}, {@link java.lang.Math#cos},
-     * {@link MathUtils#cosh} and {@link MathUtils#sinh}.
+     * {@link FastMath#cosh} and {@link FastMath#sinh}.
      * <br/>
      * Returns {@link Complex#NaN} if either real or imaginary part of the
      * input argument is {@code NaN}.
@@ -820,8 +865,8 @@ public class Complex implements FieldElement<Complex>, Serializable  {
             return NaN;
         }
 
-        return createComplex(FastMath.sin(real) * MathUtils.cosh(imaginary),
-                             FastMath.cos(real) * MathUtils.sinh(imaginary));
+        return createComplex(FastMath.sin(real) * FastMath.cosh(imaginary),
+                             FastMath.cos(real) * FastMath.sinh(imaginary));
     }
 
     /**
@@ -836,7 +881,7 @@ public class Complex implements FieldElement<Complex>, Serializable  {
      * </pre>
      * where the (real) functions on the right-hand side are
      * {@link java.lang.Math#sin}, {@link java.lang.Math#cos},
-     * {@link MathUtils#cosh} and {@link MathUtils#sinh}.
+     * {@link FastMath#cosh} and {@link FastMath#sinh}.
      * <br/>
      * Returns {@link Complex#NaN} if either real or imaginary part of the
      * input argument is {@code NaN}.
@@ -860,8 +905,8 @@ public class Complex implements FieldElement<Complex>, Serializable  {
             return NaN;
         }
 
-        return createComplex(MathUtils.sinh(real) * FastMath.cos(imaginary),
-            MathUtils.cosh(real) * FastMath.sin(imaginary));
+        return createComplex(FastMath.sinh(real) * FastMath.cos(imaginary),
+            FastMath.cosh(real) * FastMath.sin(imaginary));
     }
 
     /**
@@ -876,7 +921,7 @@ public class Complex implements FieldElement<Complex>, Serializable  {
      * where <ul>
      * <li>{@code |a| = }{@link Math#abs}(a)</li>
      * <li>{@code |a + bi| = }{@link Complex#abs}(a + bi)</li>
-     * <li>{@code sign(b) =  }{@link MathUtils#indicator}(b)
+     * <li>{@code sign(b) =  }{@link FastMath#copySign(double,double) copySign(1d, b)}
      * </ul>
      * <br/>
      * Returns {@link Complex#NaN} if either real or imaginary part of the
@@ -912,7 +957,7 @@ public class Complex implements FieldElement<Complex>, Serializable  {
             return createComplex(t, imaginary / (2.0 * t));
         } else {
             return createComplex(FastMath.abs(imaginary) / (2.0 * t),
-                                 MathUtils.indicator(imaginary) * t);
+                                 FastMath.copySign(1d, imaginary) * t);
         }
     }
 
@@ -948,8 +993,8 @@ public class Complex implements FieldElement<Complex>, Serializable  {
      *  </code>
      * </pre>
      * where the (real) functions on the right-hand side are
-     * {@link java.lang.Math#sin}, {@link java.lang.Math#cos},
-     * {@link MathUtils#cosh} and {@link MathUtils#sinh}.
+     * {@link FastMath#sin}, {@link FastMath#cos}, {@link FastMath#cosh} and
+     * {@link FastMath#sinh}.
      * <br/>
      * Returns {@link Complex#NaN} if either real or imaginary part of the
      * input argument is {@code NaN}.
@@ -959,8 +1004,8 @@ public class Complex implements FieldElement<Complex>, Serializable  {
      * <pre>
      *  Examples:
      *  <code>
-     *   tan(1 &plusmn; INFINITY i) = 0 + NaN i
-     *   tan(&plusmn;INFINITY + i) = NaN + NaN i
+     *   tan(a &plusmn; INFINITY i) = 0 &plusmn; i
+     *   tan(&plusmn;INFINITY + bi) = NaN + NaN i
      *   tan(&plusmn;INFINITY &plusmn; INFINITY i) = NaN + NaN i
      *   tan(&plusmn;&pi;/2 + 0 i) = &plusmn;INFINITY + NaN i
      *  </code>
@@ -970,16 +1015,22 @@ public class Complex implements FieldElement<Complex>, Serializable  {
      * @since 1.2
      */
     public Complex tan() {
-        if (isNaN) {
+        if (isNaN || Double.isInfinite(real)) {
             return NaN;
+        }
+        if (imaginary > 20.0) {
+            return createComplex(0.0, 1.0);
+        }
+        if (imaginary < -20.0) {
+            return createComplex(0.0, -1.0);
         }
 
         double real2 = 2.0 * real;
         double imaginary2 = 2.0 * imaginary;
-        double d = FastMath.cos(real2) + MathUtils.cosh(imaginary2);
+        double d = FastMath.cos(real2) + FastMath.cosh(imaginary2);
 
         return createComplex(FastMath.sin(real2) / d,
-                             MathUtils.sinh(imaginary2) / d);
+                             FastMath.sinh(imaginary2) / d);
     }
 
     /**
@@ -993,8 +1044,8 @@ public class Complex implements FieldElement<Complex>, Serializable  {
      *  </code>
      * </pre>
      * where the (real) functions on the right-hand side are
-     * {@link java.lang.Math#sin}, {@link java.lang.Math#cos},
-     * {@link MathUtils#cosh} and {@link MathUtils#sinh}.
+     * {@link FastMath#sin}, {@link FastMath#cos}, {@link FastMath#cosh} and
+     * {@link FastMath#sinh}.
      * <br/>
      * Returns {@link Complex#NaN} if either real or imaginary part of the
      * input argument is {@code NaN}.
@@ -1004,8 +1055,8 @@ public class Complex implements FieldElement<Complex>, Serializable  {
      * <pre>
      *  Examples:
      *  <code>
-     *   tanh(1 &plusmn; INFINITY i) = NaN + NaN i
-     *   tanh(&plusmn;INFINITY + i) = NaN + 0 i
+     *   tanh(a &plusmn; INFINITY i) = NaN + NaN i
+     *   tanh(&plusmn;INFINITY + bi) = &plusmn;1 + 0 i
      *   tanh(&plusmn;INFINITY &plusmn; INFINITY i) = NaN + NaN i
      *   tanh(0 + (&pi;/2)i) = NaN + INFINITY i
      *  </code>
@@ -1015,15 +1066,20 @@ public class Complex implements FieldElement<Complex>, Serializable  {
      * @since 1.2
      */
     public Complex tanh() {
-        if (isNaN) {
+        if (isNaN || Double.isInfinite(imaginary)) {
             return NaN;
         }
-
+        if (real > 20.0) {
+            return createComplex(1.0, 0.0);
+        }
+        if (real < -20.0) {
+            return createComplex(-1.0, 0.0);
+        }
         double real2 = 2.0 * real;
         double imaginary2 = 2.0 * imaginary;
-        double d = MathUtils.cosh(real2) + FastMath.cos(imaginary2);
+        double d = FastMath.cosh(real2) + FastMath.cos(imaginary2);
 
-        return createComplex(MathUtils.sinh(real2) / d,
+        return createComplex(FastMath.sinh(real2) / d,
                              FastMath.sin(imaginary2) / d);
     }
 
@@ -1173,4 +1229,5 @@ public class Complex implements FieldElement<Complex>, Serializable  {
     public String toString() {
         return "(" + real + ", " + imaginary + ")";
     }
+
 }

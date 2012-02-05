@@ -33,9 +33,11 @@ import org.apache.commons.math.exception.util.LocalizedFormats;
 /**
 * Base class for commons-math unchecked exceptions.
 *
-* @version $Id: MathRuntimeException.java 1166646 2011-09-08 12:08:16Z erans $
+* @version $Id: MathRuntimeException.java 1197460 2011-11-04 09:44:04Z sebb $
 * @since 2.0
+* @deprecated To be removed before 3.0.  Please do not use in any new code.
 */
+@Deprecated
 public class MathRuntimeException extends RuntimeException {
 
     /** Serializable version identifier. */

@@ -17,17 +17,17 @@
 
 package org.apache.commons.math.geometry.euclidean.threed;
 
-import org.apache.commons.math.MathException;
+import org.apache.commons.math.exception.MathIllegalStateException;
 import org.apache.commons.math.exception.util.LocalizedFormats;
 
 /** This class represents exceptions thrown while extractiong Cardan
  * or Euler angles from a rotation.
 
- * @version $Id: CardanEulerSingularityException.java 1131229 2011-06-03 20:49:25Z luc $
+ * @version $Id: CardanEulerSingularityException.java 1178082 2011-10-01 20:01:22Z luc $
  * @since 1.2
  */
 public class CardanEulerSingularityException
-  extends MathException {
+  extends MathIllegalStateException {
 
     /** Serializable version identifier */
     private static final long serialVersionUID = -1360952845582206770L;

@@ -22,11 +22,10 @@ import java.util.Collection;
 import org.apache.commons.math.exception.MathIllegalArgumentException;
 import org.apache.commons.math.exception.util.LocalizedFormats;
 
-
 /** Wrapper class enabling {@link FirstOrderDifferentialEquations basic simple}
  *  ODE instances to be used when processing {@link JacobianMatrices}.
- *  
- * @version $Id: ParameterizedWrapper.java 1175409 2011-09-25 15:04:39Z luc $
+ *
+ * @version $Id: ParameterizedWrapper.java 1240253 2012-02-03 17:38:02Z tn $
  * @since 3.0
  */
 class ParameterizedWrapper implements ParameterizedODE {
@@ -41,12 +40,18 @@ class ParameterizedWrapper implements ParameterizedODE {
         this.fode = ode;
     }
 
-    /** {@inheritDoc} */
+    /** Get the dimension of the underlying FODE.
+     * @return dimension of the underlying FODE
+     */
     public int getDimension() {
         return fode.getDimension();
     }
 
-    /** {@inheritDoc} */
+    /** Get the current time derivative of the state vector of the underlying FODE.
+     * @param t current value of the independent <I>time</I> variable
+     * @param y array containing the current value of the state vector
+     * @param yDot placeholder array where to put the time derivative of the state vector
+     */
     public void computeDerivatives(double t, double[] y, double[] yDot) {
         fode.computeDerivatives(t, y, yDot);
     }

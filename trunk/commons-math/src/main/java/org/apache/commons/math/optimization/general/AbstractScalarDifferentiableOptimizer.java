@@ -17,29 +17,29 @@
 
 package org.apache.commons.math.optimization.general;
 
-import org.apache.commons.math.analysis.DifferentiableMultivariateRealFunction;
-import org.apache.commons.math.analysis.MultivariateVectorialFunction;
-import org.apache.commons.math.optimization.DifferentiableMultivariateRealOptimizer;
+import org.apache.commons.math.analysis.DifferentiableMultivariateFunction;
+import org.apache.commons.math.analysis.MultivariateVectorFunction;
+import org.apache.commons.math.optimization.DifferentiableMultivariateOptimizer;
 import org.apache.commons.math.optimization.GoalType;
 import org.apache.commons.math.optimization.ConvergenceChecker;
 import org.apache.commons.math.optimization.RealPointValuePair;
-import org.apache.commons.math.optimization.direct.BaseAbstractScalarOptimizer;
+import org.apache.commons.math.optimization.direct.BaseAbstractMultivariateOptimizer;
 
 /**
  * Base class for implementing optimizers for multivariate scalar
  * differentiable functions.
  * It contains boiler-plate code for dealing with gradient evaluation.
  *
- * @version $Id: AbstractScalarDifferentiableOptimizer.java 1166311 2011-09-07 18:48:06Z luc $
+ * @version $Id: AbstractScalarDifferentiableOptimizer.java 1212377 2011-12-09 12:42:50Z erans $
  * @since 2.0
  */
 public abstract class AbstractScalarDifferentiableOptimizer
-    extends BaseAbstractScalarOptimizer<DifferentiableMultivariateRealFunction>
-    implements DifferentiableMultivariateRealOptimizer {
+    extends BaseAbstractMultivariateOptimizer<DifferentiableMultivariateFunction>
+    implements DifferentiableMultivariateOptimizer {
     /**
      * Objective function gradient.
      */
-    private MultivariateVectorialFunction gradient;
+    private MultivariateVectorFunction gradient;
 
     /**
      * Simple constructor with default settings.
@@ -70,7 +70,7 @@ public abstract class AbstractScalarDifferentiableOptimizer
     /** {@inheritDoc} */
     @Override
     public RealPointValuePair optimize(int maxEval,
-                                       final DifferentiableMultivariateRealFunction f,
+                                       final DifferentiableMultivariateFunction f,
                                        final GoalType goalType,
                                        final double[] startPoint) {
         // Store optimization problem characteristics.

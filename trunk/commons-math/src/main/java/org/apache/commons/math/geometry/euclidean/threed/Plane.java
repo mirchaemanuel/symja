@@ -28,7 +28,7 @@ import org.apache.commons.math.geometry.partitioning.Hyperplane;
 import org.apache.commons.math.util.FastMath;
 
 /** The class represent planes in a three dimensional space.
- * @version $Id: Plane.java 1159353 2011-08-18 18:50:08Z luc $
+ * @version $Id: Plane.java 1197468 2011-11-04 09:54:30Z sebb $
  * @since 3.0
  */
 public class Plane implements Hyperplane<Euclidean3D>, Embedding<Euclidean3D, Euclidean2D> {
@@ -308,7 +308,7 @@ public class Plane implements Hyperplane<Euclidean3D>, Embedding<Euclidean3D, Eu
         if (FastMath.abs(dot) < 1.0e-10) {
             return null;
         }
-        final Vector3D point = (Vector3D) line.toSpace(Vector1D.ZERO);
+        final Vector3D point = line.toSpace(Vector1D.ZERO);
         final double   k     = -(originOffset + w.dotProduct(point)) / dot;
         return new Vector3D(1.0, point, k, direction);
     }

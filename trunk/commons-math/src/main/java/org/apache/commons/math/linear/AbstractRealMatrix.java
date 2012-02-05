@@ -32,7 +32,7 @@ import org.apache.commons.math.util.FastMath;
  * <p>All the methods implemented here use {@link #getEntry(int, int)} to access
  * matrix elements. Derived class can provide faster implementations. </p>
  *
- * @version $Id: AbstractRealMatrix.java 1163515 2011-08-31 07:41:25Z celestin $
+ * @version $Id: AbstractRealMatrix.java 1188941 2011-10-25 21:57:15Z erans $
  * @since 2.0
  */
 public abstract class AbstractRealMatrix
@@ -564,10 +564,16 @@ public abstract class AbstractRealMatrix
     public abstract void setEntry(int row, int column, double value);
 
     /** {@inheritDoc} */
-    public abstract void addToEntry(int row, int column, double increment);
+    public void addToEntry(int row, int column, double increment) {
+        MatrixUtils.checkMatrixIndex(this, row, column);
+        setEntry(row, column, getEntry(row, column) + increment);
+    }
 
     /** {@inheritDoc} */
-    public abstract void multiplyEntry(int row, int column, double factor);
+    public void multiplyEntry(int row, int column, double factor) {
+        MatrixUtils.checkMatrixIndex(this, row, column);
+        setEntry(row, column, getEntry(row, column) * factor);
+    }
 
     /** {@inheritDoc} */
     public RealMatrix transpose() {

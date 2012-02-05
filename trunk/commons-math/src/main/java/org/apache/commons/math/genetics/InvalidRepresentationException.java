@@ -22,7 +22,7 @@ import org.apache.commons.math.exception.util.Localizable;
 /**
  * Exception indicating that the representation of a chromosome is not valid.
  *
- * @version $Id: InvalidRepresentationException.java 1136115 2011-06-15 16:44:50Z psteitz $
+ * @version $Id: InvalidRepresentationException.java 1235038 2012-01-23 22:26:37Z tn $
  * @since 2.0
  */
 public class InvalidRepresentationException extends MathIllegalArgumentException {
@@ -36,8 +36,7 @@ public class InvalidRepresentationException extends MathIllegalArgumentException
      * @param pattern Message pattern.
      * @param args Arguments.
      */
-    public InvalidRepresentationException(Localizable pattern,
-            Object ... args) {
+    public InvalidRepresentationException(Localizable pattern, Object ... args) {
        super(pattern, args);
     }
 

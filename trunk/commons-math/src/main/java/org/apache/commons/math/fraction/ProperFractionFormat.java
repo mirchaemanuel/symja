@@ -33,7 +33,7 @@ import org.apache.commons.math.util.MathUtils;
  * will result in a <code>ParseException</code>.</p>
  *
  * @since 1.1
- * @version $Id: ProperFractionFormat.java 1131229 2011-06-03 20:49:25Z luc $
+ * @version $Id: ProperFractionFormat.java 1209082 2011-12-01 13:55:04Z erans $
  */
 public class ProperFractionFormat extends FractionFormat {
 
@@ -215,7 +215,7 @@ public class ProperFractionFormat extends FractionFormat {
         int w = whole.intValue();
         int n = num.intValue();
         int d = den.intValue();
-        return new Fraction(((Math.abs(w) * d) + n) * MathUtils.sign(w), d);
+        return new Fraction(((Math.abs(w) * d) + n) * MathUtils.copySign(1, w), d);
     }
 
     /**

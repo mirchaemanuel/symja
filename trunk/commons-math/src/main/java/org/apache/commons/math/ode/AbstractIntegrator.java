@@ -27,7 +27,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import org.apache.commons.math.analysis.solvers.BracketingNthOrderBrentSolver;
-import org.apache.commons.math.analysis.solvers.UnivariateRealSolver;
+import org.apache.commons.math.analysis.solvers.UnivariateSolver;
 import org.apache.commons.math.exception.DimensionMismatchException;
 import org.apache.commons.math.exception.MathIllegalArgumentException;
 import org.apache.commons.math.exception.MathIllegalStateException;
@@ -40,14 +40,14 @@ import org.apache.commons.math.ode.sampling.AbstractStepInterpolator;
 import org.apache.commons.math.ode.sampling.StepHandler;
 import org.apache.commons.math.util.FastMath;
 import org.apache.commons.math.util.Incrementor;
-import org.apache.commons.math.util.MathUtils;
+import org.apache.commons.math.util.Precision;
 
 /**
  * Base class managing common boilerplate for all integrators.
- * @version $Id: AbstractIntegrator.java 1175409 2011-09-25 15:04:39Z luc $
+ * @version $Id: AbstractIntegrator.java 1234784 2012-01-23 13:33:30Z erans $
  * @since 2.0
  */
-public abstract class AbstractIntegrator implements ExpandableFirstOrderIntegrator {
+public abstract class AbstractIntegrator implements FirstOrderIntegrator {
 
     /** Step handler. */
     protected Collection<StepHandler> stepHandlers;
@@ -77,7 +77,7 @@ public abstract class AbstractIntegrator implements ExpandableFirstOrderIntegrat
     private Incrementor evaluations;
 
     /** Differential equations to integrate. */
-    private transient ExpandableFirstOrderDifferentialEquations equations;
+    private transient ExpandableStatefulODE expandable;
 
     /** Build an instance.
      * @param name name of the method
@@ -91,7 +91,7 @@ public abstract class AbstractIntegrator implements ExpandableFirstOrderIntegrat
         statesInitialized = false;
         evaluations = new Incrementor();
         setMaxEvaluations(-1);
-        resetEvaluations();
+        evaluations.resetCount();
     }
 
     /** Build an instance with a null name.
@@ -135,7 +135,7 @@ public abstract class AbstractIntegrator implements ExpandableFirstOrderIntegrat
                                 final double maxCheckInterval,
                                 final double convergence,
                                 final int maxIterationCount,
-                                final UnivariateRealSolver solver) {
+                                final UnivariateSolver solver) {
         eventsStates.add(new EventState(handler, maxCheckInterval, convergence,
                                         maxIterationCount, solver));
     }
@@ -179,26 +179,79 @@ public abstract class AbstractIntegrator implements ExpandableFirstOrderIntegrat
         return evaluations.getCount();
     }
 
-    /** Reset the number of evaluations to zero.
+    /** Prepare the start of an integration.
+     * @param t0 start value of the independent <i>time</i> variable
+     * @param y0 array containing the start value of the state vector
+     * @param t target time for the integration
      */
-    protected void resetEvaluations() {
+    protected void initIntegration(final double t0, final double[] y0, final double t) {
+
         evaluations.resetCount();
+
+        for (final EventState state : eventsStates) {
+            state.getEventHandler().init(t0, y0, t);
+        }
+
+        for (StepHandler handler : stepHandlers) {
+            handler.init(t0, y0, t);
+        }
+
+        setStateInitialized(false);
+
     }
 
-    /** Set the differential equations.
-     * @param equations differential equations to integrate
-     * @see #computeDerivatives(double, double[], double[])
+    /** Set the equations.
+     * @param equations equations to set
      */
-    protected void setEquations(final ExpandableFirstOrderDifferentialEquations equations) {
-        this.equations = equations;
+    protected void setEquations(final ExpandableStatefulODE equations) {
+        this.expandable = equations;
     }
 
     /** {@inheritDoc} */
-    public double integrate(FirstOrderDifferentialEquations equations,
-                            double t0, double[] y0, double t, double[] y)
+    public double integrate(final FirstOrderDifferentialEquations equations,
+                            final double t0, final double[] y0, final double t, final double[] y)
         throws MathIllegalStateException, MathIllegalArgumentException {
-        return integrate(new ExpandableFirstOrderDifferentialEquations(equations), t0, y0, t, y);
+
+        if (y0.length != equations.getDimension()) {
+            throw new DimensionMismatchException(y0.length, equations.getDimension());
+        }
+        if (y.length != equations.getDimension()) {
+            throw new DimensionMismatchException(y.length, equations.getDimension());
+        }
+
+        // prepare expandable stateful equations
+        final ExpandableStatefulODE expandableODE = new ExpandableStatefulODE(equations);
+        expandableODE.setTime(t0);
+        expandableODE.setPrimaryState(y0);
+
+        // perform integration
+        integrate(expandableODE, t);
+
+        // extract results back from the stateful equations
+        System.arraycopy(expandableODE.getPrimaryState(), 0, y, 0, y.length);
+        return expandableODE.getTime();
+
     }
+
+    /** Integrate a set of differential equations up to the given time.
+     * <p>This method solves an Initial Value Problem (IVP).</p>
+     * <p>The set of differential equations is composed of a main set, which
+     * can be extended by some sets of secondary equations. The set of
+     * equations must be already set up with initial time and partial states.
+     * At integration completion, the final time and partial states will be
+     * available in the same object.</p>
+     * <p>Since this method stores some internal state variables made
+     * available in its public interface during integration ({@link
+     * #getCurrentSignedStepsize()}), it is <em>not</em> thread-safe.</p>
+     * @param equations complete set of differential equations to integrate
+     * @param t target time for the integration
+     * (can be set to a value smaller than <code>t0</code> for backward integration)
+     * @throws MathIllegalStateException if the integrator cannot perform integration
+     * @throws MathIllegalArgumentException if integration parameters are wrong (typically
+     * too small integration span)
+     */
+    public abstract void integrate(ExpandableStatefulODE equations, double t)
+        throws MathIllegalStateException, MathIllegalArgumentException;
 
     /** Compute the derivatives and check the number of evaluations.
      * @param t current value of the independent <I>time</I> variable
@@ -209,7 +262,7 @@ public abstract class AbstractIntegrator implements ExpandableFirstOrderIntegrat
     public void computeDerivatives(final double t, final double[] y, final double[] yDot)
         throws MaxCountExceededException {
         evaluations.incrementCount();
-        equations.computeDerivatives(t, y, yDot);
+        expandable.computeDerivatives(t, y, yDot);
     }
 
     /** Set the stateInitialized flag.
@@ -239,7 +292,6 @@ public abstract class AbstractIntegrator implements ExpandableFirstOrderIntegrat
 
             double previousT = interpolator.getGlobalPreviousTime();
             final double currentT = interpolator.getGlobalCurrentTime();
-            resetOccurred = false;
 
             // initialize the events states if needed
             if (! statesInitialized) {
@@ -281,7 +333,7 @@ public abstract class AbstractIntegrator implements ExpandableFirstOrderIntegrat
 
                 // trigger the event
                 interpolator.setInterpolatedTime(eventT);
-                final double[] eventY = interpolator.getInterpolatedState();
+                final double[] eventY = interpolator.getInterpolatedState().clone();
                 currentEvent.stepAccepted(eventT, eventY);
                 isLastStep = currentEvent.stop();
 
@@ -293,6 +345,9 @@ public abstract class AbstractIntegrator implements ExpandableFirstOrderIntegrat
                 if (isLastStep) {
                     // the event asked to stop integration
                     System.arraycopy(eventY, 0, y, 0, y.length);
+                    for (final EventState remaining : occuringEvents) {
+                        remaining.stepAccepted(eventT, eventY);
+                    }
                     return eventT;
                 }
 
@@ -302,6 +357,9 @@ public abstract class AbstractIntegrator implements ExpandableFirstOrderIntegrat
                     System.arraycopy(eventY, 0, y, 0, y.length);
                     computeDerivatives(eventT, y, yDot);
                     resetOccurred = true;
+                    for (final EventState remaining : occuringEvents) {
+                        remaining.stepAccepted(eventT, eventY);
+                    }
                     return eventT;
                 }
 
@@ -324,7 +382,7 @@ public abstract class AbstractIntegrator implements ExpandableFirstOrderIntegrat
                 state.stepAccepted(currentT, currentY);
                 isLastStep = isLastStep || state.stop();
             }
-            isLastStep = isLastStep || MathUtils.equals(currentT, tEnd, 1);
+            isLastStep = isLastStep || Precision.equals(currentT, tEnd, 1);
 
             // handle the remaining part of the step, after all events if any
             for (StepHandler handler : stepHandlers) {
@@ -335,33 +393,20 @@ public abstract class AbstractIntegrator implements ExpandableFirstOrderIntegrat
 
     }
 
-    /** Perform some sanity checks on the integration parameters.
-     * @param ode differential equations set
-     * @param t0 start time
-     * @param y0 state vector at t0
+    /** Check the integration span.
+     * @param equations set of differential equations
      * @param t target time for the integration
-     * @param y placeholder where to put the state vector
-     * @exception DimensionMismatchException if some inconsistency is detected
      * @exception NumberIsTooSmallException if integration span is too small
      */
-    protected void sanityChecks(final ExpandableFirstOrderDifferentialEquations ode,
-                                final double t0, final double[] y0,
-                                final double t, final double[] y)
-        throws DimensionMismatchException, NumberIsTooSmallException {
+    protected void sanityChecks(final ExpandableStatefulODE equations, final double t)
+        throws NumberIsTooSmallException {
 
-        if (ode.getMainSetDimension() != y0.length) {
-            throw new DimensionMismatchException(ode.getDimension(), y0.length);
-        }
-
-        if (ode.getMainSetDimension() != y.length) {
-            throw new DimensionMismatchException(ode.getDimension(), y.length);
-        }
-
-        if (FastMath.abs(t - t0) <= 1.0e-12 * FastMath.max(FastMath.abs(t0), FastMath.abs(t))) {
+        final double threshold = 1000 * FastMath.ulp(FastMath.max(FastMath.abs(equations.getTime()),
+                                                                  FastMath.abs(t)));
+        final double dt = FastMath.abs(equations.getTime() - t);
+        if (dt <= threshold) {
             throw new NumberIsTooSmallException(LocalizedFormats.TOO_SMALL_INTEGRATION_INTERVAL,
-                                                FastMath.abs(t - t0),
-                                                1.0e-12 * FastMath.max(FastMath.abs(t0), FastMath.abs(t)),
-                                                false);
+                                                dt, threshold, false);
         }
 
     }

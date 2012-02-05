@@ -22,9 +22,9 @@ import java.util.Arrays;
 import org.apache.commons.math.exception.util.LocalizedFormats;
 import org.apache.commons.math.exception.NoDataException;
 import org.apache.commons.math.exception.NullArgumentException;
-import org.apache.commons.math.analysis.DifferentiableUnivariateRealFunction;
-import org.apache.commons.math.analysis.UnivariateRealFunction;
-import org.apache.commons.math.analysis.ParametricUnivariateRealFunction;
+import org.apache.commons.math.analysis.DifferentiableUnivariateFunction;
+import org.apache.commons.math.analysis.UnivariateFunction;
+import org.apache.commons.math.analysis.ParametricUnivariateFunction;
 import org.apache.commons.math.util.FastMath;
 import org.apache.commons.math.util.MathUtils;
 
@@ -34,9 +34,9 @@ import org.apache.commons.math.util.MathUtils;
  * <a href="http://mathworld.wolfram.com/HornersMethod.html">Horner's Method</a>
  * is used to evaluate the function.</p>
  *
- * @version $Id: PolynomialFunction.java 1132432 2011-06-05 14:59:29Z luc $
+ * @version $Id: PolynomialFunction.java 1206867 2011-11-27 22:18:30Z erans $
  */
-public class PolynomialFunction implements DifferentiableUnivariateRealFunction, Serializable {
+public class PolynomialFunction implements DifferentiableUnivariateFunction, Serializable {
     /**
      * Serialization identifier
      */
@@ -86,7 +86,7 @@ public class PolynomialFunction implements DifferentiableUnivariateRealFunction,
      *
      * @param x Argument for which the function value should be computed.
      * @return the value of the polynomial at the given point.
-     * @see UnivariateRealFunction#value(double)
+     * @see UnivariateFunction#value(double)
      */
     public double value(double x) {
        return evaluate(coefficients, x);
@@ -259,11 +259,11 @@ public class PolynomialFunction implements DifferentiableUnivariateRealFunction,
     }
 
     /**
-     * Returns the derivative as a {@link UnivariateRealFunction}.
+     * Returns the derivative as a {@link UnivariateFunction}.
      *
      * @return the derivative function.
      */
-    public UnivariateRealFunction derivative() {
+    public UnivariateFunction derivative() {
         return polynomialDerivative();
     }
 
@@ -366,8 +366,10 @@ public class PolynomialFunction implements DifferentiableUnivariateRealFunction,
 
     /**
      * Dedicated parametric polynomial class.
+     *
+     * @since 3.0
      */
-    public static class Parametric implements ParametricUnivariateRealFunction {
+    public static class Parametric implements ParametricUnivariateFunction {
         /** {@inheritDoc} */
         public double[] gradient(double x, double ... parameters) {
             final double[] gradient = new double[parameters.length];

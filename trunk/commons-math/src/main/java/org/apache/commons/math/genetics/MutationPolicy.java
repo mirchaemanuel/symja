@@ -17,17 +17,17 @@
 package org.apache.commons.math.genetics;
 
 /**
- * Algorithm used to mutate a chrommosome.
+ * Algorithm used to mutate a chromosome.
  *
  * @since 2.0
- * @version $Id: MutationPolicy.java 1131229 2011-06-03 20:49:25Z luc $
+ * @version $Id: MutationPolicy.java 1240274 2012-02-03 18:10:12Z tn $
  */
 public interface MutationPolicy {
 
     /**
      * Mutate the given chromosome.
      * @param original the original chromosome.
-     * @return the mutated chromomsome.
+     * @return the mutated chromosome.
      */
     Chromosome mutate(Chromosome original);
 }

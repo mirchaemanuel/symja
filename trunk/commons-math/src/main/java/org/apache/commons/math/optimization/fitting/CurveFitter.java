@@ -20,10 +20,10 @@ package org.apache.commons.math.optimization.fitting;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.math.analysis.DifferentiableMultivariateVectorialFunction;
-import org.apache.commons.math.analysis.ParametricUnivariateRealFunction;
+import org.apache.commons.math.analysis.DifferentiableMultivariateVectorFunction;
+import org.apache.commons.math.analysis.ParametricUnivariateFunction;
 import org.apache.commons.math.analysis.MultivariateMatrixFunction;
-import org.apache.commons.math.optimization.DifferentiableMultivariateVectorialOptimizer;
+import org.apache.commons.math.optimization.DifferentiableMultivariateVectorOptimizer;
 import org.apache.commons.math.optimization.VectorialPointValuePair;
 
 /** Fitter for parametric univariate real functions y = f(x).
@@ -36,19 +36,19 @@ import org.apache.commons.math.optimization.VectorialPointValuePair;
  * is done by finding the parameters values that minimizes the objective
  * function &sum;(y<sub>i</sub>-f(x<sub>i</sub>))<sup>2</sup>. This is
  * really a least squares problem.</p>
- * @version $Id: CurveFitter.java 1166311 2011-09-07 18:48:06Z luc $
+ * @version $Id: CurveFitter.java 1212361 2011-12-09 12:22:10Z erans $
  * @since 2.0
  */
 public class CurveFitter {
     /** Optimizer to use for the fitting. */
-    private final DifferentiableMultivariateVectorialOptimizer optimizer;
+    private final DifferentiableMultivariateVectorOptimizer optimizer;
     /** Observed points. */
     private final List<WeightedObservedPoint> observations;
 
     /** Simple constructor.
      * @param optimizer optimizer to use for the fitting
      */
-    public CurveFitter(final DifferentiableMultivariateVectorialOptimizer optimizer) {
+    public CurveFitter(final DifferentiableMultivariateVectorOptimizer optimizer) {
         this.optimizer = optimizer;
         observations = new ArrayList<WeightedObservedPoint>();
     }
@@ -120,7 +120,7 @@ public class CurveFitter {
      * @throws org.apache.commons.math.exception.DimensionMismatchException
      * if the start point dimension is wrong.
      */
-    public double[] fit(final ParametricUnivariateRealFunction f, final double[] initialGuess) {
+    public double[] fit(final ParametricUnivariateFunction f, final double[] initialGuess) {
         return fit(Integer.MAX_VALUE, f, initialGuess);
     }
 
@@ -139,8 +139,9 @@ public class CurveFitter {
      * if the number of allowed evaluations is exceeded.
      * @throws org.apache.commons.math.exception.DimensionMismatchException
      * if the start point dimension is wrong.
+     * @since 3.0
      */
-    public double[] fit(int maxEval, final ParametricUnivariateRealFunction f,
+    public double[] fit(int maxEval, final ParametricUnivariateFunction f,
                         final double[] initialGuess) {
         // prepare least squares problem
         double[] target  = new double[observations.size()];
@@ -163,14 +164,14 @@ public class CurveFitter {
 
     /** Vectorial function computing function theoretical values. */
     private class TheoreticalValuesFunction
-        implements DifferentiableMultivariateVectorialFunction {
+        implements DifferentiableMultivariateVectorFunction {
         /** Function to fit. */
-        private final ParametricUnivariateRealFunction f;
+        private final ParametricUnivariateFunction f;
 
         /** Simple constructor.
          * @param f function to fit.
          */
-        public TheoreticalValuesFunction(final ParametricUnivariateRealFunction f) {
+        public TheoreticalValuesFunction(final ParametricUnivariateFunction f) {
             this.f = f;
         }
 

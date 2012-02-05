@@ -22,19 +22,35 @@ import java.util.EventObject;
  * The root class from which all events occurring while running an
  * {@link IterationManager} should be derived.
  *
- * @version $Id: IterationEvent.java 1170462 2011-09-14 07:44:00Z celestin $
+ * @version $Id: IterationEvent.java 1237056 2012-01-28 13:19:14Z celestin $
  */
 public class IterationEvent extends EventObject {
     /** */
-    private static final long serialVersionUID = -1405936936084001482L;
+    private static final long serialVersionUID = 20120128L;
+
+    /** The number of iterations performed so far. */
+    private final int iterations;
 
     /**
      * Creates a new instance of this class.
      *
-     * @param source The iterative algorithm on which the event initially
-     * occurred.
+     * @param source the iterative algorithm on which the event initially
+     * occurred
+     * @param iterations the number of iterations performed at the time
+     * {@code this} event is created
      */
-    public IterationEvent(final Object source) {
+    public IterationEvent(final Object source, final int iterations) {
         super(source);
+        this.iterations = iterations;
     }
-}
+
+    /**
+     * Returns the number of iterations performed at the time {@code this} event
+     * is created.
+     *
+     * @return the number of iterations performed
+     */
+    public int getIterations() {
+        return iterations;
+    }
+ }

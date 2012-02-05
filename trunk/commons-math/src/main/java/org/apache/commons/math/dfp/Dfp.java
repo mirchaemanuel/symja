@@ -90,7 +90,7 @@ import org.apache.commons.math.FieldElement;
  *  detail and is really only a matter of definition.  Any side effects of
  *  this can be rendered invisible by a subclass.</p>
  * @see DfpField
- * @version $Id: Dfp.java 1152266 2011-07-29 15:34:10Z luc $
+ * @version $Id: Dfp.java 1180312 2011-10-08 04:21:00Z celestin $
  * @since 2.2
  */
 public class Dfp implements FieldElement<Dfp> {
@@ -1935,6 +1935,11 @@ public class Dfp implements FieldElement<Dfp> {
 
         return result;
 
+    }
+
+    /** {@inheritDoc} */
+    public Dfp reciprocal() {
+        return field.getOne().divide(this);
     }
 
     /** Compute the square root.

@@ -20,6 +20,7 @@ package org.apache.commons.math.complex;
 import java.io.Serializable;
 
 import org.apache.commons.math.Field;
+import org.apache.commons.math.FieldElement;
 
 /**
  * Representation of the complex numbers field.
@@ -27,7 +28,7 @@ import org.apache.commons.math.Field;
  * This class is a singleton.
  * </p>
  * @see Complex
- * @version $Id: ComplexField.java 1131229 2011-06-03 20:49:25Z luc $
+ * @version $Id: ComplexField.java 1178009 2011-10-01 15:15:00Z luc $
  * @since 2.0
  */
 public class ComplexField implements Field<Complex>, Serializable  {
@@ -55,6 +56,11 @@ public class ComplexField implements Field<Complex>, Serializable  {
     /** {@inheritDoc} */
     public Complex getZero() {
         return Complex.ZERO;
+    }
+
+    /** {@inheritDoc} */
+    public Class<? extends FieldElement<Complex>> getRuntimeClass() {
+        return Complex.class;
     }
 
     // CHECKSTYLE: stop HideUtilityClassConstructor

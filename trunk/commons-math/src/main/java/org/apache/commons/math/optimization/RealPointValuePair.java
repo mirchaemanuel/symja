@@ -24,8 +24,8 @@ import java.io.Serializable;
  * This class holds a point and the value of an objective function at this point.
  * <p>This is a simple immutable container.</p>
  * @see VectorialPointValuePair
- * @see org.apache.commons.math.analysis.MultivariateRealFunction
- * @version $Id: RealPointValuePair.java 1131229 2011-06-03 20:49:25Z luc $
+ * @see org.apache.commons.math.analysis.MultivariateFunction
+ * @version $Id: RealPointValuePair.java 1206889 2011-11-27 22:39:54Z erans $
  * @since 2.0
  */
 public class RealPointValuePair implements Serializable {

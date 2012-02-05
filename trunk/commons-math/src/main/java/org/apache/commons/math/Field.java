@@ -23,7 +23,7 @@ package org.apache.commons.math;
  * </p>
  * @param <T> the type of the field elements
  * @see FieldElement
- * @version $Id: Field.java 1131229 2011-06-03 20:49:25Z luc $
+ * @version $Id: Field.java 1178235 2011-10-02 19:43:17Z luc $
  * @since 2.0
  */
 public interface Field<T> {
@@ -47,5 +47,13 @@ public interface Field<T> {
      * @return multiplicative identity of the field
      */
     T getOne();
+
+    /**
+     * Returns the runtime class of the FieldElement.
+     *
+     * @return The {@code Class} object that represents the runtime
+     *         class of this object.
+     */
+    Class<? extends FieldElement<T>> getRuntimeClass();
 
 }

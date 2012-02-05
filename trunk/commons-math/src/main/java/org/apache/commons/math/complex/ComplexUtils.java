@@ -17,7 +17,7 @@
 
 package org.apache.commons.math.complex;
 
-import org.apache.commons.math.MathRuntimeException;
+import org.apache.commons.math.exception.MathIllegalArgumentException;
 import org.apache.commons.math.exception.util.LocalizedFormats;
 import org.apache.commons.math.util.FastMath;
 
@@ -25,7 +25,7 @@ import org.apache.commons.math.util.FastMath;
  * Static implementations of common
  * {@link org.apache.commons.math.complex.Complex} utilities functions.
  *
- * @version $Id: ComplexUtils.java 1131229 2011-06-03 20:49:25Z luc $
+ * @version $Id: ComplexUtils.java 1178082 2011-10-01 20:01:22Z luc $
  */
 public class ComplexUtils {
 
@@ -58,12 +58,12 @@ public class ComplexUtils {
      * @param r the modulus of the complex number to create
      * @param theta  the argument of the complex number to create
      * @return <code>r&middot;e<sup>i&middot;theta</sup></code>
-     * @throws IllegalArgumentException  if r is negative
+     * @throws MathIllegalArgumentException  if r is negative
      * @since 1.1
      */
     public static Complex polar2Complex(double r, double theta) {
         if (r < 0) {
-            throw MathRuntimeException.createIllegalArgumentException(
+            throw new MathIllegalArgumentException(
                   LocalizedFormats.NEGATIVE_COMPLEX_MODULE, r);
         }
         return new Complex(r * FastMath.cos(theta), r * FastMath.sin(theta));

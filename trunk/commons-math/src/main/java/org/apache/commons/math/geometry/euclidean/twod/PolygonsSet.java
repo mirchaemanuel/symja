@@ -36,7 +36,7 @@ import org.apache.commons.math.geometry.partitioning.utilities.OrderedTuple;
 import org.apache.commons.math.util.FastMath;
 
 /** This class represents a 2D region: a set of polygons.
- * @version $Id: PolygonsSet.java 1139915 2011-06-26 19:13:06Z luc $
+ * @version $Id: PolygonsSet.java 1197464 2011-11-04 09:49:06Z sebb $
  * @since 3.0
  */
 public class PolygonsSet extends AbstractRegion<Euclidean2D, Euclidean1D> {
@@ -120,11 +120,13 @@ public class PolygonsSet extends AbstractRegion<Euclidean2D, Euclidean1D> {
     }
 
     /** {@inheritDoc} */
+    @Override
     public PolygonsSet buildNew(final BSPTree<Euclidean2D> tree) {
         return new PolygonsSet(tree);
     }
 
     /** {@inheritDoc} */
+    @Override
     protected void computeGeometricalProperties() {
 
         final Vector2D[][] v = getVertices();

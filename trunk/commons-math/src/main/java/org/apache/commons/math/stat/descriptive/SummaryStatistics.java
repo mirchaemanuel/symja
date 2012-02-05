@@ -18,7 +18,7 @@ package org.apache.commons.math.stat.descriptive;
 
 import java.io.Serializable;
 
-import org.apache.commons.math.MathRuntimeException;
+import org.apache.commons.math.exception.MathIllegalStateException;
 import org.apache.commons.math.exception.NullArgumentException;
 import org.apache.commons.math.exception.util.LocalizedFormats;
 import org.apache.commons.math.stat.descriptive.moment.GeometricMean;
@@ -31,6 +31,7 @@ import org.apache.commons.math.stat.descriptive.summary.Sum;
 import org.apache.commons.math.stat.descriptive.summary.SumOfLogs;
 import org.apache.commons.math.stat.descriptive.summary.SumOfSquares;
 import org.apache.commons.math.util.MathUtils;
+import org.apache.commons.math.util.Precision;
 import org.apache.commons.math.util.FastMath;
 
 /**
@@ -55,7 +56,7 @@ import org.apache.commons.math.util.FastMath;
  * {@link SynchronizedSummaryStatistics} if concurrent access from multiple
  * threads is required.
  * </p>
- * @version $Id: SummaryStatistics.java 1132432 2011-06-05 14:59:29Z luc $
+ * @version $Id: SummaryStatistics.java 1206666 2011-11-27 05:20:09Z psteitz $
  */
 public class SummaryStatistics implements StatisticalSummary, Serializable {
 
@@ -87,10 +88,10 @@ public class SummaryStatistics implements StatisticalSummary, Serializable {
     protected GeometricMean geoMean = new GeometricMean(sumLog);
 
     /** mean of values that have been added */
-    protected Mean mean = new Mean();
+    protected Mean mean = new Mean(secondMoment);
 
     /** variance of values that have been added */
-    protected Variance variance = new Variance();
+    protected Variance variance = new Variance(secondMoment);
 
     /** Sum statistic implementation - can be reset by setter. */
     private StorelessUnivariateStatistic sumImpl = sum;
@@ -154,13 +155,13 @@ public class SummaryStatistics implements StatisticalSummary, Serializable {
         secondMoment.increment(value);
         // If mean, variance or geomean have been overridden,
         // need to increment these
-        if (!(meanImpl instanceof Mean)) {
+        if (meanImpl != mean) {
             meanImpl.increment(value);
         }
-        if (!(varianceImpl instanceof Variance)) {
+        if (varianceImpl != variance) {
             varianceImpl.increment(value);
         }
-        if (!(geoMeanImpl instanceof GeometricMean)) {
+        if (geoMeanImpl != geoMean) {
             geoMeanImpl.increment(value);
         }
         n++;
@@ -201,11 +202,7 @@ public class SummaryStatistics implements StatisticalSummary, Serializable {
      * @return the mean
      */
     public double getMean() {
-        if (mean == meanImpl) {
-            return new Mean(secondMoment).getResult();
-        } else {
-            return meanImpl.getResult();
-        }
+        return meanImpl.getResult();
     }
 
     /**
@@ -228,18 +225,32 @@ public class SummaryStatistics implements StatisticalSummary, Serializable {
     }
 
     /**
-     * Returns the variance of the values that have been added.
-     * <p>
-     * Double.NaN is returned if no values have been added.
-     * </p>
+     * Returns the (sample) variance of the available values.
+     *
+     * <p>This method returns the bias-corrected sample variance (using {@code n - 1} in
+     * the denominator).  Use {@link #getPopulationVariance()} for the non-bias-corrected
+     * population variance.</p>
+     *
+     * <p>Double.NaN is returned if no values have been added.</p>
+     *
      * @return the variance
      */
     public double getVariance() {
-        if (varianceImpl == variance) {
-            return new Variance(secondMoment).getResult();
-        } else {
-            return varianceImpl.getResult();
-        }
+        return varianceImpl.getResult();
+    }
+
+    /**
+     * Returns the <a href="http://en.wikibooks.org/wiki/Statistics/Summary/Variance">
+     * population variance</a> of the values that have been added.
+     *
+     * <p>Double.NaN is returned if no values have been added.</p>
+     *
+     * @return the population variance
+     */
+    public double getPopulationVariance() {
+        Variance populationVariance = new Variance(secondMoment);
+        populationVariance.setBiasCorrected(false);
+        return populationVariance.getResult();
     }
 
     /**
@@ -363,14 +374,14 @@ public class SummaryStatistics implements StatisticalSummary, Serializable {
             return false;
         }
         SummaryStatistics stat = (SummaryStatistics)object;
-        return MathUtils.equalsIncludingNaN(stat.getGeometricMean(), getGeometricMean()) &&
-               MathUtils.equalsIncludingNaN(stat.getMax(),           getMax())           &&
-               MathUtils.equalsIncludingNaN(stat.getMean(),          getMean())          &&
-               MathUtils.equalsIncludingNaN(stat.getMin(),           getMin())           &&
-               MathUtils.equalsIncludingNaN(stat.getN(),             getN())             &&
-               MathUtils.equalsIncludingNaN(stat.getSum(),           getSum())           &&
-               MathUtils.equalsIncludingNaN(stat.getSumsq(),         getSumsq())         &&
-               MathUtils.equalsIncludingNaN(stat.getVariance(),      getVariance());
+        return Precision.equalsIncludingNaN(stat.getGeometricMean(), getGeometricMean()) &&
+               Precision.equalsIncludingNaN(stat.getMax(),           getMax())           &&
+               Precision.equalsIncludingNaN(stat.getMean(),          getMean())          &&
+               Precision.equalsIncludingNaN(stat.getMin(),           getMin())           &&
+               Precision.equalsIncludingNaN(stat.getN(),             getN())             &&
+               Precision.equalsIncludingNaN(stat.getSum(),           getSum())           &&
+               Precision.equalsIncludingNaN(stat.getSumsq(),         getSumsq())         &&
+               Precision.equalsIncludingNaN(stat.getVariance(),      getVariance());
     }
 
     /**
@@ -630,9 +641,8 @@ public class SummaryStatistics implements StatisticalSummary, Serializable {
      */
     private void checkEmpty() {
         if (n > 0) {
-            throw MathRuntimeException.createIllegalStateException(
-                    LocalizedFormats.VALUES_ADDED_BEFORE_CONFIGURING_STATISTIC,
-                    n);
+            throw new MathIllegalStateException(
+                LocalizedFormats.VALUES_ADDED_BEFORE_CONFIGURING_STATISTIC, n);
         }
     }
 
@@ -660,20 +670,29 @@ public class SummaryStatistics implements StatisticalSummary, Serializable {
         MathUtils.checkNotNull(source);
         MathUtils.checkNotNull(dest);
         dest.maxImpl = source.maxImpl.copy();
-        dest.meanImpl = source.meanImpl.copy();
         dest.minImpl = source.minImpl.copy();
         dest.sumImpl = source.sumImpl.copy();
-        dest.varianceImpl = source.varianceImpl.copy();
         dest.sumLogImpl = source.sumLogImpl.copy();
         dest.sumsqImpl = source.sumsqImpl.copy();
+        dest.secondMoment = source.secondMoment.copy();
+        dest.n = source.n;
+
+        // Keep commons-math supplied statistics with embedded moments in synch
+        if (source.getVarianceImpl() instanceof Variance) {
+            dest.varianceImpl = new Variance(dest.secondMoment);
+        } else {
+            dest.varianceImpl = source.varianceImpl.copy();
+        }
+        if (source.meanImpl instanceof Mean) {
+            dest.meanImpl = new Mean(dest.secondMoment);
+        } else {
+            dest.meanImpl = source.meanImpl.copy();
+        }
         if (source.getGeoMeanImpl() instanceof GeometricMean) {
-            // Keep geoMeanImpl, sumLogImpl in synch
             dest.geoMeanImpl = new GeometricMean((SumOfLogs) dest.sumLogImpl);
         } else {
             dest.geoMeanImpl = source.geoMeanImpl.copy();
         }
-        SecondMoment.copy(source.secondMoment, dest.secondMoment);
-        dest.n = source.n;
 
         // Make sure that if stat == statImpl in source, same
         // holds in dest; otherwise copy stat

@@ -19,13 +19,16 @@ package org.apache.commons.math.util;
 
 import java.io.File;
 import java.io.DataOutputStream;
+import java.io.InputStream;
 import java.io.DataInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedInputStream;
 import java.io.FileOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import  org.apache.commons.math.exception.MathInternalError;
+import java.nio.ByteBuffer;
+import java.nio.DoubleBuffer;
+import org.apache.commons.math.exception.MathInternalError;
 
 /**
  * Utility class for saving and loading tabulated data used by
@@ -33,7 +36,7 @@ import  org.apache.commons.math.exception.MathInternalError;
  *
  * @version $Id$
  */
-public class FastMathResources {
+class FastMathResources {
     /**
      * Resource directory. Assuming that this class and the resource files
      * are located in the same package as "FastMath".
@@ -48,6 +51,8 @@ public class FastMathResources {
     private static final String EXP_FRAC = "exp_frac";
     /** Resource basename for "LN_MANT". */
     private static final String LN_MANT = "ln_mant";
+    /** Number of bytes in a "double". */
+    private static final int BYTES_IN_DOUBLE = Double.SIZE / Byte.SIZE;
 
     /**
      * Class contains only static methods.
@@ -92,8 +97,7 @@ public class FastMathResources {
             }
         }
 
-        saveTable2d(EXP_INT, 2, FastMath.EXP_INT_TABLE_LEN,
-                    new double[][] { expIntA, expIntB });
+        saveTable2d(EXP_INT, new double[][] { expIntA, expIntB });
 
         // "EXP_FRAC" tables.
         final double[] expFracA = new double[FastMath.EXP_FRAC_TABLE_LEN];
@@ -105,8 +109,7 @@ public class FastMathResources {
             expFracB[i] = tmp[1];
         }
 
-        saveTable2d(EXP_FRAC, 2, FastMath.EXP_FRAC_TABLE_LEN,
-                    new double[][] { expFracA, expFracB });
+        saveTable2d(EXP_FRAC, new double[][] { expFracA, expFracB });
 
         // "LN_MANT" table.
         final double[][] lnMant = new double[FastMath.LN_MANT_LEN][];
@@ -117,7 +120,7 @@ public class FastMathResources {
             lnMant[i] = FastMathCalc.slowLog(d);
         }
 
-        saveTable2d(LN_MANT, FastMath.LN_MANT_LEN, 2, lnMant);
+        saveTable2d(LN_MANT, transpose(lnMant));
     }
 
     /**
@@ -127,9 +130,10 @@ public class FastMathResources {
      *
      * @return the retrieved data.
      */
-    public static double[][] loadExpInt() {
+    static double[][] loadExpInt() {
         return loadTable2d(EXP_INT, 2, FastMath.EXP_INT_TABLE_LEN);
     }
+
     /**
      * Load "EXP_FRAC" tables.
      * "EXP_FRAC_TABLE_A" is at index 0.
@@ -137,18 +141,17 @@ public class FastMathResources {
      *
      * @return the retrieved data.
      */
-
-    public static double[][] loadExpFrac() {
+    static double[][] loadExpFrac() {
         return loadTable2d(EXP_FRAC, 2, FastMath.EXP_FRAC_TABLE_LEN);
     }
+
     /**
      * Load "LN_MANT".
      *
      * @return the retrieved data.
      */
-
-    public static double[][] loadLnMant() {
-        return loadTable2d(LN_MANT, FastMath.LN_MANT_LEN, 2);
+    static double[][] loadLnMant() {
+        return transpose(loadTable2d(LN_MANT, 2, FastMath.LN_MANT_LEN));
     }
 
     /**
@@ -164,12 +167,12 @@ public class FastMathResources {
 
     /**
      * @param name Basename of the resource.
-     * @param len Number of {@code double}s to be stored.
      * @param data Data to be stored.
      */
     private static void saveTable1d(String name,
-                                    int len,
                                     double[] data) {
+        final int len = data.length;
+
         try {
             final DataOutputStream out = out(name);
 
@@ -185,14 +188,13 @@ public class FastMathResources {
 
     /**
      * @param name Basename of the resource.
-     * @param len Number of table rows to be stored.
-     * @param rowLen Number of {@code double}s per table row.
      * @param data Data to be stored.
      */
     private static void saveTable2d(String name,
-                                    int len,
-                                    int rowLen,
                                     double[][] data) {
+        final int len = data.length;
+        final int rowLen = data[0].length;
+
         try {
             final DataOutputStream out = out(name);
 
@@ -216,13 +218,13 @@ public class FastMathResources {
     private static DataInputStream in(String name)
         throws FileNotFoundException {
         final String fullName = "/" + RES_PREFIX + name;
-        return new DataInputStream(new BufferedInputStream(FastMathResources.class.getResourceAsStream(fullName)));
+        final InputStream in = FastMathResources.class.getResourceAsStream(fullName);
+        return new DataInputStream(new BufferedInputStream(in));
     }
-
 
     /**
      * @param name Basename of the resource.
-     * @param len Number of {@code double}s to be retrieved.
+     * @param len Size of the data.
      * @return the retrieved data.
      */
     private static double[] loadTable1d(String name,
@@ -244,8 +246,8 @@ public class FastMathResources {
 
     /**
      * @param name Basename of the resource.
-     * @param len Number of table rows to be retrieved.
-     * @param rowLen Number of {@code double}s per table row.
+     * @param len Size of the table.
+     * @param rowLen Size of each row of the table.
      * @return the retrieved data.
      */
     private static double[][] loadTable2d(String name,
@@ -253,11 +255,15 @@ public class FastMathResources {
                                           int rowLen) {
         try {
             final DataInputStream in = in(name);
-
+            final byte[] b = new byte[BYTES_IN_DOUBLE * rowLen];
             final double[][] data = new double[len][rowLen];
+            final ByteBuffer bBuf = ByteBuffer.wrap(b);
+
             for (int i = 0; i < len; i++) {
+                in.readFully(b);
+                final DoubleBuffer dBuf = bBuf.asDoubleBuffer();
                 for (int j = 0; j < rowLen; j++) {
-                    data[i][j] = in.readDouble();
+                    data[i][j] = dBuf.get();
                 }
             }
 
@@ -266,5 +272,27 @@ public class FastMathResources {
         } catch (IOException e) {
             throw new MathInternalError(e);
         }
+    }
+
+    /**
+     * Transposes a two-dimensional array: The number of rows becomes the
+     * number of columns and vice-versa.
+     * The array must be rectangular (same number of colums in each row).
+     *
+     * @param data Array to be transposed.
+     * @return the transposed array.
+     */
+    private static double[][] transpose(double[][] data) {
+        final int rowLen = data.length;
+        final int len = data[0].length;
+        final double[][] tData = new double[len][rowLen];
+
+        for (int i = 0; i < len; i++) {
+            for (int j = 0; j < rowLen; j++) {
+                tData[i][j] = data[j][i];
+            }
+        }
+
+        return tData;
     }
 }

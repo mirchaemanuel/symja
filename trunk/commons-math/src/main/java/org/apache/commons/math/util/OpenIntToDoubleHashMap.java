@@ -23,9 +23,6 @@ import java.io.Serializable;
 import java.util.ConcurrentModificationException;
 import java.util.NoSuchElementException;
 
-import org.apache.commons.math.MathRuntimeException;
-import org.apache.commons.math.exception.util.LocalizedFormats;
-
 /**
  * Open addressed map from int to double.
  * <p>This class provides a dedicated map from integers to doubles with a
@@ -34,7 +31,7 @@ import org.apache.commons.math.exception.util.LocalizedFormats;
  * {@link #iterator()} are fail-fast: they throw a
  * <code>ConcurrentModificationException</code> when they detect the map has been
  * modified during iteration.</p>
- * @version $Id: OpenIntToDoubleHashMap.java 1131229 2011-06-03 20:49:25Z luc $
+ * @version $Id: OpenIntToDoubleHashMap.java 1179950 2011-10-07 07:32:54Z luc $
  * @since 2.0
  */
 public class OpenIntToDoubleHashMap implements Serializable {
@@ -527,10 +524,10 @@ public class OpenIntToDoubleHashMap implements Serializable {
         public int key()
             throws ConcurrentModificationException, NoSuchElementException {
             if (referenceCount != count) {
-                throw MathRuntimeException.createConcurrentModificationException(LocalizedFormats.MAP_MODIFIED_WHILE_ITERATING);
+                throw new ConcurrentModificationException();
             }
             if (current < 0) {
-                throw MathRuntimeException.createNoSuchElementException(LocalizedFormats.ITERATOR_EXHAUSTED);
+                throw new NoSuchElementException();
             }
             return keys[current];
         }
@@ -544,10 +541,10 @@ public class OpenIntToDoubleHashMap implements Serializable {
         public double value()
             throws ConcurrentModificationException, NoSuchElementException {
             if (referenceCount != count) {
-                throw MathRuntimeException.createConcurrentModificationException(LocalizedFormats.MAP_MODIFIED_WHILE_ITERATING);
+                throw new ConcurrentModificationException();
             }
             if (current < 0) {
-                throw MathRuntimeException.createNoSuchElementException(LocalizedFormats.ITERATOR_EXHAUSTED);
+                throw new NoSuchElementException();
             }
             return values[current];
         }
@@ -561,7 +558,7 @@ public class OpenIntToDoubleHashMap implements Serializable {
             throws ConcurrentModificationException, NoSuchElementException {
 
             if (referenceCount != count) {
-                throw MathRuntimeException.createConcurrentModificationException(LocalizedFormats.MAP_MODIFIED_WHILE_ITERATING);
+                throw new ConcurrentModificationException();
             }
 
             // advance on step
@@ -575,7 +572,7 @@ public class OpenIntToDoubleHashMap implements Serializable {
             } catch (ArrayIndexOutOfBoundsException e) {
                 next = -2;
                 if (current < 0) {
-                    throw MathRuntimeException.createNoSuchElementException(LocalizedFormats.ITERATOR_EXHAUSTED);
+                    throw new NoSuchElementException();
                 }
             }
 

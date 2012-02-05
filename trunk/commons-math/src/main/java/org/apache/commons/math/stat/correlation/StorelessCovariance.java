@@ -26,7 +26,7 @@ import org.apache.commons.math.linear.RealMatrix;
  * Covariance implementation that does not require input data to be
  * stored in memory.
  *
- * @version $Id: StorelessCovariance.java 1160026 2011-08-21 18:14:19Z psteitz $
+ * @version $Id: StorelessCovariance.java 1178235 2011-10-02 19:43:17Z luc $
  * @since 3.0
  */
 public class StorelessCovariance extends Covariance {
@@ -109,9 +109,12 @@ public class StorelessCovariance extends Covariance {
      * This {@link Covariance} method is not supported by StorelessCovariance, since
      * the number of bivariate observations does not have to be the same for different
      * pairs of covariates - i.e., N as defined in {@link Covariance#getN()} is undefined.
+     * @return nothing as this implementation always throws a {@link MathUnsupportedOperationException}
+     * @throws MathUnsupportedOperationException in all cases
      */
     @Override
-    public int getN() {
+    public int getN()
+        throws MathUnsupportedOperationException {
         throw new MathUnsupportedOperationException();
     }
 

@@ -56,7 +56,7 @@ import org.apache.commons.math.util.FastMath;
 
  * @param <S> Type of the space.
 
- * @version $Id: BSPTree.java 1131153 2011-06-03 19:23:56Z luc $
+ * @version $Id: BSPTree.java 1178235 2011-10-02 19:43:17Z luc $
  * @since 3.0
  */
 public class BSPTree<S extends Space> {
@@ -429,7 +429,7 @@ public class BSPTree<S extends Space> {
      * difference and symmetric difference (exclusive or).</p>
      * @param <S> Type of the space.
      */
-    public static interface LeafMerger<S extends Space> {
+    public interface LeafMerger<S extends Space> {
 
         /** Merge a leaf node and a tree node.
          * <p>This method is called at the end of a recursive merging

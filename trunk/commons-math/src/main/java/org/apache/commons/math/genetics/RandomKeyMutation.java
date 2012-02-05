@@ -19,7 +19,7 @@ package org.apache.commons.math.genetics;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.math.MathRuntimeException;
+import org.apache.commons.math.exception.MathIllegalArgumentException;
 import org.apache.commons.math.exception.util.LocalizedFormats;
 
 /**
@@ -27,21 +27,20 @@ import org.apache.commons.math.exception.util.LocalizedFormats;
  * of the array representation to a random value uniformly distributed in [0,1].
  *
  * @since 2.0
- * @version $Id: RandomKeyMutation.java 1131229 2011-06-03 20:49:25Z luc $
+ * @version $Id: RandomKeyMutation.java 1235038 2012-01-23 22:26:37Z tn $
  */
 public class RandomKeyMutation implements MutationPolicy {
 
     /**
      * {@inheritDoc}
      *
-     * @throws IllegalArgumentException if <code>original</code> is not a
+     * @throws MathIllegalArgumentException if <code>original</code> is not a
      * {@link RandomKey} instance
      */
-    public Chromosome mutate(Chromosome original) {
+    public Chromosome mutate(final Chromosome original) {
         if (!(original instanceof RandomKey<?>)) {
-            throw MathRuntimeException.createIllegalArgumentException(
-                    LocalizedFormats.RANDOMKEY_MUTATION_WRONG_CLASS,
-                    original.getClass().getSimpleName());
+            throw new MathIllegalArgumentException(LocalizedFormats.RANDOMKEY_MUTATION_WRONG_CLASS,
+                                                   original.getClass().getSimpleName());
         }
 
         RandomKey<?> originalRk = (RandomKey<?>) original;

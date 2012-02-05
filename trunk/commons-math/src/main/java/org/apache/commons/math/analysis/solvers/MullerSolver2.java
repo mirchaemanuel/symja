@@ -26,7 +26,7 @@ import org.apache.commons.math.util.FastMath;
  * chapter 3.
  * <p>
  * Muller's method applies to both real and complex functions, but here we
- * restrict ourselves to real functions.<
+ * restrict ourselves to real functions.
  * This class differs from {@link MullerSolver} in the way it avoids complex
  * operations.</p>
  * Except for the initial [min, max], it does not require bracketing
@@ -45,7 +45,7 @@ import org.apache.commons.math.util.FastMath;
  * @since 1.2
  * @see MullerSolver
  */
-public class MullerSolver2 extends AbstractUnivariateRealSolver {
+public class MullerSolver2 extends AbstractUnivariateSolver {
 
     /** Default absolute accuracy. */
     private static final double DEFAULT_ABSOLUTE_ACCURACY = 1e-6;

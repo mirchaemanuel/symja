@@ -16,7 +16,10 @@
  */
 package org.apache.commons.math.stat.inference;
 
-import org.apache.commons.math.MathException;
+import org.apache.commons.math.exception.DimensionMismatchException;
+import org.apache.commons.math.exception.NullArgumentException;
+import org.apache.commons.math.exception.OutOfRangeException;
+
 import java.util.Collection;
 
 /**
@@ -29,7 +32,7 @@ import java.util.Collection;
  * </p>
  *
  * @since 1.2
- * @version $Id: OneWayAnova.java 1131229 2011-06-03 20:49:25Z luc $
+ * @version $Id: OneWayAnova.java 1240310 2012-02-03 19:28:49Z tn $
  */
 public interface OneWayAnova {
 
@@ -47,12 +50,13 @@ public interface OneWayAnova {
      * @param categoryData <code>Collection</code> of <code>double[]</code>
      * arrays each containing data for one category
      * @return Fvalue
-     * @throws IllegalArgumentException if the preconditions are not met
-     * @throws MathException if the statistic can not be computed do to a
-     *         convergence or other numerical error.
+     * @throws NullArgumentException if <code>categoryData</code> is <code>null</code>
+     * @throws DimensionMismatchException if the length of the <code>categoryData</code>
+     * array is less than 2 or a contained <code>double[]</code> array does not have
+     * at least two values
      */
     double anovaFValue(Collection<double[]> categoryData)
-        throws IllegalArgumentException, MathException;
+        throws NullArgumentException, DimensionMismatchException;
 
     /**
      * Computes the ANOVA P-value for a collection of <code>double[]</code>
@@ -68,12 +72,13 @@ public interface OneWayAnova {
      * @param categoryData <code>Collection</code> of <code>double[]</code>
      * arrays each containing data for one category
      * @return Pvalue
-     * @throws IllegalArgumentException if the preconditions are not met
-     * @throws MathException if the statistic can not be computed do to a
-     *         convergence or other numerical error.
+     * @throws NullArgumentException if <code>categoryData</code> is <code>null</code>
+     * @throws DimensionMismatchException if the length of the <code>categoryData</code>
+     * array is less than 2 or a contained <code>double[]</code> array does not have
+     * at least two values
      */
     double anovaPValue(Collection<double[]> categoryData)
-        throws IllegalArgumentException, MathException;
+        throws NullArgumentException, DimensionMismatchException;
 
     /**
      * Performs an ANOVA test, evaluating the null hypothesis that there
@@ -93,11 +98,13 @@ public interface OneWayAnova {
      * @param alpha significance level of the test
      * @return true if the null hypothesis can be rejected with
      * confidence 1 - alpha
-     * @throws IllegalArgumentException if the preconditions are not met
-     * @throws MathException if the statistic can not be computed do to a
-     *         convergence or other numerical error.
+     * @throws NullArgumentException if <code>categoryData</code> is <code>null</code>
+     * @throws DimensionMismatchException if the length of the <code>categoryData</code>
+     * array is less than 2 or a contained <code>double[]</code> array does not have
+     * at least two values
+     * @throws OutOfRangeException if <code>alpha</code> is not in the range (0, 0.5]
      */
     boolean anovaTest(Collection<double[]> categoryData, double alpha)
-        throws IllegalArgumentException, MathException;
+        throws NullArgumentException, DimensionMismatchException, OutOfRangeException;
 
 }

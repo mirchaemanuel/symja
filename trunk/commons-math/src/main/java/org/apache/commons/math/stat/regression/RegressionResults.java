@@ -19,12 +19,12 @@ package org.apache.commons.math.stat.regression;
 import java.io.Serializable;
 import java.util.Arrays;
 import org.apache.commons.math.util.FastMath;
-import org.apache.commons.math.util.MathUtils;
+import org.apache.commons.math.util.MathArrays;
 
 /**
  * Results of a Multiple Linear Regression model fit.
  *
- * @version $Id: RegressionResults.java 1174509 2011-09-23 03:36:11Z gregs $
+ * @version $Id: RegressionResults.java 1200384 2011-11-10 15:43:02Z sebb $
  * @since 3.0
  */
 public class RegressionResults implements Serializable {
@@ -48,6 +48,7 @@ public class RegressionResults implements Serializable {
     /** boolean flag for variance covariance matrix in symm compressed storage */
     private final boolean isSymmetricVCD;
     /** rank of the solution */
+    @SuppressWarnings("unused")
     private final int rank;
     /** number of observations on which results are based */
     private final long nobs;
@@ -98,10 +99,10 @@ public class RegressionResults implements Serializable {
             final boolean containsConstant,
             final boolean copyData) {
         if (copyData) {
-            this.parameters = MathUtils.copyOf(parameters);
+            this.parameters = MathArrays.copyOf(parameters);
             this.varCovData = new double[varcov.length][];
             for (int i = 0; i < varcov.length; i++) {
-                this.varCovData[i] = MathUtils.copyOf(varcov[i]);
+                this.varCovData[i] = MathArrays.copyOf(varcov[i]);
             }
         } else {
             this.parameters = parameters;
@@ -116,12 +117,12 @@ public class RegressionResults implements Serializable {
 
         if (rank > 0) {
             this.globalFitInfo[SST_IDX] = containsConstant ?
-                    (sumysq - sumy * sumy / ((double) nobs)) : sumysq;
+                    (sumysq - sumy * sumy / nobs) : sumysq;
         }
 
         this.globalFitInfo[SSE_IDX] = sse;
         this.globalFitInfo[MSE_IDX] = this.globalFitInfo[SSE_IDX] /
-                ((double) (nobs - rank));
+                (nobs - rank);
         this.globalFitInfo[RSQ_IDX] = 1.0 -
                 this.globalFitInfo[SSE_IDX] /
                 this.globalFitInfo[SST_IDX];
@@ -170,7 +171,7 @@ public class RegressionResults implements Serializable {
         if (this.parameters == null) {
             return null;
         }
-        return MathUtils.copyOf(parameters);
+        return MathArrays.copyOf(parameters);
     }
 
     /**

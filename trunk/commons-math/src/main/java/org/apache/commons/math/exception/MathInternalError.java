@@ -16,13 +16,14 @@
  */
 package org.apache.commons.math.exception;
 
+import org.apache.commons.math.exception.util.Localizable;
 import org.apache.commons.math.exception.util.LocalizedFormats;
 
 /**
  * Exception triggered when something that shouldn't happen does happen.
  *
  * @since 2.2
- * @version $Id: MathInternalError.java 1131229 2011-06-03 20:49:25Z luc $
+ * @version $Id: MathInternalError.java 1178293 2011-10-03 04:19:48Z psteitz $
  */
 public class MathInternalError extends MathIllegalStateException {
     /** Serializable version Id. */
@@ -43,5 +44,15 @@ public class MathInternalError extends MathIllegalStateException {
      */
     public MathInternalError(final Throwable cause) {
         super(cause, LocalizedFormats.INTERNAL_ERROR, REPORT_URL);
+    }
+
+    /**
+     * Constructor accepting a localized message.
+     *
+     * @param pattern Message pattern explaining the cause of the error.
+     * @param args Arguments.
+     */
+    public MathInternalError(Localizable pattern, Object ... args) {
+        super(pattern, args);
     }
 }

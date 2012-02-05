@@ -33,8 +33,10 @@ import org.apache.commons.math.exception.util.LocalizedFormats;
 * <p>
 * Adapted from <a href="http://commons.apache.org/collections/api-release/org/apache/commons/collections/FunctorException.html"/>.</p>
 *
-* @version $Id: MathException.java 1166646 2011-09-08 12:08:16Z erans $
+* @version $Id: MathException.java 1197460 2011-11-04 09:44:04Z sebb $
+* @deprecated To be removed before 3.0.  Please do not use in any new code.
 */
+@Deprecated
 public class MathException extends Exception {
 
     /** Serializable version identifier. */

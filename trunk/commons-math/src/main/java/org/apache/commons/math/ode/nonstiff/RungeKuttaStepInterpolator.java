@@ -22,6 +22,7 @@ import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
 import org.apache.commons.math.ode.AbstractIntegrator;
+import org.apache.commons.math.ode.EquationsMapper;
 import org.apache.commons.math.ode.sampling.AbstractStepInterpolator;
 
 /** This class represents an interpolator over the last step during an
@@ -30,12 +31,15 @@ import org.apache.commons.math.ode.sampling.AbstractStepInterpolator;
  * @see RungeKuttaIntegrator
  * @see EmbeddedRungeKuttaIntegrator
  *
- * @version $Id: RungeKuttaStepInterpolator.java 1131229 2011-06-03 20:49:25Z luc $
+ * @version $Id: RungeKuttaStepInterpolator.java 1204270 2011-11-20 21:41:46Z luc $
  * @since 1.2
  */
 
 abstract class RungeKuttaStepInterpolator
   extends AbstractStepInterpolator {
+
+    /** Previous state. */
+    protected double[] previousState;
 
     /** Slopes at the intermediate points */
     protected double[][] yDotK;
@@ -54,9 +58,9 @@ abstract class RungeKuttaStepInterpolator
    * uninitialized model and latter initializing the copy.
    */
   protected RungeKuttaStepInterpolator() {
-    super();
-    yDotK      = null;
-    integrator = null;
+    previousState = null;
+    yDotK         = null;
+    integrator    = null;
   }
 
   /** Copy constructor.
@@ -81,16 +85,16 @@ abstract class RungeKuttaStepInterpolator
     super(interpolator);
 
     if (interpolator.currentState != null) {
-      final int dimension = currentState.length;
+
+      previousState = interpolator.previousState.clone();
 
       yDotK = new double[interpolator.yDotK.length][];
       for (int k = 0; k < interpolator.yDotK.length; ++k) {
-        yDotK[k] = new double[dimension];
-        System.arraycopy(interpolator.yDotK[k], 0,
-                         yDotK[k], 0, dimension);
+        yDotK[k] = interpolator.yDotK[k].clone();
       }
 
     } else {
+      previousState = null;
       yDotK = null;
     }
 
@@ -120,12 +124,24 @@ abstract class RungeKuttaStepInterpolator
    * @param yDotArray reference to the integrator array holding all the
    * intermediate slopes
    * @param forward integration direction indicator
+   * @param primaryMapper equations mapper for the primary equations set
+   * @param secondaryMappers equations mappers for the secondary equations sets
    */
   public void reinitialize(final AbstractIntegrator rkIntegrator,
-                           final double[] y, final double[][] yDotArray, final boolean forward) {
-    reinitialize(y, forward);
+                           final double[] y, final double[][] yDotArray, final boolean forward,
+                           final EquationsMapper primaryMapper,
+                           final EquationsMapper[] secondaryMappers) {
+    reinitialize(y, forward, primaryMapper, secondaryMappers);
+    this.previousState = null;
     this.yDotK = yDotArray;
     this.integrator = rkIntegrator;
+  }
+
+  /** {@inheritDoc} */
+  @Override
+  public void shift() {
+    previousState = currentState.clone();
+    super.shift();
   }
 
   /** {@inheritDoc} */
@@ -138,6 +154,10 @@ abstract class RungeKuttaStepInterpolator
 
     // save the local attributes
     final int n = (currentState == null) ? -1 : currentState.length;
+    for (int i = 0; i < n; ++i) {
+      out.writeDouble(previousState[i]);
+    }
+
     final int kMax = (yDotK == null) ? -1 : yDotK.length;
     out.writeInt(kMax);
     for (int k = 0; k < kMax; ++k) {
@@ -153,13 +173,22 @@ abstract class RungeKuttaStepInterpolator
   /** {@inheritDoc} */
   @Override
   public void readExternal(final ObjectInput in)
-    throws IOException {
+    throws IOException, ClassNotFoundException {
 
     // read the base class
     final double t = readBaseExternal(in);
 
     // read the local attributes
     final int n = (currentState == null) ? -1 : currentState.length;
+    if (n < 0) {
+      previousState = null;
+    } else {
+      previousState = new double[n];
+      for (int i = 0; i < n; ++i) {
+        previousState[i] = in.readDouble();
+      }
+    }
+
     final int kMax = in.readInt();
     yDotK = (kMax < 0) ? null : new double[kMax][];
     for (int k = 0; k < kMax; ++k) {

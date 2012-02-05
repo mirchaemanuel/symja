@@ -25,18 +25,18 @@ import org.apache.commons.math.util.FastMath;
 
 /**
  * Implements the <a href="http://mathworld.wolfram.com/TrapezoidalRule.html">
- * Trapezoidal Rule</a> for integration of real univariate functions. For
+ * Trapezoid Rule</a> for integration of real univariate functions. For
  * reference, see <b>Introduction to Numerical Analysis</b>, ISBN 038795452X,
  * chapter 3.
  * <p>
  * The function should be integrable.</p>
  *
- * @version $Id: TrapezoidIntegrator.java 1171111 2011-09-15 14:27:41Z celestin $
+ * @version $Id: TrapezoidIntegrator.java 1239390 2012-02-01 23:04:20Z erans $
  * @since 1.2
  */
-public class TrapezoidIntegrator extends UnivariateRealIntegratorImpl {
+public class TrapezoidIntegrator extends BaseAbstractUnivariateIntegrator {
 
-    /** Maximal number of iterations for trapezoid. */
+    /** Maximum number of iterations for trapezoid. */
     public static final int TRAPEZOID_MAX_ITERATIONS_COUNT = 64;
 
     /** Intermediate result. */
@@ -48,7 +48,7 @@ public class TrapezoidIntegrator extends UnivariateRealIntegratorImpl {
      * @param absoluteAccuracy absolute accuracy of the result
      * @param minimalIterationCount minimum number of iterations
      * @param maximalIterationCount maximum number of iterations
-     * (must be less than or equal to {@link #TRAPEZOID_MAX_ITERATIONS_COUNT)
+     * (must be less than or equal to {@link #TRAPEZOID_MAX_ITERATIONS_COUNT}
      * @exception NotStrictlyPositiveException if minimal number of iterations
      * is not strictly positive
      * @exception NumberIsTooSmallException if maximal number of iterations
@@ -72,7 +72,7 @@ public class TrapezoidIntegrator extends UnivariateRealIntegratorImpl {
      * Build a trapezoid integrator with given iteration counts.
      * @param minimalIterationCount minimum number of iterations
      * @param maximalIterationCount maximum number of iterations
-     * (must be less than or equal to {@link #TRAPEZOID_MAX_ITERATIONS_COUNT)
+     * (must be less than or equal to {@link #TRAPEZOID_MAX_ITERATIONS_COUNT}
      * @exception NotStrictlyPositiveException if minimal number of iterations
      * is not strictly positive
      * @exception NumberIsTooSmallException if maximal number of iterations
@@ -105,7 +105,7 @@ public class TrapezoidIntegrator extends UnivariateRealIntegratorImpl {
      * <p>
      * The interval is divided equally into 2^n sections rather than an
      * arbitrary m sections because this configuration can best utilize the
-     * alrealy computed values.</p>
+     * already computed values.</p>
      *
      * @param baseIntegrator integrator holding integration parameters
      * @param n the stage of 1/2 refinement, n = 0 is no refinement
@@ -113,7 +113,7 @@ public class TrapezoidIntegrator extends UnivariateRealIntegratorImpl {
      * @throws TooManyEvaluationsException if the maximal number of evaluations
      * is exceeded.
      */
-    double stage(final UnivariateRealIntegratorImpl baseIntegrator, final int n)
+    double stage(final BaseAbstractUnivariateIntegrator baseIntegrator, final int n)
         throws TooManyEvaluationsException {
 
         if (n == 0) {
@@ -138,6 +138,7 @@ public class TrapezoidIntegrator extends UnivariateRealIntegratorImpl {
     }
 
     /** {@inheritDoc} */
+    @Override
     protected double doIntegrate()
         throws TooManyEvaluationsException, MaxCountExceededException {
 

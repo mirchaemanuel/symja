@@ -20,11 +20,11 @@ package org.apache.commons.math.stat.clustering;
 import java.io.Serializable;
 import java.util.Collection;
 
-import org.apache.commons.math.util.MathUtils;
+import org.apache.commons.math.util.MathArrays;
 
 /**
  * A simple implementation of {@link Clusterable} for points with integer coordinates.
- * @version $Id: EuclideanIntegerPoint.java 1131229 2011-06-03 20:49:25Z luc $
+ * @version $Id: EuclideanIntegerPoint.java 1182134 2011-10-11 22:55:08Z erans $
  * @since 2.0
  */
 public class EuclideanIntegerPoint implements Clusterable<EuclideanIntegerPoint>, Serializable {
@@ -54,7 +54,7 @@ public class EuclideanIntegerPoint implements Clusterable<EuclideanIntegerPoint>
 
     /** {@inheritDoc} */
     public double distanceFrom(final EuclideanIntegerPoint p) {
-        return MathUtils.distance(point, p.getPoint());
+        return MathArrays.distance(point, p.getPoint());
     }
 
     /** {@inheritDoc} */

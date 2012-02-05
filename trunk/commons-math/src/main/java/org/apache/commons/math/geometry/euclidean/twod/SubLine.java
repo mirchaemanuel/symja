@@ -34,7 +34,7 @@ import org.apache.commons.math.geometry.partitioning.SubHyperplane;
 import org.apache.commons.math.util.FastMath;
 
 /** This class represents a sub-hyperplane for {@link Line}.
- * @version $Id: SubLine.java 1137749 2011-06-20 19:11:43Z luc $
+ * @version $Id: SubLine.java 1197468 2011-11-04 09:54:30Z sebb $
  * @since 3.0
  */
 public class SubLine extends AbstractSubHyperplane<Euclidean2D, Euclidean1D> {
@@ -95,7 +95,7 @@ public class SubLine extends AbstractSubHyperplane<Euclidean2D, Euclidean1D> {
 
     /** Get the intersection of the instance and another sub-line.
      * <p>
-     * This method is related to the {@link Line#intersection(Hyperplane)
+     * This method is related to the {@link Line#intersection(Line)
      * intersection} method in the {@link Line Line} class, but in addition
      * to compute the point along infinite lines, it also checks the point
      * lies on both sub-line ranges.
@@ -142,12 +142,14 @@ public class SubLine extends AbstractSubHyperplane<Euclidean2D, Euclidean1D> {
     }
 
     /** {@inheritDoc} */
+    @Override
     protected AbstractSubHyperplane<Euclidean2D, Euclidean1D> buildNew(final Hyperplane<Euclidean2D> hyperplane,
                                                                        final Region<Euclidean1D> remainingRegion) {
         return new SubLine(hyperplane, remainingRegion);
     }
 
     /** {@inheritDoc} */
+    @Override
     public Side side(final Hyperplane<Euclidean2D> hyperplane) {
 
         final Line    thisLine  = (Line) getHyperplane();
@@ -162,12 +164,13 @@ public class SubLine extends AbstractSubHyperplane<Euclidean2D, Euclidean1D> {
 
         // the lines do intersect
         final boolean direct = FastMath.sin(thisLine.getAngle() - otherLine.getAngle()) < 0;
-        final Vector1D x = (Vector1D) thisLine.toSubSpace(crossing);
+        final Vector1D x = thisLine.toSubSpace(crossing);
         return getRemainingRegion().side(new OrientedPoint(x, direct));
 
     }
 
     /** {@inheritDoc} */
+    @Override
     public SplitSubHyperplane<Euclidean2D> split(final Hyperplane<Euclidean2D> hyperplane) {
 
         final Line    thisLine  = (Line) getHyperplane();
@@ -184,7 +187,7 @@ public class SubLine extends AbstractSubHyperplane<Euclidean2D, Euclidean1D> {
 
         // the lines do intersect
         final boolean direct = FastMath.sin(thisLine.getAngle() - otherLine.getAngle()) < 0;
-        final Vector1D x      = (Vector1D) thisLine.toSubSpace(crossing);
+        final Vector1D x      = thisLine.toSubSpace(crossing);
         final SubHyperplane<Euclidean1D> subPlus  = new OrientedPoint(x, !direct).wholeHyperplane();
         final SubHyperplane<Euclidean1D> subMinus = new OrientedPoint(x,  direct).wholeHyperplane();
 

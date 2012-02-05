@@ -18,9 +18,9 @@ package org.apache.commons.math.analysis.polynomials;
 
 import java.util.Arrays;
 
-import org.apache.commons.math.util.MathUtils;
-import org.apache.commons.math.analysis.DifferentiableUnivariateRealFunction;
-import org.apache.commons.math.analysis.UnivariateRealFunction;
+import org.apache.commons.math.util.MathArrays;
+import org.apache.commons.math.analysis.DifferentiableUnivariateFunction;
+import org.apache.commons.math.analysis.UnivariateFunction;
 import org.apache.commons.math.exception.OutOfRangeException;
 import org.apache.commons.math.exception.NumberIsTooSmallException;
 import org.apache.commons.math.exception.DimensionMismatchException;
@@ -59,9 +59,9 @@ import org.apache.commons.math.exception.util.LocalizedFormats;
  * than or equal to <code>x</code>.  The value returned is <br>
  * <code>polynomials[j](x - knot[j])</code></li></ol></p>
  *
- * @version $Id: PolynomialSplineFunction.java 1174731 2011-09-23 13:08:58Z erans $
+ * @version $Id: PolynomialSplineFunction.java 1206867 2011-11-27 22:18:30Z erans $
  */
-public class PolynomialSplineFunction implements DifferentiableUnivariateRealFunction {
+public class PolynomialSplineFunction implements DifferentiableUnivariateFunction {
     /**
      * Spline segment interval delimiters (knots).
      * Size is n + 1 for n segments.
@@ -109,7 +109,7 @@ public class PolynomialSplineFunction implements DifferentiableUnivariateRealFun
         if (knots.length - 1 != polynomials.length) {
             throw new DimensionMismatchException(polynomials.length, knots.length);
         }
-        MathUtils.checkOrder(knots);
+        MathArrays.checkOrder(knots);
 
         this.n = knots.length -1;
         this.knots = new double[n + 1];
@@ -151,7 +151,7 @@ public class PolynomialSplineFunction implements DifferentiableUnivariateRealFun
      *
      * @return the derivative function.
      */
-    public UnivariateRealFunction derivative() {
+    public UnivariateFunction derivative() {
         return polynomialSplineDerivative();
     }
 

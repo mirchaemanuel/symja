@@ -19,9 +19,9 @@ package org.apache.commons.math.ode;
 import java.io.Serializable;
 
 /** Simple container pairing a parameter name with a step in order to compute
- *  the associated jacobian matrix by finite difference.
- * 
- * @version $Id: ParameterConfiguration.java 1175409 2011-09-25 15:04:39Z luc $
+ *  the associated Jacobian matrix by finite difference.
+ *
+ * @version $Id: ParameterConfiguration.java 1240253 2012-02-03 17:38:02Z tn $
  * @since 3.0
  */
 class ParameterConfiguration implements Serializable {
@@ -58,10 +58,10 @@ class ParameterConfiguration implements Serializable {
     }
 
     /** Set parameter step.
-     * @param hP parameter step
+     * @param hParam parameter step
      */
-    public void setHP(final double hP) {
-        this.hP = hP;
+    public void setHP(final double hParam) {
+        this.hP = hParam;
     }
 
 }

@@ -20,6 +20,7 @@ package org.apache.commons.math.util;
 import java.io.Serializable;
 
 import org.apache.commons.math.Field;
+import org.apache.commons.math.FieldElement;
 
 /**
  * Representation of real numbers with arbitrary precision field.
@@ -27,7 +28,7 @@ import org.apache.commons.math.Field;
  * This class is a singleton.
  * </p>
  * @see BigReal
- * @version $Id: BigRealField.java 1131229 2011-06-03 20:49:25Z luc $
+ * @version $Id: BigRealField.java 1178009 2011-10-01 15:15:00Z luc $
  * @since 2.0
  */
 public class BigRealField implements Field<BigReal>, Serializable  {
@@ -55,6 +56,11 @@ public class BigRealField implements Field<BigReal>, Serializable  {
     /** {@inheritDoc} */
     public BigReal getZero() {
         return BigReal.ZERO;
+    }
+
+    /** {@inheritDoc} */
+    public Class<? extends FieldElement<BigReal>> getRuntimeClass() {
+        return BigReal.class;
     }
 
     // CHECKSTYLE: stop HideUtilityClassConstructor

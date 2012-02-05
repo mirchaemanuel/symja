@@ -21,17 +21,19 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 
 import org.apache.commons.math.FieldElement;
-import org.apache.commons.math.MathRuntimeException;
-import org.apache.commons.math.exception.util.LocalizedFormats;
+import org.apache.commons.math.exception.MathIllegalArgumentException;
 import org.apache.commons.math.exception.NullArgumentException;
-import org.apache.commons.math.util.MathUtils;
+import org.apache.commons.math.exception.ZeroException;
+import org.apache.commons.math.exception.util.LocalizedFormats;
 import org.apache.commons.math.util.FastMath;
+import org.apache.commons.math.util.MathUtils;
+import org.apache.commons.math.util.ArithmeticUtils;
 
 /**
  * Representation of a rational number without any overflow. This class is
  * immutable.
  *
- * @version $Id: BigFraction.java 1132432 2011-06-05 14:59:29Z luc $
+ * @version $Id: BigFraction.java 1206199 2011-11-25 14:48:54Z erans $
  * @since 2.0
  */
 public class BigFraction
@@ -84,7 +86,7 @@ public class BigFraction
     private static final long serialVersionUID = -5630213147331578515L;
 
     /** <code>BigInteger</code> representation of 100. */
-    private static final BigInteger ONE_HUNDRED_DOUBLE = BigInteger.valueOf(100);
+    private static final BigInteger ONE_HUNDRED = BigInteger.valueOf(100);
 
     /** The numerator. */
     private final BigInteger numerator;
@@ -111,18 +113,14 @@ public class BigFraction
      *
      * @param num the numerator, must not be {@code null}.
      * @param den the denominator, must not be {@code null}.
-     * @throws ArithmeticException if the denominator is zero.
+     * @throws ZeroException if the denominator is zero.
      * @throws NullArgumentException if either of the arguments is null
      */
     public BigFraction(BigInteger num, BigInteger den) {
-        if (num == null) {
-            throw new NullArgumentException(LocalizedFormats.NUMERATOR);
-        }
-        if (den == null) {
-            throw new NullArgumentException(LocalizedFormats.DENOMINATOR);
-        }
+        MathUtils.checkNotNull(num, LocalizedFormats.NUMERATOR);
+        MathUtils.checkNotNull(den, LocalizedFormats.DENOMINATOR);
         if (BigInteger.ZERO.equals(den)) {
-            throw MathRuntimeException.createArithmeticException(LocalizedFormats.ZERO_DENOMINATOR);
+            throw new ZeroException(LocalizedFormats.ZERO_DENOMINATOR);
         }
         if (BigInteger.ZERO.equals(num)) {
             numerator   = BigInteger.ZERO;
@@ -168,14 +166,14 @@ public class BigFraction
      * </p>
      * @see #BigFraction(double, double, int)
      * @param value the double value to convert to a fraction.
-     * @exception IllegalArgumentException if value is NaN or infinite
+     * @exception MathIllegalArgumentException if value is NaN or infinite
      */
-    public BigFraction(final double value) throws IllegalArgumentException {
+    public BigFraction(final double value) throws MathIllegalArgumentException {
         if (Double.isNaN(value)) {
-            throw MathRuntimeException.createIllegalArgumentException(LocalizedFormats.NAN_VALUE_CONVERSION);
+            throw new MathIllegalArgumentException(LocalizedFormats.NAN_VALUE_CONVERSION);
         }
         if (Double.isInfinite(value)) {
-            throw MathRuntimeException.createIllegalArgumentException(LocalizedFormats.INFINITE_VALUE_CONVERSION);
+            throw new MathIllegalArgumentException(LocalizedFormats.INFINITE_VALUE_CONVERSION);
         }
 
         // compute m and k such that value = m * 2^k
@@ -609,12 +607,12 @@ public class BigFraction
      *            <code>null</code>.
      * @return a {@link BigFraction} instance with the resulting values.
      * @throws NullArgumentException if the {@code BigInteger} is {@code null}.
-     * @throws ArithmeticException
+     * @throws ZeroException
      *             if the fraction to divide by is zero.
      */
     public BigFraction divide(final BigInteger bg) {
         if (BigInteger.ZERO.equals(bg)) {
-            throw MathRuntimeException.createArithmeticException(LocalizedFormats.ZERO_DENOMINATOR);
+            throw new ZeroException(LocalizedFormats.ZERO_DENOMINATOR);
         }
         return new BigFraction(numerator, denominator.multiply(bg));
     }
@@ -660,14 +658,14 @@ public class BigFraction
      * @param fraction Fraction to divide by, must not be {@code null}.
      * @return a {@link BigFraction} instance with the resulting values.
      * @throws NullArgumentException if the {@code fraction} is {@code null}.
-     * @throws ArithmeticException if the fraction to divide by is zero.
+     * @throws ZeroException if the fraction to divide by is zero.
      */
     public BigFraction divide(final BigFraction fraction) {
         if (fraction == null) {
             throw new NullArgumentException(LocalizedFormats.FRACTION);
         }
         if (BigInteger.ZERO.equals(fraction.numerator)) {
-            throw MathRuntimeException.createArithmeticException(LocalizedFormats.ZERO_DENOMINATOR);
+            throw new ZeroException(LocalizedFormats.ZERO_DENOMINATOR);
         }
 
         return multiply(fraction.reciprocal());
@@ -926,7 +924,7 @@ public class BigFraction
      * @return the fraction percentage as a <tt>double</tt>.
      */
     public double percentageValue() {
-        return (numerator.divide(denominator)).multiply(ONE_HUNDRED_DOUBLE).doubleValue();
+        return multiply(ONE_HUNDRED).doubleValue();
     }
 
     /**
@@ -959,11 +957,11 @@ public class BigFraction
      */
     public BigFraction pow(final long exponent) {
         if (exponent < 0) {
-            return new BigFraction(MathUtils.pow(denominator, -exponent),
-                                   MathUtils.pow(numerator,   -exponent));
+            return new BigFraction(ArithmeticUtils.pow(denominator, -exponent),
+                                   ArithmeticUtils.pow(numerator,   -exponent));
         }
-        return new BigFraction(MathUtils.pow(numerator,   exponent),
-                               MathUtils.pow(denominator, exponent));
+        return new BigFraction(ArithmeticUtils.pow(numerator,   exponent),
+                               ArithmeticUtils.pow(denominator, exponent));
     }
 
     /**
@@ -979,11 +977,11 @@ public class BigFraction
     public BigFraction pow(final BigInteger exponent) {
         if (exponent.compareTo(BigInteger.ZERO) < 0) {
             final BigInteger eNeg = exponent.negate();
-            return new BigFraction(MathUtils.pow(denominator, eNeg),
-                                   MathUtils.pow(numerator,   eNeg));
+            return new BigFraction(ArithmeticUtils.pow(denominator, eNeg),
+                                   ArithmeticUtils.pow(numerator,   eNeg));
         }
-        return new BigFraction(MathUtils.pow(numerator,   exponent),
-                               MathUtils.pow(denominator, exponent));
+        return new BigFraction(ArithmeticUtils.pow(numerator,   exponent),
+                               ArithmeticUtils.pow(denominator, exponent));
     }
 
     /**

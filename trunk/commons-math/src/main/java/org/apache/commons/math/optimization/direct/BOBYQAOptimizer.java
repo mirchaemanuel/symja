@@ -19,10 +19,8 @@ package org.apache.commons.math.optimization.direct;
 
 import java.util.Arrays;
 
-import org.apache.commons.math.analysis.MultivariateRealFunction;
-import org.apache.commons.math.exception.DimensionMismatchException;
+import org.apache.commons.math.analysis.MultivariateFunction;
 import org.apache.commons.math.exception.MathIllegalStateException;
-import org.apache.commons.math.exception.MathInternalError;
 import org.apache.commons.math.exception.NumberIsTooSmallException;
 import org.apache.commons.math.exception.OutOfRangeException;
 import org.apache.commons.math.exception.util.LocalizedFormats;
@@ -30,9 +28,8 @@ import org.apache.commons.math.linear.Array2DRowRealMatrix;
 import org.apache.commons.math.linear.ArrayRealVector;
 import org.apache.commons.math.linear.RealVector;
 import org.apache.commons.math.optimization.GoalType;
-import org.apache.commons.math.optimization.MultivariateRealOptimizer;
 import org.apache.commons.math.optimization.RealPointValuePair;
-import org.apache.commons.math.util.MathUtils;
+import org.apache.commons.math.optimization.MultivariateOptimizer;
 
 /**
  * Powell's BOBYQA algorithm. This implementation is translated and
@@ -53,8 +50,15 @@ import org.apache.commons.math.util.MathUtils;
  * @since 3.0
  */
 public class BOBYQAOptimizer
-    extends BaseAbstractScalarOptimizer<MultivariateRealFunction>
-    implements MultivariateRealOptimizer {
+    extends BaseAbstractMultivariateSimpleBoundsOptimizer<MultivariateFunction>
+    implements MultivariateOptimizer {
+    /** Minimum dimension of the problem: {@value} */
+    public static final int MINIMUM_PROBLEM_DIMENSION = 2;
+    /** Default value for {@link #initialTrustRegionRadius}: {@value} . */
+    public static final double DEFAULT_INITIAL_RADIUS = 10.0;
+    /** Default value for {@link #stoppingTrustRegionRadius}: {@value} . */
+    public static final double DEFAULT_STOPPING_RADIUS = 1E-8;
+
     private static final double ZERO = 0d;
     private static final double ONE = 1d;
     private static final double TWO = 2d;
@@ -68,13 +72,6 @@ public class BOBYQAOptimizer
     private static final double ONE_OVER_TEN = ONE / 10;
     private static final double ONE_OVER_A_THOUSAND = ONE / 1000;
 
-    /** Minimum dimension of the problem: {@value} */
-    public static final int MINIMUM_PROBLEM_DIMENSION = 2;
-    /** Default value for {@link #initialTrustRegionRadius}: {@value} . */
-    public static final double DEFAULT_INITIAL_RADIUS = 10.0;
-    /** Default value for {@link #stoppingTrustRegionRadius}: {@value} . */
-    public static final double DEFAULT_STOPPING_RADIUS = 1E-8;
-
     /**
      * numberOfInterpolationPoints XXX
      */
@@ -87,19 +84,6 @@ public class BOBYQAOptimizer
      * stoppingTrustRegionRadius XXX
      */
     private final double stoppingTrustRegionRadius;
-    /**
-     * Lower bounds of the objective variables.
-     * {@code null} means no bounds.
-     * XXX Should probably be passed to the "optimize" method (overload not existing yet).
-     */
-    private double[] lowerBound;
-    /**
-     * Upper bounds of the objective variables.
-     * {@code null} means no bounds.
-     * XXX Should probably be passed to the "optimize" method (overload not existing yet).
-     */
-    private double[] upperBound;
-
     /** Goal type (minimize or maximize). */
     private boolean isMinimize;
     /**
@@ -114,6 +98,108 @@ public class BOBYQAOptimizer
      * Index of the interpolation point at the trust region center.
      */
     private int trustRegionCenterInterpolationPointIndex;
+    /**
+     * Last <em>n</em> columns of matrix H (where <em>n</em> is the dimension
+     * of the problem).
+     * XXX "bmat" in the original code.
+     */
+    private Array2DRowRealMatrix bMatrix;
+    /**
+     * Factorization of the leading <em>npt</em> square submatrix of H, this
+     * factorization being Z Z<sup>T</sup>, which provides both the correct
+     * rank and positive semi-definiteness.
+     * XXX "zmat" in the original code.
+     */
+    private Array2DRowRealMatrix zMatrix;
+    /**
+     * Coordinates of the interpolation points relative to {@link #originShift}.
+     * XXX "xpt" in the original code.
+     */
+    private Array2DRowRealMatrix interpolationPoints;
+    /**
+     * Shift of origin that should reduce the contributions from rounding
+     * errors to values of the model and Lagrange functions.
+     * XXX "xbase" in the original code.
+     */
+    private ArrayRealVector originShift;
+    /**
+     * Values of the objective function at the interpolation points.
+     * XXX "fval" in the original code.
+     */
+    private ArrayRealVector fAtInterpolationPoints;
+    /**
+     * Displacement from {@link #originShift} of the trust region center.
+     * XXX "xopt" in the original code.
+     */
+    private ArrayRealVector trustRegionCenterOffset;
+    /**
+     * Gradient of the quadratic model at {@link #originShift} +
+     * {@link #trustRegionCenterOffset}.
+     * XXX "gopt" in the original code.
+     */
+    private ArrayRealVector gradientAtTrustRegionCenter;
+    /**
+     * Differences {@link #getLowerBound()} - {@link #originShift}.
+     * All the components of every {@link #trustRegionCenterOffset} are going
+     * to satisfy the bounds<br/>
+     * {@link #getLowerBound() lowerBound}<sub>i</sub> &le;
+     * {@link #trustRegionCenterOffset}<sub>i</sub>,<br/>
+     * with appropriate equalities when {@link #trustRegionCenterOffset} is
+     * on a constraint boundary.
+     * XXX "sl" in the original code.
+     */
+    private ArrayRealVector lowerDifference;
+    /**
+     * Differences {@link #getUpperBound()} - {@link #originShift}
+     * All the components of every {@link #trustRegionCenterOffset} are going
+     * to satisfy the bounds<br/>
+     *  {@link #trustRegionCenterOffset}<sub>i</sub> &le;
+     *  {@link #getUpperBound() upperBound}<sub>i</sub>,<br/>
+     * with appropriate equalities when {@link #trustRegionCenterOffset} is
+     * on a constraint boundary.
+     * XXX "su" in the original code.
+     */
+    private ArrayRealVector upperDifference;
+    /** 
+     * Parameters of the implicit second derivatives of the quadratic model.
+     * XXX "pq" in the original code.
+     */
+    private ArrayRealVector modelSecondDerivativesParameters;
+    /**
+     * Point chosen by function {@link #trsbox(double,ArrayRealVector,
+     * ArrayRealVector, ArrayRealVector,ArrayRealVector,ArrayRealVector) trsbox}
+     * or {@link #altmov(int,double) altmov}.
+     * Usually {@link #originShift} + {@link #newPoint} is the vector of
+     * variables for the next evaluation of the objective function.
+     * It also satisfies the constraints indicated in {@link #lowerDifference}
+     * and {@link #upperDifference}.
+     * XXX "xnew" in the original code.
+     */
+    private ArrayRealVector newPoint;
+    /**
+     * Alternative to {@link #newPoint}, chosen by
+     * {@link #altmov(int,double) altmov}.
+     * It may replace {@link #newPoint} in order to increase the denominator
+     * in the {@link #update() updating procedure}.
+     * XXX "xalt" in the original code.
+     */
+    private ArrayRealVector alternativeNewPoint;
+    /**
+     * Trial step from {@link #trustRegionCenterOffset} which is usually
+     * {@link #newPoint} - {@link #trustRegionCenterOffset}.
+     * XXX "d__" in the original code.
+     */
+    private ArrayRealVector trialStepPoint;
+    /**
+     * Values of the Lagrange functions at a new point.
+     * XXX "vlag" in the original code.
+     */
+    private ArrayRealVector lagrangeValuesAtNewPoint;
+    /**
+     * Explicit second derivatives of the quadratic model.
+     * XXX "hq" in the original code.
+     */
+    private ArrayRealVector modelSecondDerivativesValues;
 
     /**
      * @param numberOfInterpolationPoints Number of interpolation conditions.
@@ -122,23 +208,7 @@ public class BOBYQAOptimizer
      * Choices that exceed {@code 2n+1} are not recommended.
      */
     public BOBYQAOptimizer(int numberOfInterpolationPoints) {
-        this(numberOfInterpolationPoints, null, null);
-    }
-
-    /**
-     * @param numberOfInterpolationPoints Number of interpolation conditions.
-     * For a problem of dimension {@code n}, its value must be in the interval
-     * {@code [n+2, (n+1)(n+2)/2]}.
-     * Choices that exceed {@code 2n+1} are not recommended.
-     * @param lowerBound Lower bounds (constraints) of the objective variables.
-     * @param upperBound Upperer bounds (constraints) of the objective variables.
-     */
-    public BOBYQAOptimizer(int numberOfInterpolationPoints,
-                           double[] lowerBound,
-                           double[] upperBound) {
         this(numberOfInterpolationPoints,
-             lowerBound,
-             upperBound,
              DEFAULT_INITIAL_RADIUS,
              DEFAULT_STOPPING_RADIUS);
     }
@@ -148,18 +218,12 @@ public class BOBYQAOptimizer
      * For a problem of dimension {@code n}, its value must be in the interval
      * {@code [n+2, (n+1)(n+2)/2]}.
      * Choices that exceed {@code 2n+1} are not recommended.
-     * @param lowerBound Lower bounds (constraints) of the objective variables.
-     * @param upperBound Upperer bounds (constraints) of the objective variables.
      * @param initialTrustRegionRadius Initial trust region radius.
      * @param stoppingTrustRegionRadius Stopping trust region radius.
      */
     public BOBYQAOptimizer(int numberOfInterpolationPoints,
-                           double[] lowerBound,
-                           double[] upperBound,
                            double initialTrustRegionRadius,
                            double stoppingTrustRegionRadius) {
-        this.lowerBound = lowerBound == null ? null : MathUtils.copyOf(lowerBound);
-        this.upperBound = upperBound == null ? null : MathUtils.copyOf(upperBound);
         this.numberOfInterpolationPoints = numberOfInterpolationPoints;
         this.initialTrustRegionRadius = initialTrustRegionRadius;
         this.stoppingTrustRegionRadius = stoppingTrustRegionRadius;
@@ -168,13 +232,16 @@ public class BOBYQAOptimizer
     /** {@inheritDoc} */
     @Override
     protected RealPointValuePair doOptimize() {
+        final double[] lowerBound = getLowerBound();
+        final double[] upperBound = getUpperBound();
+
         // Validity checks.
-        setup();
+        setup(lowerBound, upperBound);
 
         isMinimize = (getGoalType() == GoalType.MINIMIZE);
         currentBest = new ArrayRealVector(getStartPoint());
 
-        final double value = bobyqa();
+        final double value = bobyqa(lowerBound, upperBound);
 
         return new RealPointValuePair(currentBest.getDataRef(),
                                       isMinimize ? value : -value);
@@ -210,37 +277,16 @@ public class BOBYQAOptimizer
      *     MAXFUN must be set to an upper bound on the number of calls of CALFUN.
      *     The array W will be used for working space. Its length must be at least
      *       (NPT+5)*(NPT+N)+3*N*(N+5)/2.
-     * @return
+     *
+     * @param lowerBound Lower bounds.
+     * @param upperBound Upper bounds.
+     * @return the value of the objective at the optimum.
      */
-    private double bobyqa() {
-        // System.out.println("bobyqa"); // XXX
+    private double bobyqa(double[] lowerBound,
+                          double[] upperBound) {
+        printMethod(); // XXX
 
         final int n = currentBest.getDimension();
-        final int npt = numberOfInterpolationPoints;
-
-        final int np = n + 1;
-        final int ndim = npt + n;
-
-        // Partition the working space array, so that different parts of it can
-        // be treated separately during the calculation of BOBYQB. The partition
-        // requires the first (NPT+2)*(NPT+N)+3*N*(N+5)/2 elements of W plus the
-        // space that is taken by the last array in the argument list of BOBYQB.
-
-        final ArrayRealVector xbase = new ArrayRealVector(n);
-        final Array2DRowRealMatrix xpt = new Array2DRowRealMatrix(npt, n);
-        final ArrayRealVector fval = new ArrayRealVector(npt);
-        final ArrayRealVector xopt = new ArrayRealVector(n);
-        final ArrayRealVector gopt = new ArrayRealVector(n);
-        final ArrayRealVector hq = new ArrayRealVector(n * np / 2);
-        final ArrayRealVector pq = new ArrayRealVector(npt);
-        final Array2DRowRealMatrix bmat = new Array2DRowRealMatrix(ndim, n);
-        final Array2DRowRealMatrix zmat = new Array2DRowRealMatrix(npt, (npt - np));
-        final ArrayRealVector sl = new ArrayRealVector(n);
-        final ArrayRealVector su = new ArrayRealVector(n);
-        final ArrayRealVector xnew = new ArrayRealVector(n);
-        final ArrayRealVector xalt = new ArrayRealVector(n);
-        final ArrayRealVector d__ = new ArrayRealVector(n);
-        final ArrayRealVector vlag = new ArrayRealVector(ndim);
 
         // Return if there is insufficient space between the bounds. Modify the
         // initial X if necessary in order to avoid conflicts between the bounds
@@ -251,53 +297,39 @@ public class BOBYQAOptimizer
 
         for (int j = 0; j < n; j++) {
             final double boundDiff = boundDifference[j];
-            sl.setEntry(j, lowerBound[j] - currentBest.getEntry(j));
-            su.setEntry(j, upperBound[j] - currentBest.getEntry(j));
-            if (sl.getEntry(j) >= -initialTrustRegionRadius) {
-                if (sl.getEntry(j) >= ZERO) {
+            lowerDifference.setEntry(j, lowerBound[j] - currentBest.getEntry(j));
+            upperDifference.setEntry(j, upperBound[j] - currentBest.getEntry(j));
+            if (lowerDifference.getEntry(j) >= -initialTrustRegionRadius) {
+                if (lowerDifference.getEntry(j) >= ZERO) {
                     currentBest.setEntry(j, lowerBound[j]);
-                    sl.setEntry(j, ZERO);
-                    su.setEntry(j, boundDiff);
+                    lowerDifference.setEntry(j, ZERO);
+                    upperDifference.setEntry(j, boundDiff);
                 } else {
                     currentBest.setEntry(j, lowerBound[j] + initialTrustRegionRadius);
-                    sl.setEntry(j, -initialTrustRegionRadius);
+                    lowerDifference.setEntry(j, -initialTrustRegionRadius);
                     // Computing MAX
                     final double deltaOne = upperBound[j] - currentBest.getEntry(j);
-                    su.setEntry(j, Math.max(deltaOne, initialTrustRegionRadius));
+                    upperDifference.setEntry(j, Math.max(deltaOne, initialTrustRegionRadius));
                 }
-            } else if (su.getEntry(j) <= initialTrustRegionRadius) {
-                if (su.getEntry(j) <= ZERO) {
+            } else if (upperDifference.getEntry(j) <= initialTrustRegionRadius) {
+                if (upperDifference.getEntry(j) <= ZERO) {
                     currentBest.setEntry(j, upperBound[j]);
-                    sl.setEntry(j, -boundDiff);
-                    su.setEntry(j, ZERO);
+                    lowerDifference.setEntry(j, -boundDiff);
+                    upperDifference.setEntry(j, ZERO);
                 } else {
                     currentBest.setEntry(j, upperBound[j] - initialTrustRegionRadius);
                     // Computing MIN
                     final double deltaOne = lowerBound[j] - currentBest.getEntry(j);
                     final double deltaTwo = -initialTrustRegionRadius;
-                    sl.setEntry(j, Math.min(deltaOne, deltaTwo));
-                    su.setEntry(j, initialTrustRegionRadius);
+                    lowerDifference.setEntry(j, Math.min(deltaOne, deltaTwo));
+                    upperDifference.setEntry(j, initialTrustRegionRadius);
                 }
             }
         }
 
         // Make the call of BOBYQB.
 
-        return bobyqb(xbase,
-                      xpt,
-                      fval,
-                      xopt,
-                      gopt,
-                      hq,
-                      pq,
-                      bmat,
-                      zmat,
-                      sl,
-                      su,
-                      xnew,
-                      xalt,
-                      d__,
-                      vlag);
+        return bobyqb(lowerBound, upperBound);
     } // bobyqa
 
     // ----------------------------------------------------------------------------------------
@@ -335,41 +367,13 @@ public class BOBYQAOptimizer
      *     W is a one-dimensional array that is used for working space. Its length
      *       must be at least 3*NDIM = 3*(NPT+N).
      *
-     * @param xbase
-     * @param xpt
-     * @param fval
-     * @param xopt
-     * @param gopt
-     * @param hq
-     * @param pq
-     * @param bmat
-     * @param zmat
-     * @param sl
-     * @param su
-     * @param xnew
-     * @param xalt
-     * @param d__
-     * @param vlag
-     * @return
+     * @param lowerBound Lower bounds.
+     * @param upperBound Upper bounds.
+     * @return the value of the objective at the optimum.
      */
-    private double bobyqb(
-            ArrayRealVector xbase, 
-            Array2DRowRealMatrix xpt,
-            ArrayRealVector fval,
-            ArrayRealVector xopt,
-            ArrayRealVector gopt,
-            ArrayRealVector hq,
-            ArrayRealVector pq,
-            Array2DRowRealMatrix bmat,
-            Array2DRowRealMatrix zmat,
-            ArrayRealVector sl,
-            ArrayRealVector su,
-            ArrayRealVector xnew,
-            ArrayRealVector xalt,
-            ArrayRealVector d__,
-            ArrayRealVector vlag
-    ) {
-        // System.out.println("bobyqb"); // XXX
+    private double bobyqb(double[] lowerBound,
+                          double[] upperBound) {
+        printMethod(); // XXX
 
         final int n = currentBest.getDimension();
         final int npt = numberOfInterpolationPoints;
@@ -386,31 +390,6 @@ public class BOBYQAOptimizer
         double dsq = Double.NaN;
         double crvmin = Double.NaN;
 
-        // System generated locals
-        double d__1, d__2, d__3, d__4;
-
-        // Local variables
-        double f = 0;
-        int ih, ip, jp;
-        double dx;
-        double den = 0, rho = 0, sum = 0, diff = 0, beta = 0, gisq = 0;
-        int knew = 0;
-        double temp, suma, sumb, bsum, fopt;
-        double curv;
-        int ksav;
-        double gqsq = 0, dist = 0, sumw = 0, sumz = 0, diffa = 0, diffb = 0, diffc = 0, hdiag = 0;
-        int kbase;
-        double delta = 0, adelt = 0, denom = 0, fsave = 0, bdtol = 0, delsq = 0;
-        int nfsav;
-        double ratio = 0, dnorm = 0, vquad = 0, pqold = 0;
-        int itest;
-        double sumpq, scaden;
-        double errbig, fracsq, biglsq, densav;
-        double bdtest;
-        double frhosq;
-        double distsq = 0;
-        int ntrits;
-
         // Set some constants.
         // Parameter adjustments
 
@@ -425,28 +404,37 @@ public class BOBYQAOptimizer
 
         trustRegionCenterInterpolationPointIndex = 0;
 
-        prelim(currentBest, xbase,
-               xpt, fval, gopt, hq, pq, bmat,
-                zmat, sl, su);
+        prelim(lowerBound, upperBound);
         double xoptsq = ZERO;
         for (int i = 0; i < n; i++) {
-            xopt.setEntry(i, xpt.getEntry(trustRegionCenterInterpolationPointIndex, i));
+            trustRegionCenterOffset.setEntry(i, interpolationPoints.getEntry(trustRegionCenterInterpolationPointIndex, i));
             // Computing 2nd power
-            final double deltaOne = xopt.getEntry(i);
+            final double deltaOne = trustRegionCenterOffset.getEntry(i);
             xoptsq += deltaOne * deltaOne;
         }
-        fsave = fval.getEntry(0);
-        kbase = 0;
+        double fsave = fAtInterpolationPoints.getEntry(0);
+        final int kbase = 0;
 
         // Complete the settings that are required for the iterative procedure.
 
-        rho = initialTrustRegionRadius;
-        delta = rho;
-        ntrits = 0;
-        diffa = ZERO;
-        diffb = ZERO;
-        itest = 0;
-        nfsav = getEvaluations();
+        int ntrits = 0;
+        int itest = 0;
+        int knew = 0;
+        int nfsav = getEvaluations();
+        double rho = initialTrustRegionRadius;
+        double delta = rho;
+        double diffa = ZERO;
+        double diffb = ZERO;
+        double diffc = ZERO;
+        double f = ZERO;
+        double beta = ZERO;
+        double adelt = ZERO;
+        double denom = ZERO;
+        double ratio = ZERO;
+        double dnorm = ZERO;
+        double scaden = ZERO;
+        double biglsq = ZERO;
+        double distsq = ZERO;
 
         // Update GOPT if necessary before the first iteration and after each
         // call of RESCUE that makes a call of CALFUN.
@@ -454,26 +442,27 @@ public class BOBYQAOptimizer
         int state = 20;
         for(;;) switch (state) {
         case 20: {
+            printState(20); // XXX
             if (trustRegionCenterInterpolationPointIndex != kbase) {
-                ih = 0;
+                int ih = 0;
                 for (int j = 0; j < n; j++) {
                     for (int i = 0; i <= j; i++) {
                         if (i < j) {
-                            gopt.setEntry(j,  gopt.getEntry(j) + hq.getEntry(ih) * xopt.getEntry(i));
+                            gradientAtTrustRegionCenter.setEntry(j,  gradientAtTrustRegionCenter.getEntry(j) + modelSecondDerivativesValues.getEntry(ih) * trustRegionCenterOffset.getEntry(i));
                         }
-                        gopt.setEntry(i,  gopt.getEntry(i) + hq.getEntry(ih) * xopt.getEntry(j));
+                        gradientAtTrustRegionCenter.setEntry(i,  gradientAtTrustRegionCenter.getEntry(i) + modelSecondDerivativesValues.getEntry(ih) * trustRegionCenterOffset.getEntry(j));
                         ih++;
                     }
                 }
                 if (getEvaluations() > npt) {
                     for (int k = 0; k < npt; k++) {
-                        temp = ZERO;
+                        double temp = ZERO;
                         for (int j = 0; j < n; j++) {
-                            temp += xpt.getEntry(k, j) * xopt.getEntry(j);
+                            temp += interpolationPoints.getEntry(k, j) * trustRegionCenterOffset.getEntry(j);
                         }
-                        temp = pq.getEntry(k) * temp;
+                        temp *= modelSecondDerivativesParameters.getEntry(k);
                         for (int i = 0; i < n; i++) {
-                            gopt.setEntry(i, gopt.getEntry(i) + temp * xpt.getEntry(k, i));
+                            gradientAtTrustRegionCenter.setEntry(i, gradientAtTrustRegionCenter.getEntry(i) + temp * interpolationPoints.getEntry(k, i));
                         }
                     }
                     throw new PathIsExploredException(); // XXX
@@ -489,14 +478,14 @@ public class BOBYQAOptimizer
 
         }
         case 60: {
+            printState(60); // XXX
             final ArrayRealVector gnew = new ArrayRealVector(n);
             final ArrayRealVector xbdi = new ArrayRealVector(n);
             final ArrayRealVector s = new ArrayRealVector(n);
             final ArrayRealVector hs = new ArrayRealVector(n);
             final ArrayRealVector hred = new ArrayRealVector(n);
 
-            final double[] dsqCrvmin = trsbox(xpt, xopt, gopt, hq, pq, sl,
-                                              su, delta, xnew, d__, gnew, xbdi, s,
+            final double[] dsqCrvmin = trsbox(delta, gnew, xbdi, s,
                                               hs, hred);
             dsq = dsqCrvmin[0];
             crvmin = dsqCrvmin[1];
@@ -522,27 +511,27 @@ public class BOBYQAOptimizer
 
                 // Computing MAX
                 deltaOne = Math.max(diffa, diffb);
-                errbig = Math.max(deltaOne, diffc);
-                frhosq = rho * ONE_OVER_EIGHT * rho;
+                final double errbig = Math.max(deltaOne, diffc);
+                final double frhosq = rho * ONE_OVER_EIGHT * rho;
                 if (crvmin > ZERO &&
                     errbig > frhosq * crvmin) {
                     state = 650; break;
                 }
-                bdtol = errbig / rho;
+                final double bdtol = errbig / rho;
                 for (int j = 0; j < n; j++) {
-                    bdtest = bdtol;
-                    if (xnew.getEntry(j) == sl.getEntry(j)) {
+                    double bdtest = bdtol;
+                    if (newPoint.getEntry(j) == lowerDifference.getEntry(j)) {
                         bdtest = work1.getEntry(j);
                     }
-                    if (xnew.getEntry(j) == su.getEntry(j)) {
+                    if (newPoint.getEntry(j) == upperDifference.getEntry(j)) {
                         bdtest = -work1.getEntry(j);
                     }
                     if (bdtest < bdtol) {
-                        curv = hq.getEntry((j + j * j) / 2);
+                        double curv = modelSecondDerivativesValues.getEntry((j + j * j) / 2);
                         for (int k = 0; k < npt; k++) {
                             // Computing 2nd power
-                            final double d1 = xpt.getEntry(k, j);
-                            curv += pq.getEntry(k) * (d1 * d1);
+                            final double d1 = interpolationPoints.getEntry(k, j);
+                            curv += modelSecondDerivativesParameters.getEntry(k) * (d1 * d1);
                         }
                         bdtest += HALF * curv * rho;
                         if (bdtest < bdtol) {
@@ -563,29 +552,30 @@ public class BOBYQAOptimizer
 
         }
         case 90: {
+            printState(90); // XXX
             if (dsq <= xoptsq * ONE_OVER_A_THOUSAND) {
-                fracsq = xoptsq * ONE_OVER_FOUR;
-                sumpq = ZERO;
+                final double fracsq = xoptsq * ONE_OVER_FOUR;
+                double sumpq = ZERO;
                 // final RealVector sumVector
-                //     = new ArrayRealVector(npt, -HALF * xoptsq).add(xpt.operate(xopt));
+                //     = new ArrayRealVector(npt, -HALF * xoptsq).add(interpolationPoints.operate(trustRegionCenter));
                 for (int k = 0; k < npt; k++) {
-                    sumpq += pq.getEntry(k);
-                    sum = -HALF * xoptsq;
+                    sumpq += modelSecondDerivativesParameters.getEntry(k);
+                    double sum = -HALF * xoptsq;
                     for (int i = 0; i < n; i++) {
-                        sum += xpt.getEntry(k, i) * xopt.getEntry(i);
+                        sum += interpolationPoints.getEntry(k, i) * trustRegionCenterOffset.getEntry(i);
                     }
                     // sum = sumVector.getEntry(k); // XXX "testAckley" and "testDiffPow" fail.
                     work2.setEntry(k, sum);
-                    temp = fracsq - HALF * sum;
+                    final double temp = fracsq - HALF * sum;
                     for (int i = 0; i < n; i++) {
-                        work1.setEntry(i, bmat.getEntry(k, i));
-                        vlag.setEntry(i, sum * xpt.getEntry(k, i) + temp * xopt.getEntry(i));
-                        ip = npt + i;
+                        work1.setEntry(i, bMatrix.getEntry(k, i));
+                        lagrangeValuesAtNewPoint.setEntry(i, sum * interpolationPoints.getEntry(k, i) + temp * trustRegionCenterOffset.getEntry(i));
+                        final int ip = npt + i;
                         for (int j = 0; j <= i; j++) {
-                            bmat.setEntry(ip, j,
-                                          bmat.getEntry(ip, j)
-                                          + work1.getEntry(i) * vlag.getEntry(j)
-                                          + vlag.getEntry(i) * work1.getEntry(j));
+                            bMatrix.setEntry(ip, j,
+                                          bMatrix.getEntry(ip, j)
+                                          + work1.getEntry(i) * lagrangeValuesAtNewPoint.getEntry(j)
+                                          + lagrangeValuesAtNewPoint.getEntry(i) * work1.getEntry(j));
                         }
                     }
                 }
@@ -593,31 +583,31 @@ public class BOBYQAOptimizer
                 // Then the revisions of BMAT that depend on ZMAT are calculated.
 
                 for (int m = 0; m < nptm; m++) {
-                    sumz = ZERO;
-                    sumw = ZERO;
+                    double sumz = ZERO;
+                    double sumw = ZERO;
                     for (int k = 0; k < npt; k++) {
-                        sumz += zmat.getEntry(k, m);
-                        vlag.setEntry(k, work2.getEntry(k) * zmat.getEntry(k, m));
-                        sumw += vlag.getEntry(k);
+                        sumz += zMatrix.getEntry(k, m);
+                        lagrangeValuesAtNewPoint.setEntry(k, work2.getEntry(k) * zMatrix.getEntry(k, m));
+                        sumw += lagrangeValuesAtNewPoint.getEntry(k);
                     }
                     for (int j = 0; j < n; j++) {
-                        sum = (fracsq * sumz - HALF * sumw) * xopt.getEntry(j);
+                        double sum = (fracsq * sumz - HALF * sumw) * trustRegionCenterOffset.getEntry(j);
                         for (int k = 0; k < npt; k++) {
-                            sum += vlag.getEntry(k) * xpt.getEntry(k, j);
+                            sum += lagrangeValuesAtNewPoint.getEntry(k) * interpolationPoints.getEntry(k, j);
                         }
                         work1.setEntry(j, sum);
                         for (int k = 0; k < npt; k++) {
-                            bmat.setEntry(k, j,
-                                          bmat.getEntry(k, j)
-                                          + sum * zmat.getEntry(k, m));
+                            bMatrix.setEntry(k, j,
+                                          bMatrix.getEntry(k, j)
+                                          + sum * zMatrix.getEntry(k, m));
                         }
                     }
                     for (int i = 0; i < n; i++) {
-                        ip = i + npt;
-                        temp = work1.getEntry(i);
+                        final int ip = i + npt;
+                        final double temp = work1.getEntry(i);
                         for (int j = 0; j <= i; j++) {
-                            bmat.setEntry(ip, j,
-                                          bmat.getEntry(ip, j)
+                            bMatrix.setEntry(ip, j,
+                                          bMatrix.getEntry(ip, j)
                                           + temp * work1.getEntry(j));
                         }
                     }
@@ -626,28 +616,28 @@ public class BOBYQAOptimizer
                 // The following instructions complete the shift, including the changes
                 // to the second derivative parameters of the quadratic model.
 
-                ih = 0;
+                int ih = 0;
                 for (int j = 0; j < n; j++) {
-                    work1.setEntry(j, -HALF * sumpq * xopt.getEntry(j));
+                    work1.setEntry(j, -HALF * sumpq * trustRegionCenterOffset.getEntry(j));
                     for (int k = 0; k < npt; k++) {
-                        work1.setEntry(j, work1.getEntry(j) + pq.getEntry(k) * xpt.getEntry(k, j));
-                        xpt.setEntry(k, j, xpt.getEntry(k, j) - xopt.getEntry(j));
+                        work1.setEntry(j, work1.getEntry(j) + modelSecondDerivativesParameters.getEntry(k) * interpolationPoints.getEntry(k, j));
+                        interpolationPoints.setEntry(k, j, interpolationPoints.getEntry(k, j) - trustRegionCenterOffset.getEntry(j));
                     }
                     for (int i = 0; i <= j; i++) {
-                         hq.setEntry(ih,
-                                    hq.getEntry(ih)
-                                    + work1.getEntry(i) * xopt.getEntry(j)
-                                    + xopt.getEntry(i) * work1.getEntry(j));
-                        bmat.setEntry(npt + i, j, bmat.getEntry(npt + j, i));
+                         modelSecondDerivativesValues.setEntry(ih,
+                                    modelSecondDerivativesValues.getEntry(ih)
+                                    + work1.getEntry(i) * trustRegionCenterOffset.getEntry(j)
+                                    + trustRegionCenterOffset.getEntry(i) * work1.getEntry(j));
+                        bMatrix.setEntry(npt + i, j, bMatrix.getEntry(npt + j, i));
                         ih++;
                     }
                 }
                 for (int i = 0; i < n; i++) {
-                    xbase.setEntry(i, xbase.getEntry(i) + xopt.getEntry(i));
-                    xnew.setEntry(i, xnew.getEntry(i) - xopt.getEntry(i));
-                    sl.setEntry(i, sl.getEntry(i) - xopt.getEntry(i));
-                    su.setEntry(i, su.getEntry(i) - xopt.getEntry(i));
-                    xopt.setEntry(i, ZERO);
+                    originShift.setEntry(i, originShift.getEntry(i) + trustRegionCenterOffset.getEntry(i));
+                    newPoint.setEntry(i, newPoint.getEntry(i) - trustRegionCenterOffset.getEntry(i));
+                    lowerDifference.setEntry(i, lowerDifference.getEntry(i) - trustRegionCenterOffset.getEntry(i));
+                    upperDifference.setEntry(i, upperDifference.getEntry(i) - trustRegionCenterOffset.getEntry(i));
+                    trustRegionCenterOffset.setEntry(i, ZERO);
                 }
                 xoptsq = ZERO;
             }
@@ -667,6 +657,7 @@ public class BOBYQAOptimizer
 
         }
         case 210: {
+            printState(210); // XXX
             // Pick two alternative vectors of variables, relative to XBASE, that
             // are suitable as new positions of the KNEW-th interpolation point.
             // Firstly, XNEW is set to the point on a line through XOPT and another
@@ -678,14 +669,12 @@ public class BOBYQAOptimizer
             // being returned in CAUCHY. The choice between these alternatives is
             // going to be made when the denominator is calculated.
 
-            final double[] alphaCauchy = altmov(xpt, xopt,
-                                                bmat, zmat,
-                                                sl, su, knew, adelt, xnew, xalt);
+            final double[] alphaCauchy = altmov(knew, adelt);
             alpha = alphaCauchy[0];
             cauchy = alphaCauchy[1];
 
             for (int i = 0; i < n; i++) {
-                d__.setEntry(i, xnew.getEntry(i) - xopt.getEntry(i));
+                trialStepPoint.setEntry(i, newPoint.getEntry(i) - trustRegionCenterOffset.getEntry(i));
             }
 
             // Calculate VLAG and BETA for the current choice of D. The scalar
@@ -694,52 +683,58 @@ public class BOBYQAOptimizer
 
         }
         case 230: {
+            printState(230); // XXX
             for (int k = 0; k < npt; k++) {
-                suma = ZERO;
-                sumb = ZERO;
-                sum = ZERO;
+                double suma = ZERO;
+                double sumb = ZERO;
+                double sum = ZERO;
                 for (int j = 0; j < n; j++) {
-                    suma += xpt.getEntry(k, j) * d__.getEntry(j);
-                    sumb += xpt.getEntry(k, j) * xopt.getEntry(j);
-                    sum += bmat.getEntry(k, j) * d__.getEntry(j);
+                    suma += interpolationPoints.getEntry(k, j) * trialStepPoint.getEntry(j);
+                    sumb += interpolationPoints.getEntry(k, j) * trustRegionCenterOffset.getEntry(j);
+                    sum += bMatrix.getEntry(k, j) * trialStepPoint.getEntry(j);
                 }
                 work3.setEntry(k, suma * (HALF * suma + sumb));
-                vlag.setEntry(k, sum);
+                lagrangeValuesAtNewPoint.setEntry(k, sum);
                 work2.setEntry(k, suma);
             }
             beta = ZERO;
             for (int m = 0; m < nptm; m++) {
-                sum = ZERO;
+                double sum = ZERO;
                 for (int k = 0; k < npt; k++) {
-                    sum += zmat.getEntry(k, m) * work3.getEntry(k);
+                    sum += zMatrix.getEntry(k, m) * work3.getEntry(k);
                 }
                 beta -= sum * sum;
                 for (int k = 0; k < npt; k++) {
-                    vlag.setEntry(k, vlag.getEntry(k) + sum * zmat.getEntry(k, m));
+                    lagrangeValuesAtNewPoint.setEntry(k, lagrangeValuesAtNewPoint.getEntry(k) + sum * zMatrix.getEntry(k, m));
                 }
             }
             dsq = ZERO;
-            bsum = ZERO;
-            dx = ZERO;
+            double bsum = ZERO;
+            double dx = ZERO;
             for (int j = 0; j < n; j++) {
                 // Computing 2nd power
-                final double d1 = d__.getEntry(j);
+                final double d1 = trialStepPoint.getEntry(j);
                 dsq += d1 * d1;
-                sum = ZERO;
+                double sum = ZERO;
                 for (int k = 0; k < npt; k++) {
-                    sum += work3.getEntry(k) * bmat.getEntry(k, j);
+                    sum += work3.getEntry(k) * bMatrix.getEntry(k, j);
                 }
-                bsum += sum * d__.getEntry(j);
-                jp = npt + j;
+                bsum += sum * trialStepPoint.getEntry(j);
+                final int jp = npt + j;
                 for (int i = 0; i < n; i++) {
-                    sum += bmat.getEntry(jp, i) * d__.getEntry(i);
+                    sum += bMatrix.getEntry(jp, i) * trialStepPoint.getEntry(i);
                 }
-                vlag.setEntry(jp, sum);
-                bsum += sum * d__.getEntry(j);
-                dx += d__.getEntry(j) * xopt.getEntry(j);
+                lagrangeValuesAtNewPoint.setEntry(jp, sum);
+                bsum += sum * trialStepPoint.getEntry(j);
+                dx += trialStepPoint.getEntry(j) * trustRegionCenterOffset.getEntry(j);
             }
-            beta = dx * dx + dsq * (xoptsq + dx + dx + HALF * dsq) + beta - bsum;
-            vlag.setEntry(trustRegionCenterInterpolationPointIndex, vlag.getEntry(trustRegionCenterInterpolationPointIndex) + ONE);
+
+            beta = dx * dx + dsq * (xoptsq + dx + dx + HALF * dsq) + beta - bsum; // Original
+            // beta += dx * dx + dsq * (xoptsq + dx + dx + HALF * dsq) - bsum; // XXX "testAckley" and "testDiffPow" fail.
+            // beta = dx * dx + dsq * (xoptsq + 2 * dx + HALF * dsq) + beta - bsum; // XXX "testDiffPow" fails.
+
+            lagrangeValuesAtNewPoint.setEntry(trustRegionCenterInterpolationPointIndex,
+                          lagrangeValuesAtNewPoint.getEntry(trustRegionCenterInterpolationPointIndex) + ONE);
 
             // If NTRITS is zero, the denominator may be increased by replacing
             // the step D of ALTMOV by a Cauchy step. Then RESCUE may be called if
@@ -747,12 +742,12 @@ public class BOBYQAOptimizer
 
             if (ntrits == 0) {
                 // Computing 2nd power
-                final double d1 = vlag.getEntry(knew);
+                final double d1 = lagrangeValuesAtNewPoint.getEntry(knew);
                 denom = d1 * d1 + alpha * beta;
                 if (denom < cauchy && cauchy > ZERO) {
                     for (int i = 0; i < n; i++) {
-                        xnew.setEntry(i, xalt.getEntry(i));
-                        d__.setEntry(i, xnew.getEntry(i) - xopt.getEntry(i));
+                        newPoint.setEntry(i, alternativeNewPoint.getEntry(i));
+                        trialStepPoint.setEntry(i, newPoint.getEntry(i) - trustRegionCenterOffset.getEntry(i));
                     }
                     cauchy = ZERO; // XXX Useful statement?
                     state = 230; break;
@@ -764,7 +759,7 @@ public class BOBYQAOptimizer
                 // KNEW before calculating the next value of the objective function.
 
             } else {
-                delsq = delta * delta;
+                final double delsq = delta * delta;
                 scaden = ZERO;
                 biglsq = ZERO;
                 knew = 0;
@@ -772,27 +767,25 @@ public class BOBYQAOptimizer
                     if (k == trustRegionCenterInterpolationPointIndex) {
                         continue;
                     }
-                    hdiag = ZERO;
+                    double hdiag = ZERO;
                     for (int m = 0; m < nptm; m++) {
                         // Computing 2nd power
-                        final double d1 = zmat.getEntry(k, m);
+                        final double d1 = zMatrix.getEntry(k, m);
                         hdiag += d1 * d1;
                     }
                     // Computing 2nd power
-                    d__1 = vlag.getEntry(k);
-                    den = beta * hdiag + d__1 * d__1;
+                    final double d2 = lagrangeValuesAtNewPoint.getEntry(k);
+                    final double den = beta * hdiag + d2 * d2;
                     distsq = ZERO;
                     for (int j = 0; j < n; j++) {
                         // Computing 2nd power
-                        final double d1 = xpt.getEntry(k, j) - xopt.getEntry(j);
-                        distsq += d1 * d1;
+                        final double d3 = interpolationPoints.getEntry(k, j) - trustRegionCenterOffset.getEntry(j);
+                        distsq += d3 * d3;
                     }
                     // Computing MAX
                     // Computing 2nd power
-                    d__3 = distsq / delsq;
-                    d__1 = ONE;
-                    d__2 = d__3 * d__3;
-                    temp = Math.max(d__1,d__2);
+                    final double d4 = distsq / delsq;
+                    final double temp = Math.max(ONE, d4 * d4);
                     if (temp * den > scaden) {
                         scaden = temp * den;
                         knew = k;
@@ -800,10 +793,8 @@ public class BOBYQAOptimizer
                     }
                     // Computing MAX
                     // Computing 2nd power
-                    d__3 = vlag.getEntry(k);
-                    d__1 = biglsq;
-                    d__2 = temp * (d__3 * d__3);
-                    biglsq = Math.max(d__1, d__2);
+                    final double d5 = lagrangeValuesAtNewPoint.getEntry(k);
+                    biglsq = Math.max(biglsq, temp * (d5 * d5));
                 }
             }
 
@@ -815,24 +806,25 @@ public class BOBYQAOptimizer
 
         }
         case 360: {
+            printState(360); // XXX
             for (int i = 0; i < n; i++) {
                 // Computing MIN
                 // Computing MAX
-                d__3 = lowerBound[i];
-                d__4 = xbase.getEntry(i) + xnew.getEntry(i);
-                d__1 = Math.max(d__3, d__4);
-                d__2 = upperBound[i];
-                currentBest.setEntry(i, Math.min(d__1, d__2));
-                if (xnew.getEntry(i) == sl.getEntry(i)) {
+                final double d3 = lowerBound[i];
+                final double d4 = originShift.getEntry(i) + newPoint.getEntry(i);
+                final double d1 = Math.max(d3, d4);
+                final double d2 = upperBound[i];
+                currentBest.setEntry(i, Math.min(d1, d2));
+                if (newPoint.getEntry(i) == lowerDifference.getEntry(i)) {
                     currentBest.setEntry(i, lowerBound[i]);
                 }
-                if (xnew.getEntry(i) == su.getEntry(i)) {
+                if (newPoint.getEntry(i) == upperDifference.getEntry(i)) {
                     currentBest.setEntry(i, upperBound[i]);
                 }
             }
 
             f = computeObjectiveValue(currentBest.toArray());
-            
+
             if (!isMinimize)
                 f = -f;
             if (ntrits == -1) {
@@ -843,17 +835,17 @@ public class BOBYQAOptimizer
             // Use the quadratic model to predict the change in F due to the step D,
             //   and set DIFF to the error of this prediction.
 
-            fopt = fval.getEntry(trustRegionCenterInterpolationPointIndex);
-            vquad = ZERO;
-            ih = 0;
+            final double fopt = fAtInterpolationPoints.getEntry(trustRegionCenterInterpolationPointIndex);
+            double vquad = ZERO;
+            int ih = 0;
             for (int j = 0; j < n; j++) {
-                vquad += d__.getEntry(j) * gopt.getEntry(j);
+                vquad += trialStepPoint.getEntry(j) * gradientAtTrustRegionCenter.getEntry(j);
                 for (int i = 0; i <= j; i++) {
-                     temp = d__.getEntry(i) * d__.getEntry(j);
+                    double temp = trialStepPoint.getEntry(i) * trialStepPoint.getEntry(j);
                     if (i == j) {
-                        temp = HALF * temp;
+                        temp *= HALF;
                     }
-                    vquad += hq.getEntry(ih) * temp;
+                    vquad += modelSecondDerivativesValues.getEntry(ih) * temp;
                     ih++;
                }
             }
@@ -861,9 +853,9 @@ public class BOBYQAOptimizer
                 // Computing 2nd power
                 final double d1 = work2.getEntry(k);
                 final double d2 = d1 * d1; // "d1" must be squared first to prevent test failures.
-                vquad += HALF * pq.getEntry(k) * d2;
+                vquad += HALF * modelSecondDerivativesParameters.getEntry(k) * d2;
             }
-            diff = f - fopt - vquad;
+            final double diff = f - fopt - vquad;
             diffc = diffb;
             diffb = diffa;
             diffa = Math.abs(diff);
@@ -878,19 +870,16 @@ public class BOBYQAOptimizer
                     throw new MathIllegalStateException(LocalizedFormats.TRUST_REGION_STEP_FAILED, vquad);
                 }
                 ratio = (f - fopt) / vquad;
+                final double hDelta = HALF * delta;
                 if (ratio <= ONE_OVER_TEN) {
                     // Computing MIN
-                    d__1 = HALF * delta;
-                    delta = Math.min(d__1,dnorm);
+                    delta = Math.min(hDelta, dnorm);
                 } else if (ratio <= .7) {
                     // Computing MAX
-                    d__1 = HALF * delta;
-                    delta = Math.max(d__1,dnorm);
+                    delta = Math.max(hDelta, dnorm);
                 } else {
                     // Computing MAX
-                    d__1 = HALF * delta;
-                    d__2 = dnorm + dnorm;
-                    delta = Math.max(d__1,d__2);
+                    delta = Math.max(hDelta, 2 * dnorm);
                 }
                 if (delta <= rho * 1.5) {
                     delta = rho;
@@ -899,34 +888,32 @@ public class BOBYQAOptimizer
                 // Recalculate KNEW and DENOM if the new F is less than FOPT.
 
                 if (f < fopt) {
-                    ksav = knew;
-                    densav = denom;
-                    delsq = delta * delta;
+                    final int ksav = knew;
+                    final double densav = denom;
+                    final double delsq = delta * delta;
                     scaden = ZERO;
                     biglsq = ZERO;
                     knew = 0;
                     for (int k = 0; k < npt; k++) {
-                        hdiag = ZERO;
+                        double hdiag = ZERO;
                         for (int m = 0; m < nptm; m++) {
                             // Computing 2nd power
-                            final double d1 = zmat.getEntry(k, m);
+                            final double d1 = zMatrix.getEntry(k, m);
                             hdiag += d1 * d1;
                         }
                         // Computing 2nd power
-                        d__1 = vlag.getEntry(k);
-                        den = beta * hdiag + d__1 * d__1;
+                        final double d1 = lagrangeValuesAtNewPoint.getEntry(k);
+                        final double den = beta * hdiag + d1 * d1;
                         distsq = ZERO;
                         for (int j = 0; j < n; j++) {
                             // Computing 2nd power
-                            final double d1 = xpt.getEntry(k, j) - xnew.getEntry(j);
-                            distsq += d1 * d1;
+                            final double d2 = interpolationPoints.getEntry(k, j) - newPoint.getEntry(j);
+                            distsq += d2 * d2;
                         }
                         // Computing MAX
                         // Computing 2nd power
-                        d__3 = distsq / delsq;
-                        d__1 = ONE;
-                        d__2 = d__3 * d__3;
-                        temp = Math.max(d__1, d__2);
+                        final double d3 = distsq / delsq;
+                        final double temp = Math.max(ONE, d3 * d3);
                         if (temp * den > scaden) {
                             scaden = temp * den;
                             knew = k;
@@ -934,10 +921,9 @@ public class BOBYQAOptimizer
                         }
                         // Computing MAX
                         // Computing 2nd power
-                        d__3 = vlag.getEntry(k);
-                        d__1 = biglsq;
-                        d__2 = temp * (d__3 * d__3);
-                        biglsq = Math.max(d__1, d__2);
+                        final double d4 = lagrangeValuesAtNewPoint.getEntry(k);
+                        final double d5 = temp * (d4 * d4);
+                        biglsq = Math.max(biglsq, d5);
                     }
                     if (scaden <= HALF * biglsq) {
                         knew = ksav;
@@ -949,50 +935,49 @@ public class BOBYQAOptimizer
             // Update BMAT and ZMAT, so that the KNEW-th interpolation point can be
             // moved. Also update the second derivative terms of the model.
 
-            update(bmat, zmat, vlag,
-                    beta, denom, knew);
+            update(beta, denom, knew);
 
             ih = 0;
-            pqold = pq.getEntry(knew);
-            pq.setEntry(knew, ZERO);
+            final double pqold = modelSecondDerivativesParameters.getEntry(knew);
+            modelSecondDerivativesParameters.setEntry(knew, ZERO);
             for (int i = 0; i < n; i++) {
-                temp = pqold * xpt.getEntry(knew, i);
+                final double temp = pqold * interpolationPoints.getEntry(knew, i);
                 for (int j = 0; j <= i; j++) {
-                    hq.setEntry(ih, hq.getEntry(ih) + temp * xpt.getEntry(knew, j));
+                    modelSecondDerivativesValues.setEntry(ih, modelSecondDerivativesValues.getEntry(ih) + temp * interpolationPoints.getEntry(knew, j));
                     ih++;
                 }
             }
             for (int m = 0; m < nptm; m++) {
-                temp = diff * zmat.getEntry(knew, m);
+                final double temp = diff * zMatrix.getEntry(knew, m);
                 for (int k = 0; k < npt; k++) {
-                    pq.setEntry(k, pq.getEntry(k) + temp * zmat.getEntry(k, m));
+                    modelSecondDerivativesParameters.setEntry(k, modelSecondDerivativesParameters.getEntry(k) + temp * zMatrix.getEntry(k, m));
                 }
             }
 
             // Include the new interpolation point, and make the changes to GOPT at
             // the old XOPT that are caused by the updating of the quadratic model.
 
-            fval.setEntry(knew,  f);
+            fAtInterpolationPoints.setEntry(knew,  f);
             for (int i = 0; i < n; i++) {
-                xpt.setEntry(knew, i, xnew.getEntry(i));
-                work1.setEntry(i, bmat.getEntry(knew, i));
+                interpolationPoints.setEntry(knew, i, newPoint.getEntry(i));
+                work1.setEntry(i, bMatrix.getEntry(knew, i));
             }
             for (int k = 0; k < npt; k++) {
-                suma = ZERO;
+                double suma = ZERO;
                 for (int m = 0; m < nptm; m++) {
-                    suma += zmat.getEntry(knew, m) * zmat.getEntry(k, m);
+                    suma += zMatrix.getEntry(knew, m) * zMatrix.getEntry(k, m);
                 }
-                sumb = ZERO;
+                double sumb = ZERO;
                 for (int j = 0; j < n; j++) {
-                    sumb += xpt.getEntry(k, j) * xopt.getEntry(j);
+                    sumb += interpolationPoints.getEntry(k, j) * trustRegionCenterOffset.getEntry(j);
                 }
-                temp = suma * sumb;
+                final double temp = suma * sumb;
                 for (int i = 0; i < n; i++) {
-                    work1.setEntry(i, work1.getEntry(i) + temp * xpt.getEntry(k, i));
+                    work1.setEntry(i, work1.getEntry(i) + temp * interpolationPoints.getEntry(k, i));
                 }
             }
             for (int i = 0; i < n; i++) {
-                gopt.setEntry(i, gopt.getEntry(i) + diff * work1.getEntry(i));
+                gradientAtTrustRegionCenter.setEntry(i, gradientAtTrustRegionCenter.getEntry(i) + diff * work1.getEntry(i));
             }
 
             // Update XOPT, GOPT and KOPT if the new calculated F is less than FOPT.
@@ -1002,26 +987,26 @@ public class BOBYQAOptimizer
                 xoptsq = ZERO;
                 ih = 0;
                 for (int j = 0; j < n; j++) {
-                    xopt.setEntry(j, xnew.getEntry(j));
+                    trustRegionCenterOffset.setEntry(j, newPoint.getEntry(j));
                     // Computing 2nd power
-                    final double d1 = xopt.getEntry(j);
+                    final double d1 = trustRegionCenterOffset.getEntry(j);
                     xoptsq += d1 * d1;
                     for (int i = 0; i <= j; i++) {
                         if (i < j) {
-                            gopt.setEntry(j, gopt.getEntry(j) + hq.getEntry(ih) * d__.getEntry(i));
+                            gradientAtTrustRegionCenter.setEntry(j, gradientAtTrustRegionCenter.getEntry(j) + modelSecondDerivativesValues.getEntry(ih) * trialStepPoint.getEntry(i));
                         }
-                        gopt.setEntry(i, gopt.getEntry(i) + hq.getEntry(ih) * d__.getEntry(j));
+                        gradientAtTrustRegionCenter.setEntry(i, gradientAtTrustRegionCenter.getEntry(i) + modelSecondDerivativesValues.getEntry(ih) * trialStepPoint.getEntry(j));
                         ih++;
                     }
                 }
                 for (int k = 0; k < npt; k++) {
-                    temp = ZERO;
+                    double temp = ZERO;
                     for (int j = 0; j < n; j++) {
-                        temp += xpt.getEntry(k, j) * d__.getEntry(j);
+                        temp += interpolationPoints.getEntry(k, j) * trialStepPoint.getEntry(j);
                     }
-                    temp = pq.getEntry(k) * temp;
+                    temp *= modelSecondDerivativesParameters.getEntry(k);
                     for (int i = 0; i < n; i++) {
-                        gopt.setEntry(i, gopt.getEntry(i) + temp * xpt.getEntry(k, i));
+                        gradientAtTrustRegionCenter.setEntry(i, gradientAtTrustRegionCenter.getEntry(i) + temp * interpolationPoints.getEntry(k, i));
                     }
                 }
             }
@@ -1032,61 +1017,57 @@ public class BOBYQAOptimizer
 
             if (ntrits > 0) {
                 for (int k = 0; k < npt; k++) {
-                    vlag.setEntry(k, fval.getEntry(k) - fval.getEntry(trustRegionCenterInterpolationPointIndex));
+                    lagrangeValuesAtNewPoint.setEntry(k, fAtInterpolationPoints.getEntry(k) - fAtInterpolationPoints.getEntry(trustRegionCenterInterpolationPointIndex));
                     work3.setEntry(k, ZERO);
                 }
                 for (int j = 0; j < nptm; j++) {
-                    sum = ZERO;
+                    double sum = ZERO;
                     for (int k = 0; k < npt; k++) {
-                        sum += zmat.getEntry(k, j) * vlag.getEntry(k);
+                        sum += zMatrix.getEntry(k, j) * lagrangeValuesAtNewPoint.getEntry(k);
                     }
                     for (int k = 0; k < npt; k++) {
-                        work3.setEntry(k, work3.getEntry(k) + sum * zmat.getEntry(k, j));
+                        work3.setEntry(k, work3.getEntry(k) + sum * zMatrix.getEntry(k, j));
                     }
                 }
                 for (int k = 0; k < npt; k++) {
-                    sum = ZERO;
+                    double sum = ZERO;
                     for (int j = 0; j < n; j++) {
-                        sum += xpt.getEntry(k, j) * xopt.getEntry(j);
+                        sum += interpolationPoints.getEntry(k, j) * trustRegionCenterOffset.getEntry(j);
                     }
                     work2.setEntry(k, work3.getEntry(k));
                     work3.setEntry(k, sum * work3.getEntry(k));
                 }
-                gqsq = ZERO;
-                gisq = ZERO;
+                double gqsq = ZERO;
+                double gisq = ZERO;
                 for (int i = 0; i < n; i++) {
-                    sum = ZERO;
+                    double sum = ZERO;
                     for (int k = 0; k < npt; k++) {
-                        sum += bmat.getEntry(k, i) *
-                            vlag.getEntry(k) + xpt.getEntry(k, i) * work3.getEntry(k);
+                        sum += bMatrix.getEntry(k, i) *
+                            lagrangeValuesAtNewPoint.getEntry(k) + interpolationPoints.getEntry(k, i) * work3.getEntry(k);
                     }
-                    if (xopt.getEntry(i) == sl.getEntry(i)) {
+                    if (trustRegionCenterOffset.getEntry(i) == lowerDifference.getEntry(i)) {
                         // Computing MIN
-                        d__2 = ZERO;
-                        d__3 = gopt.getEntry(i);
                         // Computing 2nd power
-                        d__1 = Math.min(d__2, d__3);
-                        gqsq += d__1 * d__1;
+                        final double d1 = Math.min(ZERO, gradientAtTrustRegionCenter.getEntry(i));
+                        gqsq += d1 * d1;
                         // Computing 2nd power
-                        d__1 = Math.min(ZERO, sum);
-                        gisq += d__1 * d__1;
-                    } else if (xopt.getEntry(i) == su.getEntry(i)) {
+                        final double d2 = Math.min(ZERO, sum);
+                        gisq += d2 * d2;
+                    } else if (trustRegionCenterOffset.getEntry(i) == upperDifference.getEntry(i)) {
                         // Computing MAX
-                        d__2 = ZERO;
-                        d__3 = gopt.getEntry(i);
                         // Computing 2nd power
-                        d__1 = Math.max(d__2, d__3);
-                        gqsq += d__1 * d__1;
+                        final double d1 = Math.max(ZERO, gradientAtTrustRegionCenter.getEntry(i));
+                        gqsq += d1 * d1;
                         // Computing 2nd power
-                        d__1 = Math.max(ZERO, sum);
-                        gisq += d__1 * d__1;
+                        final double d2 = Math.max(ZERO, sum);
+                        gisq += d2 * d2;
                     } else {
                         // Computing 2nd power
-                        d__1 = gopt.getEntry(i);
-                        gqsq += d__1 * d__1;
+                        final double d1 = gradientAtTrustRegionCenter.getEntry(i);
+                        gqsq += d1 * d1;
                         gisq += sum * sum;
                     }
-                    vlag.setEntry(npt + i, sum);
+                    lagrangeValuesAtNewPoint.setEntry(npt + i, sum);
                 }
 
                 // Test whether to replace the new quadratic model by the least Frobenius
@@ -1099,13 +1080,13 @@ public class BOBYQAOptimizer
                 if (itest >= 3) {
                     for (int i = 0, max = Math.max(npt, nh); i < max; i++) {
                         if (i < n) {
-                            gopt.setEntry(i, vlag.getEntry(npt + i));
+                            gradientAtTrustRegionCenter.setEntry(i, lagrangeValuesAtNewPoint.getEntry(npt + i));
                         }
                         if (i < npt) {
-                            pq.setEntry(i, work2.getEntry(i));
+                            modelSecondDerivativesParameters.setEntry(i, work2.getEntry(i));
                         }
                         if (i < nh) {
-                            hq.setEntry(i, ZERO);
+                            modelSecondDerivativesValues.setEntry(i, ZERO);
                         }
                         itest = 0;
                     }
@@ -1128,20 +1109,19 @@ public class BOBYQAOptimizer
 
             // Computing MAX
             // Computing 2nd power
-            d__3 = TWO * delta;
+            final double d1 = TWO * delta;
             // Computing 2nd power
-            d__4 = TEN * rho;
-            d__1 = d__3 * d__3;
-            d__2 = d__4 * d__4;
-            distsq = Math.max(d__1, d__2);
+            final double d2 = TEN * rho;
+            distsq = Math.max(d1 * d1, d2 * d2);
         }
         case 650: {
+            printState(650); // XXX
             knew = -1;
             for (int k = 0; k < npt; k++) {
-                sum = ZERO;
+                double sum = ZERO;
                 for (int j = 0; j < n; j++) {
                     // Computing 2nd power
-                    final double d1 = xpt.getEntry(k, j) - xopt.getEntry(j);
+                    final double d1 = interpolationPoints.getEntry(k, j) - trustRegionCenterOffset.getEntry(j);
                     sum += d1 * d1;
                 }
                 if (sum > distsq) {
@@ -1157,12 +1137,10 @@ public class BOBYQAOptimizer
             // current RHO are complete.
 
             if (knew >= 0) {
-                dist = Math.sqrt(distsq);
+                final double dist = Math.sqrt(distsq);
                 if (ntrits == -1) {
                     // Computing MIN
-                    d__1 = ONE_OVER_TEN * delta;
-                    d__2 = HALF * dist;
-                    delta = Math.min(d__1,d__2);
+                    delta = Math.min(ONE_OVER_TEN * delta, HALF * dist);
                     if (delta <= rho * 1.5) {
                         delta = rho;
                     }
@@ -1170,9 +1148,8 @@ public class BOBYQAOptimizer
                 ntrits = 0;
                 // Computing MAX
                 // Computing MIN
-                d__2 = ONE_OVER_TEN * dist;
-                d__1 = Math.min(d__2, delta);
-                adelt = Math.max(d__1, rho);
+                final double d1 = Math.min(ONE_OVER_TEN * dist, delta);
+                adelt = Math.max(d1, rho);
                 dsq = adelt * adelt;
                 state = 90; break;
             }
@@ -1190,6 +1167,7 @@ public class BOBYQAOptimizer
             //   next values of RHO and DELTA.
         }
         case 680: {
+            printState(680); // XXX
             if (rho > stoppingTrustRegionRadius) {
                 delta = HALF * rho;
                 ratio = rho / stoppingTrustRegionRadius;
@@ -1198,7 +1176,7 @@ public class BOBYQAOptimizer
                 } else if (ratio <= TWO_HUNDRED_FIFTY) {
                     rho = Math.sqrt(ratio) * stoppingTrustRegionRadius;
                 } else {
-                    rho = ONE_OVER_TEN * rho;
+                    rho *= ONE_OVER_TEN;
                 }
                 delta = Math.max(delta, rho);
                 ntrits = 0;
@@ -1214,23 +1192,24 @@ public class BOBYQAOptimizer
             }
         }
         case 720: {
-            if (fval.getEntry(trustRegionCenterInterpolationPointIndex) <= fsave) {
+            printState(720); // XXX
+            if (fAtInterpolationPoints.getEntry(trustRegionCenterInterpolationPointIndex) <= fsave) {
                 for (int i = 0; i < n; i++) {
                     // Computing MIN
                     // Computing MAX
-                    d__3 = lowerBound[i];
-                    d__4 = xbase.getEntry(i) + xopt.getEntry(i);
-                    d__1 = Math.max(d__3, d__4);
-                    d__2 = upperBound[i];
-                    currentBest.setEntry(i, Math.min(d__1, d__2));
-                    if (xopt.getEntry(i) == sl.getEntry(i)) {
+                    final double d3 = lowerBound[i];
+                    final double d4 = originShift.getEntry(i) + trustRegionCenterOffset.getEntry(i);
+                    final double d1 = Math.max(d3, d4);
+                    final double d2 = upperBound[i];
+                    currentBest.setEntry(i, Math.min(d1, d2));
+                    if (trustRegionCenterOffset.getEntry(i) == lowerDifference.getEntry(i)) {
                         currentBest.setEntry(i, lowerBound[i]);
                     }
-                    if (xopt.getEntry(i) == su.getEntry(i)) {
+                    if (trustRegionCenterOffset.getEntry(i) == upperDifference.getEntry(i)) {
                         currentBest.setEntry(i, upperBound[i]);
                     }
                 }
-                f = fval.getEntry(trustRegionCenterInterpolationPointIndex);
+                f = fAtInterpolationPoints.getEntry(trustRegionCenterInterpolationPointIndex);
             }
             return f;
         }
@@ -1271,30 +1250,14 @@ public class BOBYQAOptimizer
      *
      *     Set the first NPT components of W to the leading elements of the
      *     KNEW-th column of the H matrix.
-     * @param xpt
-     * @param xopt
-     * @param bmat
-     * @param zmat
-     * @param sl
-     * @param su
      * @param knew
      * @param adelt
-     * @param xnew
-     * @param xalt
      */
     private double[] altmov(
-            Array2DRowRealMatrix xpt,
-            ArrayRealVector xopt,
-            Array2DRowRealMatrix bmat,
-            Array2DRowRealMatrix zmat,
-            ArrayRealVector sl,
-            ArrayRealVector su,
             int knew,
-            double adelt,
-            ArrayRealVector xnew,
-            ArrayRealVector xalt
+            double adelt
     ) {
-        // System.out.println("altmov"); // XXX
+        printMethod(); // XXX
 
         final int n = currentBest.getDimension();
         final int npt = numberOfInterpolationPoints;
@@ -1309,9 +1272,9 @@ public class BOBYQAOptimizer
             hcol.setEntry(k, ZERO);
         }
         for (int j = 0, max = npt - n - 1; j < max; j++) {
-            final double tmp = zmat.getEntry(knew, j);
+            final double tmp = zMatrix.getEntry(knew, j);
             for (int k = 0; k < npt; k++) {
-                hcol.setEntry(k, hcol.getEntry(k) + tmp * zmat.getEntry(k, j));
+                hcol.setEntry(k, hcol.getEntry(k) + tmp * zMatrix.getEntry(k, j));
             }
         }
         final double alpha = hcol.getEntry(knew);
@@ -1320,16 +1283,16 @@ public class BOBYQAOptimizer
         // Calculate the gradient of the KNEW-th Lagrange function at XOPT.
 
         for (int i = 0; i < n; i++) {
-            glag.setEntry(i, bmat.getEntry(knew, i));
+            glag.setEntry(i, bMatrix.getEntry(knew, i));
         }
         for (int k = 0; k < npt; k++) {
             double tmp = ZERO;
             for (int j = 0; j < n; j++) {
-                tmp += xpt.getEntry(k, j) * xopt.getEntry(j);
+                tmp += interpolationPoints.getEntry(k, j) * trustRegionCenterOffset.getEntry(j);
             }
             tmp *= hcol.getEntry(k);
             for (int i = 0; i < n; i++) {
-                glag.setEntry(i, glag.getEntry(i) + tmp * xpt.getEntry(k, i));
+                glag.setEntry(i, glag.getEntry(i) + tmp * interpolationPoints.getEntry(k, i));
             }
         }
 
@@ -1351,7 +1314,7 @@ public class BOBYQAOptimizer
             double dderiv = ZERO;
             double distsq = ZERO;
             for (int i = 0; i < n; i++) {
-                final double tmp = xpt.getEntry(k, i) - xopt.getEntry(i);
+                final double tmp = interpolationPoints.getEntry(k, i) - trustRegionCenterOffset.getEntry(i);
                 dderiv += glag.getEntry(i) * tmp;
                 distsq += tmp * tmp;
             }
@@ -1364,27 +1327,27 @@ public class BOBYQAOptimizer
             // Revise SLBD and SUBD if necessary because of the bounds in SL and SU.
 
             for (int i = 0; i < n; i++) {
-                final double tmp = xpt.getEntry(k, i) - xopt.getEntry(i);
+                final double tmp = interpolationPoints.getEntry(k, i) - trustRegionCenterOffset.getEntry(i);
                 if (tmp > ZERO) {
-                    if (slbd * tmp < sl.getEntry(i) - xopt.getEntry(i)) {
-                        slbd = (sl.getEntry(i) - xopt.getEntry(i)) / tmp;
+                    if (slbd * tmp < lowerDifference.getEntry(i) - trustRegionCenterOffset.getEntry(i)) {
+                        slbd = (lowerDifference.getEntry(i) - trustRegionCenterOffset.getEntry(i)) / tmp;
                         ilbd = -i - 1;
                     }
-                    if (subd * tmp > su.getEntry(i) - xopt.getEntry(i)) {
+                    if (subd * tmp > upperDifference.getEntry(i) - trustRegionCenterOffset.getEntry(i)) {
                         // Computing MAX
                         subd = Math.max(sumin,
-                                        (su.getEntry(i) - xopt.getEntry(i)) / tmp);
+                                        (upperDifference.getEntry(i) - trustRegionCenterOffset.getEntry(i)) / tmp);
                         iubd = i + 1;
                     }
                 } else if (tmp < ZERO) {
-                    if (slbd * tmp > su.getEntry(i) - xopt.getEntry(i)) {
-                        slbd = (su.getEntry(i) - xopt.getEntry(i)) / tmp;
+                    if (slbd * tmp > upperDifference.getEntry(i) - trustRegionCenterOffset.getEntry(i)) {
+                        slbd = (upperDifference.getEntry(i) - trustRegionCenterOffset.getEntry(i)) / tmp;
                         ilbd = i + 1;
                     }
-                    if (subd * tmp < sl.getEntry(i) - xopt.getEntry(i)) {
+                    if (subd * tmp < lowerDifference.getEntry(i) - trustRegionCenterOffset.getEntry(i)) {
                         // Computing MAX
                         subd = Math.max(sumin,
-                                        (sl.getEntry(i) - xopt.getEntry(i)) / tmp);
+                                        (lowerDifference.getEntry(i) - trustRegionCenterOffset.getEntry(i)) / tmp);
                         iubd = -i - 1;
                     }
                 }
@@ -1452,15 +1415,15 @@ public class BOBYQAOptimizer
         // Construct XNEW in a way that satisfies the bound constraints exactly.
 
         for (int i = 0; i < n; i++) {
-            final double tmp = xopt.getEntry(i) + stpsav * (xpt.getEntry(ksav, i) - xopt.getEntry(i));
-            xnew.setEntry(i, Math.max(sl.getEntry(i),
-                                      Math.min(su.getEntry(i), tmp)));
+            final double tmp = trustRegionCenterOffset.getEntry(i) + stpsav * (interpolationPoints.getEntry(ksav, i) - trustRegionCenterOffset.getEntry(i));
+            newPoint.setEntry(i, Math.max(lowerDifference.getEntry(i),
+                                      Math.min(upperDifference.getEntry(i), tmp)));
         }
         if (ibdsav < 0) {
-            xnew.setEntry(-ibdsav - 1, sl.getEntry(-ibdsav - 1));
+            newPoint.setEntry(-ibdsav - 1, lowerDifference.getEntry(-ibdsav - 1));
         }
         if (ibdsav > 0) {
-            xnew.setEntry(ibdsav - 1, su.getEntry(ibdsav - 1));
+            newPoint.setEntry(ibdsav - 1, upperDifference.getEntry(ibdsav - 1));
         }
 
         // Prepare for the iterative method that assembles the constrained Cauchy
@@ -1477,8 +1440,8 @@ public class BOBYQAOptimizer
             for (int i = 0; i < n; i++) {
                 final double glagValue = glag.getEntry(i);
                 work1.setEntry(i, ZERO);
-                if (Math.min(xopt.getEntry(i) - sl.getEntry(i), glagValue) > ZERO ||
-                    Math.max(xopt.getEntry(i) - su.getEntry(i), glagValue) < ZERO) {
+                if (Math.min(trustRegionCenterOffset.getEntry(i) - lowerDifference.getEntry(i), glagValue) > ZERO ||
+                    Math.max(trustRegionCenterOffset.getEntry(i) - upperDifference.getEntry(i), glagValue) < ZERO) {
                     work1.setEntry(i, bigstp);
                     // Computing 2nd power
                     ggfree += glagValue * glagValue;
@@ -1489,38 +1452,31 @@ public class BOBYQAOptimizer
             }
 
             // Investigate whether more components of W can be fixed.
-            L120: {
-                final double tmp = adelt * adelt - wfixsq;
-                if (tmp > ZERO) {
-                    final double wsqsav = wfixsq;
-                    step = Math.sqrt(tmp / ggfree);
-                    ggfree = ZERO;
-                    for (int i = 0; i < n; i++) {
-                        if (work1.getEntry(i) == bigstp) {
-                            final double tmp2 = xopt.getEntry(i) - step * glag.getEntry(i);
-                            if (tmp2 <= sl.getEntry(i)) {
-                                work1.setEntry(i, sl.getEntry(i) - xopt.getEntry(i));
-                                // Computing 2nd power
-                                final double d1 = work1.getEntry(i);
-                                wfixsq += d1 * d1;
-                            } else if (tmp2 >= su.getEntry(i)) {
-                                work1.setEntry(i, su.getEntry(i) - xopt.getEntry(i));
-                                // Computing 2nd power
-                                final double d1 = work1.getEntry(i);
-                                wfixsq += d1 * d1;
-                            } else {
-                                // Computing 2nd power
-                                final double d1 = glag.getEntry(i);
-                                ggfree += d1 * d1;
-                            }
+            final double tmp1 = adelt * adelt - wfixsq;
+            if (tmp1 > ZERO) {
+                step = Math.sqrt(tmp1 / ggfree);
+                ggfree = ZERO;
+                for (int i = 0; i < n; i++) {
+                    if (work1.getEntry(i) == bigstp) {
+                        final double tmp2 = trustRegionCenterOffset.getEntry(i) - step * glag.getEntry(i);
+                        if (tmp2 <= lowerDifference.getEntry(i)) {
+                            work1.setEntry(i, lowerDifference.getEntry(i) - trustRegionCenterOffset.getEntry(i));
+                            // Computing 2nd power
+                            final double d1 = work1.getEntry(i);
+                            wfixsq += d1 * d1;
+                        } else if (tmp2 >= upperDifference.getEntry(i)) {
+                            work1.setEntry(i, upperDifference.getEntry(i) - trustRegionCenterOffset.getEntry(i));
+                            // Computing 2nd power
+                            final double d1 = work1.getEntry(i);
+                            wfixsq += d1 * d1;
+                        } else {
+                            // Computing 2nd power
+                            final double d1 = glag.getEntry(i);
+                            ggfree += d1 * d1;
                         }
                     }
-                    if (!(wfixsq > wsqsav &&
-                          ggfree > ZERO)) {
-                        break L120;
-                    }
                 }
-            } // end L120
+            }
 
             // Set the remaining free components of W and all components of XALT,
             // except that W may be scaled later.
@@ -1530,15 +1486,15 @@ public class BOBYQAOptimizer
                 final double glagValue = glag.getEntry(i);
                 if (work1.getEntry(i) == bigstp) {
                     work1.setEntry(i, -step * glagValue);
-                    final double min = Math.min(su.getEntry(i),
-                                                xopt.getEntry(i) + work1.getEntry(i));
-                    xalt.setEntry(i, Math.max(sl.getEntry(i), min));
+                    final double min = Math.min(upperDifference.getEntry(i),
+                                                trustRegionCenterOffset.getEntry(i) + work1.getEntry(i));
+                    alternativeNewPoint.setEntry(i, Math.max(lowerDifference.getEntry(i), min));
                 } else if (work1.getEntry(i) == ZERO) {
-                    xalt.setEntry(i, xopt.getEntry(i));
+                    alternativeNewPoint.setEntry(i, trustRegionCenterOffset.getEntry(i));
                 } else if (glagValue > ZERO) {
-                    xalt.setEntry(i, sl.getEntry(i));
+                    alternativeNewPoint.setEntry(i, lowerDifference.getEntry(i));
                 } else {
-                    xalt.setEntry(i, su.getEntry(i));
+                    alternativeNewPoint.setEntry(i, upperDifference.getEntry(i));
                 }
                 gw += glagValue * work1.getEntry(i);
             }
@@ -1552,7 +1508,7 @@ public class BOBYQAOptimizer
             for (int k = 0; k < npt; k++) {
                 double tmp = ZERO;
                 for (int j = 0; j < n; j++) {
-                    tmp += xpt.getEntry(k, j) * work1.getEntry(j);
+                    tmp += interpolationPoints.getEntry(k, j) * work1.getEntry(j);
                 }
                 curv += hcol.getEntry(k) * tmp * tmp;
             }
@@ -1563,9 +1519,9 @@ public class BOBYQAOptimizer
                 curv < -gw * (ONE + Math.sqrt(TWO))) {
                 final double scale = -gw / curv;
                 for (int i = 0; i < n; i++) {
-                    final double tmp = xopt.getEntry(i) + scale * work1.getEntry(i);
-                    xalt.setEntry(i, Math.max(sl.getEntry(i),
-                                              Math.min(su.getEntry(i), tmp)));
+                    final double tmp = trustRegionCenterOffset.getEntry(i) + scale * work1.getEntry(i);
+                    alternativeNewPoint.setEntry(i, Math.max(lowerDifference.getEntry(i),
+                                              Math.min(upperDifference.getEntry(i), tmp)));
                 }
                 // Computing 2nd power
                 final double d1 = HALF * gw * scale;
@@ -1583,7 +1539,7 @@ public class BOBYQAOptimizer
             if (iflag == 0) {
                 for (int i = 0; i < n; i++) {
                     glag.setEntry(i, -glag.getEntry(i));
-                    work2.setEntry(i, xalt.getEntry(i));
+                    work2.setEntry(i, alternativeNewPoint.getEntry(i));
                 }
                 csave = cauchy;
                 iflag = 1;
@@ -1593,7 +1549,7 @@ public class BOBYQAOptimizer
         }
         if (csave > cauchy) {
             for (int i = 0; i < n; i++) {
-                xalt.setEntry(i, work2.getEntry(i));
+                alternativeNewPoint.setEntry(i, work2.getEntry(i));
             }
             cauchy = csave;
         }
@@ -1620,36 +1576,16 @@ public class BOBYQAOptimizer
      *     KOPT will be such that the least calculated value of F so far is at
      *       the point XPT(KOPT,.)+XBASE in the space of the variables.
      *
-     * @param currentBest
-     * @param xbase
-     * @param xpt
-     * @param fval
-     * @param gopt
-     * @param hq
-     * @param pq
-     * @param bmat
-     * @param zmat
-     * @param sl
-     * @param su
+     * @param lowerBound Lower bounds.
+     * @param upperBound Upper bounds.
      */
-    private void prelim(
-            ArrayRealVector currentBest,
-            ArrayRealVector xbase,
-            Array2DRowRealMatrix xpt,
-            ArrayRealVector fval,
-            ArrayRealVector gopt,
-            ArrayRealVector hq,
-            ArrayRealVector pq,
-            Array2DRowRealMatrix bmat,
-            Array2DRowRealMatrix zmat,
-            ArrayRealVector sl,
-            ArrayRealVector su
-    ) {
-        // System.out.println("prelim"); // XXX
+    private void prelim(double[] lowerBound,
+                        double[] upperBound) {
+        printMethod(); // XXX
 
         final int n = currentBest.getDimension();
         final int npt = numberOfInterpolationPoints;
-        final int ndim = bmat.getRowDimension();
+        final int ndim = bMatrix.getRowDimension();
 
         final double rhosq = initialTrustRegionRadius * initialTrustRegionRadius;
         final double recip = 1d / rhosq;
@@ -1659,21 +1595,21 @@ public class BOBYQAOptimizer
         // elements of XPT, BMAT, HQ, PQ and ZMAT to zero.
 
         for (int j = 0; j < n; j++) {
-            xbase.setEntry(j, currentBest.getEntry(j));
+            originShift.setEntry(j, currentBest.getEntry(j));
             for (int k = 0; k < npt; k++) {
-                xpt.setEntry(k, j, ZERO);
+                interpolationPoints.setEntry(k, j, ZERO);
             }
             for (int i = 0; i < ndim; i++) {
-                bmat.setEntry(i, j, ZERO);
+                bMatrix.setEntry(i, j, ZERO);
             }
         }
         for (int i = 0, max = n * np / 2; i < max; i++) {
-            hq.setEntry(i, ZERO);
+            modelSecondDerivativesValues.setEntry(i, ZERO);
         }
         for (int k = 0; k < npt; k++) {
-            pq.setEntry(k, ZERO);
+            modelSecondDerivativesParameters.setEntry(k, ZERO);
             for (int j = 0, max = npt - np; j < max; j++) {
-                zmat.setEntry(k, j, ZERO);
+                zMatrix.setEntry(k, j, ZERO);
             }
         }
 
@@ -1695,23 +1631,23 @@ public class BOBYQAOptimizer
                 if (nfm >= 1 &&
                     nfm <= n) {
                     stepa = initialTrustRegionRadius;
-                    if (su.getEntry(nfmm) == ZERO) {
+                    if (upperDifference.getEntry(nfmm) == ZERO) {
                         stepa = -stepa;
                         throw new PathIsExploredException(); // XXX
                     }
-                    xpt.setEntry(nfm, nfmm, stepa);
+                    interpolationPoints.setEntry(nfm, nfmm, stepa);
                 } else if (nfm > n) {
-                    stepa = xpt.getEntry(nfx, nfxm);
+                    stepa = interpolationPoints.getEntry(nfx, nfxm);
                     stepb = -initialTrustRegionRadius;
-                    if (sl.getEntry(nfxm) == ZERO) {
-                        stepb = Math.min(TWO * initialTrustRegionRadius, su.getEntry(nfxm));
+                    if (lowerDifference.getEntry(nfxm) == ZERO) {
+                        stepb = Math.min(TWO * initialTrustRegionRadius, upperDifference.getEntry(nfxm));
                         throw new PathIsExploredException(); // XXX
                     }
-                    if (su.getEntry(nfxm) == ZERO) {
-                        stepb = Math.max(-TWO * initialTrustRegionRadius, sl.getEntry(nfxm));
+                    if (upperDifference.getEntry(nfxm) == ZERO) {
+                        stepb = Math.max(-TWO * initialTrustRegionRadius, lowerDifference.getEntry(nfxm));
                         throw new PathIsExploredException(); // XXX
                     }
-                    xpt.setEntry(nfm, nfxm, stepb);
+                    interpolationPoints.setEntry(nfm, nfxm, stepb);
                 }
             } else {
                 final int tmp1 = (nfm - np) / n;
@@ -1721,10 +1657,12 @@ public class BOBYQAOptimizer
                     final int tmp2 = jpt;
                     jpt = ipt - n;
                     ipt = tmp2;
-                    throw new PathIsExploredException(); // XXX
+//                     throw new PathIsExploredException(); // XXX
                 }
-                xpt.setEntry(nfm, ipt, xpt.getEntry(ipt, ipt));
-                xpt.setEntry(nfm, jpt, xpt.getEntry(jpt, jpt));
+                final int iptMinus1 = ipt - 1;
+                final int jptMinus1 = jpt - 1;
+                interpolationPoints.setEntry(nfm, iptMinus1, interpolationPoints.getEntry(ipt, iptMinus1));
+                interpolationPoints.setEntry(nfm, jptMinus1, interpolationPoints.getEntry(jpt, jptMinus1));
             }
 
             // Calculate the next value of F. The least function value so far and
@@ -1732,25 +1670,25 @@ public class BOBYQAOptimizer
 
             for (int j = 0; j < n; j++) {
                 currentBest.setEntry(j, Math.min(Math.max(lowerBound[j],
-                                                          xbase.getEntry(j) + xpt.getEntry(nfm, j)),
+                                                          originShift.getEntry(j) + interpolationPoints.getEntry(nfm, j)),
                                                  upperBound[j]));
-                if (xpt.getEntry(nfm, j) == sl.getEntry(j)) {
+                if (interpolationPoints.getEntry(nfm, j) == lowerDifference.getEntry(j)) {
                     currentBest.setEntry(j, lowerBound[j]);
                 }
-                if (xpt.getEntry(nfm, j) == su.getEntry(j)) {
+                if (interpolationPoints.getEntry(nfm, j) == upperDifference.getEntry(j)) {
                     currentBest.setEntry(j, upperBound[j]);
                 }
             }
-            
+
             final double objectiveValue = computeObjectiveValue(currentBest.toArray());
             final double f = isMinimize ? objectiveValue : -objectiveValue;
             final int numEval = getEvaluations(); // nfm + 1
-            fval.setEntry(nfm, f);
+            fAtInterpolationPoints.setEntry(nfm, f);
 
             if (numEval == 1) {
                 fbeg = f;
                 trustRegionCenterInterpolationPointIndex = 0;
-            } else if (f < fval.getEntry(trustRegionCenterInterpolationPointIndex)) {
+            } else if (f < fAtInterpolationPoints.getEntry(trustRegionCenterInterpolationPointIndex)) {
                 trustRegionCenterInterpolationPointIndex = nfm;
             }
 
@@ -1763,55 +1701,55 @@ public class BOBYQAOptimizer
             if (numEval <= 2 * n + 1) {
                 if (numEval >= 2 &&
                     numEval <= n + 1) {
-                    gopt.setEntry(nfmm, (f - fbeg) / stepa);
+                    gradientAtTrustRegionCenter.setEntry(nfmm, (f - fbeg) / stepa);
                     if (npt < numEval + n) {
                         final double oneOverStepA = ONE / stepa;
-                        bmat.setEntry(0, nfmm, -oneOverStepA);
-                        bmat.setEntry(nfm, nfmm, oneOverStepA);
-                        bmat.setEntry(npt + nfmm, nfmm, -HALF * rhosq);
+                        bMatrix.setEntry(0, nfmm, -oneOverStepA);
+                        bMatrix.setEntry(nfm, nfmm, oneOverStepA);
+                        bMatrix.setEntry(npt + nfmm, nfmm, -HALF * rhosq);
                         throw new PathIsExploredException(); // XXX
                     }
                 } else if (numEval >= n + 2) {
                     final int ih = nfx * (nfx + 1) / 2 - 1;
                     final double tmp = (f - fbeg) / stepb;
                     final double diff = stepb - stepa;
-                    hq.setEntry(ih, TWO * (tmp - gopt.getEntry(nfxm)) / diff);
-                    gopt.setEntry(nfxm, (gopt.getEntry(nfxm) * stepb - tmp * stepa) / diff);
+                    modelSecondDerivativesValues.setEntry(ih, TWO * (tmp - gradientAtTrustRegionCenter.getEntry(nfxm)) / diff);
+                    gradientAtTrustRegionCenter.setEntry(nfxm, (gradientAtTrustRegionCenter.getEntry(nfxm) * stepb - tmp * stepa) / diff);
                     if (stepa * stepb < ZERO) {
-                        if (f < fval.getEntry(nfm - n)) {
-                            fval.setEntry(nfm, fval.getEntry(nfm - n));
-                            fval.setEntry(nfm - n, f);
+                        if (f < fAtInterpolationPoints.getEntry(nfm - n)) {
+                            fAtInterpolationPoints.setEntry(nfm, fAtInterpolationPoints.getEntry(nfm - n));
+                            fAtInterpolationPoints.setEntry(nfm - n, f);
                             if (trustRegionCenterInterpolationPointIndex == nfm) {
                                 trustRegionCenterInterpolationPointIndex = nfm - n;
                             }
-                            xpt.setEntry(nfm - n, nfxm, stepb);
-                            xpt.setEntry(nfm, nfxm, stepa);
+                            interpolationPoints.setEntry(nfm - n, nfxm, stepb);
+                            interpolationPoints.setEntry(nfm, nfxm, stepa);
                         }
                     }
-                    bmat.setEntry(0, nfxm, -(stepa + stepb) / (stepa * stepb));
-                    bmat.setEntry(nfm, nfxm, -HALF / xpt.getEntry(nfm - n, nfxm));
-                    bmat.setEntry(nfm - n, nfxm,
-                                  -bmat.getEntry(0, nfxm) - bmat.getEntry(nfm, nfxm));
-                    zmat.setEntry(0, nfxm, Math.sqrt(TWO) / (stepa * stepb));
-                    zmat.setEntry(nfm, nfxm, Math.sqrt(HALF) / rhosq);
-                    // zmat.setEntry(nfm, nfxm, Math.sqrt(HALF) * recip); // XXX "testAckley" and "testDiffPow" fail.
-                    zmat.setEntry(nfm - n, nfxm,
-                                  -zmat.getEntry(0, nfxm) - zmat.getEntry(nfm, nfxm));
+                    bMatrix.setEntry(0, nfxm, -(stepa + stepb) / (stepa * stepb));
+                    bMatrix.setEntry(nfm, nfxm, -HALF / interpolationPoints.getEntry(nfm - n, nfxm));
+                    bMatrix.setEntry(nfm - n, nfxm,
+                                  -bMatrix.getEntry(0, nfxm) - bMatrix.getEntry(nfm, nfxm));
+                    zMatrix.setEntry(0, nfxm, Math.sqrt(TWO) / (stepa * stepb));
+                    zMatrix.setEntry(nfm, nfxm, Math.sqrt(HALF) / rhosq);
+                    // zMatrix.setEntry(nfm, nfxm, Math.sqrt(HALF) * recip); // XXX "testAckley" and "testDiffPow" fail.
+                    zMatrix.setEntry(nfm - n, nfxm,
+                                  -zMatrix.getEntry(0, nfxm) - zMatrix.getEntry(nfm, nfxm));
                 }
 
                 // Set the off-diagonal second derivatives of the Lagrange functions and
                 // the initial quadratic model.
 
             } else {
-                zmat.setEntry(0, nfxm, recip);
-                zmat.setEntry(nfm, nfxm, recip);
-                zmat.setEntry(ipt, nfxm, -recip);
-                zmat.setEntry(jpt, nfxm, -recip);
+                zMatrix.setEntry(0, nfxm, recip);
+                zMatrix.setEntry(nfm, nfxm, recip);
+                zMatrix.setEntry(ipt, nfxm, -recip);
+                zMatrix.setEntry(jpt, nfxm, -recip);
 
                 final int ih = ipt * (ipt - 1) / 2 + jpt - 1;
-                final double tmp = xpt.getEntry(nfm, ipt - 1) * xpt.getEntry(nfm, jpt - 1);
-                hq.setEntry(ih, (fbeg - fval.getEntry(ipt) - fval.getEntry(jpt) + f) / tmp);
-                throw new PathIsExploredException(); // XXX
+                final double tmp = interpolationPoints.getEntry(nfm, ipt - 1) * interpolationPoints.getEntry(nfm, jpt - 1);
+                modelSecondDerivativesValues.setEntry(ih, (fbeg - fAtInterpolationPoints.getEntry(ipt) - fAtInterpolationPoints.getEntry(jpt) + f) / tmp);
+//                 throw new PathIsExploredException(); // XXX
             }
         } while (getEvaluations() < npt);
     } // prelim
@@ -1856,16 +1794,7 @@ public class BOBYQAOptimizer
      *       gradient searches that are not restricted by any constraints. The
      *       value CRVMIN=-1.0D0 is set, however, if all of these searches are
      *       constrained.
-     * @param xpt
-     * @param xopt
-     * @param gopt
-     * @param hq
-     * @param pq
-     * @param sl
-     * @param su
      * @param delta
-     * @param xnew
-     * @param d__
      * @param gnew
      * @param xbdi
      * @param s
@@ -1873,23 +1802,14 @@ public class BOBYQAOptimizer
      * @param hred
      */
     private double[] trsbox(
-            Array2DRowRealMatrix xpt,
-            ArrayRealVector xopt,
-            ArrayRealVector gopt,
-            ArrayRealVector hq,
-            ArrayRealVector pq,
-            ArrayRealVector sl,
-            ArrayRealVector su,
             double delta,
-            ArrayRealVector xnew,
-            ArrayRealVector d__,
             ArrayRealVector gnew,
             ArrayRealVector xbdi,
             ArrayRealVector s,
             ArrayRealVector hs,
             ArrayRealVector hred
     ) {
-        // System.out.println("trsbox"); // XXX
+        printMethod(); // XXX
 
         final int n = currentBest.getDimension();
         final int npt = numberOfInterpolationPoints;
@@ -1898,11 +1818,10 @@ public class BOBYQAOptimizer
         double crvmin = Double.NaN;
 
         // Local variables
-        int ih;
         double ds;
         int iu;
         double dhd, dhs, cth, shs, sth, ssq, beta=0, sdec, blen;
-        int iact = -1; 
+        int iact = -1;
         int nact = 0;
         double angt = 0, qred;
         int isav;
@@ -1929,20 +1848,20 @@ public class BOBYQAOptimizer
         nact = 0;
         for (int i = 0; i < n; i++) {
             xbdi.setEntry(i, ZERO);
-            if (xopt.getEntry(i) <= sl.getEntry(i)) {
-                if (gopt.getEntry(i) >= ZERO) {
+            if (trustRegionCenterOffset.getEntry(i) <= lowerDifference.getEntry(i)) {
+                if (gradientAtTrustRegionCenter.getEntry(i) >= ZERO) {
                     xbdi.setEntry(i, MINUS_ONE);
                 }
-            } else if (xopt.getEntry(i) >= su.getEntry(i)) {
-                if (gopt.getEntry(i) <= ZERO) {
+            } else if (trustRegionCenterOffset.getEntry(i) >= upperDifference.getEntry(i)) {
+                if (gradientAtTrustRegionCenter.getEntry(i) <= ZERO) {
                     xbdi.setEntry(i, ONE);
                 }
             }
             if (xbdi.getEntry(i) != ZERO) {
                 ++nact;
             }
-            d__.setEntry(i, ZERO);
-            gnew.setEntry(i, gopt.getEntry(i));
+            trialStepPoint.setEntry(i, ZERO);
+            gnew.setEntry(i, gradientAtTrustRegionCenter.getEntry(i));
         }
         delsq = delta * delta;
         qred = ZERO;
@@ -1956,12 +1875,13 @@ public class BOBYQAOptimizer
 
         int state = 20;
         for(;;) {
-            // System.out.println("loop in trsbox: state=" + state); // XXX
             switch (state) {
         case 20: {
+            printState(20); // XXX
             beta = ZERO;
         }
         case 30: {
+            printState(30); // XXX
             stepsq = ZERO;
             for (int i = 0; i < n; i++) {
                 if (xbdi.getEntry(i) != ZERO) {
@@ -1994,15 +1914,16 @@ public class BOBYQAOptimizer
             state = 210; break;
         }
         case 50: {
+            printState(50); // XXX
             resid = delsq;
             ds = ZERO;
             shs = ZERO;
             for (int i = 0; i < n; i++) {
                 if (xbdi.getEntry(i) == ZERO) {
                     // Computing 2nd power
-                    final double d1 = d__.getEntry(i);
+                    final double d1 = trialStepPoint.getEntry(i);
                     resid -= d1 * d1;
-                    ds += s.getEntry(i) * d__.getEntry(i);
+                    ds += s.getEntry(i) * trialStepPoint.getEntry(i);
                     shs += s.getEntry(i) * hs.getEntry(i);
                 }
             }
@@ -2027,11 +1948,11 @@ public class BOBYQAOptimizer
             iact = -1;
             for (int i = 0; i < n; i++) {
                 if (s.getEntry(i) != ZERO) {
-                    xsum = xopt.getEntry(i) + d__.getEntry(i);
+                    xsum = trustRegionCenterOffset.getEntry(i) + trialStepPoint.getEntry(i);
                     if (s.getEntry(i) > ZERO) {
-                        temp = (su.getEntry(i) - xsum) / s.getEntry(i);
+                        temp = (upperDifference.getEntry(i) - xsum) / s.getEntry(i);
                     } else {
-                        temp = (sl.getEntry(i) - xsum) / s.getEntry(i);
+                        temp = (lowerDifference.getEntry(i) - xsum) / s.getEntry(i);
                     }
                     if (temp < stplen) {
                         stplen = temp;
@@ -2061,7 +1982,7 @@ public class BOBYQAOptimizer
                         final double d1 = gnew.getEntry(i);
                         gredsq += d1 * d1;
                     }
-                    d__.setEntry(i, d__.getEntry(i) + stplen * s.getEntry(i));
+                    trialStepPoint.setEntry(i, trialStepPoint.getEntry(i) + stplen * s.getEntry(i));
                 }
                 // Computing MAX
                 final double d1 = stplen * (ggsav - HALF * stplen * shs);
@@ -2078,7 +1999,7 @@ public class BOBYQAOptimizer
                     xbdi.setEntry(iact, MINUS_ONE);
                 }
                 // Computing 2nd power
-                final double d1 = d__.getEntry(iact);
+                final double d1 = trialStepPoint.getEntry(iact);
                 delsq -= d1 * d1;
                 if (delsq <= ZERO) {
                     state = 190; break;
@@ -2101,6 +2022,7 @@ public class BOBYQAOptimizer
             }
         }
         case 90: {
+            printState(90); // XXX
             crvmin = ZERO;
 
             // Prepare for the alternative iteration by calculating some scalars
@@ -2109,6 +2031,7 @@ public class BOBYQAOptimizer
 
         }
         case 100: {
+            printState(100); // XXX
             if (nact >= n - 1) {
                 state = 190; break;
             }
@@ -2118,13 +2041,13 @@ public class BOBYQAOptimizer
             for (int i = 0; i < n; i++) {
                 if (xbdi.getEntry(i) == ZERO) {
                     // Computing 2nd power
-                    double d1 = d__.getEntry(i);
+                    double d1 = trialStepPoint.getEntry(i);
                     dredsq += d1 * d1;
-                    dredg += d__.getEntry(i) * gnew.getEntry(i);
+                    dredg += trialStepPoint.getEntry(i) * gnew.getEntry(i);
                     // Computing 2nd power
                     d1 = gnew.getEntry(i);
                     gredsq += d1 * d1;
-                    s.setEntry(i, d__.getEntry(i));
+                    s.setEntry(i, trialStepPoint.getEntry(i));
                 } else {
                     s.setEntry(i, ZERO);
                 }
@@ -2135,6 +2058,7 @@ public class BOBYQAOptimizer
             // and the reduced G that is orthogonal to the reduced D.
         }
         case 120: {
+            printState(120); // XXX
             ++iterc;
             temp = gredsq * dredsq - dredg * dredg;
             if (temp <= qred * 1e-4 * qred) {
@@ -2143,7 +2067,7 @@ public class BOBYQAOptimizer
             temp = Math.sqrt(temp);
             for (int i = 0; i < n; i++) {
                 if (xbdi.getEntry(i) == ZERO) {
-                    s.setEntry(i, (dredg * d__.getEntry(i) - dredsq * gnew.getEntry(i)) / temp);
+                    s.setEntry(i, (dredg * trialStepPoint.getEntry(i) - dredsq * gnew.getEntry(i)) / temp);
                 } else {
                     s.setEntry(i, ZERO);
                 }
@@ -2159,8 +2083,8 @@ public class BOBYQAOptimizer
             iact = -1;
             for (int i = 0; i < n; i++) {
                 if (xbdi.getEntry(i) == ZERO) {
-                    tempa = xopt.getEntry(i) + d__.getEntry(i) - sl.getEntry(i);
-                    tempb = su.getEntry(i) - xopt.getEntry(i) - d__.getEntry(i);
+                    tempa = trustRegionCenterOffset.getEntry(i) + trialStepPoint.getEntry(i) - lowerDifference.getEntry(i);
+                    tempb = upperDifference.getEntry(i) - trustRegionCenterOffset.getEntry(i) - trialStepPoint.getEntry(i);
                     if (tempa <= ZERO) {
                         ++nact;
                         xbdi.setEntry(i, MINUS_ONE);
@@ -2171,12 +2095,12 @@ public class BOBYQAOptimizer
                         state = 100; break;
                     }
                     // Computing 2nd power
-                    double d1 = d__.getEntry(i);
+                    double d1 = trialStepPoint.getEntry(i);
                     // Computing 2nd power
                     double d2 = s.getEntry(i);
                     ssq = d1 * d1 + d2 * d2;
                     // Computing 2nd power
-                    d1 = xopt.getEntry(i) - sl.getEntry(i);
+                    d1 = trustRegionCenterOffset.getEntry(i) - lowerDifference.getEntry(i);
                     temp = ssq - d1 * d1;
                     if (temp > ZERO) {
                         temp = Math.sqrt(temp) - s.getEntry(i);
@@ -2187,7 +2111,7 @@ public class BOBYQAOptimizer
                         }
                     }
                     // Computing 2nd power
-                    d1 = su.getEntry(i) - xopt.getEntry(i);
+                    d1 = upperDifference.getEntry(i) - trustRegionCenterOffset.getEntry(i);
                     temp = ssq - d1 * d1;
                     if (temp > ZERO) {
                         temp = Math.sqrt(temp) + s.getEntry(i);
@@ -2205,14 +2129,15 @@ public class BOBYQAOptimizer
             state = 210; break;
         }
         case 150: {
+            printState(150); // XXX
             shs = ZERO;
             dhs = ZERO;
             dhd = ZERO;
             for (int i = 0; i < n; i++) {
                 if (xbdi.getEntry(i) == ZERO) {
                     shs += s.getEntry(i) * hs.getEntry(i);
-                    dhs += d__.getEntry(i) * hs.getEntry(i);
-                    dhd += d__.getEntry(i) * hred.getEntry(i);
+                    dhs += trialStepPoint.getEntry(i) * hs.getEntry(i);
+                    dhd += trialStepPoint.getEntry(i) * hred.getEntry(i);
                 }
             }
 
@@ -2225,7 +2150,7 @@ public class BOBYQAOptimizer
             redsav = ZERO;
             iu = (int) (angbd * 17. + 3.1);
             for (int i = 0; i < iu; i++) {
-                angt = angbd * (double) i / (double) iu;
+                angt = angbd * i / iu;
                 sth = (angt + angt) / (ONE + angt * angt);
                 temp = shs + angt * (angt * dhd - dhs - dhs);
                 rednew = sth * (angt * dredg - sredg - HALF * sth * temp);
@@ -2247,7 +2172,7 @@ public class BOBYQAOptimizer
             }
             if (isav < iu) {
                 temp = (rdnext - rdprev) / (redmax + redmax - rdprev - rdnext);
-                angt = angbd * ((double) isav + HALF * temp) / (double) iu;
+                angt = angbd * (isav + HALF * temp) / iu;
             }
             cth = (ONE - angt * angt) / (ONE + angt * angt);
             sth = (angt + angt) / (ONE + angt * angt);
@@ -2266,8 +2191,8 @@ public class BOBYQAOptimizer
             for (int i = 0; i < n; i++) {
                 gnew.setEntry(i, gnew.getEntry(i) + (cth - ONE) * hred.getEntry(i) + sth * hs.getEntry(i));
                 if (xbdi.getEntry(i) == ZERO) {
-                    d__.setEntry(i, cth * d__.getEntry(i) + sth * s.getEntry(i));
-                    dredg += d__.getEntry(i) * gnew.getEntry(i);
+                    trialStepPoint.setEntry(i, cth * trialStepPoint.getEntry(i) + sth * s.getEntry(i));
+                    dredg += trialStepPoint.getEntry(i) * gnew.getEntry(i);
                     // Computing 2nd power
                     final double d1 = gnew.getEntry(i);
                     gredsq += d1 * d1;
@@ -2289,22 +2214,23 @@ public class BOBYQAOptimizer
             }
         }
         case 190: {
+            printState(190); // XXX
             dsq = ZERO;
             for (int i = 0; i < n; i++) {
                 // Computing MAX
                 // Computing MIN
-                final double min = Math.min(xopt.getEntry(i) + d__.getEntry(i),
-                                            su.getEntry(i));
-                xnew.setEntry(i, Math.max(min, sl.getEntry(i)));
+                final double min = Math.min(trustRegionCenterOffset.getEntry(i) + trialStepPoint.getEntry(i),
+                                            upperDifference.getEntry(i));
+                newPoint.setEntry(i, Math.max(min, lowerDifference.getEntry(i)));
                 if (xbdi.getEntry(i) == MINUS_ONE) {
-                    xnew.setEntry(i, sl.getEntry(i));
+                    newPoint.setEntry(i, lowerDifference.getEntry(i));
                 }
                 if (xbdi.getEntry(i) == ONE) {
-                    xnew.setEntry(i, su.getEntry(i));
+                    newPoint.setEntry(i, upperDifference.getEntry(i));
                 }
-                d__.setEntry(i, xnew.getEntry(i) - xopt.getEntry(i));
+                trialStepPoint.setEntry(i, newPoint.getEntry(i) - trustRegionCenterOffset.getEntry(i));
                 // Computing 2nd power
-                final double d1 = d__.getEntry(i);
+                final double d1 = trialStepPoint.getEntry(i);
                 dsq += d1 * d1;
             }
             return new double[] { dsq, crvmin };
@@ -2314,23 +2240,24 @@ public class BOBYQAOptimizer
             // they can be regarded as an external subroutine.
         }
         case 210: {
-            ih = 0;
+            printState(210); // XXX
+            int ih = 0;
             for (int j = 0; j < n; j++) {
                 hs.setEntry(j, ZERO);
                 for (int i = 0; i <= j; i++) {
                     if (i < j) {
-                        hs.setEntry(j, hs.getEntry(j) + hq.getEntry(ih) * s.getEntry(i));
+                        hs.setEntry(j, hs.getEntry(j) + modelSecondDerivativesValues.getEntry(ih) * s.getEntry(i));
                     }
-                    hs.setEntry(i, hs.getEntry(i) + hq.getEntry(ih) * s.getEntry(j));
+                    hs.setEntry(i, hs.getEntry(i) + modelSecondDerivativesValues.getEntry(ih) * s.getEntry(j));
                     ih++;
                 }
             }
-            final RealVector tmp = xpt.operate(s).ebeMultiply(pq);
+            final RealVector tmp = interpolationPoints.operate(s).ebeMultiply(modelSecondDerivativesParameters);
             for (int k = 0; k < npt; k++) {
-                if (pq.getEntry(k) != ZERO) {
+                if (modelSecondDerivativesParameters.getEntry(k) != ZERO) {
                     for (int i = 0; i < n; i++) {
-                        hs.setEntry(i, hs.getEntry(i) + tmp.getEntry(k) * xpt.getEntry(k, i));
-                    } 
+                        hs.setEntry(i, hs.getEntry(i) + tmp.getEntry(k) * interpolationPoints.getEntry(k, i));
+                    }
                 }
             }
             if (crvmin != ZERO) {
@@ -2361,22 +2288,16 @@ public class BOBYQAOptimizer
      *     with that name, and DENOM is set to the denominator of the updating
      *     formula. Elements of ZMAT may be treated as zero if their moduli are
      *     at most ZTEST. The first NDIM elements of W are used for working space.
-     * @param bmat
-     * @param zmat
-     * @param vlag
      * @param beta
      * @param denom
      * @param knew
      */
     private void update(
-            Array2DRowRealMatrix bmat,
-            Array2DRowRealMatrix zmat,
-            ArrayRealVector vlag,
             double beta,
             double denom,
             int knew
     ) {
-        // System.out.println("update"); // XXX
+        printMethod(); // XXX
 
         final int n = currentBest.getDimension();
         final int npt = numberOfInterpolationPoints;
@@ -2389,7 +2310,7 @@ public class BOBYQAOptimizer
         for (int k = 0; k < npt; k++) {
             for (int j = 0; j < nptm; j++) {
                 // Computing MAX
-                ztest = Math.max(ztest, Math.abs(zmat.getEntry(k, j)));
+                ztest = Math.max(ztest, Math.abs(zMatrix.getEntry(k, j)));
             }
         }
         ztest *= 1e-20;
@@ -2397,67 +2318,70 @@ public class BOBYQAOptimizer
         // Apply the rotations that put zeros in the KNEW-th row of ZMAT.
 
         for (int j = 1; j < nptm; j++) {
-            final double d1 = zmat.getEntry(knew, j);
+            final double d1 = zMatrix.getEntry(knew, j);
             if (Math.abs(d1) > ztest) {
                 // Computing 2nd power
-                final double d2 = zmat.getEntry(knew, 0);
+                final double d2 = zMatrix.getEntry(knew, 0);
                 // Computing 2nd power
-                final double d3 = zmat.getEntry(knew, j);
+                final double d3 = zMatrix.getEntry(knew, j);
                 final double d4 = Math.sqrt(d2 * d2 + d3 * d3);
-                final double d5 = zmat.getEntry(knew, 0) / d4;
-                final double d6 = zmat.getEntry(knew, j) / d4;
+                final double d5 = zMatrix.getEntry(knew, 0) / d4;
+                final double d6 = zMatrix.getEntry(knew, j) / d4;
                 for (int i = 0; i < npt; i++) {
-                    final double d7 = d5 * zmat.getEntry(i, 0) + d6 * zmat.getEntry(i, j);
-                    zmat.setEntry(i, j, d5 * zmat.getEntry(i, j) - d6 * zmat.getEntry(i, 0));
-                    zmat.setEntry(i, 0, d7);
+                    final double d7 = d5 * zMatrix.getEntry(i, 0) + d6 * zMatrix.getEntry(i, j);
+                    zMatrix.setEntry(i, j, d5 * zMatrix.getEntry(i, j) - d6 * zMatrix.getEntry(i, 0));
+                    zMatrix.setEntry(i, 0, d7);
                 }
             }
-            zmat.setEntry(knew, j, ZERO);
+            zMatrix.setEntry(knew, j, ZERO);
         }
 
         // Put the first NPT components of the KNEW-th column of HLAG into W,
         // and calculate the parameters of the updating formula.
 
         for (int i = 0; i < npt; i++) {
-            work.setEntry(i, zmat.getEntry(knew, 0) * zmat.getEntry(i, 0));
+            work.setEntry(i, zMatrix.getEntry(knew, 0) * zMatrix.getEntry(i, 0));
         }
         final double alpha = work.getEntry(knew);
-        final double tau = vlag.getEntry(knew);
-        vlag.setEntry(knew, vlag.getEntry(knew) - ONE);
+        final double tau = lagrangeValuesAtNewPoint.getEntry(knew);
+        lagrangeValuesAtNewPoint.setEntry(knew, lagrangeValuesAtNewPoint.getEntry(knew) - ONE);
 
         // Complete the updating of ZMAT.
 
         final double sqrtDenom = Math.sqrt(denom);
         final double d1 = tau / sqrtDenom;
-        final double d2 = zmat.getEntry(knew, 0) / sqrtDenom;
+        final double d2 = zMatrix.getEntry(knew, 0) / sqrtDenom;
         for (int i = 0; i < npt; i++) {
-            zmat.setEntry(i, 0,
-                          d1 * zmat.getEntry(i, 0) - d2 * vlag.getEntry(i));
+            zMatrix.setEntry(i, 0,
+                          d1 * zMatrix.getEntry(i, 0) - d2 * lagrangeValuesAtNewPoint.getEntry(i));
         }
 
         // Finally, update the matrix BMAT.
 
         for (int j = 0; j < n; j++) {
             final int jp = npt + j;
-            work.setEntry(jp, bmat.getEntry(knew, j));
-            final double d3 = (alpha * vlag.getEntry(jp) - tau * work.getEntry(jp)) / denom;
-            final double d4 = (-beta * work.getEntry(jp) - tau * vlag.getEntry(jp)) / denom;
+            work.setEntry(jp, bMatrix.getEntry(knew, j));
+            final double d3 = (alpha * lagrangeValuesAtNewPoint.getEntry(jp) - tau * work.getEntry(jp)) / denom;
+            final double d4 = (-beta * work.getEntry(jp) - tau * lagrangeValuesAtNewPoint.getEntry(jp)) / denom;
             for (int i = 0; i <= jp; i++) {
-                bmat.setEntry(i, j,
-                              bmat.getEntry(i, j) + d3 * vlag.getEntry(i) + d4 * work.getEntry(i));
+                bMatrix.setEntry(i, j,
+                              bMatrix.getEntry(i, j) + d3 * lagrangeValuesAtNewPoint.getEntry(i) + d4 * work.getEntry(i));
                 if (i >= npt) {
-                    bmat.setEntry(jp, (i - npt), bmat.getEntry(i, j));
+                    bMatrix.setEntry(jp, (i - npt), bMatrix.getEntry(i, j));
                 }
             }
         }
     } // update
 
     /**
-     * Performs validity checks and adapt the {@link #lowerBound} and
-     * {@link #upperBound} array if no constraints were provided.
+     * Performs validity checks.
+     *
+     * @param lowerBound Lower bounds (constraints) of the objective variables.
+     * @param upperBound Upperer bounds (constraints) of the objective variables.
      */
-    private void setup() {
-        // System.out.println("setup"); // XXX
+    private void setup(double[] lowerBound,
+                       double[] upperBound) {
+        printMethod(); // XXX
 
         double[] init = getStartPoint();
         final int dimension = init.length;
@@ -2476,40 +2400,38 @@ public class BOBYQAOptimizer
                                           nPointsInterval[1]);
         }
 
-        // Check (and possibly adapt) bounds.
-        if (lowerBound == null) {
-            lowerBound = fillNewArray(dimension, Double.NEGATIVE_INFINITY);
-        } else if (lowerBound.length != init.length) {
-            throw new DimensionMismatchException(lowerBound.length, dimension);
-        }
-
-        if (upperBound == null) {
-            upperBound = fillNewArray(dimension, Double.POSITIVE_INFINITY);
-        } else if (upperBound.length != init.length) {
-            throw new DimensionMismatchException(upperBound.length, dimension);
-        }
-
-       for (int i = 0; i < dimension; i++) {
-            final double v = init[i];
-            final double lo = lowerBound[i];
-            final double hi = upperBound[i];
-            if (v < lo || v > hi) {
-                throw new OutOfRangeException(v, lo, hi);
-            }
-        }
-
         // Initialize bound differences.
         boundDifference = new double[dimension];
 
         double requiredMinDiff = 2 * initialTrustRegionRadius;
         double minDiff = Double.POSITIVE_INFINITY;
-       for (int i = 0; i < dimension; i++) {
+        for (int i = 0; i < dimension; i++) {
             boundDifference[i] = upperBound[i] - lowerBound[i];
             minDiff = Math.min(minDiff, boundDifference[i]);
         }
         if (minDiff < requiredMinDiff) {
             initialTrustRegionRadius = minDiff / 3.0;
         }
+
+        // Initialize the data structures used by the "bobyqa" method.
+        bMatrix = new Array2DRowRealMatrix(dimension + numberOfInterpolationPoints,
+                                           dimension);
+        zMatrix = new Array2DRowRealMatrix(numberOfInterpolationPoints,
+                                           numberOfInterpolationPoints - dimension - 1);
+        interpolationPoints = new Array2DRowRealMatrix(numberOfInterpolationPoints,
+                                                       dimension);
+        originShift = new ArrayRealVector(dimension);
+        fAtInterpolationPoints = new ArrayRealVector(numberOfInterpolationPoints);
+        trustRegionCenterOffset = new ArrayRealVector(dimension);
+        gradientAtTrustRegionCenter = new ArrayRealVector(dimension);
+        lowerDifference = new ArrayRealVector(dimension);
+        upperDifference = new ArrayRealVector(dimension);
+        modelSecondDerivativesParameters = new ArrayRealVector(numberOfInterpolationPoints);
+        newPoint = new ArrayRealVector(dimension);
+        alternativeNewPoint = new ArrayRealVector(dimension);
+        trialStepPoint = new ArrayRealVector(dimension);
+        lagrangeValuesAtNewPoint = new ArrayRealVector(dimension + numberOfInterpolationPoints);
+        modelSecondDerivativesValues = new ArrayRealVector(dimension * (dimension + 1) / 2);
     }
 
     /**
@@ -2526,17 +2448,35 @@ public class BOBYQAOptimizer
         Arrays.fill(ds, value);
         return ds;
     }
-}
 
-/**
- * Marker for code paths that are not explored with the current unit tests.
- * If the path becomes explored, it should just be removed from the code.
- */
-class PathIsExploredException extends RuntimeException {
-    private static final String PATH_IS_EXPLORED
-        = "If this exception is thrown, just remove it from the code";
+    // XXX utility for figuring out call sequence.
+    private static String caller(int n) {
+        final Throwable t = new Throwable();
+        final StackTraceElement[] elements = t.getStackTrace();
+        final StackTraceElement e = elements[n];
+        return e.getMethodName() + " (at line " + e.getLineNumber() + ")";
+    }
+    // XXX utility for figuring out call sequence.
+    private static void printState(int s) {
+        //        System.out.println(caller(2) + ": state " + s);
+    }
+    // XXX utility for figuring out call sequence.
+    private static void printMethod() {
+        //        System.out.println(caller(2));
+    }
 
-    PathIsExploredException() {
-        super(PATH_IS_EXPLORED);
+    /**
+     * Marker for code paths that are not explored with the current unit tests.
+     * If the path becomes explored, it should just be removed from the code.
+     */
+    private static class PathIsExploredException extends RuntimeException {
+        private static final long serialVersionUID = 745350979634801853L;
+
+        private static final String PATH_IS_EXPLORED
+            = "If this exception is thrown, just remove it from the code";
+
+        PathIsExploredException() {
+            super(PATH_IS_EXPLORED + " " + BOBYQAOptimizer.caller(3));
+        }
     }
 }

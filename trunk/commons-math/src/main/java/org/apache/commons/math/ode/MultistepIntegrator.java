@@ -17,7 +17,7 @@
 
 package org.apache.commons.math.ode;
 
-import org.apache.commons.math.MathRuntimeException;
+import org.apache.commons.math.exception.MathIllegalArgumentException;
 import org.apache.commons.math.exception.MathIllegalStateException;
 import org.apache.commons.math.exception.util.LocalizedFormats;
 import org.apache.commons.math.linear.Array2DRowRealMatrix;
@@ -55,7 +55,7 @@ import org.apache.commons.math.util.FastMath;
  *
  * @see org.apache.commons.math.ode.nonstiff.AdamsBashforthIntegrator
  * @see org.apache.commons.math.ode.nonstiff.AdamsMoultonIntegrator
- * @version $Id: MultistepIntegrator.java 1175409 2011-09-25 15:04:39Z luc $
+ * @version $Id: MultistepIntegrator.java 1240253 2012-02-03 17:38:02Z tn $
  * @since 2.0
  */
 public abstract class MultistepIntegrator extends AdaptiveStepsizeIntegrator {
@@ -114,7 +114,7 @@ public abstract class MultistepIntegrator extends AdaptiveStepsizeIntegrator {
         super(name, minStep, maxStep, scalAbsoluteTolerance, scalRelativeTolerance);
 
         if (nSteps <= 1) {
-            throw MathRuntimeException.createIllegalArgumentException(
+            throw new MathIllegalArgumentException(
                   LocalizedFormats.INTEGRATION_METHOD_NEEDS_AT_LEAST_TWO_PREVIOUS_POINTS,
                   name);
         }
@@ -294,7 +294,7 @@ public abstract class MultistepIntegrator extends AdaptiveStepsizeIntegrator {
     }
 
     /** Transformer used to convert the first step to Nordsieck representation. */
-    public static interface NordsieckTransformer {
+    public interface NordsieckTransformer {
         /** Initialize the high order scaled derivatives at step start.
          * @param h step size to use for scaling
          * @param t first steps times
@@ -382,7 +382,7 @@ public abstract class MultistepIntegrator extends AdaptiveStepsizeIntegrator {
         }
 
         /** {@inheritDoc} */
-        public void reset() {
+        public void init(double t0, double[] y0, double time) {
             // nothing to do
         }
 
@@ -390,7 +390,7 @@ public abstract class MultistepIntegrator extends AdaptiveStepsizeIntegrator {
 
     /** Marker exception used ONLY to stop the starter integrator after first step. */
     private static class InitializationCompletedMarkerException
-        extends MathRuntimeException {
+        extends RuntimeException {
 
         /** Serializable version identifier. */
         private static final long serialVersionUID = -1914085471038046418L;

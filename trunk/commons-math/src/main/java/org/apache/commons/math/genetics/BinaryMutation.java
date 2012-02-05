@@ -19,10 +19,13 @@ package org.apache.commons.math.genetics;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.math.exception.MathIllegalArgumentException;
+import org.apache.commons.math.exception.util.LocalizedFormats;
+
 /**
  * Mutation for {@link BinaryChromosome}s. Randomly changes one gene.
  *
- * @version $Id: BinaryMutation.java 1131229 2011-06-03 20:49:25Z luc $
+ * @version $Id: BinaryMutation.java 1240274 2012-02-03 18:10:12Z tn $
  * @since 2.0
  */
 public class BinaryMutation implements MutationPolicy {
@@ -30,11 +33,13 @@ public class BinaryMutation implements MutationPolicy {
     /**
      * Mutate the given chromosome. Randomly changes one gene.
      * @param original the original chromosome.
-     * @return the mutated chromomsome.
+     * @return the mutated chromosome.
+     * @throws MathIllegalArgumentException if <code>original</code> is not an instance
+     *         of {@link BinaryChromosome}.
      */
     public Chromosome mutate(Chromosome original) {
         if (!(original instanceof BinaryChromosome)) {
-            throw new IllegalArgumentException("Binary mutation works on BinaryChromosome only.");
+            throw new MathIllegalArgumentException(LocalizedFormats.INVALID_BINARY_CHROMOSOME);
         }
 
         BinaryChromosome origChrom = (BinaryChromosome) original;

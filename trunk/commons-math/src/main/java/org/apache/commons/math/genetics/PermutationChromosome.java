@@ -24,7 +24,7 @@ import java.util.List;
  * @param <T>
  *            type of the permuted objects
  * @since 2.0
- * @version $Id: PermutationChromosome.java 1131229 2011-06-03 20:49:25Z luc $
+ * @version $Id: PermutationChromosome.java 1235038 2012-01-23 22:26:37Z tn $
  */
 public interface PermutationChromosome<T> {
 
@@ -34,10 +34,8 @@ public interface PermutationChromosome<T> {
      * represents a permutation (3,0,1,2), and the unpermuted sequence is
      * (a,b,c,d), this yields (d,a,b,c).
      *
-     * @param sequence
-     *            the unpermuted (original) sequence of objects
-     * @return permutation of <code>sequence</code> represented by this
-     *         permutation
+     * @param sequence the unpermuted (original) sequence of objects
+     * @return permutation of <code>sequence</code> represented by this permutation
      */
     List<T> decode(List<T> sequence);
 

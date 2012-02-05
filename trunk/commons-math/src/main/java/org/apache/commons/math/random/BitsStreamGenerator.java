@@ -21,7 +21,7 @@ import org.apache.commons.math.util.FastMath;
 
 /** Base class for random number generators that generates bits streams.
 
- * @version $Id: BitsStreamGenerator.java 1154815 2011-08-08 04:22:04Z psteitz $
+ * @version $Id: BitsStreamGenerator.java 1213081 2011-12-11 21:33:37Z psteitz $
  * @since 2.0
 
  */
@@ -155,6 +155,14 @@ public abstract class BitsStreamGenerator implements RandomGenerator {
         final long high  = ((long) next(32)) << 32;
         final long  low  = ((long) next(32)) & 0xffffffffL;
         return high | low;
+    }
+
+    /**
+     * Clears the cache used by the default implementation of
+     * {@link #nextGaussian}.
+     */
+    public void clear() {
+        nextGaussian = Double.NaN;
     }
 
 }

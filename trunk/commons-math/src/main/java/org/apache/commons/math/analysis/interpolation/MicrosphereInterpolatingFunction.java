@@ -21,7 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.math.analysis.MultivariateRealFunction;
+import org.apache.commons.math.analysis.MultivariateFunction;
 import org.apache.commons.math.exception.DimensionMismatchException;
 import org.apache.commons.math.exception.NoDataException;
 import org.apache.commons.math.exception.NullArgumentException;
@@ -34,10 +34,10 @@ import org.apache.commons.math.util.FastMath;
  * Interpolating function that implements the
  * <a href="http://www.dudziak.com/microsphere.php">Microsphere Projection</a>.
  *
- * @version $Id: MicrosphereInterpolatingFunction.java 1131229 2011-06-03 20:49:25Z luc $
+ * @version $Id: MicrosphereInterpolatingFunction.java 1206889 2011-11-27 22:39:54Z erans $
  */
 public class MicrosphereInterpolatingFunction
-    implements MultivariateRealFunction {
+    implements MultivariateFunction {
     /**
      * Space dimension.
      */

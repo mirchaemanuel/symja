@@ -20,14 +20,14 @@ package org.apache.commons.math.optimization.linear;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.math.optimization.OptimizationException;
+import org.apache.commons.math.exception.MaxCountExceededException;
 import org.apache.commons.math.optimization.RealPointValuePair;
-import org.apache.commons.math.util.MathUtils;
+import org.apache.commons.math.util.Precision;
 
 
 /**
  * Solves a linear problem using the Two-Phase Simplex Method.
- * @version $Id: SimplexSolver.java 1131229 2011-06-03 20:49:25Z luc $
+ * @version $Id: SimplexSolver.java 1181282 2011-10-10 22:35:54Z erans $
  * @since 2.0
  */
 public class SimplexSolver extends AbstractLinearOptimizer {
@@ -71,7 +71,7 @@ public class SimplexSolver extends AbstractLinearOptimizer {
         Integer minPos = null;
         for (int i = tableau.getNumObjectiveFunctions(); i < tableau.getWidth() - 1; i++) {
             final double entry = tableau.getEntry(0, i);
-            if (MathUtils.compareTo(entry, minValue, maxUlps) < 0) {
+            if (Precision.compareTo(entry, minValue, maxUlps) < 0) {
                 minValue = entry;
                 minPos = i;
             }
@@ -93,9 +93,9 @@ public class SimplexSolver extends AbstractLinearOptimizer {
             final double rhs = tableau.getEntry(i, tableau.getWidth() - 1);
             final double entry = tableau.getEntry(i, col);
 
-            if (MathUtils.compareTo(entry, 0d, maxUlps) > 0) {
+            if (Precision.compareTo(entry, 0d, maxUlps) > 0) {
                 final double ratio = rhs / entry;
-                final int cmp = MathUtils.compareTo(ratio, minRatio, maxUlps);
+                final int cmp = Precision.compareTo(ratio, minRatio, maxUlps);
                 if (cmp == 0) {
                     minRatioPositions.add(i);
                 } else if (cmp < 0) {
@@ -115,7 +115,7 @@ public class SimplexSolver extends AbstractLinearOptimizer {
             for (int i = 0; i < tableau.getNumArtificialVariables(); i++) {
               int column = i + tableau.getArtificialVariableOffset();
               final double entry = tableau.getEntry(row, column);
-              if (MathUtils.equals(entry, 1d, maxUlps) &&
+              if (Precision.equals(entry, 1d, maxUlps) &&
                   row.equals(tableau.getBasicRow(column))) {
                 return row;
               }
@@ -128,11 +128,11 @@ public class SimplexSolver extends AbstractLinearOptimizer {
     /**
      * Runs one iteration of the Simplex method on the given model.
      * @param tableau simple tableau for the problem
-     * @throws OptimizationException if the maximal iteration count has been
-     * exceeded or if the model is found not to have a bounded solution
+     * @throws MaxCountExceededException if the maximal iteration count has been exceeded
+     * @throws UnboundedSolutionException if the model is found not to have a bounded solution
      */
     protected void doIteration(final SimplexTableau tableau)
-        throws OptimizationException {
+        throws MaxCountExceededException, UnboundedSolutionException {
 
         incrementIterationsCounter();
 
@@ -158,11 +158,12 @@ public class SimplexSolver extends AbstractLinearOptimizer {
     /**
      * Solves Phase 1 of the Simplex method.
      * @param tableau simple tableau for the problem
-     * @exception OptimizationException if the maximal number of iterations is
-     * exceeded, or if the problem is found not to have a bounded solution, or
-     * if there is no feasible solution
+     * @throws MaxCountExceededException if the maximal iteration count has been exceeded
+     * @throws UnboundedSolutionException if the model is found not to have a bounded solution
+     * @throws NoFeasibleSolutionException if there is no feasible solution
      */
-    protected void solvePhase1(final SimplexTableau tableau) throws OptimizationException {
+    protected void solvePhase1(final SimplexTableau tableau)
+        throws MaxCountExceededException, UnboundedSolutionException, NoFeasibleSolutionException {
 
         // make sure we're in Phase 1
         if (tableau.getNumArtificialVariables() == 0) {
@@ -174,14 +175,15 @@ public class SimplexSolver extends AbstractLinearOptimizer {
         }
 
         // if W is not zero then we have no feasible solution
-        if (!MathUtils.equals(tableau.getEntry(0, tableau.getRhsOffset()), 0d, epsilon)) {
+        if (!Precision.equals(tableau.getEntry(0, tableau.getRhsOffset()), 0d, epsilon)) {
             throw new NoFeasibleSolutionException();
         }
     }
 
     /** {@inheritDoc} */
     @Override
-    public RealPointValuePair doOptimize() throws OptimizationException {
+    public RealPointValuePair doOptimize()
+        throws MaxCountExceededException, UnboundedSolutionException, NoFeasibleSolutionException {
         final SimplexTableau tableau =
             new SimplexTableau(function, linearConstraints, goal, nonNegative,
                                epsilon, maxUlps);

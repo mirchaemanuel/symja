@@ -17,7 +17,7 @@
 package org.apache.commons.math.stat.inference;
 
 import org.apache.commons.math.MathException;
-import org.apache.commons.math.distribution.NormalDistributionImpl;
+import org.apache.commons.math.distribution.NormalDistribution;
 import org.apache.commons.math.stat.ranking.NaNStrategy;
 import org.apache.commons.math.stat.ranking.NaturalRanking;
 import org.apache.commons.math.stat.ranking.TiesStrategy;
@@ -27,7 +27,7 @@ import org.apache.commons.math.util.FastMath;
  * An implementation of the Mann-Whitney U test (also called Wilcoxon rank-sum
  * test).
  *
- * @version $Id: MannWhitneyUTestImpl.java 1131229 2011-06-03 20:49:25Z luc $
+ * @version $Id: MannWhitneyUTestImpl.java 1206421 2011-11-26 10:17:49Z celestin $
  */
 public class MannWhitneyUTestImpl implements MannWhitneyUTest {
 
@@ -159,7 +159,7 @@ public class MannWhitneyUTestImpl implements MannWhitneyUTest {
 
         final double z = (Umin - EU) / FastMath.sqrt(VarU);
 
-        final NormalDistributionImpl standardNormal = new NormalDistributionImpl(
+        final NormalDistribution standardNormal = new NormalDistribution(
                 0, 1);
 
         return 2 * standardNormal.cumulativeProbability(z);

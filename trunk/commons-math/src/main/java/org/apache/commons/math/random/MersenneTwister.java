@@ -75,7 +75,7 @@ import org.apache.commons.math.util.FastMath;
  * DAMAGE.</strong></td></tr>
  * </table>
 
- * @version $Id: MersenneTwister.java 1167454 2011-09-10 04:43:36Z gregs $
+ * @version $Id: MersenneTwister.java 1213081 2011-12-11 21:33:37Z psteitz $
  * @since 2.0
 
  */
@@ -100,12 +100,12 @@ public class MersenneTwister extends BitsStreamGenerator implements Serializable
     private int   mti;
 
     /** Creates a new random number generator.
-     * <p>The instance is initialized using the current time as the
-     * seed.</p>
+     * <p>The instance is initialized using the current time plus the
+     * system identity hash code of this instance as the seed.</p>
      */
     public MersenneTwister() {
         mt = new int[N];
-        setSeed(System.currentTimeMillis());
+        setSeed(System.currentTimeMillis() + System.identityHashCode(this));
     }
 
     /** Creates a new random number generator using a single int seed.
@@ -150,19 +150,22 @@ public class MersenneTwister extends BitsStreamGenerator implements Serializable
             longMT = (1812433253l * (longMT ^ (longMT >> 30)) + mti) & 0xffffffffL;
             mt[mti]= (int) longMT;
         }
+
+        clear(); // Clear normal deviate cache
     }
 
     /** Reinitialize the generator as if just built with the given int array seed.
      * <p>The state of the generator is exactly the same as a new
      * generator built with the same seed.</p>
      * @param seed the initial seed (32 bits integers array), if null
-     * the seed of the generator will be related to the current time
+     * the seed of the generator will be the current system time plus the
+     * system identity hash code of this instance
      */
     @Override
     public void setSeed(int[] seed) {
 
         if (seed == null) {
-            setSeed(System.currentTimeMillis());
+            setSeed(System.currentTimeMillis() + System.identityHashCode(this));
             return;
         }
 
@@ -198,6 +201,8 @@ public class MersenneTwister extends BitsStreamGenerator implements Serializable
         }
 
         mt[0] = 0x80000000; // MSB is 1; assuring non-zero initial array
+
+        clear(); // Clear normal deviate cache
 
     }
 

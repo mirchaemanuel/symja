@@ -47,7 +47,7 @@ import org.apache.commons.math.util.IterationManager;
  * <h3><a id="context">Exception context</a></h3>
  * <p>
  * Besides standard {@link DimensionMismatchException}, this class might throw
- * {@link NonPositiveDefiniteLinearOperatorException} if the linear operator or
+ * {@link NonPositiveDefiniteOperatorException} if the linear operator or
  * the preconditioner are not positive definite. In this case, the
  * {@link ExceptionContext} provides some more information
  * <ul>
@@ -61,8 +61,9 @@ import org.apache.commons.math.util.IterationManager;
  * <dt><a id="BARR1994">Barret et al. (1994)</a></dt>
  * <dd>R. Barrett, M. Berry, T. F. Chan, J. Demmel, J. M. Donato, J. Dongarra,
  * V. Eijkhout, R. Pozo, C. Romine and H. Van der Vorst,
- * <em>Templates for the Solution of Linear Systems: Building Blocks for
- * Iterative Methods</em>, SIAM</dd>
+ * <a href="http://www.netlib.org/linalg/html_templates/Templates.html"><em>
+ * Templates for the Solution of Linear Systems: Building Blocks for Iterative
+ * Methods</em></a>, SIAM</dd>
  * <dt><a id="STRA2002">Strakos and Tichy (2002)
  * <dt>
  * <dd>Z. Strakos and P. Tichy, <a
@@ -72,35 +73,11 @@ import org.apache.commons.math.util.IterationManager;
  * Numerical Analysis 13: 56-80, 2002</dd>
  * </dl>
  *
- * @version $Id: ConjugateGradient.java 1175404 2011-09-25 14:48:18Z celestin $
+ * @version $Id: ConjugateGradient.java 1238905 2012-02-01 02:22:00Z celestin $
  * @since 3.0
  */
 public class ConjugateGradient
     extends PreconditionedIterativeLinearSolver {
-
-    /**
-     * The type of all events fired by this implementation of the Conjugate
-     * Gradient method.
-     *
-     * @version $Id: ConjugateGradient.java 1175404 2011-09-25 14:48:18Z celestin $
-     */
-    public abstract static class ConjugateGradientEvent
-        extends IterativeLinearSolverEvent
-        implements ProvidesResidual {
-
-        /** */
-        private static final long serialVersionUID = 6461730085343318121L;
-
-        /**
-         * Creates a new instance of this class.
-         *
-         * @param source The iterative algorithm on which the event initially
-         *        occurred.
-         */
-        public ConjugateGradientEvent(final Object source) {
-            super(source);
-        }
-    }
 
     /** Key for the <a href="#context">exception context</a>. */
     public static final String OPERATOR = "operator";
@@ -121,10 +98,10 @@ public class ConjugateGradient
      * Creates a new instance of this class, with <a href="#stopcrit">default
      * stopping criterion</a>.
      *
-     * @param maxIterations Maximum number of iterations.
-     * @param delta &delta; parameter for the default stopping criterion.
+     * @param maxIterations the maximum number of iterations
+     * @param delta the &delta; parameter for the default stopping criterion
      * @param check {@code true} if positive definiteness of both matrix and
-     *        preconditioner should be checked.
+     * preconditioner should be checked
      */
     public ConjugateGradient(final int maxIterations, final double delta,
                              final boolean check) {
@@ -137,10 +114,10 @@ public class ConjugateGradient
      * Creates a new instance of this class, with <a href="#stopcrit">default
      * stopping criterion</a> and custom iteration manager.
      *
-     * @param manager Custom iteration manager.
-     * @param delta &delta; parameter for the default stopping criterion.
+     * @param manager the custom iteration manager
+     * @param delta the &delta; parameter for the default stopping criterion
      * @param check {@code true} if positive definiteness of both matrix and
-     *        preconditioner should be checked.
+     * preconditioner should be checked
      */
     public ConjugateGradient(final IterationManager manager,
                              final double delta, final boolean check) {
@@ -153,7 +130,7 @@ public class ConjugateGradient
      * Returns {@code true} if positive-definiteness should be checked for both
      * matrix and preconditioner.
      *
-     * @return {@code true} if the tests are to be performed.
+     * @return {@code true} if the tests are to be performed
      */
     public final boolean getCheck() {
         return check;
@@ -161,90 +138,72 @@ public class ConjugateGradient
 
     /** {@inheritDoc} */
     @Override
-    public RealVector solve(final RealLinearOperator a,
-                            final InvertibleRealLinearOperator m,
-                            final RealVector b, final RealVector x0,
-                            final boolean inPlace)
-        throws NullArgumentException, NonSquareLinearOperatorException,
+    public RealVector solveInPlace(final RealLinearOperator a,
+        final RealLinearOperator minv, final RealVector b, final RealVector x0)
+        throws NullArgumentException, NonSquareOperatorException,
         DimensionMismatchException, MaxCountExceededException {
-        checkParameters(a, m, b, x0, inPlace);
+        checkParameters(a, minv, b, x0);
         final IterationManager manager = getIterationManager();
         // Initialization of default stopping criterion
         manager.resetIterationCount();
-        final double r2max = delta * delta * b.dotProduct(b);
+        final double rmax = delta * b.getNorm();
+        final RealVector bro = RealVector.unmodifiableRealVector(b);
 
+        // Initialization phase counts as one iteration.
+        manager.incrementIterationCount();
         // p and x are constructed as copies of x0, since presumably, the type
         // of x is optimized for the calculation of the matrix-vector product
         // A.x.
-        final RealVector x;
-        if (inPlace) {
-            x = x0;
-        } else {
-            if (x0 != null) {
-                x = x0.copy();
-            } else {
-                x = new ArrayRealVector(a.getColumnDimension());
-            }
-        }
+        final RealVector x = x0;
+        final RealVector xro = RealVector.unmodifiableRealVector(x);
         final RealVector p = x.copy();
         RealVector q = a.operate(p);
-        manager.incrementIterationCount();
+
         final RealVector r = b.combine(1, -1, q);
-        double r2 = r.dotProduct(r);
+        final RealVector rro = RealVector.unmodifiableRealVector(r);
+        double rnorm = r.getNorm();
         RealVector z;
-        if (m == null) {
+        if (minv == null) {
             z = r;
         } else {
             z = null;
         }
-        final IterativeLinearSolverEvent event;
-        event = new ConjugateGradientEvent(this) {
-
-            public RealVector getResidual() {
-                return ArrayRealVector.unmodifiableRealVector(r);
-            }
-
-            @Override
-            public RealVector getRightHandSideVector() {
-                return ArrayRealVector.unmodifiableRealVector(b);
-            }
-
-            @Override
-            public RealVector getSolution() {
-                return ArrayRealVector.unmodifiableRealVector(x);
-            }
-        };
-        manager.fireInitializationEvent(event);
-        if (r2 <= r2max) {
-            manager.fireTerminationEvent(event);
+        IterativeLinearSolverEvent evt;
+        evt = new DefaultIterativeLinearSolverEvent(this,
+            manager.getIterations(), xro, bro, rro, rnorm);
+        manager.fireInitializationEvent(evt);
+        if (rnorm <= rmax) {
+            manager.fireTerminationEvent(evt);
             return x;
         }
         double rhoPrev = 0.;
         while (true) {
-            manager.fireIterationStartedEvent(event);
-            if (m != null) {
-                z = m.solve(r);
+            manager.incrementIterationCount();
+            evt = new DefaultIterativeLinearSolverEvent(this,
+                manager.getIterations(), xro, bro, rro, rnorm);
+            manager.fireIterationStartedEvent(evt);
+            if (minv != null) {
+                z = minv.operate(r);
             }
             final double rhoNext = r.dotProduct(z);
             if (check && (rhoNext <= 0.)) {
-                final NonPositiveDefiniteLinearOperatorException e;
-                e = new NonPositiveDefiniteLinearOperatorException();
+                final NonPositiveDefiniteOperatorException e;
+                e = new NonPositiveDefiniteOperatorException();
                 final ExceptionContext context = e.getContext();
-                context.setValue(OPERATOR, m);
+                context.setValue(OPERATOR, minv);
                 context.setValue(VECTOR, r);
                 throw e;
             }
-            if (manager.getIterations() == 1) {
+            if (manager.getIterations() == 2) {
                 p.setSubVector(0, z);
             } else {
                 p.combineToSelf(rhoNext / rhoPrev, 1., z);
             }
             q = a.operate(p);
-            manager.incrementIterationCount();
             final double pq = p.dotProduct(q);
             if (check && (pq <= 0.)) {
-                final NonPositiveDefiniteLinearOperatorException e;
-                e = new NonPositiveDefiniteLinearOperatorException();
+                final NonPositiveDefiniteOperatorException e;
+                e = new NonPositiveDefiniteOperatorException();
                 final ExceptionContext context = e.getContext();
                 context.setValue(OPERATOR, a);
                 context.setValue(VECTOR, p);
@@ -254,10 +213,12 @@ public class ConjugateGradient
             x.combineToSelf(1., alpha, p);
             r.combineToSelf(1., -alpha, q);
             rhoPrev = rhoNext;
-            r2 = r.dotProduct(r);
-            manager.fireIterationPerformedEvent(event);
-            if (r2 <= r2max) {
-                manager.fireTerminationEvent(event);
+            rnorm = r.getNorm();
+            evt = new DefaultIterativeLinearSolverEvent(this,
+                manager.getIterations(), xro, bro, rro, rnorm);
+            manager.fireIterationPerformedEvent(evt);
+            if (rnorm <= rmax) {
+                manager.fireTerminationEvent(evt);
                 return x;
             }
         }

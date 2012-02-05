@@ -30,7 +30,7 @@ package org.apache.commons.math.ode.sampling;
  * method. This explains why there is no public constructor.</p>
  *
  * @see StepHandler
- * @version $Id: DummyStepHandler.java 1139831 2011-06-26 16:26:48Z luc $
+ * @version $Id: DummyStepHandler.java 1207054 2011-11-28 10:20:51Z luc $
  * @since 1.2
  */
 
@@ -50,11 +50,8 @@ public class DummyStepHandler implements StepHandler {
         return LazyHolder.INSTANCE;
     }
 
-    /** Reset the step handler.
-     * Initialize the internal data as required before the first step is
-     * handled.
-     */
-    public void reset() {
+    /** {@inheritDoc} */
+    public void init(double t0, double[] y0, double t) {
     }
 
     /**

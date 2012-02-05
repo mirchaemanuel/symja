@@ -22,6 +22,7 @@ import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
 import org.apache.commons.math.ode.AbstractIntegrator;
+import org.apache.commons.math.ode.EquationsMapper;
 import org.apache.commons.math.ode.sampling.StepInterpolator;
 
 /**
@@ -30,15 +31,15 @@ import org.apache.commons.math.ode.sampling.StepInterpolator;
  *
  * @see DormandPrince853Integrator
  *
- * @version $Id: DormandPrince853StepInterpolator.java 1165792 2011-09-06 19:17:52Z luc $
+ * @version $Id: DormandPrince853StepInterpolator.java 1204270 2011-11-20 21:41:46Z luc $
  * @since 1.2
  */
 
 class DormandPrince853StepInterpolator
   extends RungeKuttaStepInterpolator {
 
-    /** Serializable version identifier */
-    private static final long serialVersionUID = 7152276390558450974L;
+    /** Serializable version identifier. */
+    private static final long serialVersionUID = 20111120L;
 
     /** Propagation weights, element 1. */
     private static final double B_01 =         104257.0 / 1920240.0;
@@ -280,9 +281,11 @@ class DormandPrince853StepInterpolator
   /** {@inheritDoc} */
   @Override
   public void reinitialize(final AbstractIntegrator integrator,
-                           final double[] y, final double[][] yDotK, final boolean forward) {
+                           final double[] y, final double[][] yDotK, final boolean forward,
+                           final EquationsMapper primaryMapper,
+                           final EquationsMapper[] secondaryMappers) {
 
-    super.reinitialize(integrator, y, yDotK, forward);
+    super.reinitialize(integrator, y, yDotK, forward, primaryMapper, secondaryMappers);
 
     final int dimension = currentState.length;
 
@@ -365,18 +368,34 @@ class DormandPrince853StepInterpolator
     final double dot5 = theta2 * (3 + theta * (-12 + theta * (15 - 6 * theta)));
     final double dot6 = theta2 * theta * (4 + theta * (-15 + theta * (18 - 7 * theta)));
 
-    for (int i = 0; i < interpolatedState.length; ++i) {
-      interpolatedState[i] = currentState[i] -
-                             oneMinusThetaH * (v[0][i] -
-                                               theta * (v[1][i] +
-                                                        theta * (v[2][i] +
-                                                                 eta * (v[3][i] +
-                                                                        theta * (v[4][i] +
-                                                                                 eta * (v[5][i] +
-                                                                                        theta * (v[6][i])))))));
-      interpolatedDerivatives[i] =  v[0][i] + dot1 * v[1][i] + dot2 * v[2][i] +
-                                    dot3 * v[3][i] + dot4 * v[4][i] +
-                                    dot5 * v[5][i] + dot6 * v[6][i];
+    if ((previousState != null) && (theta <= 0.5)) {
+        for (int i = 0; i < interpolatedState.length; ++i) {
+            interpolatedState[i] = previousState[i] +
+                    theta * h * (v[0][i] +
+                            eta * (v[1][i] +
+                                    theta * (v[2][i] +
+                                            eta * (v[3][i] +
+                                                    theta * (v[4][i] +
+                                                            eta * (v[5][i] +
+                                                                    theta * (v[6][i])))))));
+            interpolatedDerivatives[i] =  v[0][i] + dot1 * v[1][i] + dot2 * v[2][i] +
+                    dot3 * v[3][i] + dot4 * v[4][i] +
+                    dot5 * v[5][i] + dot6 * v[6][i];
+        }
+    } else {
+        for (int i = 0; i < interpolatedState.length; ++i) {
+            interpolatedState[i] = currentState[i] -
+                    oneMinusThetaH * (v[0][i] -
+                            theta * (v[1][i] +
+                                    theta * (v[2][i] +
+                                            eta * (v[3][i] +
+                                                    theta * (v[4][i] +
+                                                            eta * (v[5][i] +
+                                                                    theta * (v[6][i])))))));
+            interpolatedDerivatives[i] =  v[0][i] + dot1 * v[1][i] + dot2 * v[2][i] +
+                    dot3 * v[3][i] + dot4 * v[4][i] +
+                    dot5 * v[5][i] + dot6 * v[6][i];
+        }
     }
 
   }
@@ -430,14 +449,9 @@ class DormandPrince853StepInterpolator
   public void writeExternal(final ObjectOutput out)
     throws IOException {
 
-    try {
-      // save the local attributes
-      finalizeStep();
-    } catch (Exception e) {
-        IOException ioe = new IOException(e.getLocalizedMessage());
-        ioe.initCause(e);
-        throw ioe;
-    }
+    // save the local attributes
+    finalizeStep();
+
     final int dimension = (currentState == null) ? -1 : currentState.length;
     out.writeInt(dimension);
     for (int i = 0; i < dimension; ++i) {
@@ -454,7 +468,7 @@ class DormandPrince853StepInterpolator
   /** {@inheritDoc} */
   @Override
   public void readExternal(final ObjectInput in)
-    throws IOException {
+    throws IOException, ClassNotFoundException {
 
     // read the local attributes
     yDotKLast = new double[3][];

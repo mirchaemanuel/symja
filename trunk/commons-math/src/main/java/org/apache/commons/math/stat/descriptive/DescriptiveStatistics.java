@@ -20,8 +20,9 @@ import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 
-import org.apache.commons.math.MathRuntimeException;
+import org.apache.commons.math.exception.MathIllegalArgumentException;
 import org.apache.commons.math.exception.NullArgumentException;
+import org.apache.commons.math.exception.MathIllegalStateException;
 import org.apache.commons.math.exception.util.LocalizedFormats;
 import org.apache.commons.math.stat.descriptive.moment.GeometricMean;
 import org.apache.commons.math.stat.descriptive.moment.Kurtosis;
@@ -55,7 +56,7 @@ import org.apache.commons.math.util.FastMath;
  * {@link SynchronizedDescriptiveStatistics} if concurrent access from multiple
  * threads is required.</p>
  *
- * @version $Id: DescriptiveStatistics.java 1132432 2011-06-05 14:59:29Z luc $
+ * @version $Id: DescriptiveStatistics.java 1206618 2011-11-26 21:56:20Z psteitz $
  */
 public class DescriptiveStatistics implements StatisticalSummary, Serializable {
 
@@ -207,12 +208,28 @@ public class DescriptiveStatistics implements StatisticalSummary, Serializable {
     }
 
     /**
-     * Returns the variance of the available values.
+     * Returns the (sample) variance of the available values.
+     *
+     * <p>This method returns the bias-corrected sample variance (using {@code n - 1} in
+     * the denominator).  Use {@link #getPopulationVariance()} for the non-bias-corrected
+     * population variance.</p>
+     *
      * @return The variance, Double.NaN if no values have been added
      * or 0.0 for a single value set.
      */
     public double getVariance() {
         return apply(varianceImpl);
+    }
+
+    /**
+     * Returns the <a href="http://en.wikibooks.org/wiki/Statistics/Summary/Variance">
+     * population variance</a> of the available values.
+     *
+     * @return The population variance, Double.NaN if no values have been added,
+     * or 0.0 for a single value set.
+     */
+    public double getPopulationVariance() {
+        return apply(new Variance(false));
     }
 
     /**
@@ -323,7 +340,7 @@ public class DescriptiveStatistics implements StatisticalSummary, Serializable {
     public void setWindowSize(int windowSize) {
         if (windowSize < 1) {
             if (windowSize != INFINITE_WINDOW) {
-                throw MathRuntimeException.createIllegalArgumentException(
+                throw new MathIllegalArgumentException(
                       LocalizedFormats.NOT_POSITIVE_WINDOW_SIZE, windowSize);
             }
         }
@@ -391,7 +408,6 @@ public class DescriptiveStatistics implements StatisticalSummary, Serializable {
      * @return An estimate for the pth percentile of the stored data
      * @throws IllegalStateException if percentile implementation has been
      *  overridden and the supplied implementation does not support setQuantile
-     * values
      */
     public double getPercentile(double p) {
         if (percentileImpl instanceof Percentile) {
@@ -402,15 +418,15 @@ public class DescriptiveStatistics implements StatisticalSummary, Serializable {
                         new Class[] {Double.TYPE}).invoke(percentileImpl,
                                 new Object[] {Double.valueOf(p)});
             } catch (NoSuchMethodException e1) { // Setter guard should prevent
-                throw MathRuntimeException.createIllegalArgumentException(
+                throw new MathIllegalStateException(
                       LocalizedFormats.PERCENTILE_IMPLEMENTATION_UNSUPPORTED_METHOD,
                       percentileImpl.getClass().getName(), SET_QUANTILE_METHOD_NAME);
             } catch (IllegalAccessException e2) {
-                throw MathRuntimeException.createIllegalArgumentException(
+                throw new MathIllegalStateException(
                       LocalizedFormats.PERCENTILE_IMPLEMENTATION_CANNOT_ACCESS_METHOD,
                       SET_QUANTILE_METHOD_NAME, percentileImpl.getClass().getName());
             } catch (InvocationTargetException e3) {
-                throw MathRuntimeException.createIllegalArgumentException(e3.getCause());
+                throw new IllegalStateException(e3.getCause());
             }
         }
         return apply(percentileImpl);
@@ -585,15 +601,15 @@ public class DescriptiveStatistics implements StatisticalSummary, Serializable {
                     new Class[] {Double.TYPE}).invoke(percentileImpl,
                             new Object[] {Double.valueOf(50.0d)});
         } catch (NoSuchMethodException e1) {
-            throw MathRuntimeException.createIllegalArgumentException(
+            throw new MathIllegalArgumentException(
                   LocalizedFormats.PERCENTILE_IMPLEMENTATION_UNSUPPORTED_METHOD,
                   percentileImpl.getClass().getName(), SET_QUANTILE_METHOD_NAME);
         } catch (IllegalAccessException e2) {
-            throw MathRuntimeException.createIllegalArgumentException(
+            throw new MathIllegalArgumentException(
                   LocalizedFormats.PERCENTILE_IMPLEMENTATION_CANNOT_ACCESS_METHOD,
                   SET_QUANTILE_METHOD_NAME, percentileImpl.getClass().getName());
         } catch (InvocationTargetException e3) {
-            throw MathRuntimeException.createIllegalArgumentException(e3.getCause());
+            throw new IllegalArgumentException(e3.getCause());
         }
         this.percentileImpl = percentileImpl;
     }

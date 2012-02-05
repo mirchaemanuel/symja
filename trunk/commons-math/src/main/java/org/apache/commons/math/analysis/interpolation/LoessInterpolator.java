@@ -28,6 +28,7 @@ import org.apache.commons.math.exception.NumberIsTooSmallException;
 import org.apache.commons.math.exception.util.LocalizedFormats;
 import org.apache.commons.math.util.FastMath;
 import org.apache.commons.math.util.MathUtils;
+import org.apache.commons.math.util.MathArrays;
 
 /**
  * Implements the <a href="http://en.wikipedia.org/wiki/Local_regression">
@@ -40,13 +41,13 @@ import org.apache.commons.math.util.MathUtils;
  * Scatterplots</a>
  * <p/>
  * This class implements both the loess method and serves as an interpolation
- * adapter to it, allowing to build a spline on the obtained loess fit.
+ * adapter to it, allowing one to build a spline on the obtained loess fit.
  *
- * @version $Id: LoessInterpolator.java 1174731 2011-09-23 13:08:58Z erans $
+ * @version $Id: LoessInterpolator.java 1238279 2012-01-31 08:56:19Z erans $
  * @since 2.0
  */
 public class LoessInterpolator
-        implements UnivariateRealInterpolator, Serializable {
+        implements UnivariateInterpolator, Serializable {
     /** Default value of the bandwidth parameter. */
     public static final double DEFAULT_BANDWIDTH = 0.3;
     /** Default value of the number of robustness iterations. */
@@ -216,7 +217,7 @@ public class LoessInterpolator
         checkAllFiniteReal(yval);
         checkAllFiniteReal(weights);
 
-        MathUtils.checkOrder(xval);
+        MathArrays.checkOrder(xval);
 
         if (n == 1) {
             return new double[]{yval[0]};

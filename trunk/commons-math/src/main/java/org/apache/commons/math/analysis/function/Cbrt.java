@@ -17,18 +17,29 @@
 
 package org.apache.commons.math.analysis.function;
 
-import org.apache.commons.math.analysis.UnivariateRealFunction;
+import org.apache.commons.math.analysis.UnivariateFunction;
+import org.apache.commons.math.analysis.DifferentiableUnivariateFunction;
 import org.apache.commons.math.util.FastMath;
 
 /**
- * Cubic-root function.
+ * Cube root function.
  *
  * @version $Id$
  * @since 3.0
  */
-public class Cbrt implements UnivariateRealFunction {
+public class Cbrt implements DifferentiableUnivariateFunction {
     /** {@inheritDoc} */
     public double value(double x) {
         return FastMath.cbrt(x);
+    }
+
+    /** {@inheritDoc} */
+    public UnivariateFunction derivative() {
+        return new UnivariateFunction() {
+            /** {@inheritDoc} */
+            public double value(double x) {
+                return 1 / (3 * FastMath.cbrt(x * x));
+            }
+        };
     }
 }

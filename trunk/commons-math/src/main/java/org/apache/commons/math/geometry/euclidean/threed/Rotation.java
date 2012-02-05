@@ -19,7 +19,7 @@ package org.apache.commons.math.geometry.euclidean.threed;
 
 import java.io.Serializable;
 
-import org.apache.commons.math.MathRuntimeException;
+import org.apache.commons.math.exception.MathIllegalArgumentException;
 import org.apache.commons.math.exception.util.LocalizedFormats;
 import org.apache.commons.math.util.FastMath;
 
@@ -86,7 +86,7 @@ import org.apache.commons.math.util.FastMath;
  *
  * <p>Rotations are guaranteed to be immutable objects.</p>
  *
- * @version $Id: Rotation.java 1154257 2011-08-05 15:05:33Z luc $
+ * @version $Id: Rotation.java 1200545 2011-11-10 21:02:54Z luc $
  * @see Vector3D
  * @see RotationOrder
  * @since 1.2
@@ -168,13 +168,13 @@ public class Rotation implements Serializable {
    * attitude community or in the graphics community.</p>
    * @param axis axis around which to rotate
    * @param angle rotation angle.
-   * @exception ArithmeticException if the axis norm is zero
+   * @exception MathIllegalArgumentException if the axis norm is zero
    */
   public Rotation(Vector3D axis, double angle) {
 
     double norm = axis.getNorm();
     if (norm == 0) {
-      throw MathRuntimeException.createArithmeticException(LocalizedFormats.ZERO_NORM_FOR_ROTATION_AXIS);
+      throw new MathIllegalArgumentException(LocalizedFormats.ZERO_NORM_FOR_ROTATION_AXIS);
     }
 
     double halfAngle = -0.5 * angle;
@@ -308,7 +308,7 @@ public class Rotation implements Serializable {
    * @param u2 second vector of the origin pair
    * @param v1 desired image of u1 by the rotation
    * @param v2 desired image of u2 by the rotation
-   * @exception IllegalArgumentException if the norm of one of the vectors is zero
+   * @exception MathIllegalArgumentException if the norm of one of the vectors is zero
    */
   public Rotation(Vector3D u1, Vector3D u2, Vector3D v1, Vector3D v2) {
 
@@ -318,7 +318,7 @@ public class Rotation implements Serializable {
   double v1v1 = v1.getNormSq();
   double v2v2 = v2.getNormSq();
   if ((u1u1 == 0) || (u2u2 == 0) || (v1v1 == 0) || (v2v2 == 0)) {
-    throw MathRuntimeException.createIllegalArgumentException(LocalizedFormats.ZERO_NORM_FOR_ROTATION_DEFINING_VECTOR);
+    throw new MathIllegalArgumentException(LocalizedFormats.ZERO_NORM_FOR_ROTATION_DEFINING_VECTOR);
   }
 
   // normalize v1 in order to have (v1'|v1') = (u1|u1)
@@ -354,8 +354,8 @@ public class Rotation implements Serializable {
     if (c <= inPlaneThreshold * k.getNorm() * u2Prime.getNorm()) {
       // the (q1, q2, q3) vector is also close to the (u1, u3) plane,
       // it is almost aligned with u1: we try (u2, u3) and (v2, v3)
-      k = v2Su2.crossProduct(v3Su3);;
-      c = k.dotProduct(u2.crossProduct(u3));;
+      k = v2Su2.crossProduct(v3Su3);
+      c = k.dotProduct(u2.crossProduct(u3));
 
       if (c <= 0) {
         // the (q1, q2, q3) vector is aligned with everything
@@ -401,13 +401,13 @@ public class Rotation implements Serializable {
 
    * @param u origin vector
    * @param v desired image of u by the rotation
-   * @exception IllegalArgumentException if the norm of one of the vectors is zero
+   * @exception MathIllegalArgumentException if the norm of one of the vectors is zero
    */
   public Rotation(Vector3D u, Vector3D v) {
 
     double normProduct = u.getNorm() * v.getNorm();
     if (normProduct == 0) {
-        throw MathRuntimeException.createIllegalArgumentException(LocalizedFormats.ZERO_NORM_FOR_ROTATION_DEFINING_VECTOR);
+        throw new MathIllegalArgumentException(LocalizedFormats.ZERO_NORM_FOR_ROTATION_DEFINING_VECTOR);
     }
 
     double dot = u.dotProduct(v);
@@ -847,6 +847,25 @@ public class Rotation implements Serializable {
 
   }
 
+  /** Apply the rotation to a vector stored in an array.
+   * @param in an array with three items which stores vector to rotate
+   * @param out an array with three items to put result to (it can be the same
+   * array as in)
+   */
+  public void applyTo(final double[] in, final double[] out) {
+
+      final double x = in[0];
+      final double y = in[1];
+      final double z = in[2];
+
+      final double s = q1 * x + q2 * y + q3 * z;
+
+      out[0] = 2 * (q0 * (x * q0 - (q2 * z - q3 * y)) + s * q1) - x;
+      out[1] = 2 * (q0 * (y * q0 - (q3 * x - q1 * z)) + s * q2) - y;
+      out[2] = 2 * (q0 * (z * q0 - (q1 * y - q2 * x)) + s * q3) - z;
+
+  }
+
   /** Apply the inverse of the rotation to a vector.
    * @param u vector to apply the inverse of the rotation to
    * @return a new vector which such that u is its image by the rotation
@@ -863,6 +882,26 @@ public class Rotation implements Serializable {
     return new Vector3D(2 * (m0 * (x * m0 - (q2 * z - q3 * y)) + s * q1) - x,
                         2 * (m0 * (y * m0 - (q3 * x - q1 * z)) + s * q2) - y,
                         2 * (m0 * (z * m0 - (q1 * y - q2 * x)) + s * q3) - z);
+
+  }
+
+  /** Apply the inverse of the rotation to a vector stored in an array.
+   * @param in an array with three items which stores vector to rotate
+   * @param out an array with three items to put result to (it can be the same
+   * array as in)
+   */
+  public void applyInverseTo(final double[] in, final double[] out) {
+
+      final double x = in[0];
+      final double y = in[1];
+      final double z = in[2];
+
+      final double s = q1 * x + q2 * y + q3 * z;
+      final double m0 = -q0;
+
+      out[0] = 2 * (m0 * (x * m0 - (q2 * z - q3 * y)) + s * q1) - x;
+      out[1] = 2 * (m0 * (y * m0 - (q3 * x - q1 * z)) + s * q2) - y;
+      out[2] = 2 * (m0 * (z * m0 - (q1 * y - q2 * x)) + s * q3) - z;
 
   }
 

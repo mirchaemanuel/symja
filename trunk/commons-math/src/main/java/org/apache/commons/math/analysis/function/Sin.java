@@ -17,7 +17,7 @@
 
 package org.apache.commons.math.analysis.function;
 
-import org.apache.commons.math.analysis.UnivariateRealFunction;
+import org.apache.commons.math.analysis.DifferentiableUnivariateFunction;
 import org.apache.commons.math.util.FastMath;
 
 /**
@@ -26,9 +26,14 @@ import org.apache.commons.math.util.FastMath;
  * @version $Id$
  * @since 3.0
  */
-public class Sin implements UnivariateRealFunction {
+public class Sin implements DifferentiableUnivariateFunction {
     /** {@inheritDoc} */
     public double value(double x) {
         return FastMath.sin(x);
+    }
+
+    /** {@inheritDoc} */
+    public DifferentiableUnivariateFunction derivative() {
+        return new Cos();
     }
 }
