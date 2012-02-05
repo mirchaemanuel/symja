@@ -4,10 +4,13 @@ import org.matheclipse.core.eval.interfaces.AbstractTrigArg1;
 import org.matheclipse.core.expression.ComplexNum;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.expression.Num;
+import org.matheclipse.core.expression.NumberUtil;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.IInteger;
 import org.matheclipse.core.interfaces.ISymbol;
 import org.matheclipse.parser.client.SyntaxError;
+
+import com.google.common.math.BigIntegerMath;
 
 import java.math.BigInteger;
 
@@ -34,6 +37,24 @@ public class Factorial extends AbstractTrigArg1 {
 	}
 
 	public static BigInteger factorial(final BigInteger biggi) {
+		try {
+			int ni = NumberUtil.toInt(biggi);
+			BigInteger result;
+			if (ni < 0) {
+				result = BigIntegerMath.factorial(-1 * ni);
+				if ((ni & 0x0001) == 0x0001) {
+					// odd integer number
+					result = result.multiply(BigInteger.valueOf(-1L));
+				}
+			} else {
+				result = BigIntegerMath.factorial(ni);
+			}
+			return result;
+
+		} catch (ArithmeticException ae) {
+			//
+		}
+
 		BigInteger result = BigInteger.ONE;
 		if (biggi.compareTo(BigInteger.ZERO) == -1) {
 			result = BigInteger.valueOf(-1);

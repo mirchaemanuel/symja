@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import org.apache.commons.math.MathRuntimeException;
+import org.apache.commons.math.exception.MathIllegalStateException;
 import org.apache.commons.math.optimization.GoalType;
-import org.apache.commons.math.optimization.OptimizationException;
 import org.apache.commons.math.optimization.RealPointValuePair;
 import org.apache.commons.math.optimization.linear.LinearConstraint;
 import org.apache.commons.math.optimization.linear.LinearObjectiveFunction;
@@ -84,7 +84,7 @@ public class LinearProgramming extends AbstractFunctionEvaluator {
 				double[] values = solution.getPointRef();
 				return F.List(values);
 			}
-		} catch (OptimizationException oe) {
+		} catch (MathIllegalStateException oe) {
 			throw MathRuntimeException.createInternalError(oe);
 			// if (Config.SHOW_STACKTRACE) {
 			// e.printStackTrace();

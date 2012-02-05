@@ -4,7 +4,7 @@ import org.apache.commons.math.linear.EigenDecomposition;
 import org.apache.commons.math.linear.FieldMatrix;
 import org.apache.commons.math.linear.InvalidMatrixException;
 import org.apache.commons.math.linear.RealMatrix;
-import org.apache.commons.math.util.MathUtils;
+import org.apache.commons.math.util.Precision;
 import org.matheclipse.core.eval.exception.WrappedException;
 import org.matheclipse.core.eval.interfaces.AbstractMatrix1Expr;
 import org.matheclipse.core.expression.ExprFieldElement;
@@ -34,7 +34,7 @@ public class Eigenvalues extends AbstractMatrix1Expr {
 	public IAST realMatrixEval(RealMatrix matrix) {
 		try {
 			IAST list = F.List();
-			EigenDecomposition ed = new EigenDecomposition(matrix, MathUtils.SAFE_MIN);
+			EigenDecomposition ed = new EigenDecomposition(matrix, Precision.SAFE_MIN);
 			double[] realValues = ed.getRealEigenvalues();
 			double[] imagValues = ed.getImagEigenvalues();
 			for (int i = 0; i < realValues.length; i++) {

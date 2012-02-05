@@ -1,8 +1,8 @@
 package org.matheclipse.core.reflection.system;
 
-import org.apache.commons.math.analysis.DifferentiableUnivariateRealFunction;
-import org.apache.commons.math.analysis.UnivariateRealFunction;
-import org.apache.commons.math.analysis.solvers.BaseAbstractUnivariateRealSolver;
+import org.apache.commons.math.analysis.DifferentiableUnivariateFunction;
+import org.apache.commons.math.analysis.UnivariateFunction;
+import org.apache.commons.math.analysis.solvers.BaseAbstractUnivariateSolver;
 import org.apache.commons.math.analysis.solvers.BisectionSolver;
 import org.apache.commons.math.analysis.solvers.BrentSolver;
 import org.apache.commons.math.analysis.solvers.IllinoisSolver;
@@ -80,8 +80,8 @@ public class FindRoot extends AbstractFunctionEvaluator implements IConstantHead
 		ISignedNumber max = (ISignedNumber) list.get(3);
 		final EvalEngine engine = EvalEngine.get();
 		function = F.eval(function);
-		DifferentiableUnivariateRealFunction f = new UnaryNumerical(function, xVar, engine);
-		BaseAbstractUnivariateRealSolver<UnivariateRealFunction> solver = null;
+		DifferentiableUnivariateFunction f = new UnaryNumerical(function, xVar, engine);
+		BaseAbstractUnivariateSolver<UnivariateFunction> solver = null;
 		if (method.equals("Bisection")) {
 			solver = new BisectionSolver();
 		} else if (method.equals("Brent")) {
@@ -102,7 +102,7 @@ public class FindRoot extends AbstractFunctionEvaluator implements IConstantHead
 			solver = new PegasusSolver();
 		} else {
 			// default: NewtonSolver
-			BaseAbstractUnivariateRealSolver<DifferentiableUnivariateRealFunction> solver2 = new NewtonSolver();
+			BaseAbstractUnivariateSolver<DifferentiableUnivariateFunction> solver2 = new NewtonSolver();
 			return solver2.solve(maxIterations, f, min.doubleValue(), max.doubleValue());
 		}
 		return solver.solve(maxIterations, f, min.doubleValue(), max.doubleValue());
