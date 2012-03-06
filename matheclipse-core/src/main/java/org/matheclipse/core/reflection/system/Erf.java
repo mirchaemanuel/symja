@@ -1,6 +1,6 @@
 package org.matheclipse.core.reflection.system;
 
-import org.apache.commons.math.exception.MaxCountExceededException;
+import org.apache.commons.math3.exception.MaxCountExceededException;
 import org.matheclipse.core.eval.interfaces.AbstractTrigArg1;
 import org.matheclipse.core.eval.interfaces.INumeric;
 import org.matheclipse.core.expression.ComplexNum;
@@ -16,7 +16,7 @@ public class Erf extends AbstractTrigArg1 implements INumeric {
 	@Override
 	public IExpr numericEvalD1(final Num arg1) {
 		try {
-			return Num.valueOf(org.apache.commons.math.special.Erf.erf(arg1.getRealPart()));
+			return Num.valueOf(org.apache.commons.math3.special.Erf.erf(arg1.getRealPart()));
 		} catch (final MaxCountExceededException e) {
 		}
 		return null;
@@ -32,7 +32,7 @@ public class Erf extends AbstractTrigArg1 implements INumeric {
 			throw new UnsupportedOperationException();
 		}
 		try {
-			return org.apache.commons.math.special.Erf.erf(stack[top]);
+			return org.apache.commons.math3.special.Erf.erf(stack[top]);
 		} catch (final MaxCountExceededException e) {
 		}
 		throw new UnsupportedOperationException();

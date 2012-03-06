@@ -27,7 +27,7 @@ public class Factorial extends AbstractTrigArg1 {
 
 	@Override
 	public IExpr numericEvalD1(final Num arg1) {
-		double d = org.apache.commons.math.special.Gamma.logGamma(arg1.doubleValue() + 1);
+		double d = org.apache.commons.math3.special.Gamma.logGamma(arg1.doubleValue() + 1);
 		return F.num(Math.exp(d));
 	}
 

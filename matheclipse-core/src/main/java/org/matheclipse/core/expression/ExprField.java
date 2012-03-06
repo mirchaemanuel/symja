@@ -1,7 +1,7 @@
 package org.matheclipse.core.expression;
 
-import org.apache.commons.math.Field;
-import org.apache.commons.math.FieldElement;
+import org.apache.commons.math3.Field;
+import org.apache.commons.math3.FieldElement;
 
 public class ExprField implements Field<ExprFieldElement> {
   public final static ExprField CONST = new ExprField();

@@ -1,7 +1,7 @@
 package org.matheclipse.core.reflection.system;
 
-import org.apache.commons.math.optimization.fitting.PolynomialFitter;
-import org.apache.commons.math.optimization.general.LevenbergMarquardtOptimizer;
+import org.apache.commons.math3.optimization.fitting.PolynomialFitter;
+import org.apache.commons.math3.optimization.general.LevenbergMarquardtOptimizer;
 import org.matheclipse.core.convert.Convert;
 import org.matheclipse.core.eval.exception.Validate;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;

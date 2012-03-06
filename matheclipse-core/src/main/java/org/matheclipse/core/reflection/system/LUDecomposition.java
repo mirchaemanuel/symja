@@ -2,8 +2,8 @@ package org.matheclipse.core.reflection.system;
 
 import static org.matheclipse.core.expression.F.List;
 
-import org.apache.commons.math.linear.FieldLUDecomposition;
-import org.apache.commons.math.linear.FieldMatrix;
+import org.apache.commons.math3.linear.FieldLUDecomposition;
+import org.apache.commons.math3.linear.FieldMatrix;
 import org.matheclipse.core.basic.Config;
 import org.matheclipse.core.convert.Convert;
 import org.matheclipse.core.eval.exception.Validate;

@@ -2,7 +2,7 @@ package org.matheclipse.core.reflection.system;
 
 import static org.matheclipse.core.expression.F.Times;
 
-import org.apache.commons.math.fraction.BigFraction;
+import org.apache.commons.math3.fraction.BigFraction;
 import org.matheclipse.core.eval.interfaces.AbstractTrigArg1;
 import org.matheclipse.core.eval.interfaces.INumeric;
 import org.matheclipse.core.expression.F;

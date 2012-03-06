@@ -1,7 +1,7 @@
 package org.matheclipse.core.expression;
 
-import org.apache.commons.math.Field;
-import org.apache.commons.math.FieldElement;
+import org.apache.commons.math3.Field;
+import org.apache.commons.math3.FieldElement;
 import org.matheclipse.core.interfaces.IExpr;
 
 public class ExprFieldElement implements FieldElement<ExprFieldElement>, Comparable<ExprFieldElement> {

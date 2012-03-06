@@ -9,7 +9,7 @@ import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.math.fraction.BigFraction;
+import org.apache.commons.math3.fraction.BigFraction;
 import org.matheclipse.core.basic.Config;
 import org.matheclipse.core.convert.Object2Expr;
 import org.matheclipse.core.eval.EvalEngine;

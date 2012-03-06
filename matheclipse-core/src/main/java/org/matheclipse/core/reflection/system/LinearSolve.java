@@ -1,9 +1,9 @@
 package org.matheclipse.core.reflection.system;
 
-import org.apache.commons.math.linear.FieldDecompositionSolver;
-import org.apache.commons.math.linear.FieldLUDecomposition;
-import org.apache.commons.math.linear.FieldMatrix;
-import org.apache.commons.math.linear.FieldVector;
+import org.apache.commons.math3.linear.FieldDecompositionSolver;
+import org.apache.commons.math3.linear.FieldLUDecomposition;
+import org.apache.commons.math3.linear.FieldMatrix;
+import org.apache.commons.math3.linear.FieldVector;
 import org.matheclipse.core.basic.Config;
 import org.matheclipse.core.convert.Convert;
 import org.matheclipse.core.eval.exception.Validate;

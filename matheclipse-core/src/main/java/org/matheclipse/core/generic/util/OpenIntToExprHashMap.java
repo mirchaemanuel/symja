@@ -22,10 +22,9 @@ import java.io.Serializable;
 import java.util.ConcurrentModificationException;
 import java.util.NoSuchElementException;
 
-import org.apache.commons.math.MathRuntimeException;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IExpr;
-
+ 
 /**
  * Open addressed map from int to IExpr.
  * <p>

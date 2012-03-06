@@ -3,15 +3,15 @@ package org.matheclipse.core.reflection.system;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.apache.commons.math.MathRuntimeException;
-import org.apache.commons.math.exception.MathIllegalStateException;
-import org.apache.commons.math.optimization.GoalType;
-import org.apache.commons.math.optimization.RealPointValuePair;
-import org.apache.commons.math.optimization.linear.LinearConstraint;
-import org.apache.commons.math.optimization.linear.LinearObjectiveFunction;
-import org.apache.commons.math.optimization.linear.Relationship;
-import org.apache.commons.math.optimization.linear.SimplexSolver;
+import org.apache.commons.math3.exception.MathIllegalStateException;
+import org.apache.commons.math3.optimization.GoalType;
+import org.apache.commons.math3.optimization.PointValuePair;
+import org.apache.commons.math3.optimization.linear.LinearConstraint;
+import org.apache.commons.math3.optimization.linear.LinearObjectiveFunction;
+import org.apache.commons.math3.optimization.linear.Relationship;
+import org.apache.commons.math3.optimization.linear.SimplexSolver;
 import org.matheclipse.core.convert.Expr2Object;
+import org.matheclipse.core.eval.exception.WrappedException;
 import org.matheclipse.core.eval.exception.WrongArgumentType;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
 import org.matheclipse.core.expression.F;
@@ -80,12 +80,12 @@ public class LinearProgramming extends AbstractFunctionEvaluator {
 					}
 				}
 				SimplexSolver solver = new SimplexSolver();
-				RealPointValuePair solution = solver.optimize(f, constraints, GoalType.MINIMIZE, true);
+				PointValuePair solution = solver.optimize(f, constraints, GoalType.MINIMIZE, true);
 				double[] values = solution.getPointRef();
 				return F.List(values);
 			}
 		} catch (MathIllegalStateException oe) {
-			throw MathRuntimeException.createInternalError(oe);
+			throw new WrappedException(oe);
 			// if (Config.SHOW_STACKTRACE) {
 			// e.printStackTrace();
 			// }

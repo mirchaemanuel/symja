@@ -2,7 +2,7 @@ package org.matheclipse.core.form.mathml;
 
 import java.util.Hashtable;
 
-import org.apache.commons.math.fraction.BigFraction;
+import org.apache.commons.math3.fraction.BigFraction;
 import org.matheclipse.core.basic.Config;
 import org.matheclipse.core.eval.exception.WrongArgumentType;
 import org.matheclipse.core.expression.IConstantHeaders;
