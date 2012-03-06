@@ -2,8 +2,8 @@ package org.matheclipse.core.test;
 
 import junit.framework.TestCase;
 
-import org.apache.commons.math.dfp.Dfp;
-import org.apache.commons.math.dfp.DfpField;
+import org.apache.commons.math3.dfp.Dfp;
+import org.apache.commons.math3.dfp.DfpField;
 
 /**
  * Tests visitors
