@@ -12,7 +12,7 @@ import javax.script.ScriptContext;
 import javax.script.ScriptEngineFactory;
 import javax.script.ScriptException;
 
-import org.apache.commons.math.exception.util.ExceptionContextProvider;
+import org.apache.commons.math3.exception.util.ExceptionContextProvider;
 import org.matheclipse.core.basic.Config;
 import org.matheclipse.core.convert.Object2Expr;
 import org.matheclipse.core.eval.EvalEngine;

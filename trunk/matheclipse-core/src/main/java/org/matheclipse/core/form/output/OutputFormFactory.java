@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.math.BigInteger;
 
-import org.apache.commons.math.fraction.BigFraction;
+import org.apache.commons.math3.fraction.BigFraction;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.expression.IConstantHeaders;
 import org.matheclipse.core.expression.NumberUtil;

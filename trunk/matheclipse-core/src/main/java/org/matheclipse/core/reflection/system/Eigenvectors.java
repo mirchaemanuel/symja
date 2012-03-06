@@ -1,11 +1,10 @@
 package org.matheclipse.core.reflection.system;
 
-import org.apache.commons.math.linear.EigenDecomposition;
-import org.apache.commons.math.linear.FieldMatrix;
-import org.apache.commons.math.linear.InvalidMatrixException;
-import org.apache.commons.math.linear.RealMatrix;
-import org.apache.commons.math.linear.RealVector;
-import org.apache.commons.math.util.Precision;
+import org.apache.commons.math3.linear.EigenDecomposition;
+import org.apache.commons.math3.linear.FieldMatrix;
+import org.apache.commons.math3.linear.RealMatrix;
+import org.apache.commons.math3.linear.RealVector;
+import org.apache.commons.math3.util.Precision;
 import org.matheclipse.core.convert.Convert;
 import org.matheclipse.core.eval.exception.WrappedException;
 import org.matheclipse.core.eval.interfaces.AbstractMatrix1Expr;
@@ -42,7 +41,7 @@ public class Eigenvectors extends AbstractMatrix1Expr {
 				list.add(Convert.realVector2List(rv));
 			}
 			return list;
-		} catch (InvalidMatrixException ime) {
+		} catch (Exception ime) {
 			throw new WrappedException(ime);
 		}
 	}

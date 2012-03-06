@@ -2,15 +2,15 @@ package org.matheclipse.core.convert;
 
 import static org.matheclipse.core.expression.F.List;
 
-import org.apache.commons.math.analysis.polynomials.PolynomialFunction;
-import org.apache.commons.math.linear.Array2DRowRealMatrix;
-import org.apache.commons.math.linear.ArrayFieldVector;
-import org.apache.commons.math.linear.ArrayRealVector;
-import org.apache.commons.math.linear.BlockFieldMatrix;
-import org.apache.commons.math.linear.FieldMatrix;
-import org.apache.commons.math.linear.FieldVector;
-import org.apache.commons.math.linear.RealMatrix;
-import org.apache.commons.math.linear.RealVector;
+import org.apache.commons.math3.analysis.polynomials.PolynomialFunction;
+import org.apache.commons.math3.linear.Array2DRowRealMatrix;
+import org.apache.commons.math3.linear.ArrayFieldVector;
+import org.apache.commons.math3.linear.ArrayRealVector;
+import org.apache.commons.math3.linear.BlockFieldMatrix;
+import org.apache.commons.math3.linear.FieldMatrix;
+import org.apache.commons.math3.linear.FieldVector;
+import org.apache.commons.math3.linear.RealMatrix;
+import org.apache.commons.math3.linear.RealVector;
 import org.matheclipse.core.expression.ExprFieldElement;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IAST;

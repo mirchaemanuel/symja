@@ -7,8 +7,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 
-import org.apache.commons.math.MathException;
-import org.apache.commons.math.MathRuntimeException;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.form.output.OutputFormFactory;
 import org.matheclipse.core.form.output.StringBufferWriter;
@@ -79,9 +77,9 @@ public class Console {
 					System.out.println("Out[" + COUNTER + "]: " + outputExpression);
 					COUNTER++;
 				}
-			} catch (final MathRuntimeException mre) {
-				Throwable me = mre.getCause();
-				System.out.println(me.getMessage());
+				// } catch (final MathRuntimeException mre) {
+				// Throwable me = mre.getCause();
+				// System.out.println(me.getMessage());
 			} catch (final Exception e) {
 				System.out.println(e.getMessage());
 			}
@@ -184,11 +182,11 @@ public class Console {
 			return buf.toString();
 		} catch (final RuntimeException re) {
 			Throwable me = re.getCause();
-			if (me instanceof MathException) {
-				printException(buf, me);
-			} else {
-				printException(buf, re);
-			}
+			// if (me instanceof MathException) {
+			// printException(buf, me);
+			// } else {
+			printException(buf, re);
+			// }
 		} catch (final Exception e) {
 			printException(buf, e);
 		}

@@ -1,9 +1,9 @@
 package org.matheclipse.core.reflection.system;
 
-import org.apache.commons.math.FieldElement;
-import org.apache.commons.math.linear.BlockFieldMatrix;
-import org.apache.commons.math.linear.FieldMatrix;
-import org.apache.commons.math.linear.FieldVector;
+import org.apache.commons.math3.FieldElement;
+import org.apache.commons.math3.linear.BlockFieldMatrix;
+import org.apache.commons.math3.linear.FieldMatrix;
+import org.apache.commons.math3.linear.FieldVector;
 import org.matheclipse.core.basic.Config;
 import org.matheclipse.core.convert.Convert;
 import org.matheclipse.core.eval.interfaces.AbstractNonOrderlessArgMultiple;

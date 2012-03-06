@@ -1,17 +1,17 @@
 package org.matheclipse.core.reflection.system;
 
-import org.apache.commons.math.ConvergenceException;
-import org.apache.commons.math.MathException;
-import org.apache.commons.math.analysis.DifferentiableUnivariateFunction;
-import org.apache.commons.math.analysis.integration.BaseAbstractUnivariateIntegrator;
-import org.apache.commons.math.analysis.integration.LegendreGaussIntegrator;
-import org.apache.commons.math.analysis.integration.RombergIntegrator;
-import org.apache.commons.math.analysis.integration.SimpsonIntegrator;
-import org.apache.commons.math.analysis.integration.TrapezoidIntegrator;
-import org.apache.commons.math.analysis.integration.UnivariateIntegrator;
+import org.apache.commons.math3.exception.ConvergenceException;
+import org.apache.commons.math3.analysis.DifferentiableUnivariateFunction;
+import org.apache.commons.math3.analysis.integration.BaseAbstractUnivariateIntegrator;
+import org.apache.commons.math3.analysis.integration.LegendreGaussIntegrator;
+import org.apache.commons.math3.analysis.integration.RombergIntegrator;
+import org.apache.commons.math3.analysis.integration.SimpsonIntegrator;
+import org.apache.commons.math3.analysis.integration.TrapezoidIntegrator;
+import org.apache.commons.math3.analysis.integration.UnivariateIntegrator;
 import org.matheclipse.core.basic.Config;
 import org.matheclipse.core.eval.EvalEngine;
 import org.matheclipse.core.eval.exception.Validate;
+import org.matheclipse.core.eval.exception.WrappedException;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.expression.IConstantHeaders;
@@ -54,13 +54,12 @@ public class NIntegrate extends AbstractFunctionEvaluator implements IConstantHe
 				try {
 					return Num.valueOf(integrate(method, list, function));
 				} catch (ConvergenceException e) {
-					if (Config.SHOW_STACKTRACE) {
-						e.printStackTrace();
-					}
-				} catch (MathException e) {
-					if (Config.SHOW_STACKTRACE) {
-						e.printStackTrace();
-					}
+					throw new WrappedException(e);
+				} catch (Exception e) {
+					throw new WrappedException(e);
+					// if (Config.SHOW_STACKTRACE) {
+					// e.printStackTrace();
+					// }
 				}
 			}
 
@@ -80,7 +79,8 @@ public class NIntegrate extends AbstractFunctionEvaluator implements IConstantHe
 			integrator = new SimpsonIntegrator();
 		} else if (method.equals("LegendreGauss")) {
 			integrator = new LegendreGaussIntegrator(3, BaseAbstractUnivariateIntegrator.DEFAULT_RELATIVE_ACCURACY,
-					BaseAbstractUnivariateIntegrator.DEFAULT_ABSOLUTE_ACCURACY, BaseAbstractUnivariateIntegrator.DEFAULT_MIN_ITERATIONS_COUNT, 64);
+					BaseAbstractUnivariateIntegrator.DEFAULT_ABSOLUTE_ACCURACY,
+					BaseAbstractUnivariateIntegrator.DEFAULT_MIN_ITERATIONS_COUNT, 64);
 		} else if (method.equals("Romberg")) {
 			integrator = new RombergIntegrator();
 		} else {

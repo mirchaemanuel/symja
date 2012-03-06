@@ -39,7 +39,7 @@ public class Gamma extends AbstractTrigArg1 {
 		double x = arg1.doubleValue();
 		if (x > 0.0) {
 			double gamma;
-			gamma = org.apache.commons.math.special.Gamma.logGamma(x);
+			gamma = org.apache.commons.math3.special.Gamma.logGamma(x);
 			gamma = Math.exp(gamma);
 			return F.num(gamma);
 		}
