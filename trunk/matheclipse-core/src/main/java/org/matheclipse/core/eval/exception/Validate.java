@@ -168,7 +168,15 @@ public final class Validate {
 		}
 		throw new WrongArgumentType(ast, ast.get(position), position, "Symbol expected!");
 	}
-
+	
+	/**
+	 * Check if the argument at the given position is an AST.
+	 * 
+	 * @param position
+	 *          the position which has to be an AST.
+	 * @throws WrongArgumentType
+	 *           if it's not an AST.
+	 */
 	public static IAST checkASTType(IAST ast, int position) {
 		if (ast.get(position).isAST()) {
 			return (IAST) ast.get(position);
