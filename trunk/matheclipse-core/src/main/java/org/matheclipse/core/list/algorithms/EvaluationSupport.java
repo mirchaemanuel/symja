@@ -50,8 +50,9 @@ public class EvaluationSupport {
 			// already sorted
 			return;
 		}
-		if (ast.size() > 2) {
-			if (ast.size() == 3) {
+		final int astSize = ast.size();
+		if (astSize > 2) {
+			if (astSize == 3) {
 				// optimize special case
 				if (ast.get(1).compareTo(ast.get(2)) > 0) {
 					// swap arguments
@@ -85,12 +86,12 @@ public class EvaluationSupport {
 	public static IAST threadList(final IAST list, final int listLength, final int headOffset) {
 
 		final IAST res0 = F.ast(F.List, listLength, true);
-
+		final int listSize = list.size();
 		for (int j = headOffset; j < listLength + headOffset; j++) {
-			final IAST res1 = F.ast(list.head(), list.size() - headOffset, true);
+			final IAST res1 = F.ast(list.head(), listSize - headOffset, true);
 
-			for (int i = headOffset; i < list.size(); i++) {
-				if ((list.get(i) instanceof IAST) && (((IAST) list.get(i)).head().equals(F.List))) {
+			for (int i = headOffset; i < listSize; i++) {
+				if (list.get(i).isList()) {
 					final IAST arg = (IAST) list.get(i);
 					res1.set(i, arg.get(j));
 				} else {
