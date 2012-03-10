@@ -530,10 +530,11 @@ public class OutputFormFactory implements IConstantHeaders {
 			}
 		}
 		buf.write("{");
-		if (list.size() > 1) {
+		final int listSize = list.size();
+		if (listSize > 1) {
 			convert(buf, list.get(1));
 		}
-		for (int i = 2; i < list.size(); i++) {
+		for (int i = 2; i < listSize; i++) {
 			buf.write(",");
 			if (list.isEvalFlagOn(IAST.IS_MATRIX)) {
 				if (buf instanceof StringBufferWriter) {
@@ -593,10 +594,11 @@ public class OutputFormFactory implements IConstantHeaders {
 		} else {
 			buf.write("[");
 		}
-		if (function.size() > 1) {
+		final int functionSize = function.size();
+		if (functionSize > 1) {
 			convert(buf, function.get(1));
 		}
-		for (int i = 2; i < function.size(); i++) {
+		for (int i = 2; i < functionSize; i++) {
 			buf.write(",");
 			convert(buf, function.get(i));
 		}
@@ -606,5 +608,4 @@ public class OutputFormFactory implements IConstantHeaders {
 			buf.write("]");
 		}
 	}
-
 }
