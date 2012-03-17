@@ -1,7 +1,7 @@
 package org.matheclipse.generic.nested;
 
 import java.util.Collection;
-import java.util.List; 
+import java.util.List;
 
 import org.matheclipse.generic.interfaces.IPositionConverter;
 import org.matheclipse.generic.interfaces.ISequence;
@@ -234,7 +234,8 @@ public abstract class NestedAlgorithms<T extends INestedListElement, L extends L
 		}
 		if (isInstance(nestedListElement)) {
 			L list = cast(nestedListElement);
-			for (int i = headOffset; i < list.size(); i++) {
+			final int size = list.size();
+			for (int i = headOffset; i < size; i++) {
 				extract(list.get(i), matcher, resultCollection, headOffset);
 			}
 		}
@@ -265,8 +266,8 @@ public abstract class NestedAlgorithms<T extends INestedListElement, L extends L
 	 */
 	public boolean flatten(final L argList, final Collection<? super T> resultList, final int headOffset) {
 		boolean isEvaled = false;
-
-		for (int i = headOffset; i < argList.size(); i++) {
+		final int astSize = argList.size();
+		for (int i = headOffset; i < astSize; i++) {
 			if (isInstance(argList.get(i))) {
 				isEvaled = true;
 				flatten(cast(argList.get(i)), resultList, headOffset);
@@ -302,7 +303,8 @@ public abstract class NestedAlgorithms<T extends INestedListElement, L extends L
 		boolean isEvaled = false;
 
 		L list;
-		for (int i = headOffset; i < argList.size(); i++) {
+		final int astSize = argList.size();
+		for (int i = headOffset; i < astSize; i++) {
 			if (isInstance(argList.get(i))) {
 				list = cast(argList.get(i));
 				if (list.get(0).equals(head)) {
@@ -374,29 +376,30 @@ public abstract class NestedAlgorithms<T extends INestedListElement, L extends L
 	// return resultCollection;
 	// }
 
-//	public void total(final T expr, final LevelSpec level, final Function<T, T> function, int headOffset) {
-//		int minDepth = 0;
-//		level.incCurrentLevel();
-//		L list;
-//		if (isInstance(expr)) {
-//			list = cast(expr);
-//			for (int i = headOffset; i < list.size(); i++) {
-//
-//				total(list.get(i), level, function, headOffset);
-//				if (level.getCurrentDepth() < minDepth) {
-//					minDepth = level.getCurrentDepth();
-//				}
-//			}
-//			level.setCurrentDepth(--minDepth);
-//			level.decCurrentLevel();
-//		} else {
-//			level.setCurrentDepth(--minDepth);
-//			level.decCurrentLevel();
-//			if (level.isInRange()) {
-//				function.apply(expr);
-//			}
-//		}
-//	}
+	// public void total(final T expr, final LevelSpec level, final Function<T, T>
+	// function, int headOffset) {
+	// int minDepth = 0;
+	// level.incCurrentLevel();
+	// L list;
+	// if (isInstance(expr)) {
+	// list = cast(expr);
+	// for (int i = headOffset; i < list.size(); i++) {
+	//
+	// total(list.get(i), level, function, headOffset);
+	// if (level.getCurrentDepth() < minDepth) {
+	// minDepth = level.getCurrentDepth();
+	// }
+	// }
+	// level.setCurrentDepth(--minDepth);
+	// level.decCurrentLevel();
+	// } else {
+	// level.setCurrentDepth(--minDepth);
+	// level.decCurrentLevel();
+	// if (level.isInRange()) {
+	// function.apply(expr);
+	// }
+	// }
+	// }
 
 	/**
 	 * Add the positions to the <code>resultCollection</code> where the matching
@@ -436,7 +439,8 @@ public abstract class NestedAlgorithms<T extends INestedListElement, L extends L
 		int minDepth = 0;
 		level.incCurrentLevel();
 		L clone = null;
-		for (int i = headOffset; i < list.size(); i++) {
+		final int size = list.size();
+		for (int i = headOffset; i < size; i++) {
 			if (matcher.apply(list.get(i))) {
 				if (level.isInRange()) {
 					clone = clone(prototypeList);
@@ -484,7 +488,8 @@ public abstract class NestedAlgorithms<T extends INestedListElement, L extends L
 
 			L result = null;
 			T temp;
-			for (int i = headOffset; i < nestedList.size(); i++) {
+			final int size = nestedList.size();
+			for (int i = headOffset; i < size; i++) {
 
 				temp = replace(nestedList.get(i), from, to, headOffset);
 				if (temp != null) {
@@ -520,7 +525,8 @@ public abstract class NestedAlgorithms<T extends INestedListElement, L extends L
 			} else {
 				return null;
 			}
-			for (int i = 1; i < nestedList.size(); i++) {
+			final int size = nestedList.size();
+			for (int i = 1; i < size; i++) {
 
 				temp = replaceAll(nestedList.get(i), from, to);
 				if (temp != null) {
