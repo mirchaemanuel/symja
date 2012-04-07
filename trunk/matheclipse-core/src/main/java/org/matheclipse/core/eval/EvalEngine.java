@@ -35,6 +35,7 @@ import org.matheclipse.core.interfaces.INumber;
 import org.matheclipse.core.interfaces.ISignedNumber;
 import org.matheclipse.core.interfaces.ISymbol;
 import org.matheclipse.core.list.algorithms.EvaluationSupport;
+import org.matheclipse.core.patternmatching.PatternMatcher;
 import org.matheclipse.core.sql.SerializeVariables2DB;
 import org.matheclipse.parser.client.Parser;
 import org.matheclipse.parser.client.ast.ASTNode;
@@ -76,13 +77,11 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 
 	transient String fSessionID;
 
-	// transient IAST fTraceList;
-
 	transient boolean fTraceMode;
 
 	transient boolean fStopAfterEvaluationMode;
 
-	transient Stack<IAST> fTraceStack;
+	transient TraceStack fTraceStack = null;
 
 	transient PrintStream fOutPrintStream = null;
 
@@ -261,7 +260,7 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 		fEvalLHSMode = false;
 		fTraceMode = false;
 		fStopAfterEvaluationMode = false;
-		fTraceStack = new Stack<IAST>();
+		fTraceStack = null;
 		// fTraceList = null;
 		fStopRequested = false;
 		fModifiedVariablesList = new HashSet<ISymbol>();
@@ -495,7 +494,8 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 	 * @param ast
 	 * @return
 	 */
-	public IExpr evalAST(final IAST ast) {
+	public IExpr evalAST(IAST ast) {
+
 		final int astSize = ast.size();
 		if (astSize == 2) {
 			return evalASTArg1(ast);
@@ -554,6 +554,7 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 		}
 
 		return evalASTBuiltinFunction(symbol, ast);
+
 	}
 
 	private IAST flattenSequences(final IAST ast) {
@@ -811,9 +812,11 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 		IExpr temp = expr;
 		boolean evaled = false;
 		int iterationCounter = 1;
-		IAST traceList = null;
 		try {
 			fRecursionCounter++;
+			if (fTraceMode) {
+				fTraceStack.pushList();
+			}
 			temp = evalObject(result);
 			if (temp != null) {
 				if (fTraceMode) {
@@ -821,10 +824,8 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 						// stop evaluation if, we've got a result
 						return temp;
 					}
-					traceList = F.List();
-					traceList.add(expr);
-					traceList.add(temp);
-					fTraceStack.push(traceList);
+					fTraceStack.addIfEmpty(expr);
+					fTraceStack.add(temp);
 				}
 				evaled = true;
 				result = temp;
@@ -836,7 +837,7 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 				temp = evalObject(result);
 				if (temp != null) {
 					if (fTraceMode) {
-						traceList.add(temp);
+						fTraceStack.add(temp);
 					}
 					result = temp;
 					if (fIterationLimit >= 0 && fIterationLimit <= ++iterationCounter) {
@@ -848,21 +849,12 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 				return result;
 			}
 		} finally {
-			if (evaled) {
-				if (traceList != null) {
-					// HeapContext.enter();
-					// try {
-					fTraceStack.pop();
-					IAST topStack = fTraceStack.peek();
-					topStack.add(traceList);// .copy());
-					// } finally {
-					// HeapContext.exit();
-					// }
-					// fTraceList = fTraceStack.pop();
-				}
-			}
 			fRecursionCounter--;
+			if (fTraceMode) {
+				fTraceStack.popList();
+			}
 		}
+
 		return null;
 	}
 
@@ -959,14 +951,6 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 	/**
 	 * @return
 	 */
-	public IAST getTraceList() {
-		return fTraceStack.pop();
-		// return fTraceList;
-	}
-
-	/**
-	 * @return
-	 */
 	public boolean isNumericMode() {
 		return fNumericMode;
 	}
@@ -1026,12 +1010,16 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 		fStopAfterEvaluationMode = b;
 	}
 
-	/**
-	 * @param list
-	 */
-	public void setTraceList(final IAST list) {
-		fTraceStack.push(list);
-		// fTraceList = list;
+	public void beginTrace(PatternMatcher matcher) {
+		setTraceMode(true);
+		fTraceStack = new TraceStack(matcher);
+	}
+
+	public IAST endTrace() {
+		setTraceMode(false);
+		IAST ast = fTraceStack.getList();
+		fTraceStack = null;
+		return ast;
 	}
 
 	/**
