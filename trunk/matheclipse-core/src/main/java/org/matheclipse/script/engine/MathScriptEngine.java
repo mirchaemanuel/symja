@@ -45,8 +45,7 @@ public class MathScriptEngine extends AbstractScriptEngine {
 		return null;
 	}
 
-	public Object eval(final Reader reader, final ScriptContext context)
-			throws ScriptException {
+	public Object eval(final Reader reader, final ScriptContext context) throws ScriptException {
 		final BufferedReader f = new BufferedReader(reader);
 		final StringBuffer buff = new StringBuffer(1024);
 		String line;
@@ -62,20 +61,17 @@ public class MathScriptEngine extends AbstractScriptEngine {
 		return null;
 	}
 
-	public Object eval(final String script, final ScriptContext context)
-			throws ScriptException {
+	public Object eval(final String script, final ScriptContext context) throws ScriptException {
 		final ArrayList<ISymbol> list = new ArrayList<ISymbol>();
 		try {
 			// first assign the EvalEngine to the current thread:
 			fUtility.startRequest();
 
-			final Bindings bindings = context
-					.getBindings(ScriptContext.ENGINE_SCOPE);
+			final Bindings bindings = context.getBindings(ScriptContext.ENGINE_SCOPE);
 			ISymbol symbol;
 			for (Map.Entry<String, Object> currEntry : bindings.entrySet()) {
 				symbol = F.$s(currEntry.getKey());
-				symbol.pushLocalVariable(Object2Expr.CONST.convert(currEntry
-						.getValue()));
+				symbol.pushLocalVariable(Object2Expr.CONST.convert(currEntry.getValue()));
 				list.add(symbol);
 			}
 
@@ -83,7 +79,7 @@ public class MathScriptEngine extends AbstractScriptEngine {
 			final Object stepwise = get("STEPWISE");
 			IExpr result;
 			if (Boolean.TRUE.equals(stepwise)) {
-				result = fUtility.evalStepByStep(script);
+				result = fUtility.evalTrace(script, null, F.List());
 			} else {
 				result = fUtility.evaluate(script);
 			}

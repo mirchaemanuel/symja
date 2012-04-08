@@ -7,22 +7,26 @@ import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.patternmatching.PatternMatcher;
 
+import com.google.common.base.Predicate;
+
 final public class TraceStack {
 
 	private static final long serialVersionUID = 3939797221814484213L;
 
 	final Stack<IAST> fStack = new Stack<IAST>();
-	final PatternMatcher fMatcher;
+	final Predicate<IExpr> fMatcher;
+	final IAST fList;
 	IAST fTraceList;
 
-	public TraceStack(PatternMatcher matcher) {
+	public TraceStack(Predicate<IExpr>  matcher, IAST list) {
 		super();
 		fMatcher = matcher;
+		fList = list;
 		pushList();
 	}
 
 	public void pushList() {
-		fTraceList = F.List();
+		fTraceList = fList.clone();
 		fStack.push(fTraceList);
 	}
 

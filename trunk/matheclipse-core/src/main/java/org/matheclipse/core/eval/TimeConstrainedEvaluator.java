@@ -24,7 +24,7 @@ public class TimeConstrainedEvaluator extends EvalUtilities implements Runnable 
 
 	private final boolean fRelaxedSyntax;
 
-	private boolean fStepByStep;
+	private boolean fTraceEvaluation;
 
 	public TimeConstrainedEvaluator(final EvalEngine evalEngine, final boolean msie, final long milliSeconds) {
 		this(evalEngine, msie, milliSeconds, false);
@@ -35,14 +35,14 @@ public class TimeConstrainedEvaluator extends EvalUtilities implements Runnable 
 		super(evalEngine, msie);
 		fMilliSeconds = milliSeconds;
 		fRelaxedSyntax = relaxedSyntax;
-		fStepByStep = false;
+		fTraceEvaluation = false;
 	}
 
 	public void run() {
 		try {
 			startRequest();
-			if (fStepByStep) {
-				fEvaluationResult = evalStepByStep(fParsedExpression);
+			if (fTraceEvaluation) {
+				fEvaluationResult = evalTrace(fParsedExpression, null, F.List());
 			} else {
 				fEvaluationResult = evaluate(fParsedExpression);
 			}
@@ -70,24 +70,21 @@ public class TimeConstrainedEvaluator extends EvalUtilities implements Runnable 
 	 * Runs the evaluation of the given math formula <code>String</code> in a time
 	 * limited thread
 	 * 
-	 * @param stepByStep
-	 *          TODO
+	 * @param traceEvaluation
 	 * 
 	 */
-	public IExpr constrainedEval(final Writer writer, final String inputString, boolean stepByStep) throws Exception {
+	public IExpr constrainedEval(final Writer writer, final String inputString, boolean traceEvaluation) throws Exception {
 
 		fEvaluationResult = null;
 		fException = null;
 		fParsedExpression = null;
 		fEvalEngine.setStopRequested(false);
-		fStepByStep = stepByStep;
+		fTraceEvaluation = traceEvaluation;
 
 		try {
 			EvalEngine.set(fEvalEngine);
 			fParsedExpression = fEvalEngine.parse(inputString);
 		} catch (final RuntimeException e) {
-			// writer.write(e.getMessage() + '\n');
-			// return false;
 			throw e;
 		}
 
