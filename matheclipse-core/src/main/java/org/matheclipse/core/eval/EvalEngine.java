@@ -41,6 +41,8 @@ import org.matheclipse.parser.client.Parser;
 import org.matheclipse.parser.client.ast.ASTNode;
 import org.matheclipse.parser.client.math.MathException;
 
+import com.google.common.base.Predicate;
+
 /**
  * 
  */
@@ -78,8 +80,6 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 	transient String fSessionID;
 
 	transient boolean fTraceMode;
-
-	transient boolean fStopAfterEvaluationMode;
 
 	transient TraceStack fTraceStack = null;
 
@@ -259,7 +259,6 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 		fNumericMode = false;
 		fEvalLHSMode = false;
 		fTraceMode = false;
-		fStopAfterEvaluationMode = false;
 		fTraceStack = null;
 		// fTraceList = null;
 		fStopRequested = false;
@@ -375,27 +374,32 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 		return (instance.get()).evaluateNull(expr);
 	}
 
+
 	/**
-	 * Evaluate an expression step by step. If evaluation is not possible return
-	 * <code>null</code>, otherwise return the first evaluated subexpression.
+	 * Evaluate the expression and return the
+	 * <code>Trace[expr]</code> (i.e. all (sub-)expressions needed to calculate the
+	 * result).
 	 * 
 	 * @param expr
-	 * @return an array of 2 elements, which contain the currently evaluated
-	 *         subexpression ans the result of this evaluation
+	 *          the expression which should be evaluated.
+	 * @param matcher
+	 *          a filter which determines the expressions which should be traced,
+	 *          If the matcher is set to <code>null</code>, all expressions are
+	 *          traced.
+	 * @param list
+	 *          an IAST object which will be cloned for containing the traced
+	 *          expressions. Typically a <code>F.List()</code> will be used.
+	 * @return
 	 */
-	public final IExpr evalStepByStep(final IExpr expr) {
-		IExpr result = null;
-		boolean numericMode = fNumericMode;
+	public final IAST evalTrace(final IExpr expr, Predicate<IExpr> matcher, IAST list) {
+		IAST traceList = F.List();
 		try {
-			setTraceMode(true);
-			setStopAfterEvaluationMode(true);
-			result = evalLoop(expr);
-			return result == null ? expr : result;
+			beginTrace(matcher, list);
+			evaluate(expr);
 		} finally {
-			setStopAfterEvaluationMode(false);
-			setTraceMode(false);
-			setNumericMode(numericMode);
+			traceList = endTrace();
 		}
+		return traceList;
 	}
 
 	protected IExpr evalComplex(final IComplex obj) {
@@ -819,11 +823,7 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 			}
 			temp = evalObject(result);
 			if (temp != null) {
-				if (fTraceMode) {
-					if (fStopAfterEvaluationMode) {
-						// stop evaluation if, we've got a result
-						return temp;
-					}
+				if (fTraceMode) { 
 					fTraceStack.addIfEmpty(expr);
 					fTraceStack.add(temp);
 				}
@@ -954,15 +954,7 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 	public boolean isNumericMode() {
 		return fNumericMode;
 	}
-
-	/**
-	 * 
-	 * @return <code>true</code> if the <i>stop after evaluation mode</i> is set.
-	 */
-	public boolean isStopAfterEvaluationMode() {
-		return fStopAfterEvaluationMode;
-	}
-
+ 
 	/**
 	 * If the trace mode is set the system writes an evaluation trace list or if
 	 * additionally the <i>stop after evaluation mode</i> is set returns the first
@@ -1000,25 +992,18 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 		fSessionID = string;
 	}
 
-	/**
-	 * Set the <i>stop after evaluation mode</i>, for getting the result of an
-	 * evaluation step b step..
-	 * 
-	 * @param b
-	 */
-	public void setStopAfterEvaluationMode(final boolean b) {
-		fStopAfterEvaluationMode = b;
-	}
-
-	public void beginTrace(PatternMatcher matcher) {
+	public void beginTrace(Predicate<IExpr>  matcher, IAST list) {
 		setTraceMode(true);
-		fTraceStack = new TraceStack(matcher);
+		fTraceStack = new TraceStack(matcher, list);
 	}
 
 	public IAST endTrace() {
 		setTraceMode(false);
 		IAST ast = fTraceStack.getList();
 		fTraceStack = null;
+		if (ast.size() > 1) {
+			return ast.getAST(1);
+		}
 		return ast;
 	}
 

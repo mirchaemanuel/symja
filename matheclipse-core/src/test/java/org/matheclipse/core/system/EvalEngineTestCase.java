@@ -32,7 +32,7 @@ public class EvalEngineTestCase extends SpecialTestCase {
 		assertEquals(result.toString(), "1 0 ");
 	}
 
-	public void testStepByStep() {
+	public void testEvalTrace() {
 		try {
 
 			EvalEngine engine = EvalEngine.get();
@@ -45,69 +45,14 @@ public class EvalEngineTestCase extends SpecialTestCase {
 			StringBufferWriter buf;
 			if (expr != null) {
 				// Step 1
-				result = engine.evalStepByStep(expr);
+				result = engine.evalTrace(expr, null, F.List());
 				if (result != null) {
 					buf = new StringBufferWriter();
 					buf.setIgnoreNewLine(true);
 					// convert the result back to output form
 					OutputFormFactory.get().convert(buf, result);
-					assertEquals(buf.toString(), "5^2*x^2+3^2*x^2");
+					assertEquals(buf.toString(), "{{(3*x)^2,3^2*x^2,{3^2,9},9*x^2},{(5*x)^2,5^2*x^2,{5^2,25},25*x^2},25*x^2+9*x^2,(25+9)*Times[x^2],{25+9,34},34*x^2}");
 				}
-				expr = result;
-			}
-			if (expr != null) {
-				// Step 2
-				result = engine.evalStepByStep(expr);
-				if (result != null) {
-					buf = new StringBufferWriter();
-					buf.setIgnoreNewLine(true);
-					OutputFormFactory.get().convert(buf, result);
-					assertEquals(buf.toString(), "25*x^2+9*x^2");
-				}
-				expr = result;
-			}
-			if (expr != null) {
-				// Step 3
-				result = engine.evalStepByStep(expr);
-				if (result != null) {
-					buf = new StringBufferWriter();
-					buf.setIgnoreNewLine(true);
-					OutputFormFactory.get().convert(buf, result);
-					// the Times[] expression occurs here, because the OneIdentity
-					// attribute for Times is evaluated after this step
-					assertEquals(buf.toString(), "(25+9)*Times[x^2]");
-				}
-				expr = result;
-			}
-			if (expr != null) {
-				// Step 3
-				result = engine.evalStepByStep(expr);
-				if (result != null) {
-					buf = new StringBufferWriter();
-					buf.setIgnoreNewLine(true);
-					OutputFormFactory.get().convert(buf, result);
-					assertEquals(buf.toString(), "(25+9)*x^2");
-				}
-				expr = result;
-			}
-
-			if (expr != null) {
-				// Step 4
-				result = engine.evalStepByStep(expr);
-				if (result != null) {
-					buf = new StringBufferWriter();
-					buf.setIgnoreNewLine(true);
-					OutputFormFactory.get().convert(buf, result);
-					assertEquals(buf.toString(), "34*x^2");
-				}
-				expr = result;
-			}
-
-			if (expr != null) {
-				// Step 5
-				result = engine.evalStepByStep(expr);
-				// no further
-				assertEquals(result, null);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

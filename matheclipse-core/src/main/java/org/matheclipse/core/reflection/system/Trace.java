@@ -27,30 +27,11 @@ public class Trace implements IFunctionEvaluator {
 		if (ast.size() == 3) {
 			matcher = new PatternMatcher(ast.get(2));
 		}
-
-		final IAST holdList = F.function(F.Hold);
 		final EvalEngine engine = EvalEngine.get();
-		IAST traceList = null;
-		try {
-			engine.beginTrace(matcher);
-			// engine.setTraceMode(true);
-			// engine.setTraceList(F.List());
-			engine.evaluate(temp);
-		} finally {
-			traceList = engine.endTrace();
-			// engine.setTraceMode(false);
-			// traceList = engine.getTraceList();
-		}
-		if (traceList != null) {
-			if (traceList.size() == 2) {
-				holdList.add(traceList.get(1));
-			} else {
-				// no trace available
-				holdList.add(traceList);
-			}
-			return holdList;
-		}
-		return null;
+		IAST traceList = engine.evalTrace(temp, matcher, F.List());
+		final IAST holdList = F.function(F.Hold);
+		holdList.add(traceList);
+		return holdList;
 	}
 
 	public IExpr numericEval(final IAST functionList) {

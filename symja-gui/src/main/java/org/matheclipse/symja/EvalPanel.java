@@ -172,12 +172,6 @@ public class EvalPanel extends JPanel { // implements DocumentListener {
 									TeXConstants.ALIGN_LEFT);
 							setBusy(false);
 							jOutputPane.addIcon(ticon, 0, true);
-							// JMathComponent component = new JMathComponent();
-							// component.setFontSize(FONT_SIZE_MATHML);
-							// component.setFont(new Font("miscfixed", 0, 16));
-							// component.setContent(buf1.toString());
-							// setBusy(false);
-							// jOutputPane.addComponent(component, 0, true);
 						}
 					} catch (final Exception e) {
 						e.printStackTrace();
@@ -241,7 +235,7 @@ public class EvalPanel extends JPanel { // implements DocumentListener {
 	/**
 	 * Calculation thread implemented as internal class
 	 */
-	class CalcStepwiseThread extends Thread {
+	class CalcTraceThread extends Thread {
 		String command;
 
 		/**
@@ -270,12 +264,8 @@ public class EvalPanel extends JPanel { // implements DocumentListener {
 
 				final StringBufferWriter buf0 = new StringBufferWriter();
 
-				// use evalStepByStep method
-				final IExpr expr = EVAL.constrainedEval(buf0, command, true // use
-						// evalStepByStep
-						// method
-						);
-				// eval(buf0, command);
+				// use evalTrace method
+				final IExpr expr = EVAL.constrainedEval(buf0, command, true);
 
 				if (printBuffer.getBuffer().length() > 0) {
 					// print error messages ...
@@ -285,8 +275,6 @@ public class EvalPanel extends JPanel { // implements DocumentListener {
 				if (buf0.getBuffer().length() > 0 && fPrettyPrintStyle.isSelected()) {
 
 					final StringBufferWriter buf1 = new StringBufferWriter();
-					// final MathMLUtilities mathUtil = new MathMLUtilities(EVAL_ENGINE,
-					// false);
 					final TeXUtilities texUtil = new TeXUtilities(EVAL_ENGINE);
 					try {
 						if (expr != null) {
@@ -297,22 +285,12 @@ public class EvalPanel extends JPanel { // implements DocumentListener {
 									TeXConstants.ALIGN_LEFT);
 							setBusy(false);
 							jOutputPane.addIcon(ticon, 0, true);
-							// JMathComponent component = new JMathComponent();
-							// component.setFontSize(FONT_SIZE_MATHML);
-							// component.setFont(new Font("miscfixed", 0, 16));
-							// component.setContent(buf1.toString());
-							// setBusy(false);
-							// jOutputPane.addComponent(component, 0, true);
 						}
 					} catch (final Exception e) {
 						e.printStackTrace();
 					}
 				} else {
 					String result = buf0.toString();
-					if (expr != null) {
-						// use the FullForm[] string to avoid problems with Flat and Orderless from input format
-						jInputArea.setText(expr.fullFormString());
-					}
 					jOutputPane.printOutColored("Out[" + commandHistoryStoreIndex + "]=" + result + "\n");
 				}
 			} catch (final MathException ex) {
@@ -562,15 +540,15 @@ public class EvalPanel extends JPanel { // implements DocumentListener {
 		calcThread.start();
 	}
 
-	private void evalStepwiseInputField() {
+	private void evalTraceInputField() {
 		final String cmd = jInputArea.getText();
 		jInputArea.setText("");
 		if (cmd.length() > 0) {
-			evalStepwise(cmd);
+			evalTrace(cmd);
 		}
 	}
 
-	private void evalStepwise(final String cmd) {
+	private void evalTrace(final String cmd) {
 		if (fInitThread != null) {
 			try {
 				fInitThread.join();
@@ -585,9 +563,9 @@ public class EvalPanel extends JPanel { // implements DocumentListener {
 		jInputArea.setText("");
 		jOutputPane.printOutColored("In[" + commandHistoryStoreIndex + "]=" + cmd + "\n\n");
 		setBusy(true);
-		CalcStepwiseThread calcStepwiseThread = new CalcStepwiseThread();
-		calcStepwiseThread.setCommand(cmd);
-		EventQueue.invokeLater(calcStepwiseThread);
+		CalcTraceThread calcTraceThread = new CalcTraceThread();
+		calcTraceThread.setCommand(cmd);
+		EventQueue.invokeLater(calcTraceThread);
 	}
 
 	/**
@@ -783,10 +761,10 @@ public class EvalPanel extends JPanel { // implements DocumentListener {
 		});
 		buttonsPanel.add(b2);
 
-		final JButton bsw = new JButton("Stepwise");
+		final JButton bsw = new JButton("Trace");
 		bsw.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(final java.awt.event.ActionEvent e) {
-				evalStepwiseInputField();
+				evalTraceInputField();
 			}
 		});
 		buttonsPanel.add(bsw);
