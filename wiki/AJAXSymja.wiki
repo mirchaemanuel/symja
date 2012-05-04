@@ -63,7 +63,7 @@ The simplified online *[http://mobmath.appspot.com/ Eval API]* lets you dynamica
 
 On testiphone.com you can try the same example online in an [http://www.testiphone.com/?view=hor&url=http%3A%2F%2Fmobmath.appspot.com%2F%3Fci%3Dx1%3AX%3Ai%3A10%7Cy1%3AY%3Ai%3A2%26ca%3Dx%21%3Ax1%21%7CFibonacci%5Bx%5D%3AFibonacci%5Bx1%5D%7CBinomial%5Bx%2Cy%5D%3ABinomial%5Bx1%2Cy1%5D iPhone simulator] (you should use the Safari browser to get the real experience). 
 
-Here is a link for the general [http://www.testiphone.com/?view=hor&url=http%3A%2F%2Fmobmath.appspot.com%2F iPhone AJAX interface]
+Here is a link for the general [http://www.testiphone.com/?view=hor&url=http%3A%2F%2Fsymjaweb.appspot.com%2F iPhone AJAX interface]
 
 The corresponding JSP file for the Evaluation API is the *index.jsp* file
 
