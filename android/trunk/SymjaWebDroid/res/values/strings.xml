@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">SymjaWebDroid</string>
+    <string name="app_name">SymjaWebDroid</string> 
     <string name="app_desc">SymjaWebDroid - Computer Algebra System</string>
-    <string name="app_copy_symjaandroid">SymjaDroid Android Port Copyright (C) 2011 Axel Kramer. All Rights Reserved.</string>
+    <string name="app_copy_symjaandroid">SymjaWebDroid Android Port Copyright @#169; 2012 Axel Kramer. All Rights Reserved.</string>
     <string name="file_name_scratch_input">symjadroid_scratch_input.txt"</string>
     <string name="file_name_scratch_output">"symjadroid_scratch_output.txt"</string>
     <string name="file_name_work">"symjadroid_work.txt"</string>
