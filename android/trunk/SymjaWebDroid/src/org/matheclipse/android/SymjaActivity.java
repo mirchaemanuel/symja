@@ -46,6 +46,7 @@ import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
@@ -75,7 +76,7 @@ import android.widget.TextView;
 public class SymjaActivity extends SymjaBase implements View.OnClickListener {
 	protected static final String TAG = "SymjaActivity";
 
-	protected EditText _txtOutput = null;
+	protected TextView _txtOutput = null;
 	protected Button _symEnter = null;
 	protected Button _numEnter = null;
 	protected Button _cmdLoadScratch = null;
@@ -115,7 +116,7 @@ public class SymjaActivity extends SymjaBase implements View.OnClickListener {
 		// set a custom title from the strings table
 		setTitle(getString(R.string.app_desc));
 
-		_txtOutput = (EditText) findViewById(R.id.txt_output);
+		_txtOutput = (TextView) findViewById(R.id.txt_output);
 		_txtOutput.setTextSize(TextSize.NORMAL);
 		_txtOutput.setTypeface(Typeface.MONOSPACE);
 		_txtOutput.setTextColor(Color.GREEN);
@@ -160,9 +161,9 @@ public class SymjaActivity extends SymjaBase implements View.OnClickListener {
 		showAbout();
 
 		// and let the interpreter show a little sample
-		String DSin = "D[Sin[x]^2,x]";
-		evalCodeStringSync(DSin);
-		_txtInput.setText(DSin);
+		// String DSin = "D[Sin[x]^2,x]";
+		// evalCodeStringSync(DSin);
+		// _txtInput.setText(DSin);
 
 		_txtInput.setOnKeyListener(new OnKeyListener() {
 
@@ -305,7 +306,8 @@ public class SymjaActivity extends SymjaBase implements View.OnClickListener {
 			saveScratchFiles();
 			break;
 		case R.id.cmd_clear:
-			clearBuffers();
+			_txtInput.setText("");
+			// clearBuffers();
 			break;
 		default:
 			// do nothing
@@ -345,6 +347,9 @@ public class SymjaActivity extends SymjaBase implements View.OnClickListener {
 			return true;
 		case R.id.menu_itm_app_about:
 			showAbout();
+			return true;
+		case R.id.mainMenuPreferences:
+			startActivity(new Intent(this, ShowSettingsActivity.class));
 			return true;
 		default: // not our items
 			return super.onOptionsItemSelected(item); // pass item id up

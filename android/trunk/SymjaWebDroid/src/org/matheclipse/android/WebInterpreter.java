@@ -8,7 +8,6 @@ import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 
 import org.matheclipse.parser.client.Parser;
-import org.matheclipse.parser.client.ast.ASTNode;
 
 import com.google.api.client.extensions.android2.AndroidHttp;
 import com.google.api.client.http.ByteArrayContent;
@@ -43,7 +42,7 @@ public class WebInterpreter {
 
 	public String interpreter(final String strEval) {
 		HttpRequestFactory rf = transport.createRequestFactory();
-		GenericUrl url = new GenericUrl("http://mobmath.appspot.com/calc");
+		GenericUrl url = new GenericUrl("http://symjaweb.appspot.com/calc");
 		url.put("evaluate", strEval);
 		HttpRequest request;
 		final StringBuffer buf = new StringBuffer();
