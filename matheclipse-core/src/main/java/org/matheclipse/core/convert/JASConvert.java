@@ -14,6 +14,7 @@ import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.IFraction;
 import org.matheclipse.core.interfaces.IInteger;
 import org.matheclipse.core.interfaces.INum;
+import org.matheclipse.core.interfaces.INumber;
 import org.matheclipse.core.interfaces.ISymbol;
 
 import com.google.common.base.Predicates;
@@ -635,5 +636,16 @@ public class JASConvert<C extends RingElem<C>> {
 		IFraction re = F.fraction(c.getRe().numerator(), c.getRe().denominator());
 		IFraction im = F.fraction(c.getIm().numerator(), c.getIm().denominator());
 		return F.complex(re, im);
+	}
+
+	public static INumber jas2Numeric(edu.jas.poly.Complex<BigRational> c, double epsilon) {
+		IFraction re = F.fraction(c.getRe().numerator(), c.getRe().denominator());
+		double red = re.doubleValue();
+		IFraction im = F.fraction(c.getIm().numerator(), c.getIm().denominator());
+		double imd = im.doubleValue();
+		if (F.isZero(imd, epsilon)) {
+			return F.num(red);
+		}
+		return F.complexNum(red, imd);
 	}
 }

@@ -686,7 +686,6 @@ public final class BigInteger implements GcdRingElem<BigInteger>,
     public Iterator<BigInteger> iterator() {
         return new BigIntegerIterator(nonNegative);
     }
-
 }
 
 

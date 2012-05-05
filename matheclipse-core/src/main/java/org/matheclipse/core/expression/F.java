@@ -2022,9 +2022,7 @@ public class F {
 	}
 
 	public static IComplexNum complexNum(final IFraction obj) {
-		final double n = obj.getBigNumerator().doubleValue();
-		final double d = obj.getBigDenominator().doubleValue();
-		return F.complexNum(n / d, 0.0d);
+		return F.complexNum(obj.doubleValue(), 0.0d);
 	}
 
 	public static IComplexNum complexNum(final IComplex obj) {
