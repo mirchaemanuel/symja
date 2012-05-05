@@ -20,6 +20,8 @@ import edu.jas.poly.GenPolynomial;
 import edu.jas.root.ComplexRootsAbstract;
 import edu.jas.root.ComplexRootsSturm;
 import edu.jas.root.InvalidBoundaryException;
+import edu.jas.root.RealRootsAbstract;
+import edu.jas.root.RealRootsSturm;
 import edu.jas.root.Rectangle;
 import edu.jas.ufd.Squarefree;
 import edu.jas.ufd.SquarefreeFactory;
@@ -37,7 +39,7 @@ public class RootIntervals extends AbstractFunctionEvaluator {
 	public IExpr evaluate(final IAST ast) {
 		Validate.checkSize(ast, 2);
 
-		return croots(ast);
+		return croots(ast.get(1), false);
 	}
 
 	/**
@@ -46,15 +48,15 @@ public class RootIntervals extends AbstractFunctionEvaluator {
 	 * @param ast
 	 * @return
 	 */
-	private static IAST croots(final IAST ast) {
+	public static IAST croots(final IExpr arg, boolean numeric) {
 
 		try {
-			ExprVariables eVar = new ExprVariables(ast.get(1));
+			ExprVariables eVar = new ExprVariables(arg);
 			if (!eVar.isSize(1)) {
 				// only possible for univariate polynomials
 				return null;
 			}
-			IExpr expr = F.evalExpandAll(ast.get(1));
+			IExpr expr = F.evalExpandAll(arg);
 			ASTRange r = new ASTRange(eVar.getVarList(), 1);
 			List<IExpr> varList = r.toList();
 
@@ -68,27 +70,30 @@ public class RootIntervals extends AbstractFunctionEvaluator {
 			poly = engine.squarefreePart(poly);
 
 			List<Rectangle<BigRational>> roots = cr.complexRoots(poly);
-			// System.out.println("a = " + a);
-			// System.out.println("roots = " + roots);
-			// assertTrue("#roots == deg(a) ", roots.size() == poly.degree(0));
 
-			BigRational len = new BigRational(1, 1000);
-			// System.out.println("len = " + len);
+			BigRational len = new BigRational(1, 100000L);
 
 			IAST resultList = F.List();
-			IAST rectangleList;
-			for (Rectangle<BigRational> root : roots) {
 
-				rectangleList = F.List();
-				// System.out.println(root.toString());
-				Rectangle<BigRational> refine = cr.complexRootRefinement(root, poly, len);
-				rectangleList.add(JASConvert.jas2Complex(refine.getNW()));
-				rectangleList.add(JASConvert.jas2Complex(refine.getSW()));
-				rectangleList.add(JASConvert.jas2Complex(refine.getSE()));
-				rectangleList.add(JASConvert.jas2Complex(refine.getNE()));
-				resultList.add(rectangleList);
-				// System.out.println("refine = " + refine);
+			if (numeric) {
+				for (Rectangle<BigRational> root : roots) {
+					Rectangle<BigRational> refine = cr.complexRootRefinement(root, poly, len);
+					resultList.add(JASConvert.jas2Numeric(refine.getCenter(), 1.0e-5));
+				}
+			} else {
+				IAST rectangleList;
+				for (Rectangle<BigRational> root : roots) {
+					rectangleList = F.List();
 
+					Rectangle<BigRational> refine = cr.complexRootRefinement(root, poly, len);
+					rectangleList.add(JASConvert.jas2Complex(refine.getNW()));
+					rectangleList.add(JASConvert.jas2Complex(refine.getSW()));
+					rectangleList.add(JASConvert.jas2Complex(refine.getSE()));
+					rectangleList.add(JASConvert.jas2Complex(refine.getNE()));
+					resultList.add(rectangleList);
+					// System.out.println("refine = " + refine);
+
+				}
 			}
 			return resultList;
 		} catch (InvalidBoundaryException e) {

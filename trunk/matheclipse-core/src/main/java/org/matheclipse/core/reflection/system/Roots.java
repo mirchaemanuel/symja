@@ -34,6 +34,7 @@ import org.matheclipse.core.interfaces.IInteger;
 import edu.jas.arith.BigRational;
 import edu.jas.poly.GenPolynomial;
 import edu.jas.poly.Monomial;
+import edu.jas.root.RootFactory;
 import edu.jas.ufd.FactorAbstract;
 import edu.jas.ufd.FactorFactory;
 
@@ -79,10 +80,10 @@ public class Roots extends AbstractFunctionEvaluator {
 				expr = F.eval(F.Numerator(expr));
 			}
 		}
-		return rootsOfVariable(expr, denom, variables);
+		return rootsOfVariable(expr, denom, variables, false);
 	}
 
-	protected static IAST rootsOfVariable(final IExpr expr, final IExpr denom, final IAST variables) {
+	protected static IAST rootsOfVariable(final IExpr expr, final IExpr denom, final IAST variables, boolean numericSolutions) {
 		// IExpr expr = arg;
 		IAST result = null;
 		// IExpr denom = F.C1;
@@ -102,7 +103,7 @@ public class Roots extends AbstractFunctionEvaluator {
 			JASConvert<BigRational> jas = new JASConvert<BigRational>(varList, BigRational.ZERO);
 			GenPolynomial<BigRational> rPoly = jas.expr2JAS(expr);
 
-			result = rootsOfPolynomial(rPoly, jas);
+			result = rootsOfPolynomial(rPoly, jas, numericSolutions);
 
 		} catch (JASConversionException e) {
 			try {
@@ -243,7 +244,7 @@ public class Roots extends AbstractFunctionEvaluator {
 		return null;
 	}
 
-	private static IAST rootsOfPolynomial(GenPolynomial<BigRational> poly, JASConvert<BigRational> jas) {
+	private static IAST rootsOfPolynomial(GenPolynomial<BigRational> poly, JASConvert<BigRational> jas, boolean numericSolutions) {
 		FactorAbstract<BigRational> factorAbstract = FactorFactory.getImplementation(BigRational.ONE);
 		SortedMap<GenPolynomial<BigRational>, Long> map = factorAbstract.baseFactors(poly);
 		IAST result = List();// function(Or);
@@ -253,11 +254,11 @@ public class Roots extends AbstractFunctionEvaluator {
 		for (SortedMap.Entry<GenPolynomial<BigRational>, Long> entry : map.entrySet()) {
 			GenPolynomial<BigRational> key = entry.getKey();
 			GenPolynomial<edu.jas.arith.BigInteger> iPoly = (GenPolynomial<edu.jas.arith.BigInteger>) jas.factorTerms(key)[2];
-			Long val = entry.getValue();
-			long varDegree = iPoly.degree(0);
 			if (iPoly.isConstant()) {
 				continue;
 			}
+			Long val = entry.getValue();
+			long varDegree = iPoly.degree(0);
 			if (varDegree <= 2) {
 				// solve Quadratic equation: a*x^2 + b*x + c = 0
 				a = C0;
@@ -349,7 +350,17 @@ public class Roots extends AbstractFunctionEvaluator {
 				// result.add(Times(CN1D3, Plus(a, Times(omega1, t1), Times(omega2,
 				// t2))));
 			} else {
-				result.add(Power(jas.integerPoly2Expr(iPoly), integer(val)));
+				IExpr temp = Power(jas.integerPoly2Expr(iPoly), integer(val));
+				if (!numericSolutions) {
+					result.add(temp);
+				} else {
+					IAST resultList = RootIntervals.croots(temp, true);
+					if (resultList.size() > 0) {
+						result.addAll(resultList);
+					} else {
+						result.add(temp);
+					}
+				}
 			}
 		}
 		return result;
