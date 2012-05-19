@@ -56,7 +56,7 @@ import org.apache.commons.math3.util.FastMath;
  * Negative binomial distribution (Wikipedia)</a>
  * @see <a href="http://mathworld.wolfram.com/NegativeBinomialDistribution.html">
  * Negative binomial distribution (MathWorld)</a>
- * @version $Id: PascalDistribution.java 1244107 2012-02-14 16:17:55Z erans $
+ * @version $Id: PascalDistribution.java 1336915 2012-05-10 21:53:43Z tn $
  * @since 1.2 (changed to concrete class in 3.0)
  */
 public class PascalDistribution extends AbstractIntegerDistribution {
@@ -130,7 +130,7 @@ public class PascalDistribution extends AbstractIntegerDistribution {
             ret = 0.0;
         } else {
             ret = Beta.regularizedBeta(probabilityOfSuccess,
-                    numberOfSuccesses, x + 1);
+                    numberOfSuccesses, x + 1.0);
         }
         return ret;
     }

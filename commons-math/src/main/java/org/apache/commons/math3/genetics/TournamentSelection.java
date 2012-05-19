@@ -29,7 +29,7 @@ import org.apache.commons.math3.exception.util.LocalizedFormats;
  * fittest chromosome among them.
  *
  * @since 2.0
- * @version $Id: TournamentSelection.java 1244107 2012-02-14 16:17:55Z erans $
+ * @version $Id: TournamentSelection.java 1310103 2012-04-05 22:08:45Z tn $
  */
 public class TournamentSelection implements SelectionPolicy {
 
@@ -51,12 +51,12 @@ public class TournamentSelection implements SelectionPolicy {
      * drawing {@link #arity} random chromosomes without replacement from the
      * population, and then selecting the fittest chromosome among them.
      *
-     * @param population the population from which the chromosomes are choosen.
+     * @param population the population from which the chromosomes are chosen.
      * @return the selected chromosomes.
      */
     public ChromosomePair select(final Population population) {
         return new ChromosomePair(tournament((ListPopulation) population),
-                                  tournament((ListPopulation)population));
+                                  tournament((ListPopulation) population));
     }
 
     /**
