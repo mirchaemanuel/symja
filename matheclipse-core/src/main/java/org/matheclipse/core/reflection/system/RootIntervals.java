@@ -20,8 +20,6 @@ import edu.jas.poly.GenPolynomial;
 import edu.jas.root.ComplexRootsAbstract;
 import edu.jas.root.ComplexRootsSturm;
 import edu.jas.root.InvalidBoundaryException;
-import edu.jas.root.RealRootsAbstract;
-import edu.jas.root.RealRootsSturm;
 import edu.jas.root.Rectangle;
 import edu.jas.ufd.Squarefree;
 import edu.jas.ufd.SquarefreeFactory;
@@ -43,7 +41,7 @@ public class RootIntervals extends AbstractFunctionEvaluator {
 	}
 
 	/**
-	 * Complex roots intervals.
+	 * Complex numeric roots intervals.
 	 * 
 	 * @param ast
 	 * @return
@@ -64,7 +62,7 @@ public class RootIntervals extends AbstractFunctionEvaluator {
 			ComplexRootsAbstract<BigRational> cr = new ComplexRootsSturm<BigRational>(cfac);
 
 			JASConvert<Complex<BigRational>> jas = new JASConvert<Complex<BigRational>>(varList, cfac);
-			GenPolynomial<Complex<BigRational>> poly = jas.expr2JAS(expr);
+			GenPolynomial<Complex<BigRational>> poly = jas.numericExpr2JAS(expr);
 
 			Squarefree<Complex<BigRational>> engine = SquarefreeFactory.<Complex<BigRational>> getImplementation(cfac);
 			poly = engine.squarefreePart(poly);

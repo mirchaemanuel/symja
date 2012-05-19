@@ -26,6 +26,7 @@ import org.matheclipse.core.expression.F;
 import org.matheclipse.core.expression.MethodSymbol;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IComplex;
+import org.matheclipse.core.interfaces.IComplexNum;
 import org.matheclipse.core.interfaces.IEvaluationEngine;
 import org.matheclipse.core.interfaces.IEvaluator;
 import org.matheclipse.core.interfaces.IExpr;
@@ -35,7 +36,6 @@ import org.matheclipse.core.interfaces.INumber;
 import org.matheclipse.core.interfaces.ISignedNumber;
 import org.matheclipse.core.interfaces.ISymbol;
 import org.matheclipse.core.list.algorithms.EvaluationSupport;
-import org.matheclipse.core.patternmatching.PatternMatcher;
 import org.matheclipse.core.sql.SerializeVariables2DB;
 import org.matheclipse.parser.client.Parser;
 import org.matheclipse.parser.client.ast.ASTNode;
@@ -374,11 +374,9 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 		return (instance.get()).evaluateNull(expr);
 	}
 
-
 	/**
-	 * Evaluate the expression and return the
-	 * <code>Trace[expr]</code> (i.e. all (sub-)expressions needed to calculate the
-	 * result).
+	 * Evaluate the expression and return the <code>Trace[expr]</code> (i.e. all
+	 * (sub-)expressions needed to calculate the result).
 	 * 
 	 * @param expr
 	 *          the expression which should be evaluated.
@@ -424,13 +422,16 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 	// return null;
 	// }
 	//
-	// protected IExpr evalDoubleComplex(final IComplexNum obj) {
-	// if (!fNumericMode) {
-	// fNumericMode = true;
-	// return obj;
-	// }
-	// return null;
-	// }
+	protected IExpr evalComplexNum(final IComplexNum cnum) {
+		// if (!fNumericMode) {
+		// fNumericMode = true;
+		// return obj;
+		// }
+		if (F.isZero(cnum.getImaginaryPart())){
+			return F.num(cnum.getRealPart());
+		}
+		return null;
+	}
 
 	protected IExpr evalFraction(final IFraction obj) {
 		if (fNumericMode) {
@@ -823,7 +824,7 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 			}
 			temp = evalObject(result);
 			if (temp != null) {
-				if (fTraceMode) { 
+				if (fTraceMode) {
 					fTraceStack.addIfEmpty(expr);
 					fTraceStack.add(temp);
 				}
@@ -887,9 +888,9 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 			if (obj instanceof ISignedNumber) {
 				return evalSignedNumber((ISignedNumber) obj);
 			}
-			// if (obj instanceof IComplexNum) {
-			// return evalDoubleComplex((IComplexNum) obj);
-			// }
+			if (obj instanceof IComplexNum) {
+				return evalComplexNum((IComplexNum) obj);
+			}
 			if (obj instanceof IComplex) {
 				return evalComplex((IComplex) obj);
 			}
@@ -954,7 +955,7 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 	public boolean isNumericMode() {
 		return fNumericMode;
 	}
- 
+
 	/**
 	 * If the trace mode is set the system writes an evaluation trace list or if
 	 * additionally the <i>stop after evaluation mode</i> is set returns the first
@@ -992,7 +993,7 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 		fSessionID = string;
 	}
 
-	public void beginTrace(Predicate<IExpr>  matcher, IAST list) {
+	public void beginTrace(Predicate<IExpr> matcher, IAST list) {
 		setTraceMode(true);
 		fTraceStack = new TraceStack(matcher, list);
 	}

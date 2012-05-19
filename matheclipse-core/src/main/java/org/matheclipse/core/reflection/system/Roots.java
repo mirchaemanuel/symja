@@ -2,8 +2,14 @@ package org.matheclipse.core.reflection.system;
 
 import static org.matheclipse.core.expression.F.C0;
 import static org.matheclipse.core.expression.F.C1;
+import static org.matheclipse.core.expression.F.C1D2;
+import static org.matheclipse.core.expression.F.C1D3;
 import static org.matheclipse.core.expression.F.C2;
+import static org.matheclipse.core.expression.F.C3;
+import static org.matheclipse.core.expression.F.C4;
 import static org.matheclipse.core.expression.F.CI;
+import static org.matheclipse.core.expression.F.CN1D2;
+import static org.matheclipse.core.expression.F.CN1D3;
 import static org.matheclipse.core.expression.F.List;
 import static org.matheclipse.core.expression.F.Plus;
 import static org.matheclipse.core.expression.F.Power;
@@ -34,7 +40,6 @@ import org.matheclipse.core.interfaces.IInteger;
 import edu.jas.arith.BigRational;
 import edu.jas.poly.GenPolynomial;
 import edu.jas.poly.Monomial;
-import edu.jas.root.RootFactory;
 import edu.jas.ufd.FactorAbstract;
 import edu.jas.ufd.FactorFactory;
 
@@ -84,19 +89,20 @@ public class Roots extends AbstractFunctionEvaluator {
 	}
 
 	protected static IAST rootsOfVariable(final IExpr expr, final IExpr denom, final IAST variables, boolean numericSolutions) {
-		// IExpr expr = arg;
+
+		if (numericSolutions) {
+			IAST result = List();
+			IAST resultList = RootIntervals.croots(expr, true);
+			if (resultList == null) {
+				return null;
+			}
+			if (resultList.size() > 0) {
+				result.addAll(resultList);
+			}
+			return result;
+		}
+
 		IAST result = null;
-		// IExpr denom = F.C1;
-		// if (expr.isAST()) {
-		// expr = Together.together((IAST) expr);
-		//
-		// // split expr into numerator and denominator
-		// denom = F.eval(F.Denominator(expr));
-		// if (!denom.isOne()) {
-		// // search roots for the numerator expression
-		// expr = F.eval(F.Numerator(expr));
-		// }
-		// }
 		ASTRange r = new ASTRange(variables, 1);
 		List<IExpr> varList = r.toList();
 		try {
@@ -299,56 +305,31 @@ public class Roots extends AbstractFunctionEvaluator {
 						result.add(Times(rev2a, Plus(b.negate(), sqrt.negative())));
 					}
 				}
-				// } else if (varDegree <= 3) {
-				// iPoly = iPoly.monic();
-				// // solve Cubic equation: x^3 + a*x^2 + b*x + c = 0
-				// a = C0;
-				// b = C0;
-				// c = C0;
-				// for (Monomial<edu.jas.arith.BigInteger> monomial : iPoly) {
-				// edu.jas.arith.BigInteger coeff = monomial.coefficient();
-				// long lExp = monomial.exponent().getVal(0);
-				// if (lExp == 2) {
-				// a = integer(coeff.getVal());
-				// } else if (lExp == 1) {
-				// b = integer(coeff.getVal());
-				// } else if (lExp == 0) {
-				// c = integer(coeff.getVal());
-				// } else if (lExp == 3) {
-				// if (!coeff.equals(edu.jas.arith.BigInteger.ONE)) {
-				// throw new
-				// ArithmeticException("Roots::Solution for cubic equation with leading coefficient: \""
-				// + coeff.toString()
-				// + "\" != 1 currently not implemented: ");
-				// }
-				// } else {
-				// throw new ArithmeticException("Roots::Unexpected exponent value: " +
-				// lExp);
-				// }
-				// }
-				// // m = 2*a^3 - 9*a*b + 27* c
-				// IInteger m =
-				// C2.multiply(a.pow(3)).subtract(a.multiply(b.multiply(integer(9)))).add(c.multiply(integer(27)));
-				// // k = a^2 - 3*b
-				// IInteger k = a.pow(2).subtract(C3.multiply(b));
-				// // n = m^2 - 4*k^3
-				// IInteger n = m.pow(2).subtract(C4.multiply(k.pow(3)));
-				//
-				// // omega1 = -(1/2) + 1/2 * Sqrt[3] * I
-				// IExpr omega1 = Plus(CN1D2, Times(C1D2, Sqrt(C3), CI));
-				// // omega2 = -(1/2) - 1/2 * Sqrt[3] * I
-				// IExpr omega2 = Plus(CN1D2, Times(CN1D2, Sqrt(C3), CI));
-				//
-				// // t1 = (1/2 * (m + n^(1/2))) ^ (1/3)
-				// IExpr t1 = Power(Times(C1D2, Plus(m, Sqrt(n))), C1D3);
-				// // t2 = (1/2 * (m - n^(1/2))) ^ (1/3)
-				// IExpr t2 = Power(Times(C1D2, Subtract(m, Sqrt(n))), C1D3);
-				//
-				// result.add(Times(CN1D3, Plus(a, t1, t2)));
-				// result.add(Times(CN1D3, Plus(a, Times(omega2, t1), Times(omega1,
-				// t2))));
-				// result.add(Times(CN1D3, Plus(a, Times(omega1, t1), Times(omega2,
-				// t2))));
+			} else if (varDegree <= 3) {
+				iPoly = iPoly.monic();
+				// solve Cubic equation: x^3 + a*x^2 + b*x + c = 0
+				a = C0;
+				b = C0;
+				c = C0;
+				for (Monomial<edu.jas.arith.BigInteger> monomial : iPoly) {
+					edu.jas.arith.BigInteger coeff = monomial.coefficient();
+					long lExp = monomial.exponent().getVal(0);
+					if (lExp == 2) {
+						a = integer(coeff.getVal());
+					} else if (lExp == 1) {
+						b = integer(coeff.getVal());
+					} else if (lExp == 0) {
+						c = integer(coeff.getVal());
+					} else if (lExp == 3) {
+						if (!coeff.equals(edu.jas.arith.BigInteger.ONE)) {
+							throw new ArithmeticException("Roots::Solution for cubic equation with leading coefficient: \"" + coeff.toString()
+									+ "\" != 1 currently not implemented: ");
+						}
+					} else {
+						throw new ArithmeticException("Roots::Unexpected exponent value: " + lExp);
+					}
+				}
+				cubicSolution(result, F.C1, a, b, c);
 			} else {
 				IExpr temp = Power(jas.integerPoly2Expr(iPoly), integer(val));
 				if (!numericSolutions) {
@@ -364,6 +345,44 @@ public class Roots extends AbstractFunctionEvaluator {
 			}
 		}
 		return result;
+	}
+
+	/**
+	 * Calculate the roots of the cubic polynomial
+	 * <code>a*x^3 + b*x^2 + c*x + d</code>. See <a href=
+	 * "http://en.wikipedia.org/wiki/Cubic_function#General_formula_of_roots"
+	 * >Wikipedia Cubic_function - General_formula_of_roots</a>
+	 * 
+	 * @param result
+	 * @param a
+	 * @param b
+	 * @param c
+	 * @param d
+	 */
+	private static void cubicSolution(IAST result, IInteger a, IInteger b, IInteger c, IInteger d) {
+		// m = 2*b^3 - 9*a*b*c + 27 * a^2 * d
+		IInteger m = C2.multiply(b.pow(3)).subtract(a.multiply(b.multiply(c.multiply(integer(9))))).add(
+				a.pow(2).multiply(d.multiply(integer(27))));
+		// k = b^2 - 3*a*c
+		IInteger k = b.pow(2).subtract(C3.multiply(a.multiply(c)));
+		// n = m^2 - 4*k^3
+		IInteger n = m.pow(2).subtract(C4.multiply(k.pow(3)));
+
+		// omega1 = -(1/2) + 1/2 * Sqrt[3] * I
+		IExpr omega1 = Plus(CN1D2, Times(C1D2, Sqrt(C3), CI));
+		// omega2 = -(1/2) - 1/2 * Sqrt[3] * I
+		IExpr omega2 = Plus(CN1D2, Times(CN1D2, Sqrt(C3), CI));
+
+		// t1 = (1/2 * (m + n^(1/2))) ^ (1/3)
+		IExpr t1 = Power(Times(C1D2, Plus(m, Sqrt(n))), C1D3);
+		// t2 = (1/2 * (m - n^(1/2))) ^ (1/3)
+		IExpr t2 = Power(Times(C1D2, Subtract(m, Sqrt(n))), C1D3);
+
+		// (-1) / (3*a)
+		IFraction n1d3ta = F.fraction(F.CN1, C3.multiply(a));
+		result.add(Times(n1d3ta, Plus(b, t1, t2)));
+		result.add(Times(n1d3ta, Plus(b, Times(omega2, t1), Times(omega1, t2))));
+		result.add(Times(n1d3ta, Plus(b, Times(omega1, t1), Times(omega2, t2))));
 	}
 
 }

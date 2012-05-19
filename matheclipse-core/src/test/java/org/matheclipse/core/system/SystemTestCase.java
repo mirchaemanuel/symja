@@ -117,7 +117,7 @@ public class SystemTestCase extends AbstractTestCase {
 		check("Sec[0.5]", "1.139493927324549");
 		check("N[Cot[I]]", "0.0+I*(-1.313035285499331)");
 		check("N[Csc[I]]", "0.0+I*(-0.8509181282393214)");
-		check("N[Sec[I]]", "0.6480542736638853+I*0.0");
+		check("N[Sec[I]]", "0.6480542736638853");
 	}
 
 	public void testSystem002() {
@@ -133,9 +133,11 @@ public class SystemTestCase extends AbstractTestCase {
 	public void testSystem004() {
 		check("1.0-(1.0-1*(2))", "2.0");
 		check("1-(1-1*(2))", "2");
-		check("Chop[2.0+I*(-2.4492935982947064E-16)]", "2.0+I*0.0");
-		check("Chop[(-2.4492935982947064E-16)+I*0.5]", "0.0+I*0.5");
+		
 		check("Chop[(-2.4492935982947064E-16)+I*(-1.0E-19)]", "0");
+		check("Chop[2.0+I*(-2.4492935982947064E-16)]", "2.0");
+		check("Chop[(-2.4492935982947064E-16)+I*0.5]", "0.0+I*0.5");
+		
 	}
 
 	// public void testSystem004() {
