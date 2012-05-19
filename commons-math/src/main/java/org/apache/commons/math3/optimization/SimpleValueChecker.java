@@ -28,7 +28,7 @@ import org.apache.commons.math3.util.FastMath;
  * threshold or if either the absolute difference between the objective
  * function values is smaller than another threshold.
  *
- * @version $Id: SimpleValueChecker.java 1244107 2012-02-14 16:17:55Z erans $
+ * @version $Id: SimpleValueChecker.java 1329144 2012-04-23 09:27:01Z erans $
  * @since 3.0
  */
 public class SimpleValueChecker
@@ -48,7 +48,7 @@ public class SimpleValueChecker
      * @param absoluteThreshold absolute tolerance threshold
      */
     public SimpleValueChecker(final double relativeThreshold,
-                                    final double absoluteThreshold) {
+                              final double absoluteThreshold) {
         super(relativeThreshold, absoluteThreshold);
     }
 

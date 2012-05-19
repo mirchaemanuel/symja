@@ -19,7 +19,7 @@ package org.apache.commons.math3.ode;
 /** Interface to compute by finite difference Jacobian matrix for some parameter
  *  when computing {@link JacobianMatrices partial derivatives equations}.
  *
- * @version $Id: ParameterizedODE.java 1244107 2012-02-14 16:17:55Z erans $
+ * @version $Id: ParameterizedODE.java 1302386 2012-03-19 11:59:25Z sebb $
  * @since 3.0
  */
 

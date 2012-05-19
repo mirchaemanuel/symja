@@ -16,15 +16,14 @@
  */
 package org.apache.commons.math3.linear;
 
+import org.apache.commons.math3.analysis.function.Sqrt;
+
 /**
  * This class implements the standard Jacobi (diagonal) preconditioner. For a
  * matrix A<sub>ij</sub>, this preconditioner is
- * M = diag(A<sub>11</sub>, A<sub>22</sub>, &hellip;).
- * {@link #create(RealLinearOperator)} returns the <em>inverse</em> of this
- * preconditioner,
- * M<sup>-1</sup> = diag(1 / A<sub>11</sub>, 1 / A<sub>22</sub>, &hellip;)
+ * M = diag(1 / A<sub>11</sub>, 1 / A<sub>22</sub>, &hellip;).
  *
- * @version $Id: JacobiPreconditioner.java 1244107 2012-02-14 16:17:55Z erans $
+ * @version $Id: JacobiPreconditioner.java 1306148 2012-03-28 04:05:59Z celestin $
  * @since 3.0
  */
 public class JacobiPreconditioner extends RealLinearOperator {
@@ -53,8 +52,8 @@ public class JacobiPreconditioner extends RealLinearOperator {
      * some time). With matrices, direct entry access is carried out.
      *
      * @param a the linear operator for which the preconditioner should be built
-     * @return the inverse of the preconditioner made of the inverse of the
-     * diagonal coefficients of the specified linear operator
+     * @return the diagonal preconditioner made of the inverse of the diagonal
+     * coefficients of the specified linear operator
      * @throws NonSquareOperatorException if {@code a} is not square
      */
     public static JacobiPreconditioner create(final RealLinearOperator a)
@@ -95,7 +94,37 @@ public class JacobiPreconditioner extends RealLinearOperator {
     /** {@inheritDoc} */
     @Override
     public RealVector operate(final RealVector x) {
-        // Dimension check is carried out by ebeMultiply
+        // Dimension check is carried out by ebeDivide
         return x.ebeDivide(diag);
+    }
+
+    /**
+     * Returns the square root of {@code this} diagonal operator. More
+     * precisely, this method returns
+     * P = diag(1 / &radic;A<sub>11</sub>, 1 / &radic;A<sub>22</sub>, &hellip;).
+     *
+     * @return the square root of {@code this} preconditioner
+     */
+    public RealLinearOperator sqrt(){
+        final RealVector sqrtDiag = diag.map(new Sqrt());
+        return new RealLinearOperator() {
+            /** {@inheritDoc} */
+            @Override
+            public RealVector operate(final RealVector x) {
+                return x.ebeDivide(sqrtDiag);
+            }
+
+            /** {@inheritDoc} */
+            @Override
+            public int getRowDimension() {
+                return sqrtDiag.getDimension();
+            }
+
+            /** {@inheritDoc} */
+            @Override
+            public int getColumnDimension() {
+                return sqrtDiag.getDimension();
+            }
+        };
     }
 }

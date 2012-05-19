@@ -23,7 +23,7 @@ import java.util.Map;
 /** Wrapper class to compute Jacobian matrices by finite differences for ODE
  *  which do not compute them by themselves.
  *
- * @version $Id: ParameterJacobianWrapper.java 1244107 2012-02-14 16:17:55Z erans $
+ * @version $Id: ParameterJacobianWrapper.java 1302386 2012-03-19 11:59:25Z sebb $
  * @since 3.0
  */
 class ParameterJacobianWrapper implements ParameterJacobianProvider {

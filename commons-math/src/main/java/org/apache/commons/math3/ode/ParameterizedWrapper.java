@@ -25,7 +25,7 @@ import org.apache.commons.math3.exception.util.LocalizedFormats;
 /** Wrapper class enabling {@link FirstOrderDifferentialEquations basic simple}
  *  ODE instances to be used when processing {@link JacobianMatrices}.
  *
- * @version $Id: ParameterizedWrapper.java 1244107 2012-02-14 16:17:55Z erans $
+ * @version $Id: ParameterizedWrapper.java 1302386 2012-03-19 11:59:25Z sebb $
  * @since 3.0
  */
 class ParameterizedWrapper implements ParameterizedODE {
