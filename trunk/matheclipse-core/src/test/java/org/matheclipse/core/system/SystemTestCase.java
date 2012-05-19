@@ -133,11 +133,11 @@ public class SystemTestCase extends AbstractTestCase {
 	public void testSystem004() {
 		check("1.0-(1.0-1*(2))", "2.0");
 		check("1-(1-1*(2))", "2");
-		
+
 		check("Chop[(-2.4492935982947064E-16)+I*(-1.0E-19)]", "0");
 		check("Chop[2.0+I*(-2.4492935982947064E-16)]", "2.0");
 		check("Chop[(-2.4492935982947064E-16)+I*0.5]", "0.0+I*0.5");
-		
+
 	}
 
 	// public void testSystem004() {
@@ -309,15 +309,12 @@ public class SystemTestCase extends AbstractTestCase {
 	public void testSystem038() {
 		check("Trace[D[Sin[x],x]]", "{{Derivative[Sin],Cos[#1]&},{x&,Cos[x]},Cos[x]*D[x,x],{D[x,x],1},1*Cos[x],Cos[x]}");
 		check("D[Sin[x]^Cos[x],x]", "(-Log[Sin[x]]*Sin[x]+Csc[x]*Cos[x]^2)*Sin[x]^Cos[x]");
-		check(
-				"Trace[D[Sin[x]^Cos[x],x]]",
-				"{D[Sin[x]^Cos[x],x],Sin[x]^Cos[x]*(Log[Sin[x]]*D[Cos[x],x]+Cos[x]*D[Sin[x],x]*Sin[x]^(\n" + 
-				"-1)),{{{{Derivative[Sin],Cos[#1]&},{x&,Cos[x]},Cos[x]*D[x,x],{D[x,x],1},1*Cos[x],Cos[x]},{{{\n" + 
-				"-1<0,True},{{(-1)*(-1),1},Csc[x]^1,{{1<0,False}},Csc[x]},Csc[x]},Csc[x]},Cos[x]*Cos[x]*Csc[x],Csc[x]*Cos[x]^\n" + 
-				"2,{{{2<0,False}}}},{{{Derivative[Cos],-Sin[#1]&},{x&,-Sin[x]},-Sin[x]*D[x,x],{D[x,x],\n" + 
-				"1},(-1)*1*Sin[x],-Sin[x]},Log[Sin[x]]*-Sin[x],-Log[Sin[x]]*Sin[x]},-Log[Sin[x]]*Sin[x]+Csc[x]*Cos[x]^\n" + 
-				"2,{{{{2<0,False}}}}},(-Log[Sin[x]]*Sin[x]+Csc[x]*Cos[x]^2)*Sin[x]^Cos[x],{{{{{2<\n" + 
-				"0,False}}}}}}");
+		check("Trace[D[Sin[x]^Cos[x],x]]", "{D[Sin[x]^Cos[x],x],Sin[x]^Cos[x]*(Log[Sin[x]]*D[Cos[x],x]+Cos[x]*D[Sin[x],x]*Sin[x]^(\n"
+				+ "-1)),{{{{Derivative[Sin],Cos[#1]&},{x&,Cos[x]},Cos[x]*D[x,x],{D[x,x],1},1*Cos[x],Cos[x]},{{{\n"
+				+ "-1<0,True},{{(-1)*(-1),1},Csc[x]^1,{{1<0,False}},Csc[x]},Csc[x]},Csc[x]},Cos[x]*Cos[x]*Csc[x],Csc[x]*Cos[x]^\n"
+				+ "2,{{{2<0,False}}}},{{{Derivative[Cos],-Sin[#1]&},{x&,-Sin[x]},-Sin[x]*D[x,x],{D[x,x],\n"
+				+ "1},(-1)*1*Sin[x],-Sin[x]},Log[Sin[x]]*-Sin[x],-Log[Sin[x]]*Sin[x]},-Log[Sin[x]]*Sin[x]+Csc[x]*Cos[x]^\n"
+				+ "2,{{{{2<0,False}}}}},(-Log[Sin[x]]*Sin[x]+Csc[x]*Cos[x]^2)*Sin[x]^Cos[x],{{{{{2<\n" + "0,False}}}}}}");
 	}
 
 	public void testSystem039() {
@@ -593,8 +590,7 @@ public class SystemTestCase extends AbstractTestCase {
 		check("Eigenvalues[{{0.0,1.0,-1.0},{1.0,1.0,0.0},{-1.0,0.0,1.0}}]",
 				"{1.9999999999999996,0.9999999999999999,-1.0000000000000002}");
 		check("Eigenvalues[{{1,0,0},{0,1,0},{0,0,1}}]", "{1.0,1.0,1.0}");
-		check("Eigenvalues[{{1,0,0},{-2,1,0},{0,0,1}}]",
-				"non symmetric matrix: the difference between entries at (0,1) and (1,0) is larger than 0");
+		check("Eigenvalues[{{1,0,0},{-2,1,0},{0,0,1}}]", "{1.0,1.0,1.0}");
 
 		check("Fit[{2,3,5,7,11,13},3,x]", "-0.08333333333333395*x^3.0+1.1071428571428645*x^2.0-1.9523809523809792*x+3.0000000000000293");
 		check("Fit[{{1,1},{2,4},{3,9},{4,16}},2,x]", "x^2.0");
@@ -2104,8 +2100,7 @@ public class SystemTestCase extends AbstractTestCase {
 		check("FindRoot[Exp[x]==Pi^3,{x,1,10}, Secant]", "{x->3.4341896575036097}");
 		check("FindRoot[Exp[x]==Pi^3,{x,1,10}, Method->RegulaFalsi, MaxIterations->100]",
 				"illegal state: maximal count (100) exceeded: evaluations");
-		check("FindRoot[Exp[x]==Pi^3,{x,1,10}, Method->RegulaFalsi, MaxIterations->32000]",
-				"illegal state: convergence failed");
+		check("FindRoot[Exp[x]==Pi^3,{x,1,10}, Method->RegulaFalsi, MaxIterations->32000]", "illegal state: convergence failed");
 		check("FindRoot[Exp[x]==Pi^3,{x,1,10}, Illinois]", "{x->3.4341896915055257}");
 		check("FindRoot[Exp[x]==Pi^3,{x,1,10}, Pegasus]", "{x->3.4341896575481976}");
 
@@ -2629,20 +2624,20 @@ public class SystemTestCase extends AbstractTestCase {
 	}
 
 	public void testSystem998() {
-		check("RootIntervals[x^4-2]", "{{-1246977/1048576+I*5/1048576,-1246977/1048576-I*1/2097152,-2493943/2097152-I*1/\n" + 
-				"2097152,-2493943/2097152+I*5/1048576},{-1/2097152-I*2493943/2097152,-1/2097152-I*\n" + 
-				"1246977/1048576,5/1048576-I*1246977/1048576,5/1048576-I*2493943/2097152},{-1/\n" + 
-				"2097152+I*4871/4096,-1/2097152+I*2493941/2097152,5/1048576+I*2493941/2097152,5/\n" + 
-				"1048576+I*4871/4096},{2493941/2097152+I*5/1048576,2493941/2097152-I*1/2097152,\n" + 
-				"4871/4096-I*1/2097152,4871/4096+I*5/1048576}}");
-		check("RootIntervals[4+x^2+2*x+3*x^3]", "{{-3145745/3145728+I*17/3145728,-3145745/3145728-I*1/1179648,-1179647/1179648-I*\n" + 
-				"1/1179648,-1179647/1179648+I*17/3145728},{1048565/3145728-I*10433155/9437184,\n" + 
-				"1048565/3145728-I*579623/524288,1572877/4718592-I*579623/524288,1572877/4718592-I*\n" + 
-				"10433155/9437184},{1048565/3145728+I*10433257/9437184,1048565/3145728+I*5216599/\n" + 
-				"4718592,1572877/4718592+I*5216599/4718592,1572877/4718592+I*10433257/9437184}}");
+		check("RootIntervals[x^4-2]", "{{-1246977/1048576+I*5/1048576,-1246977/1048576-I*1/2097152,-2493943/2097152-I*1/\n"
+				+ "2097152,-2493943/2097152+I*5/1048576},{-1/2097152-I*2493943/2097152,-1/2097152-I*\n"
+				+ "1246977/1048576,5/1048576-I*1246977/1048576,5/1048576-I*2493943/2097152},{-1/\n"
+				+ "2097152+I*4871/4096,-1/2097152+I*2493941/2097152,5/1048576+I*2493941/2097152,5/\n"
+				+ "1048576+I*4871/4096},{2493941/2097152+I*5/1048576,2493941/2097152-I*1/2097152,\n"
+				+ "4871/4096-I*1/2097152,4871/4096+I*5/1048576}}");
+		check("RootIntervals[4+x^2+2*x+3*x^3]", "{{-3145745/3145728+I*17/3145728,-3145745/3145728-I*1/1179648,-1179647/1179648-I*\n"
+				+ "1/1179648,-1179647/1179648+I*17/3145728},{1048565/3145728-I*10433155/9437184,\n"
+				+ "1048565/3145728-I*579623/524288,1572877/4718592-I*579623/524288,1572877/4718592-I*\n"
+				+ "10433155/9437184},{1048565/3145728+I*10433257/9437184,1048565/3145728+I*5216599/\n"
+				+ "4718592,1572877/4718592+I*5216599/4718592,1572877/4718592+I*10433257/9437184}}");
 		check("Expand[(x-1)^3]", "x^3-3*x^2+3*x-1");
-		check("RootIntervals[x^3-3*x^2+3*x-1]", "{{262143/262144+I*1/524288,262143/262144-I*3/1048576,1048577/1048576-I*3/1048576,\n" + 
-				"1048577/1048576+I*1/524288}}");
+		check("RootIntervals[x^3-3*x^2+3*x-1]", "{{262143/262144+I*1/524288,262143/262144-I*3/1048576,1048577/1048576-I*3/1048576,\n"
+				+ "1048577/1048576+I*1/524288}}");
 	}
 
 	public void testSystem999() {
