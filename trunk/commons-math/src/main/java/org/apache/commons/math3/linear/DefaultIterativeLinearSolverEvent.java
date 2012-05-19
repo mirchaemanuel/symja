@@ -22,7 +22,7 @@ import org.apache.commons.math3.exception.MathUnsupportedOperationException;
  * A default concrete implementation of the abstract class
  * {@link IterativeLinearSolverEvent}.
  *
- * @version $Id: DefaultIterativeLinearSolverEvent.java 1244107 2012-02-14 16:17:55Z erans $
+ * @version $Id: DefaultIterativeLinearSolverEvent.java 1330625 2012-04-26 01:32:58Z sebb $
  */
 public class DefaultIterativeLinearSolverEvent extends IterativeLinearSolverEvent {
 
@@ -109,6 +109,7 @@ public class DefaultIterativeLinearSolverEvent extends IterativeLinearSolverEven
      * This implementation throws an {@link MathUnsupportedOperationException}
      * if no residual vector {@code r} was provided at construction time.
      */
+    @Override
     public RealVector getResidual() {
         if (r != null) {
             return r;

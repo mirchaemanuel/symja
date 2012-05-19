@@ -20,7 +20,7 @@ package org.apache.commons.math3.ode;
  *  differential equations} in order to compute exactly the main state jacobian
  *  matrix for {@link JacobianMatrices partial derivatives equations}.
  *
- * @version $Id: MainStateJacobianProvider.java 1244107 2012-02-14 16:17:55Z erans $
+ * @version $Id: MainStateJacobianProvider.java 1302386 2012-03-19 11:59:25Z sebb $
  * @since 3.0
  */
 public interface MainStateJacobianProvider extends FirstOrderDifferentialEquations {

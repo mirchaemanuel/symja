@@ -45,7 +45,7 @@ import org.apache.commons.math3.util.FastMath;
  * @see <a href="http://mathworld.wolfram.com/QRDecomposition.html">MathWorld</a>
  * @see <a href="http://en.wikipedia.org/wiki/QR_decomposition">Wikipedia</a>
  *
- * @version $Id: QRDecomposition.java 1244107 2012-02-14 16:17:55Z erans $
+ * @version $Id: QRDecomposition.java 1308098 2012-04-01 13:10:08Z celestin $
  * @since 1.2 (changed to concrete class in 3.0)
  */
 public class QRDecomposition {
@@ -207,7 +207,7 @@ public class QRDecomposition {
     /**
      * Returns the transpose of the matrix Q of the decomposition.
      * <p>Q is an orthogonal matrix</p>
-     * @return the Q matrix
+     * @return the transpose of the Q matrix, Q<sup>T</sup>
      */
     public RealMatrix getQT() {
         if (cachedQT == null) {

@@ -31,7 +31,7 @@ import org.apache.commons.math3.util.FastMath;
 
 /**
  * This class implements the {@link RealVector} interface with a double array.
- * @version $Id: ArrayRealVector.java 1296539 2012-03-03 00:47:39Z sebb $
+ * @version $Id: ArrayRealVector.java 1336983 2012-05-11 00:38:29Z sebb $
  * @since 2.0
  */
 public class ArrayRealVector extends RealVector implements Serializable {
@@ -302,8 +302,8 @@ public class ArrayRealVector extends RealVector implements Serializable {
             checkVectorDimensions(v);
             double[] out = data.clone();
             Iterator<Entry> it = v.sparseIterator();
-            Entry e;
-            while (it.hasNext() && (e = it.next()) != null) {
+            while (it.hasNext()) {
+                final Entry e = it.next();
                 out[e.getIndex()] += e.getValue();
             }
             return new ArrayRealVector(out, false);
@@ -327,8 +327,8 @@ public class ArrayRealVector extends RealVector implements Serializable {
             checkVectorDimensions(v);
             double[] out = data.clone();
             Iterator<Entry> it = v.sparseIterator();
-            Entry e;
-            while(it.hasNext() && (e = it.next()) != null) {
+            while (it.hasNext()) {
+                final Entry e = it.next();
                 out[e.getIndex()] -= e.getValue();
             }
             return new ArrayRealVector(out, false);
@@ -457,8 +457,8 @@ public class ArrayRealVector extends RealVector implements Serializable {
             checkVectorDimensions(v);
             double dot = 0;
             Iterator<Entry> it = v.sparseIterator();
-            Entry e;
-            while(it.hasNext() && (e = it.next()) != null) {
+            while (it.hasNext()) {
+                final Entry e = it.next();
                 dot += data[e.getIndex()] * e.getValue();
             }
             return dot;
@@ -823,7 +823,7 @@ public class ArrayRealVector extends RealVector implements Serializable {
             return true;
         }
 
-        if (other == null || !(other instanceof RealVector)) {
+        if (!(other instanceof RealVector)) {
             return false;
         }
 

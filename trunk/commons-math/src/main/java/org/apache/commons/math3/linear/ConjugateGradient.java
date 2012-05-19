@@ -73,7 +73,7 @@ import org.apache.commons.math3.util.IterationManager;
  * Numerical Analysis 13: 56-80, 2002</dd>
  * </dl>
  *
- * @version $Id: ConjugateGradient.java 1244107 2012-02-14 16:17:55Z erans $
+ * @version $Id: ConjugateGradient.java 1306133 2012-03-28 03:00:33Z celestin $
  * @since 3.0
  */
 public class ConjugateGradient
@@ -139,10 +139,10 @@ public class ConjugateGradient
     /** {@inheritDoc} */
     @Override
     public RealVector solveInPlace(final RealLinearOperator a,
-        final RealLinearOperator minv, final RealVector b, final RealVector x0)
+        final RealLinearOperator m, final RealVector b, final RealVector x0)
         throws NullArgumentException, NonSquareOperatorException,
         DimensionMismatchException, MaxCountExceededException {
-        checkParameters(a, minv, b, x0);
+        checkParameters(a, m, b, x0);
         final IterationManager manager = getIterationManager();
         // Initialization of default stopping criterion
         manager.resetIterationCount();
@@ -163,7 +163,7 @@ public class ConjugateGradient
         final RealVector rro = RealVector.unmodifiableRealVector(r);
         double rnorm = r.getNorm();
         RealVector z;
-        if (minv == null) {
+        if (m == null) {
             z = r;
         } else {
             z = null;
@@ -182,15 +182,15 @@ public class ConjugateGradient
             evt = new DefaultIterativeLinearSolverEvent(this,
                 manager.getIterations(), xro, bro, rro, rnorm);
             manager.fireIterationStartedEvent(evt);
-            if (minv != null) {
-                z = minv.operate(r);
+            if (m != null) {
+                z = m.operate(r);
             }
             final double rhoNext = r.dotProduct(z);
             if (check && (rhoNext <= 0.)) {
                 final NonPositiveDefiniteOperatorException e;
                 e = new NonPositiveDefiniteOperatorException();
                 final ExceptionContext context = e.getContext();
-                context.setValue(OPERATOR, minv);
+                context.setValue(OPERATOR, m);
                 context.setValue(VECTOR, r);
                 throw e;
             }
