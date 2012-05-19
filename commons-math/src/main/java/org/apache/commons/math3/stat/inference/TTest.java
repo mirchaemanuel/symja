@@ -52,7 +52,7 @@ import org.apache.commons.math3.util.FastMath;
  * Uses commons-math {@link org.apache.commons.math3.distribution.TDistribution}
  * implementation to estimate exact p-values.</p>
  *
- * @version $Id: TTest.java 1244107 2012-02-14 16:17:55Z erans $
+ * @version $Id: TTest.java 1308162 2012-04-01 17:47:03Z tn $
  */
 public class TTest {
     /**
@@ -254,7 +254,7 @@ public class TTest {
      * </p><p>
      * <code>var = sqrt(((n1 - 1)var1 + (n2 - 1)var2) / ((n1-1) + (n2-1)))</code>
      * </p><p>
-     * with <strong><code>var1<code></strong> the variance of the first sample and
+     * with <strong><code>var1</code></strong> the variance of the first sample and
      * <strong><code>var2</code></strong> the variance of the second sample.
      * </p><p>
      * <strong>Preconditions</strong>: <ul>
@@ -384,7 +384,7 @@ public class TTest {
      * </p><p>
      * <code>var = sqrt(((n1 - 1)var1 + (n2 - 1)var2) / ((n1-1) + (n2-1)))</code>
      * </p><p>
-     * with <strong><code>var1<code></strong> the variance of the first sample and
+     * with <strong><code>var1</code></strong> the variance of the first sample and
      * <strong><code>var2</code></strong> the variance of the second sample.
      * </p><p>
      * <strong>Preconditions</strong>: <ul>

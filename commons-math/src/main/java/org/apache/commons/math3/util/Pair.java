@@ -18,7 +18,10 @@ package org.apache.commons.math3.util;
 
 /**
  * Generic pair.
- * Immutable class.
+ * <br/>
+ * Although the instances of this class are immutable, it is impossible
+ * to ensure that the references passed to the constructor will not be
+ * modified by the caller.
  *
  * @param <K> Key type.
  * @param <V> Value type.
@@ -50,8 +53,7 @@ public class Pair<K, V> {
      * @param entry Entry to copy.
      */
     public Pair(Pair<? extends K, ? extends V> entry) {
-        key = entry.getKey();
-        value = entry.getValue();
+        this(entry.getKey(), entry.getValue());
     }
 
     /**
@@ -81,19 +83,19 @@ public class Pair<K, V> {
      */
     @Override
     public boolean equals(Object o) {
-        if (o == null) {
-            return false;
+        if (this == o) {
+            return true;
         }
         if (!(o instanceof Pair)) {
             return false;
         } else {
             Pair<?, ?> oP = (Pair<?, ?>) o;
             return (key == null ?
-                    oP.getKey() == null :
-                    key.equals(oP.getKey())) &&
+                    oP.key == null :
+                    key.equals(oP.key)) &&
                 (value == null ?
-                 oP.getValue() == null :
-                 value.equals(oP.getValue()));
+                 oP.value == null :
+                 value.equals(oP.value));
         }
     }
 
@@ -104,7 +106,11 @@ public class Pair<K, V> {
      */
     @Override
     public int hashCode() {
-        return (key == null ? 0 : key.hashCode()) ^
-            (value == null ? 0 : value.hashCode());
+        int result = key == null ? 0 : key.hashCode();
+
+        final int h = value == null ? 0 : value.hashCode();
+        result = 37 * result + h ^ (h >>> 16);
+
+        return result;
     }
 }
