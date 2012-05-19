@@ -23,7 +23,7 @@ import org.apache.commons.math3.geometry.partitioning.Hyperplane;
  * <p>An hyperplane in 1D is a simple point, its orientation being a
  * boolean.</p>
  * <p>Instances of this class are guaranteed to be immutable.</p>
- * @version $Id: OrientedPoint.java 1244107 2012-02-14 16:17:55Z erans $
+ * @version $Id: OrientedPoint.java 1328958 2012-04-22 20:00:33Z luc $
  * @since 3.0
  */
 public class OrientedPoint implements Hyperplane<Euclidean1D> {
@@ -63,13 +63,12 @@ public class OrientedPoint implements Hyperplane<Euclidean1D> {
      * <p>Since this class represent zero dimension spaces which does
      * not have lower dimension sub-spaces, this method returns a dummy
      * implementation of a {@link
-     * org.apache.commons.math3.geometry.partitioning.Region Region}
-     * (always the same instance). This implementation is only used to
-     * allow the {@link
+     * org.apache.commons.math3.geometry.partitioning.SubHyperplane SubHyperplane}.
+     * This implementation is only used to allow the {@link
      * org.apache.commons.math3.geometry.partitioning.SubHyperplane
      * SubHyperplane} class implementation to work properly, it should
      * <em>not</em> be used otherwise.</p>
-     * @return a dummy region
+     * @return a dummy sub hyperplane
      */
     public SubOrientedPoint wholeHyperplane() {
         return new SubOrientedPoint(this, null);

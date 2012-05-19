@@ -22,6 +22,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.TreeSet;
 
+import org.apache.commons.math3.exception.MathInternalError;
 import org.apache.commons.math3.geometry.Space;
 import org.apache.commons.math3.geometry.Vector;
 
@@ -30,7 +31,7 @@ import org.apache.commons.math3.geometry.Vector;
  * @param <S> Type of the space.
  * @param <T> Type of the sub-space.
 
- * @version $Id: AbstractRegion.java 1244107 2012-02-14 16:17:55Z erans $
+ * @version $Id: AbstractRegion.java 1337928 2012-05-13 15:51:30Z luc $
  * @since 3.0
  */
 public abstract class AbstractRegion<S extends Space, T extends Space> implements Region<S> {
@@ -297,7 +298,7 @@ public abstract class AbstractRegion<S extends Space, T extends Space> implement
             characterize(node.getPlus(), node.getCut().copySelf(), plusChar);
 
             if (plusChar.hasOut()) {
-                // plusChar.out corresponds to a subset of the cut
+                // plusChar.getOut() corresponds to a subset of the cut
                 // sub-hyperplane known to have outside cells on its plus
                 // side, we want to check if parts of this subset do have
                 // inside cells on their minus side
@@ -309,7 +310,7 @@ public abstract class AbstractRegion<S extends Space, T extends Space> implement
             }
 
             if (plusChar.hasIn()) {
-                // plusChar.in corresponds to a subset of the cut
+                // plusChar.getIn() corresponds to a subset of the cut
                 // sub-hyperplane known to have inside cells on its plus
                 // side, we want to check if parts of this subset do have
                 // outside cells on their minus side
@@ -362,7 +363,7 @@ public abstract class AbstractRegion<S extends Space, T extends Space> implement
                 break;
             default:
                 // this should not happen
-                throw new RuntimeException("internal error");
+                throw new MathInternalError();
             }
         }
     }

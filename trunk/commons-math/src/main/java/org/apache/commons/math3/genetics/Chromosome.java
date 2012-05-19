@@ -23,7 +23,7 @@ package org.apache.commons.math3.genetics;
  * therefore it can be cached.
  *
  * @since 2.0
- * @version $Id: Chromosome.java 1295583 2012-03-01 14:33:03Z erans $
+ * @version $Id: Chromosome.java 1308162 2012-04-01 17:47:03Z tn $
  */
 public abstract class Chromosome implements Comparable<Chromosome>,Fitness {
     /** Value assigned when no fitness has been computed yet. */
@@ -66,7 +66,7 @@ public abstract class Chromosome implements Comparable<Chromosome>,Fitness {
     }
 
     /**
-     * Returns <code>true<code> iff <code>another</code> has the same
+     * Returns <code>true</code> iff <code>another</code> has the same
      * representation and therefore the same fitness. By default, it returns
      * false -- override it in your implementation if you need it.
      * @param another chromosome to compare

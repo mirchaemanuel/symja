@@ -16,11 +16,12 @@
  */
 package org.apache.commons.math3.genetics;
 
+
 /**
  * A collection of chromosomes that facilitates generational evolution.
  *
  * @since 2.0
- * @version $Id: Population.java 1244107 2012-02-14 16:17:55Z erans $
+ * @version $Id: Population.java 1310103 2012-04-05 22:08:45Z tn $
  */
 public interface Population extends Iterable<Chromosome> {
     /**
@@ -44,6 +45,8 @@ public interface Population extends Iterable<Chromosome> {
     /**
      * Add the given chromosome to the population.
      * @param chromosome the chromosome to add.
+     * @throws org.apache.commons.math3.exception.NumberIsTooLargeException if the population would exceed
+     * the population limit when adding this chromosome
      */
     void addChromosome(Chromosome chromosome);
 
