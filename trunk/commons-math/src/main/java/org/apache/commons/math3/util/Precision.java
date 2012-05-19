@@ -32,19 +32,43 @@ import org.apache.commons.math3.util.FastMath;
 public class Precision {
     /**
      * Smallest positive number such that {@code 1 - EPSILON} is not
-     * numerically equal to 1: {@value}.
+     * numerically equal to 1.
+     * <br/>
+     * In IEEE 754 arithmetic, this is 2<sup>-53</sup>.
      */
-    public static final double EPSILON = 0x1.0p-53;
+    public static final double EPSILON;
+
     /**
      * Safe minimum, such that {@code 1 / SAFE_MIN} does not overflow.
+     * <br/>
      * In IEEE 754 arithmetic, this is also the smallest normalized
-     * number 2<sup>-1022</sup>: {@value}.
+     * number 2<sup>-1022</sup>.
      */
-    public static final double SAFE_MIN = 0x1.0p-1022;
+    public static final double SAFE_MIN;
+
+    /** Exponent offset in IEEE754 representation. */
+    private static final long EXPONENT_OFFSET = 1023l;
+
     /** Offset to order signed double numbers lexicographically. */
     private static final long SGN_MASK = 0x8000000000000000L;
     /** Offset to order signed double numbers lexicographically. */
     private static final int SGN_MASK_FLOAT = 0x80000000;
+
+    static {
+        /*
+         *  This was previously expressed as = 0x1.0p-53;
+         *  However, OpenJDK (Sparc Solaris) cannot handle such small
+         *  constants: MATH-721
+         */
+        EPSILON = Double.longBitsToDouble((EXPONENT_OFFSET - 53l) << 52);
+
+        /*
+         * This was previously expressed as = 0x1.0p-1022;
+         * However, OpenJDK (Sparc Solaris) cannot handle such small
+         * constants: MATH-721
+         */
+        SAFE_MIN = Double.longBitsToDouble((EXPONENT_OFFSET - 1022l) << 52);
+    }
 
     /**
      * Private constructor.

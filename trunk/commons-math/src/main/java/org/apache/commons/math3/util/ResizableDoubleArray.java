@@ -72,7 +72,7 @@ import org.apache.commons.math3.exception.util.LocalizedFormats;
  * properties enforce this requirement, throwing IllegalArgumentException if it
  * is violated.
  * </p>
- * @version $Id: ResizableDoubleArray.java 1296563 2012-03-03 02:23:39Z erans $
+ * @version $Id: ResizableDoubleArray.java 1308162 2012-04-01 17:47:03Z tn $
  */
 public class ResizableDoubleArray implements DoubleArray, Serializable {
 
@@ -440,7 +440,7 @@ public class ResizableDoubleArray implements DoubleArray, Serializable {
     }
 
     /**
-     * Discards the <code>i<code> initial elements of the array.  For example,
+     * Discards the <code>i</code> initial elements of the array.  For example,
      * if the array contains the elements 1,2,3,4, invoking
      * <code>discardFrontElements(2)</code> will cause the first two elements
      * to be discarded, leaving 3,4 in the array.  Throws illegalArgumentException
@@ -457,7 +457,7 @@ public class ResizableDoubleArray implements DoubleArray, Serializable {
     }
 
     /**
-     * Discards the <code>i<code> last elements of the array.  For example,
+     * Discards the <code>i</code> last elements of the array.  For example,
      * if the array contains the elements 1,2,3,4, invoking
      * <code>discardMostRecentElements(2)</code> will cause the last two elements
      * to be discarded, leaving 1,2 in the array.  Throws illegalArgumentException
@@ -474,7 +474,7 @@ public class ResizableDoubleArray implements DoubleArray, Serializable {
     }
 
     /**
-     * Discards the <code>i<code> first or last elements of the array,
+     * Discards the <code>i</code> first or last elements of the array,
      * depending on the value of <code>front</code>.
      * For example, if the array contains the elements 1,2,3,4, invoking
      * <code>discardExtremeElements(2,false)</code> will cause the last two elements

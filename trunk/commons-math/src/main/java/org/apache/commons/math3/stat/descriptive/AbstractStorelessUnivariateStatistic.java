@@ -25,12 +25,12 @@ import org.apache.commons.math3.util.Precision;
  *
  * Abstract implementation of the {@link StorelessUnivariateStatistic} interface.
  * <p>
- * Provides default <code>evaluate()</code> and <code>incrementAll(double[])<code>
+ * Provides default <code>evaluate()</code> and <code>incrementAll(double[])</code>
  * implementations.</p>
  * <p>
  * <strong>Note that these implementations are not synchronized.</strong></p>
  *
- * @version $Id: AbstractStorelessUnivariateStatistic.java 1244107 2012-02-14 16:17:55Z erans $
+ * @version $Id: AbstractStorelessUnivariateStatistic.java 1308162 2012-04-01 17:47:03Z tn $
  */
 public abstract class AbstractStorelessUnivariateStatistic
     extends AbstractUnivariateStatistic

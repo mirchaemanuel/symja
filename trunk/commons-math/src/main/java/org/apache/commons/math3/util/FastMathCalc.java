@@ -21,7 +21,7 @@ import java.io.PrintStream;
 import org.apache.commons.math3.exception.DimensionMismatchException;
 
 /** Class used to compute the classical functions tables.
- * @version $Id: FastMathCalc.java 1244107 2012-02-14 16:17:55Z erans $
+ * @version $Id: FastMathCalc.java 1306277 2012-03-28 11:55:05Z sebb $
  * @since 3.0
  */
 class FastMathCalc {
@@ -604,7 +604,7 @@ class FastMathCalc {
         checkLen(expectedLen, array2d.length);
         out.println(TABLE_START_DECL + " ");
         int i = 0;
-        for(double array[] : array2d) {
+        for(double[] array : array2d) { // "double array[]" causes PMD parsing error
             out.print("        {");
             for(double d : array) { // assume inner array has very few entries
                 out.printf("%-25.25s", format(d)); // multiple entries per line
