@@ -32,7 +32,7 @@ import org.apache.commons.math3.optimization.GoalType;
  * this method finds an approximation {@code x} to the point at which
  * the function attains its minimum.
  *
- * @version $Id: BrentOptimizer.java 1244107 2012-02-14 16:17:55Z erans $
+ * @version $Id: BrentOptimizer.java 1331635 2012-04-27 23:30:41Z erans $
  * @since 2.0
  */
 public class BrentOptimizer extends BaseAbstractUnivariateOptimizer {
@@ -220,6 +220,16 @@ public class BrentOptimizer extends BaseAbstractUnivariateOptimizer {
                     fu = -fu;
                 }
 
+                // User-defined convergence checker.
+                previous = current;
+                current = new UnivariatePointValuePair(u, isMinim ? fu : -fu);
+
+                if (checker != null) {
+                    if (checker.converged(iter, previous, current)) {
+                        return current;
+                    }
+                }
+
                 // Update a, b, v, w and x.
                 if (fu <= fx) {
                     if (u < x) {
@@ -250,16 +260,6 @@ public class BrentOptimizer extends BaseAbstractUnivariateOptimizer {
                                Precision.equals(v, w)) {
                         v = u;
                         fv = fu;
-                    }
-                }
-
-                previous = current;
-                current = new UnivariatePointValuePair(x, isMinim ? fx : -fx);
-
-                // User-defined convergence checker.
-                if (checker != null) {
-                    if (checker.converged(iter, previous, current)) {
-                        return current;
                     }
                 }
             } else { // Default termination (Brent's criterion).

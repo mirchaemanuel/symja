@@ -57,7 +57,7 @@ import org.apache.commons.math3.util.Precision;
  * a1: Artificial variable</br>
  * RHS: Right hand side</br>
  * </p>
- * @version $Id: SimplexTableau.java 1244107 2012-02-14 16:17:55Z erans $
+ * @version $Id: SimplexTableau.java 1333146 2012-05-02 18:28:37Z tn $
  * @since 2.0
  */
 class SimplexTableau implements Serializable {
@@ -335,7 +335,7 @@ class SimplexTableau implements Serializable {
         // positive cost non-artificial variables
         for (int i = getNumObjectiveFunctions(); i < getArtificialVariableOffset(); i++) {
             final double entry = tableau.getEntry(0, i);
-            if (Precision.compareTo(entry, 0d, maxUlps) > 0) {
+            if (Precision.compareTo(entry, 0d, epsilon) > 0) {
                 columnsToDrop.add(i);
             }
         }
