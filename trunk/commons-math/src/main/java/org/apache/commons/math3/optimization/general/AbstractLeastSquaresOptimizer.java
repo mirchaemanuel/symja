@@ -45,7 +45,7 @@ import org.apache.commons.math3.util.FastMath;
  * the numbers of rows is equal to the length of the {@code target} array while the
  * number of columns is equal to the length of the {@code startPoint} array.
  *
- * @version $Id: AbstractLeastSquaresOptimizer.java 1295552 2012-03-01 13:14:32Z erans $
+ * @version $Id: AbstractLeastSquaresOptimizer.java 1336123 2012-05-09 12:14:16Z erans $
  * @since 1.2
  */
 public abstract class AbstractLeastSquaresOptimizer
@@ -224,15 +224,33 @@ public abstract class AbstractLeastSquaresOptimizer
     }
 
     /**
-     * Guess the errors in optimized parameters.
-     * Guessing is covariance-based: It only gives a rough order of magnitude.
+     * <p>
+     * Returns an estimate of the standard deviation of each parameter. The
+     * returned values are the so-called (asymptotic) standard errors on the
+     * parameters, defined as {@code sd(a[i]) = sqrt(S / (n - m) * C[i][i])},
+     * where {@code a[i]} is the optimized value of the {@code i}-th parameter,
+     * {@code S} is the minimized value of the sum of squares objective function
+     * (as returned by {@link #getChiSquare()}), {@code n} is the number of
+     * observations, {@code m} is the number of parameters and {@code C} is the
+     * covariance matrix.
+     * </p>
+     * <p>
+     * See also
+     * <a href="http://en.wikipedia.org/wiki/Least_squares">Wikipedia</a>,
+     * or
+     * <a href="http://mathworld.wolfram.com/LeastSquaresFitting.html">MathWorld</a>,
+     * equations (34) and (35) for a particular case.
+     * </p>
      *
-     * @return errors in optimized parameters
+     * @return an estimate of the standard deviation of the optimized parameters
      * @throws org.apache.commons.math3.linear.SingularMatrixException
-     * if the covariances matrix cannot be computed.
+     * if the covariance matrix cannot be computed.
      * @throws NumberIsTooSmallException if the number of degrees of freedom is not
      * positive, i.e. the number of measurements is less or equal to the number of
      * parameters.
+     * @deprecated as of version 3.1, {@link #getSigma()} should be used
+     * instead. It should be emphasized that {@link #guessParametersErrors()} and
+     * {@link #getSigma()} are <em>not</em> strictly equivalent.
      */
     public double[] guessParametersErrors() {
         if (rows <= cols) {
@@ -248,12 +266,34 @@ public abstract class AbstractLeastSquaresOptimizer
         return errors;
     }
 
+    /**
+     * <p>
+     * Returns an estimate of the standard deviation of the parameters. The
+     * returned values are the square root of the diagonal coefficients of the
+     * covariance matrix, {@code sd(a[i]) ~= sqrt(C[i][i])}, where {@code a[i]}
+     * is the optimized value of the {@code i}-th parameter, and {@code C} is
+     * the covariance matrix.
+     * </p>
+     *
+     * @return an estimate of the standard deviation of the optimized parameters
+     * @throws org.apache.commons.math3.linear.SingularMatrixException
+     * if the covariance matrix cannot be computed.
+     */
+    public double[] getSigma() {
+        final double[] sig = new double[cols];
+        final double[][] cov = getCovariances();
+        for (int i = 0; i < sig.length; ++i) {
+            sig[i] = FastMath.sqrt(cov[i][i]);
+        }
+        return sig;
+    }
+
     /** {@inheritDoc} */
     @Override
     public PointVectorValuePair optimize(int maxEval,
-                                            final DifferentiableMultivariateVectorFunction f,
-                                            final double[] target, final double[] weights,
-                                            final double[] startPoint) {
+                                         final DifferentiableMultivariateVectorFunction f,
+                                         final double[] target, final double[] weights,
+                                         final double[] startPoint) {
         // Reset counter.
         jacobianEvaluations = 0;
 
