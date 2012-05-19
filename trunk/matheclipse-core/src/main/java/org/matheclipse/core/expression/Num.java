@@ -227,6 +227,20 @@ public class Num extends ExprImpl implements INum {
 	}
 
 	/**
+	 * {@inheritDoc}
+	 */
+	public int toInt() throws ArithmeticException {
+		if (fDouble > Integer.MAX_VALUE || fDouble < Integer.MIN_VALUE) {
+			throw new ArithmeticException("toInt: double value not in int range");
+		}
+		int result = Double.valueOf(fDouble).intValue();
+		if (F.isZero(fDouble - result)) {
+			return result;
+		}
+		throw new ArithmeticException("toInt: double value is not an int value");
+	}
+
+	/**
 	 * @return
 	 */
 	public boolean isInfinite() {
@@ -389,12 +403,12 @@ public class Num extends ExprImpl implements INum {
 	public boolean isOne() {
 		return F.isZero(fDouble - 1.0);
 	}
-	
+
 	@Override
 	public boolean isMinusOne() {
 		return F.isZero(fDouble + 1.0);
 	}
-	
+
 	public ISignedNumber round() {
 		return valueOf(Math.rint(fDouble));
 	}

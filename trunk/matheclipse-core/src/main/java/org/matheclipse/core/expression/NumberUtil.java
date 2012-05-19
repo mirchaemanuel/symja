@@ -88,7 +88,7 @@ public class NumberUtil {
 		}
 		return val;
 	}
-
+ 
 	/**
 	 * Compares the absolute value of two rational numbers.
 	 * 

@@ -795,6 +795,9 @@ public class IntegerSym extends ExprImpl implements IInteger {
 		return newInstance(fInteger.modPow(exp.fInteger, m.fInteger));
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public int toInt() throws ArithmeticException {
 		return NumberUtil.toInt(fInteger);
 	}

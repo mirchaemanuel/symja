@@ -31,6 +31,7 @@ public class Chop extends AbstractFunctionEvaluator {
 				if (F.isZero(((INum) arg1).getRealPart(), delta)) {
 					return F.C0;
 				}
+				return arg1;
 			} else if (arg1 instanceof IComplexNum) {
 				if (F.isZero(((IComplexNum) arg1).getRealPart(), delta)) {
 					if (F.isZero(((IComplexNum) arg1).getImaginaryPart(), delta)) {
@@ -41,6 +42,7 @@ public class Chop extends AbstractFunctionEvaluator {
 				if (F.isZero(((IComplexNum) arg1).getImaginaryPart(), delta)) {
 					return F.complexNum(((IComplexNum) arg1).getRealPart(), 0.0);
 				}
+				return arg1;
 			}
 		} catch (Exception e) {
 			if (Config.SHOW_STACKTRACE) {
@@ -52,6 +54,6 @@ public class Chop extends AbstractFunctionEvaluator {
 	}
 
 	public void setUp(final ISymbol symbol) {
-		symbol.setAttributes(ISymbol.HOLDALL | ISymbol.LISTABLE);
+		symbol.setAttributes(ISymbol.NHOLDALL | ISymbol.LISTABLE);
 	}
 }
