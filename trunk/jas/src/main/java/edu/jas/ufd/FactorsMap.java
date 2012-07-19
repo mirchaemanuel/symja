@@ -1,5 +1,5 @@
 /*
- * $Id: FactorsMap.java 2754 2009-07-16 19:40:51Z kredel $
+ * $Id: FactorsMap.java 3992 2012-07-14 21:32:18Z kredel $
  */
 
 package edu.jas.ufd;
@@ -145,6 +145,7 @@ public class FactorsMap<C extends GcdRingElem<C>> implements Serializable {
             if ( e == null ) { // should not happen
                 System.out.println("f = " + f);
                 System.out.println("afactors = " + afactors);
+                throw new RuntimeException("this should not happen");
             }
             if (e == 1) {
                 sb.append(f.toScript());

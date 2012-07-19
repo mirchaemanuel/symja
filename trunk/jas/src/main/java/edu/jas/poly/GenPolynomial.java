@@ -1,5 +1,5 @@
 /*
- * $Id: GenPolynomial.java 3749 2011-08-24 21:44:12Z kredel $
+ * $Id: GenPolynomial.java 4005 2012-07-15 18:37:10Z kredel $
  */
 
 package edu.jas.poly;
@@ -105,6 +105,16 @@ Iterable<Monomial<C>> {
      */
     public GenPolynomial(GenPolynomialRing<C> r, C c) {
         this(r, c, r.evzero);
+    }
+
+
+    /**
+     * Constructor for GenPolynomial x<sup>e</sup>.
+     * @param r polynomial ring factory.
+     * @param e exponent.
+     */
+    public GenPolynomial(GenPolynomialRing<C> r, ExpVector e) {
+        this(r, r.coFac.getONE(), e);
     }
 
 
@@ -263,12 +273,13 @@ Iterable<Monomial<C>> {
                     }
                     ExpVector e = m.getKey();
                     if (!c.isONE() || e.isZERO()) {
+                        String cs = c.toString();
                         if (c instanceof GenPolynomial || c instanceof AlgebraicNumber) {
-                            s.append("{ ");
-                        }
-                        s.append(c.toString());
-                        if (c instanceof GenPolynomial || c instanceof AlgebraicNumber) {
-                            s.append(" }");
+                            s.append("( ");
+                            s.append(cs);
+                            s.append(" )");
+                        } else {
+                            s.append(cs);
                         }
                         s.append(" ");
                     }
@@ -407,10 +418,7 @@ Iterable<Monomial<C>> {
         if (c == null) {
             return false;
         }
-        if (!c.isONE()) {
-            return false;
-        }
-        return true;
+        return c.isONE();
     }
 
 
@@ -427,10 +435,7 @@ Iterable<Monomial<C>> {
         if (c == null) {
             return false;
         }
-        if (c.isUnit()) {
-            return true;
-        }
-        return false;
+        return c.isUnit();
     }
 
 
@@ -446,6 +451,26 @@ Iterable<Monomial<C>> {
         C c = val.get(ring.evzero);
         if (c == null) {
             return false;
+        }
+        return true;
+    }
+
+
+    /**
+     * Is GenPolynomial&lt;C&gt; homogeneous.
+     * @return true, if this is homogeneous, else false.
+     */
+    public boolean isHomogeneous() {
+        if (val.size() <= 1) {
+            return true;
+        }
+        long deg = -1;
+        for ( ExpVector e : val.keySet() ) {
+            if (deg < 0) {
+                deg = e.totalDeg(); 
+            } else if (deg != e.totalDeg()) {
+                return false; 
+            }
         }
         return true;
     }
@@ -567,7 +592,7 @@ Iterable<Monomial<C>> {
      */
     public ExpVector leadingExpVector() {
         if (val.size() == 0) {
-            return null; // ring.evzero or null ?;
+            return null; // ring.evzero? needs many changes 
         }
         return val.firstKey();
     }
@@ -579,7 +604,7 @@ Iterable<Monomial<C>> {
      */
     public ExpVector trailingExpVector() {
         if (val.size() == 0) {
-            return null; // ring.evzero or null ?;
+            return ring.evzero; // or null ?;
         }
         return val.lastKey();
     }
@@ -648,7 +673,12 @@ Iterable<Monomial<C>> {
         if (val.size() == 0) {
             return 0; // 0 or -1 ?;
         }
-        int j = ring.nvar - 1 - i;
+        int j;
+        if ( i >= 0 ) {
+            j = ring.nvar - 1 - i;
+        } else { // python like -1 means main variable
+            j = ring.nvar + i;
+        }
         long deg = 0;
         for (ExpVector e : val.keySet()) {
             long d = e.getVal(j);
@@ -671,6 +701,25 @@ Iterable<Monomial<C>> {
         long deg = 0;
         for (ExpVector e : val.keySet()) {
             long d = e.maxDeg();
+            if (d > deg) {
+                deg = d;
+            }
+        }
+        return deg;
+    }
+
+
+    /**
+     * Total degree.
+     * @return total degree in any variables.
+     */
+    public long totalDegree() {
+        if (val.size() == 0) {
+            return 0; // 0 or -1 ?;
+        }
+        long deg = 0;
+        for (ExpVector e : val.keySet()) {
+            long d = e.totalDeg();
             if (d > deg) {
                 deg = d;
             }
@@ -1139,7 +1188,7 @@ Iterable<Monomial<C>> {
      * @param S nonzero GenPolynomial with invertible leading coefficient.
      * @return [ quotient , remainder ] with this = quotient * S + remainder and
      *         deg(remainder) &lt; deg(S) or remiander = 0.
-     * @see edu.jas.poly.PolyUtil#basePseudoRemainder(edu.jas.poly.GenPolynomial,edu.jas.poly.GenPolynomial)
+     * @see edu.jas.poly.PolyUtil#baseSparsePseudoRemainder(edu.jas.poly.GenPolynomial,edu.jas.poly.GenPolynomial)
      *      .
      */
     @SuppressWarnings("unchecked")
@@ -1184,7 +1233,7 @@ Iterable<Monomial<C>> {
      * @param S nonzero GenPolynomial with invertible leading coefficient.
      * @return [ quotient , remainder ] with this = quotient * S + remainder and
      *         deg(remainder) &lt; deg(S) or remiander = 0.
-     * @see edu.jas.poly.PolyUtil#basePseudoRemainder(edu.jas.poly.GenPolynomial,edu.jas.poly.GenPolynomial)
+     * @see edu.jas.poly.PolyUtil#baseSparsePseudoRemainder(edu.jas.poly.GenPolynomial,edu.jas.poly.GenPolynomial)
      *      .
      * @deprecated use quotientRemainder()
      */
@@ -1200,7 +1249,7 @@ Iterable<Monomial<C>> {
      * over fields, but works in any case.
      * @param S nonzero GenPolynomial with invertible leading coefficient.
      * @return quotient with this = quotient * S + remainder.
-     * @see edu.jas.poly.PolyUtil#basePseudoRemainder(edu.jas.poly.GenPolynomial,edu.jas.poly.GenPolynomial)
+     * @see edu.jas.poly.PolyUtil#baseSparsePseudoRemainder(edu.jas.poly.GenPolynomial,edu.jas.poly.GenPolynomial)
      *      .
      */
     public GenPolynomial<C> divide(GenPolynomial<C> S) {
@@ -1214,7 +1263,7 @@ Iterable<Monomial<C>> {
      * over fields, but works in any case.
      * @param S nonzero GenPolynomial with invertible leading coefficient.
      * @return remainder with this = quotient * S + remainder.
-     * @see edu.jas.poly.PolyUtil#basePseudoRemainder(edu.jas.poly.GenPolynomial,edu.jas.poly.GenPolynomial)
+     * @see edu.jas.poly.PolyUtil#baseSparsePseudoRemainder(edu.jas.poly.GenPolynomial,edu.jas.poly.GenPolynomial)
      *      .
      */
     public GenPolynomial<C> remainder(GenPolynomial<C> S) {
@@ -1407,7 +1456,7 @@ Iterable<Monomial<C>> {
 
 
     /**
-     * GenPolynomial inverse. Required by RingElem. Throws not implemented
+     * GenPolynomial inverse. Required by RingElem. Throws not invertible
      * exception.
      */
     public GenPolynomial<C> inverse() {
@@ -1415,7 +1464,7 @@ Iterable<Monomial<C>> {
             C c = leadingBaseCoefficient().inverse();
             return ring.getONE().multiply(c);
         }
-        throw new NotInvertibleException("element not invertible " + this);
+        throw new NotInvertibleException("element not invertible " + this + " :: " + ring);
     }
 
 
@@ -1452,7 +1501,7 @@ Iterable<Monomial<C>> {
      */
     public GenPolynomial<C> extend(GenPolynomialRing<C> pfac, int j, long k) {
         if (ring.equals(pfac)) { // nothing to do
-	    return this;
+            return this;
         }
         GenPolynomial<C> Cp = pfac.getZERO().clone();
         if (this.isZERO()) {
@@ -1481,7 +1530,7 @@ Iterable<Monomial<C>> {
      */
     public GenPolynomial<C> extendLower(GenPolynomialRing<C> pfac, int j, long k) {
         if (ring.equals(pfac)) { // nothing to do
-	    return this;
+            return this;
         }
         GenPolynomial<C> Cp = pfac.getZERO().clone();
         if (this.isZERO()) {
@@ -1587,6 +1636,58 @@ Iterable<Monomial<C>> {
         return Cp;
     }
 
+
+    /**
+     * Make homogeneous. 
+     * @param pfac extended polynomial ring factory (by 1 variable).
+     * @return homogeneous polynomial.
+     */
+    public GenPolynomial<C> homogenize(GenPolynomialRing<C> pfac) {
+        if (ring.equals(pfac)) { // not implemented
+            throw new UnsupportedOperationException("case with same ring not implemented");
+        }
+        GenPolynomial<C> Cp = pfac.getZERO().clone();
+        if (this.isZERO()) {
+            return Cp;
+        }
+        long deg = totalDegree();
+        int i = pfac.nvar - ring.nvar;
+        Map<ExpVector, C> C = Cp.val; //getMap();
+        Map<ExpVector, C> A = val;
+        for (Map.Entry<ExpVector, C> y : A.entrySet()) {
+            ExpVector e = y.getKey();
+            C a = y.getValue();
+            long d = deg - e.totalDeg();
+            ExpVector f = e.extend(1, 0, d);
+            C.put(f, a);
+        }
+        return Cp;
+    }
+
+
+    /**
+     * Dehomogenize. 
+     * @param pfac contracted polynomial ring factory (by 1 variable).
+     * @return in homogeneous polynomial.
+     */
+    public GenPolynomial<C> deHomogenize(GenPolynomialRing<C> pfac) {
+        if (ring.equals(pfac)) { // not implemented
+            throw new UnsupportedOperationException("case with same ring not implemented");
+        }
+        GenPolynomial<C> Cp = pfac.getZERO().clone();
+        if (this.isZERO()) {
+            return Cp;
+        }
+        Map<ExpVector, C> C = Cp.val; //getMap();
+        Map<ExpVector, C> A = val;
+        for (Map.Entry<ExpVector, C> y : A.entrySet()) {
+            ExpVector e = y.getKey();
+            C a = y.getValue();
+            ExpVector f = e.contract(1,pfac.nvar);
+            C.put(f, a);
+        }
+        return Cp;
+    }
 
     /**
      * Reverse variables. Used e.g. in opposite rings.

@@ -1,5 +1,5 @@
 /*
- * $Id: SyzygyAbstract.java 3584 2011-03-26 11:39:39Z kredel $
+ * $Id: SyzygyAbstract.java 3981 2012-07-12 20:51:22Z kredel $
  */
 
 package edu.jas.gbmod;
@@ -176,9 +176,9 @@ public class SyzygyAbstract<C extends GcdRingElem<C>> implements Syzygy<C> {
         int modv = M.cols; // > 0  
         //System.out.println("modv = " + modv);
         List<List<GenPolynomial<C>>> G = zeroRelations(modv, F.list);
-        if (G == null) {
-            return N;
-        }
+        //if (G == null) {
+        //    return N;
+        //}
         List<List<GenPolynomial<C>>> Z = new ArrayList<List<GenPolynomial<C>>>();
         for (int i = 0; i < G.size(); i++) {
             //F = new PolynomialList(F.ring,(List)G.get(i));
@@ -535,9 +535,9 @@ public class SyzygyAbstract<C extends GcdRingElem<C>> implements Syzygy<C> {
         int modv = M.cols; // > 0  
         //System.out.println("modv = " + modv);
         List<List<GenPolynomial<C>>> G = zeroRelationsArbitrary(modv, F.list);
-        if (G == null) {
-            return N;
-        }
+        //if (G == null) {
+        //    return N;
+        //}
         List<List<GenPolynomial<C>>> Z = new ArrayList<List<GenPolynomial<C>>>();
         for (int i = 0; i < G.size(); i++) {
             //F = new PolynomialList(F.ring,(List)G.get(i));

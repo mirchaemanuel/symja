@@ -1,5 +1,5 @@
 /*
- * $Id: IdealWithComplexAlgebraicRoots.java 3657 2011-06-02 18:27:28Z kredel $
+ * $Id: IdealWithComplexAlgebraicRoots.java 3946 2012-05-20 13:59:50Z kredel $
  */
 
 package edu.jas.application;
@@ -24,7 +24,7 @@ import edu.jas.structure.RingElem;
  * roots.
  * @author Heinz Kredel
  */
-public class IdealWithComplexAlgebraicRoots<C extends RingElem<C> & Rational, D extends GcdRingElem<D> & Rational>
+public class IdealWithComplexAlgebraicRoots<D extends GcdRingElem<D> & Rational>
         extends IdealWithUniv<D> implements Serializable {
 
 
@@ -78,7 +78,7 @@ public class IdealWithComplexAlgebraicRoots<C extends RingElem<C> & Rational, D 
      */
     @Override
     public String toString() {
-        StringBuffer sb = new StringBuffer(super.toString() + "\nreal roots:\n");
+        StringBuffer sb = new StringBuffer(super.toString() + "\ncomplex roots:\n");
         sb.append("[");
         boolean f1 = true;
         for (List<Complex<RealAlgebraicNumber<D>>> lr : can) {
@@ -101,7 +101,7 @@ public class IdealWithComplexAlgebraicRoots<C extends RingElem<C> & Rational, D 
         }
         sb.append("]");
         if (droots != null) {
-            sb.append("\ndecimal real root approximation:\n");
+            sb.append("\ndecimal complex root approximation:\n");
             for (List<Complex<BigDecimal>> d : droots) {
                 sb.append(d.toString());
                 sb.append("\n");

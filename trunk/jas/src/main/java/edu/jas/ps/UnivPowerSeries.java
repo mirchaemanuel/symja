@@ -1,5 +1,5 @@
 /*
- * $Id: UnivPowerSeries.java 3571 2011-03-18 22:02:51Z kredel $
+ * $Id: UnivPowerSeries.java 3992 2012-07-14 21:32:18Z kredel $
  */
 
 package edu.jas.ps;
@@ -585,9 +585,6 @@ public class UnivPowerSeries<C extends RingElem<C>> implements RingElem<UnivPowe
     @Override
     @SuppressWarnings("unchecked")
     public boolean equals(Object B) {
-        if (!(B instanceof UnivPowerSeries)) {
-            return false;
-        }
         UnivPowerSeries<C> a = null;
         try {
             a = (UnivPowerSeries<C>) B;
@@ -612,7 +609,7 @@ public class UnivPowerSeries<C extends RingElem<C>> implements RingElem<UnivPowe
         for (int i = 0; i <= truncate; i++) {
             h += coefficient(i).hashCode();
             h = (h << 23);
-        };
+        }
         return h;
     }
 

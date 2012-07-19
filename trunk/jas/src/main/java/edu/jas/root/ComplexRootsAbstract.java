@@ -1,5 +1,5 @@
 /*
- * $Id: ComplexRootsAbstract.java 3652 2011-06-02 18:17:04Z kredel $
+ * $Id: ComplexRootsAbstract.java 3946 2012-05-20 13:59:50Z kredel $
  */
 
 package edu.jas.root;
@@ -21,6 +21,7 @@ import edu.jas.poly.GenPolynomial;
 import edu.jas.poly.GenPolynomialRing;
 import edu.jas.poly.PolyUtil;
 import edu.jas.structure.RingElem;
+import edu.jas.structure.GcdRingElem;
 import edu.jas.structure.RingFactory;
 import edu.jas.structure.UnaryFunctor;
 import edu.jas.ufd.Squarefree;
@@ -53,6 +54,9 @@ public abstract class ComplexRootsAbstract<C extends RingElem<C> & Rational> imp
      * @param cf coefficient factory.
      */
     public ComplexRootsAbstract(RingFactory<Complex<C>> cf) {
+        if ( ! (cf instanceof ComplexRing) ) {
+            throw new IllegalArgumentException("cf not supported coefficients " + cf);
+        }
         engine = SquarefreeFactory.<Complex<C>> getImplementation(cf);
     }
 

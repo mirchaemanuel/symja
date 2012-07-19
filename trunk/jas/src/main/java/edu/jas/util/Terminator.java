@@ -1,5 +1,5 @@
 /*
- * $Id: Terminator.java 3393 2010-12-09 21:46:03Z kredel $
+ * $Id: Terminator.java 3979 2012-07-09 21:13:53Z kredel $
  */
 
 package edu.jas.util;
@@ -140,7 +140,7 @@ public class Terminator {
      * hasJobs.
      * @return true, if there are possibly jobs, else false.
      */
-    public boolean hasJobs() {
+    public synchronized boolean hasJobs() {
         return (idler < workers);
     }
 

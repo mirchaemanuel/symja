@@ -1,5 +1,5 @@
 /*
- * $Id: PolyUtil.java 3756 2011-09-03 11:37:03Z kredel $
+ * $Id: PolyUtil.java 3961 2012-06-16 14:13:33Z kredel $
  */
 
 package edu.jas.poly;
@@ -229,7 +229,8 @@ public class PolyUtil {
      * BigInteger from BigRational coefficients. Represent as polynomial with
      * BigInteger coefficients by multiplication with the gcd of the numerators
      * and the lcm of the denominators of the BigRational coefficients. <br
-     * /><b>Author:</b> Axel Kramer
+     * />
+     * <b>Author:</b> Axel Kramer
      * @param fac result polynomial factory.
      * @param A polynomial with BigRational coefficients to be converted.
      * @return Object[] with 3 entries: [0]->gcd [1]->lcm and [2]->polynomial
@@ -605,9 +606,8 @@ public class PolyUtil {
                             public GenPolynomial<C> eval(GenPolynomial<C> c) {
                                 if (c == null) {
                                     return null;
-                                } else {
-                                    return c.monic();
                                 }
+                                return c.monic();
                             }
                         });
     }
@@ -626,9 +626,8 @@ public class PolyUtil {
             public ExpVector eval(GenPolynomial<C> c) {
                 if (c == null) {
                     return null;
-                } else {
-                    return c.leadingExpVector();
                 }
+                return c.leadingExpVector();
             }
         });
     }
@@ -650,8 +649,8 @@ public class PolyUtil {
             return Cp;
         }
         GenPolynomialRing<C> cfac = (GenPolynomialRing<C>) pfac.coFac;
-        GenPolynomialRing<C> acfac = (GenPolynomialRing<C>) A.ring.coFac;
-        int i = cfac.nvar - acfac.nvar;
+        //GenPolynomialRing<C> acfac = (GenPolynomialRing<C>) A.ring.coFac;
+        //int i = cfac.nvar - acfac.nvar;
         Map<ExpVector, GenPolynomial<C>> CC = Cp.val; //getMap();
         for (Map.Entry<ExpVector, GenPolynomial<C>> y : A.val.entrySet()) {
             ExpVector e = y.getKey();
@@ -678,8 +677,8 @@ public class PolyUtil {
         if (A.isZERO()) {
             return B;
         }
-        int i = rfac.nvar;
-        GenPolynomial<C> zero = rfac.getZEROCoefficient();
+        //int i = rfac.nvar;
+        //GenPolynomial<C> zero = rfac.getZEROCoefficient();
         GenPolynomial<C> one = rfac.getONECoefficient();
         Map<ExpVector, GenPolynomial<C>> Bv = B.val; //getMap();
         for (Monomial<C> m : A) {
@@ -702,7 +701,7 @@ public class PolyUtil {
      */
     public static <C extends RingElem<C>> GenPolynomial<C> baseRemainderPoly(GenPolynomial<C> P, C s) {
         if (s == null || s.isZERO()) {
-            throw new ArithmeticException(P.getClass().getName() + " division by zero");
+            throw new ArithmeticException(P + " division by zero " + s);
         }
         GenPolynomial<C> h = P.ring.getZERO().clone();
         Map<ExpVector, C> hm = h.val; //getMap();
@@ -722,12 +721,29 @@ public class PolyUtil {
      * @param P GenPolynomial.
      * @param S nonzero GenPolynomial.
      * @return remainder with ldcf(S)<sup>m'</sup> P = quotient * S + remainder.
+     *         m' &le; deg(P)-deg(S)
      * @see edu.jas.poly.GenPolynomial#remainder(edu.jas.poly.GenPolynomial).
+     * @deprecated Use {@link #baseSparsePseudoRemainder(edu.jas.poly.GenPolynomial,edu.jas.poly.GenPolynomial)} instead
      */
     public static <C extends RingElem<C>> GenPolynomial<C> basePseudoRemainder(GenPolynomial<C> P,
                     GenPolynomial<C> S) {
+                        return baseSparsePseudoRemainder(P, S);
+    }
+
+
+    /**
+     * GenPolynomial sparse pseudo remainder. For univariate polynomials.
+     * @param <C> coefficient type.
+     * @param P GenPolynomial.
+     * @param S nonzero GenPolynomial.
+     * @return remainder with ldcf(S)<sup>m'</sup> P = quotient * S + remainder.
+     *         m' &le; deg(P)-deg(S)
+     * @see edu.jas.poly.GenPolynomial#remainder(edu.jas.poly.GenPolynomial).
+     */
+    public static <C extends RingElem<C>> GenPolynomial<C> baseSparsePseudoRemainder(GenPolynomial<C> P,
+                    GenPolynomial<C> S) {
         if (S == null || S.isZERO()) {
-            throw new ArithmeticException(P.getClass().getName() + " division by zero");
+            throw new ArithmeticException(P.toString() + " division by zero " + S);
         }
         if (P.isZERO()) {
             return P;
@@ -762,18 +778,115 @@ public class PolyUtil {
 
 
     /**
-     * GenPolynomial pseudo divide. For univariate polynomials or exact
+     * GenPolynomial dense pseudo remainder. For univariate polynomials.
+     * @param P GenPolynomial.
+     * @param S nonzero GenPolynomial.
+     * @return remainder with ldcf(S)<sup>m</sup> P = quotient * S +
+     *         remainder.
+     *         m == deg(P)-deg(S)
+     * @see edu.jas.poly.GenPolynomial#remainder(edu.jas.poly.GenPolynomial).
+     */
+    public static <C extends RingElem<C>> GenPolynomial<C> baseDensePseudoRemainder(GenPolynomial<C> P, GenPolynomial<C> S) {
+        if (S == null || S.isZERO()) {
+            throw new ArithmeticException(P + " division by zero " + S);
+        }
+        if (P.isZERO()) {
+            return P;
+        }
+        if (S.degree() <= 0) {
+            return P.ring.getZERO();
+        }
+        long m = P.degree(0);
+        long n = S.degree(0);
+        C c = S.leadingBaseCoefficient();
+        ExpVector e = S.leadingExpVector();
+        GenPolynomial<C> h;
+        GenPolynomial<C> r = P;
+        for (long i = m; i >= n; i--) {
+            if (r.isZERO()) {
+                return r;
+            }
+            long k = r.degree(0);
+            if (i == k) {
+                ExpVector f = r.leadingExpVector();
+                C a = r.leadingBaseCoefficient();
+                f = f.subtract(e); // EVDIF( f, e );
+                //System.out.println("red div = " + f);
+                r = r.multiply(c); // coeff ac
+                h = S.multiply(a, f); // coeff ac
+                r = r.subtract(h);
+            } else {
+                r = r.multiply(c);
+            }
+        }
+        return r;
+    }
+
+
+    /**
+     * GenPolynomial dense pseudo quotient. For univariate polynomials.
+     * @param P GenPolynomial.
+     * @param S nonzero GenPolynomial.
+     * @return quotient with ldcf(S)<sup>m</sup> P = quotient * S +
+     *         remainder.
+     *         m == deg(P)-deg(S)
+     * @see edu.jas.poly.GenPolynomial#remainder(edu.jas.poly.GenPolynomial).
+     */
+    public static <C extends RingElem<C>> GenPolynomial<C> baseDensePseudoQuotient(GenPolynomial<C> P, GenPolynomial<C> S) {
+        if (S == null || S.isZERO()) {
+            throw new ArithmeticException(P + " division by zero " + S);
+        }
+        if (P.isZERO()) {
+            return P;
+        }
+        //if (S.degree() <= 0) {
+        //    return l^n P; //P.ring.getZERO();
+        //}
+        long m = P.degree(0);
+        long n = S.degree(0);
+        C c = S.leadingBaseCoefficient();
+        ExpVector e = S.leadingExpVector();
+        GenPolynomial<C> q = P.ring.getZERO();
+        GenPolynomial<C> h;
+        GenPolynomial<C> r = P;
+        for (long i = m; i >= n; i--) {
+            if (r.isZERO()) {
+                return q;
+            }
+            long k = r.degree(0);
+            if (i == k) {
+                ExpVector f = r.leadingExpVector();
+                C a = r.leadingBaseCoefficient();
+                f = f.subtract(e); // EVDIF( f, e );
+                //System.out.println("red div = " + f);
+                r = r.multiply(c); // coeff ac
+                h = S.multiply(a, f); // coeff ac
+                r = r.subtract(h);
+                q = q.multiply(c); 
+                q = q.sum(a,f);
+            } else {
+                q = q.multiply(c); 
+                r = r.multiply(c);
+            }
+        }
+        return q;
+    }
+
+
+    /**
+     * GenPolynomial sparse pseudo divide. For univariate polynomials or exact
      * division.
      * @param <C> coefficient type.
      * @param P GenPolynomial.
      * @param S nonzero GenPolynomial.
      * @return quotient with ldcf(S)<sup>m'</sup> P = quotient * S + remainder.
+     *         m' &le; deg(P)-deg(S)
      * @see edu.jas.poly.GenPolynomial#divide(edu.jas.poly.GenPolynomial).
      */
     public static <C extends RingElem<C>> GenPolynomial<C> basePseudoDivide(GenPolynomial<C> P,
                     GenPolynomial<C> S) {
         if (S == null || S.isZERO()) {
-            throw new ArithmeticException(P.getClass().getName() + " division by zero");
+            throw new ArithmeticException(P.toString() + " division by zero " + S);
         }
         if (S.ring.nvar != 1) {
             // ok if exact division
@@ -800,8 +913,8 @@ public class PolyUtil {
                     q = q.sum(y, f);
                     h = S.multiply(y, f); // coeff a
                 } else {
-                    q = q.sum(a, f);
                     q = q.multiply(c);
+                    q = q.sum(a, f);
                     r = r.multiply(c); // coeff ac
                     h = S.multiply(a, f); // coeff ac
                 }
@@ -815,20 +928,20 @@ public class PolyUtil {
 
 
     /**
-     * GenPolynomial pseudo quotient and remainder. For univariate polynomials
-     * or exact division.
+     * GenPolynomial sparse pseudo quotient and remainder. For univariate
+     * polynomials or exact division.
      * @param <C> coefficient type.
      * @param P GenPolynomial.
      * @param S nonzero GenPolynomial.
      * @return [ quotient, remainder ] with ldcf(S)<sup>m'</sup> P = quotient *
-     *         S + remainder.
+     *         S + remainder. m' &le; deg(P)-deg(S)
      * @see edu.jas.poly.GenPolynomial#divide(edu.jas.poly.GenPolynomial).
      */
     @SuppressWarnings("unchecked")
     public static <C extends RingElem<C>> GenPolynomial<C>[] basePseudoQuotientRemainder(GenPolynomial<C> P,
                     GenPolynomial<C> S) {
         if (S == null || S.isZERO()) {
-            throw new ArithmeticException(P.getClass().getName() + " division by zero");
+            throw new ArithmeticException(P.toString() + " division by zero " + S);
         }
         if (S.ring.nvar != 1) {
             // ok if exact division
@@ -860,8 +973,8 @@ public class PolyUtil {
                     q = q.sum(y, f);
                     h = S.multiply(y, f); // coeff a
                 } else {
-                    q = q.sum(a, f);
                     q = q.multiply(c);
+                    q = q.sum(a, f);
                     r = r.multiply(c); // coeff ac
                     h = S.multiply(a, f); // coeff ac
                 }
@@ -870,6 +983,8 @@ public class PolyUtil {
                 break;
             }
         }
+        GenPolynomial<C> rhs = q.multiply(S).sum(r);
+        GenPolynomial<C> lhs = P;
         ret[0] = q;
         ret[1] = r;
         return ret;
@@ -877,8 +992,50 @@ public class PolyUtil {
 
 
     /**
-     * GenPolynomial pseudo divide. For recursive polynomials. Division by
-     * coefficient ring element.
+     * Is GenPolynomial pseudo quotient and remainder. For univariate polynomials.
+     * @param <C> coefficient type.
+     * @param P base GenPolynomial.
+     * @param S nonzero base GenPolynomial.
+     * @return remainder with ldcf(S)<sup>m'</sup> P = quotient * S + remainder.
+     * @see edu.jas.poly.GenPolynomial#remainder(edu.jas.poly.GenPolynomial).
+     * <b>Note:</b> not always meaningful and working
+     */
+    public static <C extends RingElem<C>> boolean isBasePseudoQuotientRemainder(
+           GenPolynomial<C> P, GenPolynomial<C> S,
+           GenPolynomial<C> q, GenPolynomial<C> r) {
+        GenPolynomial<C> rhs = q.multiply(S).sum(r);
+        //System.out.println("rhs,1 = " + rhs);
+        GenPolynomial<C> lhs = P;
+        C ldcf = S.leadingBaseCoefficient();
+        long d = P.degree(0) - S.degree(0) + 1;
+        d = ( d > 0 ? d : -d+2 );
+        for ( long i = 0; i <= d; i++ ) {
+            //System.out.println("lhs-rhs = " + lhs.subtract(rhs));
+            if ( lhs.equals(rhs) ) {
+                //System.out.println("lhs,1 = " + lhs);
+                return true;
+            }
+            lhs = lhs.multiply(ldcf);
+        }
+        GenPolynomial<C> Pp = P;
+        rhs = q.multiply(S);
+        //System.out.println("rhs,2 = " + rhs);
+        for ( long i = 0; i <= d; i++ ) {
+            lhs = Pp.subtract(r);
+            //System.out.println("lhs-rhs = " + lhs.subtract(rhs));
+            if ( lhs.equals(rhs) ) {
+                //System.out.println("lhs,2 = " + lhs);
+                return true;
+            }
+            Pp = Pp.multiply(ldcf);
+        }
+        return false;
+    }
+
+
+    /**
+     * GenPolynomial divide. For recursive polynomials. Division by coefficient
+     * ring element.
      * @param <C> coefficient type.
      * @param P recursive GenPolynomial.
      * @param s GenPolynomial.
@@ -887,7 +1044,7 @@ public class PolyUtil {
     public static <C extends RingElem<C>> GenPolynomial<GenPolynomial<C>> recursiveDivide(
                     GenPolynomial<GenPolynomial<C>> P, GenPolynomial<C> s) {
         if (s == null || s.isZERO()) {
-            throw new ArithmeticException(P.getClass().getName() + " division by zero " + P + ", " + s);
+            throw new ArithmeticException("division by zero " + P + ", " + s);
         }
         if (P.isZERO()) {
             return P;
@@ -925,7 +1082,7 @@ public class PolyUtil {
     public static <C extends RingElem<C>> GenPolynomial<GenPolynomial<C>> baseRecursiveDivide(
                     GenPolynomial<GenPolynomial<C>> P, C s) {
         if (s == null || s.isZERO()) {
-            throw new ArithmeticException(P.getClass().getName() + " division by zero " + P + ", " + s);
+            throw new ArithmeticException("division by zero " + P + ", " + s);
         }
         if (P.isZERO()) {
             return P;
@@ -959,11 +1116,26 @@ public class PolyUtil {
      * @param S nonzero recursive GenPolynomial.
      * @return remainder with ldcf(S)<sup>m'</sup> P = quotient * S + remainder.
      * @see edu.jas.poly.GenPolynomial#remainder(edu.jas.poly.GenPolynomial).
+     * @deprecated Use {@link #recursiveSparsePseudoRemainder(edu.jas.poly.GenPolynomial,edu.jas.poly.GenPolynomial)} instead
      */
     public static <C extends RingElem<C>> GenPolynomial<GenPolynomial<C>> recursivePseudoRemainder(
                     GenPolynomial<GenPolynomial<C>> P, GenPolynomial<GenPolynomial<C>> S) {
+        return recursiveSparsePseudoRemainder(P,S);
+    }
+
+
+    /**
+     * GenPolynomial sparse pseudo remainder. For recursive polynomials.
+     * @param <C> coefficient type.
+     * @param P recursive GenPolynomial.
+     * @param S nonzero recursive GenPolynomial.
+     * @return remainder with ldcf(S)<sup>m'</sup> P = quotient * S + remainder.
+     * @see edu.jas.poly.GenPolynomial#remainder(edu.jas.poly.GenPolynomial).
+     */
+    public static <C extends RingElem<C>> GenPolynomial<GenPolynomial<C>> recursiveSparsePseudoRemainder(
+                    GenPolynomial<GenPolynomial<C>> P, GenPolynomial<GenPolynomial<C>> S) {
         if (S == null || S.isZERO()) {
-            throw new ArithmeticException(P.getClass().getName() + " division by zero");
+            throw new ArithmeticException(P + " division by zero " + S);
         }
         if (P == null || P.isZERO()) {
             return P;
@@ -998,17 +1170,62 @@ public class PolyUtil {
 
 
     /**
-     * GenPolynomial pseudo divide. For recursive polynomials.
+     * GenPolynomial dense pseudo remainder. For recursive polynomials.
+     * @param P recursive GenPolynomial.
+     * @param S nonzero recursive GenPolynomial.
+     * @return remainder with ldcf(S)<sup>m'</sup> P = quotient * S + remainder.
+     * @see edu.jas.poly.GenPolynomial#remainder(edu.jas.poly.GenPolynomial).
+     */
+    public static <C extends RingElem<C>> GenPolynomial<GenPolynomial<C>> recursiveDensePseudoRemainder(
+                    GenPolynomial<GenPolynomial<C>> P, GenPolynomial<GenPolynomial<C>> S) {
+        if (S == null || S.isZERO()) {
+            throw new ArithmeticException(P + " division by zero " + S);
+        }
+        if (P == null || P.isZERO()) {
+            return P;
+        }
+        if (S.degree() <= 0) {
+            return P.ring.getZERO();
+        }
+        long m = P.degree(0);
+        long n = S.degree(0);
+        GenPolynomial<C> c = S.leadingBaseCoefficient();
+        ExpVector e = S.leadingExpVector();
+        GenPolynomial<GenPolynomial<C>> h;
+        GenPolynomial<GenPolynomial<C>> r = P;
+        for (long i = m; i >= n; i--) {
+            if (r.isZERO()) {
+                return r;
+            }
+            long k = r.degree(0);
+            if (i == k) {
+                ExpVector f = r.leadingExpVector();
+                GenPolynomial<C> a = r.leadingBaseCoefficient();
+                f = f.subtract(e); //EVDIF( f, e );
+                //System.out.println("red div = " + f);
+                r = r.multiply(c); // coeff ac
+                h = S.multiply(a, f); // coeff ac
+                r = r.subtract(h);
+            } else {
+                r = r.multiply(c);
+            }
+        }
+        return r;
+    }
+
+
+    /**
+     * GenPolynomial recursive pseudo divide. For recursive polynomials.
      * @param <C> coefficient type.
      * @param P recursive GenPolynomial.
      * @param S nonzero recursive GenPolynomial.
-     * @return quotient with ldcf(S)<sup>m</sup> P = quotient * S + remainder.
+     * @return quotient with ldcf(S)<sup>m'</sup> P = quotient * S + remainder.
      * @see edu.jas.poly.GenPolynomial#remainder(edu.jas.poly.GenPolynomial).
      */
     public static <C extends RingElem<C>> GenPolynomial<GenPolynomial<C>> recursivePseudoDivide(
                     GenPolynomial<GenPolynomial<C>> P, GenPolynomial<GenPolynomial<C>> S) {
         if (S == null || S.isZERO()) {
-            throw new ArithmeticException(P.getClass().getName() + " division by zero");
+            throw new ArithmeticException(P + " division by zero " + S);
         }
         if (S.ring.nvar != 1) {
             // ok if exact division
@@ -1031,14 +1248,14 @@ public class PolyUtil {
             if (f.multipleOf(e)) {
                 GenPolynomial<C> a = r.leadingBaseCoefficient();
                 f = f.subtract(e);
-                GenPolynomial<C> x = PolyUtil.<C> basePseudoRemainder(a, c);
-                if (x.isZERO()) {
+                GenPolynomial<C> x = PolyUtil.<C> baseSparsePseudoRemainder(a, c);
+                if (x.isZERO() && !c.isConstant()) {
                     GenPolynomial<C> y = PolyUtil.<C> basePseudoDivide(a, c);
                     q = q.sum(y, f);
                     h = S.multiply(y, f); // coeff a
                 } else {
-                    q = q.sum(a, f);
                     q = q.multiply(c);
+                    q = q.sum(a, f);
                     r = r.multiply(c); // coeff ac
                     h = S.multiply(a, f); // coeff ac
                 }
@@ -1048,6 +1265,48 @@ public class PolyUtil {
             }
         }
         return q;
+    }
+
+
+    /**
+     * Is GenPolynomial pseudo quotient and remainder. For recursive polynomials.
+     * @param <C> coefficient type.
+     * @param P recursive GenPolynomial.
+     * @param S nonzero recursive GenPolynomial.
+     * @return remainder with ldcf(S)<sup>m'</sup> P = quotient * S + remainder.
+     * @see edu.jas.poly.GenPolynomial#remainder(edu.jas.poly.GenPolynomial).
+     * <b>Note:</b> not always meaningful and working
+     */
+    public static <C extends RingElem<C>> boolean isRecursivePseudoQuotientRemainder(
+           GenPolynomial<GenPolynomial<C>> P, GenPolynomial<GenPolynomial<C>> S,
+           GenPolynomial<GenPolynomial<C>> q, GenPolynomial<GenPolynomial<C>> r) {
+        GenPolynomial<GenPolynomial<C>> rhs = q.multiply(S).sum(r);
+        GenPolynomial<GenPolynomial<C>> lhs = P;
+        GenPolynomial<C> ldcf = S.leadingBaseCoefficient();
+        long d = P.degree(0) - S.degree(0) + 1;
+        d = ( d > 0 ? d : -d+2 );
+        for ( long i = 0; i <= d; i++ ) {
+            //System.out.println("lhs = " + lhs);
+            //System.out.println("rhs = " + rhs);
+            //System.out.println("lhs-rhs = " + lhs.subtract(rhs));
+            if ( lhs.equals(rhs) ) {
+                return true;
+            }
+            lhs = lhs.multiply(ldcf);
+        }
+        GenPolynomial<GenPolynomial<C>> Pp = P;
+        rhs = q.multiply(S);
+        //System.out.println("rhs,2 = " + rhs);
+        for ( long i = 0; i <= d; i++ ) {
+            lhs = Pp.subtract(r);
+            //System.out.println("lhs-rhs = " + lhs.subtract(rhs));
+            if ( lhs.equals(rhs) ) {
+                //System.out.println("lhs,2 = " + lhs);
+                return true;
+            }
+            Pp = Pp.multiply(ldcf);
+        }
+        return false;
     }
 
 
@@ -1062,7 +1321,7 @@ public class PolyUtil {
     public static <C extends RingElem<C>> GenPolynomial<GenPolynomial<C>> coefficientPseudoDivide(
                     GenPolynomial<GenPolynomial<C>> P, GenPolynomial<C> s) {
         if (s == null || s.isZERO()) {
-            throw new ArithmeticException(" division by zero");
+            throw new ArithmeticException(P + " division by zero " + s);
         }
         if (P.isZERO()) {
             return P;
@@ -1101,7 +1360,7 @@ public class PolyUtil {
      */
     public static <C extends RingElem<C>> GenPolynomial<C> coefficientBasePseudoDivide(GenPolynomial<C> P, C s) {
         if (s == null || s.isZERO()) {
-            throw new ArithmeticException(" division by zero");
+            throw new ArithmeticException(P + " division by zero " + s);
         }
         if (P.isZERO()) {
             return P;
@@ -1322,7 +1581,7 @@ public class PolyUtil {
         if (a == null || a.isZERO()) {
             return A.trailingBaseCoefficient();
         }
-        // assert decending exponents, i.e. compatible term order
+        // assert descending exponents, i.e. compatible term order
         Map<ExpVector, GenPolynomial<C>> val = A.getMap();
         GenPolynomial<C> B = null;
         long el1 = -1; // undefined
@@ -1376,8 +1635,8 @@ public class PolyUtil {
      * @param a value to evaluate at.
      * @return list( A( x_1, ..., x_{n-1}, a ) ) for A in L.
      */
-    public static <C extends RingElem<C>> List<GenPolynomial<C>> 
-        evaluateMain(GenPolynomialRing<C> cfac, List<GenPolynomial<C>> L, C a) {
+    public static <C extends RingElem<C>> List<GenPolynomial<C>> evaluateMain(GenPolynomialRing<C> cfac,
+                    List<GenPolynomial<C>> L, C a) {
         return ListUtil.<GenPolynomial<C>, GenPolynomial<C>> map(L, new EvalMainPol<C>(cfac, a));
     }
 
@@ -1668,7 +1927,7 @@ public class PolyUtil {
         long n = 1;
         long i = 0;
         GenPolynomial<C> g = PolyUtil.<C> baseDeriviative(f);
-        GenPolynomial<C> p = fac.getONE();
+        //GenPolynomial<C> p = fac.getONE();
         while (!g.isZERO()) {
             i++;
             n *= i;
@@ -1798,11 +2057,11 @@ public class PolyUtil {
      * Maximal degree of leading terms of a polynomial list.
      * @return maximum degree of the leading terms of a polynomial list.
      */
-    public static <C extends RingElem<C>> long totalDegreeLeadingTerm(List<GenPolynomial<C>> P){
+    public static <C extends RingElem<C>> long totalDegreeLeadingTerm(List<GenPolynomial<C>> P) {
         long degree = 0;
-        for(GenPolynomial<C> g : P){
+        for (GenPolynomial<C> g : P) {
             long total = g.leadingExpVector().totalDeg();
-            if ( degree < total ) {
+            if (degree < total) {
                 degree = total;
             }
         }
@@ -1814,11 +2073,11 @@ public class PolyUtil {
      * Maximal degree of polynomial list.
      * @return maximum degree of the polynomial list.
      */
-    public static <C extends RingElem<C>> long totalDegree(List<GenPolynomial<C>> P){
+    public static <C extends RingElem<C>> long totalDegree(List<GenPolynomial<C>> P) {
         long degree = 0;
-        for(GenPolynomial<C> g : P){
+        for (GenPolynomial<C> g : P) {
             long total = g.degree();
-            if ( degree < total ) {
+            if (degree < total) {
                 degree = total;
             }
         }
@@ -2060,7 +2319,7 @@ public class PolyUtil {
 
 
     /**
-     * Remove all upper variables, which do not occur in polynomial.
+     * Remove all upper variables which do not occur in polynomial.
      * @param p polynomial.
      * @return polynomial with removed variables
      */
@@ -2074,7 +2333,9 @@ public class PolyUtil {
             return p;
         }
         if (dep.length == 0) { // no variables
-            return p;
+            GenPolynomialRing<C> fac0 = new GenPolynomialRing<C>(fac.coFac,0);
+            GenPolynomial<C> p0 = new GenPolynomial<C>(fac0,p.leadingBaseCoefficient());
+            return p0;
         }
         int l = dep[0]; // higher variable
         int r = dep[dep.length - 1]; // lower variable
@@ -2099,7 +2360,7 @@ public class PolyUtil {
 
 
     /**
-     * Remove all lower variables, which do not occur in polynomial.
+     * Remove all lower variables which do not occur in polynomial.
      * @param p polynomial.
      * @return polynomial with removed variables
      */
@@ -2113,7 +2374,9 @@ public class PolyUtil {
             return p;
         }
         if (dep.length == 0) { // no variables
-            return p;
+            GenPolynomialRing<C> fac0 = new GenPolynomialRing<C>(fac.coFac,0);
+            GenPolynomial<C> p0 = new GenPolynomial<C>(fac0,p.leadingBaseCoefficient());
+            return p0;
         }
         int l = dep[0]; // higher variable
         int r = dep[dep.length - 1]; // lower variable
@@ -2141,6 +2404,79 @@ public class PolyUtil {
             pr.doPutToMap(e, c);
         }
         return pr;
+    }
+
+
+    /**
+     * Remove upper block of middle variables which do not occur in polynomial.
+     * @param p polynomial.
+     * @return polynomial with removed variables
+     */
+    public static <C extends RingElem<C>> GenPolynomial<C> removeUnusedMiddleVariables(GenPolynomial<C> p) {
+        GenPolynomialRing<C> fac = p.ring;
+        if (fac.nvar <= 2) { // univariate or bi-variate
+            return p;
+        }
+        int[] dep = p.degreeVector().dependencyOnVariables();
+        if (fac.nvar == dep.length) { // all variables appear
+            return p;
+        }
+        if (dep.length == 0) { // no variables
+            GenPolynomialRing<C> fac0 = new GenPolynomialRing<C>(fac.coFac,0);
+            GenPolynomial<C> p0 = new GenPolynomial<C>(fac0,p.leadingBaseCoefficient());
+            return p0;
+        }
+        ExpVector e1 = p.leadingExpVector();
+        if (dep.length == 1) { // one variable
+            TermOrder to = new TermOrder(fac.tord.getEvord());
+            int i = dep[0];
+            String v1 = e1.indexVarName(i,fac.getVars());
+            String[] vars = new String[] { v1 };
+            GenPolynomialRing<C> fac1 = new GenPolynomialRing<C>(fac.coFac, to, vars);
+            GenPolynomial<C> p1 = fac1.getZERO().clone(); 
+            for (Monomial<C> m : p) {
+                 ExpVector e = m.e;
+                 ExpVector f = ExpVector.create(1,0,e.getVal(i));
+                 p1.doPutToMap(f, m.c);
+            }
+            return p1;
+        }
+        GenPolynomialRing<GenPolynomial<C>> rfac = fac.recursive(1);
+        GenPolynomial<GenPolynomial<C>> mpr = recursive(rfac, p);
+
+        int l = dep[0];            // higher variable
+        int r = fac.nvar - dep[1]; // next variable
+        //System.out.println("l  = " + l);
+        //System.out.println("r  = " + r);
+
+        TermOrder to = new TermOrder(fac.tord.getEvord());
+        String[] vs = fac.getVars();
+        String[] vars = new String[ r+1 ];
+        for ( int i = 0; i < r; i++ ) {
+	    vars[i] = vs[i];
+        }
+        vars[r] = e1.indexVarName(l,vs);
+        //System.out.println("fac  = " + fac);
+        GenPolynomialRing<C> dfac = new GenPolynomialRing<C>(fac.coFac, to, vars);
+        //System.out.println("dfac = " + dfac);
+        GenPolynomialRing<GenPolynomial<C>> fac2 = dfac.recursive(1);
+        GenPolynomialRing<C> cfac = (GenPolynomialRing<C>) fac2.coFac;
+        GenPolynomial<GenPolynomial<C>> p2r = fac2.getZERO().clone();
+        for (Monomial<GenPolynomial<C>> m : mpr) {
+            ExpVector e = m.e;
+            GenPolynomial<C> a = m.c;
+            Map<ExpVector,GenPolynomial<C>> cc = a.contract(cfac);
+            for ( ExpVector f : cc.keySet() ) {
+                if ( f.isZERO() ) {
+                    GenPolynomial<C> c = cc.get(f);
+                    p2r.doPutToMap(e, c);
+                } else {
+                    throw new RuntimeException("this should not happen " + cc);
+                }
+            }
+        }
+        GenPolynomial<C> p2 = distribute(dfac, p2r);
+        return p2;
     }
 
 
@@ -2180,9 +2516,8 @@ class DistToRec<C extends RingElem<C>> implements
     public GenPolynomial<GenPolynomial<C>> eval(GenPolynomial<C> c) {
         if (c == null) {
             return fac.getZERO();
-        } else {
-            return PolyUtil.<C> recursive(fac, c);
         }
+        return PolyUtil.<C> recursive(fac, c);
     }
 }
 
@@ -2205,9 +2540,8 @@ class RecToDist<C extends RingElem<C>> implements
     public GenPolynomial<C> eval(GenPolynomial<GenPolynomial<C>> c) {
         if (c == null) {
             return fac.getZERO();
-        } else {
-            return PolyUtil.<C> distribute(fac, c);
         }
+        return PolyUtil.<C> distribute(fac, c);
     }
 }
 
@@ -2221,9 +2555,8 @@ class RatNumer implements UnaryFunctor<BigRational, BigInteger> {
     public BigInteger eval(BigRational c) {
         if (c == null) {
             return new BigInteger();
-        } else {
-            return new BigInteger(c.numerator());
         }
+        return new BigInteger(c.numerator());
     }
 }
 
@@ -2237,9 +2570,8 @@ class ModSymToInt<C extends RingElem<C> & Modular> implements UnaryFunctor<C, Bi
     public BigInteger eval(C c) {
         if (c == null) {
             return new BigInteger();
-        } else {
-            return c.getSymmetricInteger();
         }
+        return c.getSymmetricInteger();
     }
 }
 
@@ -2253,9 +2585,8 @@ class ModToInt<C extends RingElem<C> & Modular> implements UnaryFunctor<C, BigIn
     public BigInteger eval(C c) {
         if (c == null) {
             return new BigInteger();
-        } else {
-            return c.getInteger();
         }
+        return c.getInteger();
     }
 }
 
@@ -2278,11 +2609,10 @@ class RatToInt implements UnaryFunctor<BigRational, BigInteger> {
     public BigInteger eval(BigRational c) {
         if (c == null) {
             return new BigInteger();
-        } else {
-            // p = num*(lcm/denom)
-            java.math.BigInteger b = lcm.divide(c.denominator());
-            return new BigInteger(c.numerator().multiply(b));
         }
+        // p = num*(lcm/denom)
+        java.math.BigInteger b = lcm.divide(c.denominator());
+        return new BigInteger(c.numerator().multiply(b));
     }
 }
 
@@ -2308,18 +2638,16 @@ class RatToIntFactor implements UnaryFunctor<BigRational, BigInteger> {
     public BigInteger eval(BigRational c) {
         if (c == null) {
             return new BigInteger();
-        } else {
-            if (gcd.equals(java.math.BigInteger.ONE)) {
-                // p = num*(lcm/denom)
-                java.math.BigInteger b = lcm.divide(c.denominator());
-                return new BigInteger(c.numerator().multiply(b));
-            } else {
-                // p = (num/gcd)*(lcm/denom)
-                java.math.BigInteger a = c.numerator().divide(gcd);
-                java.math.BigInteger b = lcm.divide(c.denominator());
-                return new BigInteger(a.multiply(b));
-            }
         }
+        if (gcd.equals(java.math.BigInteger.ONE)) {
+            // p = num*(lcm/denom)
+            java.math.BigInteger b = lcm.divide(c.denominator());
+            return new BigInteger(c.numerator().multiply(b));
+        }
+        // p = (num/gcd)*(lcm/denom)
+        java.math.BigInteger a = c.numerator().divide(gcd);
+        java.math.BigInteger b = lcm.divide(c.denominator());
+        return new BigInteger(a.multiply(b));
     }
 }
 
@@ -2333,9 +2661,8 @@ class RatToDec<C extends Element<C> & Rational> implements UnaryFunctor<C, BigDe
     public BigDecimal eval(C c) {
         if (c == null) {
             return new BigDecimal();
-        } else {
-            return new BigDecimal(c.getRational());
         }
+        return new BigDecimal(c.getRational());
     }
 }
 
@@ -2357,11 +2684,10 @@ class CompRatToDec<C extends RingElem<C> & Rational> implements UnaryFunctor<Com
     public Complex<BigDecimal> eval(Complex<C> c) {
         if (c == null) {
             return ring.getZERO();
-        } else {
-            BigDecimal r = new BigDecimal(c.getRe().getRational());
-            BigDecimal i = new BigDecimal(c.getIm().getRational());
-            return new Complex<BigDecimal>(ring, r, i);
         }
+        BigDecimal r = new BigDecimal(c.getRe().getRational());
+        BigDecimal i = new BigDecimal(c.getIm().getRational());
+        return new Complex<BigDecimal>(ring, r, i);
     }
 }
 
@@ -2383,9 +2709,8 @@ class FromInteger<D extends RingElem<D>> implements UnaryFunctor<BigInteger, D> 
     public D eval(BigInteger c) {
         if (c == null) {
             return ring.getZERO();
-        } else {
-            return ring.fromInteger(c.getVal());
         }
+        return ring.fromInteger(c.getVal());
     }
 }
 
@@ -2415,9 +2740,8 @@ class FromIntegerPoly<D extends RingElem<D>> implements
     public GenPolynomial<D> eval(GenPolynomial<BigInteger> c) {
         if (c == null) {
             return ring.getZERO();
-        } else {
-            return PolyUtil.<BigInteger, D> map(ring, c, fi);
         }
+        return PolyUtil.<BigInteger, D> map(ring, c, fi);
     }
 }
 
@@ -2443,9 +2767,8 @@ class RatToIntPoly implements UnaryFunctor<GenPolynomial<BigRational>, GenPolyno
     public GenPolynomial<BigInteger> eval(GenPolynomial<BigRational> c) {
         if (c == null) {
             return ring.getZERO();
-        } else {
-            return PolyUtil.integerFromRationalCoefficients(ring, c);
         }
+        return PolyUtil.integerFromRationalCoefficients(ring, c);
     }
 }
 
@@ -2459,9 +2782,8 @@ class RealPart implements UnaryFunctor<BigComplex, BigRational> {
     public BigRational eval(BigComplex c) {
         if (c == null) {
             return new BigRational();
-        } else {
-            return c.getRe();
         }
+        return c.getRe();
     }
 }
 
@@ -2475,9 +2797,8 @@ class ImagPart implements UnaryFunctor<BigComplex, BigRational> {
     public BigRational eval(BigComplex c) {
         if (c == null) {
             return new BigRational();
-        } else {
-            return c.getIm();
         }
+        return c.getIm();
     }
 }
 
@@ -2491,9 +2812,8 @@ class RealPartComplex<C extends RingElem<C>> implements UnaryFunctor<Complex<C>,
     public C eval(Complex<C> c) {
         if (c == null) {
             return null;
-        } else {
-            return c.getRe();
         }
+        return c.getRe();
     }
 }
 
@@ -2507,9 +2827,8 @@ class ImagPartComplex<C extends RingElem<C>> implements UnaryFunctor<Complex<C>,
     public C eval(Complex<C> c) {
         if (c == null) {
             return null;
-        } else {
-            return c.getIm();
         }
+        return c.getIm();
     }
 }
 
@@ -2535,9 +2854,8 @@ class ToComplex<C extends RingElem<C>> implements UnaryFunctor<C, Complex<C>> {
     public Complex<C> eval(C c) {
         if (c == null) {
             return cfac.getZERO();
-        } else {
-            return new Complex<C>(cfac, c);
         }
+        return new Complex<C>(cfac, c);
     }
 }
 
@@ -2551,9 +2869,8 @@ class RatToCompl implements UnaryFunctor<BigRational, BigComplex> {
     public BigComplex eval(BigRational c) {
         if (c == null) {
             return new BigComplex();
-        } else {
-            return new BigComplex(c);
         }
+        return new BigComplex(c);
     }
 }
 
@@ -2678,9 +2995,8 @@ class AlgToPoly<C extends GcdRingElem<C>> implements UnaryFunctor<AlgebraicNumbe
     public GenPolynomial<C> eval(AlgebraicNumber<C> c) {
         if (c == null) {
             return null;
-        } else {
-            return c.val;
         }
+        return c.val;
     }
 }
 
@@ -2705,9 +3021,8 @@ class PolyToAlg<C extends GcdRingElem<C>> implements UnaryFunctor<GenPolynomial<
     public AlgebraicNumber<C> eval(GenPolynomial<C> c) {
         if (c == null) {
             return afac.getZERO();
-        } else {
-            return new AlgebraicNumber<C>(afac, c);
         }
+        return new AlgebraicNumber<C>(afac, c);
     }
 }
 
@@ -2737,9 +3052,8 @@ class CoeffToAlg<C extends GcdRingElem<C>> implements UnaryFunctor<C, AlgebraicN
     public AlgebraicNumber<C> eval(C c) {
         if (c == null) {
             return afac.getZERO();
-        } else {
-            return new AlgebraicNumber<C>(afac, zero.sum(c));
         }
+        return new AlgebraicNumber<C>(afac, zero.sum(c));
     }
 }
 
@@ -2817,9 +3131,8 @@ class EvalMain<C extends RingElem<C>> implements UnaryFunctor<GenPolynomial<C>, 
     public C eval(GenPolynomial<C> c) {
         if (c == null) {
             return cfac.getZERO();
-        } else {
-            return PolyUtil.<C> evaluateMain(cfac, c, a);
         }
+        return PolyUtil.<C> evaluateMain(cfac, c, a);
     }
 }
 
@@ -2845,8 +3158,7 @@ class EvalMainPol<C extends RingElem<C>> implements UnaryFunctor<GenPolynomial<C
     public GenPolynomial<C> eval(GenPolynomial<C> c) {
         if (c == null) {
             return cfac.getZERO();
-        } else {
-            return PolyUtil.<C> evaluateMain(cfac, c, a);
         }
+        return PolyUtil.<C> evaluateMain(cfac, c, a);
     }
 }

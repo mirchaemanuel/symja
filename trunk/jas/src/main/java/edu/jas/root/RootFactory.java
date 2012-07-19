@@ -1,5 +1,5 @@
 /*
- * $Id: RootFactory.java 3649 2011-05-28 12:51:09Z kredel $
+ * $Id: RootFactory.java 3974 2012-07-01 12:29:44Z kredel $
  */
 
 package edu.jas.root;
@@ -8,6 +8,7 @@ package edu.jas.root;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.Map;
 
 import edu.jas.arith.Rational;
 import edu.jas.arith.BigRational;
@@ -57,14 +58,18 @@ public class RootFactory {
            List<RealAlgebraicNumber<C>> realAlgebraicNumbers(GenPolynomial<C> f) {
         RealRoots<C> rr = new RealRootsSturm<C>();
         SquarefreeAbstract<C> engine = SquarefreeFactory.<C> getImplementation(f.ring.coFac);
-        Set<GenPolynomial<C>> S = engine.squarefreeFactors(f).keySet();
+        Map<GenPolynomial<C>,Long> SF = engine.squarefreeFactors(f);
+        Set<GenPolynomial<C>> S = SF.keySet();
         List<RealAlgebraicNumber<C>> list = new ArrayList<RealAlgebraicNumber<C>>();
         for (GenPolynomial<C> sp : S) {
             List<Interval<C>> iv = rr.realRoots(sp);
             for (Interval<C> I : iv) {
                 RealAlgebraicRing<C> rar = new RealAlgebraicRing<C>(sp, I);
                 RealAlgebraicNumber<C> rn = rar.getGenerator();
-                list.add(rn);
+                long mult = SF.get(sp);
+                for ( int i = 0; i < mult; i++ ) {
+                     list.add(rn);
+                }
             }
         }
         return list;
@@ -81,7 +86,8 @@ public class RootFactory {
            List<RealAlgebraicNumber<C>> realAlgebraicNumbers(GenPolynomial<C> f, BigRational eps) {
         RealRoots<C> rr = new RealRootsSturm<C>();
         SquarefreeAbstract<C> engine = SquarefreeFactory.<C> getImplementation(f.ring.coFac);
-        Set<GenPolynomial<C>> S = engine.squarefreeFactors(f).keySet();
+        Map<GenPolynomial<C>,Long> SF = engine.squarefreeFactors(f);
+        Set<GenPolynomial<C>> S = SF.keySet();
         List<RealAlgebraicNumber<C>> list = new ArrayList<RealAlgebraicNumber<C>>();
         for (GenPolynomial<C> sp : S) {
             List<Interval<C>> iv = rr.realRoots(sp,eps);
@@ -89,7 +95,10 @@ public class RootFactory {
                 RealAlgebraicRing<C> rar = new RealAlgebraicRing<C>(sp, I);
                 rar.setEps(eps);
                 RealAlgebraicNumber<C> rn = rar.getGenerator();
-                list.add(rn);
+                long mult = SF.get(sp);
+                for ( int i = 0; i < mult; i++ ) {
+                     list.add(rn);
+                }
             }
         }
         return list;
@@ -105,14 +114,18 @@ public class RootFactory {
            List<RealAlgebraicNumber<C>> realAlgebraicNumbersField(GenPolynomial<C> f) {
         RealRoots<C> rr = new RealRootsSturm<C>();
         FactorAbstract<C> engine = FactorFactory.<C> getImplementation(f.ring.coFac);
-        Set<GenPolynomial<C>> S = engine.baseFactors(f).keySet();
+        Map<GenPolynomial<C>,Long> SF = engine.baseFactors(f);
+        Set<GenPolynomial<C>> S = SF.keySet();
         List<RealAlgebraicNumber<C>> list = new ArrayList<RealAlgebraicNumber<C>>();
         for (GenPolynomial<C> sp : S) {
             List<Interval<C>> iv = rr.realRoots(sp);
             for (Interval<C> I : iv) {
                 RealAlgebraicRing<C> rar = new RealAlgebraicRing<C>(sp, I, true);//field
                 RealAlgebraicNumber<C> rn = rar.getGenerator();
-                list.add(rn);
+                long mult = SF.get(sp);
+                for ( int i = 0; i < mult; i++ ) {
+                     list.add(rn);
+                }
             }
         }
         return list;
@@ -129,7 +142,8 @@ public class RootFactory {
            List<RealAlgebraicNumber<C>> realAlgebraicNumbersField(GenPolynomial<C> f, BigRational eps) {
         RealRoots<C> rr = new RealRootsSturm<C>();
         FactorAbstract<C> engine = FactorFactory.<C> getImplementation(f.ring.coFac);
-        Set<GenPolynomial<C>> S = engine.baseFactors(f).keySet();
+        Map<GenPolynomial<C>,Long> SF = engine.baseFactors(f);
+        Set<GenPolynomial<C>> S = SF.keySet();
         List<RealAlgebraicNumber<C>> list = new ArrayList<RealAlgebraicNumber<C>>();
         for (GenPolynomial<C> sp : S) {
             List<Interval<C>> iv = rr.realRoots(sp,eps);
@@ -137,7 +151,10 @@ public class RootFactory {
                 RealAlgebraicRing<C> rar = new RealAlgebraicRing<C>(sp, I, true);//field
                 rar.setEps(eps);
                 RealAlgebraicNumber<C> rn = rar.getGenerator();
-                list.add(rn);
+                long mult = SF.get(sp);
+                for ( int i = 0; i < mult; i++ ) {
+                     list.add(rn);
+                }
             }
         }
         return list;
@@ -230,14 +247,18 @@ public class RootFactory {
         ComplexRoots<C> cr = new ComplexRootsSturm<C>(f.ring.coFac);
         SquarefreeAbstract<Complex<C>> engine = SquarefreeFactory
                 .<Complex<C>> getImplementation(f.ring.coFac);
-        Set<GenPolynomial<Complex<C>>> S = engine.squarefreeFactors(f).keySet();
+        Map<GenPolynomial<Complex<C>>,Long> SF = engine.squarefreeFactors(f);
+        Set<GenPolynomial<Complex<C>>> S = SF.keySet();
         List<ComplexAlgebraicNumber<C>> list = new ArrayList<ComplexAlgebraicNumber<C>>();
         for (GenPolynomial<Complex<C>> sp : S) {
             List<Rectangle<C>> iv = cr.complexRoots(sp);
             for (Rectangle<C> I : iv) {
                 ComplexAlgebraicRing<C> car = new ComplexAlgebraicRing<C>(sp, I);
                 ComplexAlgebraicNumber<C> cn = car.getGenerator();
-                list.add(cn);
+                long mult = SF.get(sp);
+                for ( int i = 0; i < mult; i++ ) {
+                     list.add(cn);
+                }
             }
         }
         return list;
@@ -255,7 +276,8 @@ public class RootFactory {
         ComplexRoots<C> cr = new ComplexRootsSturm<C>(f.ring.coFac);
         SquarefreeAbstract<Complex<C>> engine = SquarefreeFactory
                 .<Complex<C>> getImplementation(f.ring.coFac);
-        Set<GenPolynomial<Complex<C>>> S = engine.squarefreeFactors(f).keySet();
+        Map<GenPolynomial<Complex<C>>,Long> SF = engine.squarefreeFactors(f);
+        Set<GenPolynomial<Complex<C>>> S = SF.keySet();
         List<ComplexAlgebraicNumber<C>> list = new ArrayList<ComplexAlgebraicNumber<C>>();
         for (GenPolynomial<Complex<C>> sp : S) {
             List<Rectangle<C>> iv = cr.complexRoots(sp);
@@ -269,7 +291,10 @@ public class RootFactory {
                 ComplexAlgebraicRing<C> car = new ComplexAlgebraicRing<C>(sp, Iv);
                 car.setEps(eps);
                 ComplexAlgebraicNumber<C> cn = car.getGenerator();
-                list.add(cn);
+                long mult = SF.get(sp);
+                for ( int i = 0; i < mult; i++ ) {
+                     list.add(cn);
+                }
             }
         }
         return list;
@@ -285,6 +310,9 @@ public class RootFactory {
            List<ComplexAlgebraicNumber<C>> complexAlgebraicNumbers(GenPolynomial<C> f) {
         if ( f.ring.coFac instanceof Complex ) {
             throw new IllegalArgumentException("f already has Complex coefficients " + f.ring);
+        }
+        if ( f.ring.coFac instanceof ComplexAlgebraicRing ) {
+            throw new UnsupportedOperationException("unsupported ComplexAlgebraicRing coefficients " + f.ring);
         }
         ComplexRing<C> cr = new ComplexRing<C>( f.ring.coFac );
         GenPolynomialRing<Complex<C>> fac = new GenPolynomialRing<Complex<C>>(cr,f.ring);
@@ -303,6 +331,9 @@ public class RootFactory {
                              List<ComplexAlgebraicNumber<C>> complexAlgebraicNumbers(GenPolynomial<C> f, BigRational eps) {
         if ( f.ring.coFac instanceof Complex ) {
             throw new IllegalArgumentException("f already has Complex coefficients " + f.ring);
+        }
+        if ( f.ring.coFac instanceof ComplexAlgebraicRing ) {
+            throw new UnsupportedOperationException("unsupported ComplexAlgebraicRing coefficients " + f.ring);
         }
         ComplexRing<C> cr = new ComplexRing<C>( f.ring.coFac );
         GenPolynomialRing<Complex<C>> fac = new GenPolynomialRing<Complex<C>>(cr,f.ring);

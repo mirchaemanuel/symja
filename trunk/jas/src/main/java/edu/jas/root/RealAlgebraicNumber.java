@@ -1,5 +1,5 @@
 /*
- * $Id: RealAlgebraicNumber.java 3664 2011-06-13 10:48:08Z kredel $
+ * $Id: RealAlgebraicNumber.java 3979 2012-07-09 21:13:53Z kredel $
  */
 
 package edu.jas.root;
@@ -321,7 +321,7 @@ implements GcdRingElem<RealAlgebraicNumber<C>>, Rational {
      */
     public BigRational magnitude() {
         Interval<C> v = ring.engine.invariantMagnitudeInterval(ring.root, ring.algebraic.modul, number.val,
-                        ring.eps);
+							       ring.getEps());
         //System.out.println("old v = " + ring.root + ", new v = " + v);
         ring.setRoot(v);
         C ev = ring.engine.realIntervalMagnitude(v, ring.algebraic.modul, number.val); //, ring.eps);

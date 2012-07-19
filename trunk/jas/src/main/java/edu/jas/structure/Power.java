@@ -1,5 +1,5 @@
 /*
- * $Id: Power.java 3737 2011-08-14 19:46:26Z kredel $
+ * $Id: Power.java 3978 2012-07-09 21:10:01Z kredel $
  */
 
 package edu.jas.structure;
@@ -339,7 +339,7 @@ public class Power<C extends RingElem<C> > {
      * @return prod(i=0,...k) a_i.
      */
     public static <C extends RingElem<C>> C multiply( RingFactory<C> fac, List<C> A) {
-	return multiply( (MonoidFactory<C>) fac, A);
+        return multiply( (MonoidFactory<C>) fac, A);
     }
 
 
@@ -354,11 +354,11 @@ public class Power<C extends RingElem<C> > {
             throw new IllegalArgumentException("fac may not be null for empty list");
         }
         C res = fac.getONE();
-        if ( A == null || A.size() == 0 ) {
+        if ( A == null || A.isEmpty() ) {
            return res;
         }
         for ( C a : A ) {
-	    res = res.multiply(a);
+            res = res.multiply(a);
         }
         return res;
     }
@@ -371,7 +371,7 @@ public class Power<C extends RingElem<C> > {
      * @return sum(i=0,...k) a_i.
      */
     public static <C extends RingElem<C>> C sum( RingFactory<C> fac, List<C> A) {
-	return sum( (AbelianGroupFactory<C>) fac, A);
+        return sum( (AbelianGroupFactory<C>) fac, A);
     }
 
 
@@ -386,11 +386,11 @@ public class Power<C extends RingElem<C> > {
             throw new IllegalArgumentException("fac may not be null for empty list");
         }
         C res = fac.getZERO();
-        if ( A == null || A.size() == 0 ) {
+        if ( A == null || A.isEmpty() ) {
            return res;
         }
         for ( C a : A ) {
-	    res = res.sum(a);
+            res = res.sum(a);
         }
         return res;
     }

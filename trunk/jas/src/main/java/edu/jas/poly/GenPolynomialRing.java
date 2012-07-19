@@ -1,5 +1,5 @@
 /*
- * $Id: GenPolynomialRing.java 3767 2011-09-18 11:42:39Z kredel $
+ * $Id: GenPolynomialRing.java 3983 2012-07-12 21:18:20Z kredel $
  */
 
 package edu.jas.poly;
@@ -177,6 +177,17 @@ public class GenPolynomialRing<C extends RingElem<C>> implements RingFactory<Gen
     /**
      * The constructor creates a polynomial factory object.
      * @param cf factory for coefficients of type C.
+     * @param v names for the variables.
+     * @param t a term order.
+     */
+    public GenPolynomialRing(RingFactory<C> cf, String[] v, TermOrder t) {
+        this(cf, v.length, t, v);
+    }
+
+
+    /**
+     * The constructor creates a polynomial factory object.
+     * @param cf factory for coefficients of type C.
      * @param n number of variables.
      * @param t a term order.
      * @param v names for the variables.
@@ -191,8 +202,10 @@ public class GenPolynomialRing<C extends RingElem<C>> implements RingFactory<Gen
         C coeff = coFac.getONE();
         evzero = ExpVector.create(nvar);
         ONE = new GenPolynomial<C>(this, coeff, evzero);
-        if (vars == null && PrettyPrint.isTrue()) {
-            vars = newVars("x", nvar);
+        if (vars == null) {
+            if (PrettyPrint.isTrue()) {
+                vars = newVars("x", nvar);
+            }
         } else {
             if (vars.length != nvar) {
                 throw new IllegalArgumentException("incompatible variable size " + vars.length + ", " + nvar);
@@ -215,6 +228,18 @@ public class GenPolynomialRing<C extends RingElem<C>> implements RingFactory<Gen
 
 
     /**
+     * The constructor creates a polynomial factory object with the the same
+     * coefficient factory, number of variables and variable names as the given
+     * polynomial factory, only the term order differs.
+     * @param to term order.
+     * @param o other polynomial ring.
+     */
+    public GenPolynomialRing(GenPolynomialRing<C> o, TermOrder to) {
+        this(o.coFac, o.nvar, to, o.getVars());
+    }
+
+
+    /**
      * Clone this factory.
      * @see java.lang.Object#clone()
      */
@@ -231,7 +256,7 @@ public class GenPolynomialRing<C extends RingElem<C>> implements RingFactory<Gen
     @Override
     public String toString() {
         String res = null;
-        if (PrettyPrint.isTrue()) {
+        if (PrettyPrint.isTrue()&& coFac != null) {
             String scf = coFac.getClass().getSimpleName();
             if (coFac instanceof AlgebraicNumberRing) {
                 AlgebraicNumberRing an = (AlgebraicNumberRing) coFac;
@@ -256,12 +281,8 @@ public class GenPolynomialRing<C extends RingElem<C>> implements RingFactory<Gen
                 res = "Mod " + mn.getModul() + " ";
             }
             if (res == null) {
-                if (coFac != null) {
-                    res = coFac.toString();
-                    if (res.matches("[0-9].*")) {
-                        res = scf;
-                    }
-                } else {
+                res = coFac.toString();
+                if (res.matches("[0-9].*")) {
                     res = scf;
                 }
             }
@@ -318,13 +339,13 @@ public class GenPolynomialRing<C extends RingElem<C>> implements RingFactory<Gen
         } else {
             s.append(coFac.toScript().trim());
         }
-        s.append(",\"" + varsToString() + "\",");
+        s.append(",\"" + varsToString() + "\"");
         String to = tord.toString();
         if (tord.getEvord() == TermOrder.INVLEX) {
-            to = "PolyRing.lex";
+            to = ",PolyRing.lex";
         }
         if (tord.getEvord() == TermOrder.IGRLEX) {
-            to = "PolyRing.grad";
+            to = ",PolyRing.grad";
         }
         s.append(to);
         s.append(")");
@@ -1031,7 +1052,7 @@ public class GenPolynomialRing<C extends RingElem<C>> implements RingFactory<Gen
 
     /**
      * Get a GenPolynomial iterator.
-     * @return a iterator over all polynomials.
+     * @return an iterator over all polynomials.
      */
     public Iterator<GenPolynomial<C>> iterator() {
         if (coFac.isFinite()) {

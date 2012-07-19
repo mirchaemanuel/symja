@@ -1,5 +1,5 @@
 /*
- * $Id: ReductionSeq.java 3345 2010-10-15 19:50:36Z kredel $
+ * $Id: ReductionSeq.java 3981 2012-07-12 20:51:22Z kredel $
  */
 
 package edu.jas.ps;
@@ -352,7 +352,7 @@ public class ReductionSeq<C extends RingElem<C>> // should be FieldElem<C>>
         }
         for (MultiVarPowerSeries<C> p : P) {
             ExpVector ep = p.orderExpVector();
-            if (e == null) {
+            if (ep == null) { // found by findbugs
                 continue;
             }
             if (e.multipleOf(ep)) {

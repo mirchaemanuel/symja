@@ -1,10 +1,11 @@
 /*
- * $Id: CReductionSeq.java 3426 2010-12-24 13:17:58Z kredel $
+ * $Id: CReductionSeq.java 3989 2012-07-14 12:39:14Z kredel $
  */
 
 package edu.jas.application;
 
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -28,7 +29,7 @@ import edu.jas.ufd.GreatestCommonDivisor;
  * @param <C> coefficient type
  * @author Heinz Kredel
  */
-public class CReductionSeq<C extends GcdRingElem<C>>
+public class CReductionSeq<C extends GcdRingElem<C>> implements Serializable
        /* extends ReductionAbstract<C> */
        /* implements CReduction<C> */ {
 

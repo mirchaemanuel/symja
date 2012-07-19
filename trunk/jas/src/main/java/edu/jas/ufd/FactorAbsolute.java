@@ -1,5 +1,5 @@
 /*
- * $Id: FactorAbsolute.java 3494 2011-01-20 21:22:45Z kredel $
+ * $Id: FactorAbsolute.java 3978 2012-07-09 21:10:01Z kredel $
  */
 
 package edu.jas.ufd;
@@ -281,7 +281,7 @@ public abstract class FactorAbsolute<C extends GcdRingElem<C>> extends FactorAbs
             //System.out.println("factors over K(alpha) = " + factors);
         }
         List<GenPolynomial<AlgebraicNumber<C>>> faca = new ArrayList<GenPolynomial<AlgebraicNumber<C>>>(
-                factors.size());;
+                factors.size());
         List<Factors<AlgebraicNumber<C>>> facar = new ArrayList<Factors<AlgebraicNumber<C>>>();
         for (GenPolynomial<AlgebraicNumber<C>> fi : factors) {
             if (fi.degree(0) <= 1) {
@@ -441,7 +441,7 @@ public abstract class FactorAbsolute<C extends GcdRingElem<C>> extends FactorAbs
         // = GCDFactory.<C>getImplementation( cfac.coFac );
         GreatestCommonDivisorAbstract<AlgebraicNumber<C>> aengine = null;
 
-        GenPolynomial<GenPolynomial<C>> Rc = engine.recursiveResultant(Pc, At);
+        GenPolynomial<GenPolynomial<C>> Rc = engine.recursiveUnivariateResultant(Pc, At);
         //System.out.println("Rc = " + Rc);
         GenPolynomial<C> res = Rc.leadingBaseCoefficient();
         //no: res = res.monic();

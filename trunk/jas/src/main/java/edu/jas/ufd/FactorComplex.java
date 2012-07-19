@@ -1,5 +1,5 @@
 /*
- * $Id: FactorComplex.java 3364 2010-10-24 12:56:06Z kredel $
+ * $Id: FactorComplex.java 3883 2012-02-05 18:43:31Z kredel $
  */
 
 package edu.jas.ufd;
@@ -76,11 +76,20 @@ public class FactorComplex<C extends GcdRingElem<C>> extends FactorAbsolute<Comp
      */
     public FactorComplex(ComplexRing<C> fac) {
         super(fac);
-        GenPolynomialRing<C> pfac = new GenPolynomialRing<C>(fac.ring, 1, new TermOrder(TermOrder.INVLEX),
-                new String[] { "I" });
-        GenPolynomial<C> I = pfac.univariate(0, 2L).sum(pfac.getONE());
-        afac = new AlgebraicNumberRing<C>(I, true); // must indicate field
+        this.afac = fac.algebraicRing();
         this.factorAlgeb = FactorFactory.<C> getImplementation(afac);
+    }
+
+
+    /**
+     * Constructor.
+     * @param fac complex number factory.
+     * @param factorAlgeb factorization engine for polynomials over algebraic coefficients.
+     */
+    public FactorComplex(ComplexRing<C> fac, FactorAbstract<AlgebraicNumber<C>> factorAlgeb) {
+        super(fac);
+        this.afac = fac.algebraicRing();
+        this.factorAlgeb = factorAlgeb;
     }
 
 

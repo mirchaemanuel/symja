@@ -1,5 +1,5 @@
 /*
- * $Id: Boundary.java 3677 2011-07-04 20:29:49Z kredel $
+ * $Id: Boundary.java 3993 2012-07-14 21:39:15Z kredel $
  */
 
 package edu.jas.root;
@@ -31,7 +31,7 @@ import edu.jas.ufd.GreatestCommonDivisor;
  * @param <C> coefficient type.
  * @author Heinz Kredel
  */
-public class Boundary<C extends RingElem<C> & Rational> {
+public class Boundary<C extends RingElem<C> & Rational> implements Cloneable {
 
 
     /**
@@ -108,7 +108,10 @@ public class Boundary<C extends RingElem<C> & Rational> {
         rect = r;
         A = p;
         polys = b;
-        //ufd = GCDFactory.<Complex<C>> getImplementation(A.ring.coFac);
+        // setup factory for real and imaginary parts
+        ComplexRing<C> cr = (ComplexRing<C>) A.ring.coFac;
+        RingFactory<C> cf = cr.ring;
+        rfac = new GenPolynomialRing<C>(cf, A.ring);
     }
 
 
@@ -171,13 +174,13 @@ public class Boundary<C extends RingElem<C> & Rational> {
     @Override
     @SuppressWarnings("unchecked")
     public boolean equals(Object b) {
-        if (!(b instanceof Boundary)) {
-            return false;
-        }
         Boundary<C> a = null;
         try {
             a = (Boundary<C>) b;
         } catch (ClassCastException e) {
+        }
+        if (a == null) {
+            return false;
         }
         return rect.equals(a.rect) && A.equals(a.A);
     }

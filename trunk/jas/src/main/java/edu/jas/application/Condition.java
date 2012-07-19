@@ -1,5 +1,5 @@
 /*
- * $Id: Condition.java 3426 2010-12-24 13:17:58Z kredel $
+ * $Id: Condition.java 3816 2011-10-29 18:08:34Z kredel $
  */
 
 package edu.jas.application;
@@ -356,13 +356,13 @@ public class Condition<C extends GcdRingElem<C>> implements Serializable {
                 return new ColorPolynomial<C>(green, red, white);
                 // since break is not possible
             default:
-                System.out.println("error cond       = " + this);
-                System.out.println("error poly     A = " + A);
-                System.out.println("error poly green = " + green);
-                System.out.println("error poly   red = " + red);
-                System.out.println("error poly    Ap = " + Ap);
-                System.out.println("error coeff    c = " + c);
-                throw new RuntimeException("error, c is white = " + c);
+                System.out.println("undetermined cond       = " + this);
+                System.out.println("undetermined poly     A = " + A);
+                System.out.println("undetermined poly green = " + green);
+                System.out.println("undetermined poly   red = " + red);
+                System.out.println("undetermined poly    Ap = " + Ap);
+                System.out.println("undetermined coeff    c = " + c);
+                throw new RuntimeException("undetermined, c is white = " + c);
                 // is catched in minimalGB
             }
         }

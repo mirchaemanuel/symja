@@ -1,5 +1,5 @@
 /*
- * $Id: ExpVector.java 3497 2011-01-20 21:30:04Z kredel $
+ * $Id: ExpVector.java 3800 2011-10-12 21:36:11Z kredel $
  */
 
 package edu.jas.poly;
@@ -744,6 +744,14 @@ public abstract class ExpVector implements AbelianGroupElem<ExpVector>
         return U.totalDeg();
     }
 
+
+    /**
+     * ExpVector degree.
+     * @return total degree of all exponents.
+     */
+    public long degree() {
+        return totalDeg();
+    }
 
     /**
      * ExpVector total degree.

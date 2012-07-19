@@ -1,5 +1,5 @@
 /*
- * $Id: Complex.java 3364 2010-10-24 12:56:06Z kredel $
+ * $Id: Complex.java 3963 2012-06-16 14:32:14Z kredel $
  */
 
 package edu.jas.poly;
@@ -11,15 +11,15 @@ import edu.jas.arith.BigComplex;
 import edu.jas.arith.BigDecimal;
 import edu.jas.arith.BigInteger;
 import edu.jas.arith.BigRational;
-import edu.jas.structure.GcdRingElem;
 import edu.jas.structure.RingElem;
+import edu.jas.structure.GcdRingElem;
 import edu.jas.structure.StarRingElem;
 
 
 /**
  * Generic Complex class implementing the RingElem interface. Objects of this
  * class are immutable.
- * @param <C> base type.
+ * @param <C> base type of RingElem (for complex polynomials).
  * @author Heinz Kredel
  */
 public class Complex<C extends RingElem<C>> implements StarRingElem<Complex<C>>, GcdRingElem<Complex<C>> {
@@ -191,15 +191,21 @@ public class Complex<C extends RingElem<C>> implements StarRingElem<Complex<C>>,
         if (im.isZERO()) {
             s.append(re.toScript());
         } else {
-            s.append("");
+            C mi = im;
+            //s.append("");
             if (!re.isZERO()) {
                 s.append(re.toScript());
-                s.append(" + ");
+                if (mi.signum() > 0) {
+                    s.append(" + ");
+	        } else {
+                    s.append(" - ");
+                    mi = mi.negate();
+                }
             }
-            if (im.isONE()) {
+            if (mi.isONE()) {
                 s.append("I");
             } else {
-                s.append(im.toScript()).append(" * I");
+                s.append(mi.toScript()).append(" * I");
             }
             s.append("");
         }

@@ -1,9 +1,11 @@
 /*
- * $Id: Interval.java 3662 2011-06-11 13:41:28Z kredel $
+ * $Id: Interval.java 3993 2012-07-14 21:39:15Z kredel $
  */
 
 package edu.jas.root;
 
+
+import java.io.Serializable;
 
 import edu.jas.arith.BigDecimal;
 import edu.jas.arith.BigRational;
@@ -17,7 +19,7 @@ import edu.jas.structure.RingFactory;
  * @param <C> coefficient type.
  * @author Heinz Kredel
  */
-public class Interval<C extends RingElem<C> & Rational > {
+public class Interval<C extends RingElem<C> & Rational > implements Serializable, Cloneable { //findbugs
 
 
     /**
@@ -96,6 +98,7 @@ public class Interval<C extends RingElem<C> & Rational > {
         try {
             a = (Interval<C>) b;
         } catch (ClassCastException e) {
+            return false;
         }
         return left.equals(a.left) && right.equals(a.right);
     }
@@ -164,12 +167,24 @@ public class Interval<C extends RingElem<C> & Rational > {
 
     /**
      * Rational middle point.
-     * @return (left-right)/2;
+     * @return (left+right)/2;
      */
     public BigRational rationalMiddle() {
         BigRational m = left.getRational().sum(right.getRational());
         BigRational t = new BigRational(1L,2L);
         m = m.multiply(t);
+        return m;
+    }
+
+
+    /**
+     * Middle point.
+     * @return (left+right)/2;
+     */
+    public C middle() {
+        C m = left.sum(right);
+        C h = left.factory().parse("1/2");
+        m = m.multiply(h);
         return m;
     }
 

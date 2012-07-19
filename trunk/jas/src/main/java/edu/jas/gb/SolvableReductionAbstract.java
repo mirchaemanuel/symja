@@ -1,5 +1,5 @@
 /*
- * $Id: SolvableReductionAbstract.java 3452 2010-12-27 12:48:08Z kredel $
+ * $Id: SolvableReductionAbstract.java 3992 2012-07-14 21:32:18Z kredel $
  */
 
 package edu.jas.gb;
@@ -233,10 +233,7 @@ public abstract class SolvableReductionAbstract<C extends RingElem<C>>
             }
             return Ap.equals(Np);
         }
-        if ( row == null && Pp != null ) {
-            return false;
-        }
-        if ( row != null && Pp == null ) {
+        if ( row == null || Pp == null ) {
             return false;
         }
         if ( row.size() != Pp.size() ) {

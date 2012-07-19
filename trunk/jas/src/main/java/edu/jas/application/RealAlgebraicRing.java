@@ -1,5 +1,5 @@
 /*
- * $Id: RealAlgebraicRing.java 3753 2011-08-27 20:34:30Z kredel $
+ * $Id: RealAlgebraicRing.java 3947 2012-05-28 10:50:47Z kredel $
  */
 
 package edu.jas.application;
@@ -278,6 +278,15 @@ public class RealAlgebraicRing<C extends GcdRingElem<C> & Rational> implements
 
 
     /**
+     * Assert that this ring is a field.
+     * @param isField true if this ring is a field, else false.
+     */
+    public void setField(boolean isField) {
+        realRing.setField(isField);
+    }
+
+
+    /**
      * Characteristic of this ring.
      * @return characteristic of this ring.
      */
@@ -313,7 +322,7 @@ public class RealAlgebraicRing<C extends GcdRingElem<C> & Rational> implements
     @Override
     public String toString() {
         return "RealAlgebraicRing[ " + realRing.toString() + " in " + root + " | isField="
-                        + realRing.isField() + " :: " + algebraic.ideal.toString() + " ]";
+                        + realRing.isField() + ", algebraic.ideal=" + algebraic.ideal.toString() + " ]";
     }
 
 

@@ -1,5 +1,5 @@
 /*
- * $Id: OptimizedPolynomialList.java 2996 2010-02-07 13:32:42Z kredel $
+ * $Id: OptimizedPolynomialList.java 3988 2012-07-14 12:07:13Z kredel $
  */
 
 package edu.jas.poly;
@@ -39,6 +39,19 @@ public class OptimizedPolynomialList<C extends RingElem<C>> extends PolynomialLi
     @Override
     public String toString() {
         return "permutation = " + perm + "\n" + super.toString();
+    }
+
+
+    /**
+     * Comparison with any other object.
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object B) {
+        if (!(B instanceof OptimizedPolynomialList)) {
+            return false;
+        }
+        return super.equals(B);
     }
 
 }

@@ -1,5 +1,5 @@
 /*
- * $Id: ExpVectorLong.java 3295 2010-08-26 17:01:10Z kredel $
+ * $Id: ExpVectorLong.java 3994 2012-07-15 11:50:54Z kredel $
  */
 
 package edu.jas.poly;
@@ -300,6 +300,16 @@ public class ExpVectorLong extends ExpVector
         int t = this.invLexCompareTo(b);
         //System.out.println("equals: this = " + this + " B = " + B + " t = " + t);
         return (0 == t);
+    }
+
+
+    /** hashCode for this exponent vector.
+     * @see java.lang.Object#hashCode()
+     * Only for findbugs.
+     */
+    @Override
+    public int hashCode() { 
+        return super.hashCode();
     }
 
 

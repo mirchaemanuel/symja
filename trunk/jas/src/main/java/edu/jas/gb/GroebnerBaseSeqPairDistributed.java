@@ -1,5 +1,5 @@
 /*
- * $Id: GroebnerBaseSeqPairDistributed.java 3626 2011-05-08 09:51:57Z kredel $
+ * $Id: GroebnerBaseSeqPairDistributed.java 3990 2012-07-14 12:46:08Z kredel $
  */
 
 package edu.jas.gb;
@@ -57,7 +57,7 @@ public class GroebnerBaseSeqPairDistributed<C extends RingElem<C>> extends Groeb
     /**
      * Pool of threads to use.
      */
-    protected final ThreadPool pool;
+    protected transient final ThreadPool pool;
 
 
     /**
@@ -223,6 +223,7 @@ public class GroebnerBaseSeqPairDistributed<C extends RingElem<C>> extends Groeb
 
         DistHashTable<Integer, GenPolynomial<C>> theList = new DistHashTable<Integer, GenPolynomial<C>>(
                 "localhost", DL_PORT);
+        theList.init();
         List<GenPolynomial<C>> al = pairlist.getList();
         for (int i = 0; i < al.size(); i++) {
             // no wait required
@@ -287,6 +288,7 @@ public class GroebnerBaseSeqPairDistributed<C extends RingElem<C>> extends Groeb
         final int DL_PORT = port + 100;
         DistHashTable<Integer, GenPolynomial<C>> theList = new DistHashTable<Integer, GenPolynomial<C>>(host,
                 DL_PORT);
+        theList.init();
 
         ReducerClientSeqPair<C> R = new ReducerClientSeqPair<C>(pairChannel, theList);
         R.run();
@@ -560,7 +562,7 @@ class ReducerServerSeqPair<C extends RingElem<C>> implements Runnable {
                 //logger.info("H = " + H);
                 if (H == null) {
                     if (pair != null) {
-                        polIndex = pairlist.record(pair, H);
+                        polIndex = pairlist.record(pair, null);
                         //pair.setZero();
                     }
                     pairlist.update();

@@ -1,5 +1,5 @@
 /*
- * $Id: BigInteger.java 3354 2010-10-23 15:51:37Z kredel $
+ * $Id: BigInteger.java 3827 2011-12-15 21:57:54Z kredel $
  */
 
 package edu.jas.arith;
@@ -18,8 +18,9 @@ import edu.jas.structure.RingFactory;
 
 /**
  * BigInteger class to make java.math.BigInteger available with RingElem 
- * interface and with the familiar SAC static method names.
+ * respectively the GcdRingElem interface.
  * Objects of this class are immutable.
+ * The SAC2 static methods are also provided.
  * @author Heinz Kredel
  * @see java.math.BigInteger
  */

@@ -1,5 +1,5 @@
 /*
- * $Id: MultiplicativeSetFactors.java 3423 2010-12-24 10:56:50Z kredel $
+ * $Id: MultiplicativeSetFactors.java 3988 2012-07-14 12:07:13Z kredel $
  */
 
 package edu.jas.gbufd;
@@ -69,6 +69,19 @@ public class MultiplicativeSetFactors<C extends GcdRingElem<C>> extends Multipli
     @Override
     public String toString() {
         return "MultiplicativeSetFactors" + mset;
+    }
+
+
+    /**
+     * Comparison with any other object.
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object B) {
+        if (!(B instanceof MultiplicativeSetFactors)) {
+            return false;
+        }
+        return super.equals(B);
     }
 
 

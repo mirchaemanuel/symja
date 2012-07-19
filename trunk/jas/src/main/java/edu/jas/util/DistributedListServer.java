@@ -1,5 +1,5 @@
 /*
- * $Id: DistributedListServer.java 3279 2010-08-21 20:18:25Z kredel $
+ * $Id: DistributedListServer.java 3994 2012-07-15 11:50:54Z kredel $
  */
 
 package edu.jas.util;
@@ -255,7 +255,7 @@ class Counter implements Serializable, Comparable<Counter> {
      * @return true if this is equal to o, else false.
      */
     @Override
-     public boolean equals(Object ob) {
+    public boolean equals(Object ob) {
         if ( ! (ob instanceof Counter) ) {
            return false;
         }
@@ -277,6 +277,16 @@ class Counter implements Serializable, Comparable<Counter> {
             return -1;
         }
         return 0;
+    }
+
+
+    /**
+     * Hash code for this Counter.
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode() {
+        return value;
     }
 
 

@@ -1,5 +1,5 @@
 /*
- * $Id: TaggedSocketChannel.java 3297 2010-08-26 19:09:03Z kredel $
+ * $Id: TaggedSocketChannel.java 3982 2012-07-12 21:00:59Z kredel $
  */
 
 package edu.jas.util;
@@ -102,7 +102,7 @@ public class TaggedSocketChannel extends Thread {
      */
     public void send(Integer tag, Object v) throws IOException {
         if (tag == null) {
-            throw new IllegalArgumentException("tag " + tag + " not allowed");
+            throw new IllegalArgumentException("tag null not allowed");
         }
         if (v instanceof Exception) {
             throw new IllegalArgumentException("message " + v + " not allowed");
