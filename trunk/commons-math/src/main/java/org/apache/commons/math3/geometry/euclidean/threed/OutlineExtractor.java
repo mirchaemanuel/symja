@@ -32,7 +32,7 @@ import org.apache.commons.math3.util.FastMath;
 /** Extractor for {@link PolygonsSet polyhedrons sets} outlines.
  * <p>This class extracts the 2D outlines from {{@link PolygonsSet
  * polyhedrons sets} in a specified projection plane.</p>
- * @version $Id: OutlineExtractor.java 1244107 2012-02-14 16:17:55Z erans $
+ * @version $Id: OutlineExtractor.java 1343694 2012-05-29 12:21:27Z luc $
  * @since 3.0
  */
 public class OutlineExtractor {
@@ -246,8 +246,8 @@ public class OutlineExtractor {
             }
         }
 
-        /** Get the projecion of the polyhedrons set on the plane.
-         * @return projecion of the polyhedrons set on the plane
+        /** Get the projection of the polyhedrons set on the plane.
+         * @return projection of the polyhedrons set on the plane
          */
         public PolygonsSet getProjected() {
             return projected;

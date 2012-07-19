@@ -45,7 +45,7 @@ import org.apache.commons.math3.util.FastMath;
  * the numbers of rows is equal to the length of the {@code target} array while the
  * number of columns is equal to the length of the {@code startPoint} array.
  *
- * @version $Id: AbstractLeastSquaresOptimizer.java 1336123 2012-05-09 12:14:16Z erans $
+ * @version $Id: AbstractLeastSquaresOptimizer.java 1345803 2012-06-03 23:24:43Z erans $
  * @since 1.2
  */
 public abstract class AbstractLeastSquaresOptimizer
@@ -82,8 +82,11 @@ public abstract class AbstractLeastSquaresOptimizer
      * Simple constructor with default settings.
      * The convergence check is set to a {@link
      * org.apache.commons.math3.optimization.SimpleVectorValueChecker}.
+     * @deprecated See {@link org.apache.commons.math3.optimization.SimpleValueChecker#SimpleValueChecker()}
      */
+    @Deprecated
     protected AbstractLeastSquaresOptimizer() {}
+
     /**
      * @param checker Convergence checker.
      */

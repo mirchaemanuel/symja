@@ -148,7 +148,7 @@ import org.apache.commons.math3.util.MathUtils;
  * Journal on Numerical Analysis 12(4): 617-629, 1975</dd>
  * </dl>
  *
- * @version $Id: SymmLQ.java 1306150 2012-03-28 04:18:44Z celestin $
+ * @version $Id: SymmLQ.java 1353141 2012-06-23 15:12:34Z celestin $
  * @since 3.0
  */
 public class SymmLQ
@@ -956,7 +956,7 @@ public class SymmLQ
      * @throws MaxCountExceededException at exhaustion of the iteration count,
      * unless a custom
      * {@link org.apache.commons.math3.util.Incrementor.MaxCountExceededCallback callback}
-     * has been set at construction
+     * has been set at construction of the {@link IterationManager}
      * @throws NonSelfAdjointOperatorException if {@link #getCheck()} is
      * {@code true}, and {@code a} or {@code m} is not self-adjoint
      * @throws NonPositiveDefiniteOperatorException if {@code m} is not
@@ -1044,7 +1044,7 @@ public class SymmLQ
      * @throws MaxCountExceededException at exhaustion of the iteration count,
      * unless a custom
      * {@link org.apache.commons.math3.util.Incrementor.MaxCountExceededCallback callback}
-     * has been set at construction
+     * has been set at construction of the {@link IterationManager}
      * @throws NonSelfAdjointOperatorException if {@link #getCheck()} is
      * {@code true}, and {@code a} is not self-adjoint
      * @throws IllConditionedOperatorException if {@code a} is ill-conditioned
@@ -1134,7 +1134,7 @@ public class SymmLQ
      * @throws MaxCountExceededException at exhaustion of the iteration count,
      * unless a custom
      * {@link org.apache.commons.math3.util.Incrementor.MaxCountExceededCallback callback}
-     * has been set at construction
+     * has been set at construction of the {@link IterationManager}
      * @throws NonSelfAdjointOperatorException if {@link #getCheck()} is
      * {@code true}, and {@code a} or {@code m} is not self-adjoint
      * @throws NonPositiveDefiniteOperatorException if {@code m} is not positive

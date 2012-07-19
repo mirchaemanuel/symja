@@ -45,7 +45,7 @@ import org.apache.commons.math3.util.MathUtils;
  * preconditioner M, as a {@link RealLinearOperator}.
  * </p>
  *
- * @version $Id: PreconditionedIterativeLinearSolver.java 1305738 2012-03-27 06:02:15Z celestin $
+ * @version $Id: PreconditionedIterativeLinearSolver.java 1353141 2012-06-23 15:12:34Z celestin $
  * @since 3.0
  */
 public abstract class PreconditionedIterativeLinearSolver
@@ -88,7 +88,7 @@ public abstract class PreconditionedIterativeLinearSolver
      * @throws MaxCountExceededException at exhaustion of the iteration count,
      * unless a custom
      * {@link org.apache.commons.math3.util.Incrementor.MaxCountExceededCallback callback}
-     * has been set at construction
+     * has been set at construction of the {@link IterationManager}
      */
     public RealVector solve(final RealLinearOperator a,
         final RealLinearOperator m, final RealVector b, final RealVector x0)
@@ -169,7 +169,7 @@ public abstract class PreconditionedIterativeLinearSolver
      * @throws MaxCountExceededException at exhaustion of the iteration count,
      * unless a custom
      * {@link org.apache.commons.math3.util.Incrementor.MaxCountExceededCallback callback}
-     * has been set at construction
+     * has been set at construction of the {@link IterationManager}
      */
     public RealVector solve(RealLinearOperator a, RealLinearOperator m,
         RealVector b) throws NullArgumentException, NonSquareOperatorException,
@@ -197,7 +197,7 @@ public abstract class PreconditionedIterativeLinearSolver
      * @throws MaxCountExceededException at exhaustion of the iteration count,
      * unless a custom
      * {@link org.apache.commons.math3.util.Incrementor.MaxCountExceededCallback callback}
-     * has been set at construction.
+     * has been set at construction of the {@link IterationManager}
      */
     public abstract RealVector solveInPlace(RealLinearOperator a,
         RealLinearOperator m, RealVector b, RealVector x0) throws

@@ -100,7 +100,7 @@ import org.apache.commons.math3.util.FastMath;
  *     POSSIBILITY OF SUCH LOSS OR DAMAGES.</strong></li>
  * <ol></td></tr>
  * </table>
- * @version $Id: LevenbergMarquardtOptimizer.java 1244107 2012-02-14 16:17:55Z erans $
+ * @version $Id: LevenbergMarquardtOptimizer.java 1345803 2012-06-03 23:24:43Z erans $
  * @since 2.0
  *
  */
@@ -260,6 +260,7 @@ public class LevenbergMarquardtOptimizer extends AbstractLeastSquaresOptimizer {
                                        double parRelativeTolerance,
                                        double orthoTolerance,
                                        double threshold) {
+        super(null); // No custom convergence criterion.
         this.initialStepBoundFactor = initialStepBoundFactor;
         this.costRelativeTolerance = costRelativeTolerance;
         this.parRelativeTolerance = parRelativeTolerance;
