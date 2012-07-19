@@ -1,5 +1,5 @@
 /*
- * $Id: MultiVarPowerSeriesRing.java 3349 2010-10-15 20:54:27Z kredel $
+ * $Id: MultiVarPowerSeriesRing.java 3992 2012-07-14 21:32:18Z kredel $
  */
 
 package edu.jas.ps;
@@ -157,8 +157,10 @@ public class MultiVarPowerSeriesRing<C extends RingElem<C>> implements RingFacto
         this.nvar = nv;
         this.truncate = truncate;
         this.vars = names;
-        if (vars == null && PrettyPrint.isTrue()) {
-            vars = GenPolynomialRing.newVars("x", nvar);
+        if (vars == null) {
+            if (PrettyPrint.isTrue()) {
+                vars = GenPolynomialRing.newVars("x", nvar);
+            }
         } else {
             if (vars.length != nvar) {
                 throw new IllegalArgumentException("incompatible variable size " + vars.length + ", " + nvar);
@@ -270,13 +272,13 @@ public class MultiVarPowerSeriesRing<C extends RingElem<C>> implements RingFacto
     @Override
     @SuppressWarnings("unchecked")
     public boolean equals(Object B) {
-        if (!(B instanceof MultiVarPowerSeriesRing)) {
-            return false;
-        }
         MultiVarPowerSeriesRing<C> a = null;
         try {
             a = (MultiVarPowerSeriesRing<C>) B;
         } catch (ClassCastException ignored) {
+        }
+        if (a == null) {
+            return false;
         }
         if (Arrays.equals(vars, a.vars)) {
             return true;

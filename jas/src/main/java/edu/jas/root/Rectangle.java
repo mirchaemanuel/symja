@@ -1,9 +1,11 @@
 /*
- * $Id: Rectangle.java 3625 2011-05-08 09:35:21Z kredel $
+ * $Id: Rectangle.java 3993 2012-07-14 21:39:15Z kredel $
  */
 
 package edu.jas.root;
 
+
+import java.io.Serializable;
 
 import edu.jas.arith.BigDecimal;
 import edu.jas.arith.BigRational;
@@ -12,6 +14,7 @@ import edu.jas.poly.Complex;
 import edu.jas.poly.ComplexRing;
 import edu.jas.structure.ElemFactory;
 import edu.jas.structure.RingElem;
+import edu.jas.structure.GcdRingElem;
 import edu.jas.structure.RingFactory;
 
 
@@ -20,7 +23,7 @@ import edu.jas.structure.RingFactory;
  * @param <C> coefficient type.
  * @author Heinz Kredel
  */
-public class Rectangle<C extends RingElem<C> & Rational> {
+public class Rectangle<C extends RingElem<C> & Rational> implements Serializable, Cloneable {
 
 
     /**
@@ -34,7 +37,7 @@ public class Rectangle<C extends RingElem<C> & Rational> {
      * @param c array of corners.
      */
     @SuppressWarnings("unchecked")
-    public Rectangle(Complex<C>[] c) {
+    /*package*/ Rectangle(Complex<C>[] c) {
         if (c.length < 5) {
             corners = (Complex<C>[]) new Complex[5];
             for (int i = 0; i < 4; i++) {
@@ -73,6 +76,10 @@ public class Rectangle<C extends RingElem<C> & Rational> {
 
     /**
      * Constructor.
+     * <pre>
+     *  nw|0 ne|3
+     *  sw|1 se|2
+     * </pre>
      * @param nw corner.
      * @param sw corner.
      * @param se corner.
@@ -103,7 +110,7 @@ public class Rectangle<C extends RingElem<C> & Rational> {
     public String toScript() {
         // Python case
         //return "(" + corners[0] + ", " + corners[1] + ", " + corners[2] + ", " + corners[3] + ")";
-        return "(" + corners[1] + ", " + corners[3] + ")";
+        return "(" + corners[1].toScript() + ", " + corners[3].toScript() + ")";
     }
 
 
@@ -368,6 +375,26 @@ public class Rectangle<C extends RingElem<C> & Rational> {
     public BigRational rationalLength() {
         //BigRational r = new BigRational(length().toString());
         return length().getRational();
+    }
+
+
+    /**
+     * Length real side.
+     * @return |re(ne)-re(sw)|;
+     */
+    public C lengthReal() {
+        C m = corners[3].getRe().subtract(corners[1].getRe());
+        return m.abs();
+    }
+
+
+    /**
+     * Length imaginary side.
+     * @return |im(ne)-im(sw)|;
+     */
+    public C lengthImag() {
+        C m = corners[3].getIm().subtract(corners[1].getIm());
+        return m.abs();
     }
 
 }

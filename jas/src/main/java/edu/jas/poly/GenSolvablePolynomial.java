@@ -1,5 +1,5 @@
 /*
- * $Id: GenSolvablePolynomial.java 3440 2010-12-25 14:21:08Z kredel $
+ * $Id: GenSolvablePolynomial.java 3988 2012-07-14 12:07:13Z kredel $
  */
 
 package edu.jas.poly;
@@ -97,6 +97,19 @@ public class GenSolvablePolynomial<C extends RingElem<C>>
     public GenSolvablePolynomial<C> clone() {
         //return ring.copy(this);
         return new GenSolvablePolynomial<C>(ring,this.val);
+    }
+
+
+    /**
+     * Comparison with any other object.
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object B) {
+        if (!(B instanceof GenSolvablePolynomial)) {
+            return false;
+        }
+        return super.equals(B);
     }
 
 

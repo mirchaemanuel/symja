@@ -1,5 +1,5 @@
 /*
- * $Id: Residue.java 3287 2010-08-23 21:29:53Z kredel $
+ * $Id: Residue.java 3836 2011-12-26 21:38:55Z kredel $
  */
 
 package edu.jas.application;
@@ -310,7 +310,7 @@ public class Residue<C extends GcdRingElem<C> >
      */
     public Residue<C> remainder(Residue<C> S) {
         //GenPolynomial<C> x = val.remainder( S.val );
-        GenPolynomial<C> x = PolyUtil.<C>basePseudoRemainder( val, S.val );
+        GenPolynomial<C> x = PolyUtil.<C>baseSparsePseudoRemainder( val, S.val );
         return new Residue<C>( ring, x );
     }
 

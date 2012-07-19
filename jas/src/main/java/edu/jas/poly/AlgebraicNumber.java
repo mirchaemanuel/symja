@@ -1,11 +1,12 @@
 /*
- * $Id: AlgebraicNumber.java 3487 2011-01-10 22:39:18Z kredel $
+ * $Id: AlgebraicNumber.java 3882 2012-02-05 17:53:12Z kredel $
  */
 
 package edu.jas.poly;
 
 
 import edu.jas.kern.PrettyPrint;
+import edu.jas.structure.RingElem;
 import edu.jas.structure.GcdRingElem;
 import edu.jas.structure.NotInvertibleException;
 
@@ -16,7 +17,7 @@ import edu.jas.structure.NotInvertibleException;
  * @author Heinz Kredel
  */
 
-public class AlgebraicNumber<C extends GcdRingElem<C>> implements GcdRingElem<AlgebraicNumber<C>> {
+public class AlgebraicNumber<C extends RingElem<C>> implements GcdRingElem<AlgebraicNumber<C>> {
 
 
     /**

@@ -1,5 +1,5 @@
 /*
- * $Id: FactorQuotient.java 3356 2010-10-23 16:41:01Z kredel $
+ * $Id: FactorQuotient.java 3867 2012-01-30 22:24:48Z kredel $
  */
 
 package edu.jas.ufd;
@@ -50,8 +50,18 @@ public class FactorQuotient<C extends GcdRingElem<C>> extends FactorAbstract<Quo
      * @param fac coefficient quotient ring factory.
      */
     public FactorQuotient(QuotientRing<C> fac) {
+        this(fac, FactorFactory.<C> getImplementation(fac.ring.coFac) );
+    }
+
+
+    /**
+     * Constructor.
+     * @param fac coefficient quotient ring factory.
+     * @param nengine factorization engine for polynomials over base coefficients.
+     */
+    public FactorQuotient(QuotientRing<C> fac, FactorAbstract<C> nengine) {
         super(fac);
-        nengine = FactorFactory.<C> getImplementation(fac.ring.coFac);
+        this.nengine = nengine;
     }
 
 

@@ -1,5 +1,5 @@
 /*
- * $Id: ElementaryIntegration.java 3356 2010-10-23 16:41:01Z kredel $
+ * $Id: ElementaryIntegration.java 3843 2011-12-29 11:56:02Z kredel $
  */
 
 package edu.jas.integrate;
@@ -361,7 +361,7 @@ public class ElementaryIntegration<C extends GcdRingElem<C>> {
         // = GCDFactory.<C>getImplementation( cfac.coFac );
         GreatestCommonDivisorAbstract<AlgebraicNumber<C>> aengine = null;
 
-        GenPolynomial<GenPolynomial<C>> Rc = engine.recursiveResultant(Pc, At);
+        GenPolynomial<GenPolynomial<C>> Rc = engine.recursiveUnivariateResultant(Pc, At);
         //System.out.println("Rc = " + Rc);
         GenPolynomial<C> res = Rc.leadingBaseCoefficient();
         //no: res = res.monic();

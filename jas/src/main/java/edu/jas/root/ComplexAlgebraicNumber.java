@@ -1,5 +1,5 @@
 /*
- * $Id: ComplexAlgebraicNumber.java 3611 2011-04-27 21:47:38Z kredel $
+ * $Id: ComplexAlgebraicNumber.java 3979 2012-07-09 21:13:53Z kredel $
  */
 
 package edu.jas.root;
@@ -429,7 +429,7 @@ implements GcdRingElem<ComplexAlgebraicNumber<C>> {
             Rectangle<C> v = ring.engine.invariantMagnitudeRectangle(ring.root, 
                                                                      ring.algebraic.modul, 
                                                                      number.val,
-                                                                     ring.eps);
+                                                                     ring.getEps());
             ring.setRoot(v);
             //System.out.println("new v = " + v);
             Complex<C> ev = ring.engine.complexRectangleMagnitude(v, ring.algebraic.modul, number.val); //, ring.eps);

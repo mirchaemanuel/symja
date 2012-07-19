@@ -1,5 +1,5 @@
 /*
- * $Id: FactorAbstract.java 3771 2011-09-18 20:29:35Z kredel $
+ * $Id: FactorAbstract.java 3836 2011-12-26 21:38:55Z kredel $
  */
 
 package edu.jas.ufd;
@@ -232,7 +232,7 @@ public abstract class FactorAbstract<C extends GcdRingElem<C>> implements Factor
                     System.out.println("u     = " + u);
                     System.out.println("trial = " + trial);
                 }
-                GenPolynomial<C> rem = PolyUtil.<C> basePseudoRemainder(u, trial);
+                GenPolynomial<C> rem = PolyUtil.<C> baseSparsePseudoRemainder(u, trial);
                 //System.out.println(" rem = " + rem);
                 if (rem.isZERO()) {
                     logger.info("trial = " + trial);
@@ -268,7 +268,7 @@ public abstract class FactorAbstract<C extends GcdRingElem<C>> implements Factor
             //System.out.println("irred u = " + u);
             factors.add(P);
         }
-        return factors;
+        return normalizeFactorization(factors);
     }
 
 
@@ -577,7 +577,7 @@ public abstract class FactorAbstract<C extends GcdRingElem<C>> implements Factor
     public long factorsDegree(SortedMap<GenPolynomial<C>,Long> F) {
         long d = 0;
         for ( GenPolynomial<C> p : F.keySet() ) {
-	    long e = F.get(p);
+            long e = F.get(p);
             d += p.degree() * e;
         }
         return d;
@@ -716,7 +716,7 @@ public abstract class FactorAbstract<C extends GcdRingElem<C>> implements Factor
         if ( F == null || F.size() <= 1 ) {
             return F;
         }
-	List<GenPolynomial<C>> Fp = new ArrayList<GenPolynomial<C>>(F.size());
+        List<GenPolynomial<C>> Fp = new ArrayList<GenPolynomial<C>>(F.size());
         GenPolynomial<C> f0 = F.get(0);
         for ( int i = 1; i < F.size(); i++ ) {
              GenPolynomial<C> fi = F.get(i);

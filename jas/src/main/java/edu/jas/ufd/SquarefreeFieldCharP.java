@@ -1,5 +1,5 @@
 /*
- * $Id: SquarefreeFieldCharP.java 3502 2011-01-23 19:34:46Z kredel $
+ * $Id: SquarefreeFieldCharP.java 3822 2011-10-30 21:09:42Z kredel $
  */
 
 package edu.jas.ufd;
@@ -411,6 +411,9 @@ public abstract class SquarefreeFieldCharP<C extends GcdRingElem<C>> extends Squ
             }
         }
         logger.info("exit char root: T0 = " + T0 + ", T = " + T);
+        if (sfactors.size() == 0) {
+            sfactors.put(pfac.getONE(), 1L);
+        }
         return sfactors;
     }
 

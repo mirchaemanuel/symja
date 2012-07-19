@@ -1,5 +1,5 @@
 /*
- * $Id: FactorInteger.java 3776 2011-09-23 20:08:13Z kredel $
+ * $Id: FactorInteger.java 3894 2012-02-26 20:31:47Z kredel $
  */
 
 package edu.jas.ufd;
@@ -459,7 +459,7 @@ public class FactorInteger<MOD extends GcdRingElem<MOD> & Modular> extends Facto
                 //trial = engine.basePrimitivePart( trial.multiply(ldcf) );
                 trial = engine.basePrimitivePart(trial);
                 //System.out.println("pp(trial)= " + trial);
-                if (PolyUtil.<BigInteger> basePseudoRemainder(u, trial).isZERO()) {
+                if (PolyUtil.<BigInteger> baseSparsePseudoRemainder(u, trial).isZERO()) {
                     logger.info("successful trial = " + trial);
                     //System.out.println("trial    = " + trial);
                     //System.out.println("flist    = " + flist);
@@ -589,7 +589,7 @@ public class FactorInteger<MOD extends GcdRingElem<MOD> & Modular> extends Facto
 
                 itrial = engine.basePrimitivePart(itrial);
                 //System.out.println("pp(trial)= " + itrial);
-                if (PolyUtil.<BigInteger> basePseudoRemainder(u, itrial).isZERO()) {
+                if (PolyUtil.<BigInteger> baseSparsePseudoRemainder(u, itrial).isZERO()) {
                     logger.info("successful trial = " + itrial);
                     //System.out.println("trial    = " + itrial);
                     //System.out.println("cofactor = " + icofactor);
@@ -680,14 +680,13 @@ public class FactorInteger<MOD extends GcdRingElem<MOD> & Modular> extends Facto
                 //e.printStackTrace();
             }
         }
-        if (facs != null) {
-            List<GenPolynomial<BigInteger>> iopt = TermOrderOptimization. <BigInteger> permutation(iperm,pfac,facs);
-            logger.info("de-optimized polynomials: " + iopt);
-            facs = normalizeFactorization(iopt);
-        } else {
+        if (facs == null) {
             logger.info("factorsSquarefreeHensel not applicable or failed, reverting to Kronecker for: " + P);
             facs = super.factorsSquarefree(P);
         }
+        List<GenPolynomial<BigInteger>> iopt = TermOrderOptimization. <BigInteger> permutation(iperm,pfac,facs);
+        logger.info("de-optimized polynomials: " + iopt);
+        facs = normalizeFactorization(iopt);
         return facs;
     }
 
@@ -787,9 +786,9 @@ public class FactorInteger<MOD extends GcdRingElem<MOD> & Modular> extends Facto
         boolean isPrimitive = true;
         boolean notLucky = true;
         while (notLucky) { // for Wang's test
-            if (Math.abs(evStart) > 400L) {
-                System.out.println("P = " + P + ", lprr = " + lprr + ", lfacs = " + lfacs);
-                throw new RuntimeException("no lucky evaluation point found after " + evStart + " iterations");
+            if (Math.abs(evStart) > 371L) {
+                logger.warn("no lucky evaluation point for: P = " + P + ", lprr = " + lprr + ", lfacs = " + lfacs);
+                throw new RuntimeException("no lucky evaluation point found after " + Math.abs(evStart) + " iterations");
             }
             if (Math.abs(evStart) % 100L <= 3L) {
                 ran = ran * (Math.PI - 2.14);
@@ -1093,7 +1092,11 @@ public class FactorInteger<MOD extends GcdRingElem<MOD> & Modular> extends Facto
                     tp = new TrialParts(V, pes, un, cei, ln);
                 }
                 //System.out.println("trialParts = " + tp);
-                tParts.add(tp);
+                if (tp.univPoly != null) {
+                    if (tp.ldcfEval.size() != 0) {
+                       tParts.add(tp);
+                    }
+                }
                 if (tParts.size() < trials) {
                     notLucky = true;
                 }
@@ -1125,6 +1128,7 @@ public class FactorInteger<MOD extends GcdRingElem<MOD> & Modular> extends Facto
         ufactors = tpmin.univFactors;
         cei = tpmin.ldcfEval; // unused
         lf = tpmin.ldcfFactors;
+        logger.info("iterations    = " + Math.abs(evStart));
         logger.info("minimal trial = " + tpmin);
 
         GenPolynomialRing<BigInteger> ufac = pe.ring;
@@ -1286,7 +1290,7 @@ public class FactorInteger<MOD extends GcdRingElem<MOD> & Modular> extends Facto
                 if (debug) {
                     logger.info("trial    = " + trial); // + ", mtrial = " + mtrial);
                 }
-                if (PolyUtil.<BigInteger> basePseudoRemainder(ui, trial).isZERO()) {
+                if (PolyUtil.<BigInteger> baseSparsePseudoRemainder(ui, trial).isZERO()) {
                     logger.info("successful trial = " + trial);
                     factors.add(trial);
                     ui = PolyUtil.<BigInteger> basePseudoDivide(ui, trial);

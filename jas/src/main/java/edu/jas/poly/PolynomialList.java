@@ -1,5 +1,5 @@
 /*
- * $Id: PolynomialList.java 3470 2011-01-06 19:19:11Z kredel $
+ * $Id: PolynomialList.java 3814 2011-10-29 11:56:29Z kredel $
  */
 
 package edu.jas.poly;
@@ -94,7 +94,7 @@ public class PolynomialList<C extends RingElem<C> >
         } catch (ClassCastException ignored) {
         }
         if ( pl == null ) {
-           return false;
+            return false;
         }
         if ( ! ring.equals( pl.ring ) ) {
             System.out.println("not same Ring " + ring.toScript() + ", " + pl.ring.toScript());
@@ -122,7 +122,7 @@ public class PolynomialList<C extends RingElem<C> >
             GenPolynomial<C> b = l2.get(i);
             s = a.compareTo(b);
             if ( s != 0 ) {
-               return s;
+                return s;
             }
         }
         if ( list.size() > si ) { 
@@ -140,10 +140,10 @@ public class PolynomialList<C extends RingElem<C> >
      */
     @Override
     public int hashCode() { 
-       int h;
-       h = ring.hashCode();
-       h = 37 * h + ( list == null ? 0 : list.hashCode() );
-       return h;
+        int h;
+        h = ring.hashCode();
+        h = 37 * h + ( list == null ? 0 : list.hashCode() );
+        return h;
     }
 
 
@@ -156,25 +156,25 @@ public class PolynomialList<C extends RingElem<C> >
         StringBuffer erg = new StringBuffer();
         String[] vars = null;
         if ( ring != null ) {
-           erg.append( ring.toString() );
-           vars = ring.getVars();
+            erg.append( ring.toString() );
+            vars = ring.getVars();
         }
         boolean first = true;
         erg.append("\n(\n");
         String sa = null;
         for ( GenPolynomial<C> oa: list ) {
             if ( vars != null ) {
-               sa = oa.toString(vars);
+                sa = oa.toString(vars);
             } else {
-               sa = oa.toString();
+                sa = oa.toString();
             }
             if ( first ) {
-               first = false;
+                first = false;
             } else {
-               erg.append( ", " );
-               if ( sa.length() > 10 ) {
-                  erg.append("\n");
-               }
+                erg.append( ", " );
+                if ( sa.length() > 10 ) {
+                    erg.append("\n");
+                }
             }
             erg.append( "( " + sa + " )" );
         }
@@ -190,28 +190,35 @@ public class PolynomialList<C extends RingElem<C> >
         StringBuffer s = new StringBuffer();
         switch (Scripting.getLang() ) {
         case Ruby:
-            s.append("Ideal.new(");
+            s.append("SimIdeal.new(");
             break;
         case Python:
         default:
             s.append("Ideal(");
         }
         if ( ring != null ) {
-           s.append( ring.toScript() );
+            s.append( ring.toScript() );
         }
         if ( list == null ) {
             s.append(")");
             return s.toString();
         }
-        s.append(",list=[");
+        switch (Scripting.getLang() ) {
+        case Ruby:
+            s.append(",\"\",[");
+            break;
+        case Python:
+        default:
+            s.append(",list=[");
+        }
         boolean first = true;
         String sa = null;
         for ( GenPolynomial<C> oa: list ) {
             sa = oa.toScript();
             if ( first ) {
-               first = false;
+                first = false;
             } else {
-               s.append( ", " );
+                s.append( ", " );
             }
             s.append( "( " + sa + " )" );
         }
@@ -235,16 +242,16 @@ public class PolynomialList<C extends RingElem<C> >
 
         List<List<GenPolynomial<C>>> vecs = null;
         if ( list == null ) { 
-           return new ModuleList<C>(pfac,vecs);
+            return new ModuleList<C>(pfac,vecs);
         }
         int rows = list.size();
         vecs = new ArrayList<List<GenPolynomial<C>>>( rows );
         if ( rows == 0 ) { // nothing to do
-           return new ModuleList<C>(pfac,vecs);
+            return new ModuleList<C>(pfac,vecs);
         }
 
         ArrayList<GenPolynomial<C>> zr 
-             = new ArrayList<GenPolynomial<C>>( i-1 );
+            = new ArrayList<GenPolynomial<C>>( i-1 );
         GenPolynomial<C> zero = pfac.getZERO();
         for ( int j = 0; j < i; j++ ) {
             zr.add(j,zero);
@@ -261,9 +268,9 @@ public class PolynomialList<C extends RingElem<C> >
                     int[] dov = e.dependencyOnVariables();
                     int ix = 0;
                     if ( dov.length > 1 ) {
-                       throw new IllegalArgumentException("wrong dependencyOnVariables " + e);
+                        throw new IllegalArgumentException("wrong dependencyOnVariables " + e);
                     } else if ( dov.length == 1 )  {
-                       ix = dov[0];
+                        ix = dov[0];
                     }
                     //ix = i-1 - ix; // revert
                     //System.out.println("ix = " + ix ); 
@@ -297,7 +304,7 @@ public class PolynomialList<C extends RingElem<C> >
      * @return solvable polynomial list from this.
      */
     public static <C extends RingElem<C> > 
-           List< GenSolvablePolynomial<C> > castToSolvableList(List<GenPolynomial<C>> list) {
+                             List< GenSolvablePolynomial<C> > castToSolvableList(List<GenPolynomial<C>> list) {
         List< GenSolvablePolynomial<C> > slist = null;
         if ( list == null ) {
             return slist;
@@ -306,7 +313,7 @@ public class PolynomialList<C extends RingElem<C> >
         GenSolvablePolynomial<C> s;
         for ( GenPolynomial<C> p: list ) {
             if ( ! (p instanceof GenSolvablePolynomial) ) {
-               throw new IllegalArgumentException("no solvable polynomial "+p);
+                throw new IllegalArgumentException("no solvable polynomial "+p);
             }
             s = (GenSolvablePolynomial<C>) p;
             slist.add( s );
@@ -323,7 +330,7 @@ public class PolynomialList<C extends RingElem<C> >
      * @return solvable polynomial list from this.
      */
     public static <C extends RingElem<C> > 
-           List<List< GenSolvablePolynomial<C> >> castToSolvableMatrix(List<List<GenPolynomial<C>>> list) {
+                             List<List< GenSolvablePolynomial<C> >> castToSolvableMatrix(List<List<GenPolynomial<C>>> list) {
         List<List< GenSolvablePolynomial<C> >> slist = null;
         if ( list == null ) {
             return slist;
@@ -347,8 +354,8 @@ public class PolynomialList<C extends RingElem<C> >
      * @return polynomial list from slist.
      */
     public static <C extends RingElem<C> > 
-           List< GenPolynomial<C> > 
-           castToList( List<? extends GenPolynomial<C>> slist) {
+                             List< GenPolynomial<C> > 
+                             castToList( List<? extends GenPolynomial<C>> slist) {
         logger.warn("will lead to wrong method dispatch");
         List< GenPolynomial<C> > list = null;
         if ( slist == null ) {
@@ -371,8 +378,8 @@ public class PolynomialList<C extends RingElem<C> >
      * @return polynomial list from slist.
      */
     public static <C extends RingElem<C> > 
-           List<List< GenPolynomial<C> >> 
-           castToMatrix( List<List<? extends GenPolynomial<C>>> slist) {
+                             List<List< GenPolynomial<C> >> 
+                             castToMatrix( List<List<? extends GenPolynomial<C>>> slist) {
         logger.warn("will lead to wrong method dispatch");
         List<List< GenPolynomial<C> >> list = null;
         if ( slist == null ) {
@@ -386,43 +393,92 @@ public class PolynomialList<C extends RingElem<C> >
     }
 
 
-  /**
-   * Test if list contains only ZEROs.
-   * @return true, if this is the 0 list, else false
-   */
-  public boolean isZERO() {
-      if ( list == null ) {
-          return true;
-      }
-      for ( GenPolynomial<C> p : list ) {
-          if ( p == null ) {
-              continue;
-          }
-          if ( ! p.isZERO() ) {
-             return false;
-          }
-      }
-      return true;
-  }
+    /**
+     * Test if list contains only ZEROs.
+     * @return true, if this is the 0 list, else false
+     */
+    public boolean isZERO() {
+        if ( list == null ) {
+            return true;
+        }
+        for ( GenPolynomial<C> p : list ) {
+            if ( p == null ) {
+                continue;
+            }
+            if ( ! p.isZERO() ) {
+                return false;
+            }
+        }
+        return true;
+    }
 
 
-  /**
-   * Test if list contains a ONE.
-   * @return true, if this contains 1, else false
-   */
-  public boolean isONE() {
-      if ( list == null ) {
-          return false;
-      }
-      for ( GenPolynomial<C> p : list ) {
-          if ( p == null ) {
-              continue;
-          }
-          if ( p.isONE() ) {
-             return true;
-          }
-      }
-      return false;
-  }
+    /**
+     * Test if list contains a ONE.
+     * @return true, if this contains 1, else false
+     */
+    public boolean isONE() {
+        if ( list == null ) {
+            return false;
+        }
+        for ( GenPolynomial<C> p : list ) {
+            if ( p == null ) {
+                continue;
+            }
+            if ( p.isONE() ) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+    /**
+     * Make homogeneous. 
+     * @return polynomial list of homogeneous polynomials.
+     */
+    public PolynomialList<C> homogenize() {
+        GenPolynomialRing<C> pfac = ring.extend(1);
+        List<GenPolynomial<C>> hom = new ArrayList<GenPolynomial<C>>(list.size());
+        for (GenPolynomial<C> p : list) {
+            GenPolynomial<C> h = p.homogenize(pfac);
+            hom.add(h);
+        }
+        return new PolynomialList<C>(pfac,hom);
+    }
+
+    /**
+     * Dehomogenize. 
+     * @return polynomial list of de-homogenized polynomials.
+     */
+    public PolynomialList<C> deHomogenize() {
+        GenPolynomialRing<C> pfac = ring.contract(1);
+        List<GenPolynomial<C>> dehom = new ArrayList<GenPolynomial<C>>(list.size());
+        for (GenPolynomial<C> p : list) {
+            GenPolynomial<C> h = p.deHomogenize(pfac);
+            dehom.add(h);
+        }
+        return new PolynomialList<C>(pfac,dehom);
+    }
+
+
+    /**
+     * Test if all polynomials are homogeneous.
+     * @return true, if all polynomials are homogeneous, else false
+     */
+    public boolean isHomogeneous() {
+        if ( list == null ) {
+            return true;
+        }
+        for ( GenPolynomial<C> p : list ) {
+            if ( p == null ) {
+                continue;
+            }
+            if ( ! p.isHomogeneous() ) {
+                return false;
+            }
+        }
+        return true;
+    }
 
 }

@@ -1,5 +1,5 @@
 /*
- * $Id: GreatestCommonDivisorSubres.java 3652 2011-06-02 18:17:04Z kredel $
+ * $Id: GreatestCommonDivisorSubres.java 3851 2011-12-30 18:30:04Z kredel $
  */
 
 package edu.jas.ufd;
@@ -13,6 +13,7 @@ import edu.jas.poly.GenPolynomialRing;
 import edu.jas.poly.PolyUtil;
 import edu.jas.structure.GcdRingElem;
 import edu.jas.structure.Power;
+import edu.jas.structure.RingElem;
 import edu.jas.structure.RingFactory;
 
 
@@ -35,44 +36,31 @@ public class GreatestCommonDivisorSubres<C extends GcdRingElem<C>> extends Great
      * GenPolynomial pseudo remainder. For univariate polynomials.
      * @param P GenPolynomial.
      * @param S nonzero GenPolynomial.
-     * @return remainder with ldcf(S)<sup>m</sup> P = quotient * S +
-     *         remainder.
+     * @return remainder with ldcf(S)<sup>m</sup> P = quotient * S + remainder.
      * @see edu.jas.poly.GenPolynomial#remainder(edu.jas.poly.GenPolynomial).
+     * @deprecated Use {@link
+     *             edu.jas.poly.PolyUtil#baseDensePseudoRemainder(edu.jas.poly.GenPolynomial,edu.jas.poly.GenPolynomial)}
+     *             instead
      */
+    @Deprecated
     public GenPolynomial<C> basePseudoRemainder(GenPolynomial<C> P, GenPolynomial<C> S) {
-        if (S == null || S.isZERO()) {
-            throw new ArithmeticException(this.getClass().getName() + " division by zero");
-        }
-        if (P.isZERO()) {
-            return P;
-        }
-        if (S.degree() <= 0) {
-            return P.ring.getZERO();
-        }
-        long m = P.degree(0);
-        long n = S.degree(0);
-        C c = S.leadingBaseCoefficient();
-        ExpVector e = S.leadingExpVector();
-        GenPolynomial<C> h;
-        GenPolynomial<C> r = P;
-        for (long i = m; i >= n; i--) {
-            if (r.isZERO()) {
-                return r;
-            }
-            long k = r.degree(0);
-            if (i == k) {
-                ExpVector f = r.leadingExpVector();
-                C a = r.leadingBaseCoefficient();
-                f = f.subtract(e); // EVDIF( f, e );
-                //System.out.println("red div = " + f);
-                r = r.multiply(c); // coeff ac
-                h = S.multiply(a, f); // coeff ac
-                r = r.subtract(h);
-            } else {
-                r = r.multiply(c);
-            }
-        }
-        return r;
+        return PolyUtil.<C> baseDensePseudoRemainder(P, S);
+    }
+
+
+    /**
+     * GenPolynomial pseudo remainder. For recursive polynomials.
+     * @param P recursive GenPolynomial.
+     * @param S nonzero recursive GenPolynomial.
+     * @return remainder with ldcf(S)<sup>m</sup> P = quotient * S + remainder.
+     * @see edu.jas.poly.GenPolynomial#remainder(edu.jas.poly.GenPolynomial).
+     * @deprecated Use {@link
+     *             edu.jas.poly.PolyUtil#recursiveDensePseudoRemainder(edu.jas.poly.GenPolynomial,edu.jas.poly.GenPolynomial)} instead
+     */
+    @Deprecated
+    public GenPolynomial<GenPolynomial<C>> recursivePseudoRemainder(GenPolynomial<GenPolynomial<C>> P,
+                    GenPolynomial<GenPolynomial<C>> S) {
+        return PolyUtil.<C> recursiveDensePseudoRemainder(P, S);
     }
 
 
@@ -128,7 +116,7 @@ public class GreatestCommonDivisorSubres<C extends GcdRingElem<C>> extends Great
         while (!r.isZERO()) {
             long delta = q.degree(0) - r.degree(0);
             //System.out.println("delta    = " + delta);
-            x = basePseudoRemainder(q, r);
+            x = PolyUtil.<C> baseDensePseudoRemainder(q, r);
             q = r;
             if (!x.isZERO()) {
                 z = g.multiply(power(P.ring.coFac, h, delta));
@@ -149,52 +137,6 @@ public class GreatestCommonDivisorSubres<C extends GcdRingElem<C>> extends Great
 
 
     /**
-     * GenPolynomial pseudo remainder. For recursive polynomials.
-     * @param P recursive GenPolynomial.
-     * @param S nonzero recursive GenPolynomial.
-     * @return remainder with ldcf(S)<sup>m</sup> P = quotient * S +
-     *         remainder.
-     * @see edu.jas.poly.GenPolynomial#remainder(edu.jas.poly.GenPolynomial).
-     */
-    public GenPolynomial<GenPolynomial<C>> recursivePseudoRemainder(GenPolynomial<GenPolynomial<C>> P,
-            GenPolynomial<GenPolynomial<C>> S) {
-        if (S == null || S.isZERO()) {
-            throw new ArithmeticException(this.getClass().getName() + " division by zero");
-        }
-        if (P == null || P.isZERO()) {
-            return P;
-        }
-        if (S.degree() <= 0) {
-            return P.ring.getZERO();
-        }
-        long m = P.degree(0);
-        long n = S.degree(0);
-        GenPolynomial<C> c = S.leadingBaseCoefficient();
-        ExpVector e = S.leadingExpVector();
-        GenPolynomial<GenPolynomial<C>> h;
-        GenPolynomial<GenPolynomial<C>> r = P;
-        for (long i = m; i >= n; i--) {
-            if (r.isZERO()) {
-                return r;
-            }
-            long k = r.degree(0);
-            if (i == k) {
-                ExpVector f = r.leadingExpVector();
-                GenPolynomial<C> a = r.leadingBaseCoefficient();
-                f = f.subtract(e); //EVDIF( f, e );
-                //System.out.println("red div = " + f);
-                r = r.multiply(c); // coeff ac
-                h = S.multiply(a, f); // coeff ac
-                r = r.subtract(h);
-            } else {
-                r = r.multiply(c);
-            }
-        }
-        return r;
-    }
-
-
-    /**
      * Univariate GenPolynomial recursive greatest comon divisor. Uses
      * pseudoRemainder for remainder.
      * @param P univariate recursive GenPolynomial.
@@ -203,7 +145,7 @@ public class GreatestCommonDivisorSubres<C extends GcdRingElem<C>> extends Great
      */
     @Override
     public GenPolynomial<GenPolynomial<C>> recursiveUnivariateGcd(GenPolynomial<GenPolynomial<C>> P,
-            GenPolynomial<GenPolynomial<C>> S) {
+                    GenPolynomial<GenPolynomial<C>> S) {
         if (S == null || S.isZERO()) {
             return P;
         }
@@ -249,7 +191,7 @@ public class GreatestCommonDivisorSubres<C extends GcdRingElem<C>> extends Great
         while (!r.isZERO()) {
             long delta = q.degree(0) - r.degree(0);
             //System.out.println("rgcd delta = " + delta);
-            x = recursivePseudoRemainder(q, r);
+            x = PolyUtil.<C> recursiveDensePseudoRemainder(q, r);
             q = r;
             if (!x.isZERO()) {
                 z = g.multiply(power(P.ring.coFac, h, delta));
@@ -272,6 +214,7 @@ public class GreatestCommonDivisorSubres<C extends GcdRingElem<C>> extends Great
      * @param S univariate GenPolynomial.
      * @return res(P,S).
      */
+    @Override
     public GenPolynomial<C> baseResultant(GenPolynomial<C> P, GenPolynomial<C> S) {
         if (S == null || S.isZERO()) {
             return S;
@@ -296,8 +239,8 @@ public class GreatestCommonDivisorSubres<C extends GcdRingElem<C>> extends Great
             q = P;
             r = S;
         }
-        r = r.abs();
-        q = q.abs();
+        //r = r.abs();
+        //q = q.abs();
         C a = baseContent(r);
         C b = baseContent(q);
         r = divide(r, a); // indirection
@@ -316,7 +259,8 @@ public class GreatestCommonDivisorSubres<C extends GcdRingElem<C>> extends Great
             if ((q.degree(0) % 2 != 0) && (r.degree(0) % 2 != 0)) {
                 s = -s;
             }
-            x = basePseudoRemainder(q, r);
+            x = PolyUtil.<C> baseDensePseudoRemainder(q, r);
+            //System.out.println("x  = " + x);
             q = r;
             if (x.degree(0) > 0) {
                 z = g.multiply(power(cofac, h, delta));
@@ -331,8 +275,10 @@ public class GreatestCommonDivisorSubres<C extends GcdRingElem<C>> extends Great
         }
         z = power(cofac, r.leadingBaseCoefficient(), q.degree(0));
         h = z.divide(power(cofac, h, q.degree(0) - 1));
-        z = cofac.fromInteger(s);
-        z = h.multiply(t).multiply(z);
+        z = h.multiply(t);
+        if ( s < 0 ) {
+            z = z.negate();
+        }
         x = P.ring.getONE().multiply(z);
         return x;
     }
@@ -345,8 +291,9 @@ public class GreatestCommonDivisorSubres<C extends GcdRingElem<C>> extends Great
      * @param S univariate recursive GenPolynomial.
      * @return res(P,S).
      */
-    public GenPolynomial<GenPolynomial<C>> recursiveResultant(GenPolynomial<GenPolynomial<C>> P,
-            GenPolynomial<GenPolynomial<C>> S) {
+    @Override
+    public GenPolynomial<GenPolynomial<C>> recursiveUnivariateResultant(GenPolynomial<GenPolynomial<C>> P,
+                    GenPolynomial<GenPolynomial<C>> S) {
         if (S == null || S.isZERO()) {
             return S;
         }
@@ -398,7 +345,8 @@ public class GreatestCommonDivisorSubres<C extends GcdRingElem<C>> extends Great
             if ((q.degree(0) % 2 != 0) && (r.degree(0) % 2 != 0)) {
                 s = -s;
             }
-            x = recursivePseudoRemainder(q, r);
+            x = PolyUtil.<C> recursiveDensePseudoRemainder(q, r);
+            //System.out.println("x  = " + x);
             q = r;
             if (x.degree(0) > 0) {
                 z = g.multiply(power(P.ring.coFac, h, delta));
@@ -412,8 +360,10 @@ public class GreatestCommonDivisorSubres<C extends GcdRingElem<C>> extends Great
         }
         z = power(cofac, r.leadingBaseCoefficient(), q.degree(0));
         h = PolyUtil.<C> basePseudoDivide(z, power(cofac, h, q.degree(0) - 1));
-        z = cofac.fromInteger(s);
-        z = h.multiply(t).multiply(z);
+        z = h.multiply(t);
+        if ( s < 0 ) {
+            z = z.negate();
+        }
         x = P.ring.getONE().multiply(z);
         return x;
     }
@@ -438,12 +388,12 @@ public class GreatestCommonDivisorSubres<C extends GcdRingElem<C>> extends Great
         C a = P.leadingBaseCoefficient();
         a = a.inverse();
         GenPolynomial<C> Pp = PolyUtil.<C> baseDeriviative(P);
-        GenPolynomial<C> res = baseResultant(P,Pp);
+        GenPolynomial<C> res = baseResultant(P, Pp);
         GenPolynomial<C> disc = res.multiply(a);
         long n = P.degree(0);
-        n = n * (n-1);
+        n = n * (n - 1);
         n = n / 2;
-        if ( n % 2L != 0L ) {
+        if (n % 2L != 0L) {
             disc = disc.negate();
         }
         return disc;

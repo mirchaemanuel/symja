@@ -1,5 +1,5 @@
 /*
- * $Id: ModInteger.java 3500 2011-01-23 19:31:18Z kredel $
+ * $Id: ModInteger.java 3830 2011-12-18 12:55:54Z kredel $
  */
 
 package edu.jas.arith;
@@ -10,9 +10,9 @@ import edu.jas.structure.NotInvertibleException;
 
 
 /**
- * ModInteger class with RingElem interface
- * and with the familiar SAC method names.
+ * ModInteger class with GcdRingElem interface.
  * Objects of this class are immutable.
+ * The SAC2 static methods are also provided.
  * @author Heinz Kredel
  * @see java.math.BigInteger
  */

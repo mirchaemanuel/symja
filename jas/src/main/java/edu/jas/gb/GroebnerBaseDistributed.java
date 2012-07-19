@@ -1,5 +1,5 @@
 /*
- * $Id: GroebnerBaseDistributed.java 3626 2011-05-08 09:51:57Z kredel $
+ * $Id: GroebnerBaseDistributed.java 3990 2012-07-14 12:46:08Z kredel $
  */
 
 package edu.jas.gb;
@@ -58,7 +58,7 @@ public class GroebnerBaseDistributed<C extends RingElem<C>> extends GroebnerBase
      * Pool of threads to use. <b>Note:</b> No ComputerThreads for one node
      * tests
      */
-    protected final ThreadPool pool;
+    protected transient final ThreadPool pool;
 
 
     /**
@@ -212,6 +212,7 @@ public class GroebnerBaseDistributed<C extends RingElem<C>> extends GroebnerBase
 
         DistHashTable<Integer, GenPolynomial<C>> theList = new DistHashTable<Integer, GenPolynomial<C>>(
                 "localhost", DL_PORT);
+        theList.init();
         List<GenPolynomial<C>> al = pairlist.getList();
         for (int i = 0; i < al.size(); i++) {
             // no wait required
@@ -275,6 +276,7 @@ public class GroebnerBaseDistributed<C extends RingElem<C>> extends GroebnerBase
         final int DL_PORT = port + 100;
         DistHashTable<Integer, GenPolynomial<C>> theList = new DistHashTable<Integer, GenPolynomial<C>>(host,
                 DL_PORT);
+        theList.init();
 
         ReducerClient<C> R = new ReducerClient<C>(pairChannel, theList);
         R.run();

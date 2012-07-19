@@ -1,5 +1,5 @@
 /*
- * $Id: SolvableGroebnerBaseParallel.java 3429 2010-12-24 13:55:26Z kredel $
+ * $Id: SolvableGroebnerBaseParallel.java 3990 2012-07-14 12:46:08Z kredel $
  */
 
 package edu.jas.gb;
@@ -45,7 +45,7 @@ public class SolvableGroebnerBaseParallel<C extends RingElem<C>>
     /**
      * Pool of threads to use.
      */
-    protected final ThreadPool pool;
+    protected transient final ThreadPool pool;
 
 
     /**

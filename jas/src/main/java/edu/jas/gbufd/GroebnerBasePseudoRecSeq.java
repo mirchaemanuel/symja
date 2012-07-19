@@ -1,5 +1,5 @@
 /*
- * $Id: GroebnerBasePseudoRecSeq.java 3626 2011-05-08 09:51:57Z kredel $
+ * $Id: GroebnerBasePseudoRecSeq.java 3807 2011-10-21 19:59:51Z kredel $
  */
 
 package edu.jas.gbufd;
@@ -25,7 +25,7 @@ import edu.jas.ufd.GreatestCommonDivisorAbstract;
 
 /**
  * Groebner Base with pseudo reduction sequential algorithm for integral
- * function coeffcients. Implements Groebner bases and GB test.
+ * function coeffcients. Implements polynomial fraction free coefficients Groebner bases.
  * @param <C> base coefficient type
  * @author Heinz Kredel
  */

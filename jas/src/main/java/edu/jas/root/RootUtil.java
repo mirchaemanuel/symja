@@ -1,5 +1,5 @@
 /*
- * $Id: RootUtil.java 3652 2011-06-02 18:17:04Z kredel $
+ * $Id: RootUtil.java 3978 2012-07-09 21:10:01Z kredel $
  */
 
 package edu.jas.root;
@@ -90,8 +90,8 @@ public class RootUtil {
         String ls = iv.substring(0,k).trim();
         String rs = iv.substring(k+1,iv.length()).trim();
         //System.out.println("ls = " + ls + ", rs = " + rs);
-        C left = fac.parse(ls);;
-        C right = fac.parse(rs);;
+        C left = fac.parse(ls);
+        C right = fac.parse(rs);
         //System.out.println("left = " + left + ", right = " + right);
         return new Interval<C>(left,right);
     }
@@ -129,8 +129,8 @@ public class RootUtil {
         String ls = iv.substring(0,k).trim();
         String rs = iv.substring(k+1,iv.length()).trim();
         //System.out.println("ls = " + ls + ", rs = " + rs);
-        Complex sw = fac.parse(ls);;
-        Complex ne = fac.parse(rs);;
+        Complex sw = fac.parse(ls);
+        Complex ne = fac.parse(rs);
         //System.out.println("left = " + left + ", right = " + right);
         return new Rectangle<C>(sw,ne);
     }

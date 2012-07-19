@@ -1,10 +1,11 @@
 /*
- * $Id: ComplexRoots.java 3364 2010-10-24 12:56:06Z kredel $
+ * $Id: ComplexRoots.java 3989 2012-07-14 12:39:14Z kredel $
  */
 
 package edu.jas.root;
 
 
+import java.io.Serializable;
 import java.util.List;
 
 import edu.jas.arith.Rational;
@@ -12,6 +13,7 @@ import edu.jas.arith.BigRational;
 import edu.jas.poly.Complex;
 import edu.jas.poly.GenPolynomial;
 import edu.jas.structure.RingElem;
+import edu.jas.structure.GcdRingElem;
 
 
 /**
@@ -19,7 +21,7 @@ import edu.jas.structure.RingElem;
  * @param <C> coefficient type.
  * @author Heinz Kredel
  */
-public interface ComplexRoots<C extends RingElem<C> & Rational> {
+public interface ComplexRoots<C extends RingElem<C> & Rational> extends Serializable {
 
 
     /**

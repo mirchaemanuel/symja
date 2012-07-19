@@ -1,5 +1,5 @@
 /*
- * $Id: SolvableGroebnerBaseSeqPairParallel.java 3413 2010-12-19 12:46:49Z kredel $
+ * $Id: SolvableGroebnerBaseSeqPairParallel.java 3990 2012-07-14 12:46:08Z kredel $
  */
 
 package edu.jas.gb;
@@ -49,7 +49,7 @@ public class SolvableGroebnerBaseSeqPairParallel<C extends RingElem<C>>
     /**
      * Pool of threads to use.
      */
-    protected final ThreadPool pool;
+    protected transient final ThreadPool pool;
 
 
     /**

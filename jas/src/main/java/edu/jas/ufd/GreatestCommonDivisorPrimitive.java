@@ -1,5 +1,5 @@
 /*
- * $Id: GreatestCommonDivisorPrimitive.java 3290 2010-08-26 09:18:48Z kredel $
+ * $Id: GreatestCommonDivisorPrimitive.java 3836 2011-12-26 21:38:55Z kredel $
  */
 
 package edu.jas.ufd;
@@ -75,7 +75,7 @@ public class GreatestCommonDivisorPrimitive<C extends GcdRingElem<C>> extends
         }
         GenPolynomial<C> x;
         while (!r.isZERO()) {
-            x = PolyUtil.<C> basePseudoRemainder(q, r);
+            x = PolyUtil.<C> baseSparsePseudoRemainder(q, r);
             q = r;
             r = basePrimitivePart(x);
         }

@@ -1,5 +1,5 @@
 /*
- * $Id: RealAlgebraicNumber.java 3655 2011-06-02 18:20:54Z kredel $
+ * $Id: RealAlgebraicNumber.java 3947 2012-05-28 10:50:47Z kredel $
  */
 
 package edu.jas.application;
@@ -49,6 +49,17 @@ public class RealAlgebraicNumber<C extends GcdRingElem<C> & Rational> implements
      */
     public RealAlgebraicNumber(RealAlgebraicRing<C> r) {
         this(r, r.realRing.getZERO());
+    }
+
+
+    /**
+     * The constructor creates a RealAlgebraicNumber object from a GenPolynomial
+     * value.
+     * @param r ring RealAlgebraicRing<C>.
+     * @param a value element <C>.
+     */
+    public RealAlgebraicNumber(RealAlgebraicRing<C> r, C a) {
+        this(r, r.realRing.parse(a.toString()));
     }
 
 

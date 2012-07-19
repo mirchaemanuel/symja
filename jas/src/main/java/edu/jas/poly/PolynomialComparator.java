@@ -1,5 +1,5 @@
 /*
- * $Id: PolynomialComparator.java 3571 2011-03-18 22:02:51Z kredel $
+ * $Id: PolynomialComparator.java 3994 2012-07-15 11:50:54Z kredel $
  */
 
 package edu.jas.poly;
@@ -71,6 +71,16 @@ public class PolynomialComparator<C extends RingElem<C>> implements Serializable
             return false;
         }
         return tord.equals(pc.tord);
+    }
+
+
+    /**
+     * Hash code for this PolynomialComparator.
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode() {
+        return tord.hashCode();
     }
 
 

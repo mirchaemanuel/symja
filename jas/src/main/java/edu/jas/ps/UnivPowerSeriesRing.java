@@ -1,5 +1,5 @@
 /*
- * $Id: UnivPowerSeriesRing.java 3337 2010-09-27 21:05:17Z kredel $
+ * $Id: UnivPowerSeriesRing.java 3992 2012-07-14 21:32:18Z kredel $
  */
 
 package edu.jas.ps;
@@ -209,13 +209,13 @@ public class UnivPowerSeriesRing<C extends RingElem<C>> implements RingFactory<U
     @Override
     @SuppressWarnings("unchecked")
     public boolean equals(Object B) {
-        if (!(B instanceof UnivPowerSeriesRing)) {
-            return false;
-        }
         UnivPowerSeriesRing<C> a = null;
         try {
             a = (UnivPowerSeriesRing<C>) B;
         } catch (ClassCastException ignored) {
+        }
+        if (a == null) {
+            return false;
         }
         if (var.equals(a.var)) {
             return true;

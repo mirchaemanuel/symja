@@ -1,10 +1,11 @@
 /*
- * $Id: Squarefree.java 3068 2010-04-11 17:27:16Z kredel $
+ * $Id: Squarefree.java 3989 2012-07-14 12:39:14Z kredel $
  */
 
 package edu.jas.ufd;
 
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.SortedMap;
 
@@ -42,7 +43,7 @@ import edu.jas.structure.GcdRingElem;
  * @see edu.jas.ufd.SquarefreeFactory#getImplementation
  */
 
-public interface Squarefree<C extends GcdRingElem<C>> {
+public interface Squarefree<C extends GcdRingElem<C>> extends Serializable {
 
 
     /**

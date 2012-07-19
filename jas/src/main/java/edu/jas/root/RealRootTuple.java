@@ -1,10 +1,11 @@
 /*
- * $Id: RealRootTuple.java 3603 2011-04-25 18:31:43Z kredel $
+ * $Id: RealRootTuple.java 3993 2012-07-14 21:39:15Z kredel $
  */
 
 package edu.jas.root;
 
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -22,7 +23,7 @@ import edu.jas.structure.RingFactory;
  * @param <C> coefficient type.
  * @author Heinz Kredel
  */
-public class RealRootTuple<C extends GcdRingElem<C> & Rational> {
+public class RealRootTuple<C extends GcdRingElem<C> & Rational> implements Serializable, Cloneable {
 
 
     /**
@@ -139,13 +140,13 @@ public class RealRootTuple<C extends GcdRingElem<C> & Rational> {
     @Override
     @SuppressWarnings("unchecked")
     public boolean equals(Object b) {
-        if (!(b instanceof RealRootTuple)) {
-            return false;
-        }
         RealRootTuple<C> a = null;
         try {
             a = (RealRootTuple<C>) b;
         } catch (ClassCastException e) {
+        }
+        if (a == null) {
+            return false;
         }
         return tuple.equals(a.tuple);
     }

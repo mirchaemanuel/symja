@@ -1,5 +1,5 @@
 /*
- * $Id: RealRootsSturm.java 3677 2011-07-04 20:29:49Z kredel $
+ * $Id: RealRootsSturm.java 3957 2012-06-10 18:46:27Z kredel $
  */
 
 package edu.jas.root;
@@ -11,9 +11,11 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 import edu.jas.arith.Rational;
+import edu.jas.arith.BigRational;
 import edu.jas.poly.GenPolynomial;
 import edu.jas.poly.PolyUtil;
 import edu.jas.structure.RingElem;
+import edu.jas.structure.GcdRingElem;
 import edu.jas.structure.RingFactory;
 
 
@@ -22,7 +24,7 @@ import edu.jas.structure.RingFactory;
  * @param <C> coefficient type.
  * @author Heinz Kredel
  */
-public class RealRootsSturm<C extends RingElem<C> & Rational> extends RealRootAbstract<C> {
+public class RealRootsSturm<C extends RingElem<C> & Rational> extends RealRootsAbstract<C> {
 
 
     private static final Logger logger = Logger.getLogger(RealRootsSturm.class);
@@ -97,6 +99,10 @@ public class RealRootsSturm<C extends RingElem<C> & Rational> extends RealRootAb
         //System.out.println("S = " + S);
         //System.out.println("f_S = " + S.get(0));
         List<Interval<C>> Rp = realRoots(iv, S);
+        if (logger.isInfoEnabled()&& !( ((Object)f.ring.coFac) instanceof BigRational)) {
+            //logger.info("realRoots bound: " + iv);
+            logger.info("realRoots: " + Rp);
+        }
         R.addAll(Rp);
         return R;
     }
@@ -121,12 +127,14 @@ public class RealRootsSturm<C extends RingElem<C> & Rational> extends RealRootAb
             return R;
         }
         if ( f.isConstant() ) {
-            throw new IllegalArgumentException("f has no root: f = " + f + ", iv = " + iv);
+            return R;
+            //throw new IllegalArgumentException("f has no root: f = " + f + ", iv = " + iv);
         }
         if ( f.degree(0) == 1L ) {
             C z = f.monic().trailingBaseCoefficient().negate();
             if ( !iv.contains(z) ) {
-                throw new IllegalArgumentException("root not in interval: f = " + f + ", iv = " + iv + ", z = " + z);
+                return R;
+                //throw new IllegalArgumentException("root not in interval: f = " + f + ", iv = " + iv + ", z = " + z);
             }
             Interval<C> iv1 = new Interval<C>(z);
             R.add(iv1);
@@ -255,8 +263,15 @@ public class RealRootsSturm<C extends RingElem<C> & Rational> extends RealRootAb
      */
     @Override
     public long realRootCount(Interval<C> iv, GenPolynomial<C> f) {
-        if (f == null || f.isZERO() || f.isConstant()) {
+        if (f == null || f.isConstant()) { // ? 
             return 0L;
+        }
+        if (f.isZERO()) {
+            C z = f.leadingBaseCoefficient();
+            if ( !iv.contains(z) ) {
+                return 0L;
+	    }
+            return 1L;
         }
         List<GenPolynomial<C>> S = sturmSequence(f);
         return realRootCount(iv, S);
@@ -274,13 +289,15 @@ public class RealRootsSturm<C extends RingElem<C> & Rational> extends RealRootAb
     public Interval<C> invariantSignInterval(Interval<C> iv, GenPolynomial<C> f, GenPolynomial<C> g) {
         Interval<C> v = iv;
         if (g == null || g.isZERO()) {
+            //throw new IllegalArgumentException("g == 0");
             return v;
         }
         if (g.isConstant()) {
             return v;
         }
-        if (f == null || f.isZERO() || f.isConstant()) { // ?
-            return v;
+        if (f == null || f.isZERO()) { // ? || f.isConstant()
+            throw new IllegalArgumentException("f == 0");
+            //return v;
         }
         List<GenPolynomial<C>> Sg = sturmSequence(g.monic());
         Interval<C> ivp = invariantSignInterval(iv, f, Sg);
@@ -304,7 +321,7 @@ public class RealRootsSturm<C extends RingElem<C> & Rational> extends RealRootAb
         if (g.isConstant()) {
             return v;
         }
-        if (f == null || f.isZERO() || f.isConstant()) { // ?
+        if (f == null || f.isZERO()) { // ? || f.isConstant()
             return v;
         }
         RingFactory<C> cfac = f.ring.coFac;

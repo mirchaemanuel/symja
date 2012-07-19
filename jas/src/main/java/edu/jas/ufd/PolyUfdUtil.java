@@ -1,5 +1,5 @@
 /*
- * $Id: PolyUfdUtil.java 3634 2011-05-15 18:48:04Z kredel $
+ * $Id: PolyUfdUtil.java 3843 2011-12-29 11:56:02Z kredel $
  */
 
 package edu.jas.ufd;
@@ -338,7 +338,7 @@ public class PolyUfdUtil {
         GreatestCommonDivisorSubres<C> engine = new GreatestCommonDivisorSubres<C>( /*cfac.coFac*/);
         // = (GreatestCommonDivisorAbstract<C>)GCDFactory.<C>getImplementation( cfac.coFac );
 
-        GenPolynomial<GenPolynomial<C>> Rc = engine.recursiveResultant(Pc, Ac);
+        GenPolynomial<GenPolynomial<C>> Rc = engine.recursiveUnivariateResultant(Pc, Ac);
         //System.out.println("Rc = " + Rc.toScript());
         GenPolynomial<C> res = Rc.leadingBaseCoefficient();
         res = res.monic();

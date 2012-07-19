@@ -1,5 +1,5 @@
 /*
- * $Id: SolvableSyzygyAbstract.java 3584 2011-03-26 11:39:39Z kredel $
+ * $Id: SolvableSyzygyAbstract.java 3981 2012-07-12 20:51:22Z kredel $
  */
 
 package edu.jas.gbmod;
@@ -163,9 +163,9 @@ public class SolvableSyzygyAbstract<C extends RingElem<C>> implements SolvableSy
         int modv = M.cols; // > 0  
         logger.info("modv = " + modv);
         List<List<GenSolvablePolynomial<C>>> G = leftZeroRelations(modv, F.castToSolvableList());
-        if (G == null) {
-            return N;
-        }
+        //if (G == null) {
+        //    return N;
+        //}
         List<List<GenSolvablePolynomial<C>>> Z = new ArrayList<List<GenSolvablePolynomial<C>>>();
         for (int i = 0; i < G.size(); i++) {
             List<GenSolvablePolynomial<C>> Gi = G.get(i);

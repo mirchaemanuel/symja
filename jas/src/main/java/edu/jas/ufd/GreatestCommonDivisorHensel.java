@@ -1,5 +1,5 @@
 /*
- * $Id: GreatestCommonDivisorHensel.java 3718 2011-08-03 19:58:03Z kredel $
+ * $Id: GreatestCommonDivisorHensel.java 3836 2011-12-26 21:38:55Z kredel $
  */
 
 package edu.jas.ufd;
@@ -251,8 +251,8 @@ public class GreatestCommonDivisorHensel<MOD extends GcdRingElem<MOD> & Modular>
             }
             q = basePrimitivePart(q);
             q = q.multiply(c).abs();
-            if (PolyUtil.<BigInteger> basePseudoRemainder(P, q).isZERO()
-                && PolyUtil.<BigInteger> basePseudoRemainder(S, q).isZERO()) {
+            if (PolyUtil.<BigInteger> baseSparsePseudoRemainder(P, q).isZERO()
+                && PolyUtil.<BigInteger> baseSparsePseudoRemainder(S, q).isZERO()) {
                 break;
             } else { // else should not happen at this point
                 logger.info("final devision not successfull");

@@ -1,5 +1,5 @@
 /*
- * $Id: Pair.java 3315 2010-09-05 18:26:34Z kredel $
+ * $Id: Pair.java 3994 2012-07-15 11:50:54Z kredel $
  */
 
 package edu.jas.ps;
@@ -135,6 +135,16 @@ public class Pair<C extends RingElem<C>> implements Serializable, Comparable<Pai
             return -1;
         }
         return 0;
+    }
+
+
+    /**
+     * Hash code for this Pair.
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode() {
+        return (i << 16) + j;
     }
 
 

@@ -1,10 +1,11 @@
 /*
- * $Id: ColorPolynomial.java 3426 2010-12-24 13:17:58Z kredel $
+ * $Id: ColorPolynomial.java 3984 2012-07-12 21:36:16Z kredel $
  */
 
 package edu.jas.application;
 
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -23,7 +24,7 @@ import edu.jas.structure.RingElem;
  * @author Heinz Kredel
  */
 
-public class ColorPolynomial<C extends RingElem<C>>
+public class ColorPolynomial<C extends RingElem<C>> implements Serializable
     /* implements RingElem< ColorPolynomial<C> > */ {
 
 

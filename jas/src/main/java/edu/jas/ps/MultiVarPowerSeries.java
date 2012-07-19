@@ -1,5 +1,5 @@
 /*
- * $Id: MultiVarPowerSeries.java 3507 2011-01-26 22:23:58Z kredel $
+ * $Id: MultiVarPowerSeries.java 3978 2012-07-09 21:10:01Z kredel $
  */
 
 package edu.jas.ps;
@@ -1096,7 +1096,7 @@ public class MultiVarPowerSeries<C extends RingElem<C>> implements RingElem<Mult
             }
             h += c.hashCode();
             h = (h << 23);
-        };
+        }
         return h;
     }
 

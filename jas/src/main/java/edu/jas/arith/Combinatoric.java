@@ -1,5 +1,5 @@
 /*
- * $Id: Combinatoric.java 3295 2010-08-26 17:01:10Z kredel $
+ * $Id: Combinatoric.java 3840 2011-12-28 18:28:55Z kredel $
  */
 
 package edu.jas.arith;
@@ -64,6 +64,26 @@ public class Combinatoric {
             S = S.sum(B);
         }
         return S;
+    }
+
+
+    /**
+     * Factorial.
+     * @param n integer.
+     * @return n!, with 0! = 1.
+     */
+    public static BigInteger factorial(long n) {
+        if (n <= 1) {
+            return BigInteger.ONE;
+        }
+        BigInteger f = BigInteger.ONE;
+        if (n >= Integer.MAX_VALUE) {
+            throw new UnsupportedOperationException(n + " >= Integer.MAX_VALUE = " + Integer.MAX_VALUE);
+        }
+        for (int i = 2; i <= n; i++) {
+            f = f.multiply(new BigInteger(i));
+        }
+        return f;
     }
 
 }

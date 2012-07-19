@@ -1,5 +1,5 @@
 /*
- * $Id: ComplexAlgebraicRing.java 3592 2011-04-02 18:49:49Z kredel $
+ * $Id: ComplexAlgebraicRing.java 3987 2012-07-14 11:58:20Z kredel $
  */
 
 package edu.jas.root;
@@ -57,7 +57,7 @@ implements RingFactory<ComplexAlgebraicNumber<C>> {
     /**
      * Precision of the isolating rectangle for a complex root.
      */
-    public final int PRECISION = 9; //BigDecimal.DEFAULT_PRECISION;
+    public static final int PRECISION = 9; //BigDecimal.DEFAULT_PRECISION;
 
 
     /**

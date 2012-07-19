@@ -1,5 +1,5 @@
 /*
- * $Id: ReductionAbstract.java 3652 2011-06-02 18:17:04Z kredel $
+ * $Id: ReductionAbstract.java 3992 2012-07-14 21:32:18Z kredel $
  */
 
 package edu.jas.gb;
@@ -444,10 +444,7 @@ public abstract class ReductionAbstract<C extends RingElem<C>>
             }
             return Ap.equals(Np);
         }
-        if ( row == null && Pp != null ) {
-            return false;
-        }
-        if ( row != null && Pp == null ) {
+        if ( row == null || Pp == null ) {
             return false;
         }
         if ( row.size() != Pp.size() ) {

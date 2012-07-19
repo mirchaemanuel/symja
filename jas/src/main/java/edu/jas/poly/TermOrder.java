@@ -1,5 +1,5 @@
 /*
- * $Id: TermOrder.java 3748 2011-08-21 13:53:26Z kredel $
+ * $Id: TermOrder.java 3973 2012-07-01 11:26:02Z kredel $
  */
 
 package edu.jas.poly;
@@ -1543,8 +1543,9 @@ public final class TermOrder implements Serializable {
             return new TermOrder(w);
         }
         if (evord2 != 0) {
-            if (debug) {
-                logger.warn("TermOrder is already extended");
+            logger.warn("TermOrder is already extended");
+            if ( false && debug ) {
+                throw new IllegalArgumentException("TermOrder is already extended: " + this);
             }
             return new TermOrder(evord, evord2, r + k, evend1 + k);
         }
