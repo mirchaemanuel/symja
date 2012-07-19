@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.commons.math3.exception.MaxCountExceededException;
+import org.apache.commons.math3.exception.NullArgumentException;
 
 /**
  * This abstract class provides a general framework for managing iterative
@@ -27,7 +28,7 @@ import org.apache.commons.math3.exception.MaxCountExceededException;
  * provided to monitor the current iteration count. A lightweight event
  * framework is also provided.
  *
- * @version $Id: IterationManager.java 1244107 2012-02-14 16:17:55Z erans $
+ * @version $Id: IterationManager.java 1353586 2012-06-25 15:00:11Z celestin $
  */
 public class IterationManager {
 
@@ -40,11 +41,24 @@ public class IterationManager {
     /**
      * Creates a new instance of this class.
      *
-     * @param maxIterations Maximum number of iterations.
+     * @param maxIterations the maximum number of iterations
      */
     public IterationManager(final int maxIterations) {
-        this.iterations = new Incrementor();
-        this.iterations.setMaximalCount(maxIterations);
+        this.iterations = new Incrementor(maxIterations);
+        this.listeners = new CopyOnWriteArrayList<IterationListener>();
+    }
+
+    /**
+     * Creates a new instance of this class.
+     *
+     * @param maxIterations the maximum number of iterations
+     * @param callBack the function to be called when the maximum number of
+     * iterations has been reached
+     * @throws NullArgumentException if {@code callBack} is {@code null}
+     */
+    public IterationManager(final int maxIterations,
+                            final Incrementor.MaxCountExceededCallback callBack) {
+        this.iterations = new Incrementor(maxIterations, callBack);
         this.listeners = new CopyOnWriteArrayList<IterationListener>();
     }
 

@@ -28,14 +28,16 @@ import org.apache.commons.math3.util.FastMath;
  * threshold or if either the absolute difference between the objective
  * function values is smaller than another threshold for all vectors elements.
  *
- * @version $Id: SimpleVectorValueChecker.java 1244107 2012-02-14 16:17:55Z erans $
+ * @version $Id: SimpleVectorValueChecker.java 1345803 2012-06-03 23:24:43Z erans $
  * @since 3.0
  */
 public class SimpleVectorValueChecker
     extends AbstractConvergenceChecker<PointVectorValuePair> {
     /**
      * Build an instance with default thresholds.
+     * @deprecated See {@link AbstractConvergenceChecker#AbstractConvergenceChecker()}
      */
+    @Deprecated
     public SimpleVectorValueChecker() {}
 
     /**

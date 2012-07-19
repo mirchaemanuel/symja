@@ -17,6 +17,8 @@
 package org.apache.commons.math3.analysis.solvers;
 
 import org.apache.commons.math3.complex.Complex;
+import org.apache.commons.math3.complex.ComplexUtils;
+import org.apache.commons.math3.analysis.polynomials.PolynomialFunction;
 import org.apache.commons.math3.exception.NoBracketingException;
 import org.apache.commons.math3.exception.NullArgumentException;
 import org.apache.commons.math3.exception.NoDataException;
@@ -35,7 +37,7 @@ import org.apache.commons.math3.util.FastMath;
  * approximation and be able to solve all roots from that point.
  * The algorithm requires a bracketing condition.
  *
- * @version $Id: LaguerreSolver.java 1296557 2012-03-03 02:07:07Z erans $
+ * @version $Id: LaguerreSolver.java 1362032 2012-07-16 13:38:12Z erans $
  * @since 1.2
  */
 public class LaguerreSolver extends AbstractPolynomialSolver {
@@ -86,21 +88,21 @@ public class LaguerreSolver extends AbstractPolynomialSolver {
      */
     @Override
     public double doSolve() {
-        double min = getMin();
-        double max = getMax();
-        double initial = getStartValue();
+        final double min = getMin();
+        final double max = getMax();
+        final double initial = getStartValue();
         final double functionValueAccuracy = getFunctionValueAccuracy();
 
         verifySequence(min, initial, max);
 
         // Return the initial guess if it is good enough.
-        double yInitial = computeObjectiveValue(initial);
+        final double yInitial = computeObjectiveValue(initial);
         if (FastMath.abs(yInitial) <= functionValueAccuracy) {
             return initial;
         }
 
         // Return the first endpoint if it is good enough.
-        double yMin = computeObjectiveValue(min);
+        final double yMin = computeObjectiveValue(min);
         if (FastMath.abs(yMin) <= functionValueAccuracy) {
             return min;
         }
@@ -111,7 +113,7 @@ public class LaguerreSolver extends AbstractPolynomialSolver {
         }
 
         // Return the second endpoint if it is good enough.
-        double yMax = computeObjectiveValue(max);
+        final double yMax = computeObjectiveValue(max);
         if (FastMath.abs(yMax) <= functionValueAccuracy) {
             return max;
         }
@@ -141,16 +143,16 @@ public class LaguerreSolver extends AbstractPolynomialSolver {
      * @param fLo Function value at the lower bound of the search interval.
      * @param fHi Function value at the higher bound of the search interval.
      * @return the point at which the function value is zero.
+     * @deprecated This method should not be part of the public API: It will
+     * be made private in version 4.0.
      */
+    @Deprecated
     public double laguerre(double lo, double hi,
                            double fLo, double fHi) {
-        double coefficients[] = getCoefficients();
-        Complex c[] = new Complex[coefficients.length];
-        for (int i = 0; i < coefficients.length; i++) {
-            c[i] = new Complex(coefficients[i], 0);
-        }
-        Complex initial = new Complex(0.5 * (lo + hi), 0);
-        Complex z = complexSolver.solve(c, initial);
+        final Complex c[] = ComplexUtils.convertToComplex(getCoefficients());
+
+        final Complex initial = new Complex(0.5 * (lo + hi), 0);
+        final Complex z = complexSolver.solve(c, initial);
         if (complexSolver.isRoot(lo, hi, z)) {
             return z.getReal();
         } else {
@@ -165,6 +167,58 @@ public class LaguerreSolver extends AbstractPolynomialSolver {
             }
             return r;
         }
+    }
+
+    /**
+     * Find all complex roots for the polynomial with the given
+     * coefficients, starting from the given initial value.
+     * <br/>
+     * Note: This method is not part of the API of {@link BaseUnivariateSolver}.
+     *
+     * @param coefficients Polynomial coefficients.
+     * @param initial Start value.
+     * @return the point at which the function value is zero.
+     * @throws org.apache.commons.math3.exception.TooManyEvaluationsException
+     * if the maximum number of evaluations is exceeded.
+     * @throws NullArgumentException if the {@code coefficients} is
+     * {@code null}.
+     * @throws NoDataException if the {@code coefficients} array is empty.
+     */
+    public Complex[] solveAllComplex(double[] coefficients,
+                                     double initial) {
+        setup(Integer.MAX_VALUE,
+              new PolynomialFunction(coefficients),
+              Double.NEGATIVE_INFINITY,
+              Double.POSITIVE_INFINITY,
+              initial);
+        return complexSolver.solveAll(ComplexUtils.convertToComplex(coefficients),
+                                      new Complex(initial, 0d));
+    }
+
+    /**
+     * Find a complex root for the polynomial with the given coefficients,
+     * starting from the given initial value.
+     * <br/>
+     * Note: This method is not part of the API of {@link BaseUnivariateSolver}.
+     *
+     * @param coefficients Polynomial coefficients.
+     * @param initial Start value.
+     * @return the point at which the function value is zero.
+     * @throws org.apache.commons.math3.exception.TooManyEvaluationsException
+     * if the maximum number of evaluations is exceeded.
+     * @throws NullArgumentException if the {@code coefficients} is
+     * {@code null}.
+     * @throws NoDataException if the {@code coefficients} array is empty.
+     */
+    public Complex solveComplex(double[] coefficients,
+                                double initial) {
+        setup(Integer.MAX_VALUE,
+              new PolynomialFunction(coefficients),
+              Double.NEGATIVE_INFINITY,
+              Double.POSITIVE_INFINITY,
+              initial);
+        return complexSolver.solve(ComplexUtils.convertToComplex(coefficients),
+                                   new Complex(initial, 0d));
     }
 
     /**
@@ -206,20 +260,20 @@ public class LaguerreSolver extends AbstractPolynomialSolver {
             if (coefficients == null) {
                 throw new NullArgumentException();
             }
-            int n = coefficients.length - 1;
+            final int n = coefficients.length - 1;
             if (n == 0) {
                 throw new NoDataException(LocalizedFormats.POLYNOMIAL);
             }
             // Coefficients for deflated polynomial.
-            Complex c[] = new Complex[n + 1];
+            final Complex c[] = new Complex[n + 1];
             for (int i = 0; i <= n; i++) {
                 c[i] = coefficients[i];
             }
 
             // Solve individual roots successively.
-            Complex root[] = new Complex[n];
+            final Complex root[] = new Complex[n];
             for (int i = 0; i < n; i++) {
-                Complex subarray[] = new Complex[n - i + 1];
+                final Complex subarray[] = new Complex[n - i + 1];
                 System.arraycopy(c, 0, subarray, 0, subarray.length);
                 root[i] = solve(subarray, initial);
                 // Polynomial deflation using synthetic division.
@@ -253,7 +307,7 @@ public class LaguerreSolver extends AbstractPolynomialSolver {
                 throw new NullArgumentException();
             }
 
-            int n = coefficients.length - 1;
+            final int n = coefficients.length - 1;
             if (n == 0) {
                 throw new NoDataException(LocalizedFormats.POLYNOMIAL);
             }
@@ -262,26 +316,18 @@ public class LaguerreSolver extends AbstractPolynomialSolver {
             final double relativeAccuracy = getRelativeAccuracy();
             final double functionValueAccuracy = getFunctionValueAccuracy();
 
-            Complex N  = new Complex(n,     0.0);
-            Complex N1 = new Complex(n - 1, 0.0);
+            final Complex nC  = new Complex(n, 0);
+            final Complex n1C = new Complex(n - 1, 0);
 
-            Complex pv = null;
-            Complex dv = null;
-            Complex d2v = null;
-            Complex G = null;
-            Complex G2 = null;
-            Complex H = null;
-            Complex delta = null;
-            Complex denominator = null;
             Complex z = initial;
             Complex oldz = new Complex(Double.POSITIVE_INFINITY,
                                        Double.POSITIVE_INFINITY);
             while (true) {
                 // Compute pv (polynomial value), dv (derivative value), and
                 // d2v (second derivative value) simultaneously.
-                pv = coefficients[n];
-                dv = Complex.ZERO;
-                d2v = Complex.ZERO;
+                Complex pv = coefficients[n];
+                Complex dv = Complex.ZERO;
+                Complex d2v = Complex.ZERO;
                 for (int j = n-1; j >= 0; j--) {
                     d2v = dv.add(z.multiply(d2v));
                     dv = pv.add(z.multiply(dv));
@@ -289,9 +335,9 @@ public class LaguerreSolver extends AbstractPolynomialSolver {
                 }
                 d2v = d2v.multiply(new Complex(2.0, 0.0));
 
-                // check for convergence
-                double tolerance = FastMath.max(relativeAccuracy * z.abs(),
-                                                absoluteAccuracy);
+                // Check for convergence.
+                final double tolerance = FastMath.max(relativeAccuracy * z.abs(),
+                                                      absoluteAccuracy);
                 if ((z.subtract(oldz)).abs() <= tolerance) {
                     return z;
                 }
@@ -299,16 +345,16 @@ public class LaguerreSolver extends AbstractPolynomialSolver {
                     return z;
                 }
 
-                // now pv != 0, calculate the new approximation
-                G = dv.divide(pv);
-                G2 = G.multiply(G);
-                H = G2.subtract(d2v.divide(pv));
-                delta = N1.multiply((N.multiply(H)).subtract(G2));
-                // choose a denominator larger in magnitude
-                Complex deltaSqrt = delta.sqrt();
-                Complex dplus = G.add(deltaSqrt);
-                Complex dminus = G.subtract(deltaSqrt);
-                denominator = dplus.abs() > dminus.abs() ? dplus : dminus;
+                // Now pv != 0, calculate the new approximation.
+                final Complex G = dv.divide(pv);
+                final Complex G2 = G.multiply(G);
+                final Complex H = G2.subtract(d2v.divide(pv));
+                final Complex delta = n1C.multiply((nC.multiply(H)).subtract(G2));
+                // Choose a denominator larger in magnitude.
+                final Complex deltaSqrt = delta.sqrt();
+                final Complex dplus = G.add(deltaSqrt);
+                final Complex dminus = G.subtract(deltaSqrt);
+                final Complex denominator = dplus.abs() > dminus.abs() ? dplus : dminus;
                 // Perturb z if denominator is zero, for instance,
                 // p(x) = x^3 + 1, z = 0.
                 if (denominator.equals(new Complex(0.0, 0.0))) {
@@ -317,7 +363,7 @@ public class LaguerreSolver extends AbstractPolynomialSolver {
                                        Double.POSITIVE_INFINITY);
                 } else {
                     oldz = z;
-                    z = z.subtract(N.divide(denominator));
+                    z = z.subtract(nC.divide(denominator));
                 }
                 incrementEvaluationCount();
             }

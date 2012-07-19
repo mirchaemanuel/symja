@@ -19,6 +19,7 @@ package org.apache.commons.math3.linear;
 import java.io.Serializable;
 
 import org.apache.commons.math3.exception.MathArithmeticException;
+import org.apache.commons.math3.exception.NotPositiveException;
 import org.apache.commons.math3.exception.util.LocalizedFormats;
 import org.apache.commons.math3.util.OpenIntToDoubleHashMap;
 import org.apache.commons.math3.util.OpenIntToDoubleHashMap.Iterator;
@@ -27,7 +28,7 @@ import org.apache.commons.math3.util.FastMath;
 /**
  * This class implements the {@link RealVector} interface with a
  * {@link OpenIntToDoubleHashMap} backing store.
- * @version $Id: OpenMapRealVector.java 1244107 2012-02-14 16:17:55Z erans $
+ * @version $Id: OpenMapRealVector.java 1360662 2012-07-12 13:17:08Z celestin $
  * @since 2.0
 */
 public class OpenMapRealVector extends SparseRealVector
@@ -303,47 +304,19 @@ public class OpenMapRealVector extends SparseRealVector
         return new OpenMapRealVector(this);
     }
 
-    /**
-     * Optimized method to compute the dot product with an OpenMapRealVector.
-     * It iterates over the smallest of the two.
-     *
-     * @param v Cector to compute the dot product with.
-     * @return the dot product of {@code this} and {@code v}.
-     * @throws org.apache.commons.math3.exception.DimensionMismatchException
-     * if the dimensions do not match.
-     */
-    public double dotProduct(OpenMapRealVector v) {
-        checkVectorDimensions(v.getDimension());
-        boolean thisIsSmaller  = entries.size() < v.entries.size();
-        Iterator iter = thisIsSmaller  ? entries.iterator() : v.entries.iterator();
-        OpenIntToDoubleHashMap larger = thisIsSmaller  ? v.entries : entries;
-        double d = 0;
-        while(iter.hasNext()) {
-            iter.advance();
-            d += iter.value() * larger.get(iter.key());
-        }
-        return d;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public double dotProduct(RealVector v) {
-        if(v instanceof OpenMapRealVector) {
-            return dotProduct((OpenMapRealVector)v);
-        } else {
-            return super.dotProduct(v);
-        }
-    }
-
     /** {@inheritDoc} */
     @Override
     public OpenMapRealVector ebeDivide(RealVector v) {
         checkVectorDimensions(v.getDimension());
         OpenMapRealVector res = new OpenMapRealVector(this);
-        Iterator iter = entries.iterator();
-        while (iter.hasNext()) {
-            iter.advance();
-            res.setEntry(iter.key(), iter.value() / v.getEntry(iter.key()));
+        /*
+         * MATH-803: it is not sufficient to loop through non zero entries of
+         * this only. Indeed, if this[i] = 0d and v[i] = 0d, then
+         * this[i] / v[i] = NaN, and not 0d.
+         */
+        final int n = getDimension();
+        for (int i = 0; i < n; i++) {
+            res.setEntry(i, this.getEntry(i) / v.getEntry(i));
         }
         return res;
     }
@@ -358,6 +331,25 @@ public class OpenMapRealVector extends SparseRealVector
             iter.advance();
             res.setEntry(iter.key(), iter.value() * v.getEntry(iter.key()));
         }
+        /*
+         * MATH-803: the above loop assumes that 0d * x  = 0d for any double x,
+         * which allows to consider only the non-zero entries of this. However,
+         * this fails if this[i] == 0d and (v[i] = NaN or v[i] = Infinity).
+         *
+         * These special cases are handled below.
+         */
+        if (v.isNaN() || v.isInfinite()) {
+            final int n = getDimension();
+            for (int i = 0; i < n; i++) {
+                final double y = v.getEntry(i);
+                if (Double.isNaN(y)) {
+                    res.setEntry(i, Double.NaN);
+                } else if (Double.isInfinite(y)) {
+                    final double x = this.getEntry(i);
+                    res.setEntry(i, x * y);
+                }
+            }
+        }
         return res;
     }
 
@@ -365,6 +357,9 @@ public class OpenMapRealVector extends SparseRealVector
     @Override
     public OpenMapRealVector getSubVector(int index, int n) {
         checkIndex(index);
+        if (n < 0) {
+            throw new NotPositiveException(LocalizedFormats.NUMBER_OF_ELEMENTS_SHOULD_BE_POSITIVE, n);
+        }
         checkIndex(index + n - 1);
         OpenMapRealVector res = new OpenMapRealVector(n);
         int end = index + n;
@@ -557,13 +552,6 @@ public class OpenMapRealVector extends SparseRealVector
             setEntry(i, getEntry(i) + d);
         }
         return this;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public RealVector projection(RealVector v) {
-        checkVectorDimensions(v.getDimension());
-        return v.mapMultiply(dotProduct(v) / v.dotProduct(v));
     }
 
     /** {@inheritDoc} */

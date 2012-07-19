@@ -17,6 +17,7 @@
 package org.apache.commons.math3.util;
 
 import org.apache.commons.math3.exception.MaxCountExceededException;
+import org.apache.commons.math3.exception.NullArgumentException;
 
 /**
  * Utility that increments a counter until a maximum is reached, at
@@ -73,9 +74,13 @@ public class Incrementor {
      *
      * @param max Maximal count.
      * @param cb Function to be called when the maximal count has been reached.
+     * @throws NullArgumentException if {@code cb} is {@code null}
      */
     public Incrementor(int max,
                        MaxCountExceededCallback cb) {
+        if (cb == null){
+            throw new NullArgumentException();
+        }
         maximalCount = max;
         maxCountCallback = cb;
     }

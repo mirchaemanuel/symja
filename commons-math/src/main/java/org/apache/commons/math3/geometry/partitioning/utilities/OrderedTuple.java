@@ -88,7 +88,7 @@ import org.apache.commons.math3.util.FastMath;
  * components</li>
  * </ul>
 
- * @version $Id: OrderedTuple.java 1244107 2012-02-14 16:17:55Z erans $
+ * @version $Id: OrderedTuple.java 1344166 2012-05-30 09:22:58Z luc $
  * @since 3.0
  */
 public class OrderedTuple implements Comparable<OrderedTuple> {
@@ -301,12 +301,23 @@ public class OrderedTuple implements Comparable<OrderedTuple> {
     /** {@inheritDoc} */
     @Override
     public int hashCode() {
-        return Arrays.hashCode(components)   ^
-               ((Integer) offset).hashCode() ^
-               ((Integer) lsb).hashCode()    ^
-               ((Boolean) posInf).hashCode() ^
-               ((Boolean) negInf).hashCode() ^
-               ((Boolean) nan).hashCode();
+        // the following constants are arbitrary small primes
+        final int multiplier = 37;
+        final int trueHash   = 97;
+        final int falseHash  = 71;
+
+        // hash fields and combine them
+        // (we rely on the multiplier to have different combined weights
+        //  for all int fields and all boolean fields)
+        int hash = Arrays.hashCode(components);
+        hash = hash * multiplier + offset;
+        hash = hash * multiplier + lsb;
+        hash = hash * multiplier + (posInf ? trueHash : falseHash);
+        hash = hash * multiplier + (negInf ? trueHash : falseHash);
+        hash = hash * multiplier + (nan    ? trueHash : falseHash);
+
+        return hash;
+
     }
 
     /** Get the components array.

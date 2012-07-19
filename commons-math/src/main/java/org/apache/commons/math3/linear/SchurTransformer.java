@@ -18,7 +18,6 @@
 package org.apache.commons.math3.linear;
 
 import org.apache.commons.math3.exception.MaxCountExceededException;
-import org.apache.commons.math3.exception.TooManyEvaluationsException;
 import org.apache.commons.math3.exception.util.LocalizedFormats;
 import org.apache.commons.math3.util.FastMath;
 import org.apache.commons.math3.util.Precision;
@@ -40,7 +39,7 @@ import org.apache.commons.math3.util.Precision;
  * @see <a href="http://mathworld.wolfram.com/SchurDecomposition.html">Schur Decomposition - MathWorld</a>
  * @see <a href="http://en.wikipedia.org/wiki/Schur_decomposition">Schur Decomposition - Wikipedia</a>
  * @see <a href="http://en.wikipedia.org/wiki/Householder_transformation">Householder Transformations</a>
- * @version $Id: SchurTransformer.java 1334744 2012-05-06 19:29:02Z tn $
+ * @version $Id: SchurTransformer.java 1363105 2012-07-18 20:49:43Z tn $
  * @since 3.1
  */
 class SchurTransformer {
@@ -437,13 +436,17 @@ class SchurTransformer {
      * Contains variable names as present in the original JAMA code.
      */
     private static class ShiftInfo {
-        /** TODO: describe */
+        // CHECKSTYLE: stop all
+
+        /** x shift info */
         double x;
-        /** TODO: describe */
+        /** y shift info */
         double y;
-        /** TODO: describe */
+        /** w shift info */
         double w;
         /** Indicates an exceptional shift. */
         double exShift;
+
+        // CHECKSTYLE: resume all
     }
 }

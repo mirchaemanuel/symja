@@ -30,7 +30,7 @@ import org.apache.commons.math3.optimization.direct.BaseAbstractMultivariateOpti
  * differentiable functions.
  * It contains boiler-plate code for dealing with gradient evaluation.
  *
- * @version $Id: AbstractScalarDifferentiableOptimizer.java 1244107 2012-02-14 16:17:55Z erans $
+ * @version $Id: AbstractScalarDifferentiableOptimizer.java 1345803 2012-06-03 23:24:43Z erans $
  * @since 2.0
  */
 public abstract class AbstractScalarDifferentiableOptimizer
@@ -46,8 +46,11 @@ public abstract class AbstractScalarDifferentiableOptimizer
      * The convergence check is set to a
      * {@link org.apache.commons.math3.optimization.SimpleValueChecker
      * SimpleValueChecker}.
+     * @deprecated See {@link org.apache.commons.math3.optimization.SimpleValueChecker#SimpleValueChecker()}
      */
+    @Deprecated
     protected AbstractScalarDifferentiableOptimizer() {}
+
     /**
      * @param checker Convergence checker.
      */

@@ -32,21 +32,21 @@ import org.apache.commons.math3.exception.util.LocalizedFormats;
  * Example:
  * <pre>
  * -C- denotes a crossover point
- *                   -C-                                -C-
+ *                   -C-                                 -C-
  * p1 = (1 0 1 0 0 1  | 0 1 1)    X    p2 = (0 1 1 0 1 0  | 1 1 1)
- *         \------------/ \-----/              \------------/ \-----/
+ *      \------------/ \-----/              \------------/ \-----/
  *            ||         (*)                       ||        (**)
  *            VV         (**)                      VV        (*)
  *      /------------\ /-----\              /------------\ /-----\
- * c1 = (1 0 1 0 0 1  | 1 1 1)    X    p2 = (0 1 1 0 1 0  | 0 1 1)
+ * c1 = (1 0 1 0 0 1  | 1 1 1)    X    c2 = (0 1 1 0 1 0  | 0 1 1)
  * </pre>
  *
  * This policy works only on {@link AbstractListChromosome}, and therefore it
- * is parametrized by T. Moreover, the chromosomes must have same lengths.
+ * is parameterized by T. Moreover, the chromosomes must have same lengths.
  *
  * @param <T> generic type of the {@link AbstractListChromosome}s for crossover
  * @since 2.0
- * @version $Id: OnePointCrossover.java 1244107 2012-02-14 16:17:55Z erans $
+ * @version $Id: OnePointCrossover.java 1344031 2012-05-29 22:26:22Z tn $
  *
  */
 public class OnePointCrossover<T> implements CrossoverPolicy {
@@ -57,14 +57,16 @@ public class OnePointCrossover<T> implements CrossoverPolicy {
      * second parts are copied crosswise.
      *
      * Example:
+     * <pre>
      * -C- denotes a crossover point
-     *                   -C-                                -C-
+     *                   -C-                                 -C-
      * p1 = (1 0 1 0 0 1  | 0 1 1)    X    p2 = (0 1 1 0 1 0  | 1 1 1)
-     *         \------------/ \-----/              \------------/ \-----/
+     *      \------------/ \-----/              \------------/ \-----/
      *            ||         (*)                       ||        (**)
      *            VV         (**)                      VV        (*)
      *      /------------\ /-----\              /------------\ /-----\
-     * c1 = (1 0 1 0 0 1  | 1 1 1)    X    p2 = (0 1 1 0 1 0  | 0 1 1)
+     * c1 = (1 0 1 0 0 1  | 1 1 1)    X    c2 = (0 1 1 0 1 0  | 0 1 1)
+     * </pre>
      *
      * @param first first parent (p1)
      * @param second second parent (p2)
@@ -92,20 +94,20 @@ public class OnePointCrossover<T> implements CrossoverPolicy {
      */
     private ChromosomePair crossover(final AbstractListChromosome<T> first,
                                      final AbstractListChromosome<T> second) {
-        int length = first.getLength();
+        final int length = first.getLength();
         if (length != second.getLength()) {
             throw new DimensionMismatchException(second.getLength(), length);
         }
 
         // array representations of the parents
-        List<T> parent1Rep = first.getRepresentation();
-        List<T> parent2Rep = second.getRepresentation();
+        final List<T> parent1Rep = first.getRepresentation();
+        final List<T> parent2Rep = second.getRepresentation();
         // and of the children
-        ArrayList<T> child1Rep = new ArrayList<T> (first.getLength());
-        ArrayList<T> child2Rep = new ArrayList<T> (second.getLength());
+        final ArrayList<T> child1Rep = new ArrayList<T> (first.getLength());
+        final ArrayList<T> child2Rep = new ArrayList<T> (second.getLength());
 
         // select a crossover point at random (0 and length makes no sense)
-        int crossoverIndex = 1 + (GeneticAlgorithm.getRandomGenerator().nextInt(length-2));
+        final int crossoverIndex = 1 + (GeneticAlgorithm.getRandomGenerator().nextInt(length-2));
 
         // copy the first part
         for (int i = 0; i < crossoverIndex; i++) {

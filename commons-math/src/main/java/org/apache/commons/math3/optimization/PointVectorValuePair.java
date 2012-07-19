@@ -27,7 +27,7 @@ import org.apache.commons.math3.util.Pair;
  *
  * @see PointValuePair
  * @see org.apache.commons.math3.analysis.MultivariateVectorFunction
- * @version $Id: PointVectorValuePair.java 1337849 2012-05-13 11:16:45Z luc $
+ * @version $Id: PointVectorValuePair.java 1361839 2012-07-15 23:42:38Z erans $
  * @since 3.0
  */
 public class PointVectorValuePair extends Pair<double[], double[]> implements Serializable {
@@ -118,19 +118,18 @@ public class PointVectorValuePair extends Pair<double[], double[]> implements Se
 
     /** Internal class used only for serialization. */
     private static class DataTransferObject implements Serializable {
-
         /** Serializable UID. */
         private static final long serialVersionUID = 20120513L;
-
-        /** Point coordinates.
+        /**
+         * Point coordinates.
          * @Serial
          */
-        final double[] point;
-
-        /** Value of the objective function at the point.
+        private final double[] point;
+        /**
+         * Value of the objective function at the point.
          * @Serial
          */
-        final double[] value;
+        private final double[] value;
 
         /** Simple constructor.
          * @param point Point coordinates.
@@ -147,7 +146,5 @@ public class PointVectorValuePair extends Pair<double[], double[]> implements Se
         private Object readResolve() {
             return new PointVectorValuePair(point, value, false);
         }
-
     }
-
 }

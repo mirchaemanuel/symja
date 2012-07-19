@@ -20,16 +20,18 @@ package org.apache.commons.math3.optimization.fitting;
 import org.apache.commons.math3.analysis.polynomials.PolynomialFunction;
 import org.apache.commons.math3.optimization.DifferentiableMultivariateVectorOptimizer;
 
-/** This class implements a curve fitting specialized for polynomials.
- * <p>Polynomial fitting is a very simple case of curve fitting. The
- * estimated coefficients are the polynomial coefficients. They are
- * searched by a least square estimator.</p>
- * @version $Id: PolynomialFitter.java 1244107 2012-02-14 16:17:55Z erans $
+/**
+ * Polynomial fitting is a very simple case of {@link CurveFitter curve fitting}.
+ * The estimated coefficients are the polynomial coefficients (see the
+ * {@link #fit(double[]) fit} method).
+ *
+ * @version $Id: PolynomialFitter.java 1357353 2012-07-04 18:00:02Z erans $
  * @since 2.0
  */
-
-public class PolynomialFitter extends CurveFitter {
-    /** Polynomial degree. */
+public class PolynomialFitter extends CurveFitter<PolynomialFunction.Parametric> {
+    /** Polynomial degree.
+     * @deprecated
+     */
     private final int degree;
 
     /**
@@ -39,10 +41,22 @@ public class PolynomialFitter extends CurveFitter {
      *
      * @param degree Maximal degree of the polynomial.
      * @param optimizer Optimizer to use for the fitting.
+     * @deprecated Since 3.1 (to be removed in 4.0). Please use
+     * {@link #PolynomialFitter(DifferentiableMultivariateVectorOptimizer)} instead.
      */
     public PolynomialFitter(int degree, final DifferentiableMultivariateVectorOptimizer optimizer) {
         super(optimizer);
         this.degree = degree;
+    }
+
+    /**
+     * Simple constructor.
+     *
+     * @param optimizer Optimizer to use for the fitting.
+     */
+    public PolynomialFitter(DifferentiableMultivariateVectorOptimizer optimizer) {
+        super(optimizer);
+        degree = -1; // To avoid compilation error until the instance variable is removed.
     }
 
     /**
@@ -51,8 +65,40 @@ public class PolynomialFitter extends CurveFitter {
      * @return the coefficients of the polynomial that best fits the observed points.
      * @throws org.apache.commons.math3.exception.ConvergenceException
      * if the algorithm failed to converge.
+     * @deprecated Since 3.1 (to be removed in 4.0). Please use {@link #fit(double[])} instead.
      */
     public double[] fit() {
         return fit(new PolynomialFunction.Parametric(), new double[degree + 1]);
+    }
+
+    /**
+     * Get the coefficients of the polynomial fitting the weighted data points.
+     * The degree of the fitting polynomial is {@code guess.length - 1}.
+     *
+     * @param guess First guess for the coefficients. They must be sorted in
+     * increasing order of the polynomial's degree.
+     * @param maxEval Maximum number of evaluations of the polynomial.
+     * @return the coefficients of the polynomial that best fits the observed points.
+     * @throws org.apache.commons.math3.exception.TooManyEvaluationsException if
+     * the number of evaluations exceeds {@code maxEval}.
+     * @throws org.apache.commons.math3.exception.ConvergenceException
+     * if the algorithm failed to converge.
+     */
+    public double[] fit(int maxEval, double[] guess) {
+        return fit(maxEval, new PolynomialFunction.Parametric(), guess);
+    }
+
+    /**
+     * Get the coefficients of the polynomial fitting the weighted data points.
+     * The degree of the fitting polynomial is {@code guess.length - 1}.
+     *
+     * @param guess First guess for the coefficients. They must be sorted in
+     * increasing order of the polynomial's degree.
+     * @return the coefficients of the polynomial that best fits the observed points.
+     * @throws org.apache.commons.math3.exception.ConvergenceException
+     * if the algorithm failed to converge.
+     */
+    public double[] fit(double[] guess) {
+        return fit(new PolynomialFunction.Parametric(), guess);
     }
 }

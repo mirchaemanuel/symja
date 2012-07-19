@@ -21,17 +21,18 @@ import java.util.Arrays;
 import java.util.Iterator;
 
 import org.apache.commons.math3.analysis.UnivariateFunction;
+import org.apache.commons.math3.exception.NotPositiveException;
 import org.apache.commons.math3.exception.NullArgumentException;
 import org.apache.commons.math3.exception.DimensionMismatchException;
 import org.apache.commons.math3.exception.NumberIsTooLargeException;
-import org.apache.commons.math3.exception.MathArithmeticException;
+import org.apache.commons.math3.exception.OutOfRangeException;
 import org.apache.commons.math3.exception.util.LocalizedFormats;
 import org.apache.commons.math3.util.MathUtils;
 import org.apache.commons.math3.util.FastMath;
 
 /**
  * This class implements the {@link RealVector} interface with a double array.
- * @version $Id: ArrayRealVector.java 1336983 2012-05-11 00:38:29Z sebb $
+ * @version $Id: ArrayRealVector.java 1361839 2012-07-15 23:42:38Z erans $
  * @since 2.0
  */
 public class ArrayRealVector extends RealVector implements Serializable {
@@ -453,16 +454,8 @@ public class ArrayRealVector extends RealVector implements Serializable {
                 dot += data[i] * vData[i];
             }
             return dot;
-        } else {
-            checkVectorDimensions(v);
-            double dot = 0;
-            Iterator<Entry> it = v.sparseIterator();
-            while (it.hasNext()) {
-                final Entry e = it.next();
-                dot += data[e.getIndex()] * e.getValue();
-            }
-            return dot;
         }
+        return super.dotProduct(v);
     }
 
     /** {@inheritDoc} */
@@ -566,32 +559,6 @@ public class ArrayRealVector extends RealVector implements Serializable {
 
     /** {@inheritDoc} */
     @Override
-    public RealVector unitVector() {
-        final double norm = getNorm();
-        if (norm == 0) {
-            throw new MathArithmeticException(LocalizedFormats.ZERO_NORM);
-        }
-        return mapDivide(norm);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void unitize() {
-        final double norm = getNorm();
-        if (norm == 0) {
-            throw new MathArithmeticException(LocalizedFormats.ZERO_NORM);
-        }
-        mapDivideToSelf(norm);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public RealVector projection(RealVector v) {
-        return v.mapMultiply(dotProduct(v) / v.dotProduct(v));
-    }
-
-    /** {@inheritDoc} */
-    @Override
     public RealMatrix outerProduct(RealVector v) {
         if (v instanceof ArrayRealVector) {
             final double[] vData = ((ArrayRealVector) v).data;
@@ -620,7 +587,12 @@ public class ArrayRealVector extends RealVector implements Serializable {
     /** {@inheritDoc} */
     @Override
     public double getEntry(int index) {
-        return data[index];
+        try {
+            return data[index];
+        } catch (IndexOutOfBoundsException e) {
+            throw new OutOfRangeException(LocalizedFormats.INDEX, index, 0,
+                getDimension() - 1);
+        }
     }
 
     /** {@inheritDoc} */
@@ -661,6 +633,9 @@ public class ArrayRealVector extends RealVector implements Serializable {
     /** {@inheritDoc} */
     @Override
     public RealVector getSubVector(int index, int n) {
+        if (n < 0) {
+            throw new NotPositiveException(LocalizedFormats.NUMBER_OF_ELEMENTS_SHOULD_BE_POSITIVE, n);
+        }
         ArrayRealVector out = new ArrayRealVector(n);
         try {
             System.arraycopy(data, index, out.data, 0, n);
@@ -684,7 +659,12 @@ public class ArrayRealVector extends RealVector implements Serializable {
     /** {@inheritDoc} */
     @Override
     public void addToEntry(int index, double increment) {
+        try {
         data[index] += increment;
+        } catch(IndexOutOfBoundsException e){
+            throw new OutOfRangeException(LocalizedFormats.INDEX,
+                                          index, 0, data.length - 1);
+        }
     }
 
     /** {@inheritDoc} */
@@ -803,20 +783,7 @@ public class ArrayRealVector extends RealVector implements Serializable {
         return false;
     }
 
-    /**
-     * Test for the equality of two real vectors.
-     * If all coordinates of two real vectors are exactly the same, and none are
-     * {@code NaN}, the two real vectors are considered to be equal.
-     * {@code NaN} coordinates are considered to affect globally the vector
-     * and be equals to each other - i.e, if either (or all) coordinates of the
-     * real vector are equal to {@code NaN}, the real vector is equal to
-     * a vector with all {@code NaN} coordinates.
-     *
-     * @param other Object to test for equality.
-     * @return {@code true} if two vector objects are equal, {@code false} if
-     * {@code other} is null, not an instance of {@code RealVector}, or
-     * not equal to this {@code RealVector} instance.
-     */
+    /** {@inheritDoc} */
     @Override
     public boolean equals(Object other) {
         if (this == other) {
@@ -845,10 +812,7 @@ public class ArrayRealVector extends RealVector implements Serializable {
     }
 
     /**
-     * Get a hashCode for the real vector.
-     * All {@code NaN} values have the same hash code.
-     *
-     * @return a hash code.
+     * {@inheritDoc} All {@code NaN} values have the same hash code.
      */
     @Override
     public int hashCode() {
@@ -880,5 +844,91 @@ public class ArrayRealVector extends RealVector implements Serializable {
             }
         }
         return this;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public double walkInDefaultOrder(final RealVectorPreservingVisitor visitor) {
+        visitor.start(data.length, 0, data.length - 1);
+        for (int i = 0; i < data.length; i++) {
+            visitor.visit(i, data[i]);
+        }
+        return visitor.end();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public double walkInDefaultOrder(final RealVectorPreservingVisitor visitor,
+        final int start, final int end) {
+        checkIndices(start, end);
+        visitor.start(data.length, start, end);
+        for (int i = start; i <= end; i++) {
+            visitor.visit(i, data[i]);
+        }
+        return visitor.end();
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * In this implementation, the optimized order is the default order.
+     */
+    @Override
+    public double walkInOptimizedOrder(final RealVectorPreservingVisitor visitor) {
+        return walkInDefaultOrder(visitor);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * In this implementation, the optimized order is the default order.
+     */
+    @Override
+    public double walkInOptimizedOrder(final RealVectorPreservingVisitor visitor,
+        final int start, final int end) {
+        return walkInDefaultOrder(visitor, start, end);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public double walkInDefaultOrder(final RealVectorChangingVisitor visitor) {
+        visitor.start(data.length, 0, data.length - 1);
+        for (int i = 0; i < data.length; i++) {
+            data[i] = visitor.visit(i, data[i]);
+        }
+        return visitor.end();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public double walkInDefaultOrder(final RealVectorChangingVisitor visitor,
+        final int start, final int end) {
+        checkIndices(start, end);
+        visitor.start(data.length, start, end);
+        for (int i = start; i <= end; i++) {
+            data[i] = visitor.visit(i, data[i]);
+        }
+        return visitor.end();
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * In this implementation, the optimized order is the default order.
+     */
+    @Override
+    public double walkInOptimizedOrder(final RealVectorChangingVisitor visitor) {
+        return walkInDefaultOrder(visitor);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * In this implementation, the optimized order is the default order.
+     */
+    @Override
+    public double walkInOptimizedOrder(final RealVectorChangingVisitor visitor,
+        final int start, final int end) {
+        return walkInDefaultOrder(visitor, start, end);
     }
 }

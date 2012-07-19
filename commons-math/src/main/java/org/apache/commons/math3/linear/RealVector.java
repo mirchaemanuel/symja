@@ -22,6 +22,7 @@ import java.util.NoSuchElementException;
 
 import org.apache.commons.math3.exception.MathUnsupportedOperationException;
 import org.apache.commons.math3.exception.DimensionMismatchException;
+import org.apache.commons.math3.exception.NumberIsTooSmallException;
 import org.apache.commons.math3.exception.OutOfRangeException;
 import org.apache.commons.math3.exception.MathArithmeticException;
 import org.apache.commons.math3.analysis.FunctionUtils;
@@ -52,7 +53,7 @@ import org.apache.commons.math3.util.FastMath;
  *   RealVector result = v.mapAddToSelf(3.4).mapToSelf(new Tan()).mapToSelf(new Power(2.3));
  * </pre>
  *
- * @version $Id: RealVector.java 1334198 2012-05-04 21:42:16Z tn $
+ * @version $Id: RealVector.java 1361839 2012-07-15 23:42:38Z erans $
  * @since 2.1
  */
 public abstract class RealVector {
@@ -122,6 +123,8 @@ public abstract class RealVector {
      * @return a vector containing n elements.
      * @throws org.apache.commons.math3.exception.OutOfRangeException
      * if the index is not valid.
+     * @throws org.apache.commons.math3.exception.NotPositiveException
+     * if the number of elements is not positive
      */
     public abstract RealVector getSubVector(int index, int n);
 
@@ -191,6 +194,31 @@ public abstract class RealVector {
     }
 
     /**
+     * Checks that the indices of a subvector are valid.
+     *
+     * @param start the index of the first entry of the subvector
+     * @param end the index of the last entry of the subvector (inclusive)
+     * @throws OutOfRangeException if {@code start} of {@code end} are not valid
+     * @throws NumberIsTooSmallException if {@code end < start}
+     */
+    protected void checkIndices(final int start, final int end) {
+        final int dim = getDimension();
+        if ((start < 0) || (start >= dim)) {
+            throw new OutOfRangeException(LocalizedFormats.INDEX, start, 0,
+                                          dim - 1);
+        }
+        if ((end < 0) || (end >= dim)) {
+            throw new OutOfRangeException(LocalizedFormats.INDEX, end, 0,
+                                          dim - 1);
+        }
+        if (end < start) {
+            // TODO Use more specific error message
+            throw new NumberIsTooSmallException(LocalizedFormats.INITIAL_ROW_AFTER_FINAL_ROW,
+                                                end, start, false);
+        }
+    }
+
+    /**
      * Compute the sum of this vector and {@code v}.
      * Returns a new vector. Does not change instance data.
      *
@@ -200,6 +228,7 @@ public abstract class RealVector {
      * if {@code v} is not the same size as this vector.
      */
     public RealVector add(RealVector v) {
+        checkVectorDimensions(v);
         RealVector result = v.copy();
         Iterator<Entry> it = sparseIterator();
         while (it.hasNext()) {
@@ -220,12 +249,13 @@ public abstract class RealVector {
      * if {@code v} is not the same size as this vector.
      */
     public RealVector subtract(RealVector v) {
-        RealVector result = v.copy();
+        checkVectorDimensions(v);
+        RealVector result = v.mapMultiply(-1d);
         Iterator<Entry> it = sparseIterator();
         while (it.hasNext()) {
             final Entry e = it.next();
             final int index = e.getIndex();
-            result.setEntry(index, e.getValue() - result.getEntry(index));
+            result.setEntry(index, e.getValue() + result.getEntry(index));
         }
         return result;
     }
@@ -273,10 +303,9 @@ public abstract class RealVector {
     public double dotProduct(RealVector v) {
         checkVectorDimensions(v);
         double d = 0;
-        Iterator<Entry> it = sparseIterator();
-        while (it.hasNext()) {
-            final Entry e = it.next();
-            d += e.getValue() * v.getEntry(e.getIndex());
+        final int n = getDimension();
+        for (int i = 0; i < n; i++) {
+            d += getEntry(i) * v.getEntry(i);
         }
         return d;
     }
@@ -287,6 +316,10 @@ public abstract class RealVector {
      *
      * @param v Vector.
      * @return the cosine of the angle between this vector and {@code v}.
+     * @throws MathArithmeticException if {@code this} or {@code v} is the null
+     * vector
+     * @throws DimensionMismatchException if the dimensions of {@code this} and
+     * {@code v} do not match
      */
     public double cosine(RealVector v) {
         final double norm = getNorm();
@@ -306,7 +339,17 @@ public abstract class RealVector {
      * @return a vector containing this[i] / v[i] for all i.
      * @throws org.apache.commons.math3.exception.DimensionMismatchException
      * if {@code v} is not the same size as this vector.
+     * @deprecated As of version 3.1, this method is deprecated, and will be
+     * removed in version 4.0. This decision follows the discussion reported in
+     * <a href="https://issues.apache.org/jira/browse/MATH-803?focusedCommentId=13399150#comment-13399150">MATH-803</a>.
+     * Uses of this method involving sparse implementations of
+     * {@link RealVector} might lead to wrong results. Since there is no
+     * satisfactory correction to this bug, this method is deprecated. Users who
+     * want to preserve this feature are advised to implement
+     * {@link RealVectorPreservingVisitor} (possibly ignoring corner cases for
+     * the sake of efficiency).
      */
+    @Deprecated
     public abstract RealVector ebeDivide(RealVector v);
 
     /**
@@ -316,7 +359,17 @@ public abstract class RealVector {
      * @return a vector containing this[i] * v[i] for all i.
      * @throws org.apache.commons.math3.exception.DimensionMismatchException
      * if {@code v} is not the same size as this vector.
+     * @deprecated As of version 3.1, this method is deprecated, and will be
+     * removed in version 4.0. This decision follows the discussion reported in
+     * <a href="https://issues.apache.org/jira/browse/MATH-803?focusedCommentId=13399150#comment-13399150">MATH-803</a>.
+     * Uses of this method involving sparse implementations of
+     * {@link RealVector} might lead to wrong results. Since there is no
+     * satisfactory correction to this bug, this method is deprecated. Users who
+     * want to preserve this feature are advised to implement
+     * {@link RealVectorPreservingVisitor} (possibly ignoring corner cases for
+     * the sake of efficiency).
      */
+    @Deprecated
     public abstract RealVector ebeMultiply(RealVector v);
 
     /**
@@ -589,27 +642,20 @@ public abstract class RealVector {
      * @return the matrix outer product between this instance and {@code v}.
      */
     public RealMatrix outerProduct(RealVector v) {
-        RealMatrix product;
+        final int m = this.getDimension();
+        final int n = v.getDimension();
+        final RealMatrix product;
         if (v instanceof SparseRealVector || this instanceof SparseRealVector) {
-            product = new OpenMapRealMatrix(this.getDimension(),
-                                            v.getDimension());
+            product = new OpenMapRealMatrix(m, n);
         } else {
-            product = new Array2DRowRealMatrix(this.getDimension(),
-                                               v.getDimension());
+            product = new Array2DRowRealMatrix(m, n);
         }
-        Iterator<Entry> thisIt = sparseIterator();
-        while (thisIt.hasNext()) {
-            final Entry thisE = thisIt.next();
-            Iterator<Entry> otherIt = v.sparseIterator();
-            while (otherIt.hasNext()) {
-                final Entry otherE = otherIt.next();
-                product.setEntry(thisE.getIndex(), otherE.getIndex(),
-                                 thisE.getValue() * otherE.getValue());
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                product.setEntry(i, j, this.getEntry(i) * v.getEntry(j));
             }
         }
-
         return product;
-
     }
 
     /**
@@ -617,10 +663,18 @@ public abstract class RealVector {
      *
      * @param v vector onto which instance must be projected.
      * @return projection of the instance onto {@code v}.
+     * @throws MathArithmeticException if {@code this} or {@code v} is the null
+     * vector
      * @throws org.apache.commons.math3.exception.DimensionMismatchException
      * if {@code v} is not the same size as this vector.
      */
-    public abstract RealVector projection(RealVector v);
+    public RealVector projection(final RealVector v) {
+        final double norm2 = v.dotProduct(v);
+        if (norm2 == 0.0) {
+            throw new MathArithmeticException(LocalizedFormats.ZERO_NORM);
+        }
+        return v.mapMultiply(dotProduct(v) / v.dotProduct(v));
+    }
 
     /**
      * Set all elements to a single value.
@@ -659,9 +713,11 @@ public abstract class RealVector {
      * @throws ArithmeticException if the norm is {@code null}.
      */
     public RealVector unitVector() {
-        RealVector copy = copy();
-        copy.unitize();
-        return copy;
+        final double norm = getNorm();
+        if (norm == 0) {
+            throw new MathArithmeticException(LocalizedFormats.ZERO_NORM);
+        }
+        return mapDivide(norm);
     }
 
     /**
@@ -672,6 +728,10 @@ public abstract class RealVector {
      * if the norm is zero.
      */
     public void unitize() {
+        final double norm = getNorm();
+        if (norm == 0) {
+            throw new MathArithmeticException(LocalizedFormats.ZERO_NORM);
+        }
         mapDivideToSelf(getNorm());
     }
 
@@ -721,8 +781,12 @@ public abstract class RealVector {
 
             /** {@inheritDoc} */
             public Entry next() {
-                e.setIndex(i++);
-                return e;
+                if (i < dim) {
+                    e.setIndex(i++);
+                    return e;
+                } else {
+                    throw new NoSuchElementException();
+                }
             }
 
             /** {@inheritDoc} */
@@ -807,9 +871,156 @@ public abstract class RealVector {
         return this;
     }
 
+
     /**
-     *  An entry in the vector.
+     * Visits (but does not alter) all entries of this vector in default order
+     * (increasing index).
+     *
+     * @param visitor the visitor to be used to process the entries of this
+     * vector
+     * @return the value returned by {@link RealVectorPreservingVisitor#end()}
+     * at the end of the walk
      */
+    public double walkInDefaultOrder(final RealVectorPreservingVisitor visitor) {
+        final int dim = getDimension();
+        visitor.start(dim, 0, dim - 1);
+        for (int i = 0; i < dim; i++) {
+            visitor.visit(i, getEntry(i));
+        }
+        return visitor.end();
+    }
+
+    /**
+     * Visits (but does not alter) some entries of this vector in default order
+     * (increasing index).
+     *
+     * @param visitor visitor to be used to process the entries of this vector
+     * @param start the index of the first entry to be visited
+     * @param end the index of the last entry to be visited (inclusive)
+     * @return the value returned by {@link RealVectorPreservingVisitor#end()}
+     * at the end of the walk
+     * @throws org.apache.commons.math3.exception.OutOfRangeException if
+     * the indices are not valid.
+     */
+    public double walkInDefaultOrder(final RealVectorPreservingVisitor visitor,
+                                     final int start, final int end) {
+        checkIndices(start, end);
+        visitor.start(getDimension(), start, end);
+        for (int i = start; i <= end; i++) {
+            visitor.visit(i, getEntry(i));
+        }
+        return visitor.end();
+    }
+
+    /**
+     * Visits (but does not alter) all entries of this vector in optimized
+     * order. The order in which the entries are visited is selected so as to
+     * lead to the most efficient implementation; it might depend on the
+     * concrete implementation of this abstract class.
+     *
+     * @param visitor the visitor to be used to process the entries of this
+     * vector
+     * @return the value returned by {@link RealVectorPreservingVisitor#end()}
+     * at the end of the walk
+     */
+    public double walkInOptimizedOrder(final RealVectorPreservingVisitor visitor) {
+        return walkInDefaultOrder(visitor);
+    }
+
+    /**
+     * Visits (but does not alter) some entries of this vector in optimized
+     * order. The order in which the entries are visited is selected so as to
+     * lead to the most efficient implementation; it might depend on the
+     * concrete implementation of this abstract class.
+     *
+     * @param visitor visitor to be used to process the entries of this vector
+     * @param start the index of the first entry to be visited
+     * @param end the index of the last entry to be visited (inclusive)
+     * @return the value returned by {@link RealVectorPreservingVisitor#end()}
+     * at the end of the walk
+     * @throws org.apache.commons.math3.exception.OutOfRangeException if
+     * the indices are not valid.
+     */
+    public double walkInOptimizedOrder(final RealVectorPreservingVisitor visitor,
+                                       final int start, final int end) {
+        return walkInDefaultOrder(visitor, start, end);
+    }
+
+    /**
+     * Visits (and possibly alters) all entries of this vector in default order
+     * (increasing index).
+     *
+     * @param visitor the visitor to be used to process and modify the entries
+     * of this vector
+     * @return the value returned by {@link RealVectorChangingVisitor#end()}
+     * at the end of the walk
+     */
+    public double walkInDefaultOrder(final RealVectorChangingVisitor visitor) {
+        final int dim = getDimension();
+        visitor.start(dim, 0, dim - 1);
+        for (int i = 0; i < dim; i++) {
+            setEntry(i, visitor.visit(i, getEntry(i)));
+        }
+        return visitor.end();
+    }
+
+    /**
+     * Visits (and possibly alters) some entries of this vector in default order
+     * (increasing index).
+     *
+     * @param visitor visitor to be used to process the entries of this vector
+     * @param start the index of the first entry to be visited
+     * @param end the index of the last entry to be visited (inclusive)
+     * @return the value returned by {@link RealVectorChangingVisitor#end()}
+     * at the end of the walk
+     * @throws org.apache.commons.math3.exception.OutOfRangeException if
+     * the indices are not valid.
+     */
+    public double walkInDefaultOrder(final RealVectorChangingVisitor visitor,
+                              final int start, final int end) {
+        checkIndices(start, end);
+        visitor.start(getDimension(), start, end);
+        for (int i = start; i <= end; i++) {
+            setEntry(i, visitor.visit(i, getEntry(i)));
+        }
+        return visitor.end();
+    }
+
+    /**
+     * Visits (and possibly alters) all entries of this vector in optimized
+     * order. The order in which the entries are visited is selected so as to
+     * lead to the most efficient implementation; it might depend on the
+     * concrete implementation of this abstract class.
+     *
+     * @param visitor the visitor to be used to process the entries of this
+     * vector
+     * @return the value returned by {@link RealVectorChangingVisitor#end()}
+     * at the end of the walk
+     */
+    public double walkInOptimizedOrder(final RealVectorChangingVisitor visitor) {
+        return walkInDefaultOrder(visitor);
+    }
+
+    /**
+     * Visits (and possibly change) some entries of this vector in optimized
+     * order. The order in which the entries are visited is selected so as to
+     * lead to the most efficient implementation; it might depend on the
+     * concrete implementation of this abstract class.
+     *
+     * @param visitor visitor to be used to process the entries of this vector
+     * @param start the index of the first entry to be visited
+     * @param end the index of the last entry to be visited (inclusive)
+     * @return the value returned by {@link RealVectorChangingVisitor#end()}
+     * at the end of the walk
+     * @throws org.apache.commons.math3.exception.OutOfRangeException if
+     * the indices are not valid.
+     */
+    public double walkInOptimizedOrder(final RealVectorChangingVisitor visitor,
+                                       final int start, final int end) {
+        return walkInDefaultOrder(visitor, start, end);
+    }
+
+    /** An entry in the vector. */
     protected class Entry {
         /** Index of this entry. */
         private int index;
@@ -854,6 +1065,40 @@ public abstract class RealVector {
         public void setIndex(int index) {
             this.index = index;
         }
+    }
+
+    /**
+     * <p>
+     * Test for the equality of two real vectors. If all coordinates of two real
+     * vectors are exactly the same, and none are {@code NaN}, the two real
+     * vectors are considered to be equal. {@code NaN} coordinates are
+     * considered to affect globally the vector and be equals to each other -
+     * i.e, if either (or all) coordinates of the real vector are equal to
+     * {@code NaN}, the real vector is equal to a vector with all {@code NaN}
+     * coordinates.
+     * </p>
+     * <p>
+     * This method <em>must</em> be overriden by concrete subclasses of
+     * {@link RealVector}.
+     * </p>
+     *
+     * @param other Object to test for equality.
+     * @return {@code true} if two vector objects are equal, {@code false} if
+     * {@code other} is null, not an instance of {@code RealVector}, or
+     * not equal to this {@code RealVector} instance.
+     */
+    @Override
+    public boolean equals(Object other) {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * {@inheritDoc}. This method <em>must</em> be overriden by concrete
+     * subclasses of {@link RealVector}.
+     */
+    @Override
+    public int hashCode() {
+        throw new UnsupportedOperationException();
     }
 
     /**
@@ -1156,12 +1401,6 @@ public abstract class RealVector {
             @Override
             public void unitize() {
                 throw new MathUnsupportedOperationException();
-            }
-
-            /** {@inheritDoc} */
-            @Override
-            public RealVector projection(RealVector w) {
-                return v.projection(w);
             }
 
             /** {@inheritDoc} */

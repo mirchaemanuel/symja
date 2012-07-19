@@ -36,7 +36,7 @@ import org.apache.commons.math3.util.FastMath;
  * optional preconditioning.
  * </p>
  *
- * @version $Id: NonLinearConjugateGradientOptimizer.java 1244107 2012-02-14 16:17:55Z erans $
+ * @version $Id: NonLinearConjugateGradientOptimizer.java 1345803 2012-06-03 23:24:43Z erans $
  * @since 2.0
  *
  */
@@ -61,7 +61,9 @@ public class NonLinearConjugateGradientOptimizer
      * @param updateFormula formula to use for updating the &beta; parameter,
      * must be one of {@link ConjugateGradientFormula#FLETCHER_REEVES} or {@link
      * ConjugateGradientFormula#POLAK_RIBIERE}.
+     * @deprecated See {@link SimpleValueChecker#SimpleValueChecker()}
      */
+    @Deprecated
     public NonLinearConjugateGradientOptimizer(final ConjugateGradientFormula updateFormula) {
         this(updateFormula,
              new SimpleValueChecker());

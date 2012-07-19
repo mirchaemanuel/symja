@@ -28,7 +28,7 @@ import org.apache.commons.math3.util.MathUtils;
  * - A &middot; x, where A is the linear operator of the linear system, b is the
  * right-hand side vector, and x the current estimate of the solution.
  *
- * @version $Id: IterativeLinearSolver.java 1244107 2012-02-14 16:17:55Z erans $
+ * @version $Id: IterativeLinearSolver.java 1353141 2012-06-23 15:12:34Z celestin $
  * @since 3.0
  */
 public abstract class IterativeLinearSolver {
@@ -115,7 +115,7 @@ public abstract class IterativeLinearSolver {
      * @throws MaxCountExceededException at exhaustion of the iteration count,
      * unless a custom
      * {@link org.apache.commons.math3.util.Incrementor.MaxCountExceededCallback callback}
-     * has been set at construction
+     * has been set at construction of the {@link IterationManager}
      */
     public RealVector solve(final RealLinearOperator a, final RealVector b)
         throws NullArgumentException, NonSquareOperatorException,
@@ -141,7 +141,7 @@ public abstract class IterativeLinearSolver {
      * @throws MaxCountExceededException at exhaustion of the iteration count,
      * unless a custom
      * {@link org.apache.commons.math3.util.Incrementor.MaxCountExceededCallback callback}
-     * has been set at construction
+     * has been set at construction of the {@link IterationManager}
      */
     public RealVector solve(RealLinearOperator a, RealVector b, RealVector x0)
         throws NullArgumentException, NonSquareOperatorException,
@@ -166,7 +166,7 @@ public abstract class IterativeLinearSolver {
      * @throws MaxCountExceededException at exhaustion of the iteration count,
      * unless a custom
      * {@link org.apache.commons.math3.util.Incrementor.MaxCountExceededCallback callback}
-     * has been set at construction
+     * has been set at construction of the {@link IterationManager}
      */
     public abstract RealVector solveInPlace(RealLinearOperator a, RealVector b,
         RealVector x0) throws NullArgumentException, NonSquareOperatorException,

@@ -34,7 +34,7 @@ import java.util.ResourceBundle;
  * translation is missing.
  * </p>
  * @since 2.2
- * @version $Id: LocalizedFormats.java 1244705 2012-02-15 20:47:20Z luc $
+ * @version $Id: LocalizedFormats.java 1351257 2012-06-18 10:01:12Z luc $
  */
 public enum LocalizedFormats implements Localizable {
 
@@ -88,9 +88,10 @@ public enum LocalizedFormats implements Localizable {
     DIMENSIONS_MISMATCH("dimensions mismatch"), /* keep */
     DISCRETE_CUMULATIVE_PROBABILITY_RETURNED_NAN("Discrete cumulative probability function returned NaN for argument {0}"),
     DISTRIBUTION_NOT_LOADED("distribution not loaded"),
-    DUPLICATED_ABSCISSA("Abscissa {0} is duplicated at both indices {1} and {2}"),
+    DUPLICATED_ABSCISSA_DIVISION_BY_ZERO("duplicated abscissa {0} causes division by zero"),
     ELITISM_RATE("elitism rate ({0})"),
     EMPTY_CLUSTER_IN_K_MEANS("empty cluster in k-means"),
+    EMPTY_INTERPOLATION_SAMPLE("sample for interpolation is empty"),
     EMPTY_POLYNOMIALS_COEFFICIENTS_ARRAY("empty polynomials coefficients array"), /* keep */
     EMPTY_SELECTED_COLUMN_INDEX_ARRAY("empty selected column index array"),
     EMPTY_SELECTED_ROW_INDEX_ARRAY("empty selected row index array"),
@@ -112,7 +113,6 @@ public enum LocalizedFormats implements Localizable {
     GCD_OVERFLOW_32_BITS("overflow: gcd({0}, {1}) is 2^31"),
     GCD_OVERFLOW_64_BITS("overflow: gcd({0}, {1}) is 2^63"),
     HOLE_BETWEEN_MODELS_TIME_RANGES("{0} wide hole between models time ranges"),
-    IDENTICAL_ABSCISSAS_DIVISION_BY_ZERO("identical abscissas x[{0}] == x[{1}] == {2} cause division by zero"),
     ILL_CONDITIONED_OPERATOR("condition number {1} is too high "),
     INDEX_LARGER_THAN_MAX("the index specified: {0} is larger than the current maximal index {1}"),
     INDEX_NOT_POSITIVE("index ({0}) is not positive"),
@@ -191,8 +191,6 @@ public enum LocalizedFormats implements Localizable {
     NOT_INCREASING_NUMBER_OF_POINTS("points {0} and {1} are not increasing ({2} > {3})"),
     NOT_INCREASING_SEQUENCE("points {3} and {2} are not increasing ({1} > {0})"), /* keep */
     NOT_MULTIPLICATION_COMPATIBLE_MATRICES("{0}x{1} and {2}x{3} matrices are not multiplication compatible"),
-    ALPHA("alpha"), /* keep */
-    BETA("beta"), /* keep */
     NOT_POSITIVE_DEFINITE_MATRIX("not positive definite matrix"), /* keep */
     NON_POSITIVE_DEFINITE_MATRIX("not positive definite matrix: diagonal element at ({1},{1}) is smaller than {2} ({0})"),
     NON_POSITIVE_DEFINITE_OPERATOR("non positive definite linear operator"), /* keep */
@@ -202,6 +200,7 @@ public enum LocalizedFormats implements Localizable {
     NOT_POSITIVE_DEGREES_OF_FREEDOM("degrees of freedom must be positive ({0})"),
     NOT_POSITIVE_ELEMENT_AT_INDEX("element {0} is not positive: {1}"),
     NOT_POSITIVE_EXPONENT("invalid exponent {0} (must be positive)"),
+    NUMBER_OF_ELEMENTS_SHOULD_BE_POSITIVE("number of elements should be positive ({0})"),
     EXPONENT("exponent ({0})"), /* keep */
     NOT_POSITIVE_LENGTH("length must be positive ({0})"),
     LENGTH("length ({0})"), /* keep */
