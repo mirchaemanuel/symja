@@ -35,7 +35,7 @@ import org.apache.commons.math3.optimization.SimpleValueChecker;
  *
  * @param <FUNC> Type of the objective function to be optimized.
  *
- * @version $Id$
+ * @version $Id: BaseAbstractMultivariateOptimizer.java 1364392 2012-07-22 18:27:12Z tn $
  * @since 2.2
  */
 public abstract class BaseAbstractMultivariateOptimizer<FUNC extends MultivariateFunction>

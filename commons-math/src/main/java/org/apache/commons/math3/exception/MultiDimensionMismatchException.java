@@ -23,7 +23,7 @@ import org.apache.commons.math3.exception.util.LocalizedFormats;
  * Exception to be thrown when two sets of dimensions differ.
  *
  * @since 3.0
- * @version $Id$
+ * @version $Id: MultiDimensionMismatchException.java 1364378 2012-07-22 17:42:38Z tn $
  */
 public class MultiDimensionMismatchException extends MathIllegalArgumentException {
     /** Serializable version Id. */

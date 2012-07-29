@@ -33,6 +33,7 @@ import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.RealVector;
 import org.apache.commons.math3.optimization.GoalType;
 import org.apache.commons.math3.optimization.PointValuePair;
+import org.apache.commons.math3.util.FastMath;
 import org.apache.commons.math3.util.Precision;
 
 /**
@@ -57,7 +58,7 @@ import org.apache.commons.math3.util.Precision;
  * a1: Artificial variable</br>
  * RHS: Right hand side</br>
  * </p>
- * @version $Id: SimplexTableau.java 1333146 2012-05-02 18:28:37Z tn $
+ * @version $Id: SimplexTableau.java 1366717 2012-07-28 17:44:32Z tn $
  * @since 2.0
  */
 class SimplexTableau implements Serializable {
@@ -67,6 +68,9 @@ class SimplexTableau implements Serializable {
 
     /** Default amount of error to accept in floating point comparisons (as ulps). */
     private static final int DEFAULT_ULPS = 10;
+
+    /** The cut-off threshold to zero-out entries. */
+    private static final double CUTOFF_THRESHOLD = 1e-12;
 
     /** Serializable version identifier. */
     private static final long serialVersionUID = -1369660067587938365L;
@@ -453,8 +457,14 @@ class SimplexTableau implements Serializable {
      */
     protected void subtractRow(final int minuendRow, final int subtrahendRow,
                                final double multiple) {
-        tableau.setRowVector(minuendRow, tableau.getRowVector(minuendRow)
-            .subtract(tableau.getRowVector(subtrahendRow).mapMultiply(multiple)));
+        for (int i = 0; i < getWidth(); i++) {
+            double result = tableau.getEntry(minuendRow, i) - tableau.getEntry(subtrahendRow, i) * multiple;
+            // cut-off values smaller than the CUTOFF_THRESHOLD, otherwise may lead to numerical instabilities
+            if (FastMath.abs(result) < CUTOFF_THRESHOLD) {
+                result = 0.0;
+            }
+            tableau.setEntry(minuendRow, i, result);
+        }
     }
 
     /**

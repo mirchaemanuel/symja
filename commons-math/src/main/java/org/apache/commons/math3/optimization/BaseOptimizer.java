@@ -30,7 +30,7 @@ package org.apache.commons.math3.optimization;
  *
  * @param <PAIR> Type of the point/objective pair.
  *
- * @version $Id$
+ * @version $Id: BaseOptimizer.java 1364392 2012-07-22 18:27:12Z tn $
  * @since 3.0
  */
 public interface BaseOptimizer<PAIR> {

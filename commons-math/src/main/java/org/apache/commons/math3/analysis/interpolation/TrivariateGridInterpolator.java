@@ -22,8 +22,8 @@ import org.apache.commons.math3.analysis.TrivariateFunction;
  * Interface representing a trivariate real interpolating function where the
  * sample points must be specified on a regular grid.
  *
- * @version $Id$
  * @since 2.2
+ * @version $Id: TrivariateGridInterpolator.java 1364387 2012-07-22 18:14:11Z tn $
  */
 public interface TrivariateGridInterpolator {
     /**

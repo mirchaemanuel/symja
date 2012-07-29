@@ -42,9 +42,21 @@ import org.apache.commons.math3.util.Precision;
 /**
  * A collection of static methods that operate on or return matrices.
  *
- * @version $Id: MatrixUtils.java 1244107 2012-02-14 16:17:55Z erans $
+ * @version $Id: MatrixUtils.java 1364775 2012-07-23 19:56:59Z tn $
  */
 public class MatrixUtils {
+
+    /**
+     * The default format for {@link RealMatrix} objects.
+     * @since 3.1
+     */
+    public static final RealMatrixFormat DEFAULT_FORMAT = RealMatrixFormat.getInstance();
+
+    /**
+     * A format for {@link RealMatrix} objects compatible with octave.
+     * @since 3.1
+     */
+    public static final RealMatrixFormat OCTAVE_FORMAT = new RealMatrixFormat("[", "]", "", "", "; ", ", ");
 
     /**
      * Private constructor.

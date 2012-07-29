@@ -20,7 +20,7 @@ package org.apache.commons.math3.stat.descriptive;
  * Weighted evaluation for statistics.
  *
  * @since 2.1
- * @version $Id$
+ * @version $Id: WeightedEvaluation.java 1364390 2012-07-22 18:21:02Z tn $
  */
 public interface WeightedEvaluation {
 

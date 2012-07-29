@@ -30,7 +30,7 @@ import org.apache.commons.math3.optimization.AbstractConvergenceChecker;
  * threshold or if either the absolute difference between the objective
  * function values is smaller than another threshold.
  *
- * @version $Id$
+ * @version $Id: SimpleUnivariateValueChecker.java 1364392 2012-07-22 18:27:12Z tn $
  * @since 3.1
  */
 public class SimpleUnivariateValueChecker

@@ -23,8 +23,8 @@ import org.apache.commons.math3.util.FastMath;
 /**
  * Arc-tangent function.
  *
- * @version $Id$
  * @since 3.0
+ * @version $Id: Atan2.java 1364377 2012-07-22 17:39:16Z tn $
  */
 public class Atan2 implements BivariateFunction {
     /** {@inheritDoc} */

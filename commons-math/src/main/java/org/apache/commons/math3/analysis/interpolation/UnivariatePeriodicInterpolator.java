@@ -29,7 +29,7 @@ import org.apache.commons.math3.exception.NumberIsTooSmallException;
  * be wrapped into the initial range before being passed to the class that
  * actually computes the interpolation.
  *
- * @version $Id$
+ * @version $Id: UnivariatePeriodicInterpolator.java 1364387 2012-07-22 18:14:11Z tn $
  */
 public class UnivariatePeriodicInterpolator
     implements UnivariateInterpolator {

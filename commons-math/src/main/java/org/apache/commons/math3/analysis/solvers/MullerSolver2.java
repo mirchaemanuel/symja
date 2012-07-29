@@ -41,7 +41,7 @@ import org.apache.commons.math3.util.FastMath;
  * <p>
  * The formulas here do not use divided differences directly.</p>
  *
- * @version $Id$
+ * @version $Id: MullerSolver2.java 1364387 2012-07-22 18:14:11Z tn $
  * @since 1.2
  * @see MullerSolver
  */

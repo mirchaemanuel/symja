@@ -47,10 +47,12 @@ import org.apache.commons.math3.util.FastMath;
  * &prod; (x-x<sub>k</sub>)/(x<sub>i</sub>-x<sub>k</sub>) for k != i.
  * </p>
  * <p>
- * @version $Id: LegendreGaussIntegrator.java 1296571 2012-03-03 03:55:24Z erans $
+ * @version $Id: LegendreGaussIntegrator.java 1364452 2012-07-22 22:30:01Z erans $
  * @since 1.2
+ * @deprecated As of 3.1 (to be removed in 4.0). Please use
+ * {@link IterativeLegendreGaussIntegrator} instead.
  */
-
+@Deprecated
 public class LegendreGaussIntegrator extends BaseAbstractUnivariateIntegrator {
 
     /** Abscissas for the 2 points method. */

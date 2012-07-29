@@ -25,7 +25,7 @@ import org.apache.commons.math3.exception.TooManyEvaluationsException;
 /**
  * Interface for univariate real integration algorithms.
  *
- * @version $Id: UnivariateIntegrator.java 1244107 2012-02-14 16:17:55Z erans $
+ * @version $Id: UnivariateIntegrator.java 1364387 2012-07-22 18:14:11Z tn $
  * @since 1.2
  */
 public interface UnivariateIntegrator {

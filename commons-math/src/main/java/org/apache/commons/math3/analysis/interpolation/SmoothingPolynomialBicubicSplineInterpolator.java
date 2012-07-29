@@ -28,7 +28,7 @@ import org.apache.commons.math3.analysis.polynomials.PolynomialFunction;
  * Prior to generating the interpolating function, the input is smoothed using
  * polynomial fitting.
  *
- * @version $Id: SmoothingPolynomialBicubicSplineInterpolator.java 1244107 2012-02-14 16:17:55Z erans $
+ * @version $Id: SmoothingPolynomialBicubicSplineInterpolator.java 1364387 2012-07-22 18:14:11Z tn $
  * @since 2.2
  */
 public class SmoothingPolynomialBicubicSplineInterpolator

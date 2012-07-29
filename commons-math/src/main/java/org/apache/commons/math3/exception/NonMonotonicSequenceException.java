@@ -24,7 +24,7 @@ import org.apache.commons.math3.exception.util.LocalizedFormats;
  * increasing or decreasing.
  *
  * @since 2.2 (name changed to "NonMonotonicSequenceException" in 3.0)
- * @version $Id$
+ * @version $Id: NonMonotonicSequenceException.java 1364378 2012-07-22 17:42:38Z tn $
  */
 public class NonMonotonicSequenceException extends MathIllegalNumberException {
     /** Serializable version Id. */

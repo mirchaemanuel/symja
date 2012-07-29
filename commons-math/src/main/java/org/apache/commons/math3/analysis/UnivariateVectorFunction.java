@@ -19,7 +19,7 @@ package org.apache.commons.math3.analysis;
 /**
  * An interface representing a univariate vectorial function.
  *
- * @version $Id: UnivariateVectorFunction.java 1244107 2012-02-14 16:17:55Z erans $
+ * @version $Id: UnivariateVectorFunction.java 1364387 2012-07-22 18:14:11Z tn $
  * @since 2.0
  */
 public interface UnivariateVectorFunction {

@@ -63,7 +63,7 @@ package org.apache.commons.math3.analysis;
  * As shown, the exception is local to the user's code and it is guaranteed
  * that Apache Commons Math will not catch it.
  *
- * @version $Id: UnivariateFunction.java 1244107 2012-02-14 16:17:55Z erans $
+ * @version $Id: UnivariateFunction.java 1364387 2012-07-22 18:14:11Z tn $
  */
 public interface UnivariateFunction {
     /**

@@ -80,7 +80,7 @@ import org.apache.commons.math3.optimization.MultivariateOptimizer;
  * @see MultivariateFunctionPenaltyAdapter
  * @see CMAESOptimizer
  * @see BOBYQAOptimizer
- * @version $Id$
+ * @version $Id: SimplexOptimizer.java 1364392 2012-07-22 18:27:12Z tn $
  * @since 3.0
  */
 public class SimplexOptimizer

@@ -25,7 +25,7 @@ import org.apache.commons.math3.exception.util.LocalizedFormats;
 /**
  * Utilities for manipulating function objects.
  *
- * @version $Id$
+ * @version $Id: FunctionUtils.java 1365559 2012-07-25 12:40:14Z erans $
  * @since 3.0
  */
 public class FunctionUtils {
@@ -315,7 +315,7 @@ public class FunctionUtils {
      * {@code n} is negative
      */
     public static double[] sample(UnivariateFunction f,
-            double min, double max, int n) {
+                                  double min, double max, int n) {
 
         if (n <= 0) {
             throw new NotStrictlyPositiveException(
@@ -326,8 +326,8 @@ public class FunctionUtils {
             throw new NumberIsTooLargeException(min, max, false);
         }
 
-        double[] s = new double[n];
-        double h = (max - min) / n;
+        final double[] s = new double[n];
+        final double h = (max - min) / n;
         for (int i = 0; i < n; i++) {
             s[i] = f.value(min + i * h);
         }

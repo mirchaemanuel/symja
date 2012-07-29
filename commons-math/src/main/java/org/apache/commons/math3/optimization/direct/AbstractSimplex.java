@@ -44,7 +44,7 @@ import org.apache.commons.math3.optimization.PointValuePair;
  * this class.
  *
  * @see SimplexOptimizer
- * @version $Id$
+ * @version $Id: AbstractSimplex.java 1364392 2012-07-22 18:27:12Z tn $
  * @since 3.0
  */
 public abstract class AbstractSimplex {

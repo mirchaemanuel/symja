@@ -26,8 +26,8 @@ import org.apache.commons.math3.util.Pair;
  * {@link #integrate(UnivariateFunction) integrating} a weighted
  * function.
  *
- * @version $Id$
  * @since 3.1
+ * @version $Id: GaussIntegrator.java 1364387 2012-07-22 18:14:11Z tn $
  */
 public class GaussIntegrator {
     /** Nodes. */

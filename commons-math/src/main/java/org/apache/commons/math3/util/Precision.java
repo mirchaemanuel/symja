@@ -21,13 +21,12 @@ import java.math.BigDecimal;
 import org.apache.commons.math3.exception.MathArithmeticException;
 import org.apache.commons.math3.exception.MathIllegalArgumentException;
 import org.apache.commons.math3.exception.util.LocalizedFormats;
-import org.apache.commons.math3.util.FastMath;
 
 /**
  * Utilities for comparing numbers.
  *
  * @since 3.0
- * @version $Id$
+ * @version $Id: Precision.java 1364376 2012-07-22 17:29:45Z tn $
  */
 public class Precision {
     /**

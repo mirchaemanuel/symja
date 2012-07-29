@@ -52,7 +52,7 @@ import org.apache.commons.math3.util.MathArrays;
  * </p>
  *
  * @see DftNormalization
- * @version $Id: FastFourierTransformer.java 1244375 2012-02-15 06:30:05Z celestin $
+ * @version $Id: FastFourierTransformer.java 1364372 2012-07-22 17:24:20Z tn $
  * @since 1.2
  */
 public class FastFourierTransformer implements Serializable {
@@ -505,7 +505,6 @@ public class FastFourierTransformer implements Serializable {
                 }
             }
         }
-        return;
     }
 
     /**

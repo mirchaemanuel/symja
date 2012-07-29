@@ -22,8 +22,8 @@ import org.apache.commons.math3.analysis.BivariateFunction;
 /**
  * Add the two operands.
  *
- * @version $Id$
  * @since 3.0
+ * @version $Id: Add.java 1364377 2012-07-22 17:39:16Z tn $
  */
 public class Add implements BivariateFunction {
     /** {@inheritDoc} */

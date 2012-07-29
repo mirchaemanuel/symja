@@ -30,8 +30,8 @@ import org.apache.commons.math3.util.MathUtils;
  *
  * @param <FUNC> Type of function to solve.
  *
- * @version $Id$
  * @since 2.0
+ * @version $Id: BaseAbstractUnivariateSolver.java 1364387 2012-07-22 18:14:11Z tn $
  */
 public abstract class BaseAbstractUnivariateSolver<FUNC extends UnivariateFunction>
     implements BaseUnivariateSolver<FUNC> {

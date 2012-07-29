@@ -43,7 +43,7 @@ import org.apache.commons.math3.optimization.univariate.SimpleUnivariateValueChe
  * to define a custom convergence checker that might terminate the algorithm
  * earlier.
  *
- * @version $Id$
+ * @version $Id: PowellOptimizer.java 1364392 2012-07-22 18:27:12Z tn $
  * @since 2.2
  */
 public class PowellOptimizer

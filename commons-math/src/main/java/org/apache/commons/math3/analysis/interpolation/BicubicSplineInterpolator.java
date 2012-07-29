@@ -25,7 +25,7 @@ import org.apache.commons.math3.util.MathArrays;
 /**
  * Generates a bicubic interpolating function.
  *
- * @version $Id: BicubicSplineInterpolator.java 1244107 2012-02-14 16:17:55Z erans $
+ * @version $Id: BicubicSplineInterpolator.java 1364387 2012-07-22 18:14:11Z tn $
  * @since 2.2
  */
 public class BicubicSplineInterpolator

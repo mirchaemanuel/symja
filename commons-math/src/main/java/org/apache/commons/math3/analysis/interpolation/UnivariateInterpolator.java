@@ -21,7 +21,7 @@ import org.apache.commons.math3.analysis.UnivariateFunction;
 /**
  * Interface representing a univariate real interpolating function.
  *
- * @version $Id: UnivariateInterpolator.java 1244107 2012-02-14 16:17:55Z erans $
+ * @version $Id: UnivariateInterpolator.java 1364387 2012-07-22 18:14:11Z tn $
  */
 public interface UnivariateInterpolator {
     /**

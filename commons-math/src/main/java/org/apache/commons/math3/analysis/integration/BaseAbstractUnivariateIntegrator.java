@@ -30,7 +30,7 @@ import org.apache.commons.math3.util.MathUtils;
 /**
  * Provide a default implementation for several generic functions.
  *
- * @version $Id: BaseAbstractUnivariateIntegrator.java 1296849 2012-03-04 18:30:44Z erans $
+ * @version $Id: BaseAbstractUnivariateIntegrator.java 1364387 2012-07-22 18:14:11Z tn $
  * @since 1.2
  */
 public abstract class BaseAbstractUnivariateIntegrator implements UnivariateIntegrator {

@@ -37,7 +37,7 @@ import org.apache.commons.math3.util.FastMath;
  * approximation and be able to solve all roots from that point.
  * The algorithm requires a bracketing condition.
  *
- * @version $Id: LaguerreSolver.java 1362032 2012-07-16 13:38:12Z erans $
+ * @version $Id: LaguerreSolver.java 1364387 2012-07-22 18:14:11Z tn $
  * @since 1.2
  */
 public class LaguerreSolver extends AbstractPolynomialSolver {

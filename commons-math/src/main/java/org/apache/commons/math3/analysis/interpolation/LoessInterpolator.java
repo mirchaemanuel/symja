@@ -43,7 +43,7 @@ import org.apache.commons.math3.util.MathArrays;
  * This class implements both the loess method and serves as an interpolation
  * adapter to it, allowing one to build a spline on the obtained loess fit.
  *
- * @version $Id: LoessInterpolator.java 1244107 2012-02-14 16:17:55Z erans $
+ * @version $Id: LoessInterpolator.java 1364387 2012-07-22 18:14:11Z tn $
  * @since 2.0
  */
 public class LoessInterpolator

@@ -29,7 +29,7 @@ import org.apache.commons.math3.util.FastMath;
 /**
  * An implementation of the Mann-Whitney U test (also called Wilcoxon rank-sum test).
  *
- * @version $Id: MannWhitneyUTest.java 1349372 2012-06-12 14:27:56Z mikl $
+ * @version $Id: MannWhitneyUTest.java 1363565 2012-07-19 22:02:16Z tn $
  */
 public class MannWhitneyUTest {
 
@@ -170,7 +170,7 @@ public class MannWhitneyUTest {
                                              final int n2)
         throws ConvergenceException, MaxCountExceededException {
 
-        /* long multiplication to avoid overflow (double not used due to efficiency 
+        /* long multiplication to avoid overflow (double not used due to efficiency
          * and to avoid precision loss)
          */
         final long n1n2prod = (long) n1 * n2;

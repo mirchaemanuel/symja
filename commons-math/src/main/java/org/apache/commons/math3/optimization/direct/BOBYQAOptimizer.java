@@ -47,7 +47,7 @@ import org.apache.commons.math3.optimization.MultivariateOptimizer;
  * derivative-based optimizer when the derivatives are approximated by
  * finite differences.
  *
- * @version $Id$
+ * @version $Id: BOBYQAOptimizer.java 1364392 2012-07-22 18:27:12Z tn $
  * @since 3.0
  */
 public class BOBYQAOptimizer

@@ -29,7 +29,7 @@ import org.apache.commons.math3.analysis.MultivariateVectorFunction;
  *
  * @param <FUNC> Type of the objective function to be optimized.
  *
- * @version $Id$
+ * @version $Id: BaseMultivariateVectorOptimizer.java 1364392 2012-07-22 18:27:12Z tn $
  * @since 3.0
  */
 public interface BaseMultivariateVectorOptimizer<FUNC extends MultivariateVectorFunction>

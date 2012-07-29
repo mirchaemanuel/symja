@@ -26,7 +26,7 @@ import org.apache.commons.math3.exception.util.ExceptionContextProvider;
  * current state and the user's expectations.
  *
  * @since 2.2
- * @version $Id$
+ * @version $Id: MathIllegalStateException.java 1364378 2012-07-22 17:42:38Z tn $
  */
 public class MathIllegalStateException extends IllegalStateException
     implements ExceptionContextProvider {
