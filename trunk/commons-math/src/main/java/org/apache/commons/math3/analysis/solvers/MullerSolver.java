@@ -40,7 +40,7 @@ import org.apache.commons.math3.util.FastMath;
  * <p>
  * The formulas here use divided differences directly.</p>
  *
- * @version $Id: MullerSolver.java 1244107 2012-02-14 16:17:55Z erans $
+ * @version $Id: MullerSolver.java 1364387 2012-07-22 18:14:11Z tn $
  * @since 1.2
  * @see MullerSolver2
  */

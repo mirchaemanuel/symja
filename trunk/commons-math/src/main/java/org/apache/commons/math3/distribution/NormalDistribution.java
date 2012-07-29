@@ -22,13 +22,15 @@ import org.apache.commons.math3.exception.NumberIsTooLargeException;
 import org.apache.commons.math3.exception.util.LocalizedFormats;
 import org.apache.commons.math3.special.Erf;
 import org.apache.commons.math3.util.FastMath;
+import org.apache.commons.math3.random.RandomGenerator;
+import org.apache.commons.math3.random.Well19937c;
 
 /**
  * Implementation of the normal (gaussian) distribution.
  *
  * @see <a href="http://en.wikipedia.org/wiki/Normal_distribution">Normal distribution (Wikipedia)</a>
  * @see <a href="http://mathworld.wolfram.com/NormalDistribution.html">Normal distribution (MathWorld)</a>
- * @version $Id: NormalDistribution.java 1244107 2012-02-14 16:17:55Z erans $
+ * @version $Id: NormalDistribution.java 1363604 2012-07-20 00:43:45Z erans $
  */
 public class NormalDistribution extends AbstractRealDistribution {
     /**
@@ -48,6 +50,14 @@ public class NormalDistribution extends AbstractRealDistribution {
     private final double standardDeviation;
     /** Inverse cumulative probability accuracy. */
     private final double solverAbsoluteAccuracy;
+
+    /**
+     * Create a normal distribution with mean equal to zero and standard
+     * deviation equal to one.
+     */
+    public NormalDistribution() {
+        this(0, 1);
+    }
 
     /**
      * Create a normal distribution using the given mean and standard deviation.
@@ -73,6 +83,26 @@ public class NormalDistribution extends AbstractRealDistribution {
      */
     public NormalDistribution(double mean, double sd, double inverseCumAccuracy)
         throws NotStrictlyPositiveException {
+        this(new Well19937c(), mean, sd, inverseCumAccuracy);
+    }
+
+    /**
+     * Creates a normal distribution.
+     *
+     * @param rng Random number generator.
+     * @param mean Mean for this distribution.
+     * @param sd Standard deviation for this distribution.
+     * @param inverseCumAccuracy Inverse cumulative probability accuracy.
+     * @throws NotStrictlyPositiveException if {@code sd <= 0}.
+     * @since 3.1
+     */
+    public NormalDistribution(RandomGenerator rng,
+                              double mean,
+                              double sd,
+                              double inverseCumAccuracy)
+        throws NotStrictlyPositiveException {
+        super(rng);
+
         if (sd <= 0) {
             throw new NotStrictlyPositiveException(LocalizedFormats.STANDARD_DEVIATION, sd);
         }
@@ -80,14 +110,6 @@ public class NormalDistribution extends AbstractRealDistribution {
         this.mean = mean;
         standardDeviation = sd;
         solverAbsoluteAccuracy = inverseCumAccuracy;
-    }
-
-    /**
-     * Create a normal distribution with mean equal to zero and standard
-     * deviation equal to one.
-     */
-    public NormalDistribution() {
-        this(0, 1);
     }
 
     /**
@@ -113,10 +135,10 @@ public class NormalDistribution extends AbstractRealDistribution {
      *
      * For this distribution {@code P(X = x)} always evaluates to 0.
      *
-     * @return 0
+     * @return zero.
      */
     public double probability(double x) {
-        return 0.0;
+        return 0;
     }
 
     /** {@inheritDoc} */
@@ -230,6 +252,6 @@ public class NormalDistribution extends AbstractRealDistribution {
     /** {@inheritDoc} */
     @Override
     public double sample()  {
-        return randomData.nextGaussian(mean, standardDeviation);
+        return standardDeviation * random.nextGaussian() + mean;
     }
 }

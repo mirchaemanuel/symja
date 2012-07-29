@@ -25,7 +25,7 @@ import org.apache.commons.math3.optimization.PointValuePair;
 /**
  * This class implements the multi-directional direct search method.
  *
- * @version $Id$
+ * @version $Id: MultiDirectionalSimplex.java 1364392 2012-07-22 18:27:12Z tn $
  * @since 3.0
  */
 public class MultiDirectionalSimplex extends AbstractSimplex {

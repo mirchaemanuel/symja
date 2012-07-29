@@ -22,8 +22,8 @@ import org.apache.commons.math3.analysis.DifferentiableUnivariateFunction;
 /**
  * Identity function.
  *
- * @version $Id$
  * @since 3.0
+ * @version $Id: Identity.java 1364377 2012-07-22 17:39:16Z tn $
  */
 public class Identity implements DifferentiableUnivariateFunction {
     /** {@inheritDoc} */

@@ -35,7 +35,7 @@ import org.apache.commons.math3.optimization.SimpleVectorValueChecker;
  *
  * @param <FUNC> the type of the objective function to be optimized
  *
- * @version $Id$
+ * @version $Id: BaseAbstractMultivariateVectorOptimizer.java 1364392 2012-07-22 18:27:12Z tn $
  * @since 3.0
  */
 public abstract class BaseAbstractMultivariateVectorOptimizer<FUNC extends MultivariateVectorFunction>

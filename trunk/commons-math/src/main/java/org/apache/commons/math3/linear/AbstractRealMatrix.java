@@ -32,12 +32,20 @@ import org.apache.commons.math3.util.FastMath;
  * <p>All the methods implemented here use {@link #getEntry(int, int)} to access
  * matrix elements. Derived class can provide faster implementations. </p>
  *
- * @version $Id: AbstractRealMatrix.java 1244107 2012-02-14 16:17:55Z erans $
+ * @version $Id: AbstractRealMatrix.java 1364775 2012-07-23 19:56:59Z tn $
  * @since 2.0
  */
 public abstract class AbstractRealMatrix
     extends RealLinearOperator
     implements RealMatrix {
+
+    /** Default format. */
+    private static final RealMatrixFormat DEFAULT_FORMAT = RealMatrixFormat.getInstance();
+    static {
+        // set the minimum fraction digits to 1 to keep compatibility
+        DEFAULT_FORMAT.getFormat().setMinimumFractionDigits(1);
+    }
+
     /**
      * Creates a matrix with no data
      */
@@ -871,28 +879,11 @@ public abstract class AbstractRealMatrix
      */
     @Override
     public String toString() {
-        final int nRows = getRowDimension();
-        final int nCols = getColumnDimension();
-        final StringBuffer res = new StringBuffer();
+        final StringBuilder res = new StringBuilder();
         String fullClassName = getClass().getName();
         String shortClassName = fullClassName.substring(fullClassName.lastIndexOf('.') + 1);
-        res.append(shortClassName).append("{");
-
-        for (int i = 0; i < nRows; ++i) {
-            if (i > 0) {
-                res.append(",");
-            }
-            res.append("{");
-            for (int j = 0; j < nCols; ++j) {
-                if (j > 0) {
-                    res.append(",");
-                }
-                res.append(getEntry(i, j));
-            }
-            res.append("}");
-        }
-
-        res.append("}");
+        res.append(shortClassName);
+        res.append(DEFAULT_FORMAT.format(this));
         return res.toString();
     }
 

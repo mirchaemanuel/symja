@@ -21,7 +21,8 @@ import java.io.Serializable;
 
 /**
  * Goal type for an optimization problem.
- * @version $Id: GoalType.java 1244107 2012-02-14 16:17:55Z erans $
+ *
+ * @version $Id: GoalType.java 1364392 2012-07-22 18:27:12Z tn $
  * @since 2.0
  */
 public enum GoalType implements Serializable {

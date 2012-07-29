@@ -24,8 +24,8 @@ import org.apache.commons.math3.util.FastMath;
 /**
  * Hyperbolic tangent function.
  *
- * @version $Id$
  * @since 3.0
+ * @version $Id: Tanh.java 1364377 2012-07-22 17:39:16Z tn $
  */
 public class Tanh implements DifferentiableUnivariateFunction {
     /** {@inheritDoc} */

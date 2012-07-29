@@ -24,8 +24,8 @@ import org.apache.commons.math3.util.FastMath;
 /**
  * Base 10 logarithm function.
  *
- * @version $Id$
  * @since 3.0
+ * @version $Id: Log10.java 1364377 2012-07-22 17:39:16Z tn $
  */
 public class Log10 implements DifferentiableUnivariateFunction {
     /** ln(10) = {@value}.*/

@@ -22,7 +22,7 @@ import org.apache.commons.math3.analysis.BivariateFunction;
  * Interface representing a bivariate real interpolating function where the
  * sample points must be specified on a regular grid.
  *
- * @version $Id: BivariateGridInterpolator.java 1244107 2012-02-14 16:17:55Z erans $
+ * @version $Id: BivariateGridInterpolator.java 1364387 2012-07-22 18:14:11Z tn $
  */
 public interface BivariateGridInterpolator {
     /**

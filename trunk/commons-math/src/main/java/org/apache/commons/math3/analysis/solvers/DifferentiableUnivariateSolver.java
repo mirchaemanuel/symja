@@ -23,7 +23,7 @@ import org.apache.commons.math3.analysis.DifferentiableUnivariateFunction;
  * Interface for (univariate real) rootfinding algorithms.
  * Implementations will search for only one zero in the given interval.
  *
- * @version $Id$
+ * @version $Id: DifferentiableUnivariateSolver.java 1364387 2012-07-22 18:14:11Z tn $
  */
 public interface DifferentiableUnivariateSolver
     extends BaseUnivariateSolver<DifferentiableUnivariateFunction> {}

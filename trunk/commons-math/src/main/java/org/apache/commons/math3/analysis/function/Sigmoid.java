@@ -31,8 +31,8 @@ import org.apache.commons.math3.util.FastMath;
  * A more flexible version, the generalised logistic, is implemented
  * by the {@link Logistic} class.
  *
- * @version $Id$
  * @since 3.0
+ * @version $Id: Sigmoid.java 1364377 2012-07-22 17:39:16Z tn $
  */
 public class Sigmoid implements DifferentiableUnivariateFunction {
     /** Lower asymptote. */

@@ -32,7 +32,7 @@ import org.apache.commons.math3.util.Pair;
  * @param <PAIR> Type of the (point, value) pair.
  * The type of the "value" part of the pair (not used by this class).
  *
- * @version $Id$
+ * @version $Id: SimplePointChecker.java 1364392 2012-07-22 18:27:12Z tn $
  * @since 3.0
  */
 public class SimplePointChecker<PAIR extends Pair<double[], ? extends Object>>

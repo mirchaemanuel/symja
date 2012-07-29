@@ -40,7 +40,7 @@ package org.apache.commons.math3.optimization;
  * @see org.apache.commons.math3.optimization.SimpleValueChecker
  * @see org.apache.commons.math3.optimization.SimpleVectorValueChecker
  *
- * @version $Id$
+ * @version $Id: ConvergenceChecker.java 1364392 2012-07-22 18:27:12Z tn $
  * @since 3.0
  */
 public interface ConvergenceChecker<PAIR> {

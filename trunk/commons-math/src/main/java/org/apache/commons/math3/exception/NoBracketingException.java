@@ -24,7 +24,7 @@ import org.apache.commons.math3.exception.util.LocalizedFormats;
  * ends of an interval.
  *
  * @since 3.0
- * @version $Id$
+ * @version $Id: NoBracketingException.java 1364378 2012-07-22 17:42:38Z tn $
  */
 public class NoBracketingException extends MathIllegalArgumentException {
     /** Serializable version Id. */

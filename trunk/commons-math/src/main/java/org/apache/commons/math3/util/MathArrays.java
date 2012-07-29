@@ -34,7 +34,7 @@ import org.apache.commons.math3.exception.MathArithmeticException;
  * Arrays utilities.
  *
  * @since 3.0
- * @version $Id$
+ * @version $Id: MathArrays.java 1364389 2012-07-22 18:19:26Z tn $
  */
 public class MathArrays {
     /** Factor used for splitting double numbers: n = 2^27 + 1 (i.e. {@value}). */

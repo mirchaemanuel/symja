@@ -39,8 +39,9 @@ import org.apache.commons.math3.exception.NotStrictlyPositiveException;
  *  <li>...</li>
  *  <li>(1, 3, 2) corresponds to 23</li>
  * </ul>
- * @version $Id$
+ *
  * @since 2.2
+ * @version $Id: MultidimensionalCounter.java 1364389 2012-07-22 18:19:26Z tn $
  */
 public class MultidimensionalCounter implements Iterable<Integer> {
     /**

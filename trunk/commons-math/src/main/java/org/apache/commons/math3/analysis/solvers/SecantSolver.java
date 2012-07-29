@@ -36,7 +36,7 @@ import org.apache.commons.math3.util.FastMath;
  * {@link IllinoisSolver <em>Illinois</em>} algorithm or the
  * {@link PegasusSolver <em>Pegasus</em>} algorithm.</p>
  *
- * @version $Id: SecantSolver.java 1244107 2012-02-14 16:17:55Z erans $
+ * @version $Id: SecantSolver.java 1364387 2012-07-22 18:14:11Z tn $
  */
 public class SecantSolver extends AbstractUnivariateSolver {
 

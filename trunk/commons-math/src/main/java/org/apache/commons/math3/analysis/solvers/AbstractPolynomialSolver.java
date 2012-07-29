@@ -22,8 +22,8 @@ import org.apache.commons.math3.analysis.polynomials.PolynomialFunction;
 /**
  * Base class for solvers.
  *
- * @version $Id$
  * @since 3.0
+ * @version $Id: AbstractPolynomialSolver.java 1364387 2012-07-22 18:14:11Z tn $
  */
 public abstract class AbstractPolynomialSolver
     extends BaseAbstractUnivariateSolver<PolynomialFunction>

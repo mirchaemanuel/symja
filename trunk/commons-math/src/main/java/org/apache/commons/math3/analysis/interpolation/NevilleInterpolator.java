@@ -29,7 +29,7 @@ import org.apache.commons.math3.analysis.polynomials.PolynomialFunctionLagrangeF
  * The actual code of Neville's algorithm is in PolynomialFunctionLagrangeForm,
  * this class provides an easy-to-use interface to it.</p>
  *
- * @version $Id: NevilleInterpolator.java 1244107 2012-02-14 16:17:55Z erans $
+ * @version $Id: NevilleInterpolator.java 1364387 2012-07-22 18:14:11Z tn $
  * @since 1.2
  */
 public class NevilleInterpolator implements UnivariateInterpolator,

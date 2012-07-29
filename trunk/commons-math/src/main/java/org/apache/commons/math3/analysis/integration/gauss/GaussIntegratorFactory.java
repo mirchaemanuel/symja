@@ -16,20 +16,22 @@
  */
 package org.apache.commons.math3.analysis.integration.gauss;
 
+import java.math.BigDecimal;
+
 import org.apache.commons.math3.util.Pair;
 
 /**
  * Class that provides different ways to compute the nodes and weights to be
  * used by the {@link GaussIntegrator Gaussian integration rule}.
  *
- * @version $Id$
  * @since 3.1
+ * @version $Id: GaussIntegratorFactory.java 1364420 2012-07-22 20:01:12Z tn $
  */
 public class GaussIntegratorFactory {
     /** Generator of Gauss-Legendre integrators. */
-    private final BaseRuleFactory legendre = new LegendreRuleFactory();
+    private final BaseRuleFactory<Double> legendre = new LegendreRuleFactory();
     /** Generator of Gauss-Legendre integrators. */
-    private final BaseRuleFactory legendreHighPrecision = new LegendreHighPrecisionRuleFactory();
+    private final BaseRuleFactory<BigDecimal> legendreHighPrecision = new LegendreHighPrecisionRuleFactory();
 
     /**
      * Creates an integrator of the given order, and whose call to the
@@ -96,7 +98,7 @@ public class GaussIntegratorFactory {
      * @param numberOfPoints Order of the integration rule.
      * @return the integration nodes and weights.
      */
-    private static Pair<double[], double[]> getRule(BaseRuleFactory factory,
+    private static Pair<double[], double[]> getRule(BaseRuleFactory<? extends Number> factory,
                                                     int numberOfPoints) {
         return factory.getRule(numberOfPoints);
     }

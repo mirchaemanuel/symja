@@ -22,7 +22,7 @@ package org.apache.commons.math3.analysis;
  * variable plus some extra parameters.
  *
  * @since 3.0
- * @version $Id: ParametricUnivariateFunction.java 1244107 2012-02-14 16:17:55Z erans $
+ * @version $Id: ParametricUnivariateFunction.java 1364387 2012-07-22 18:14:11Z tn $
  */
 public interface ParametricUnivariateFunction {
     /**

@@ -34,7 +34,7 @@ import java.util.Locale;
  * All Commons Math exceptions delegate the interface's methods to this class.
  *
  * @since 3.0
- * @version $Id$
+ * @version $Id: ExceptionContext.java 1364388 2012-07-22 18:16:43Z tn $
  */
 public class ExceptionContext implements Serializable {
     /** Serializable version Id. */

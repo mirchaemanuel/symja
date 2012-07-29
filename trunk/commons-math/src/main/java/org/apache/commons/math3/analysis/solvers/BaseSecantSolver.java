@@ -44,7 +44,7 @@ import org.apache.commons.math3.exception.MathInternalError;
  * implementation.</p>
  *
  * @since 3.0
- * @version $Id$
+ * @version $Id: BaseSecantSolver.java 1364387 2012-07-22 18:14:11Z tn $
  */
 public abstract class BaseSecantSolver
     extends AbstractUnivariateSolver

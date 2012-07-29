@@ -24,7 +24,7 @@ import org.apache.commons.math3.util.Precision;
  *
  * @param <PAIR> Type of (point, value) pair.
  *
- * @version $Id$
+ * @version $Id: AbstractConvergenceChecker.java 1364392 2012-07-22 18:27:12Z tn $
  * @since 3.0
  */
 public abstract class AbstractConvergenceChecker<PAIR>

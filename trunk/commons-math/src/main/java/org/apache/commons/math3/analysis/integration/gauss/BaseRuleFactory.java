@@ -29,13 +29,16 @@ import org.apache.commons.math3.exception.DimensionMismatchException;
  * @param <T> Type of the number used to represent the points and weights of
  * the quadrature rules.
  *
- * @version $Id$
  * @since 3.1
+ * @version $Id: BaseRuleFactory.java 1364387 2012-07-22 18:14:11Z tn $
  */
 public abstract class BaseRuleFactory<T extends Number> {
     /** List of points and weights, indexed by the order of the rule. */
     private final Map<Integer, Pair<T[], T[]>> pointsAndWeights
         = new TreeMap<Integer, Pair<T[], T[]>>();
+    /** Cache for double-precision rules. */
+    private final Map<Integer, Pair<double[], double[]>> pointsAndWeightsDouble
+        = new TreeMap<Integer, Pair<double[], double[]>>();
 
     /**
      * Gets a copy of the quadrature rule with given number of integration points.
@@ -44,18 +47,35 @@ public abstract class BaseRuleFactory<T extends Number> {
      * @return a copy of the integration rule.
      */
     public Pair<double[], double[]> getRule(int numberOfPoints) {
-        return convertToDouble(getRuleInternal(numberOfPoints));
+        // Try to obtain the rule from the cache.
+        Pair<double[], double[]> cached = pointsAndWeightsDouble.get(numberOfPoints);
+
+        if (cached == null) {
+            // Rule not computed yet.
+
+            // Compute the rule.
+            final Pair<T[], T[]> rule = getRuleInternal(numberOfPoints);
+            cached = convertToDouble(rule);
+
+            // Cache it.
+            pointsAndWeightsDouble.put(numberOfPoints, cached);
+        }
+
+        // Return a copy.
+        return new Pair<double[], double[]>(cached.getFirst().clone(),
+                                            cached.getSecond().clone());
     }
 
     /**
      * Gets a rule.
-     * Rules are computed once, and cached.
+     * Synchronization ensures that rules will be computed and added to the
+     * cache at most once.
      * The returned rule is a reference into the cache.
      *
      * @param numberOfPoints Order of the rule to be retrieved.
      * @return the points and weights corresponding to the given order.
      */
-    protected Pair<T[], T[]> getRuleInternal(int numberOfPoints) {
+    protected synchronized Pair<T[], T[]> getRuleInternal(int numberOfPoints) {
         final Pair<T[], T[]> rule = pointsAndWeights.get(numberOfPoints);
         if (rule == null) {
             addRule(computeRule(numberOfPoints));

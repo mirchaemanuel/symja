@@ -76,7 +76,7 @@ import org.apache.commons.math3.util.MathArrays;
  *  <li><a href="http://en.wikipedia.org/wiki/CMA-ES">Wikipedia</a></li>
  * </ul>
  *
- * @version $Id$
+ * @version $Id: CMAESOptimizer.java 1364392 2012-07-22 18:27:12Z tn $
  * @since 3.0
  */
 
@@ -768,7 +768,7 @@ public class CMAESOptimizer
             // to achieve O(N^2)
             C = triu(C, 0).add(triu(C, 1).transpose());
             // enforce symmetry to prevent complex numbers
-            EigenDecomposition eig = new EigenDecomposition(C, 1.0);
+            EigenDecomposition eig = new EigenDecomposition(C);
             B = eig.getV(); // eigen decomposition, B==normalized eigenvectors
             D = eig.getD();
             diagD = diag(D);

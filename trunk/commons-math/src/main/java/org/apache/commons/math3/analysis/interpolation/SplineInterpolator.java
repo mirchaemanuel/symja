@@ -47,8 +47,7 @@ import org.apache.commons.math3.util.MathArrays;
  * <u>Numerical Analysis</u>, 4th Ed., 1989, PWS-Kent, ISBN 0-53491-585-X, pp 126-131.
  * </p>
  *
- * @version $Id: SplineInterpolator.java 1244107 2012-02-14 16:17:55Z erans $
- *
+ * @version $Id: SplineInterpolator.java 1364387 2012-07-22 18:14:11Z tn $
  */
 public class SplineInterpolator implements UnivariateInterpolator {
 

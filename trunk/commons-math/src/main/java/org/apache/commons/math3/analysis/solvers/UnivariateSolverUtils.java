@@ -27,7 +27,7 @@ import org.apache.commons.math3.util.FastMath;
 /**
  * Utility routines for {@link UnivariateSolver} objects.
  *
- * @version $Id: UnivariateSolverUtils.java 1244107 2012-02-14 16:17:55Z erans $
+ * @version $Id: UnivariateSolverUtils.java 1364387 2012-07-22 18:14:11Z tn $
  */
 public class UnivariateSolverUtils {
     /**
