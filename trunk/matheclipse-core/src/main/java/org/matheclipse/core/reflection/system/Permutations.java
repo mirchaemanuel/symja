@@ -12,6 +12,8 @@ import org.matheclipse.generic.combinatoric.KPermutationsList;
  * Generate a list of permutations
  * 
  * See <a href=" http://en.wikipedia.org/wiki/Permutation">Permutation</a>
+ * @see Partition
+ * @see Subsets
  */
 public class Permutations extends AbstractFunctionEvaluator {
 

@@ -7,6 +7,11 @@ import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.IInteger;
 
+/**
+ * 
+ * @see Permutations
+ * @see Subsets
+ */
 public class Partition extends AbstractFunctionEvaluator {
 
 	public Partition() {
