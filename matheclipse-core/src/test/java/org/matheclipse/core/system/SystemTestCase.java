@@ -2172,7 +2172,7 @@ public class SystemTestCase extends AbstractTestCase {
 	public void testSystem390() {
 		check("Apply[(1 + 1/#) &, 10]", "11/10");
 		check("FixedPoint[(1 + 1/#) &, 10, 3]", "32/21");
-		check("FixedPoint[(Cos[#])&,0.8]", "0.7390851332151603");
+		check("FixedPoint[(Cos[#])&,0.8]", "0.7390851332151607");
 	}
 
 	public void testSystem391() {
@@ -2610,7 +2610,7 @@ public class SystemTestCase extends AbstractTestCase {
 	}
 
 	public void testSystem996() {
-		check("FactorTerms[3+3*x^3]", "3*x^3+3");
+		check("FactorTerms[3+3*x^3]", "3*(x^3+1)");
 		check("FactorTerms[3+3/4*x^3+12/17*x^2,x]", "3/68*(17*x^3+16*x^2+68)");
 	}
 
@@ -2645,7 +2645,7 @@ public class SystemTestCase extends AbstractTestCase {
 		check("Roots[x^3-3*x-2]", "{2,-1}");
 		check("Roots[x^3-4*x^2+x+6]", "{3,2,-1}");
 		check("Roots[(x^2-1)/(x-1)]", "{-1}");
-		check("Factor[3*x^2+6]", "3*x^2+6");
+		check("Factor[3*x^2+6]", "3*(x^2+2)");
 		check("Factor[3/4*x^2+9/16]", "3/16*(4*x^2+3)");
 		check("Factor[3/4*x^2+9/16+7]", "1/16*(12*x^2+121)");
 		check("Factor[3/4*x^2+9/16*x+7]", "1/16*(12*x^2+9*x+112)");

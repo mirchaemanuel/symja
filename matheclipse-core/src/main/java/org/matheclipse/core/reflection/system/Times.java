@@ -168,7 +168,7 @@ public class Times extends AbstractArgMultiple implements INumeric {
 	@Override
 	public IExpr evaluate(final IAST ast) {
 		if (ast.size() == 3) {
-			if ((ast.get(1).isSignedNumber() && !ast.get(1).isFraction()) && ast.get(2).isPlus()) {
+			if ((ast.get(1).isNumeric() || ast.get(1).isOne() || ast.get(1).isMinusOne()) && ast.get(2).isPlus()) {
 				// distribute the number over the sum:
 				final IAST arg2 = (IAST) ast.get(2);
 				return arg2.map(Functors.replace2nd(F.Times(ast.get(1), F.Null)));

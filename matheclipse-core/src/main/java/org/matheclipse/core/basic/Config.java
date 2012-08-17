@@ -1,5 +1,7 @@
 package org.matheclipse.core.basic;
 
+import org.apache.commons.math3.util.Precision;
+
 /**
  * 
  */
@@ -50,8 +52,8 @@ public class Config {
 	 * Show the console output, if an expression has a head symbol with attribute
 	 * <code>ISymbol.CONSOLE_OUTPUT</code>.
 	 * 
-	 */  
-	public final static boolean SHOW_CONSOLE = true; 
+	 */
+	public final static boolean SHOW_CONSOLE = true;
 
 	/**
 	 * Version string for console application
@@ -70,7 +72,11 @@ public class Config {
 	 */
 	public static boolean SERVER_MODE = false;
 
-	public static double DOUBLE_EPSILON = 1.0e-15;
+	/**
+	 * See <a href="http://en.wikipedia.org/wiki/Machine_epsilon">Wikipedia:
+	 * Machine epsilon</a>
+	 */
+	public static double DOUBLE_EPSILON = Precision.EPSILON; 
 
 	/**
 	 * Maximum size of the BigInteger words in <i>server mode</i>.

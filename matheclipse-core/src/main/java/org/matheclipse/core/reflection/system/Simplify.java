@@ -210,7 +210,7 @@ public class Simplify extends AbstractFunctionEvaluator {
 								if (reduced != null) {
 									return reduced;
 								}
-							} else if (temp.isPower() && ((IAST) temp).get(1).isPlus() && ((IAST) temp).get(2).equals(F.CN1)) {
+							} else if (temp.isPower() && ((IAST) temp).get(1).isPlus() && ((IAST) temp).get(2).isMinusOne()) {
 								// <number> * Power[Plus[...], -1 ]
 								reduced = tryToReduceNumericFactor(ast, ((IAST) temp).get(1), number.inverse(), i);
 								if (reduced != null) {

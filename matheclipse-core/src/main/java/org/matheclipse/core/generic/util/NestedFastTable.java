@@ -227,7 +227,10 @@ public class NestedFastTable<E extends INestedListElement> extends ArrayList<E> 
 	@Override
 	public String toString() {
 		final String sep = ", ";
-		final E temp = head();
+		E temp = null;
+		if (size()>0){
+			temp = head();
+		}
 		StringBuffer text;
 		if (temp == null) {
 			text = new StringBuffer("<null-tag>");
