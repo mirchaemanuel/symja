@@ -79,6 +79,12 @@ function clearta(nameArray) {
 	document.getElementById(nameArray[0]).focus();
   }
 }
+function linkta() {
+  var tmp, resultstr;
+  tmp = document.getElementById("ta").value;	
+  resultstr = "http://symjaweb.appspot.com/?ci=ta:Input:t:"+encodeURIComponent(tmp); 
+  document.getElementById('result').innerHTML = resultstr;
+}
 function ol(){document.getElementById("ta").focus();}
 </script>
 </head>
@@ -162,8 +168,13 @@ function ol(){document.getElementById("ta").focus();}
 	for (int i = 0; i < btns.length; i++) {
 		comps = btns[i].split("\\:");
 		if (comps.length >= 2) {
-			buf
-					.append("\n<button type=\"submit\" onclick=\"getResult(new Array(");
+			buf.append("\n<button type=\"submit\" ");
+			if (comps[0]!=null && comps[0].equals("Sym")) {
+			  buf.append("title=\"Evaluate input in symbolic mode\" ");
+			} else if (comps[0]!=null && comps[0].equals("Num")) {
+			  buf.append("title=\"Evaluate input in numeric mode\" ");
+			}
+			buf.append("onclick=\"getResult(new Array(");
 			buf.append(arrayString);
 			buf.append("),\'");
 			buf.append(comps[1]);
@@ -172,12 +183,11 @@ function ol(){document.getElementById("ta").focus();}
 			buf.append("</button>");
 		}
 	}
-	buf
-			.append("\n<button type=\"submit\" title=\"Clear input area\" onclick=\"clearta(new Array(");
+	buf.append("\n<button type=\"submit\" title=\"Clear input area\" onclick=\"clearta(new Array(");
 	buf.append(arrayString);
 	buf.append(")); return false;\" >C</button> ");
-	buf
-			.append("<input type=\"hidden\" id=\"token\" value=\"47110815\">");
+	buf.append("\n<button type=\"submit\" title=\"Create a HTTP link from the input expression\" onclick=\"linkta(); return false;\" >Link</button> ");
+	buf.append("\n<input type=\"hidden\" id=\"token\" value=\"47110815\">");
 	out.println(buf.toString());
 
 	UserService userService = UserServiceFactory.getUserService();
