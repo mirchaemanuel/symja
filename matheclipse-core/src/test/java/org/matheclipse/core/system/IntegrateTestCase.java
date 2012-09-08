@@ -32,7 +32,7 @@ public class IntegrateTestCase extends AbstractTestCase {
 		check("Integrate[(8*x+1)/(x^2+2*x+1),x]", "7*(x+1)^(-1)+8*Log[x+1]");
 
 		check("Integrate[1/(x^3+1),x]", "ArcTan[(2*x-1)*3^(-1/2)]*3^(-1/2)-1/6*Log[x^2-x+1]+1/3*Log[x+1]");
-		check("Simplify[Integrate[1/3*(2-x)*(x^2-x+1)^(-1),x]]", "ArcTan[2*x*3^(-1/2)-3^(-1/2)]*3^(-1/2)-1/6*Log[x^2-x+1]");
+		check("Simplify[Integrate[1/3*(2-x)*(x^2-x+1)^(-1),x]]", "ArcTan[(2*x-1)*3^(-1/2)]*3^(-1/2)-1/6*Log[x^2-x+1]");
 		check("Integrate[1/3*(2-x)*(x^2-x+1)^(-1)+1/3*(x+1)^(-1),x]", "ArcTan[(2*x-1)*3^(-1/2)]*3^(-1/2)-1/6*Log[x^2-x+1]+1/3*Log[x+1]");
 		check("Integrate[E^x*(2-x^2),x]", "-E^x*x^2+2*E^x*x");
 		check("Integrate[(x^2+1)Log[x],x]", "1/3*Log[x]*x^3-1/9*x^3+x*Log[x]-x");
@@ -40,7 +40,7 @@ public class IntegrateTestCase extends AbstractTestCase {
 
 		check("Apart[2*x^2/(x^3+1)]", "(4/3*x-2/3)*(x^2-x+1)^(-1)+2/3*(x+1)^(-1)");
 
-		check("Integrate[2*x^2/(x^3+1),x]", "2/3*Log[x^2-x+1]+2/3*Log[x+1]");
+		check("Integrate[2*x^2/(x^3+1),x]", "2*(1/3*Log[x^2-x+1]+1/3*Log[x+1])");
 		// check("Integrate[Sin[x]^3,x]", "-1/3*Cos[x]*Sin[x]^2-2/3*Cos[x]");
 		check("Integrate[Sin[x]^3,x]", "1/3*Cos[x]^3-Cos[x]");
 		// check("Integrate[Cos[2x]^3,x]", "1/6*Cos[2*x]^2*Sin[2*x]+1/3*Sin[2*x]");
@@ -80,8 +80,9 @@ public class IntegrateTestCase extends AbstractTestCase {
 		check("Apart[(x^7 - 24*x^4 - 4*x^2 + 8*x - 8)/(x^8 + 6*x^6 + 12*x^4 + 8*x^2)]",
 				"(x^2+2)^(-1)+(-6*x-22)*(x^2+2)^(-2)+48*(x^2+2)^(-3)+x^(-1)-x^(-2)");
 		check("Integrate[(x^2+2)^(-1),x]", "ArcTan[x*(1/2)^(1/2)]*(1/2)^(1/2)");
-		check("Integrate[(-6*x-22)*(x^2+2)^(-2),x]", "-11/2*x*(x^2+2)^(-1)+3*(x^2+2)^(-1)-11/2*ArcTan[x*(1/2)^(1/2)]*(1/2)^(1/2)");
-		check("Integrate[48*(x^2+2)^(-3),x]", "9/2*x*(x^2+2)^(-1)+6*x*(x^2+2)^(-2)+9/2*ArcTan[x*(1/2)^(1/2)]*(1/2)^(1/2)");
+		check("Integrate[(-6*x-22)*(x^2+2)^(-2),x]", "3*(x^2+2)^(-1)-22*(1/4*x*(x^2+2)^(-1)+1/4*ArcTan[x*(1/2)^(1/2)]*(1/2)^(1/2))");
+		check("Integrate[48*(x^2+2)^(-3),x]", "48*(1/8*x*(x^2+2)^(-2)+3/8*(1/4*x*(x^2+2)^(-1)+1/4*ArcTan[x*(1/2)^(1/2)]*(1/2)^(\n" + 
+				"1/2)))");
 		check("Integrate[-x^(-2),x]", "x^(-1)");
 		check("Integrate[x^(-1),x]", "Log[x]");
 		check("Integrate[Exp[-x^4],x]", "(-1/4)*x*Gamma[1/4,x^4]*x^4^(-1/4)");
