@@ -60,9 +60,11 @@ public class IntegrateTrigFunctionTestCase extends AbstractTestCase {
 
 		// TODO wrong result?
 		check("Integrate[Sqrt[a*Sin[x]^2],x]", "-Cos[x]*a^(1/2)");
+		check("D[-Cos[x]*a^(1/2),x]", "a^(1/2)*Sin[x]");
 
 		// TODO
-    // check("Integrate[1/(a + b*Cos[x]^3),x]", "Integrate[(b*Cos[x]^3+a)^(-1),x]");
+		// check("Integrate[1/(a + b*Cos[x]^3),x]",
+		// "Integrate[(b*Cos[x]^3+a)^(-1),x]");
 
 		check("Integrate[Cos[x]*x,x]", "x*Sin[x]+Cos[x]");
 		// check("Integrate[,x]", "");
