@@ -1,12 +1,11 @@
 /*
- * $Id: RReductionSeq.java 3423 2010-12-24 10:56:50Z kredel $
+ * $Id: RReductionSeq.java 4061 2012-07-27 12:03:20Z kredel $
  */
 
 package edu.jas.gbufd;
 
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -16,7 +15,6 @@ import edu.jas.gb.ReductionAbstract;
 import edu.jas.poly.ExpVector;
 import edu.jas.poly.GenPolynomial;
 import edu.jas.poly.GenSolvablePolynomial;
-
 import edu.jas.structure.RegularRingElem;
 
 
@@ -27,14 +25,14 @@ import edu.jas.structure.RegularRingElem;
  * @author Heinz Kredel
  */
 
-public class RReductionSeq<C extends RegularRingElem<C>> extends ReductionAbstract<C>
-        implements RReduction<C> {
+public class RReductionSeq<C extends RegularRingElem<C>> extends ReductionAbstract<C> implements
+                RReduction<C> {
 
 
     private static final Logger logger = Logger.getLogger(RReductionSeq.class);
 
 
-    private final boolean debug = logger.isDebugEnabled();
+    //private final boolean debug = logger.isDebugEnabled();
 
 
     /**
@@ -159,11 +157,12 @@ public class RReductionSeq<C extends RegularRingElem<C>> extends ReductionAbstra
         l = j;
         boolean mt = false;
         Map<ExpVector, C> Am = Ap.getMap();
-        for (ExpVector e : Am.keySet()) {
+        for (Map.Entry<ExpVector, C> me : Am.entrySet()) {
+            ExpVector e = me.getKey();
+            C a = me.getValue();
             for (i = 0; i < l; i++) {
                 mt = e.multipleOf(htl[i]);
                 if (mt) {
-                    C a = Am.get(e);
                     //C r = a.multiply( lbc[i] );
                     //C r = a.idempotent().multiply( lbc[i].idempotent() );
                     C r = a.idempotentAnd(lbc[i]);
@@ -351,8 +350,8 @@ public class RReductionSeq<C extends RegularRingElem<C>> extends ReductionAbstra
      * @return Ap - row*Pp = nf(Pp,Ap) , the normal form of Ap wrt. Pp.
      */
     @SuppressWarnings("unchecked")
-    public GenPolynomial<C> normalform(List<GenPolynomial<C>> row,
-            List<GenPolynomial<C>> Pp, GenPolynomial<C> Ap) {
+    public GenPolynomial<C> normalform(List<GenPolynomial<C>> row, List<GenPolynomial<C>> Pp,
+                    GenPolynomial<C> Ap) {
         if (Pp == null || Pp.isEmpty()) {
             return Ap;
         }
@@ -470,11 +469,9 @@ public class RReductionSeq<C extends RegularRingElem<C>> extends ReductionAbstra
         ExpVector e;
         ExpVector f;
         GenPolynomial<C> a;
-        Iterator<GenPolynomial<C>> it;
         logger.debug("irr = ");
         while (irr != l) {
-            //it = P.listIterator(); 
-            //a = P.get(0); //it.next();
+            //a = P.get(0);
             a = P.remove(0);
             e = a.leadingExpVector();
             a = normalform(P, a);
@@ -686,8 +683,7 @@ public class RReductionSeq<C extends RegularRingElem<C>> extends ReductionAbstra
      * @param F polynomial list.
      * @return red(bc(A)).
      */
-    public List<GenPolynomial<C>> reducedBooleanClosure(List<GenPolynomial<C>> F,
-            GenPolynomial<C> A) {
+    public List<GenPolynomial<C>> reducedBooleanClosure(List<GenPolynomial<C>> F, GenPolynomial<C> A) {
         List<GenPolynomial<C>> B = new ArrayList<GenPolynomial<C>>();
         if (A == null || A.isZERO()) {
             return B;

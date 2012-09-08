@@ -1,5 +1,5 @@
 /*
- * $Id: Examples.java 3454 2010-12-27 13:24:38Z kredel $
+ * $Id: Examples.java 4025 2012-07-23 16:41:43Z kredel $
  */
 
 package edu.jas.ufd;
@@ -94,7 +94,7 @@ public class Examples {
 
         TermOrder to = new TermOrder(TermOrder.INVLEX);
         BigRational cfac = new BigRational(1);
-        String[] alpha = new String[] { "alpha" };
+        //String[] alpha = new String[] { "alpha" };
         String[] vars = new String[] { "x" };
         GenPolynomialRing<BigRational> pfac = new GenPolynomialRing<BigRational>(cfac, 1, to, vars);
 
@@ -117,7 +117,7 @@ public class Examples {
 
         TermOrder to = new TermOrder(TermOrder.INVLEX);
         BigRational cfac = new BigRational(1);
-        String[] alpha = new String[] { "alpha" };
+        //String[] alpha = new String[] { "alpha" };
         String[] vars = new String[] { "x" };
         GenPolynomialRing<BigRational> pfac = new GenPolynomialRing<BigRational>(cfac, 1, to, vars);
 

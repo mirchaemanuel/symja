@@ -1,14 +1,14 @@
 /*
- * $Id: GroebnerBasePseudoSeq.java 3807 2011-10-21 19:59:51Z kredel $
+ * $Id: GroebnerBasePseudoSeq.java 4061 2012-07-27 12:03:20Z kredel $
  */
 
 package edu.jas.gbufd;
 
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.Collections;
 
 import org.apache.log4j.Logger;
 
@@ -23,8 +23,8 @@ import edu.jas.ufd.GreatestCommonDivisorAbstract;
 
 
 /**
- * Groebner Base with pseudo reduction sequential algorithm. 
- * Implements coefficient fraction free Groebner bases.
+ * Groebner Base with pseudo reduction sequential algorithm. Implements
+ * coefficient fraction free Groebner bases.
  * @param <C> coefficient type
  * @author Heinz Kredel
  */
@@ -129,7 +129,7 @@ public class GroebnerBasePseudoSeq<C extends GcdRingElem<C>> extends GroebnerBas
 
             pi = pair.pi;
             pj = pair.pj;
-            if (false && logger.isDebugEnabled()) {
+            if (debug) {
                 logger.debug("pi    = " + pi);
                 logger.debug("pj    = " + pj);
             }
@@ -139,7 +139,7 @@ public class GroebnerBasePseudoSeq<C extends GcdRingElem<C>> extends GroebnerBas
                 pair.setZero();
                 continue;
             }
-            if (logger.isDebugEnabled()) {
+            if (debug) {
                 logger.debug("ht(S) = " + S.leadingExpVector());
             }
 
@@ -148,7 +148,7 @@ public class GroebnerBasePseudoSeq<C extends GcdRingElem<C>> extends GroebnerBas
                 pair.setZero();
                 continue;
             }
-            if (logger.isDebugEnabled()) {
+            if (debug) {
                 logger.debug("ht(H) = " + H.leadingExpVector());
             }
             H = engine.basePrimitivePart(H); //H.monic();

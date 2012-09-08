@@ -1,5 +1,5 @@
 /*
- * $Id: UnivPowerSeries.java 3992 2012-07-14 21:32:18Z kredel $
+ * $Id: UnivPowerSeries.java 4125 2012-08-19 19:05:22Z kredel $
  */
 
 package edu.jas.ps;
@@ -104,7 +104,7 @@ public class UnivPowerSeries<C extends RingElem<C>> implements RingElem<UnivPowe
      * @see java.lang.Object#clone()
      */
     @Override
-    public UnivPowerSeries<C> clone() {
+    public UnivPowerSeries<C> copy() {
         return new UnivPowerSeries<C>(ring, lazyCoeffs);
     }
 
@@ -306,9 +306,8 @@ public class UnivPowerSeries<C extends RingElem<C>> implements RingElem<UnivPowe
             public C generate(int i) {
                 if (i == 0) {
                     return h;
-                } else {
-                    return coefficient(i - 1);
                 }
+                return coefficient(i - 1);
             }
         });
     }
@@ -348,9 +347,8 @@ public class UnivPowerSeries<C extends RingElem<C>> implements RingElem<UnivPowe
                 C c = coefficient(i);
                 if (sel.select(c)) {
                     return c;
-                } else {
-                    return ring.coFac.getZERO();
                 }
+                return ring.coFac.getZERO();
             }
         });
     }
@@ -373,7 +371,7 @@ public class UnivPowerSeries<C extends RingElem<C>> implements RingElem<UnivPowe
             public C generate(int i) {
                 C c;
                 if (i > 0) {
-                    c = get(i - 1);
+                    c = get(i - 1); // ensure coeffs are all generated
                 }
                 do {
                     c = coefficient(pos++);
@@ -466,9 +464,8 @@ public class UnivPowerSeries<C extends RingElem<C>> implements RingElem<UnivPowe
     public UnivPowerSeries<C> abs() {
         if (signum() < 0) {
             return negate();
-        } else {
-            return this;
         }
+        return this;
     }
 
 

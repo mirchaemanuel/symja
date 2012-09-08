@@ -1,5 +1,5 @@
 /*
- * $Id: Quotient.java 3356 2010-10-23 16:41:01Z kredel $
+ * $Id: Quotient.java 4125 2012-08-19 19:05:22Z kredel $
  */
 
 package edu.jas.ufd;
@@ -132,7 +132,7 @@ public class Quotient<C extends GcdRingElem<C>> implements GcdRingElem<Quotient<
      * @see java.lang.Object#clone()
      */
     @Override
-    public Quotient<C> clone() {
+    public Quotient<C> copy() {
         return new Quotient<C>(ring, num, den, true);
     }
 
@@ -165,9 +165,8 @@ public class Quotient<C extends GcdRingElem<C>> implements GcdRingElem<Quotient<
     public boolean isUnit() {
         if (num.isZERO()) {
             return false;
-        } else {
-            return true;
         }
+        return true;
     }
 
 
@@ -192,9 +191,8 @@ public class Quotient<C extends GcdRingElem<C>> implements GcdRingElem<Quotient<
                 s += " | " + den.toString(ring.ring.getVars());
             }
             return s + " }";
-        } else {
-            return "Quotient[ " + num.toString() + " | " + den.toString() + " ]";
         }
+        return "Quotient[ " + num.toString() + " | " + den.toString() + " ]";
     }
 
 
@@ -208,9 +206,8 @@ public class Quotient<C extends GcdRingElem<C>> implements GcdRingElem<Quotient<
         // Python case
         if (den.isONE()) {
             return num.toScript();
-        } else {
-            return num.toScript() + " / " + den.toScript();
         }
+        return num.toScript() + " / " + den.toScript();
     }
 
 
@@ -258,7 +255,6 @@ public class Quotient<C extends GcdRingElem<C>> implements GcdRingElem<Quotient<
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @SuppressWarnings("unchecked")
-    // not jet working
     @Override
     public boolean equals(Object b) {
         if (!(b instanceof Quotient)) {

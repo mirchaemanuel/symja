@@ -1,10 +1,11 @@
 /*
- * $Id: MultiVarCoefficients.java 3444 2010-12-25 17:13:53Z kredel $
+ * $Id: MultiVarCoefficients.java 4125 2012-08-19 19:05:22Z kredel $
  */
 
 package edu.jas.ps;
 
 
+import java.io.Serializable;
 import java.util.BitSet;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -22,7 +23,7 @@ import edu.jas.structure.RingElem;
  * @author Heinz Kredel
  */
 
-public abstract class MultiVarCoefficients<C extends RingElem<C>> {
+public abstract class MultiVarCoefficients<C extends RingElem<C>> implements Serializable {
 
 
     /**
@@ -153,7 +154,7 @@ public abstract class MultiVarCoefficients<C extends RingElem<C>> {
         long tdeg = index.totalDeg();
         GenPolynomial<C> p = coeffCache.get(tdeg);
         if (p == null) {
-            p = pfac.getZERO().clone();
+            p = pfac.getZERO().copy();
             coeffCache.put(tdeg, p);
         }
         C c = p.coefficient(index);
@@ -187,7 +188,7 @@ public abstract class MultiVarCoefficients<C extends RingElem<C>> {
         }
         GenPolynomial<C> p = coeffCache.get(tdeg);
         if (p == null) {
-            p = pfac.getZERO().clone();
+            p = pfac.getZERO().copy();
             coeffCache.put(tdeg, p);
         } 
         // trust contents?

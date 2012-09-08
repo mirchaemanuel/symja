@@ -1,5 +1,5 @@
 /*
- * $Id: GroebnerBaseAbstract.java 3781 2011-09-28 19:55:02Z kredel $
+ * $Id: GroebnerBaseAbstract.java 4114 2012-08-19 12:53:36Z kredel $
  */
 
 package edu.jas.gb;
@@ -123,9 +123,9 @@ public abstract class GroebnerBaseAbstract<C extends RingElem<C>>
                 }
                 h = red.normalform( F, s );
                 if ( ! h.isZERO() ) {
-                   System.out.println("pi = " + pi + ", pj = " + pj);
-                   System.out.println("s  = " + s  + ", h = " + h);
-                   return false;
+                    logger.info("no GB: pi = " + pi + ", pj = " + pj);
+                    logger.info("s  = " + s  + ", h = " + h);
+                    return false;
                 }
             }
         }
@@ -279,6 +279,60 @@ public abstract class GroebnerBaseAbstract<C extends RingElem<C>>
             i++;
         }
         return G;
+    }
+
+
+    /**
+     * Test for minimal ordered Groebner basis.
+     * @param Gp an ideal base.
+     * @return true, if Gp is a reduced minimal Groebner base.
+     */
+    public boolean isMinimalGB(List<GenPolynomial<C>> Gp) {  
+        if ( Gp == null || Gp.size() == 0 ) {
+            return true;
+        }
+        // test for zero polynomials
+        for ( GenPolynomial<C> a : Gp ) { 
+            if ( a == null || a.isZERO() ) { 
+                if (debug) {
+                    logger.debug("zero polynomial " + a);
+                }
+                return false;
+            }
+        }
+        // test for top reducible polynomials
+        List<GenPolynomial<C>> G = new ArrayList<GenPolynomial<C>>( Gp );
+        List<GenPolynomial<C>> F = new ArrayList<GenPolynomial<C>>( G.size() );
+        while ( G.size() > 0 ) {
+            GenPolynomial<C> a = G.remove(0);
+            if ( red.isTopReducible(G,a) || red.isTopReducible(F,a) ) {
+                if (debug) {
+                    logger.debug("top reducible polynomial " + a);
+                }
+                return false;
+            } else {
+                F.add(a);
+            }
+        }
+        G = F;
+        if ( G.size() <= 1 ) {
+           return true;
+        }
+        // test reducibility of polynomials
+        int len = G.size();
+        int i = 0;
+        while ( i < len ) {
+            GenPolynomial<C> a = G.remove(0);
+            if ( ! red.isNormalform( G, a ) ) {
+                if (debug) {
+                    logger.debug("reducible polynomial " + a);
+                }
+                return false;
+            }
+            G.add( a ); // re-adds as last
+            i++;
+        }
+        return true;
     }
 
 
@@ -580,7 +634,7 @@ public abstract class GroebnerBaseAbstract<C extends RingElem<C>>
             throw new IllegalArgumentException("G may not be null or empty");
         }
         List<Long> ud = univariateDegrees(G);
-        if (ud == null || ud.size() <= i) {
+        if (ud.size() <= i) {
             //logger.info("univ pol, ud = " + ud);
             throw new IllegalArgumentException("ideal(G) not zero dimensional " + ud);
         }
@@ -603,7 +657,6 @@ public abstract class GroebnerBaseAbstract<C extends RingElem<C>>
         String var = pfac.getVars()[pfac.nvar - 1 - i];
         GenPolynomialRing<C> ufac = new GenPolynomialRing<C>(cfac, 1, new TermOrder(TermOrder.INVLEX),
                                                              new String[] { var });
-        GenPolynomial<C> pol = ufac.getZERO();
 
         GenPolynomialRing<C> cpfac = new GenPolynomialRing<C>(cfac, ll, new TermOrder(TermOrder.INVLEX));
         GenPolynomialRing<GenPolynomial<C>> rfac = new GenPolynomialRing<GenPolynomial<C>>(cpfac, pfac);
@@ -655,7 +708,7 @@ public abstract class GroebnerBaseAbstract<C extends RingElem<C>>
             }
         } while (z != 0); // && ll <= 5 && !XP.isZERO()
         // construct result polynomial
-        pol = ufac.univariate(0, ll);
+        GenPolynomial<C> pol = ufac.univariate(0, ll);
         for (GenPolynomial<C> pc : ls) {
             ExpVector e = pc.leadingExpVector();
             if (e == null) {

@@ -1,5 +1,5 @@
 /*
- * $Id: RingFactoryTokenizer.java 3488 2011-01-13 19:40:36Z kredel $
+ * $Id: RingFactoryTokenizer.java 4107 2012-08-18 10:42:35Z kredel $
  */
 
 package edu.jas.application;
@@ -10,7 +10,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StreamTokenizer;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
@@ -24,31 +26,24 @@ import edu.jas.arith.BigQuaternion;
 import edu.jas.arith.BigRational;
 import edu.jas.arith.ModInteger;
 import edu.jas.arith.ModIntegerRing;
-import edu.jas.arith.ModLong;
 import edu.jas.arith.ModLongRing;
-import edu.jas.structure.Power;
-import edu.jas.structure.RingElem;
+import edu.jas.poly.AlgebraicNumberRing;
+import edu.jas.poly.ExpVector;
+import edu.jas.poly.GenPolynomial;
+import edu.jas.poly.GenPolynomialRing;
+import edu.jas.poly.GenPolynomialTokenizer;
+import edu.jas.poly.GenSolvablePolynomial;
+import edu.jas.poly.GenSolvablePolynomialRing;
+import edu.jas.poly.RelationTable;
+import edu.jas.poly.TermOrder;
 import edu.jas.structure.RingFactory;
 import edu.jas.ufd.Quotient;
 import edu.jas.ufd.QuotientRing;
-import edu.jas.poly.GenPolynomial;
-import edu.jas.poly.GenPolynomialRing;
-import edu.jas.poly.GenSolvablePolynomial;
-import edu.jas.poly.GenSolvablePolynomialRing;
-import edu.jas.poly.ModuleList;
-import edu.jas.poly.OrderedModuleList;
-import edu.jas.poly.TermOrder;
-import edu.jas.poly.ExpVector;
-import edu.jas.poly.PolynomialList;
-import edu.jas.poly.RelationTable;
-import edu.jas.poly.AlgebraicNumberRing;
-import edu.jas.poly.AlgebraicNumber;
-import edu.jas.poly.GenPolynomialTokenizer;
 
 
 /**
- * RingFactory Tokenizer. Used to read ring factories from input streams.
- * It can read also QuotientRing factory.
+ * RingFactory Tokenizer. Used to read ring factories from input streams. It can
+ * read also QuotientRing factory.
  * @author Heinz Kredel
  */
 
@@ -109,7 +104,7 @@ public class RingFactoryTokenizer {
      * No-args constructor reads from System.in.
      */
     public RingFactoryTokenizer() {
-        this(new BufferedReader(new InputStreamReader(System.in)));
+        this(new BufferedReader(new InputStreamReader(System.in,Charset.forName("UTF8"))));
     }
 
 
@@ -419,11 +414,11 @@ public class RingFactoryTokenizer {
                     if (digit(tok.sval.charAt(0))) {
                         BigInteger mo = new BigInteger(tok.sval);
                         BigInteger lm = new BigInteger(Long.MAX_VALUE);
-                        if ( mo.compareTo(lm) < 0 ) {
+                        if (mo.compareTo(lm) < 0) {
                             coeff = new ModLongRing(mo.getVal());
-			} else {
+                        } else {
                             coeff = new ModIntegerRing(mo.getVal());
-			}
+                        }
                         System.out.println("coeff = " + coeff + " :: " + coeff.getClass());
                         ct = coeffType.ModInt;
                     } else {
@@ -508,7 +503,7 @@ public class RingFactoryTokenizer {
                     if (debug) {
                         logger.debug("pfac = " + pfac);
                     }
-                    GenPolynomialTokenizer ptok = new GenPolynomialTokenizer(pfac,reader);
+                    GenPolynomialTokenizer ptok = new GenPolynomialTokenizer(pfac, reader);
                     GenPolynomial mod = ptok.nextPolynomial();
                     ptok = null;
                     if (debug) {
@@ -576,7 +571,7 @@ public class RingFactoryTokenizer {
                     first = tok.sval.charAt(0);
                     if (digit(first)) {
                         e = Long.parseLong(tok.sval);
-                        l.add(new Long(e));
+                        l.add(Long.valueOf(e));
                         //System.out.println("w: " + e);
                     }
                 }
@@ -600,7 +595,7 @@ public class RingFactoryTokenizer {
      */
     public long[][] nextWeightArray() throws IOException {
         List<long[]> l = new ArrayList<long[]>();
-        long[][] w = null;
+        long[][] w;
         long[] e;
         char first;
         int tt;
@@ -653,7 +648,9 @@ public class RingFactoryTokenizer {
         int tt;
         tt = tok.nextToken();
         if (tt == '|') {
-            logger.debug("split index");
+            if (debug) {
+                logger.debug("split index");
+            }
             tt = tok.nextToken();
             if (tt == StreamTokenizer.TT_EOF) {
                 return e;
@@ -669,7 +666,9 @@ public class RingFactoryTokenizer {
                 }
             }
         } else if (tt == '[') {
-            logger.debug("split index");
+            if (debug) {
+                logger.debug("split index");
+            }
             tt = tok.nextToken();
             if (tt == StreamTokenizer.TT_EOF) {
                 return e;
@@ -684,7 +683,7 @@ public class RingFactoryTokenizer {
                 if (tt == ',') {
                     tt = tok.nextToken();
                     if (tt == StreamTokenizer.TT_EOF) {
-                        return e;
+                        return e0; // ??
                     }
                     if (tok.sval != null) {
                         first = tok.sval.charAt(0);
@@ -745,9 +744,8 @@ public class RingFactoryTokenizer {
         int s = nextSplitIndex();
         if (s <= 0) {
             return new TermOrder(evord);
-        } else {
-            return new TermOrder(evord, evord, vars.length, s);
         }
+        return new TermOrder(evord, evord, vars.length, s);
     }
 
 
@@ -768,9 +766,12 @@ public class RingFactoryTokenizer {
         GenSolvablePolynomial sp;
         int tt;
         tt = tok.nextToken();
+        if (debug) {
+            logger.debug("start relation table: " + tt);
+        }
         if (tok.sval != null) {
             if (tok.sval.equalsIgnoreCase("RelationTable")) {
-                GenPolynomialTokenizer ptok = new GenPolynomialTokenizer(pfac,reader);
+                GenPolynomialTokenizer ptok = new GenPolynomialTokenizer(pfac, reader);
                 rels = ptok.nextPolynomialList();
                 ptok = null;
             }
@@ -816,11 +817,7 @@ public class RingFactoryTokenizer {
         logger.info("coeff = " + coeff);
 
         vars = nextVariableList();
-        String dd = "vars =";
-        for (int i = 0; i < vars.length; i++) {
-            dd += " " + vars[i];
-        }
-        logger.info(dd);
+        logger.info("vars = " + Arrays.toString(vars));
         if (vars != null) {
             nvars = vars.length;
         }
@@ -850,11 +847,7 @@ public class RingFactoryTokenizer {
         logger.info("coeff = " + coeff);
 
         vars = nextVariableList();
-        String dd = "vars =";
-        for (int i = 0; i < vars.length; i++) {
-            dd += " " + vars[i];
-        }
-        logger.info(dd);
+        logger.info("vars = " + Arrays.toString(vars));
         if (vars != null) {
             nvars = vars.length;
         }
@@ -873,7 +866,7 @@ public class RingFactoryTokenizer {
             logger.info("table = " + table + ", tok = " + tok);
         }
         // now spfac is initialized
-        return spfac; 
+        return spfac;
     }
 
 
@@ -882,18 +875,19 @@ public class RingFactoryTokenizer {
     }
 
 
-    private boolean letter(char x) {
-        return ('a' <= x && x <= 'z') || ('A' <= x && x <= 'Z');
-    }
+    //private boolean letter(char x) {
+    //    return ('a' <= x && x <= 'z') || ('A' <= x && x <= 'Z');
+    //}
 
 
     // unused
     public void nextComma() throws IOException {
         int tt;
         if (tok.ttype == ',') {
-            if (debug)
-                logger.debug("comma: ");
             tt = tok.nextToken();
+            if (debug) {
+                logger.debug("after comma: " + tt);
+            }
         }
     }
 

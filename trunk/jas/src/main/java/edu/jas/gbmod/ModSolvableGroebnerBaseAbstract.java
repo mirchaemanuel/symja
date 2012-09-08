@@ -1,5 +1,5 @@
 /*
- * $Id: ModSolvableGroebnerBaseAbstract.java 3973 2012-07-01 11:26:02Z kredel $
+ * $Id: ModSolvableGroebnerBaseAbstract.java 4104 2012-08-18 10:00:59Z kredel $
  */
 
 package edu.jas.gbmod;
@@ -97,6 +97,7 @@ public class ModSolvableGroebnerBaseAbstract<C extends RingElem<C>>
      * @param M a module basis.
      * @return leftGB(M) a left Groebner base for M.
      */
+    @SuppressWarnings("unchecked")
     public ModuleList<C> 
            leftGB(ModuleList<C> M) {  
         ModuleList<C> N = M;
@@ -171,6 +172,7 @@ public class ModSolvableGroebnerBaseAbstract<C extends RingElem<C>>
      * @param M a module basis.
      * @return tsGB(M) a twosided Groebner base for M.
      */
+    @SuppressWarnings("unchecked")
     public ModuleList<C> 
            twosidedGB(ModuleList<C> M) {  
         ModuleList<C> N = M;
@@ -245,6 +247,7 @@ public class ModSolvableGroebnerBaseAbstract<C extends RingElem<C>>
      * @param M a module basis.
      * @return rightGB(M) a right Groebner base for M.
      */
+    @SuppressWarnings("unchecked")
     public ModuleList<C> 
            rightGB(ModuleList<C> M) {  
         ModuleList<C> N = M;

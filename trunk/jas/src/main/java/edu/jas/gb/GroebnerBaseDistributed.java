@@ -1,5 +1,5 @@
 /*
- * $Id: GroebnerBaseDistributed.java 3990 2012-07-14 12:46:08Z kredel $
+ * $Id: GroebnerBaseDistributed.java 4116 2012-08-19 13:26:25Z kredel $
  */
 
 package edu.jas.gb;
@@ -8,30 +8,28 @@ package edu.jas.gb;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.Collections;
 import java.util.concurrent.Semaphore;
 
 import org.apache.log4j.Logger;
 
 import edu.jas.poly.ExpVector;
 import edu.jas.poly.GenPolynomial;
-
 import edu.jas.structure.RingElem;
-
+import edu.jas.util.ChannelFactory;
 import edu.jas.util.DistHashTable;
 import edu.jas.util.DistHashTableServer;
+import edu.jas.util.SocketChannel;
 import edu.jas.util.Terminator;
 import edu.jas.util.ThreadPool;
-import edu.jas.util.ChannelFactory;
-import edu.jas.util.SocketChannel;
 
 
 /**
  * Groebner Base distributed algorithm. Implements a distributed memory parallel
- * version of Groebner bases. Using pairlist class,
- * distributed tasks do reduction, one communication channel per task.
+ * version of Groebner bases. Using pairlist class, distributed tasks do
+ * reduction, one communication channel per task.
  * @param <C> coefficient type
  * @author Heinz Kredel
  */
@@ -107,8 +105,9 @@ public class GroebnerBaseDistributed<C extends RingElem<C>> extends GroebnerBase
      * @param port server port to use.
      */
     public GroebnerBaseDistributed(int threads, ThreadPool pool, int port) {
-        this(threads,pool,new OrderedPairlist<C>(),port);
+        this(threads, pool, new OrderedPairlist<C>(), port);
     }
+
 
     /**
      * Constructor.
@@ -117,8 +116,9 @@ public class GroebnerBaseDistributed<C extends RingElem<C>> extends GroebnerBase
      * @param port server port to use.
      */
     public GroebnerBaseDistributed(int threads, PairList<C> pl, int port) {
-        this(threads, new ThreadPool(threads), pl , port);
+        this(threads, new ThreadPool(threads), pl, port);
     }
+
 
     /**
      * Constructor.
@@ -128,7 +128,7 @@ public class GroebnerBaseDistributed<C extends RingElem<C>> extends GroebnerBase
      * @param port server port to use.
      */
     public GroebnerBaseDistributed(int threads, ThreadPool pool, PairList<C> pl, int port) {
-        super( new ReductionPar<C>(), pl );
+        super(new ReductionPar<C>(), pl);
         if (threads < 1) {
             threads = 1;
         }
@@ -141,6 +141,7 @@ public class GroebnerBaseDistributed<C extends RingElem<C>> extends GroebnerBase
     /**
      * Cleanup and terminate ThreadPool.
      */
+    @Override
     public void terminate() {
         if (pool == null) {
             return;
@@ -150,7 +151,7 @@ public class GroebnerBaseDistributed<C extends RingElem<C>> extends GroebnerBase
 
 
     /**
-     * Distributed Groebner base. 
+     * Distributed Groebner base.
      * @param modv number of module variables.
      * @param F polynomial list.
      * @return GB(F) a Groebner base of F or null, if a IOException occurs.
@@ -186,8 +187,8 @@ public class GroebnerBaseDistributed<C extends RingElem<C>> extends GroebnerBase
                 }
                 if (pairlist == null) {
                     //pairlist = new OrderedPairlist<C>(modv, p.ring);
-                    pairlist = strategy.create( modv, p.ring );
-                    if ( ! p.ring.coFac.isField() ) {
+                    pairlist = strategy.create(modv, p.ring);
+                    if (!p.ring.coFac.isField()) {
                         throw new IllegalArgumentException("coefficients not from a field");
                     }
                 }
@@ -201,9 +202,9 @@ public class GroebnerBaseDistributed<C extends RingElem<C>> extends GroebnerBase
                 l--;
             }
         }
-        if (l <= 1) {
+        //if (l <= 1) {
             //return G; must signal termination to others
-        }
+        //}
 
         logger.debug("looking for clients");
         //long t = System.currentTimeMillis();
@@ -211,12 +212,12 @@ public class GroebnerBaseDistributed<C extends RingElem<C>> extends GroebnerBase
         //while ( dls.size() < threads ) { sleep(); }
 
         DistHashTable<Integer, GenPolynomial<C>> theList = new DistHashTable<Integer, GenPolynomial<C>>(
-                "localhost", DL_PORT);
+                        "localhost", DL_PORT);
         theList.init();
         List<GenPolynomial<C>> al = pairlist.getList();
         for (int i = 0; i < al.size(); i++) {
             // no wait required
-            GenPolynomial<C> nn = theList.put(new Integer(i), al.get(i));
+            GenPolynomial<C> nn = theList.put(Integer.valueOf(i), al.get(i));
             if (nn != null) {
                 logger.info("double polynomials " + i + ", nn = " + nn + ", al(i) = " + al.get(i));
             }
@@ -257,7 +258,7 @@ public class GroebnerBaseDistributed<C extends RingElem<C>> extends GroebnerBase
         theList.terminate();
         logger.info("dls.terminate()");
         dls.terminate();
-        logger.info("" + pairlist); 
+        logger.info("" + pairlist);
         return G;
     }
 
@@ -275,7 +276,7 @@ public class GroebnerBaseDistributed<C extends RingElem<C>> extends GroebnerBase
 
         final int DL_PORT = port + 100;
         DistHashTable<Integer, GenPolynomial<C>> theList = new DistHashTable<Integer, GenPolynomial<C>>(host,
-                DL_PORT);
+                        DL_PORT);
         theList.init();
 
         ReducerClient<C> R = new ReducerClient<C>(pairChannel, theList);
@@ -352,7 +353,7 @@ public class GroebnerBaseDistributed<C extends RingElem<C>> extends GroebnerBase
         while (G.size() > 0) {
             a = G.remove(0);
             // System.out.println("doing " + a.length());
-            List<GenPolynomial<C>> R = new ArrayList<GenPolynomial<C>>(G.size()+F.size());
+            List<GenPolynomial<C>> R = new ArrayList<GenPolynomial<C>>(G.size() + F.size());
             R.addAll(G);
             R.addAll(F);
             mirs[i] = new MiReducerServer<C>(R, a);
@@ -400,7 +401,7 @@ class ReducerServer<C extends RingElem<C>> implements Runnable {
 
 
     ReducerServer(Terminator fin, ChannelFactory cf, DistHashTable<Integer, GenPolynomial<C>> dl,
-            List<GenPolynomial<C>> G, PairList<C> L) {
+                    List<GenPolynomial<C>> G, PairList<C> L) {
         pool = fin;
         this.cf = cf;
         theList = dl;
@@ -542,19 +543,18 @@ class ReducerServer<C extends RingElem<C>> implements Runnable {
                         if (H.isONE()) {
                             // pool.allIdle();
                             polIndex = pairlist.putOne();
-                            GenPolynomial<C> nn = theList.put(new Integer(polIndex), H);
+                            GenPolynomial<C> nn = theList.put(Integer.valueOf(polIndex), H);
                             if (nn != null) {
                                 logger.info("double polynomials nn = " + nn + ", H = " + H);
                             }
                             goon = false;
                             break;
-                        } else {
-                            polIndex = pairlist.put(H);
-                            // use putWait ? but still not all distributed
-                            GenPolynomial<C> nn = theList.put(new Integer(polIndex), H);
-                            if (nn != null) {
-                                logger.info("double polynomials nn = " + nn + ", H = " + H);
-                            }
+                        }
+                        polIndex = pairlist.put(H);
+                        // use putWait ? but still not all distributed
+                        GenPolynomial<C> nn = theList.put(Integer.valueOf(polIndex), H);
+                        if (nn != null) {
+                            logger.info("double polynomials nn = " + nn + ", H = " + H);
                         }
                     }
                 }
@@ -703,8 +703,8 @@ class GBTransportMessPairIndex extends GBTransportMess {
         if (p == null) {
             throw new NullPointerException("pair may not be null");
         }
-        this.i = new Integer(p.i);
-        this.j = new Integer(p.j);
+        this.i = Integer.valueOf(p.i);
+        this.j = Integer.valueOf(p.j);
     }
 
 
@@ -714,8 +714,8 @@ class GBTransportMessPairIndex extends GBTransportMess {
      * @param j second index.
      */
     public GBTransportMessPairIndex(int i, int j) {
-        this.i = new Integer(i);
-        this.j = new Integer(j);
+        this.i = Integer.valueOf(i);
+        this.j = Integer.valueOf(j);
     }
 
 

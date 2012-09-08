@@ -1,5 +1,5 @@
 /*
- * $Id: ExecutableServer.java 3320 2010-09-12 11:01:57Z kredel $
+ * $Id: ExecutableServer.java 4109 2012-08-19 12:01:24Z kredel $
  */
 
 package edu.jas.util;
@@ -96,7 +96,7 @@ public class ExecutableServer extends Thread {
      * main method to start serving thread.
      * @param args args[0] is port
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         BasicConfigurator.configure();
 
         int port = DEFAULT_PORT;
@@ -108,8 +108,10 @@ public class ExecutableServer extends Thread {
             } catch (NumberFormatException e) {
             }
         }
-        logger.info("ExecutableServer at port " + port);
-        (new ExecutableServer(port)).run();
+        //logger.info("ExecutableServer at port " + port);
+        ExecutableServer es = new ExecutableServer(port);
+        es.init();
+        es.join(); // do not use terminate()
         // until CRTL-C
     }
 
@@ -119,7 +121,7 @@ public class ExecutableServer extends Thread {
      */
     public void init() {
         this.start();
-        logger.info("ExecutableServer at " + cf);
+        //logger.info("ExecutableServer at " + cf);
     }
 
 
@@ -127,6 +129,9 @@ public class ExecutableServer extends Thread {
      * number of servers.
      */
     public int size() {
+        if ( servers == null ) {
+            return -1;
+        }
         return servers.size();
     }
 
@@ -269,7 +274,8 @@ class Executor extends Thread /*implements Runnable*/{
                             goon = false; // stop this thread
                             channel.send(ExecutableServer.DONE);
                         } else {
-                            goon = false; // stop this thread
+                            logger.warn("invalid/unknown String: " + d + " from " + channel);
+                            goon = false; // stop this thread ?
                             channel.send(ExecutableServer.DONE);
                         }
                     }

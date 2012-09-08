@@ -1,10 +1,11 @@
 /*
- * $Id: Coefficients.java 3336 2010-09-27 20:14:44Z kredel $
+ * $Id: Coefficients.java 4043 2012-07-25 16:46:06Z kredel $
  */
 
 package edu.jas.ps;
 
 
+import java.io.Serializable;
 import java.util.HashMap;
 
 import edu.jas.structure.RingElem;
@@ -17,7 +18,7 @@ import edu.jas.structure.RingElem;
  * @author Heinz Kredel
  */
 
-public abstract class Coefficients<C extends RingElem<C>> {
+public abstract class Coefficients<C extends RingElem<C>> implements Serializable {
 
 
     /**

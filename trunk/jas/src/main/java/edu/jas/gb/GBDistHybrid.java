@@ -1,5 +1,5 @@
 /*
- * $Id: GBDistHybrid.java 3391 2010-12-05 13:18:42Z kredel $
+ * $Id: GBDistHybrid.java 4040 2012-07-25 14:36:03Z kredel $
  */
 
 package edu.jas.gb;
@@ -87,8 +87,8 @@ public class GBDistHybrid<C extends RingElem<C>> {
             this.mfile = mfile;
         }
         this.port = port;
-        bbd = new GroebnerBaseDistributedHybrid<C>(threads, threadsPerNode, pl, port);
-        dtp = new DistThreadPool(threads, mfile);
+        bbd = new GroebnerBaseDistributedHybrid<C>(threads, threadsPerNode, pl, this.port);
+        dtp = new DistThreadPool(threads, this.mfile); // findbugs
     }
 
 

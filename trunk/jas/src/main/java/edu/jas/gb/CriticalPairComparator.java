@@ -1,5 +1,5 @@
 /*
- * $Id: CriticalPairComparator.java 3420 2010-12-19 21:34:25Z kredel $
+ * $Id: CriticalPairComparator.java 4052 2012-07-25 19:20:25Z kredel $
  */
 
 package edu.jas.gb;
@@ -24,7 +24,7 @@ public class CriticalPairComparator<C extends RingElem<C> >
 
 
     public final TermOrder tord;
-    protected final Comparator<ExpVector> ec;
+    protected final TermOrder.EVComparator ec;
 
 
     /**

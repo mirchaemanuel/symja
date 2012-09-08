@@ -1,5 +1,5 @@
 /*
- * $Id: CriticalPairList.java 3420 2010-12-19 21:34:25Z kredel $
+ * $Id: CriticalPairList.java 4049 2012-07-25 17:10:49Z kredel $
  */
 
 package edu.jas.gb;
@@ -163,7 +163,7 @@ public class CriticalPairList<C extends RingElem<C>> extends OrderedPairlist<C> 
         CriticalPair<C> pair = null;
         Iterator< CriticalPair<C> > ip = pairlist.iterator();
         boolean c = false;
-        while ( !c & ip.hasNext() )  {
+        while ( !c && ip.hasNext() )  { // findbugs
            pair = ip.next();
            if ( pair.getInReduction() ) {
                continue;
@@ -235,6 +235,9 @@ public class CriticalPairList<C extends RingElem<C>> extends OrderedPairlist<C> 
            recordCount++;
         }
         int c = update();
+        if (c < 0) { // use for findbugs 
+            System.out.println("c < 0");
+        }
         if ( ! p.isZERO() && ! p.isONE() ) {
            return recordCount;
         } 

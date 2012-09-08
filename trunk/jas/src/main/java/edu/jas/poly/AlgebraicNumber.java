@@ -1,5 +1,5 @@
 /*
- * $Id: AlgebraicNumber.java 3882 2012-02-05 17:53:12Z kredel $
+ * $Id: AlgebraicNumber.java 4148 2012-08-31 19:49:27Z kredel $
  */
 
 package edu.jas.poly;
@@ -91,7 +91,7 @@ public class AlgebraicNumber<C extends RingElem<C>> implements GcdRingElem<Algeb
      * @see java.lang.Object#clone()
      */
     @Override
-    public AlgebraicNumber<C> clone() {
+    public AlgebraicNumber<C> copy() {
         return new AlgebraicNumber<C>(ring, val);
     }
 
@@ -344,7 +344,7 @@ public class AlgebraicNumber<C extends RingElem<C>> implements GcdRingElem<Algeb
      */
     public AlgebraicNumber<C> remainder(AlgebraicNumber<C> S) {
         if (S == null || S.isZERO()) {
-            throw new ArithmeticException(this.getClass().getName() + " division by zero");
+            throw new ArithmeticException("division by zero");
         }
         if (S.isONE()) {
             return ring.getZERO();

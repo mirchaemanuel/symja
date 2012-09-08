@@ -1,5 +1,5 @@
 /*
- * $Id: PolynomialList.java 3814 2011-10-29 11:56:29Z kredel $
+ * $Id: PolynomialList.java 4125 2012-08-19 19:05:22Z kredel $
  */
 
 package edu.jas.poly;
@@ -29,7 +29,7 @@ import edu.jas.poly.GenSolvablePolynomialRing;
  */
 
 public class PolynomialList<C extends RingElem<C> > 
-    implements Comparable<PolynomialList<C>>, Serializable, Cloneable {
+    implements Comparable<PolynomialList<C>>, Serializable {
 
 
     /** The factory for the solvable polynomial ring. 
@@ -69,11 +69,10 @@ public class PolynomialList<C extends RingElem<C> >
 
 
     /**
-     * Clone this.
+     * Copy this.
      * @return a copy of this.
      */
-    @Override
-    public PolynomialList<C> clone() {
+    public PolynomialList<C> copy() {
         return new PolynomialList<C>(ring,new ArrayList<GenPolynomial<C>>(list));
     }
 
@@ -259,12 +258,12 @@ public class PolynomialList<C extends RingElem<C> >
 
         for ( GenPolynomial<C> p: list ) {
             if ( p != null ) {
-                Map<ExpVector,GenPolynomial<C>> r = null;
-                r = p.contract( pfac );
+                Map<ExpVector,GenPolynomial<C>> r = p.contract( pfac );
                 //System.out.println("r = " + r ); 
                 List<GenPolynomial<C>> row 
                     = (ArrayList<GenPolynomial<C>>)zr.clone();
-                for ( ExpVector e: r.keySet() ) {
+                for ( Map.Entry<ExpVector,GenPolynomial<C>> me : r.entrySet() ) {
+                    ExpVector e = me.getKey();
                     int[] dov = e.dependencyOnVariables();
                     int ix = 0;
                     if ( dov.length > 1 ) {
@@ -274,7 +273,7 @@ public class PolynomialList<C extends RingElem<C> >
                     }
                     //ix = i-1 - ix; // revert
                     //System.out.println("ix = " + ix ); 
-                    GenPolynomial<C> vi = r.get( e );
+                    GenPolynomial<C> vi = me.getValue(); //r.get( e );
                     row.set(ix,vi);
                 }
                 //System.out.println("row = " + row ); 

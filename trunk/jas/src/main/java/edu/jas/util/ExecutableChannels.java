@@ -1,5 +1,5 @@
 /*
- * $Id: ExecutableChannels.java 3337 2010-09-27 21:05:17Z kredel $
+ * $Id: ExecutableChannels.java 4078 2012-07-28 12:40:12Z kredel $
  */
 
 package edu.jas.util;
@@ -7,8 +7,10 @@ package edu.jas.util;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -90,7 +92,8 @@ public class ExecutableChannels {
         if (mfile == null || mfile.length() == 0) {
             mfile = DEFAULT_MFILE;
         }
-        BufferedReader in = new BufferedReader(new FileReader(mfile));
+        InputStreamReader isr = new InputStreamReader(new FileInputStream(mfile),Charset.forName("UTF8"));
+        BufferedReader in = new BufferedReader(isr);
         String line = null;
         List<String> list = new ArrayList<String>();
         int x;

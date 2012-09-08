@@ -1,5 +1,5 @@
 /*
- * $Id: GBDistSP.java 3295 2010-08-26 17:01:10Z kredel $
+ * $Id: GBDistSP.java 4059 2012-07-27 11:16:42Z kredel $
  */
 
 package edu.jas.gb;
@@ -66,30 +66,9 @@ public class GBDistSP<C extends RingElem<C>> {
             this.mfile = mfile;
         }
         this.port = port;
-        bbd = new GroebnerBaseSeqPairDistributed<C>(threads, port);
-        dtp = new DistThreadPool(threads, mfile);
+        bbd = new GroebnerBaseSeqPairDistributed<C>(threads, this.port);
+        dtp = new DistThreadPool(threads, this.mfile);
     }
-
-
-    /**
-     * Execute a distributed GB example. Distribute clients and start master.
-     * Obsolete version.
-     * @param F list of polynomials
-     * @return GB(F) a Groebner base for F. public List<GenPolynomial<C>>
-     *         executeOld(List<GenPolynomial<C>> F) { final int numc = threads;
-     *         List<GenPolynomial<C>> G = null; ExecutableChannels ec = null;
-     *         try { ec = new ExecutableChannels( mfile ); } catch
-     *         (FileNotFoundException e) { e.printStackTrace(); return G; } try
-     *         { ec.open(numc); } catch (IOException e) { e.printStackTrace();
-     *         return G; } GBClient<C> gbc = new GBClient<C>(
-     *         ec.getMasterHost(), ec.getMasterPort() ); try { for ( int i = 0;
-     *         i < numc; i++ ) { ec.send( i, gbc ); } } catch (IOException e) {
-     *         e.printStackTrace(); return G; } G = bbd.GB( F ); try { for ( int
-     *         i = 0; i < numc; i++ ) { Object o = ec.receive( i ); } } catch
-     *         (IOException e) { e.printStackTrace(); return G; } catch
-     *         (ClassNotFoundException e) { e.printStackTrace(); return G; }
-     *         ec.close(); bbd.terminate(); return G; }
-     */
 
 
     /**

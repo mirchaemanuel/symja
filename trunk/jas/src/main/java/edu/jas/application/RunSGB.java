@@ -1,5 +1,5 @@
 /*
- * $Id: RunSGB.java 3441 2010-12-25 15:07:40Z kredel $
+ * $Id: RunSGB.java 4078 2012-07-28 12:40:12Z kredel $
  */
 
 package edu.jas.application;
@@ -9,7 +9,11 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.StringReader;
 import java.io.IOException;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 import java.io.Reader;
+import java.io.BufferedReader;
+import java.nio.charset.Charset;
 import java.util.List;
 
 import org.apache.log4j.BasicConfigurator;
@@ -109,7 +113,8 @@ public class RunSGB {
 
         Reader problem = null;
         try {
-            problem = new FileReader(filename);
+            problem = new InputStreamReader(new FileInputStream(filename),Charset.forName("UTF8"));
+            problem = new BufferedReader(problem);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             System.out.println(usage);

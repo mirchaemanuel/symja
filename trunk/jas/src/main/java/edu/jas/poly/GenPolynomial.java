@@ -1,5 +1,5 @@
 /*
- * $Id: GenPolynomial.java 4005 2012-07-15 18:37:10Z kredel $
+ * $Id: GenPolynomial.java 4148 2012-08-31 19:49:27Z kredel $
  */
 
 package edu.jas.poly;
@@ -140,12 +140,10 @@ Iterable<Monomial<C>> {
 
 
     /**
-     * Clone this GenPolynomial.
-     * @see java.lang.Object#clone()
+     * Copy this GenPolynomial.
+     * @return copy of this.
      */
-    @Override
-    public GenPolynomial<C> clone() {
-        //return ring.copy(this);
+    public GenPolynomial<C> copy() {
         return new GenPolynomial<C>(ring, this.val);
     }
 
@@ -178,10 +176,10 @@ Iterable<Monomial<C>> {
      * @param e exponent.
      */
     public void doPutToMap(ExpVector e, C c) {
-        if (false && debug) {
+        if (debug) {
             C a = val.get(e);
             if (a != null) {
-                logger.info("map entry exists " + e + " to " + a + " new " + c);
+                logger.error("map entry exists " + e + " to " + a + " new " + c);
             }
         }
         if (!c.isZERO()) {
@@ -200,10 +198,10 @@ Iterable<Monomial<C>> {
     public void doPutToMap(SortedMap<ExpVector, C> vals) {
         for (Map.Entry<ExpVector, C> me : vals.entrySet()) {
             ExpVector e = me.getKey();
-            if (false && debug) {
+            if (debug) {
                 C a = val.get(e);
                 if (a != null) {
-                    logger.info("map entry exists " + e + " to " + a + " new " + me.getValue());
+                    logger.error("map entry exists " + e + " to " + a + " new " + me.getValue());
                 }
             }
             C c = me.getValue();
@@ -343,11 +341,11 @@ Iterable<Monomial<C>> {
             v = GenPolynomialRing.newVars("x", ring.nvar);
         }
         boolean parenthesis = false;
-        if (ring.coFac instanceof GenPolynomialRing || ring.coFac instanceof AlgebraicNumberRing
-        // || ring.coFac instanceof RealAlgebraicRing
-        ) {
+        //if (ring.coFac instanceof GenPolynomialRing || ring.coFac instanceof AlgebraicNumberRing
+        //    || ring.coFac instanceof RealAlgebraicRing
+        //) {
             // inactive: parenthesis = true;
-        }
+        //}
         boolean first = true;
         for (Map.Entry<ExpVector, C> m : val.entrySet()) {
             C c = m.getValue();
@@ -465,11 +463,11 @@ Iterable<Monomial<C>> {
             return true;
         }
         long deg = -1;
-        for ( ExpVector e : val.keySet() ) {
+        for (ExpVector e : val.keySet()) {
             if (deg < 0) {
-                deg = e.totalDeg(); 
+                deg = e.totalDeg();
             } else if (deg != e.totalDeg()) {
-                return false; 
+                return false;
             }
         }
         return true;
@@ -522,21 +520,23 @@ Iterable<Monomial<C>> {
         }
         SortedMap<ExpVector, C> av = this.val;
         SortedMap<ExpVector, C> bv = b.val;
-        Iterator<ExpVector> ai = av.keySet().iterator();
-        Iterator<ExpVector> bi = bv.keySet().iterator();
+        Iterator<Map.Entry<ExpVector, C>> ai = av.entrySet().iterator();
+        Iterator<Map.Entry<ExpVector, C>> bi = bv.entrySet().iterator();
         int s = 0;
         int c = 0;
         while (ai.hasNext() && bi.hasNext()) {
-            ExpVector ae = ai.next();
-            ExpVector be = bi.next();
+            Map.Entry<ExpVector, C> aie = ai.next();
+            Map.Entry<ExpVector, C> bie = bi.next();
+            ExpVector ae = aie.getKey();
+            ExpVector be = bie.getKey();
             s = ae.compareTo(be);
             //System.out.println("s = " + s + ", " + ae + ", " +be);
             if (s != 0) {
                 return s;
             }
             if (c == 0) {
-                C ac = av.get(ae);
-                C bc = bv.get(be);
+                C ac = aie.getValue(); //av.get(ae);
+                C bc = bie.getValue(); //bv.get(be);
                 c = ac.compareTo(bc);
             }
         }
@@ -674,7 +674,7 @@ Iterable<Monomial<C>> {
             return 0; // 0 or -1 ?;
         }
         int j;
-        if ( i >= 0 ) {
+        if (i >= 0) {
             j = ring.nvar - 1 - i;
         } else { // python like -1 means main variable
             j = ring.nvar + i;
@@ -791,12 +791,13 @@ Iterable<Monomial<C>> {
             return S;
         }
         assert (ring.nvar == S.ring.nvar);
-        GenPolynomial<C> n = this.clone(); //new GenPolynomial<C>(ring, val); 
+        GenPolynomial<C> n = this.copy(); //new GenPolynomial<C>(ring, val); 
         SortedMap<ExpVector, C> nv = n.val;
         SortedMap<ExpVector, C> sv = S.val;
-        for (ExpVector e : sv.keySet()) {
+        for (Map.Entry<ExpVector, C> me : sv.entrySet()) {
+            ExpVector e = me.getKey();
+            C y = me.getValue(); //sv.get(e); // assert y != null
             C x = nv.get(e);
-            C y = sv.get(e); // assert y != null
             if (x != null) {
                 x = x.sum(y);
                 if (!x.isZERO()) {
@@ -826,7 +827,7 @@ Iterable<Monomial<C>> {
         if (a.isZERO()) {
             return this;
         }
-        GenPolynomial<C> n = this.clone(); //new GenPolynomial<C>(ring, val); 
+        GenPolynomial<C> n = this.copy(); //new GenPolynomial<C>(ring, val); 
         SortedMap<ExpVector, C> nv = n.val;
         //if ( nv.size() == 0 ) { nv.put(e,a); return n; }
         C x = nv.get(e);
@@ -871,12 +872,13 @@ Iterable<Monomial<C>> {
             return S.negate();
         }
         assert (ring.nvar == S.ring.nvar);
-        GenPolynomial<C> n = this.clone(); //new GenPolynomial<C>(ring, val); 
+        GenPolynomial<C> n = this.copy(); //new GenPolynomial<C>(ring, val); 
         SortedMap<ExpVector, C> nv = n.val;
         SortedMap<ExpVector, C> sv = S.val;
-        for (ExpVector e : sv.keySet()) {
+        for (Map.Entry<ExpVector, C> me : sv.entrySet()) {
+            ExpVector e = me.getKey();
+            C y = me.getValue(); //sv.get(e); // assert y != null
             C x = nv.get(e);
-            C y = sv.get(e); // assert y != null
             if (x != null) {
                 x = x.subtract(y);
                 if (!x.isZERO()) {
@@ -906,7 +908,7 @@ Iterable<Monomial<C>> {
         if (a.isZERO()) {
             return this;
         }
-        GenPolynomial<C> n = this.clone(); //new GenPolynomial<C>(ring, val); 
+        GenPolynomial<C> n = this.copy(); //new GenPolynomial<C>(ring, val); 
         SortedMap<ExpVector, C> nv = n.val;
         C x = nv.get(e);
         if (x != null) {
@@ -939,7 +941,7 @@ Iterable<Monomial<C>> {
      * @return -this.
      */
     public GenPolynomial<C> negate() {
-        GenPolynomial<C> n = ring.getZERO().clone();
+        GenPolynomial<C> n = ring.getZERO().copy();
         //new GenPolynomial<C>(ring, ring.getZERO().val);
         SortedMap<ExpVector, C> v = n.val;
         for (Map.Entry<ExpVector, C> m : val.entrySet()) {
@@ -986,7 +988,7 @@ Iterable<Monomial<C>> {
             GenSolvablePolynomial<C> Sp = (GenSolvablePolynomial<C>) S;
             return T.multiply(Sp);
         }
-        GenPolynomial<C> p = ring.getZERO().clone();
+        GenPolynomial<C> p = ring.getZERO().copy();
         SortedMap<ExpVector, C> pv = p.val;
         for (Map.Entry<ExpVector, C> m1 : val.entrySet()) {
             C c1 = m1.getValue();
@@ -1030,7 +1032,7 @@ Iterable<Monomial<C>> {
         if (this.isZERO()) {
             return this;
         }
-        GenPolynomial<C> p = ring.getZERO().clone();
+        GenPolynomial<C> p = ring.getZERO().copy();
         SortedMap<ExpVector, C> pv = p.val;
         for (Map.Entry<ExpVector, C> m1 : val.entrySet()) {
             C c1 = m1.getValue();
@@ -1086,7 +1088,7 @@ Iterable<Monomial<C>> {
             GenSolvablePolynomial<C> T = (GenSolvablePolynomial<C>) this;
             return T.multiply(s, e);
         }
-        GenPolynomial<C> p = ring.getZERO().clone();
+        GenPolynomial<C> p = ring.getZERO().copy();
         SortedMap<ExpVector, C> pv = p.val;
         for (Map.Entry<ExpVector, C> m1 : val.entrySet()) {
             C c1 = m1.getValue();
@@ -1117,7 +1119,7 @@ Iterable<Monomial<C>> {
             GenSolvablePolynomial<C> T = (GenSolvablePolynomial<C>) this;
             return T.multiply(e);
         }
-        GenPolynomial<C> p = ring.getZERO().clone();
+        GenPolynomial<C> p = ring.getZERO().copy();
         SortedMap<ExpVector, C> pv = p.val;
         for (Map.Entry<ExpVector, C> m1 : val.entrySet()) {
             C c1 = m1.getValue();
@@ -1150,30 +1152,28 @@ Iterable<Monomial<C>> {
      */
     public GenPolynomial<C> divide(C s) {
         if (s == null || s.isZERO()) {
-            throw new ArithmeticException(this.getClass().getName() + " division by zero");
+            throw new ArithmeticException("division by zero");
         }
         if (this.isZERO()) {
             return this;
         }
         //C t = s.inverse();
         //return multiply(t);
-        GenPolynomial<C> p = ring.getZERO().clone();
+        GenPolynomial<C> p = ring.getZERO().copy();
         SortedMap<ExpVector, C> pv = p.val;
         for (Map.Entry<ExpVector, C> m : val.entrySet()) {
             ExpVector e = m.getKey();
             C c1 = m.getValue();
             C c = c1.divide(s);
-            if (false) {
+            if (debug) {
                 C x = c1.remainder(s);
                 if (!x.isZERO()) {
-                    System.out.println("divide x = " + x);
-                    throw new ArithmeticException(this.getClass().getName() + " no exact division: " + c1
-                                    + "/" + s);
+                    logger.info("divide x = " + x);
+                    throw new ArithmeticException("no exact division: " + c1 + "/" + s);
                 }
             }
             if (c.isZERO()) {
-                throw new ArithmeticException(this.getClass().getName() + " no exact division: " + c1 + "/"
-                                + s + ", in " + this);
+                throw new ArithmeticException("no exact division: " + c1 + "/" + s + ", in " + this);
             }
             pv.put(e, c); // or m1.setValue( c )
         }
@@ -1194,18 +1194,18 @@ Iterable<Monomial<C>> {
     @SuppressWarnings("unchecked")
     public GenPolynomial<C>[] quotientRemainder(GenPolynomial<C> S) {
         if (S == null || S.isZERO()) {
-            throw new ArithmeticException(this.getClass().getName() + " division by zero");
+            throw new ArithmeticException("division by zero");
         }
         C c = S.leadingBaseCoefficient();
         if (!c.isUnit()) {
-            throw new ArithmeticException(this.getClass().getName() + " lbcf not invertible " + c);
+            throw new ArithmeticException("lbcf not invertible " + c);
         }
         C ci = c.inverse();
         assert (ring.nvar == S.ring.nvar);
         ExpVector e = S.leadingExpVector();
         GenPolynomial<C> h;
-        GenPolynomial<C> q = ring.getZERO().clone();
-        GenPolynomial<C> r = this.clone();
+        GenPolynomial<C> q = ring.getZERO().copy();
+        GenPolynomial<C> r = this.copy();
         while (!r.isZERO()) {
             ExpVector f = r.leadingExpVector();
             if (f.multipleOf(e)) {
@@ -1268,17 +1268,17 @@ Iterable<Monomial<C>> {
      */
     public GenPolynomial<C> remainder(GenPolynomial<C> S) {
         if (S == null || S.isZERO()) {
-            throw new ArithmeticException(this.getClass().getName() + " division by zero");
+            throw new ArithmeticException("division by zero");
         }
         C c = S.leadingBaseCoefficient();
         if (!c.isUnit()) {
-            throw new ArithmeticException(this.getClass().getName() + " lbc not invertible " + c);
+            throw new ArithmeticException("lbc not invertible " + c);
         }
         C ci = c.inverse();
         assert (ring.nvar == S.ring.nvar);
         ExpVector e = S.leadingExpVector();
         GenPolynomial<C> h;
-        GenPolynomial<C> r = this.clone();
+        GenPolynomial<C> r = this.copy();
         while (!r.isZERO()) {
             ExpVector f = r.leadingExpVector();
             if (f.multipleOf(e)) {
@@ -1310,8 +1310,7 @@ Iterable<Monomial<C>> {
             return S;
         }
         if (ring.nvar != 1) {
-            throw new IllegalArgumentException(this.getClass().getName() + " not univariate polynomials"
-                            + ring);
+            throw new IllegalArgumentException("not univariate polynomials" + ring);
         }
         GenPolynomial<C> x;
         GenPolynomial<C> q = this;
@@ -1367,10 +1366,10 @@ Iterable<Monomial<C>> {
         GenPolynomial<C>[] qr;
         GenPolynomial<C> q = this;
         GenPolynomial<C> r = S;
-        GenPolynomial<C> c1 = ring.getONE().clone();
-        GenPolynomial<C> d1 = ring.getZERO().clone();
-        GenPolynomial<C> c2 = ring.getZERO().clone();
-        GenPolynomial<C> d2 = ring.getONE().clone();
+        GenPolynomial<C> c1 = ring.getONE().copy();
+        GenPolynomial<C> d1 = ring.getZERO().copy();
+        GenPolynomial<C> c2 = ring.getZERO().copy();
+        GenPolynomial<C> d2 = ring.getONE().copy();
         GenPolynomial<C> x1;
         GenPolynomial<C> x2;
         while (!r.isZERO()) {
@@ -1428,10 +1427,9 @@ Iterable<Monomial<C>> {
         GenPolynomial<C>[] qr;
         GenPolynomial<C> q = this;
         GenPolynomial<C> r = S;
-        GenPolynomial<C> c1 = ring.getONE().clone();
-        GenPolynomial<C> d1 = ring.getZERO().clone();
+        GenPolynomial<C> c1 = ring.getONE().copy();
+        GenPolynomial<C> d1 = ring.getZERO().copy();
         GenPolynomial<C> x1;
-        GenPolynomial<C> x2;
         while (!r.isZERO()) {
             qr = q.quotientRemainder(r);
             q = qr[0];
@@ -1503,7 +1501,7 @@ Iterable<Monomial<C>> {
         if (ring.equals(pfac)) { // nothing to do
             return this;
         }
-        GenPolynomial<C> Cp = pfac.getZERO().clone();
+        GenPolynomial<C> Cp = pfac.getZERO().copy();
         if (this.isZERO()) {
             return Cp;
         }
@@ -1532,7 +1530,7 @@ Iterable<Monomial<C>> {
         if (ring.equals(pfac)) { // nothing to do
             return this;
         }
-        GenPolynomial<C> Cp = pfac.getZERO().clone();
+        GenPolynomial<C> Cp = pfac.getZERO().copy();
         if (this.isZERO()) {
             return Cp;
         }
@@ -1620,7 +1618,7 @@ Iterable<Monomial<C>> {
             return pfac.getONE();
         }
         int j = pfac.nvar - 1 - i;
-        GenPolynomial<C> Cp = pfac.getZERO().clone();
+        GenPolynomial<C> Cp = pfac.getZERO().copy();
         if (this.isZERO()) {
             return Cp;
         }
@@ -1638,7 +1636,7 @@ Iterable<Monomial<C>> {
 
 
     /**
-     * Make homogeneous. 
+     * Make homogeneous.
      * @param pfac extended polynomial ring factory (by 1 variable).
      * @return homogeneous polynomial.
      */
@@ -1646,12 +1644,12 @@ Iterable<Monomial<C>> {
         if (ring.equals(pfac)) { // not implemented
             throw new UnsupportedOperationException("case with same ring not implemented");
         }
-        GenPolynomial<C> Cp = pfac.getZERO().clone();
+        GenPolynomial<C> Cp = pfac.getZERO().copy();
         if (this.isZERO()) {
             return Cp;
         }
         long deg = totalDegree();
-        int i = pfac.nvar - ring.nvar;
+        //int i = pfac.nvar - ring.nvar;
         Map<ExpVector, C> C = Cp.val; //getMap();
         Map<ExpVector, C> A = val;
         for (Map.Entry<ExpVector, C> y : A.entrySet()) {
@@ -1666,7 +1664,7 @@ Iterable<Monomial<C>> {
 
 
     /**
-     * Dehomogenize. 
+     * Dehomogenize.
      * @param pfac contracted polynomial ring factory (by 1 variable).
      * @return in homogeneous polynomial.
      */
@@ -1674,7 +1672,7 @@ Iterable<Monomial<C>> {
         if (ring.equals(pfac)) { // not implemented
             throw new UnsupportedOperationException("case with same ring not implemented");
         }
-        GenPolynomial<C> Cp = pfac.getZERO().clone();
+        GenPolynomial<C> Cp = pfac.getZERO().copy();
         if (this.isZERO()) {
             return Cp;
         }
@@ -1683,18 +1681,19 @@ Iterable<Monomial<C>> {
         for (Map.Entry<ExpVector, C> y : A.entrySet()) {
             ExpVector e = y.getKey();
             C a = y.getValue();
-            ExpVector f = e.contract(1,pfac.nvar);
+            ExpVector f = e.contract(1, pfac.nvar);
             C.put(f, a);
         }
         return Cp;
     }
+
 
     /**
      * Reverse variables. Used e.g. in opposite rings.
      * @return polynomial with reversed variables.
      */
     public GenPolynomial<C> reverse(GenPolynomialRing<C> oring) {
-        GenPolynomial<C> Cp = oring.getZERO().clone();
+        GenPolynomial<C> Cp = oring.getZERO().copy();
         if (this.isZERO()) {
             return Cp;
         }
@@ -1753,7 +1752,7 @@ Iterable<Monomial<C>> {
      * @return new polynomial with coefficients f(this(e)).
      */
     public GenPolynomial<C> map(final UnaryFunctor<? super C, C> f) {
-        GenPolynomial<C> n = ring.getZERO().clone();
+        GenPolynomial<C> n = ring.getZERO().copy();
         SortedMap<ExpVector, C> nv = n.val;
         for (Monomial<C> m : this) {
             //logger.info("m = " + m);

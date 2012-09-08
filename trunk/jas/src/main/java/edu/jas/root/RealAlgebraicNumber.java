@@ -1,5 +1,5 @@
 /*
- * $Id: RealAlgebraicNumber.java 3979 2012-07-09 21:13:53Z kredel $
+ * $Id: RealAlgebraicNumber.java 4125 2012-08-19 19:05:22Z kredel $
  */
 
 package edu.jas.root;
@@ -88,7 +88,7 @@ implements GcdRingElem<RealAlgebraicNumber<C>>, Rational {
      * @see java.lang.Object#clone()
      */
     @Override
-    public RealAlgebraicNumber<C> clone() {
+    public RealAlgebraicNumber<C> copy() {
         return new RealAlgebraicNumber<C>(ring, number);
     }
 
@@ -141,9 +141,8 @@ implements GcdRingElem<RealAlgebraicNumber<C>>, Rational {
     public String toString() {
         if (PrettyPrint.isTrue()) {
             return "{ " + number.toString() + " }";
-        } else {
-            return "Real" + number.toString();
         }
+        return "Real" + number.toString();
     }
 
 
@@ -247,9 +246,8 @@ implements GcdRingElem<RealAlgebraicNumber<C>>, Rational {
     public RealAlgebraicNumber<C> abs() {
         if (this.signum() < 0) {
             return new RealAlgebraicNumber<C>(ring, number.negate());
-        } else {
-            return this;
         }
+        return this;
     }
 
 
@@ -321,18 +319,16 @@ implements GcdRingElem<RealAlgebraicNumber<C>>, Rational {
      */
     public BigRational magnitude() {
         Interval<C> v = ring.engine.invariantMagnitudeInterval(ring.root, ring.algebraic.modul, number.val,
-							       ring.getEps());
+                        ring.getEps());
         //System.out.println("old v = " + ring.root + ", new v = " + v);
         ring.setRoot(v);
         C ev = ring.engine.realIntervalMagnitude(v, ring.algebraic.modul, number.val); //, ring.eps);
-        if ((Object) ev instanceof Rational) { // always true by type parameter
-            BigRational er = ev.getRational();
-            return er;
-        } else {
-            throw new RuntimeException("Rational expected, but was " + ev.getClass());
-        }
+        //if ((Object) ev instanceof Rational) { // always true by type parameter
+        BigRational er = ev.getRational();
+        return er;
+        //}
+        //throw new RuntimeException("Rational expected, but was " + ev.getClass());
     }
-
 
 
     /**

@@ -1,13 +1,13 @@
 /*
- * $Id: RGroebnerBaseSeq.java 3626 2011-05-08 09:51:57Z kredel $
+ * $Id: RGroebnerBaseSeq.java 4116 2012-08-19 13:26:25Z kredel $
  */
 
 package edu.jas.gbufd;
 
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Collections;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 
@@ -25,8 +25,7 @@ import edu.jas.structure.RegularRingElem;
  * @author Heinz Kredel
  */
 
-public class RGroebnerBaseSeq<C extends RegularRingElem<C>> extends
-        GroebnerBaseAbstract<C> {
+public class RGroebnerBaseSeq<C extends RegularRingElem<C>> extends GroebnerBaseAbstract<C> {
 
 
     private static final Logger logger = Logger.getLogger(RGroebnerBaseSeq.class);
@@ -38,7 +37,7 @@ public class RGroebnerBaseSeq<C extends RegularRingElem<C>> extends
     /**
      * Reduction engine.
      */
-    protected RReduction<C> red; // shadow super.red 
+    protected RReduction<C> rred; // shadow super.red ??
 
 
     /**
@@ -51,12 +50,12 @@ public class RGroebnerBaseSeq<C extends RegularRingElem<C>> extends
 
     /**
      * Constructor.
-     * @param red R-Reduction engine
+     * @param rred R-Reduction engine
      */
-    public RGroebnerBaseSeq(RReduction<C> red) {
-        super(red);
-        this.red = red;
-        assert super.red == this.red;
+    public RGroebnerBaseSeq(RReduction<C> rred) {
+        super(rred);
+        this.rred = rred;
+        assert super.red == this.rred;
     }
 
 
@@ -71,13 +70,13 @@ public class RGroebnerBaseSeq<C extends RegularRingElem<C>> extends
         if (F == null) {
             return true;
         }
-        if (!red.isBooleanClosed(F)) {
-            if (true || debug) {
-                System.out.println("not boolean closed");
+        if (!rred.isBooleanClosed(F)) {
+            if (debug) {
+                logger.debug("not boolean closed");
             }
             return false;
         }
-        GenPolynomial<C> pi, pj, s, h;
+        GenPolynomial<C> pi, pj, s;
         for (int i = 0; i < F.size(); i++) {
             pi = F.get(i);
             for (int j = i + 1; j < F.size(); j++) {
@@ -93,11 +92,10 @@ public class RGroebnerBaseSeq<C extends RegularRingElem<C>> extends
                 s = red.normalform(F, s);
                 if (!s.isZERO()) {
                     if (debug) {
-                        System.out.println("p" + i + " = " + pi);
-                        System.out.println("p" + j + " = " + pj);
-                        System.out.println("s-pol = " + red.SPolynomial(pi, pj));
-                        System.out.println("s-pol(" + i + "," + j + ") != 0: " + s);
-                        //System.out.println("red = " + red.getClass().getName());
+                        logger.debug("p" + i + " = " + pi);
+                        logger.debug("p" + j + " = " + pj);
+                        logger.debug("s-pol = " + red.SPolynomial(pi, pj));
+                        logger.debug("s-pol(" + i + "," + j + ") != 0: " + s);
                     }
                     return false;
                 }
@@ -115,7 +113,7 @@ public class RGroebnerBaseSeq<C extends RegularRingElem<C>> extends
      */
     public List<GenPolynomial<C>> GB(int modv, List<GenPolynomial<C>> F) {
         /* boolean closure */
-        List<GenPolynomial<C>> bcF = red.reducedBooleanClosure(F);
+        List<GenPolynomial<C>> bcF = rred.reducedBooleanClosure(F);
         logger.info("#bcF-#F = " + (bcF.size() - F.size()));
         F = bcF;
         /* normalize input */
@@ -198,7 +196,7 @@ public class RGroebnerBaseSeq<C extends RegularRingElem<C>> extends
             if (!H.isZERO()) {
                 logger.info("Sred = " + H);
                 //len = G.size();
-                bcH = red.reducedBooleanClosure(G, H);
+                bcH = rred.reducedBooleanClosure(G, H);
                 logger.info("#bcH = " + bcH.size());
                 for (GenPolynomial<C> h : bcH) {
                     h = h.monic(); // monic() ok, since boolean closed
@@ -215,7 +213,7 @@ public class RGroebnerBaseSeq<C extends RegularRingElem<C>> extends
         logger.debug("#sequential list = " + G.size());
         G = minimalGB(G);
         //G = red.irreducibleSet(G);
-        logger.info("" + pairlist); 
+        logger.info("" + pairlist);
         return G;
     }
 
@@ -238,9 +236,9 @@ public class RGroebnerBaseSeq<C extends RegularRingElem<C>> extends
                 G.add(a);
             }
         }
-        if (G.size() <= 1) {
+        //if (G.size() <= 1) {
             //wg monic do not return G;
-        }
+        //}
         // remove top reducible polynomials
         GenPolynomial<C> a, b;
         List<GenPolynomial<C>> F;
@@ -251,14 +249,14 @@ public class RGroebnerBaseSeq<C extends RegularRingElem<C>> extends
             b = a;
             if (red.isTopReducible(G, a) || red.isTopReducible(F, a)) {
                 // drop polynomial 
-                if (true || debug) {
+                if (logger.isInfoEnabled()) {
                     List<GenPolynomial<C>> ff;
                     ff = new ArrayList<GenPolynomial<C>>(G);
                     ff.addAll(F);
                     a = red.normalform(ff, a);
                     if (!a.isZERO()) { // happens
                         logger.info("minGB not zero " + a);
-                        bcH = red.reducedBooleanClosure(G, a);
+                        bcH = rred.reducedBooleanClosure(G, a);
                         if (bcH.size() > 1) { // never happend so far
                             System.out.println("minGB not bc: bcH size = " + bcH.size());
                             F.add(b); // do not replace, stay with b
@@ -275,9 +273,9 @@ public class RGroebnerBaseSeq<C extends RegularRingElem<C>> extends
             }
         }
         G = F;
-        if (G.size() <= 1) {
+        //if (G.size() <= 1) {
             // wg monic return G;
-        }
+        //}
         Collections.reverse(G); // important for lex GB
         // reduce remaining polynomials
         int len = G.size();
@@ -287,7 +285,7 @@ public class RGroebnerBaseSeq<C extends RegularRingElem<C>> extends
             b = a;
             //System.out.println("doing " + a.length());
             a = red.normalform(G, a);
-            bcH = red.reducedBooleanClosure(G, a);
+            bcH = rred.reducedBooleanClosure(G, a);
             if (bcH.size() > 1) {
                 System.out.println("minGB not bc: bcH size = " + bcH.size());
                 G.add(b); // do not reduce

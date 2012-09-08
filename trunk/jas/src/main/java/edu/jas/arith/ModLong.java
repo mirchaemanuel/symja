@@ -1,5 +1,5 @@
 /*
- * $Id: ModLong.java 3501 2011-01-23 19:33:54Z kredel $
+ * $Id: ModLong.java 4148 2012-08-31 19:49:27Z kredel $
  */
 
 package edu.jas.arith;
@@ -27,7 +27,7 @@ public final class ModLong implements GcdRingElem<ModLong>, Modular {
     /**
      * Value part of the element data structure.
      */
-    protected final long val;
+    public final long val;
 
 
     /**
@@ -154,7 +154,7 @@ public final class ModLong implements GcdRingElem<ModLong>, Modular {
      * @see java.lang.Object#clone()
      */
     @Override
-    public ModLong clone() {
+    public ModLong copy() {
         return new ModLong(ring, val);
     }
 
@@ -345,9 +345,10 @@ public final class ModLong implements GcdRingElem<ModLong>, Modular {
         try {
             return new ModLong(ring, modInverse(val, ring.modul));
         } catch (ArithmeticException e) {
-            long g = gcd( val, ring.modul );
+            long g = gcd(val, ring.modul);
             long f = ring.modul / g;
-            throw new ModularNotInvertibleException(e,new BigInteger(ring.modul),new BigInteger(g),new BigInteger(f));
+            throw new ModularNotInvertibleException(e, new BigInteger(ring.modul), new BigInteger(g),
+                            new BigInteger(f));
         }
     }
 
@@ -359,7 +360,7 @@ public final class ModLong implements GcdRingElem<ModLong>, Modular {
      */
     public ModLong remainder(ModLong S) {
         if (S == null || S.isZERO()) {
-            throw new ArithmeticException(this.getClass().getName() + " division by zero");
+            throw new ArithmeticException("division by zero");
         }
         if (S.isONE()) {
             return ring.getZERO();
@@ -436,7 +437,7 @@ public final class ModLong implements GcdRingElem<ModLong>, Modular {
                 //ret[2] = S.inverse().multiply(half);
                 // (1-1*this)/S
                 ret[1] = ring.getONE();
-                ModLong x =  ret[0].subtract(ret[1].multiply(this)); 
+                ModLong x = ret[0].subtract(ret[1].multiply(this));
                 ret[2] = x.divide(S);
                 return ret;
             }
@@ -562,8 +563,8 @@ public final class ModLong implements GcdRingElem<ModLong>, Modular {
         long[] hegcd = hegcd(T, m);
         long a = hegcd[0];
         if (!(a == 1L || a == -1L)) { // gcd != 1
-            throw new ModularNotInvertibleException("element not invertible, gcd != 1",
-                                                    new BigInteger(m),new BigInteger(a),new BigInteger(m/a));
+            throw new ModularNotInvertibleException("element not invertible, gcd != 1", new BigInteger(m),
+                            new BigInteger(a), new BigInteger(m / a));
         }
         long b = hegcd[1];
         if (b == 0L) { // when m divides this, e.g. m.isUnit()

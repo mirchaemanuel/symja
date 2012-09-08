@@ -1,5 +1,5 @@
 /*
- * $Id: AlgebraElem.java 1708 2008-02-24 17:28:36Z kredel $
+ * $Id: AlgebraElem.java 4056 2012-07-26 17:44:13Z kredel $
  */
 
 package edu.jas.structure;
@@ -11,9 +11,8 @@ package edu.jas.structure;
  * @param <C> scalar type
  * @author Heinz Kredel
  */
-public interface AlgebraElem<A extends AlgebraElem<A,C>,
-                             C extends RingElem<C>> 
-                 extends RingElem< A > {
+public interface AlgebraElem<A extends AlgebraElem<A, C>, C extends RingElem<C>> extends RingElem<A> {
+
 
     /**
      * Scalar multiplication. Multiply this by a scalar.

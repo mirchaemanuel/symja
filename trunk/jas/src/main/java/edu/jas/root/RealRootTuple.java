@@ -1,5 +1,5 @@
 /*
- * $Id: RealRootTuple.java 3993 2012-07-14 21:39:15Z kredel $
+ * $Id: RealRootTuple.java 4125 2012-08-19 19:05:22Z kredel $
  */
 
 package edu.jas.root;
@@ -23,7 +23,7 @@ import edu.jas.structure.RingFactory;
  * @param <C> coefficient type.
  * @author Heinz Kredel
  */
-public class RealRootTuple<C extends GcdRingElem<C> & Rational> implements Serializable, Cloneable {
+public class RealRootTuple<C extends GcdRingElem<C> & Rational> implements Serializable {
 
 
     /**
@@ -124,11 +124,10 @@ public class RealRootTuple<C extends GcdRingElem<C> & Rational> implements Seria
 
 
     /**
-     * Clone this.
-     * @see java.lang.Object#clone()
+     * Copy this.
+     * @return a copy of this.
      */
-    @Override
-    public RealRootTuple<C> clone() {
+    public RealRootTuple<C> copy() {
         return new RealRootTuple<C>(new ArrayList<RealAlgebraicNumber<C>>(tuple));
     }
 

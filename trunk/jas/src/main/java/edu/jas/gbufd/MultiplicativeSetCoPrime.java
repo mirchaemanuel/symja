@@ -1,5 +1,5 @@
 /*
- * $Id: MultiplicativeSetCoPrime.java 3988 2012-07-14 12:07:13Z kredel $
+ * $Id: MultiplicativeSetCoPrime.java 4061 2012-07-27 12:03:20Z kredel $
  */
 
 package edu.jas.gbufd;
@@ -29,7 +29,7 @@ public class MultiplicativeSetCoPrime<C extends GcdRingElem<C>> extends Multipli
     private static final Logger logger = Logger.getLogger(MultiplicativeSetCoPrime.class);
 
 
-    private final boolean debug = logger.isDebugEnabled();
+    //private final boolean debug = logger.isDebugEnabled();
 
 
     /**
@@ -55,7 +55,7 @@ public class MultiplicativeSetCoPrime<C extends GcdRingElem<C>> extends Multipli
      * @param eng gcd computation engine.
      */
     protected MultiplicativeSetCoPrime(GenPolynomialRing<C> ring, List<GenPolynomial<C>> ms,
-            GreatestCommonDivisorAbstract<C> eng) {
+                    GreatestCommonDivisorAbstract<C> eng) {
         super(ring, ms);
         engine = eng;
     }

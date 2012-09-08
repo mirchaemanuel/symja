@@ -1,5 +1,5 @@
 /*
- * $Id: MultiVarPowerSeriesRing.java 3992 2012-07-14 21:32:18Z kredel $
+ * $Id: MultiVarPowerSeriesRing.java 4125 2012-08-19 19:05:22Z kredel $
  */
 
 package edu.jas.ps;
@@ -156,7 +156,7 @@ public class MultiVarPowerSeriesRing<C extends RingElem<C>> implements RingFacto
         this.coFac = cofac;
         this.nvar = nv;
         this.truncate = truncate;
-        this.vars = names;
+        vars = names;
         if (vars == null) {
             if (PrettyPrint.isTrue()) {
                 vars = GenPolynomialRing.newVars("x", nvar);
@@ -219,29 +219,23 @@ public class MultiVarPowerSeriesRing<C extends RingElem<C>> implements RingFacto
 
     /**
      * Get a String representation of the variable names.
-     * @return names seperated by commas.
+     * @return names separated by commas.
      */
     public String varsToString() {
-        String s = "";
         if (vars == null) {
-            return s + "#" + nvar;
+            return "#" + nvar;
         }
-        for (int i = 0; i < vars.length; i++) {
-            if (i != 0) {
-                s += ", ";
-            }
-            s += vars[i];
-        }
-        return s;
+        return ExpVector.varsToString(vars);
+        //return Arrays.toString(vars);
     }
 
 
     /**
-     * Get a variable names.
+     * Get the variable names.
      * @return names.
      */
     public String[] getVars() {
-        return vars;
+        return vars; // Java-5: Arrays.copyOf(vars,vars.length);
     }
 
 
@@ -280,6 +274,9 @@ public class MultiVarPowerSeriesRing<C extends RingElem<C>> implements RingFacto
         if (a == null) {
             return false;
         }
+        if (!coFac.equals(a.coFac)) {
+            return false;
+        }
         if (Arrays.equals(vars, a.vars)) {
             return true;
         }
@@ -293,8 +290,9 @@ public class MultiVarPowerSeriesRing<C extends RingElem<C>> implements RingFacto
      */
     @Override
     public int hashCode() {
-        int h = 0;
-        h = (Arrays.hashCode(vars) << 23);
+        int h = coFac.hashCode();
+        h = h << 7;
+        h += (Arrays.hashCode(vars) << 17);
         h += truncate;
         return h;
     }
@@ -566,7 +564,7 @@ public class MultiVarPowerSeriesRing<C extends RingElem<C>> implements RingFacto
             mt = Math.max(mt, (int) t);
             GenPolynomial<C> p = cache.get(t);
             if (p == null) {
-                p = pfac.getZERO().clone();
+                p = pfac.getZERO().copy();
                 cache.put(t, p);
             }
             p.doPutToMap(e, m.coefficient());
@@ -579,7 +577,7 @@ public class MultiVarPowerSeriesRing<C extends RingElem<C>> implements RingFacto
         for (int i = 0; i <= truncate(); i++) {
             check.set(i);
             if (cache.get((long) i) == null) {
-                GenPolynomial<C> p = pfac.getZERO().clone();
+                GenPolynomial<C> p = pfac.getZERO().copy();
                 cache.put((long) i, p);
                 //System.out.println("p zero for deg i = " + i);
             }
@@ -605,13 +603,13 @@ public class MultiVarPowerSeriesRing<C extends RingElem<C>> implements RingFacto
      */
     public List<MultiVarPowerSeries<C>> fromPolynomial(List<GenPolynomial<C>> A) {
         return ListUtil.<GenPolynomial<C>, MultiVarPowerSeries<C>> map(A,
-                new UnaryFunctor<GenPolynomial<C>, MultiVarPowerSeries<C>>() {
+                        new UnaryFunctor<GenPolynomial<C>, MultiVarPowerSeries<C>>() {
 
 
-                    public MultiVarPowerSeries<C> eval(GenPolynomial<C> c) {
-                        return fromPolynomial(c);
-                    }
-                });
+                            public MultiVarPowerSeries<C> eval(GenPolynomial<C> c) {
+                                return fromPolynomial(c);
+                            }
+                        });
     }
 
 
@@ -774,8 +772,8 @@ public class MultiVarPowerSeriesRing<C extends RingElem<C>> implements RingFacto
                     return c;
                 }
                 TaylorFunction<C> pder = der.deriviative(i);
-                if ( pder.isZERO() ) {
-                     return coFac.getZERO();
+                if (pder.isZERO()) {
+                    return coFac.getZERO();
                 }
                 c = pder.evaluate(v);
                 if (c.isZERO()) {

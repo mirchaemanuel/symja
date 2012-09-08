@@ -1,19 +1,17 @@
 /*
- * $Id: AbelianGroupElem.java 1708 2008-02-24 17:28:36Z kredel $
+ * $Id: AbelianGroupElem.java 4056 2012-07-26 17:44:13Z kredel $
  */
 
 package edu.jas.structure;
 
 
 /**
- * Abelian group element interface.
- * Defines the additive methods.
+ * Abelian group element interface. Defines the additive methods.
  * @param <C> element type
  * @author Heinz Kredel
  */
 
-public interface AbelianGroupElem<C extends AbelianGroupElem<C>> 
-         extends Element<C> {
+public interface AbelianGroupElem<C extends AbelianGroupElem<C>> extends Element<C> {
 
 
     /**
@@ -36,6 +34,8 @@ public interface AbelianGroupElem<C extends AbelianGroupElem<C>>
      * @return this + S.
      */
     public C sum(C S);
+
+
     //public <T extends C> T sum(T S);
 
 

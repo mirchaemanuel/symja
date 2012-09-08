@@ -1,5 +1,5 @@
 /*
- * $Id: GroebnerBasePartial.java 3423 2010-12-24 10:56:50Z kredel $
+ * $Id: GroebnerBasePartial.java 4116 2012-08-19 13:26:25Z kredel $
  */
 
 package edu.jas.gbufd;
@@ -38,7 +38,7 @@ public class GroebnerBasePartial<C extends GcdRingElem<C>> extends GroebnerBaseA
     private static final Logger logger = Logger.getLogger(GroebnerBasePartial.class);
 
 
-    private final boolean debug = logger.isDebugEnabled();
+    //private final boolean debug = logger.isDebugEnabled();
 
 
     /**
@@ -79,9 +79,9 @@ public class GroebnerBasePartial<C extends GcdRingElem<C>> extends GroebnerBaseA
         super();
         this.bb = bb;
         this.rbb = rbb;
-        if (rbb == null) {
+        //if (rbb == null) {
             //logger.warn("no recursive GB given");
-        }
+        //}
     }
 
 
@@ -227,10 +227,10 @@ public class GroebnerBasePartial<C extends GcdRingElem<C>> extends GroebnerBaseA
         if (rvars.length + pvars.length == vars.length) {
             //System.out.println("pvariables  = " + pvariables);
             return getPermutation(vars, rvars);
-        } else if (true) {
-            logger.info("not implemented for " + variables + " != " + pvariables + " cup " + rvariables);
-            throw new UnsupportedOperationException("not implemented");
         }
+        logger.info("not implemented for " + variables + " != " + pvariables + " cup " + rvariables);
+        throw new UnsupportedOperationException("not implemented");
+        /*
         if (!variables.containsAll(pvariables) || !variables.containsAll(rvariables)) {
             throw new IllegalArgumentException("partial variables not contained in all variables ");
         }
@@ -292,6 +292,7 @@ public class GroebnerBasePartial<C extends GcdRingElem<C>> extends GroebnerBaseA
         perm.addAll(pv);
         System.out.println("perm, 2 = " + perm);
         return perm;
+        */
     }
 
 
@@ -308,7 +309,7 @@ public class GroebnerBasePartial<C extends GcdRingElem<C>> extends GroebnerBaseA
      *         \ {evars,pvars}}.
      */
     public static List<Integer> partialPermutation(String[] vars, String[] evars, String[] pvars,
-            String[] rvars) {
+                    String[] rvars) {
         if (vars == null || evars == null || pvars == null) {
             throw new IllegalArgumentException("not all variable names given");
         }
@@ -403,7 +404,7 @@ public class GroebnerBasePartial<C extends GcdRingElem<C>> extends GroebnerBaseA
         GenPolynomialRing<C> cfac = new GenPolynomialRing<C>(fac.coFac, cl, fac.tord, rvars);
         //System.out.println("cfac = " + cfac);
         GenPolynomialRing<GenPolynomial<C>> rfac = new GenPolynomialRing<GenPolynomial<C>>(cfac, pl,
-                fac.tord, pvars);
+                        fac.tord, pvars);
         if (logger.isInfoEnabled()) {
             logger.info("rfac = " + rfac);
         }
@@ -419,7 +420,7 @@ public class GroebnerBasePartial<C extends GcdRingElem<C>> extends GroebnerBaseA
         //System.out.println("\nGr = " + Gr);
         //perm = perm.subList(0,pl);
         OptimizedPolynomialList<GenPolynomial<C>> pgb = new OptimizedPolynomialList<GenPolynomial<C>>(perm,
-                rfac, Gr);
+                        rfac, Gr);
         return pgb;
     }
 
@@ -440,7 +441,7 @@ public class GroebnerBasePartial<C extends GcdRingElem<C>> extends GroebnerBaseA
         GenPolynomialRing<C> fac = F.get(0).ring;
         String[] vars = fac.getVars();
         // compute permutation (in reverse sorting)
-        String[] xvars = remainingVars(vars, pvars);
+        //String[] xvars = remainingVars(vars, pvars);
         //System.out.println("xvars = " + Arrays.toString(xvars));
 
         List<Integer> perm = partialPermutation(vars, pvars);
@@ -468,7 +469,7 @@ public class GroebnerBasePartial<C extends GcdRingElem<C>> extends GroebnerBaseA
         //System.out.println("cfac = " + cfac);
 
         GenPolynomialRing<GenPolynomial<C>> rfac = new GenPolynomialRing<GenPolynomial<C>>(cfac, pl,
-                fac.tord, pvars);
+                        fac.tord, pvars);
         if (logger.isInfoEnabled()) {
             logger.info("rfac = " + rfac);
         }
@@ -542,9 +543,8 @@ public class GroebnerBasePartial<C extends GcdRingElem<C>> extends GroebnerBaseA
                 logger.info("pgb = " + pgb);
             }
             return pgb;
-        } else {
-            logger.info("not meaningful for elimination " + cl);
         }
+        logger.warn("not meaningful for elimination " + cl);
         // recursive case
         int pl = pvars.length + pvars.length;
         String[] rvars = remainingVars(vars, evars);
@@ -563,11 +563,10 @@ public class GroebnerBasePartial<C extends GcdRingElem<C>> extends GroebnerBaseA
         TermOrder to = pfac.tord;
         int ev = to.getEvord();
         TermOrder split = new TermOrder(ev, ev, pl, evars.length);
-
-        GenPolynomialRing<C> sfac = new GenPolynomialRing<C>(pfac.coFac, pfac.nvar, split, pfac.getVars());
+        //GenPolynomialRing<C> sfac = new GenPolynomialRing<C>(pfac.coFac, pfac.nvar, split, pfac.getVars());
 
         GenPolynomialRing<GenPolynomial<C>> rfac = new GenPolynomialRing<GenPolynomial<C>>(cfac, pl, split,
-                uvars);
+                        uvars);
         //System.out.println("rfac = " + rfac);
 
         List<GenPolynomial<GenPolynomial<C>>> Fr = PolyUtil.<C> recursive(rfac, ppolys);

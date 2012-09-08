@@ -1,5 +1,5 @@
 /*
- * $Id: SolvableSyzygyAbstract.java 3981 2012-07-12 20:51:22Z kredel $
+ * $Id: SolvableSyzygyAbstract.java 4104 2012-08-18 10:00:59Z kredel $
  */
 
 package edu.jas.gbmod;
@@ -147,6 +147,7 @@ public class SolvableSyzygyAbstract<C extends RingElem<C>> implements SolvableSy
      * @param M a Groebner base.
      * @return leftSyz(M), a basis for the left module of syzygies for M.
      */
+    @SuppressWarnings("unchecked")
     public ModuleList<C> leftZeroRelations(ModuleList<C> M) {
         ModuleList<C> N = null;
         if (M == null || M.list == null) {
@@ -316,8 +317,9 @@ public class SolvableSyzygyAbstract<C extends RingElem<C>> implements SolvableSy
      * @param F a polynomial list of a Groebner basis.
      * @return a resolution of F.
      */
+    @SuppressWarnings("unchecked")
     public List // <SolvResPart<C>|SolvResPolPart<C>> 
-    resolution(PolynomialList<C> F) {
+      resolution(PolynomialList<C> F) {
         List<List<GenSolvablePolynomial<C>>> Z;
         ModuleList<C> Zm;
         List<GenSolvablePolynomial<C>> G;
@@ -364,8 +366,9 @@ public class SolvableSyzygyAbstract<C extends RingElem<C>> implements SolvableSy
      * @param F a polynomial list of an arbitrary basis.
      * @return a resolution of F.
      */
+    @SuppressWarnings("unchecked")
     public List // <SolvResPart<C>|SolvResPolPart<C>> 
-    resolutionArbitrary(PolynomialList<C> F) {
+      resolutionArbitrary(PolynomialList<C> F) {
         List<List<GenSolvablePolynomial<C>>> Z;
         ModuleList<C> Zm;
         //List<GenSolvablePolynomial<C>> G;
@@ -399,7 +402,8 @@ public class SolvableSyzygyAbstract<C extends RingElem<C>> implements SolvableSy
      * @param F a solvable polynomial list.
      * @return syz(F), a basis for the module of left syzygies for F.
      */
-    public List<List<GenSolvablePolynomial<C>>> leftZeroRelationsArbitrary(int modv,
+     @SuppressWarnings("unchecked")
+     public List<List<GenSolvablePolynomial<C>>> leftZeroRelationsArbitrary(int modv,
                     List<GenSolvablePolynomial<C>> F) {
         if (F == null) {
             return null; //leftZeroRelations( modv, F );
@@ -564,6 +568,7 @@ public class SolvableSyzygyAbstract<C extends RingElem<C>> implements SolvableSy
      * @param M an arbitrary base.
      * @return leftSyz(M), a basis for the left module of syzygies for M.
      */
+    @SuppressWarnings("unchecked")
     public ModuleList<C> leftZeroRelationsArbitrary(ModuleList<C> M) {
         ModuleList<C> N = null;
         if (M == null || M.list == null) {
@@ -629,6 +634,7 @@ public class SolvableSyzygyAbstract<C extends RingElem<C>> implements SolvableSy
      * @param F a solvable polynomial list.
      * @return syz(F), a basis for the module of right syzygies for F.
      */
+    @SuppressWarnings("unchecked")
     public List<List<GenSolvablePolynomial<C>>> rightZeroRelationsArbitrary(int modv,
                     List<GenSolvablePolynomial<C>> F) {
         GenSolvablePolynomialRing<C> ring = null;
@@ -654,10 +660,10 @@ public class SolvableSyzygyAbstract<C extends RingElem<C>> implements SolvableSy
                 rF.add(q);
             }
         }
-        if (true || debug) {
+        if (logger.isInfoEnabled()) {
             PolynomialList<C> pl = new PolynomialList<C>(rring, rF);
-            //logger.info("reversed problem = " + pl);
-            System.out.println("reversed problem = " + pl);
+            logger.info("reversed problem = " + pl);
+            //System.out.println("reversed problem = " + pl);
         }
         List<List<GenSolvablePolynomial<C>>> rZ = leftZeroRelationsArbitrary(modv, rF);
         if (debug) {

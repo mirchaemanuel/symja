@@ -1,5 +1,5 @@
 /*
- * $Id: GreatestCommonDivisorPrimitive.java 3836 2011-12-26 21:38:55Z kredel $
+ * $Id: GreatestCommonDivisorPrimitive.java 4026 2012-07-23 16:52:28Z kredel $
  */
 
 package edu.jas.ufd;
@@ -60,6 +60,9 @@ public class GreatestCommonDivisorPrimitive<C extends GcdRingElem<C>> extends
             q = P;
             r = S;
         }
+        if (debug) {
+            logger.debug("degrees: e = " + e + ", f = " + f);
+        }
         r = r.abs();
         q = q.abs();
         C a = baseContent(r);
@@ -115,6 +118,9 @@ public class GreatestCommonDivisorPrimitive<C extends GcdRingElem<C>> extends
         } else {
             q = P;
             r = S;
+        }
+        if (debug) {
+            logger.debug("degrees: e = " + e + ", f = " + f);
         }
         r = r.abs();
         q = q.abs();

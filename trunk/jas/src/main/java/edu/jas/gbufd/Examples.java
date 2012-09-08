@@ -1,5 +1,5 @@
 /*
- * $Id: Examples.java 3432 2010-12-24 14:28:19Z kredel $
+ * $Id: Examples.java 4036 2012-07-25 13:11:28Z kredel $
  */
 
 package edu.jas.gbufd;
@@ -136,8 +136,10 @@ public class Examples {
             F = (PolynomialList<BigRational>) parser.nextPolynomialSet();
         } catch (ClassCastException e) {
             e.printStackTrace();
+            return;
         } catch (IOException e) {
             e.printStackTrace();
+            return;
         }
         System.out.println("F = " + F);
 
@@ -166,8 +168,10 @@ public class Examples {
             F = (PolynomialList<BigRational>) parser.nextPolynomialSet();
         } catch (ClassCastException e) {
             e.printStackTrace();
+            return;
         } catch (IOException e) {
             e.printStackTrace();
+            return;
         }
         System.out.println("F = " + F);
 
@@ -199,8 +203,10 @@ public class Examples {
             F = (PolynomialList<BigRational>) parser.nextPolynomialSet();
         } catch (ClassCastException e) {
             e.printStackTrace();
+            return;
         } catch (IOException e) {
             e.printStackTrace();
+            return;
         }
         System.out.println("F = " + F);
 

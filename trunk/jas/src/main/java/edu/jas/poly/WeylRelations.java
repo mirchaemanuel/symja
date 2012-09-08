@@ -1,5 +1,5 @@
 /*
- * $Id: WeylRelations.java 1894 2008-07-12 13:50:23Z kredel $
+ * $Id: WeylRelations.java 4125 2012-08-19 19:05:22Z kredel $
  */
 
 package edu.jas.poly;
@@ -52,8 +52,8 @@ public class WeylRelations<C extends RingElem<C>> {
         int r = ring.nvar;
         int m =  r / 2;
         //ExpVector z = ring.evzero;
-        GenSolvablePolynomial<C> one  = ring.getONE().clone();
-        GenSolvablePolynomial<C> zero = ring.getZERO().clone();
+        GenSolvablePolynomial<C> one  = ring.getONE().copy();
+        GenSolvablePolynomial<C> zero = ring.getZERO().copy();
         for ( int i = m; i < r; i++ ) {
             ExpVector f = ExpVector.create(r,i,1); 
             int j = i - m;

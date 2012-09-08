@@ -1,5 +1,5 @@
 /*
- * $Id: Integral.java 3295 2010-08-26 17:01:10Z kredel $
+ * $Id: Integral.java 4046 2012-07-25 16:48:54Z kredel $
  */
 
 package edu.jas.integrate;
@@ -155,6 +155,29 @@ public class Integral<C extends GcdRingElem<C>> implements Serializable {
         h = h * 37 + rational.hashCode();
         h = h * 37 + logarithm.hashCode();
         return h;
+    }
+
+
+    /**
+     * Comparison with any other object.
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    @SuppressWarnings("unchecked")
+    public boolean equals(Object B) {
+        Integral<C> b = null;
+        try {
+            b = (Integral<C>) B;
+        } catch (ClassCastException ignored) {
+        }
+        if (b == null) {
+            return false;
+        }
+        return num.equals(b.num) && 
+               den.equals(b.den) && 
+               pol.equals(b.pol) && 
+               rational.equals(b.rational) && 
+               logarithm.equals(b.logarithm);
     }
 
 }

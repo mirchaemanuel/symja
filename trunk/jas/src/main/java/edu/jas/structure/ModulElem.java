@@ -1,5 +1,5 @@
 /*
- * $Id: ModulElem.java 1708 2008-02-24 17:28:36Z kredel $
+ * $Id: ModulElem.java 4056 2012-07-26 17:44:13Z kredel $
  */
 
 package edu.jas.structure;
@@ -9,15 +9,13 @@ import java.util.List;
 
 
 /**
- * Module element interface.
- * Defines scalar operations.
+ * Module element interface. Defines scalar operations.
  * @param <M> module type
  * @param <C> scalar type
  * @author Heinz Kredel
  */
-public interface ModulElem<M extends ModulElem<M,C>,
-                           C extends RingElem<C>> 
-                 extends AbelianGroupElem< M > {
+public interface ModulElem<M extends ModulElem<M, C>, C extends RingElem<C>> extends AbelianGroupElem<M> {
+
 
     /**
      * Scalar multiplication. Multiply this by a scalar.
@@ -55,7 +53,8 @@ public interface ModulElem<M extends ModulElem<M,C>,
 
 
     /**
-     * Scalar product. Multiply this vectors by list of vectors to become a vector.
+     * Scalar product. Multiply this vectors by list of vectors to become a
+     * vector.
      * @param b list of module elements
      * @return this * b, a list of scalars, a module element.
      */

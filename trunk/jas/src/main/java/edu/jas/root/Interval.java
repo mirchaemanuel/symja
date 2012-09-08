@@ -1,5 +1,5 @@
 /*
- * $Id: Interval.java 3993 2012-07-14 21:39:15Z kredel $
+ * $Id: Interval.java 4125 2012-08-19 19:05:22Z kredel $
  */
 
 package edu.jas.root;
@@ -19,7 +19,7 @@ import edu.jas.structure.RingFactory;
  * @param <C> coefficient type.
  * @author Heinz Kredel
  */
-public class Interval<C extends RingElem<C> & Rational > implements Serializable, Cloneable { //findbugs
+public class Interval<C extends RingElem<C> & Rational > implements Serializable { //findbugs
 
 
     /**
@@ -75,11 +75,10 @@ public class Interval<C extends RingElem<C> & Rational > implements Serializable
 
 
     /**
-     * Clone this.
-     * @see java.lang.Object#clone()
+     * Copy this.
+     * @return a copy of this.
      */
-    @Override
-    public Interval<C> clone() {
+    public Interval<C> copy() {
         return new Interval<C>(left, right);
     }
 

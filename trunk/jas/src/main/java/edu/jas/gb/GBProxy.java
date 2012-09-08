@@ -1,5 +1,5 @@
 /*
- * $Id: GBProxy.java 3211 2010-07-05 12:54:22Z kredel $
+ * $Id: GBProxy.java 4045 2012-07-25 16:48:23Z kredel $
  */
 
 package edu.jas.gb;
@@ -45,7 +45,7 @@ public class GBProxy<C extends GcdRingElem<C>> extends GroebnerBaseAbstract<C> {
     /**
      * Thread pool.
      */
-    protected ExecutorService pool;
+    protected transient ExecutorService pool;
 
 
     /**
@@ -54,10 +54,8 @@ public class GBProxy<C extends GcdRingElem<C>> extends GroebnerBaseAbstract<C> {
     public GBProxy(GroebnerBaseAbstract<C> e1, GroebnerBaseAbstract<C> e2) {
         this.e1 = e1;
         this.e2 = e2;
-        if (pool == null) {
-            pool = ComputerThreads.getPool();
-            //System.out.println("pool 2 = "+pool);
-        }
+        pool = ComputerThreads.getPool();
+        //System.out.println("pool 2 = "+pool);
     }
 
 

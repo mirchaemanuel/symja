@@ -1,11 +1,12 @@
 /*
- * $Id: ExpVectorByte.java 3994 2012-07-15 11:50:54Z kredel $
+ * $Id: ExpVectorByte.java 4125 2012-08-19 19:05:22Z kredel $
  */
 
 package edu.jas.poly;
 
 
-import java.util.Vector;
+import java.util.List;
+import java.util.ArrayList;
 
 
 /**
@@ -107,7 +108,7 @@ public class ExpVectorByte extends ExpVector
     public ExpVectorByte(String s) throws NumberFormatException {
         super();
         // first format = (1,2,3,4,5,6,7)
-        Vector<Byte> exps = new Vector<Byte>();
+        List<Byte> exps = new ArrayList<Byte>();
         s = s.trim();
         int b = s.indexOf('(');
         int e = s.indexOf(')', b + 1);
@@ -119,18 +120,18 @@ public class ExpVectorByte extends ExpVector
             while ((k = s.indexOf(',', b)) >= 0) {
                 teil = s.substring(b, k);
                 a = Byte.parseByte(teil);
-                exps.add(new Byte(a));
+                exps.add(Byte.valueOf(a));
                 b = k + 1;
             }
             if (b <= e) {
                 teil = s.substring(b, e);
                 a = Byte.parseByte(teil);
-                exps.add(new Byte(a));
+                exps.add(Byte.valueOf(a));
             }
             int length = exps.size();
             val = new byte[length];
             for (int j = 0; j < length; j++) {
-                val[j] = exps.elementAt(j).byteValue();
+                val[j] = exps.get(j).byteValue();
             }
         } else {
             // not implemented
@@ -147,7 +148,7 @@ public class ExpVectorByte extends ExpVector
      * @see java.lang.Object#clone()
      */
     @Override
-    public ExpVectorByte clone() {
+    public ExpVectorByte copy() {
         byte[] w = new byte[val.length];
         System.arraycopy(val, 0, w, 0, val.length);
         return new ExpVectorByte(w);
@@ -366,12 +367,12 @@ public class ExpVectorByte extends ExpVector
     }
 
 
-    /** hashCode for this exponent vector.
-     * @see java.lang.Object#hashCode()
-     * Only for findbugs.
+    /**
+     * hashCode for this exponent vector.
+     * @see java.lang.Object#hashCode() Only for findbugs.
      */
     @Override
-    public int hashCode() { 
+    public int hashCode() {
         return super.hashCode();
     }
 
@@ -455,7 +456,8 @@ public class ExpVectorByte extends ExpVector
      * @return substituted ExpVector.
      */
     public ExpVectorByte subst(int i, byte d) {
-        ExpVectorByte V = (ExpVectorByte) this.clone();
+        ExpVectorByte V = this.copy();
+        @SuppressWarnings("unused")
         long e = V.setVal(i, d);
         return V;
         //return EVSU(this, i, d);
@@ -470,7 +472,8 @@ public class ExpVectorByte extends ExpVector
      */
     @Override
     public ExpVectorByte subst(int i, long d) {
-        ExpVectorByte V = (ExpVectorByte) this.clone();
+        ExpVectorByte V = this.copy();
+        @SuppressWarnings("unused")
         long e = V.setVal(i, d);
         return V;
         //return EVSU(this, i, d);
@@ -646,7 +649,6 @@ public class ExpVectorByte extends ExpVector
      * @param V
      * @return 0 if U == V, -1 if U &lt; V, 1 if U &gt; V.
      */
-    //@Override
     @Override
     public int compareTo(ExpVector V) {
         return this.invLexCompareTo(V);
