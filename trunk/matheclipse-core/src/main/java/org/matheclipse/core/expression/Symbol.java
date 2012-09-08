@@ -199,9 +199,6 @@ public class Symbol extends ExprImpl implements ISymbol {
 		if (!(this.getClass().equals(obj.getClass()))) {
 			return false;
 		}
-		// if (hash != ((SymbolImpl) obj).hash) {
-		// return false;
-		// }
 		if (fSymbolName.equals(((Symbol) obj).fSymbolName)) {
 			if (Config.DEBUG) {
 				System.err.println(fSymbolName + " EQUALS " + ((Symbol) obj).fSymbolName);
