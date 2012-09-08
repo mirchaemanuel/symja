@@ -36,7 +36,7 @@ public class NestedFastTable<E extends INestedListElement> extends ArrayList<E> 
 
 	protected final static boolean DEBUG_HASH = true;
 
-	protected int fHash = 0;
+	protected int fHashValue = 0;
 
 	/**
 	 * Creates a table of specified initial capacity and adds
@@ -146,16 +146,16 @@ public class NestedFastTable<E extends INestedListElement> extends ArrayList<E> 
 
 	@Override
 	public int hashCode() {
-		if (fHash == 0) {
+		if (fHashValue == 0) {
 			if (size() >= 1) {
 				if (size() == 1) {
-					fHash = (17 * get(0).hashCode());
+					fHashValue = (17 * get(0).hashCode());
 				} else {
-					fHash = (31 * get(0).hashCode() + get(1).hashCode() + size());
+					fHashValue = (31 * get(0).hashCode() + get(1).hashCode() + size());
 				}
 			} else {
 				// this case shouldn't happen
-				fHash = 41;
+				fHashValue = 41;
 			}
 		}
 		// } else if (DEBUG_HASH) {
@@ -176,7 +176,7 @@ public class NestedFastTable<E extends INestedListElement> extends ArrayList<E> 
 		// if (dHash != fHash) {
 		// throw new RuntimeException("Different hash values in AST class");
 		// }
-		return fHash;
+		return fHashValue;
 	}
 
 	/*
@@ -201,7 +201,7 @@ public class NestedFastTable<E extends INestedListElement> extends ArrayList<E> 
 	@Override
 	public Object clone() {
 		final NestedFastTable<E> v = (NestedFastTable<E>) super.clone();// FACTORY.object();
-		v.fHash = 0;
+		v.fHashValue = 0;
 		return v;
 	}
 

@@ -1060,6 +1060,9 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 			return true;
 		}
 		if (obj instanceof AST) {
+			if (hashCode() != obj.hashCode()) {
+				return false;
+			}
 			return super.equals(obj);
 		}
 		return false;
@@ -1088,40 +1091,22 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 
 	@Override
 	public int hashCode() {
-		if (fHash == 0) {
-			if (size() > 2) {
-				fHash = (31 * get(0).hashCode() + 31) * get(1).hashCode() + get(2).hashCode() + size();
-			} else if (size() == 2) {
-				fHash = 31 * get(0).hashCode() + get(1).hashCode();
+		if (fHashValue == 0) {
+			final int sz = size();
+			if (sz > 2) {
+				fHashValue = (31 * get(0).hashCode() + 31) * get(1).hashCode() + get(2).hashCode() + sz;
+			} else if (sz == 2) {
+				fHashValue = 31 * get(0).hashCode() + get(1).hashCode();
 			} else {
-				if (size() == 1) {
-					fHash = (17 * get(0).hashCode());
+				if (sz == 1) {
+					fHashValue = (17 * get(0).hashCode());
 				} else {
 					// this case shouldn't happen
-					fHash = 41;
+					fHashValue = 41;
 				}
 			}
 		}
-		// } else if (DEBUG_HASH) {
-		// int dHash = 0;
-		// if (size() >= 1) {
-		// if (size() == 1) {
-		// dHash = 17 * get(0).hashCode();
-		// } else {
-		// if (get(1) instanceof NestedList) {
-		// dHash = 31 * get(0).hashCode() + ((NestedList)
-		// get(1)).get(0).hashCode()
-		// + size();
-		// } else {
-		// dHash = 37 * get(0).hashCode() + get(1).hashCode() + size();
-		// }
-		// }
-		// }
-		// if (dHash != fHash) {
-		// throw new RuntimeException("Different hash values in AST class");
-		// }
-		// }
-		return fHash;
+		return fHashValue;
 	}
 
 	/**

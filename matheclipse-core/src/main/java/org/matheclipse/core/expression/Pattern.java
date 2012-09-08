@@ -129,6 +129,9 @@ public class Pattern extends ExprImpl implements IPattern {
 			return true;
 		}
 		if (obj instanceof Pattern) {
+			if (fHashValue != obj.hashCode()) {
+				return false;
+			}
 			Pattern pattern = (Pattern) obj;
 			if (fSymbol == null) {
 				if ((fCondition != null) && (pattern.fCondition != null)) {
