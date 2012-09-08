@@ -19,7 +19,7 @@ public class Block extends AbstractFunctionEvaluator {
 	public IExpr evaluate(final IAST ast) {
 		final EvalEngine engine = EvalEngine.get();
 		if ((ast.size() == 3) && (ast.get(1)).isList()) {
-			final IAST lst = (IAST) ast.get(1);
+			final IAST lst = (IAST) ast.get(1); 
 			final List<IExpr> variables = new ArrayList<IExpr>();
 			IExpr result;
 

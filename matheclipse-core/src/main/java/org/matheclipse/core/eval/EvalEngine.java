@@ -3,7 +3,6 @@ package org.matheclipse.core.eval;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.Serializable;
-import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -15,25 +14,16 @@ import java.util.Set;
 import java.util.Stack;
 
 import org.matheclipse.core.basic.Config;
-import org.matheclipse.core.basic.Util;
 import org.matheclipse.core.convert.AST2Expr;
 import org.matheclipse.core.eval.exception.IterationLimitExceeded;
 import org.matheclipse.core.eval.exception.RecursionLimitExceeded;
 import org.matheclipse.core.eval.interfaces.IFunctionEvaluator;
-import org.matheclipse.core.eval.interfaces.ISymbolEvaluator;
-import org.matheclipse.core.expression.ComplexSym;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.expression.MethodSymbol;
 import org.matheclipse.core.interfaces.IAST;
-import org.matheclipse.core.interfaces.IComplex;
-import org.matheclipse.core.interfaces.IComplexNum;
 import org.matheclipse.core.interfaces.IEvaluationEngine;
 import org.matheclipse.core.interfaces.IEvaluator;
 import org.matheclipse.core.interfaces.IExpr;
-import org.matheclipse.core.interfaces.IFraction;
-import org.matheclipse.core.interfaces.IInteger;
-import org.matheclipse.core.interfaces.INumber;
-import org.matheclipse.core.interfaces.ISignedNumber;
 import org.matheclipse.core.interfaces.ISymbol;
 import org.matheclipse.core.list.algorithms.EvaluationSupport;
 import org.matheclipse.core.sql.SerializeVariables2DB;
@@ -64,7 +54,7 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 	 * Associate a symbol name with a local variable stack in this thread
 	 * 
 	 */
-	transient private HashMap<String, Stack<IExpr>> fLocalVariableStackMap = null;
+	transient private Map<String, Stack<IExpr>> fLocalVariableStackMap = null;
 
 	/**
 	 * if set the current thread should stop evaluation;
@@ -228,8 +218,8 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 	 * @param recursionLimit
 	 *          the maximum allowed recursion limit (if set to zero, no limit will
 	 *          be proofed)
-	 * @param lowercaseEnabled
-	 *          TODO
+	 * @param out
+	 * @param relaxedSyntax
 	 * @see javax.servlet.http.HttpSession#getID()
 	 */
 	public EvalEngine(final String sessionID, final int recursionLimit, final PrintStream out, boolean relaxedSyntax) {
@@ -400,49 +390,6 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 		return traceList;
 	}
 
-	protected IExpr evalComplex(final IComplex obj) {
-		if (fNumericMode) {
-			return F.complexNum(obj);
-		}
-		if (obj instanceof ComplexSym) {
-			final INumber cTemp = ((ComplexSym) obj).normalize();
-			if (cTemp == obj) {
-				return null;
-			}
-			return cTemp;
-		}
-		return null;
-	}
-
-	// protected IExpr evalDouble(final INum dbl) {
-	// if (!fNumericMode) {
-	// fNumericMode = true;
-	// return dbl;
-	// }
-	// return null;
-	// }
-	//
-	protected IExpr evalComplexNum(final IComplexNum cnum) {
-		// if (!fNumericMode) {
-		// fNumericMode = true;
-		// return obj;
-		// }
-		if (F.isZero(cnum.getImaginaryPart())){
-			return F.num(cnum.getRealPart());
-		}
-		return null;
-	}
-
-	protected IExpr evalFraction(final IFraction obj) {
-		if (fNumericMode) {
-			return F.num(obj);
-		}
-		if (obj.getBigDenominator().equals(BigInteger.ONE)) {
-			return F.integer(obj.getBigNumerator());
-		}
-		return null;
-	}
-
 	/**
 	 * Evaluate an AST with only one argument (i.e. <code>head[arg1]</code>). The
 	 * evaluation steps are controlled by the header attributes.
@@ -468,24 +415,29 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 			return result;
 		}
 
-		final IExpr arg1 = ast.get(1);
 		if ((ISymbol.ONEIDENTITY & attr) == ISymbol.ONEIDENTITY) {
-			return arg1;
+			return ast.get(1);
 		}
 
-		if ((ISymbol.FLAT & attr) == ISymbol.FLAT && arg1.topHead().equals(symbol)) {
-			// associative
-			return arg1;
+		if ((ISymbol.FLAT & attr) == ISymbol.FLAT) {
+			final IExpr arg1 = ast.get(1);
+			if (arg1.topHead().equals(symbol)) {
+				// associative
+				return arg1;
+			}
 		}
 
 		if ((result = evalArgs(ast, attr)) != null) {
 			return result;
 		}
 
-		if ((ISymbol.LISTABLE & attr) == ISymbol.LISTABLE && arg1.isList()) {
-			// thread over the list
-			if ((result = EvaluationSupport.threadList(ast, ((IAST) arg1).size() - 1, 1)) != null) {
-				return result;
+		if ((ISymbol.LISTABLE & attr) == ISymbol.LISTABLE) {
+			final IExpr arg1 = ast.get(1);
+			if (arg1.isList()) {
+				// thread over the list
+				if ((result = EvaluationSupport.threadList(ast, ((IAST) arg1).size() - 1, 1)) != null) {
+					return result;
+				}
 			}
 		}
 
@@ -505,10 +457,10 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 		if (astSize == 2) {
 			return evalASTArg1(ast);
 		}
-		IExpr result;
 
-		if ((result = evalLoop(ast.head())) != null) {
-			// first evaluate the header !
+		// first evaluate the header !
+		IExpr result = evalLoop(ast.head());
+		if (result != null) {
 			IAST resultList = ast.clone();
 			resultList.setHeader(result);
 			return resultList;
@@ -523,13 +475,11 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 				return result;
 			}
 
-			if (astSize == 2 && (ISymbol.ONEIDENTITY & attr) == ISymbol.ONEIDENTITY) {
-				return ast.get(1);
-			}
+			// ONEIDENTITY is checked in the evalASTArg1() method!
 
 			IAST flattened = null;
 			if ((ISymbol.FLAT & attr) == ISymbol.FLAT) {
-				// associative
+				// associative symbol
 				if ((flattened = EvaluationSupport.flatten(ast)) != null) {
 					IAST resultList = evalArgs(flattened, attr);
 					if (resultList != null) {
@@ -553,7 +503,7 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 			}
 
 			if (astSize > 2 && (ISymbol.ORDERLESS & attr) == ISymbol.ORDERLESS) {
-				// commutative
+				// commutative symbol
 				EvaluationSupport.sort(ast);
 			}
 		}
@@ -609,12 +559,6 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 	 * @return
 	 */
 	private IExpr evalASTBuiltinFunction(final ISymbol symbol, final IAST ast) {
-		IExpr result;
-		if (!symbol.equals(F.Integrate)) {
-			if ((result = symbol.evalDownRule(this, ast)) != null) {
-				return result;
-			}
-		}
 
 		if (fEvalLHSMode) {
 			final int attr = symbol.getAttributes();
@@ -630,6 +574,13 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 				if ((ISymbol.NUMERICFUNCTION & attr) != ISymbol.NUMERICFUNCTION) {
 					return null;
 				}
+			}
+		}
+
+		if (!symbol.equals(F.Integrate)) {
+			IExpr result= symbol.evalDownRule(this, ast);
+			if (result != null) {
+				return result;
 			}
 		}
 
@@ -661,8 +612,6 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 		if (astSize > 1) {
 			boolean numericMode = fNumericMode;
 			boolean localNumericMode = fNumericMode;
-			IAST resultList = null;
-			IExpr evaledExpr;
 			if (!fNumericMode) {
 				for (int i = 1; i < astSize; i++) {
 					if (ast.get(i).isNumeric()) {
@@ -672,6 +621,8 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 				}
 			}
 
+			IAST resultList = null;
+			IExpr evaledExpr;
 			if ((ISymbol.HOLDFIRST & attr) == ISymbol.NOATTRIBUTE) {
 				// the HoldFirst attribute isn't set here
 				try {
@@ -681,12 +632,10 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 						fNumericMode = localNumericMode;
 					}
 					if ((evaledExpr = evalLoop(ast.get(1))) != null) {
-						if (resultList == null) {
-							resultList = ast.clone();
-							resultList.setEvalFlags(ast.getEvalFlags() & IAST.IS_MATRIX_OR_VECTOR);
-						}
+						resultList = ast.clone();
+						resultList.setEvalFlags(ast.getEvalFlags() & IAST.IS_MATRIX_OR_VECTOR);
 						resultList.set(1, evaledExpr);
-						if (ast.size() == 2) {
+						if (astSize == 2) {
 							return resultList;
 						}
 					}
@@ -788,13 +737,6 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 		}
 	}
 
-	protected IExpr evalInteger(final IInteger obj) {
-		if (fNumericMode) {
-			return F.num(obj);
-		}
-		return null;
-	}
-
 	/**
 	 * Evaluate an object, if evaluation is not possible return <code>null</code>.
 	 * 
@@ -805,7 +747,6 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 	 * @see EvalEngine#evalWithoutNumericReset(IExpr)
 	 */
 	public IExpr evalLoop(final IExpr expr) {
-
 		if ((fRecursionLimit > 0) && (fRecursionCounter > fRecursionLimit)) {
 			if (Config.DEBUG) {
 				System.out.println(expr.toString());
@@ -813,122 +754,40 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 			RecursionLimitExceeded.throwIt(fRecursionLimit, expr);
 		}
 
-		IExpr result = expr;
-		IExpr temp = expr;
-		boolean evaled = false;
-		int iterationCounter = 1;
 		try {
 			fRecursionCounter++;
 			if (fTraceMode) {
 				fTraceStack.pushList();
 			}
-			temp = evalObject(result);
+			IExpr temp = expr.evaluate(this);
 			if (temp != null) {
 				if (fTraceMode) {
 					fTraceStack.addIfEmpty(expr);
 					fTraceStack.add(temp);
 				}
-				evaled = true;
-				result = temp;
-			} else {
-				return null;
-			}
-
-			while (temp != null) {
-				temp = evalObject(result);
-				if (temp != null) {
-					if (fTraceMode) {
-						fTraceStack.add(temp);
+				IExpr result = temp;
+				int iterationCounter = 1;
+				do {
+					temp = result.evaluate(this);
+					if (temp != null) {
+						if (fTraceMode) {
+							fTraceStack.add(temp);
+						}
+						result = temp;
+						if (fIterationLimit >= 0 && fIterationLimit <= ++iterationCounter) {
+							IterationLimitExceeded.throwIt(iterationCounter, result);
+						}
 					}
-					result = temp;
-					if (fIterationLimit >= 0 && fIterationLimit <= ++iterationCounter) {
-						IterationLimitExceeded.throwIt(iterationCounter, result);
-					}
-				}
-			}
-			if (evaled) {
+				} while (temp != null);
 				return result;
 			}
+			return null;
 		} finally {
 			fRecursionCounter--;
 			if (fTraceMode) {
 				fTraceStack.popList();
 			}
 		}
-
-		return null;
-	}
-
-	/**
-	 * Evaluate an object
-	 * 
-	 * @param obj
-	 *          the object which should be evaluated
-	 * @return the evaluated Object or null if evaluation is not possible
-	 */
-	protected IExpr evalObject(final IExpr obj) {
-		if (Config.DEBUG) {
-			System.out.println(obj.toString());
-		}
-		Util.checkCanceled();
-		if (obj.isAST()) {
-			IExpr temp = evalAST((IAST) obj);
-			if (Config.SHOW_CONSOLE) {
-				if ((obj.topHead().getAttributes() & ISymbol.CONSOLE_OUTPUT) == ISymbol.CONSOLE_OUTPUT) {
-					if (temp != null) {
-						System.out.println(obj.toString());
-						System.out.println(" => " + temp.toString());
-					}
-				}
-			}
-			return temp;
-		}
-
-		if (obj.isNumber()) {
-			if (obj instanceof ISignedNumber) {
-				return evalSignedNumber((ISignedNumber) obj);
-			}
-			if (obj instanceof IComplexNum) {
-				return evalComplexNum((IComplexNum) obj);
-			}
-			if (obj instanceof IComplex) {
-				return evalComplex((IComplex) obj);
-			}
-			return null;
-		}
-		if (obj.isSymbol()) {
-			return evalSymbol((ISymbol) obj);
-		}
-		return null;
-	}
-
-	protected IExpr evalSignedNumber(final ISignedNumber obj) {
-
-		if (obj instanceof IInteger) {
-			return evalInteger((IInteger) obj);
-		}
-		if (obj instanceof IFraction) {
-			return evalFraction((IFraction) obj);
-		}
-		return null;
-	}
-
-	public IExpr evalSymbol(final ISymbol symbol) {
-		IExpr result;
-		if (symbol.hasLocalVariableStack()) {
-			return symbol.get();
-		}
-		if ((result = symbol.evalDownRule(this, symbol)) != null) {
-			return result;
-		}
-		final IEvaluator module = symbol.getEvaluator();
-		if (module instanceof ISymbolEvaluator) {
-			if (fNumericMode) {
-				return ((ISymbolEvaluator) module).numericEval(symbol);
-			}
-			return ((ISymbolEvaluator) module).evaluate(symbol);
-		}
-		return null;
 	}
 
 	/**

@@ -11,6 +11,7 @@ import org.matheclipse.core.eval.EvalEngine;
 import org.matheclipse.core.eval.SystemNamespace;
 import org.matheclipse.core.eval.exception.RuleCreationError;
 import org.matheclipse.core.eval.interfaces.INumericConstant;
+import org.matheclipse.core.eval.interfaces.ISymbolEvaluator;
 import org.matheclipse.core.form.output.OutputFormFactory;
 import org.matheclipse.core.form.output.StringBufferWriter;
 import org.matheclipse.core.generic.UnaryVariable2Slot;
@@ -122,6 +123,12 @@ public class Symbol extends ExprImpl implements ISymbol {
 
 	/* package private */String fSymbolName;
 
+	/**
+	 * The hash value of this object computed in the constructor.
+	 * 
+	 */
+	final int fHashValue;
+
 	public Symbol(final String symbolName) {
 		this(symbolName, null);
 	}
@@ -130,18 +137,15 @@ public class Symbol extends ExprImpl implements ISymbol {
 	 * do not use directly, needed for XML transformations
 	 * 
 	 */
-	protected Symbol() {
-		super();
-		fSymbolName = null;
-		fEvaluator = null;
-		// hash = fSymbolName.hashCode();
+	private Symbol() {
+		this(null, null);
 	}
 
 	public Symbol(final String symbolName, final IEvaluator evaluator) {
 		super();
+		fHashValue = (symbolName == null) ? 197 : 7 * symbolName.hashCode();
 		fSymbolName = symbolName;
 		fEvaluator = evaluator;
-		// hash = fSymbolName.hashCode();
 	}
 
 	/** {@inheritDoc} */
@@ -208,6 +212,26 @@ public class Symbol extends ExprImpl implements ISymbol {
 	}
 
 	/** {@inheritDoc} */
+	@Override
+	public IExpr evaluate(EvalEngine engine) {
+		if (hasLocalVariableStack()) {
+			return get();
+		}
+		IExpr result;
+		if ((result = evalDownRule(engine, this)) != null) {
+			return result;
+		}
+		final IEvaluator module = getEvaluator();
+		if (module instanceof ISymbolEvaluator) {
+			if (engine.isNumericMode()) {
+				return ((ISymbolEvaluator) module).numericEval(this);
+			}
+			return ((ISymbolEvaluator) module).evaluate(this);
+		}
+		return null;
+	}
+
+	/** {@inheritDoc} */
 	public IExpr evalDownRule(final IEvaluationEngine ee, final IExpr expression) {
 		return fRulesData.evalDownRule(ee, expression);
 	}
@@ -253,7 +277,7 @@ public class Symbol extends ExprImpl implements ISymbol {
 	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
-		return fSymbolName.hashCode();
+		return fHashValue;
 	}
 
 	/** {@inheritDoc} */
@@ -369,7 +393,7 @@ public class Symbol extends ExprImpl implements ISymbol {
 	/** {@inheritDoc} */
 	@Override
 	public boolean isValue() {
-		return EvalEngine.get().evalSymbol(this) != null;
+		return evaluate(EvalEngine.get()) != null;
 	}
 
 	/** {@inheritDoc} */

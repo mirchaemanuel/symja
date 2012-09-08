@@ -16,7 +16,7 @@ import org.matheclipse.core.visit.IVisitorInt;
 import com.google.common.base.Predicate;
 
 /**
- * A concrete pattern implementation
+ * A concrete pattern implementation.
  * 
  */
 public class Pattern extends ExprImpl implements IPattern {
@@ -43,11 +43,11 @@ public class Pattern extends ExprImpl implements IPattern {
 	 * 
 	 */
 	public static IPattern valueOf(final ISymbol symbol, final IExpr check, final boolean def) {
-		Pattern p = new Pattern();
-		p.fSymbol = symbol;
-		p.fCondition = check;
-		p.fDefault = def;
-		return p;
+		return new Pattern(symbol, check, def);
+		// p.fSymbol = symbol;
+		// p.fCondition = check;
+		// p.fDefault = def;
+		// return p;
 	}
 
 	/**
@@ -56,10 +56,10 @@ public class Pattern extends ExprImpl implements IPattern {
 	 * @return
 	 */
 	public static IPattern valueOf(final ISymbol symbol, final IExpr check) {
-		Pattern p = new Pattern();
-		p.fSymbol = symbol;
-		p.fCondition = check;
-		return p;
+		return new Pattern(symbol, check);
+		// p.fSymbol = symbol;
+		// p.fCondition = check;
+		// return p;
 	}
 
 	public static IPattern valueOf(final ISymbol symbol) {
@@ -76,7 +76,7 @@ public class Pattern extends ExprImpl implements IPattern {
 	/**
 	 * The expression which should check this pattern
 	 */
-	IExpr fCondition;
+	final IExpr fCondition;
 
 	/**
 	 * Index for the pattern-matcher
@@ -86,23 +86,41 @@ public class Pattern extends ExprImpl implements IPattern {
 	// int fIndex = 0;
 
 	/**
-	 * The associated symbol for this pattern
+	 * The hash value of this object computed in the constructor.
+	 * 
 	 */
-	ISymbol fSymbol;
+	final int fHashValue;
 
 	/**
-	 * Use default value, if not matching was found
+	 * The associated symbol for this pattern
 	 */
-	boolean fDefault = false;
+	final ISymbol fSymbol;
+
+	/**
+	 * Use default value, if no matching expression was found
+	 */
+	final boolean fDefault;
 
 	private Pattern() {
+		this(null, null, false);
 	}
 
 	/** package private */
 	Pattern(final ISymbol symbol) {
+		this(symbol, null, false);
+	}
+
+	/** package private */
+	Pattern(final ISymbol symbol, IExpr condition) {
+		this(symbol, condition, false);
+	}
+
+	/** package private */
+	Pattern(final ISymbol symbol, IExpr condition, boolean def) {
+		fHashValue = (symbol == null) ? 199 : 19 + symbol.hashCode();
 		fSymbol = symbol;
-		fCondition = null;
-		fDefault = false;
+		fCondition = condition;
+		fDefault = def;
 	}
 
 	@Override
@@ -149,10 +167,7 @@ public class Pattern extends ExprImpl implements IPattern {
 
 	@Override
 	public int hashCode() {
-		if (fSymbol == null) {
-			return 199;
-		}
-		return fSymbol.hashCode();
+		return fHashValue;
 	}
 
 	/*
