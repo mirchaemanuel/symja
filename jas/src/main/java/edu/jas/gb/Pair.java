@@ -1,5 +1,5 @@
 /*
- * $Id: Pair.java 3994 2012-07-15 11:50:54Z kredel $
+ * $Id: Pair.java 4098 2012-08-12 16:39:41Z kredel $
  */
 
 package edu.jas.gb;
@@ -18,7 +18,7 @@ import edu.jas.poly.GenPolynomial;
  * @author Heinz Kredel.
  */
 public class Pair<C extends RingElem<C> > extends AbstractPair<C>
-             implements Serializable, Comparable<Pair> {
+             implements Comparable<Pair> {
 
     protected int n;
     protected boolean toZero = false;
@@ -195,14 +195,6 @@ public class Pair<C extends RingElem<C> > extends AbstractPair<C>
     public boolean getUseCriterion3() {
         return this.useCriterion3;
     }
-
-
-    /*
-     * what is this for?
-    public MiniPair toMiniPair() {
-        return new MiniPair(i,j);
-    }
-     */
 
 }
 

@@ -1,5 +1,5 @@
 /*
- * $Id: EReductionSeq.java 3288 2010-08-25 21:46:14Z kredel $
+ * $Id: EReductionSeq.java 4115 2012-08-19 13:18:59Z kredel $
  */
 
 package edu.jas.gb;
@@ -114,11 +114,12 @@ public class EReductionSeq<C extends RingElem<C>> extends DReductionSeq<C> imple
         l = j;
         boolean mt = false;
         Map<ExpVector, C> Am = Ap.getMap();
-        for (ExpVector e : Am.keySet()) {
+        for (Map.Entry<ExpVector,C> me : Am.entrySet()) {
+            ExpVector e = me.getKey();
+            C a = me.getValue(); //Am.get(e);
             for (i = 0; i < l; i++) {
                 mt = e.multipleOf(htl[i]);
                 if (mt) {
-                    C a = Am.get(e);
                     C r = a.remainder(lbc[i]);
                     mt = !r.equals(a);
                     if (mt) {
@@ -182,7 +183,7 @@ public class EReductionSeq<C extends RingElem<C>> extends DReductionSeq<C> imple
         GenPolynomial<C> T = Ap.ring.getZERO();
         GenPolynomial<C> Q = null;
         GenPolynomial<C> S = Ap;
-        try { // required to avoid a compiler error in the while loop
+        //try { // required to avoid a compiler error in the while loop
             while (S.length() > 0) {
                 boolean mt = false;
                 m = S.leadingMonomial();
@@ -218,14 +219,14 @@ public class EReductionSeq<C extends RingElem<C>> extends DReductionSeq<C> imple
                 //System.out.println(" R = " + R);
                 //System.out.println(" S = " + S);
             }
-        } catch (Exception ex) {
-            System.out.println("R = " + R);
-            System.out.println("S = " + S);
-            System.out.println("f = " + f + ", " + e + ", " + htl[i]);
-            System.out.println("a = " + a + ", " + b + ", " + r + ", " + lbc[i]);
-            //throw ex;
-            return T;
-        }
+        //} catch (Exception ex) {
+        //    System.out.println("R = " + R);
+        //    System.out.println("S = " + S);
+        //    System.out.println("f = " + f + ", " + e + ", " + htl[i]);
+        //    System.out.println("a = " + a + ", " + b + ", " + r + ", " + lbc[i]);
+        //    //throw ex;
+        //    return T;
+        //}
         return R.abs();
     }
 

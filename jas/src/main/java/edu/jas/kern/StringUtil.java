@@ -1,14 +1,13 @@
 /*
- * $Id: StringUtil.java 3354 2010-10-23 15:51:37Z kredel $
+ * $Id: StringUtil.java 4055 2012-07-26 17:37:29Z kredel $
  */
 
 package edu.jas.kern;
 
 
+import java.io.IOException;
 import java.io.Reader;
 import java.io.StringWriter;
-import java.io.IOException;
-
 
 
 /**

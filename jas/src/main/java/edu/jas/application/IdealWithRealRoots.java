@@ -1,5 +1,5 @@
 /*
- * $Id: IdealWithRealRoots.java 3111 2010-05-05 21:05:56Z kredel $
+ * $Id: IdealWithRealRoots.java 4050 2012-07-25 17:14:32Z kredel $
  */
 
 package edu.jas.application;
@@ -17,7 +17,7 @@ import edu.jas.structure.GcdRingElem;
  * Container for Ideals together with univariate polynomials and real roots.
  * @author Heinz Kredel
  */
-public class IdealWithRealRoots<C extends GcdRingElem<C>> extends IdealWithUniv<C> implements Serializable {
+public class IdealWithRealRoots<C extends GcdRingElem<C>> extends IdealWithUniv<C> {
 
 
     /**

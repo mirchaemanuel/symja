@@ -1,5 +1,5 @@
 /*
- * $Id: IdealWithComplexRoots.java 3364 2010-10-24 12:56:06Z kredel $
+ * $Id: IdealWithComplexRoots.java 4050 2012-07-25 17:14:32Z kredel $
  */
 
 package edu.jas.application;
@@ -18,7 +18,7 @@ import edu.jas.structure.GcdRingElem;
  * Container for Ideals together with univariate polynomials and complex roots.
  * @author Heinz Kredel
  */
-class IdealWithComplexRoots<C extends GcdRingElem<C>> extends IdealWithUniv<C> implements Serializable {
+class IdealWithComplexRoots<C extends GcdRingElem<C>> extends IdealWithUniv<C> {
 
 
     /**

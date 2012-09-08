@@ -1,11 +1,12 @@
 /*
- * $Id: ExpVectorShort.java 4002 2012-07-15 17:15:06Z kredel $
+ * $Id: ExpVectorShort.java 4125 2012-08-19 19:05:22Z kredel $
  */
 
 package edu.jas.poly;
 
 
-import java.util.Vector;
+import java.util.List;
+import java.util.ArrayList;
 
 
 /**
@@ -107,7 +108,7 @@ public class ExpVectorShort extends ExpVector
     public ExpVectorShort(String s) throws NumberFormatException {
         super();
         // first format = (1,2,3,4,5,6,7)
-        Vector<Short> exps = new Vector<Short>();
+        List<Short> exps = new ArrayList<Short>();
         s = s.trim();
         int b = s.indexOf('(');
         int e = s.indexOf(')', b + 1);
@@ -119,18 +120,18 @@ public class ExpVectorShort extends ExpVector
             while ((k = s.indexOf(',', b)) >= 0) {
                 teil = s.substring(b, k);
                 a = Short.parseShort(teil);
-                exps.add(new Short(a));
+                exps.add(Short.valueOf(a));
                 b = k + 1;
             }
             if (b <= e) {
                 teil = s.substring(b, e);
                 a = Short.parseShort(teil);
-                exps.add(new Short(a));
+                exps.add(Short.valueOf(a));
             }
             int length = exps.size();
             val = new short[length];
             for (int j = 0; j < length; j++) {
-                val[j] = exps.elementAt(j).shortValue();
+                val[j] = exps.get(j).shortValue();
             }
         } else {
             // not implemented
@@ -147,7 +148,7 @@ public class ExpVectorShort extends ExpVector
      * @see java.lang.Object#clone()
      */
     @Override
-    public ExpVectorShort clone() {
+    public ExpVectorShort copy() {
         short[] w = new short[val.length];
         System.arraycopy(val, 0, w, 0, val.length);
         return new ExpVectorShort(w);
@@ -366,12 +367,12 @@ public class ExpVectorShort extends ExpVector
     }
 
 
-    /** hashCode for this exponent vector.
-     * @see java.lang.Object#hashCode()
-     * Only for findbugs.
+    /**
+     * hashCode for this exponent vector.
+     * @see java.lang.Object#hashCode() Only for findbugs.
      */
     @Override
-    public int hashCode() { 
+    public int hashCode() {
         return super.hashCode();
     }
 
@@ -455,7 +456,8 @@ public class ExpVectorShort extends ExpVector
      * @return substituted ExpVector.
      */
     public ExpVectorShort subst(int i, short d) {
-        ExpVectorShort V = (ExpVectorShort) this.clone();
+        ExpVectorShort V = this.copy();
+        @SuppressWarnings("unused")
         long e = V.setVal(i, d);
         return V;
         //return EVSU(this, i, d);
@@ -470,7 +472,8 @@ public class ExpVectorShort extends ExpVector
      */
     @Override
     public ExpVectorShort subst(int i, long d) {
-        ExpVectorShort V = (ExpVectorShort) this.clone();
+        ExpVectorShort V = this.copy();
+        @SuppressWarnings("unused")
         long e = V.setVal(i, d);
         return V;
         //return EVSU(this, i, d);
@@ -646,7 +649,6 @@ public class ExpVectorShort extends ExpVector
      * @param V
      * @return 0 if U == V, -1 if U &lt; V, 1 if U &gt; V.
      */
-    //@Override
     @Override
     public int compareTo(ExpVector V) {
         return this.invLexCompareTo(V);

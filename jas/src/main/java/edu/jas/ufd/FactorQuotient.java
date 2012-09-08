@@ -1,5 +1,5 @@
 /*
- * $Id: FactorQuotient.java 3867 2012-01-30 22:24:48Z kredel $
+ * $Id: FactorQuotient.java 4067 2012-07-27 16:17:35Z kredel $
  */
 
 package edu.jas.ufd;
@@ -28,7 +28,7 @@ public class FactorQuotient<C extends GcdRingElem<C>> extends FactorAbstract<Quo
     private static final Logger logger = Logger.getLogger(FactorQuotient.class);
 
 
-    private final boolean debug = true || logger.isInfoEnabled();
+    //private final boolean debug = logger.isInfoEnabled();
 
 
     /**
@@ -50,14 +50,15 @@ public class FactorQuotient<C extends GcdRingElem<C>> extends FactorAbstract<Quo
      * @param fac coefficient quotient ring factory.
      */
     public FactorQuotient(QuotientRing<C> fac) {
-        this(fac, FactorFactory.<C> getImplementation(fac.ring.coFac) );
+        this(fac, FactorFactory.<C> getImplementation(fac.ring.coFac));
     }
 
 
     /**
      * Constructor.
      * @param fac coefficient quotient ring factory.
-     * @param nengine factorization engine for polynomials over base coefficients.
+     * @param nengine factorization engine for polynomials over base
+     *            coefficients.
      */
     public FactorQuotient(QuotientRing<C> fac, FactorAbstract<C> nengine) {
         super(fac);
@@ -118,7 +119,7 @@ public class FactorQuotient<C extends GcdRingElem<C>> extends FactorAbstract<Quo
             return factors;
         }
         List<GenPolynomial<Quotient<C>>> qfacts = PolyUfdUtil.<C> quotientFromIntegralCoefficients(pfac,
-                irfacts);
+                        irfacts);
         //System.out.println("qfacts = " + qfacts);
         //qfacts = PolyUtil.monic(qfacts);
         //System.out.println("qfacts = " + qfacts);

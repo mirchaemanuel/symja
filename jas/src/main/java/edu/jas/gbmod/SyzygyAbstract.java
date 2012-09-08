@@ -1,5 +1,5 @@
 /*
- * $Id: SyzygyAbstract.java 3981 2012-07-12 20:51:22Z kredel $
+ * $Id: SyzygyAbstract.java 4125 2012-08-19 19:05:22Z kredel $
  */
 
 package edu.jas.gbmod;
@@ -120,8 +120,8 @@ public class SyzygyAbstract<C extends GcdRingElem<C>> implements Syzygy<C> {
         GenVectorModul<GenPolynomial<C>> mfac = v.modul;
         List<GenPolynomial<C>> F = v.val;
         GenVector<GenPolynomial<C>> S = mfac.getZERO();
-        GenPolynomial<C> pi, pj, s, h, zero;
-        zero = mfac.coFac.getZERO();
+        GenPolynomial<C> pi, pj, s, h;
+        //zero = mfac.coFac.getZERO();
         for (int i = 0; i < F.size(); i++) {
             pi = F.get(i);
             for (int j = i + 1; j < F.size(); j++) {
@@ -132,7 +132,7 @@ public class SyzygyAbstract<C extends GcdRingElem<C>> implements Syzygy<C> {
                     continue;
                 }
                 // if ( ! red.criterion4( pi, pj ) ) { continue; }
-                List<GenPolynomial<C>> row = S.clone().val;
+                List<GenPolynomial<C>> row = S.copy().val;
 
                 s = red.SPolynomial(row, i, pi, j, pj);
                 if (s.isZERO()) {
@@ -371,9 +371,9 @@ public class SyzygyAbstract<C extends GcdRingElem<C>> implements Syzygy<C> {
      * @return syz(F), a basis for the module of syzygies for F.
      */
     public List<List<GenPolynomial<C>>> zeroRelationsArbitrary(int modv, List<GenPolynomial<C>> F) {
-
         if (F == null) {
-            return zeroRelations(modv, F);
+            return new ArrayList<List<GenPolynomial<C>>>();
+            //return zeroRelations(modv, F);
         }
         if (F.size() <= 1) {
             return zeroRelations(modv, F);

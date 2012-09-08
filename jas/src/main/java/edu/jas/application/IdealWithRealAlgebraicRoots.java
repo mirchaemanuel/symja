@@ -1,5 +1,5 @@
 /*
- * $Id: IdealWithRealAlgebraicRoots.java 3879 2012-02-05 16:51:04Z kredel $
+ * $Id: IdealWithRealAlgebraicRoots.java 4050 2012-07-25 17:14:32Z kredel $
  */
 
 package edu.jas.application;
@@ -23,7 +23,7 @@ import edu.jas.structure.RingElem;
  * @author Heinz Kredel
  */
 public class IdealWithRealAlgebraicRoots<D extends GcdRingElem<D> & Rational>
-        extends IdealWithUniv<D> implements Serializable {
+        extends IdealWithUniv<D> {
 
 
     /**
@@ -147,6 +147,9 @@ public class IdealWithRealAlgebraicRoots<D extends GcdRingElem<D> & Rational>
      */
     public void doDecimalApproximation() {
         List<List<BigDecimal>> unused = decimalApproximation();
+        if ( unused.isEmpty() ) { // use for findbugs
+            System.out.println("unused is empty");
+        }
         return;
     }
 

@@ -1,22 +1,21 @@
 /*
- * $Id: AlgebraFactory.java 1708 2008-02-24 17:28:36Z kredel $
+ * $Id: AlgebraFactory.java 4056 2012-07-26 17:44:13Z kredel $
  */
 
 package edu.jas.structure;
+
 
 import java.util.List;
 
 
 /**
- * Algebra factory interface.
- * Defines conversion from list of lists and sparse random.
+ * Algebra factory interface. Defines conversion from list of lists and sparse
+ * random.
  * @param <A> algebra type
  * @param <C> coefficient type
  * @author Heinz Kredel
  */
-public interface AlgebraFactory<A extends AlgebraElem<A,C>,
-                                C extends RingElem<C>> 
-                 extends RingFactory<A> {
+public interface AlgebraFactory<A extends AlgebraElem<A, C>, C extends RingElem<C>> extends RingFactory<A> {
 
 
     /**

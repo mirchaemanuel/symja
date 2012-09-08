@@ -1,18 +1,16 @@
 /*
- * $Id: AbelianGroupFactory.java 1259 2007-07-29 10:18:54Z kredel $
+ * $Id: AbelianGroupFactory.java 4056 2012-07-26 17:44:13Z kredel $
  */
 
 package edu.jas.structure;
 
 
 /**
- * Abelian group factory interface.
- * Defines get zero.
+ * Abelian group factory interface. Defines get zero.
  * @author Heinz Kredel
  */
 
-public interface AbelianGroupFactory<C extends AbelianGroupElem<C>> 
-                 extends ElemFactory<C> {
+public interface AbelianGroupFactory<C extends AbelianGroupElem<C>> extends ElemFactory<C> {
 
 
     /**

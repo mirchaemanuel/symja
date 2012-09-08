@@ -1,5 +1,5 @@
 /*
- * $Id: GroebnerBaseFGLM.java 3910 2012-03-11 17:31:51Z suess $
+ * $Id: GroebnerBaseFGLM.java 4061 2012-07-27 12:03:20Z kredel $
  */
 
 package edu.jas.gbufd;
@@ -35,7 +35,7 @@ public class GroebnerBaseFGLM<C extends GcdRingElem<C>> extends GroebnerBaseAbst
     private static final Logger logger = Logger.getLogger(GroebnerBaseFGLM.class);
 
 
-    private final boolean debug = logger.isDebugEnabled();
+    //private final boolean debug = logger.isDebugEnabled();
 
 
     /**

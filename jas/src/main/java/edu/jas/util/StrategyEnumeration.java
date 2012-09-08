@@ -1,5 +1,5 @@
 /*
- * $Id: StrategyEnumeration.java 2771 2009-08-05 20:10:49Z kredel $
+ * $Id: StrategyEnumeration.java 4065 2012-07-27 15:17:38Z kredel $
  */
 
 package edu.jas.util;
@@ -31,9 +31,8 @@ public final class StrategyEnumeration {
     public String toString() {
         if (this == FIFO) {
             return "FIFO strategy";
-        } else {
-            return "LIFO strategy";
         }
+        return "LIFO strategy";
     }
 
 }

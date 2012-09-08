@@ -1,5 +1,5 @@
 /*
- * $Id: MultiplicativeSet.java 3992 2012-07-14 21:32:18Z kredel $
+ * $Id: MultiplicativeSet.java 4061 2012-07-27 12:03:20Z kredel $
  */
 
 package edu.jas.gbufd;
@@ -27,7 +27,7 @@ public class MultiplicativeSet<C extends GcdRingElem<C>> implements Serializable
     private static final Logger logger = Logger.getLogger(MultiplicativeSet.class);
 
 
-    private final boolean debug = logger.isDebugEnabled();
+    //private final boolean debug = logger.isDebugEnabled();
 
 
     /**

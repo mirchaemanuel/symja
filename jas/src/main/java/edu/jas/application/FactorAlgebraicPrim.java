@@ -1,5 +1,5 @@
 /*
- * $Id: FactorAlgebraicPrim.java 3867 2012-01-30 22:24:48Z kredel $
+ * $Id: FactorAlgebraicPrim.java 4110 2012-08-19 12:02:16Z kredel $
  */
 
 package edu.jas.application;
@@ -17,18 +17,18 @@ import edu.jas.poly.GenPolynomialRing;
 import edu.jas.poly.PolyUtil;
 import edu.jas.poly.TermOrder;
 import edu.jas.structure.GcdRingElem;
-import edu.jas.ufd.FactorAbstract;
 import edu.jas.ufd.FactorAbsolute;
-//import edu.jas.ufd.FactorFactory;
+import edu.jas.ufd.FactorAbstract;
+import edu.jas.ufd.PolyUfdUtil;
 import edu.jas.ufd.Squarefree;
 import edu.jas.ufd.SquarefreeFactory;
-import edu.jas.ufd.PolyUfdUtil;
 
 
 /**
- * Algebraic number coefficients factorization algorithms. This class implements
- * factorization methods for polynomials over algebraic numbers over rational
- * numbers or over (prime) modular integers.
+ * Algebraic number coefficients factorization algorithms. This class
+ * implements factorization methods for polynomials over algebraic
+ * numbers over rational numbers or over (prime) modular integers. The
+ * algorithm uses zero dimensional ideal prime decomposition.
  * @author Heinz Kredel
  * @param <C> coefficient type
  */
@@ -42,7 +42,7 @@ public class FactorAlgebraicPrim<C extends GcdRingElem<C>> extends FactorAbsolut
     private static final Logger logger = Logger.getLogger(FactorAlgebraicPrim.class);
 
 
-    private final boolean debug = true || logger.isInfoEnabled();
+    //private final boolean debug = logger.isInfoEnabled();
 
 
     /**
@@ -64,14 +64,15 @@ public class FactorAlgebraicPrim<C extends GcdRingElem<C>> extends FactorAbsolut
      * @param fac algebraic number factory.
      */
     public FactorAlgebraicPrim(AlgebraicNumberRing<C> fac) {
-        this(fac, FactorFactory.<C> getImplementation(fac.ring.coFac) );
+        this(fac, FactorFactory.<C> getImplementation(fac.ring.coFac));
     }
 
 
     /**
      * Constructor.
      * @param fac algebraic number factory.
-     * @param factorCoeff factorization engine for polynomials over base coefficients.
+     * @param factorCoeff factorization engine for polynomials over base
+     *            coefficients.
      */
     public FactorAlgebraicPrim(AlgebraicNumberRing<C> fac, FactorAbstract<C> factorCoeff) {
         super(fac);
@@ -109,70 +110,69 @@ public class FactorAlgebraicPrim<C extends GcdRingElem<C>> extends FactorAbsolut
             factors.add(pfac.getONE().multiply(ldcf));
         }
         //System.out.println("\nP = " + P);
-        if (false && debug) {
-           Squarefree<AlgebraicNumber<C>> sqengine = SquarefreeFactory.<AlgebraicNumber<C>> getImplementation(afac);
-           if ( !sqengine.isSquarefree(P) ) {
-               throw new RuntimeException("P not squarefree: " + sqengine.squarefreeFactors(P));
-           }
-           GenPolynomial<C> modu = afac.modul;
-           if ( !factorCoeff.isIrreducible(modu) ) {
-               throw new RuntimeException("modul not irreducible: " + factorCoeff.factors(modu));
-           }
-           System.out.println("P squarefree and modul irreducible via ideal decomposition");
-           //GreatestCommonDivisor<AlgebraicNumber<C>> aengine //= GCDFactory.<AlgebraicNumber<C>> getProxy(afac);
-           //  = new GreatestCommonDivisorSimple<AlgebraicNumber<C>>( /*cfac.coFac*/ );
+        if (logger.isDebugEnabled()) {
+            Squarefree<AlgebraicNumber<C>> sqengine = SquarefreeFactory
+                            .<AlgebraicNumber<C>> getImplementation(afac);
+            if (!sqengine.isSquarefree(P)) {
+                throw new RuntimeException("P not squarefree: " + sqengine.squarefreeFactors(P));
+            }
+            GenPolynomial<C> modu = afac.modul;
+            if (!factorCoeff.isIrreducible(modu)) {
+                throw new RuntimeException("modul not irreducible: " + factorCoeff.factors(modu));
+            }
+            System.out.println("P squarefree and modul irreducible via ideal decomposition");
+            //GreatestCommonDivisor<AlgebraicNumber<C>> aengine //= GCDFactory.<AlgebraicNumber<C>> getProxy(afac);
+            //  = new GreatestCommonDivisorSimple<AlgebraicNumber<C>>( /*cfac.coFac*/ );
         }
         GenPolynomial<C> agen = afac.modul;
         GenPolynomialRing<C> cfac = afac.ring;
         GenPolynomialRing<GenPolynomial<C>> rfac = new GenPolynomialRing<GenPolynomial<C>>(cfac, pfac);
-        // transform minimal polynomial to bi-variate polynomial
-        GenPolynomial<GenPolynomial<C>> Ac = PolyUfdUtil.<C> introduceLowerVariable(rfac, agen);
-        //System.out.println("Ac = " + Ac.toScript());
-        // transform to bi-variate polynomial, 
-        // switching varaible sequence from Q[alpha][x] to Q[X][alpha]
-        GenPolynomial<GenPolynomial<C>> Pc = PolyUfdUtil.<C> substituteFromAlgebraicCoefficients(rfac, P, 0);
-        Pc = PolyUtil.<C> monic(Pc);
-        //System.out.println("Pc = " + Pc.toScript());
-        // distribute 
         TermOrder to = new TermOrder(TermOrder.INVLEX);
         String[] vars = new String[2];
         vars[0] = cfac.getVars()[0];
         vars[1] = rfac.getVars()[0];
         GenPolynomialRing<C> dfac = new GenPolynomialRing<C>(cfac.coFac, to, vars);
-        GenPolynomial<C> Ad = agen.extend(dfac,0,0L); 
-        Pc = PolyUtil.<C> fromAlgebraicCoefficients(rfac,P);
-        GenPolynomial<C> Pd = PolyUtil.<C> distribute(dfac,Pc);
+        // transform minimal polynomial to bi-variate polynomial
+        GenPolynomial<C> Ad = agen.extend(dfac, 0, 0L);
+        // transform to bi-variate polynomial 
+        GenPolynomial<GenPolynomial<C>> Pc = PolyUtil.<C> fromAlgebraicCoefficients(rfac, P); 
+        //System.out.println("Pc = " + Pc.toScript());
+        GenPolynomial<C> Pd = PolyUtil.<C> distribute(dfac, Pc);
         //System.out.println("Ad = " + Ad.toScript());
         //System.out.println("Pd = " + Pd.toScript());
 
         List<GenPolynomial<C>> id = new ArrayList<GenPolynomial<C>>(2);
         id.add(Ad);
         id.add(Pd);
-        Ideal<C> I = new Ideal<C>(dfac,id);
-        List<IdealWithUniv<C>> Iul = I.zeroDimPrimeDecomposition(); 
+        Ideal<C> I = new Ideal<C>(dfac, id);
+        List<IdealWithUniv<C>> Iul = I.zeroDimPrimeDecomposition();
         //System.out.println("prime decomp = " + Iul);
-        if ( Iul.size() == 1 ) {
+        if (Iul.size() == 1) {
             factors.add(P);
             return factors;
         }
         GenPolynomial<AlgebraicNumber<C>> f = pfac.getONE();
-        for (IdealWithUniv<C> Iu : Iul ) {
-            GenPolynomial<C> ag = PolyUtil.<C> selectWithVariable(Iu.ideal.getList(),1); 
-            GenPolynomial<C> pg = PolyUtil.<C> selectWithVariable(Iu.ideal.getList(),0); 
+        for (IdealWithUniv<C> Iu : Iul) {
+            List<GenPolynomial<C>> pl = Iu.ideal.getList();
+            GenPolynomial<C> ag = PolyUtil.<C> selectWithVariable(pl, 1);
+            GenPolynomial<C> pg = PolyUtil.<C> selectWithVariable(pl, 0);
             //System.out.println("ag = " + ag.toScript());
             //System.out.println("pg = " + pg.toScript());
-            if ( ag.equals(Ad) ) {
+            if (ag.equals(Ad)) {
                 //System.out.println("found factor --------------------");
-                GenPolynomial<GenPolynomial<C>> pgr = PolyUtil.<C> recursive(rfac,pg); 
-		GenPolynomial<AlgebraicNumber<C>> pga = PolyUtil.<C> convertRecursiveToAlgebraicCoefficients(pfac, pgr); 
+                GenPolynomial<GenPolynomial<C>> pgr = PolyUtil.<C> recursive(rfac, pg);
+                GenPolynomial<AlgebraicNumber<C>> pga = PolyUtil.<C> convertRecursiveToAlgebraicCoefficients(
+                                pfac, pgr);
                 //System.out.println("pga = " + pga.toScript());
                 f = f.multiply(pga);
                 factors.add(pga);
-	    }
+            } else {
+                logger.warn("algebraic number mismatch: ag = " + ag + ", expected Ad = " + Ad);
+            }
         }
         f = f.subtract(P);
         //System.out.println("f = " + f.toScript());
-        if ( !f.isZERO() ) {
+        if (!f.isZERO()) {
             throw new RuntimeException("no factorization: " + f + ", factors = " + factors);
         }
         return factors;

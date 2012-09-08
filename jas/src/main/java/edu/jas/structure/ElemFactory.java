@@ -1,18 +1,20 @@
 /*
- * $Id: ElemFactory.java 3193 2010-06-26 20:10:37Z kredel $
+ * $Id: ElemFactory.java 4056 2012-07-26 17:44:13Z kredel $
  */
 
 package edu.jas.structure;
 
-import java.math.BigInteger;
+
 import java.io.Reader;
 import java.io.Serializable;
-import java.util.Random;
+import java.math.BigInteger;
 import java.util.List;
+import java.util.Random;
+
 
 /**
- * Element factory interface.
- * Defines embedding of integers, parsing and random element construction.
+ * Element factory interface. Defines embedding of integers, parsing and random
+ * element construction.
  * @author Heinz Kredel
  */
 
@@ -90,7 +92,8 @@ public interface ElemFactory<C extends Element<C>> extends Serializable {
     public C parse(Reader r);
 
 
-    /** Get a scripting compatible string representation.
+    /**
+     * Get a scripting compatible string representation.
      * @return script compatible representation for this ElemFactory.
      */
     public String toScript();

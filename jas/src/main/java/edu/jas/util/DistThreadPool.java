@@ -1,5 +1,5 @@
 /*
- * $Id: DistThreadPool.java 3337 2010-09-27 21:05:17Z kredel $
+ * $Id: DistThreadPool.java 4065 2012-07-27 15:17:38Z kredel $
  */
 
 package edu.jas.util;
@@ -13,7 +13,7 @@ import org.apache.log4j.Logger;
 
 
 /**
- * Distributed thread pool. Using stack / list workpile and Executable Channels
+ * Distributed thread pool. Using stack / list work-pile and Executable Channels
  * and Servers.
  * @author Heinz Kredel
  */
@@ -271,7 +271,7 @@ public class DistThreadPool /*extends ThreadPool*/{
         logger.debug("adding job");
         if (idleworkers > 0) {
             logger.debug("notifying a jobless worker");
-            notify();
+            notifyAll(); // findbugs
         }
     }
 
@@ -437,7 +437,7 @@ class DistPoolThread extends Thread {
                     running = false;
                 } finally {
                     logger.info("receive finally " + myId + " at " + ec + " send job " + job + " received "
-                            + o + " running " + running);
+                                    + o + " running " + running);
                 }
                 working = false;
                 time += System.currentTimeMillis() - t;

@@ -1,5 +1,5 @@
 /*
- * $Id: SolvableGroebnerBaseAbstract.java 3973 2012-07-01 11:26:02Z kredel $
+ * $Id: SolvableGroebnerBaseAbstract.java 4104 2012-08-18 10:00:59Z kredel $
  */
 
 package edu.jas.gb;
@@ -356,6 +356,7 @@ public abstract class SolvableGroebnerBaseAbstract<C extends RingElem<C>>
      * @param F solvable polynomial list.
      * @return rightGB(F) a right Groebner base of F.
      */
+    @SuppressWarnings("unchecked")
     public List<GenSolvablePolynomial<C>> 
            rightGB(int modv, 
                    List<GenSolvablePolynomial<C>> F) {

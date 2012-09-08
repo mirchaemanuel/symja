@@ -1,5 +1,5 @@
 /*
- * $Id: Residue.java 3366 2010-10-24 13:02:14Z kredel $
+ * $Id: Residue.java 4125 2012-08-19 19:05:22Z kredel $
  */
 
 package edu.jas.poly;
@@ -73,16 +73,20 @@ public class Residue<C extends RingElem<C> >
             v = v.sum( ring.modul );
         }
         val = v;
-        switch ( u ) {
-        case 0:  isunit = u;
-                 break;
-        case 1:  isunit = u;
-                 break;
-        default: isunit = -1;
+        if ( u == 0 || u == 1 ) {
+            isunit = u;
+            return;
+        }
+        if (val.isZERO()) {
+            isunit = 0;
+            return;
         }
         if ( val.isUnit() ) {
            isunit = 1;
+        //} else { // not possible
+           //isunit = 0;
         }
+        isunit = -1;
     }
 
 
@@ -100,7 +104,7 @@ public class Residue<C extends RingElem<C> >
      * @see java.lang.Object#clone()
      */
     @Override
-    public Residue<C> clone() {
+    public Residue<C> copy() {
         return new Residue<C>( ring, val );
     }
    
@@ -129,7 +133,7 @@ public class Residue<C extends RingElem<C> >
      */
     @SuppressWarnings("unchecked")
      public boolean isUnit() {
-        if ( isunit > 0 ) {
+        if ( isunit == 1 ) {
             return true;
         } 
         if ( isunit == 0 ) {
@@ -162,7 +166,7 @@ public class Residue<C extends RingElem<C> >
      * @see java.lang.Object#toString()
      */
     @Override
-     public String toString() {
+    public String toString() {
         return "Residue[ " + val.toString() 
                  + " mod " + ring.toString() + " ]";
     }
@@ -298,7 +302,7 @@ public class Residue<C extends RingElem<C> >
      * @return S with S = 1/this if defined. 
      */
     @SuppressWarnings("unchecked")
-     public Residue<C> inverse() {
+    public Residue<C> inverse() {
         if ( isunit == 0 ) {
            throw new NotInvertibleException("element not invertible (0) " + this);
         }

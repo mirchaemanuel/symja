@@ -1,5 +1,5 @@
 /*
- * $Id: Condition.java 3816 2011-10-29 18:08:34Z kredel $
+ * $Id: Condition.java 4058 2012-07-26 21:03:53Z kredel $
  */
 
 package edu.jas.application;
@@ -32,7 +32,7 @@ public class Condition<C extends GcdRingElem<C>> implements Serializable {
     private static final Logger logger = Logger.getLogger(Condition.class);
 
 
-    private final boolean debug = logger.isDebugEnabled();
+    //private final boolean debug = logger.isDebugEnabled();
 
 
     /**
@@ -215,10 +215,10 @@ public class Condition<C extends GcdRingElem<C>> implements Serializable {
         logger.info("added to ideal: " + z);
 
         Condition<C> nc = new Condition<C>(idz, nonZero);
-        if (true) {
-            return nc.simplify();
-        }
-        return nc;
+        //if (true) {
+        return nc.simplify();
+        //}
+        //return nc;
     }
 
 
@@ -237,10 +237,10 @@ public class Condition<C extends GcdRingElem<C>> implements Serializable {
         logger.info("added to non zero: " + n);
 
         Condition<C> nc = new Condition<C>(zero, ms);
-        if (true) {
-            return nc.simplify();
-        }
-        return nc;
+        //if (true) {
+        return nc.simplify();
+        //}
+        //return nc;
     }
 
 
@@ -249,9 +249,9 @@ public class Condition<C extends GcdRingElem<C>> implements Serializable {
      * @return new simplified condition.
      */
     public Condition<C> simplify() {
-        if (false) { // no simplification
-            return this;
-        }
+        //if (false) { // no simplification
+        //    return this;
+        //}
         Ideal<C> idz = zero.squarefree();
         if (!idz.getList().equals(zero.getList())) {
             logger.info("simplify squarefree: " + zero.getList() + " to " + idz.getList());
@@ -286,9 +286,9 @@ public class Condition<C extends GcdRingElem<C>> implements Serializable {
             return this;
         }
         logger.info("condition simplified: " + this + " to " + nc);
-        if (false) { // no further simplification
-            return nc;
-        }
+        //if (false) { // no further simplification
+        //    return nc;
+        //}
         return nc.simplify();
     }
 

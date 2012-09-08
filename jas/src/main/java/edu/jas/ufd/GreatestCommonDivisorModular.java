@@ -1,5 +1,5 @@
 /*
- * $Id: GreatestCommonDivisorModular.java 3847 2011-12-30 12:57:31Z kredel $
+ * $Id: GreatestCommonDivisorModular.java 4111 2012-08-19 12:30:30Z kredel $
  */
 
 package edu.jas.ufd;
@@ -132,6 +132,9 @@ public class GreatestCommonDivisorModular<MOD extends GcdRingElem<MOD> & Modular
         } else {
             q = P;
             r = S;
+        }
+        if (debug) {
+            logger.debug("degrees: e = " + e + ", f = " + f);
         }
         r = r.abs();
         q = q.abs();
@@ -482,7 +485,7 @@ public class GreatestCommonDivisorModular<MOD extends GcdRingElem<MOD> & Modular
                 // initialize chinese remainder algorithm
                 M = new BigInteger(p);
                 cofacM = cofac;
-                rfac = mfac;
+                //rfac = mfac;
                 cp = cm;
             } else {
                 // apply chinese remainder algorithm

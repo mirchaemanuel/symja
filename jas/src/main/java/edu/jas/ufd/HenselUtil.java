@@ -1,5 +1,5 @@
 /*
- * $Id: HenselUtil.java 3831 2011-12-18 20:54:12Z kredel $
+ * $Id: HenselUtil.java 4115 2012-08-19 13:18:59Z kredel $
  */
 
 package edu.jas.ufd;
@@ -353,11 +353,11 @@ public class HenselUtil {
             // E mod p
             Ep = PolyUtil.<MOD> fromIntegerCoefficients(qfac, E);
             //logger.info("Ep = " + Ep + ", qfac = " + qfac);
-            if (Ep.isZERO()) {
+            //if (Ep.isZERO()) {
                 //System.out.println("leaving on zero error");
                 //??logger.info("leaving on zero Ep");
                 //??break;
-            }
+            //}
 
             // construct approximation mod p
             Ap = Sp.multiply(Ep); // S,T ++ T,S
@@ -573,7 +573,7 @@ public class HenselUtil {
             GenPolynomial<BigInteger> C, BigInteger M, GenPolynomial<MOD> A, GenPolynomial<MOD> B,
             GenPolynomial<MOD> S, GenPolynomial<MOD> T) throws NoLiftingException {
         //System.out.println("*** version for factorization *** ");
-        GenPolynomial<BigInteger>[] AB = new GenPolynomial[2];
+        //GenPolynomial<BigInteger>[] AB = new GenPolynomial[2];
         if (C == null || C.isZERO()) {
             throw new IllegalArgumentException("C must be nonzero");
         }
@@ -1044,7 +1044,7 @@ public class HenselUtil {
         ModularRingFactory<MOD> mcfac = (ModularRingFactory<MOD>) fac.coFac;
         BigInteger p = mcfac.getIntegerModul();
         BigInteger modul = p;
-        GenPolynomialRing<MOD> mfac = new GenPolynomialRing<MOD>(mcfac, fac);
+        GenPolynomialRing<MOD> mfac; // = new GenPolynomialRing<MOD>(mcfac, fac);
         for (int i = 1; i < k; i++) {
             // e = 1 - s a - t b in Z[x]
             GenPolynomial<BigInteger> e = one.subtract(Si.multiply(Ai)).subtract(Ti.multiply(Bi));
@@ -1399,7 +1399,7 @@ public class HenselUtil {
              S.add(a);
         }
         GenPolynomial<MOD> xe = fac.univariate(0, e);
-        List<GenPolynomial<MOD>> Sr = new ArrayList<GenPolynomial<MOD>>(lee.size());
+        //List<GenPolynomial<MOD>> Sr = new ArrayList<GenPolynomial<MOD>>(lee.size());
         int i = 0;
         for ( GenPolynomial<MOD> s : S ) {
              GenPolynomial<MOD> q = s.multiply(xe);
@@ -1566,7 +1566,6 @@ public class HenselUtil {
 
         // setup integer polynomial ring
         GenPolynomialRing<BigInteger> ifac = new GenPolynomialRing<BigInteger>(new BigInteger(), fac);
-        GenPolynomial<BigInteger> one = ifac.getONE();
         List<GenPolynomial<BigInteger>> Fi = PolyUtil.integerFromModularCoefficients(ifac, F);
         //System.out.println("Fi = " + Fi);
 
@@ -1722,7 +1721,6 @@ public class HenselUtil {
 
         // setup integer polynomial ring
         GenPolynomialRing<BigInteger> ifac = new GenPolynomialRing<BigInteger>(new BigInteger(), fac);
-        GenPolynomial<BigInteger> one = ifac.getONE();
         List<GenPolynomial<BigInteger>> Fi = PolyUtil.integerFromModularCoefficients(ifac, F);
         //System.out.println("Fi = " + Fi);
 

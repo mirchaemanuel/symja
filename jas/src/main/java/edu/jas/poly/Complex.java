@@ -1,5 +1,5 @@
 /*
- * $Id: Complex.java 3963 2012-06-16 14:32:14Z kredel $
+ * $Id: Complex.java 4125 2012-08-19 19:05:22Z kredel $
  */
 
 package edu.jas.poly;
@@ -159,7 +159,7 @@ public class Complex<C extends RingElem<C>> implements StarRingElem<Complex<C>>,
      * @see java.lang.Object#clone()
      */
     @Override
-    public Complex<C> clone() {
+    public Complex<C> copy() {
         return new Complex<C>(ring, re, im);
     }
 

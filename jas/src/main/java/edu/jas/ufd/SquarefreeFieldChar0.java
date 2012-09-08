@@ -1,12 +1,10 @@
 /*
- * $Id: SquarefreeFieldChar0.java 3819 2011-10-30 12:04:10Z kredel $
+ * $Id: SquarefreeFieldChar0.java 4112 2012-08-19 12:35:48Z kredel $
  */
 
 package edu.jas.ufd;
 
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -31,7 +29,7 @@ public class SquarefreeFieldChar0<C extends GcdRingElem<C>> extends SquarefreeAb
     private static final Logger logger = Logger.getLogger(SquarefreeFieldChar0.class);
 
 
-    private final boolean debug = logger.isDebugEnabled();
+    //private final boolean debug = logger.isDebugEnabled();
 
 
     /**
@@ -44,7 +42,7 @@ public class SquarefreeFieldChar0<C extends GcdRingElem<C>> extends SquarefreeAb
      * Constructor.
      */
     public SquarefreeFieldChar0(RingFactory<C> fac) {
-        super( GCDFactory.<C> getProxy(fac) );
+        super(GCDFactory.<C> getProxy(fac));
         if (!fac.isField()) {
             throw new IllegalArgumentException("fac must be a field");
         }
@@ -217,9 +215,9 @@ public class SquarefreeFieldChar0<C extends GcdRingElem<C>> extends SquarefreeAb
         }
         GenPolynomialRing<GenPolynomial<C>> pfac = P.ring;
         if (pfac.nvar > 1) {
-            throw new IllegalArgumentException(this.getClass().getName() + " only for multivariate polynomials");
+            throw new IllegalArgumentException(this.getClass().getName()
+                            + " only for multivariate polynomials");
         }
-        GenPolynomialRing<C> cfac = (GenPolynomialRing<C>) pfac.coFac;
         // squarefree content
         GenPolynomial<GenPolynomial<C>> pp = P;
         GenPolynomial<C> Pc = engine.recursiveContent(P);
@@ -227,8 +225,8 @@ public class SquarefreeFieldChar0<C extends GcdRingElem<C>> extends SquarefreeAb
         if (!Pc.isONE()) {
             pp = PolyUtil.<C> coefficientPseudoDivide(pp, Pc);
             //System.out.println("pp,sqp = " + pp);
-            GenPolynomial<C> Pr = squarefreePart(Pc);
-            Pr = Pr.monic();
+            //GenPolynomial<C> Pr = squarefreePart(Pc);
+            //Pr = Pr.monic();
             //System.out.println("Pr,sqp = " + Pr);
         }
         if (pp.leadingExpVector().getVal(0) < 1) {
@@ -258,16 +256,16 @@ public class SquarefreeFieldChar0<C extends GcdRingElem<C>> extends SquarefreeAb
         }
         GenPolynomialRing<GenPolynomial<C>> pfac = P.ring;
         if (pfac.nvar > 1) {
-            throw new IllegalArgumentException(this.getClass().getName() + " only for multivariate polynomials");
+            throw new IllegalArgumentException(this.getClass().getName()
+                            + " only for multivariate polynomials");
         }
-        GenPolynomialRing<C> cfac = (GenPolynomialRing<C>) pfac.coFac;
         // squarefree content
         GenPolynomial<GenPolynomial<C>> pp = P;
         GenPolynomial<C> Pc = engine.recursiveContent(P);
-        if ( logger.isInfoEnabled() ) {
+        if (logger.isInfoEnabled()) {
             logger.info("recursiveContent = " + Pc);
         }
-        if ( ! isSquarefree(Pc) ) {
+        if (!isSquarefree(Pc)) {
             return false;
         }
         Pc = Pc.monic();
@@ -283,7 +281,7 @@ public class SquarefreeFieldChar0<C extends GcdRingElem<C>> extends SquarefreeAb
         GenPolynomial<GenPolynomial<C>> d = PolyUtil.<C> recursiveDeriviative(pp);
         //System.out.println("d = " + d);
         GenPolynomial<GenPolynomial<C>> g = engine.recursiveUnivariateGcd(pp, d);
-        if ( logger.isInfoEnabled() ) {
+        if (logger.isInfoEnabled()) {
             logger.info("gcd = " + g);
         }
         //System.out.println("g,rec = " + g);
@@ -300,7 +298,7 @@ public class SquarefreeFieldChar0<C extends GcdRingElem<C>> extends SquarefreeAb
      */
     @Override
     public SortedMap<GenPolynomial<GenPolynomial<C>>, Long> recursiveUnivariateSquarefreeFactors(
-            GenPolynomial<GenPolynomial<C>> P) {
+                    GenPolynomial<GenPolynomial<C>> P) {
         SortedMap<GenPolynomial<GenPolynomial<C>>, Long> sfactors = new TreeMap<GenPolynomial<GenPolynomial<C>>, Long>();
         if (P == null || P.isZERO()) {
             return sfactors;
@@ -325,7 +323,7 @@ public class SquarefreeFieldChar0<C extends GcdRingElem<C>> extends SquarefreeAb
         }
         // factors of content
         GenPolynomial<C> Pc = engine.recursiveContent(P);
-        if ( logger.isInfoEnabled() ) {
+        if (logger.isInfoEnabled()) {
             logger.info("recursiveContent = " + Pc);
         }
         Pc = Pc.monic();
@@ -333,14 +331,15 @@ public class SquarefreeFieldChar0<C extends GcdRingElem<C>> extends SquarefreeAb
             P = PolyUtil.<C> coefficientPseudoDivide(P, Pc);
         }
         SortedMap<GenPolynomial<C>, Long> rsf = squarefreeFactors(Pc);
-        if ( logger.isInfoEnabled() ) {
+        if (logger.isInfoEnabled()) {
             logger.info("squarefreeFactors = " + rsf);
         }
         // add factors of content
-        for (GenPolynomial<C> c : rsf.keySet()) {
+        for (Map.Entry<GenPolynomial<C>, Long> me : rsf.entrySet()) {
+            GenPolynomial<C> c = me.getKey();
             if (!c.isONE()) {
                 GenPolynomial<GenPolynomial<C>> cr = pfac.getONE().multiply(c);
-                Long rk = rsf.get(c);
+                Long rk = me.getValue(); // rsf.get(c);
                 sfactors.put(cr, rk);
             }
         }
@@ -418,13 +417,13 @@ public class SquarefreeFieldChar0<C extends GcdRingElem<C>> extends SquarefreeAb
         GenPolynomial<C> Pc = engine.recursiveContent(Pr);
         Pr = PolyUtil.<C> coefficientPseudoDivide(Pr, Pc);
         GenPolynomial<C> Ps = squarefreePart(Pc);
-        if ( logger.isInfoEnabled() ) {
+        if (logger.isInfoEnabled()) {
             logger.info("content = " + Pc + ", squarefreePart = " + Ps);
         }
         GenPolynomial<GenPolynomial<C>> PP = recursiveUnivariateSquarefreePart(Pr);
         GenPolynomial<GenPolynomial<C>> PS = PP.multiply(Ps);
         GenPolynomial<C> D = PolyUtil.<C> distribute(pfac, PS);
-        if ( logger.isInfoEnabled() ) {
+        if (logger.isInfoEnabled()) {
             logger.info("univRec = " + Pr + ", squarefreePart = " + PP);
         }
         return D;
@@ -486,7 +485,7 @@ public class SquarefreeFieldChar0<C extends GcdRingElem<C>> extends SquarefreeAb
             GenPolynomial<C> D = PolyUtil.<C> distribute(pfac, Dr);
             sfactors.put(D, i);
         }
-        if ( logger.isInfoEnabled() ) {
+        if (logger.isInfoEnabled()) {
             logger.info("squarefreeFactors(" + P + ") = " + sfactors);
         }
         return normalizeFactorization(sfactors);
@@ -499,6 +498,7 @@ public class SquarefreeFieldChar0<C extends GcdRingElem<C>> extends SquarefreeAb
      * @return [p_1 -> e_1, ..., p_k -> e_k] with P = prod_{i=1,...,k} p_i^{e_i}
      *         and p_i squarefree.
      */
+    @Override
     public SortedMap<C, Long> squarefreeFactors(C P) {
         throw new UnsupportedOperationException("method not implemented");
     }

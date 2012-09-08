@@ -1,5 +1,5 @@
 /*
- * $Id: CharacteristicSetWu.java 4008 2012-07-15 19:51:40Z kredel $
+ * $Id: CharacteristicSetWu.java 4061 2012-07-27 12:03:20Z kredel $
  */
 
 package edu.jas.gbufd;
@@ -101,7 +101,7 @@ public class CharacteristicSetWu<C extends GcdRingElem<C>> implements Characteri
                 zeroDeg.add(rr.leadingBaseCoefficient().monic());
             } else {
                 pd.add(rr);
-                pd = opl.sort(rfac, pd);
+                pd = OrderedPolynomialList.sort(rfac, pd);
                 Collections.reverse(pd); // avoid
             }
         }
@@ -147,11 +147,11 @@ public class CharacteristicSetWu<C extends GcdRingElem<C>> implements Characteri
         }
         GenPolynomialRing<C> pfac = A.get(0).ring;
         if (pfac.nvar <= 1) {
-            System.out.println("CS: pfac = " + pfac + ", A = " + A + ", A.size() = " + A.size());
+            //System.out.println("CS: pfac = " + pfac + ", A = " + A + ", A.size() = " + A.size());
             return A.size() <= 1;
         }
         if (pfac.nvar < A.size()) {
-            System.out.println("not CS: pfac = " + pfac + ", A = " + A);
+            logger.info("not CS: pfac = " + pfac + ", A = " + A);
             return false;
         }
         // select polynomials according to the main variable
@@ -160,7 +160,7 @@ public class CharacteristicSetWu<C extends GcdRingElem<C>> implements Characteri
         int positiveDeg = 0;
         for (GenPolynomial<C> f : A) {
             if (f.isZERO()) {
-                System.out.println("not CS: f = " + f);
+                logger.info("not CS: f = " + f);
                 return false;
             }
             //f = f.monic();
@@ -170,7 +170,7 @@ public class CharacteristicSetWu<C extends GcdRingElem<C>> implements Characteri
             } else {
                 positiveDeg++;
                 if (positiveDeg > 1) {
-                    System.out.println("not CS: f = " + f + ", positiveDeg = " + positiveDeg);
+                    logger.info("not CS: f = " + f + ", positiveDeg = " + positiveDeg);
                     return false;
                 }
             }
@@ -180,11 +180,12 @@ public class CharacteristicSetWu<C extends GcdRingElem<C>> implements Characteri
 
 
     /**
-     * Characteristic set reduction. Pseudo remainder wrt. the main variable with
-     * further pseudo reduction of the leading coefficient.
+     * Characteristic set reduction. Pseudo remainder wrt. the main variable
+     * with further pseudo reduction of the leading coefficient.
      * @param P generic polynomial.
      * @param A list of generic polynomials as characteristic set.
-     * @return characteristicSetReductionCoeff(A,characteristicSetRemainder(A,P))
+     * @return 
+     *         characteristicSetReductionCoeff(A,characteristicSetRemainder(A,P))
      */
     public GenPolynomial<C> characteristicSetReduction(List<GenPolynomial<C>> A, GenPolynomial<C> P) {
         if (A == null || A.isEmpty()) {
@@ -193,7 +194,6 @@ public class CharacteristicSetWu<C extends GcdRingElem<C>> implements Characteri
         if (P.isZERO()) {
             return P;
         }
-        GenPolynomialRing<C> pfac = A.get(0).ring;
         GenPolynomial<C> R = PolyGBUtil.<C> topPseudoRemainder(A, P);
         //System.out.println("remainder, R = " + R);
         if (R.isZERO()) {

@@ -1,5 +1,5 @@
 /*
- * $Id: MultiplicativeSetFactors.java 3988 2012-07-14 12:07:13Z kredel $
+ * $Id: MultiplicativeSetFactors.java 4061 2012-07-27 12:03:20Z kredel $
  */
 
 package edu.jas.gbufd;
@@ -30,7 +30,7 @@ public class MultiplicativeSetFactors<C extends GcdRingElem<C>> extends Multipli
     private static final Logger logger = Logger.getLogger(MultiplicativeSetFactors.class);
 
 
-    private final boolean debug = logger.isDebugEnabled();
+    //private final boolean debug = logger.isDebugEnabled();
 
 
     /**
@@ -56,7 +56,7 @@ public class MultiplicativeSetFactors<C extends GcdRingElem<C>> extends Multipli
      * @param eng factorization engine.
      */
     protected MultiplicativeSetFactors(GenPolynomialRing<C> ring, List<GenPolynomial<C>> ms,
-            FactorAbstract<C> eng) {
+                    FactorAbstract<C> eng) {
         super(ring, ms);
         engine = eng;
     }

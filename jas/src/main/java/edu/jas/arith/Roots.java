@@ -1,5 +1,5 @@
 /*
- * $Id: Roots.java 3296 2010-08-26 17:30:55Z kredel $
+ * $Id: Roots.java 4054 2012-07-26 17:34:57Z kredel $
  */
 
 package edu.jas.arith;
@@ -53,9 +53,8 @@ public class Roots {
             //System.out.println("P = " + P);
             if (A.compareTo(P) >= 0) {
                 break;
-            } else {
-                R = R.subtract(BigInteger.ONE);
             }
+            R = R.subtract(BigInteger.ONE);
         }
         return R;
     }
@@ -87,9 +86,8 @@ public class Roots {
             //System.out.println("P = " + P);
             if (A.compareTo(P) >= 0) {
                 break;
-            } else {
-                R = R.subtract(BigInteger.ONE);
             }
+            R = R.subtract(BigInteger.ONE);
         }
         return R;
     }

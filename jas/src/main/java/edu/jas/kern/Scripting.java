@@ -1,20 +1,21 @@
 /*
- * $Id: Scripting.java 3470 2011-01-06 19:19:11Z kredel $
+ * $Id: Scripting.java 4055 2012-07-26 17:37:29Z kredel $
  */
 
 package edu.jas.kern;
 
 
 /**
- * Scripting,
- * defines script language for output in toScript() method.
+ * Scripting, defines script language for output in toScript() method.
  * @author Heinz Kredel
  */
 
 public class Scripting {
 
 
-    public static enum Lang { Python, Ruby };
+    public static enum Lang {
+        Python, Ruby
+    };
 
 
     private static Lang script = Lang.Python;

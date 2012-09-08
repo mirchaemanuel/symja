@@ -1,5 +1,5 @@
 /*
- * $Id: FactorAbsolute.java 3978 2012-07-09 21:10:01Z kredel $
+ * $Id: FactorAbsolute.java 4125 2012-08-19 19:05:22Z kredel $
  */
 
 package edu.jas.ufd;
@@ -7,6 +7,7 @@ package edu.jas.ufd;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -148,8 +149,9 @@ public abstract class FactorAbsolute<C extends GcdRingElem<C>> extends FactorAbs
         }
         // factor over some K(alpha)
         SortedMap<Factors<C>, Long> afactors = new TreeMap<Factors<C>, Long>();
-        for (GenPolynomial<C> p : facs.keySet()) {
-            Long e = facs.get(p);
+        for ( Map.Entry<GenPolynomial<C>,Long> me : facs.entrySet()) {
+            GenPolynomial<C> p = me.getKey();
+            Long e = me.getValue(); //facs.get(p);
             if (p.degree(0) <= 1) {
                 factors.put(p, e);
             } else {
@@ -253,7 +255,7 @@ public abstract class FactorAbsolute<C extends GcdRingElem<C>> extends FactorAbs
         // setup field extension K(alpha) where alpha = z_xx
         //String[] vars = new String[] { "z_" + Math.abs(P.hashCode() % 1000) };
         String[] vars = pfac.newVars( "z_" );
-        pfac = pfac.clone();
+        pfac = pfac.copy();
         vars = pfac.setVars(vars);
         GenPolynomial<C> aP = pfac.copy(P); // hack to exchange the variables
         AlgebraicNumberRing<C> afac = new AlgebraicNumberRing<C>(aP, true); // since irreducible
@@ -462,8 +464,8 @@ public abstract class FactorAbsolute<C extends GcdRingElem<C>> extends FactorAbs
 //             }
             //vars = new String[] { "z_" + Math.abs(r.hashCode() % 1000) };
             vars = pfac.newVars( "z_" );
-            pfac = pfac.clone();
-            vars = pfac.setVars(vars);
+            pfac = pfac.copy();
+            String[] ovars = pfac.setVars(vars);
             r = pfac.copy(r); // hack to exchange the variables
             //System.out.println("r(z_) = " + r);
             AlgebraicNumberRing<C> afac = new AlgebraicNumberRing<C>(r, true); // since irreducible
@@ -669,8 +671,9 @@ public abstract class FactorAbsolute<C extends GcdRingElem<C>> extends FactorAbs
         }
         SortedMap<Factors<C>, Long> afactors = new TreeMap<Factors<C>, Long>();
         // factor over K(alpha)
-        for (GenPolynomial<C> p : facs.keySet()) {
-            Long e = facs.get(p);
+        for ( Map.Entry<GenPolynomial<C>, Long> me : facs.entrySet()) {
+            GenPolynomial<C> p = me.getKey();
+            Long e = me.getValue(); //facs.get(p);
             if (p.degree() <= 1) {
                 factors.put(p, e);
             } else {
@@ -767,7 +770,7 @@ public abstract class FactorAbsolute<C extends GcdRingElem<C>> extends FactorAbs
         if (!pfac.coFac.isField()) {
             throw new IllegalArgumentException("only for field coefficients");
         }
-        List<GenPolynomial<C>> factors = new ArrayList<GenPolynomial<C>>();
+        //List<GenPolynomial<C>> factors = new ArrayList<GenPolynomial<C>>();
         if (P.degree() <= 1) {
             return new Factors<C>(P);
         }
@@ -842,7 +845,7 @@ public abstract class FactorAbsolute<C extends GcdRingElem<C>> extends FactorAbs
         // setup field extension K(alpha)
         //String[] vars = new String[] { "z_" + Math.abs(up.hashCode() % 1000) };
         String[] vars = pfac.newVars( "z_" );
-        pfac = pfac.clone();
+        pfac = pfac.copy();
         String[] ovars = pfac.setVars(vars); // side effects! 
         GenPolynomial<C> aup = pfac.copy(up); // hack to exchange the variables
 
@@ -972,8 +975,9 @@ public abstract class FactorAbsolute<C extends GcdRingElem<C>> extends FactorAbs
         }
         GenPolynomial<C> P = facs.poly;
         GenPolynomial<C> t = P.ring.getONE();
-        for (GenPolynomial<C> f : facs.factors.keySet()) {
-            long e = facs.factors.get(f);
+        for ( Map.Entry<GenPolynomial<C>,Long> me : facs.factors.entrySet()) {
+            GenPolynomial<C> f = me.getKey();
+            long e = me.getValue(); //facs.factors.get(f);
             GenPolynomial<C> g = Power.<GenPolynomial<C>> positivePower(f, e);
             t = t.multiply(g);
         }
@@ -983,11 +987,12 @@ public abstract class FactorAbsolute<C extends GcdRingElem<C>> extends FactorAbs
         if (facs.afactors == null) {
             return false;
         }
-        for (Factors<C> fs : facs.afactors.keySet()) {
+        for ( Map.Entry<Factors<C>,Long> me : facs.afactors.entrySet()) {
+            Factors<C> fs = me.getKey();
             if (!isAbsoluteFactorization(fs)) {
                 return false;
             }
-            long e = facs.afactors.get(fs);
+            long e = me.getValue(); // facs.afactors.get(fs);
             GenPolynomial<C> g = Power.<GenPolynomial<C>> positivePower(fs.poly, e);
             t = t.multiply(g);
         }

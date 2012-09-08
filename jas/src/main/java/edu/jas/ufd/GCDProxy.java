@@ -1,5 +1,5 @@
 /*
- * $Id: GCDProxy.java 3847 2011-12-30 12:57:31Z kredel $
+ * $Id: GCDProxy.java 4045 2012-07-25 16:48:23Z kredel $
  */
 
 package edu.jas.ufd;
@@ -49,7 +49,7 @@ public class GCDProxy<C extends GcdRingElem<C>> extends GreatestCommonDivisorAbs
     /**
      * Thread pool.
      */
-    protected ExecutorService pool;
+    protected transient ExecutorService pool;
 
 
     /**
@@ -58,10 +58,8 @@ public class GCDProxy<C extends GcdRingElem<C>> extends GreatestCommonDivisorAbs
     public GCDProxy(GreatestCommonDivisorAbstract<C> e1, GreatestCommonDivisorAbstract<C> e2) {
         this.e1 = e1;
         this.e2 = e2;
-        if (pool == null) {
-            pool = ComputerThreads.getPool();
-            //System.out.println("pool 2 = "+pool);
-        }
+        pool = ComputerThreads.getPool();
+        //System.out.println("pool 2 = "+pool);
     }
 
 

@@ -1,5 +1,5 @@
 /*
- * $Id: UnaryFunctor.java 2955 2010-01-01 12:50:44Z kredel $
+ * $Id: UnaryFunctor.java 4056 2012-07-26 17:44:13Z kredel $
  */
 
 package edu.jas.structure;
@@ -12,7 +12,7 @@ package edu.jas.structure;
  * @author Heinz Kredel
  */
 
-public interface UnaryFunctor< C extends Element<C>, D extends Element<D> > {
+public interface UnaryFunctor<C extends Element<C>, D extends Element<D>> {
 
 
     /**

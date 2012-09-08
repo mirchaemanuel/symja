@@ -1,5 +1,5 @@
 /*
- * $Id: PolyGBUtil.java 4008 2012-07-15 19:51:40Z kredel $
+ * $Id: PolyGBUtil.java 4049 2012-07-25 17:10:49Z kredel $
  */
 
 package edu.jas.gbufd;
@@ -176,7 +176,7 @@ public class PolyGBUtil {
     public static <C extends RingElem<C>> 
       GenPolynomial<GenPolynomial<GenPolynomial<C>>> coefficientPseudoRemainder(
                     GenPolynomial<GenPolynomial<GenPolynomial<C>>> P, GenPolynomial<GenPolynomial<C>> A) {
-        if (A == null | A.isZERO()) {
+        if (A == null || A.isZERO()) { // findbugs
             throw new ArithmeticException(P + " division by zero " + A);
         }
         if (A.isONE()) {
@@ -234,7 +234,7 @@ public class PolyGBUtil {
     public static <C extends RingElem<C>> 
       GenPolynomial<GenPolynomial<C>> coefficientPseudoRemainderBase(
                     GenPolynomial<GenPolynomial<C>> P, GenPolynomial<C> A) {
-        if (A == null | A.isZERO()) {
+        if (A == null || A.isZERO()) { // findbugs
             throw new ArithmeticException(P + " division by zero " + A);
         }
         if (A.isONE()) {

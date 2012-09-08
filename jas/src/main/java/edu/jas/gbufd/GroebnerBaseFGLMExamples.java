@@ -1,13 +1,13 @@
 /*
- * $Id: GroebnerBaseFGLMExamples.java 4003 2012-07-15 17:19:19Z kredel $
+ * $Id: GroebnerBaseFGLMExamples.java 4106 2012-08-18 10:41:52Z suess $
  */
 
 package edu.jas.gbufd;
 
 
+import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
-import java.io.IOException;
 import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Collections;
@@ -21,6 +21,7 @@ import edu.jas.arith.BigRational;
 import edu.jas.arith.ModInteger;
 import edu.jas.arith.ModIntegerRing;
 import edu.jas.gb.GroebnerBase;
+import edu.jas.poly.ExpVector;
 import edu.jas.poly.GenPolynomial;
 import edu.jas.poly.GenPolynomialTokenizer;
 import edu.jas.poly.Monomial;
@@ -106,14 +107,14 @@ public class GroebnerBaseFGLMExamples extends TestCase {
                         + ") ";
         String[] order = new String[] { "v", "w", "x", "y", "z" };
 
-        String order1 = shuffle(order);
+        //String order1 = shuffle(order);
         String order2 = shuffle(order);
-        String order3 = shuffle(order);
-        String order4 = shuffle(order);
-        String order5 = shuffle(order);
-        String order6 = "(z,w,v,y,x)"; //langsam
-        String order7 = "(v,z,w,y,x)"; //langsam
-        String order8 = "(w,z,v,x,y)"; //langsam
+        //String order3 = shuffle(order);
+        //String order4 = shuffle(order);
+        //String order5 = shuffle(order);
+        //String order6 = "(z,w,v,y,x)"; //langsam
+        //String order7 = "(v,z,w,y,x)"; //langsam
+        //String order8 = "(w,z,v,x,y)"; //langsam
 
         /*
           String erg1 = testGeneral(order1, polynomials);
@@ -999,14 +1000,10 @@ public class GroebnerBaseFGLMExamples extends TestCase {
     //Method shuffle returns a random permutation of a string of variables
     public String shuffle(String[] tempOrder) {
         Collections.shuffle(Arrays.asList(tempOrder));
-        String ret = "(";
-        int j = tempOrder.length;
-        for (int i = 0; i < j - 1; i++) {
-            ret = ret + tempOrder[i] + ",";
-        }
-        ret = ret + tempOrder[j - 1];
-        ret = ret + ")";
-        return ret;
+        StringBuffer ret = new StringBuffer("(");
+        ret.append(ExpVector.varsToString(tempOrder));
+        ret.append(")");
+        return ret.toString();
     }
 
 
@@ -1016,8 +1013,7 @@ public class GroebnerBaseFGLMExamples extends TestCase {
         BigInteger num = BigInteger.ONE;
         for (GenPolynomial<BigRational> g : list) {
             for (Monomial<BigRational> m : g) {
-                BigRational bi = new BigRational();
-                bi = m.coefficient();
+                BigRational bi = m.coefficient();
                 BigInteger i = bi.denominator().abs();
                 BigInteger j = bi.numerator().abs();
                 if (i.compareTo(denom) > 0)
@@ -1029,8 +1025,9 @@ public class GroebnerBaseFGLMExamples extends TestCase {
         int erg;
         if (denom.compareTo(num) > 0) {
             erg = denom.bitLength();
+        } else {
+            erg = num.bitLength();
         }
-        erg = num.bitLength();
         return erg;
     }
 

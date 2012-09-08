@@ -1,5 +1,5 @@
 /*
- * $Id: GenMatrixRing.java 3571 2011-03-18 22:02:51Z kredel $
+ * $Id: GenMatrixRing.java 4125 2012-08-19 19:05:22Z kredel $
  */
 
 package edu.jas.vector;
@@ -115,6 +115,8 @@ public class GenMatrixRing<C extends RingElem<C>> implements AlgebraFactory<GenM
             }
         }
         ONE = new GenMatrix<C>(this, m);
+        logger.info(rows + " x " + cols + " with blocksize " + blocksize + " matrix ring over " + coFac
+                        + "constructed");
     }
 
 
@@ -488,19 +490,23 @@ public class GenMatrixRing<C extends RingElem<C>> implements AlgebraFactory<GenM
 
 
     /**
-     * copy matrix.
-     */
+     * Copy matrix.
+     * @param c matrix to copy.
+     * @return copy of the matrix
+     * */
     public GenMatrix<C> copy(GenMatrix<C> c) {
         if (c == null) {
             return c;
         }
-        return c.clone();
+        return c.copy();
     }
 
 
     /**
-     * parse a matrix from a String. Syntax: [ [ c, ..., c ], ..., [ c, ..., c ]
+     * Parse a matrix from a String. Syntax: [ [ c, ..., c ], ..., [ c, ..., c ]
      * ]
+     * @param s input String.
+     * @return parsed matrix
      */
     public GenMatrix<C> parse(String s) {
         int i = s.indexOf("[");
@@ -534,7 +540,7 @@ public class GenMatrixRing<C extends RingElem<C>> implements AlgebraFactory<GenM
                     if (e.trim().length() > 0) {
                         throw new RuntimeException("Error e not empty " + e);
                     }
-                    s = s.substring(i + 1);
+                    //s = s.substring(i + 1);
                 }
                 break;
             }
@@ -544,7 +550,9 @@ public class GenMatrixRing<C extends RingElem<C>> implements AlgebraFactory<GenM
 
 
     /**
-     * parse a matrix from a Reader.
+     * Parse a matrix from a Reader.
+     * @param r Reader.
+     * @return parsed matrix
      */
     public GenMatrix<C> parse(Reader r) {
         String s = StringUtil.nextPairedString(r, '[', ']');

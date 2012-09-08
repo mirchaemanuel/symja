@@ -1,5 +1,5 @@
 /*
- * $Id: GreatestCommonDivisorModEval.java 3851 2011-12-30 18:30:04Z kredel $
+ * $Id: GreatestCommonDivisorModEval.java 4025 2012-07-23 16:41:43Z kredel $
  */
 
 package edu.jas.ufd;
@@ -107,6 +107,9 @@ public class GreatestCommonDivisorModEval <MOD extends GcdRingElem<MOD> & Modula
         } else {
             q = P;
             r = S;
+        }
+        if (debug) {
+            logger.debug("degrees: e = " + e + ", f = " + f);
         }
         r = r.abs();
         q = q.abs();
@@ -337,6 +340,9 @@ public class GreatestCommonDivisorModEval <MOD extends GcdRingElem<MOD> & Modula
         } else {
             q = P;
             r = S;
+        }
+        if (debug) {
+            logger.debug("degrees: e = " + e + ", f = " + f);
         }
         // setup factories
         ModularRingFactory<MOD> cofac = (ModularRingFactory<MOD>) P.ring.coFac;

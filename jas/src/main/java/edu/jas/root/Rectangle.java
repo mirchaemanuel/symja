@@ -1,5 +1,5 @@
 /*
- * $Id: Rectangle.java 3993 2012-07-14 21:39:15Z kredel $
+ * $Id: Rectangle.java 4125 2012-08-19 19:05:22Z kredel $
  */
 
 package edu.jas.root;
@@ -23,7 +23,7 @@ import edu.jas.structure.RingFactory;
  * @param <C> coefficient type.
  * @author Heinz Kredel
  */
-public class Rectangle<C extends RingElem<C> & Rational> implements Serializable, Cloneable {
+public class Rectangle<C extends RingElem<C> & Rational> implements Serializable {
 
 
     /**
@@ -210,8 +210,20 @@ public class Rectangle<C extends RingElem<C> & Rational> implements Serializable
     public boolean contains(Complex<C> c) {
         Complex<C> ll = getSW();
         Complex<C> ur = getNE(); // ?? Fix ?? getSW();
-        return c.getRe().compareTo(ll.getRe()) < 0 || c.getIm().compareTo(ll.getIm()) < 0
-                        || c.getRe().compareTo(ur.getRe()) > 0 || c.getIm().compareTo(ur.getIm()) > 0;
+        C cre = c.getRe();
+        C cim = c.getIm();
+        return    cre.compareTo(ll.getRe()) >= 0 && cim.compareTo(ll.getIm()) >= 0
+               && cre.compareTo(ur.getRe()) <= 0 && cim.compareTo(ur.getIm()) <= 0;
+    }
+
+
+    /**
+     * Contains a rectangle.
+     * @param r rectangle.
+     * @return true if r is contained in this rectangle, else false.
+     */
+    public boolean contains(Rectangle<C> r) {
+        return contains(r.getSW()) && contains(r.getNE()); // && contains(r.getSE()) && contains(r.getNW())
     }
 
 
@@ -250,11 +262,10 @@ public class Rectangle<C extends RingElem<C> & Rational> implements Serializable
 
 
     /**
-     * Clone this.
-     * @see java.lang.Object#clone()
+     * Copy this.
+     * @return a copy of this.
      */
-    @Override
-    public Rectangle<C> clone() {
+    public Rectangle<C> copy() {
         return new Rectangle<C>(corners);
     }
 

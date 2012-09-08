@@ -1,5 +1,5 @@
 /*
- * $Id: GroebnerSystem.java 3426 2010-12-24 13:17:58Z kredel $
+ * $Id: GroebnerSystem.java 4031 2012-07-25 10:58:50Z kredel $
  */
 
 package edu.jas.application;
@@ -200,6 +200,9 @@ public class GroebnerSystem<C extends GcdRingElem<C>> {
         }
         // assure conditions are collected
         List<Condition<C>> unused = getConditions();
+        if ( unused.isEmpty() ) { // use for findbugs
+            logger.info("unused is empty");
+        }
         // combine for CGB
         Set<GenPolynomial<GenPolynomial<C>>> Gs 
            = new HashSet<GenPolynomial<GenPolynomial<C>>>();

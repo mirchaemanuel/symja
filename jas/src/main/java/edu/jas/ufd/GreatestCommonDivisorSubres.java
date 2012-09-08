@@ -1,5 +1,5 @@
 /*
- * $Id: GreatestCommonDivisorSubres.java 3851 2011-12-30 18:30:04Z kredel $
+ * $Id: GreatestCommonDivisorSubres.java 4025 2012-07-23 16:41:43Z kredel $
  */
 
 package edu.jas.ufd;
@@ -29,7 +29,7 @@ public class GreatestCommonDivisorSubres<C extends GcdRingElem<C>> extends Great
     private static final Logger logger = Logger.getLogger(GreatestCommonDivisorSubres.class);
 
 
-    //private boolean debug = logger.isDebugEnabled();
+    private boolean debug = logger.isDebugEnabled();
 
 
     /**
@@ -95,6 +95,9 @@ public class GreatestCommonDivisorSubres<C extends GcdRingElem<C>> extends Great
         } else {
             q = P;
             r = S;
+        }
+        if (debug) {
+            logger.debug("degrees: e = " + e + ", f = " + f);
         }
         r = r.abs();
         q = q.abs();
@@ -168,6 +171,9 @@ public class GreatestCommonDivisorSubres<C extends GcdRingElem<C>> extends Great
         } else {
             q = P;
             r = S;
+        }
+        if (debug) {
+            logger.debug("degrees: e = " + e + ", f = " + f);
         }
         r = r.abs();
         q = q.abs();

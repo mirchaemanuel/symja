@@ -1,10 +1,11 @@
 /*
- * $Id: SquarefreeFiniteFieldCharP.java 3290 2010-08-26 09:18:48Z kredel $
+ * $Id: SquarefreeFiniteFieldCharP.java 4125 2012-08-19 19:05:22Z kredel $
  */
 
 package edu.jas.ufd;
 
 
+import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -31,7 +32,7 @@ public class SquarefreeFiniteFieldCharP<C extends GcdRingElem<C>> extends Square
     private static final Logger logger = Logger.getLogger(SquarefreeFiniteFieldCharP.class);
 
 
-    private final boolean debug = logger.isDebugEnabled();
+    //private final boolean debug = logger.isDebugEnabled();
 
 
     /**
@@ -40,8 +41,8 @@ public class SquarefreeFiniteFieldCharP<C extends GcdRingElem<C>> extends Square
     public SquarefreeFiniteFieldCharP(RingFactory<C> fac) {
         super(fac);
         // isFinite() predicate now present
-        if ( !fac.isFinite() ) {
-            throw new IllegalArgumentException("fac must be finite"); 
+        if (!fac.isFinite()) {
+            throw new IllegalArgumentException("fac must be finite");
         }
     }
 
@@ -138,12 +139,13 @@ public class SquarefreeFiniteFieldCharP<C extends GcdRingElem<C>> extends Square
         }
         // better: test if sf.size() == 1 // not ok
         Long k = null;
-        for (GenPolynomial<C> p : sf.keySet()) {
+        for (Map.Entry<GenPolynomial<C>, Long> me : sf.entrySet()) {
+            GenPolynomial<C> p = me.getKey();
             if (p.isConstant()) {
                 //System.out.println("p,const = " + p);
                 continue;
             }
-            Long e = sf.get(p);
+            Long e = me.getValue(); //sf.get(p);
             java.math.BigInteger E = new java.math.BigInteger(e.toString());
             java.math.BigInteger r = E.remainder(c);
             if (!r.equals(java.math.BigInteger.ZERO)) {
@@ -159,14 +161,15 @@ public class SquarefreeFiniteFieldCharP<C extends GcdRingElem<C>> extends Square
         // now c divides all exponents
         Long cl = c.longValue();
         GenPolynomial<C> rp = P.ring.getONE();
-        for (GenPolynomial<C> q : sf.keySet()) {
-            Long e = sf.get(q);
+        for (Map.Entry<GenPolynomial<C>, Long> me : sf.entrySet()) {
+            GenPolynomial<C> q = me.getKey();
+            Long e = me.getValue(); // sf.get(q);
             if (q.isConstant()) { // ensure p-th root
                 C qc = q.leadingBaseCoefficient();
                 //System.out.println("qc,const = " + qc + ", e = " + e);
                 if (e > 1L) {
                     qc = Power.<C> positivePower(qc, e);
-                    e = 1L;
+                    //e = 1L;
                 }
                 C qr = coeffRootCharacteristic(qc);
                 //System.out.println("qr,const = " + qr);
@@ -190,10 +193,9 @@ public class SquarefreeFiniteFieldCharP<C extends GcdRingElem<C>> extends Square
 
 
     /**
-     * GenPolynomial char-th root univariate polynomial. 
-     * Base coefficient type must be
-     * finite field, that is ModInteger or AlgebraicNumber&lt;ModInteger&gt;
-     * etc.
+     * GenPolynomial char-th root univariate polynomial. Base coefficient type
+     * must be finite field, that is ModInteger or
+     * AlgebraicNumber&lt;ModInteger&gt; etc.
      * @param P GenPolynomial.
      * @return char-th_rootOf(P), or null if no char-th root.
      */
@@ -213,7 +215,7 @@ public class SquarefreeFiniteFieldCharP<C extends GcdRingElem<C>> extends Square
             throw new IllegalArgumentException(P.getClass().getName() + " only for char p > 0 " + rf);
         }
         long mp = rf.characteristic().longValue();
-        GenPolynomial<C> d = pfac.getZERO().clone();
+        GenPolynomial<C> d = pfac.getZERO().copy();
         for (Monomial<C> m : P) {
             ExpVector f = m.e;
             long fl = f.getVal(0);
@@ -231,13 +233,14 @@ public class SquarefreeFiniteFieldCharP<C extends GcdRingElem<C>> extends Square
 
 
     /**
-     * GenPolynomial char-th root univariate polynomial with polynomial coefficients.
+     * GenPolynomial char-th root univariate polynomial with polynomial
+     * coefficients.
      * @param P recursive univariate GenPolynomial.
      * @return char-th_rootOf(P), or null if P is no char-th root.
      */
     @Override
     public GenPolynomial<GenPolynomial<C>> recursiveUnivariateRootCharacteristic(
-            GenPolynomial<GenPolynomial<C>> P) {
+                    GenPolynomial<GenPolynomial<C>> P) {
         if (P == null || P.isZERO()) {
             return P;
         }
@@ -252,7 +255,7 @@ public class SquarefreeFiniteFieldCharP<C extends GcdRingElem<C>> extends Square
             throw new IllegalArgumentException(P.getClass().getName() + " only for char p > 0 " + rf);
         }
         long mp = rf.characteristic().longValue();
-        GenPolynomial<GenPolynomial<C>> d = pfac.getZERO().clone();
+        GenPolynomial<GenPolynomial<C>> d = pfac.getZERO().copy();
         for (Monomial<GenPolynomial<C>> m : P) {
             ExpVector f = m.e;
             long fl = f.getVal(0);
@@ -265,11 +268,12 @@ public class SquarefreeFiniteFieldCharP<C extends GcdRingElem<C>> extends Square
                 return null;
             }
             if (logger.isInfoEnabled()) {
-               logger.info("sm,rec = " + sm);
+                logger.info("sm,rec = " + sm);
             }
             GenPolynomial<C> r = rf.getONE();
-            for (GenPolynomial<C> rp : sm.keySet()) {
-                long gl = sm.get(rp);
+            for (Map.Entry<GenPolynomial<C>, Long> me : sm.entrySet()) {
+                GenPolynomial<C> rp = me.getKey();
+                long gl = me.getValue(); //sm.get(rp);
                 if (gl > 1) {
                     rp = Power.<GenPolynomial<C>> positivePower(rp, gl);
                 }

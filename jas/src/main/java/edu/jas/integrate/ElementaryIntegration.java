@@ -1,5 +1,5 @@
 /*
- * $Id: ElementaryIntegration.java 3843 2011-12-29 11:56:02Z kredel $
+ * $Id: ElementaryIntegration.java 4125 2012-08-19 19:05:22Z kredel $
  */
 
 package edu.jas.integrate;
@@ -377,8 +377,8 @@ public class ElementaryIntegration<C extends GcdRingElem<C>> {
             }
             //vars = new String[] { "z_" + Math.abs(r.hashCode() % 1000) };
             vars = pfac.newVars("z_");
-            pfac = pfac.clone();
-            vars = pfac.setVars(vars);
+            pfac = pfac.copy();
+            String[] unused = pfac.setVars(vars);
             r = pfac.copy(r); // hack to exchange the variables
             //System.out.println("r(z_) = " + r);
             AlgebraicNumberRing<C> afac = new AlgebraicNumberRing<C>(r, true); // since irreducible

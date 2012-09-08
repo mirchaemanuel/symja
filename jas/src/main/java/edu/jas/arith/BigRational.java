@@ -1,5 +1,5 @@
 /*
- * $Id: BigRational.java 3827 2011-12-15 21:57:54Z kredel $
+ * $Id: BigRational.java 4125 2012-08-19 19:05:22Z kredel $
  */
 
 package edu.jas.arith;
@@ -15,43 +15,35 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
-import edu.jas.kern.StringUtil;
 import edu.jas.kern.Scripting;
+import edu.jas.kern.StringUtil;
 import edu.jas.structure.GcdRingElem;
 import edu.jas.structure.Power;
 import edu.jas.structure.RingFactory;
 
 
 /**
- * Immutable arbitrary-precision rational numbers. BigRational class
- * based on BigInteger and implementing the RingElem
- * interface. BigInteger is from java.math in the implementation.
- * The SAC2 static methods are also provided.
+ * Immutable arbitrary-precision rational numbers. BigRational class based on
+ * BigInteger and implementing the RingElem interface. BigInteger is from
+ * java.math in the implementation. The SAC2 static methods are also provided.
  * @author Heinz Kredel
  */
 
 public final class BigRational implements GcdRingElem<BigRational>, RingFactory<BigRational>, Rational,
-        Iterable<BigRational> {
+                Iterable<BigRational> {
 
 
     /**
      * Numerator part of the data structure.
      */
-    protected final BigInteger num;
+    public final BigInteger num;
 
 
     /**
      * Denominator part of the data structure.
      */
-    protected final BigInteger den;
+    public final BigInteger den;
 
-
-    /* from history: 
-    private final static BigInteger IZERO = BigInteger.ZERO;
-
-
-    private final static BigInteger IONE = BigInteger.ONE;
-    */
 
     /**
      * The Constant 0.
@@ -244,7 +236,7 @@ public final class BigRational implements GcdRingElem<BigRational>, RingFactory<
      * @see java.lang.Object#clone()
      */
     @Override
-    public BigRational clone() {
+    public BigRational copy() {
         return new BigRational(num, den);
     }
 
@@ -1213,8 +1205,8 @@ class BigRationalIterator implements Iterator<BigRational> {
         curr = edu.jas.arith.BigRational.ZERO;
         level = 0;
         den = new edu.jas.arith.BigInteger(); // ZERO
-        num = edu.jas.arith.BigInteger.ONE.clone();
-        if (nn) {
+        num = edu.jas.arith.BigInteger.ONE.copy();
+        if (nonNegative) {
             den.setNonNegativeIterator();
         } else {
             den.setAllIterator();
@@ -1227,6 +1219,9 @@ class BigRationalIterator implements Iterator<BigRational> {
         @SuppressWarnings("unused")
         edu.jas.arith.BigInteger unused = denit.next(); // skip zero denominator
         unused = numit.next();
+        if (unused == null) { // use for findbugs
+            System.out.println("unused is null");
+        }
         denlist.add(denit.next());
         numlist.add(numit.next());
         denlistit = denlist.iterator();
@@ -1291,7 +1286,7 @@ class BigRationalIterator implements Iterator<BigRational> {
 
 
 /**
- * Big rational unique iterator. Uses Cantors diagonal enumeration, produces 
+ * Big rational unique iterator. Uses Cantors diagonal enumeration, produces
  * distinct elements.
  * @author Heinz Kredel
  */

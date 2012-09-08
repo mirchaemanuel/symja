@@ -1,5 +1,5 @@
 /*
- * $Id: FactorFactory.java 3883 2012-02-05 18:43:31Z kredel $
+ * $Id: FactorFactory.java 4067 2012-07-27 16:17:35Z kredel $
  */
 
 package edu.jas.ufd;
@@ -13,7 +13,6 @@ import edu.jas.arith.ModInteger;
 import edu.jas.arith.ModIntegerRing;
 import edu.jas.arith.ModLong;
 import edu.jas.arith.ModLongRing;
-import edu.jas.arith.Rational;
 import edu.jas.poly.AlgebraicNumber;
 import edu.jas.poly.AlgebraicNumberRing;
 import edu.jas.poly.Complex;
@@ -186,12 +185,12 @@ public class FactorFactory {
         } else if (ofac instanceof ModLongRing) {
             ufd = new FactorModular(fac);
         } else if (ofac instanceof ComplexRing) {
-            cfac = (ComplexRing<C>)ofac;
+            cfac = (ComplexRing<C>) ofac;
             ufd = new FactorComplex(cfac);
         } else if (ofac instanceof AlgebraicNumberRing) {
             //System.out.println("afac_o = " + ofac);
             afac = (AlgebraicNumberRing) ofac;
-            ofac = afac.ring.coFac;
+            //ofac = afac.ring.coFac;
             ufd = new FactorAlgebraic/*raw <C>*/(afac);
         } else if (ofac instanceof QuotientRing) {
             //System.out.println("qfac_o = " + ofac);

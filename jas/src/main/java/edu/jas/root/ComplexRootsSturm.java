@@ -1,5 +1,5 @@
 /*
- * $Id: ComplexRootsSturm.java 3964 2012-06-16 14:32:47Z kredel $
+ * $Id: ComplexRootsSturm.java 4025 2012-07-23 16:41:43Z kredel $
  */
 
 package edu.jas.root;
@@ -163,13 +163,13 @@ public class ComplexRootsSturm<C extends RingElem<C> & Rational> extends Complex
             return 0;
         }
         if ( rl.isZERO() || il.isZERO() ) {
-            RingFactory<C> cf = (RingFactory<C>) rl.factory();
-            GenPolynomialRing<C> rfac = new GenPolynomialRing<C>(cf,a.ring);
-            cf = (RingFactory<C>) il.factory();
-            GenPolynomialRing<C> ifac = new GenPolynomialRing<C>(cf,a.ring);
-            GenPolynomial<C> rp = PolyUtil.<C> realPartFromComplex(rfac, a);
-            GenPolynomial<C> ip = PolyUtil.<C> imaginaryPartFromComplex(ifac, a);
-            RealRoots<C> rr = new RealRootsSturm<C>();
+            //RingFactory<C> cf = (RingFactory<C>) rl.factory();
+            //GenPolynomialRing<C> rfac = new GenPolynomialRing<C>(cf,a.ring);
+            //cf = (RingFactory<C>) il.factory();
+            //GenPolynomialRing<C> ifac = new GenPolynomialRing<C>(cf,a.ring);
+            //GenPolynomial<C> rp = PolyUtil.<C> realPartFromComplex(rfac, a);
+            //GenPolynomial<C> ip = PolyUtil.<C> imaginaryPartFromComplex(ifac, a);
+            //RealRoots<C> rr = new RealRootsSturm<C>();
             if ( rl.isZERO() ) {
                 //logger.info("lengthReal == 0: " + rect);
                 //Complex<C> r = rect.getSW();

@@ -1,5 +1,5 @@
 /*
- * $Id: RealAlgebraicNumber.java 3947 2012-05-28 10:50:47Z kredel $
+ * $Id: RealAlgebraicNumber.java 4125 2012-08-19 19:05:22Z kredel $
  */
 
 package edu.jas.application;
@@ -28,7 +28,7 @@ public class RealAlgebraicNumber<C extends GcdRingElem<C> & Rational> implements
     /*
      * Representing Residue, unused.
      */
-    private Residue<C> numberRes;
+    //private Residue<C> numberRes;
 
 
     /**
@@ -104,7 +104,7 @@ public class RealAlgebraicNumber<C extends GcdRingElem<C> & Rational> implements
      * @see java.lang.Object#clone()
      */
     @Override
-    public RealAlgebraicNumber<C> clone() {
+    public RealAlgebraicNumber<C> copy() {
         return new RealAlgebraicNumber<C>(ring, number);
     }
 

@@ -1,18 +1,17 @@
 /*
- * $Id: MonoidFactory.java 1259 2007-07-29 10:18:54Z kredel $
+ * $Id: MonoidFactory.java 4056 2012-07-26 17:44:13Z kredel $
  */
 
 package edu.jas.structure;
 
 
 /**
- * Monoid factory interface.
- * Defines get one and tests for associativity and commutativity.
+ * Monoid factory interface. Defines get one and tests for associativity and
+ * commutativity.
  * @author Heinz Kredel
  */
 
-public interface MonoidFactory<C extends MonoidElem<C>> 
-                 extends ElemFactory<C> {
+public interface MonoidFactory<C extends MonoidElem<C>> extends ElemFactory<C> {
 
 
     /**

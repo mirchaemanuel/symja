@@ -1,5 +1,5 @@
 /*
- * $Id: ThreadPool.java 3571 2011-03-18 22:02:51Z kredel $
+ * $Id: ThreadPool.java 4065 2012-07-27 15:17:38Z kredel $
  */
 
 // package edu.unima.ky.parallel;
@@ -120,7 +120,7 @@ public class ThreadPool {
             }
             logger.info("size = " + size + ", strategy = " + strategy);
         }
-        if (false) { // debug
+        if (debug) {
             Thread.dumpStack();
         }
     }

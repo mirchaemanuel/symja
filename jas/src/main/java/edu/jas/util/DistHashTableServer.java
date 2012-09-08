@@ -1,5 +1,5 @@
 /*
- * $Id: DistHashTableServer.java 3296 2010-08-26 17:30:55Z kredel $
+ * $Id: DistHashTableServer.java 4074 2012-07-28 10:04:58Z kredel $
  */
 
 package edu.jas.util;
@@ -9,9 +9,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.TreeMap;
-import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
 
@@ -19,7 +19,7 @@ import org.apache.log4j.Logger;
 /**
  * Server for the distributed version of a list.
  * @author Heinz Kredel
- * @todo redistribute list for late comming clients, removal of elements.
+ * @todo redistribute list for late coming clients, removal of elements.
  */
 
 public class DistHashTableServer<K> extends Thread {
@@ -94,7 +94,7 @@ public class DistHashTableServer<K> extends Thread {
     /**
      * main. Usage: DistHashTableServer &lt;port&gt;
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         int port = DEFAULT_PORT;
         if (args.length < 1) {
             System.out.println("Usage: DistHashTableServer <port>");
@@ -104,7 +104,9 @@ public class DistHashTableServer<K> extends Thread {
             } catch (NumberFormatException e) {
             }
         }
-        (new DistHashTableServer/*raw: <K>*/(port)).run();
+        DistHashTableServer dhts = new DistHashTableServer/*raw: <K>*/(port);
+        dhts.init();
+        dhts.join();
         // until CRTL-C
     }
 
@@ -126,7 +128,6 @@ public class DistHashTableServer<K> extends Thread {
         DHTBroadcaster<K> s = null;
         mythread = Thread.currentThread();
         Entry<K, DHTTransport> e;
-        K n;
         DHTTransport tc;
         while (goon) {
             //logger.debug("list server " + this + " go on");
@@ -157,7 +158,7 @@ public class DistHashTableServer<K> extends Thread {
                             Iterator<Entry<K, DHTTransport>> it = theList.entrySet().iterator();
                             for (int i = 0; i < ls; i++) {
                                 e = it.next();
-                                n = e.getKey();
+                                // n = e.getKey(); // findbugs, already in tc
                                 tc = e.getValue();
                                 //DHTTransport tc = (DHTTransport) o;                             
                                 try {
@@ -228,8 +229,8 @@ public class DistHashTableServer<K> extends Thread {
         long decr = DHTTransport.drtime - drtime;
         long drest = (encr * dec) / (enc + 1);
         logger.info("DHT time: encode = " + enc + ", decode = " + dec + ", enc raw = " + encr
-                + ", dec raw wait = " + decr + ", dec raw est = " + drest + ", sum est = "
-                + (enc + dec + encr + drest)); // +decr not meaningful
+                        + ", dec raw wait = " + decr + ", dec raw est = " + drest + ", sum est = "
+                        + (enc + dec + encr + drest)); // +decr not meaningful
         if (mythread == null) {
             return;
         }
@@ -254,6 +255,9 @@ public class DistHashTableServer<K> extends Thread {
      * number of servers.
      */
     public int size() {
+        if ( servers == null ) {
+            return -1;
+        }
         synchronized (servers) {
             return servers.size();
         }

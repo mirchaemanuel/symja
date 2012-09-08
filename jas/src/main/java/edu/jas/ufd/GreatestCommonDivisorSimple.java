@@ -1,5 +1,5 @@
 /*
- * $Id: GreatestCommonDivisorSimple.java 3843 2011-12-29 11:56:02Z kredel $
+ * $Id: GreatestCommonDivisorSimple.java 4025 2012-07-23 16:41:43Z kredel $
  */
 
 package edu.jas.ufd;
@@ -62,6 +62,9 @@ public class GreatestCommonDivisorSimple<C extends GcdRingElem<C>> extends Great
         } else {
             q = P;
             r = S;
+        }
+        if (debug) {
+            logger.debug("degrees: e = " + e + ", f = " + f);
         }
         C c;
         if (field) {
@@ -135,6 +138,9 @@ public class GreatestCommonDivisorSimple<C extends GcdRingElem<C>> extends Great
         } else {
             q = P;
             r = S;
+        }
+        if (debug) {
+            logger.debug("degrees: e = " + e + ", f = " + f);
         }
         if (field) {
             r = PolyUtil.<C> monic(r);
