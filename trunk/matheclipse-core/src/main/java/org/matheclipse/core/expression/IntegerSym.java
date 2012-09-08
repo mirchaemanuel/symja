@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.apache.commons.math3.fraction.BigFraction;
+import org.matheclipse.core.eval.EvalEngine;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.IInteger;
@@ -113,6 +114,15 @@ public class IntegerSym extends ExprImpl implements IInteger {
 		return fInteger.equals(BigInteger.valueOf(i));
 	}
 
+	/** {@inheritDoc} */
+	@Override
+	public IExpr evaluate(EvalEngine engine){
+		if (engine.isNumericMode()) {
+			return F.num(this);
+		}
+		return null;
+	}
+	
 	public int hierarchy() {
 		return INTEGERID;
 	}

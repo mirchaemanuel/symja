@@ -6,6 +6,7 @@ import java.math.BigInteger;
 import org.apache.commons.math3.fraction.BigFraction;
 import org.apache.commons.math3.fraction.FractionConversionException;
 import org.matheclipse.core.basic.Config;
+import org.matheclipse.core.eval.EvalEngine;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.IFraction;
 import org.matheclipse.core.interfaces.IInteger;
@@ -194,6 +195,18 @@ public class FractionSym extends ExprImpl implements IFraction {
 			return fRational.equals(((FractionSym) obj).fRational);
 		}
 		return false;
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public IExpr evaluate(EvalEngine engine) {
+		if (engine.isNumericMode()) {
+			return F.num(this);
+		}
+		if (getBigDenominator().equals(BigInteger.ONE)) {
+			return F.integer(getBigNumerator());
+		}
+		return null;
 	}
 
 	/**

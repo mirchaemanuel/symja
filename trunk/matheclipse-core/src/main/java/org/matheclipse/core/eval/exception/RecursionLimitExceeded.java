@@ -5,7 +5,8 @@ import org.matheclipse.core.reflection.system.ToString;
 import org.matheclipse.parser.client.math.MathException;
 
 /**
- * 
+ * Exception which will be thrown, if the recursion limit of the evaluation
+ * stack was exceeded.
  */
 public class RecursionLimitExceeded extends MathException {
 	/**

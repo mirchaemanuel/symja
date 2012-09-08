@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
+import org.matheclipse.core.eval.EvalEngine;
 import org.matheclipse.core.visit.IVisitor;
 import org.matheclipse.core.visit.IVisitorBoolean;
 import org.matheclipse.core.visit.IVisitorInt;
@@ -83,6 +84,16 @@ public interface IExpr extends Comparable<IExpr>, RingElem<IExpr>, INestedListEl
 	 * canonical less than, equal to, or greater than the specified expression.
 	 */
 	public int compareTo(IExpr obj);
+
+	/**
+	 * Evaluate an expression
+	 * 
+	 * @param engine
+	 *          the evaluation engine
+	 * @return the evaluated Object or <code>null</code> if the evaluation is not
+	 *         possible (i.e. the evaluation doesn't change the object).
+	 */
+	public IExpr evaluate(EvalEngine engine);
 
 	public IExpr div(final IExpr that);
 
@@ -241,7 +252,7 @@ public interface IExpr extends Comparable<IExpr>, RingElem<IExpr>, INestedListEl
 	 */
 	public boolean isAST(String symbol);
 
-	/** 
+	/**
 	 * Test if this expression is an AST list, where the string representation of
 	 * the <b>header element</b> at index position <code>0</code> equals the given
 	 * <code>symbol</code> and some optional <b>argument elements</b> at the index

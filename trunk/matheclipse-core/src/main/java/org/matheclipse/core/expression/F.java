@@ -398,9 +398,9 @@ public class F {
 	public static IPattern x_;
 	public static IPattern y_;
 	public static IPattern z_;
-	
-	
-	/**	 * Constant integer &quot;0&quot;
+
+	/**
+	 * * Constant integer &quot;0&quot;
 	 */
 	public static IInteger C0;
 
@@ -1008,8 +1008,8 @@ public class F {
 				w = predefinedSymbol("w");
 				x = predefinedSymbol("x");
 				y = predefinedSymbol("y");
-				z = predefinedSymbol("z"); 
-				
+				z = predefinedSymbol("z");
+
 				a_ = new Pattern(a);
 				b_ = new Pattern(b);
 				c_ = new Pattern(c);
@@ -1036,7 +1036,7 @@ public class F {
 				x_ = new Pattern(x);
 				y_ = new Pattern(y);
 				z_ = new Pattern(z);
-	 
+
 				PREDEFINED_PATTERN_MAP.put("a", a_);
 				PREDEFINED_PATTERN_MAP.put("b", b_);
 				PREDEFINED_PATTERN_MAP.put("c", c_);
@@ -1063,7 +1063,7 @@ public class F {
 				PREDEFINED_PATTERN_MAP.put("x", x_);
 				PREDEFINED_PATTERN_MAP.put("y", y_);
 				PREDEFINED_PATTERN_MAP.put("z", z_);
-				
+
 				/**
 				 * Define the &quot;set symbols&quot; first, because of dependencies in
 				 * the predefined rules
@@ -1443,11 +1443,11 @@ public class F {
 	public static IAST Max() {
 		return function(Max);
 	}
-	
+
 	public static IAST Max(final IExpr a0) {
 		return unary(Max, a0);
 	}
-	
+
 	public static IAST Max(final IExpr a0, final IExpr a1) {
 		return binary(Max, a0, a1);
 	}
@@ -1463,6 +1463,7 @@ public class F {
 	public static IAST Min(final IExpr a0) {
 		return unary(Min, a0);
 	}
+
 	public static IAST Min(final IExpr a0, final IExpr a1) {
 		return binary(Min, a0, a1);
 	}

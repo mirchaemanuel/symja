@@ -5,9 +5,15 @@ import org.matheclipse.core.reflection.system.ToString;
 import org.matheclipse.parser.client.math.MathException;
 
 /**
- * 
+ * Exception which will be thrown, if the iteration limit of the evaluation loop
+ * was exceeded.
  */
 public class IterationLimitExceeded extends MathException {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 4334847679009499117L;
+
 	/**
 	 * 
 	 */
@@ -31,7 +37,7 @@ public class IterationLimitExceeded extends MathException {
 	public static void throwIt(int iterationCounter, final IExpr expr) {
 		// HeapContext.enter();
 		// try {
-		throw new IterationLimitExceeded(iterationCounter, expr);//expr.copy());
+		throw new IterationLimitExceeded(iterationCounter, expr);// expr.copy());
 		// } finally {
 		// HeapContext.exit();
 		// }

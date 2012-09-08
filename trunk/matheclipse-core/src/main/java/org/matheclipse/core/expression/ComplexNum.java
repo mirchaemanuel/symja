@@ -1,6 +1,7 @@
 package org.matheclipse.core.expression;
 
 import org.apache.commons.math3.complex.Complex;
+import org.matheclipse.core.eval.EvalEngine;
 import org.matheclipse.core.interfaces.IComplexNum;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.INum;
@@ -185,6 +186,15 @@ public class ComplexNum extends ExprImpl implements IComplexNum {
 		return false;
 	}
 
+	/** {@inheritDoc} */
+	@Override
+	public IExpr evaluate(EvalEngine engine){
+		if (F.isZero(getImaginaryPart())) {
+			return F.num(getRealPart());
+		}
+		return null;
+	}
+	
 	public boolean isSame(IExpr expression, double epsilon) {
 		if (expression instanceof ComplexNum) {
 			return F.isZero(fComplex.getReal() - ((ComplexNum) expression).fComplex.getReal(), epsilon)

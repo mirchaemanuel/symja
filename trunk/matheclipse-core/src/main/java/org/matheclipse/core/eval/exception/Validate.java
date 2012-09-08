@@ -110,10 +110,10 @@ public final class Validate {
 	 */
 	public static IAST checkRange(IAST ast, int from, int to) {
 		if (ast.size() < from) {
-			throw new WrongNumberOfArguments(ast, from, ast.size() - 1);
+			throw new WrongNumberOfArguments(ast, from - 1, ast.size() - 1);
 		}
 		if (ast.size() > to) {
-			throw new WrongNumberOfArguments(ast, to, ast.size() - 1);
+			throw new WrongNumberOfArguments(ast, to - 1, ast.size() - 1);
 		}
 		return ast;
 	}
@@ -168,7 +168,7 @@ public final class Validate {
 		}
 		throw new WrongArgumentType(ast, ast.get(position), position, "Symbol expected!");
 	}
-	
+
 	/**
 	 * Check if the argument at the given position is an AST.
 	 * 

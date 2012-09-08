@@ -1,5 +1,6 @@
 package org.matheclipse.core.expression;
 
+import org.matheclipse.core.eval.EvalEngine;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.INum;
 import org.matheclipse.core.interfaces.ISignedNumber;
@@ -196,7 +197,7 @@ public class Num extends ExprImpl implements INum {
 		}
 		return false;
 	}
-
+	
 	@Override
 	public boolean isSame(IExpr expression, double epsilon) {
 		if (expression instanceof Num) {

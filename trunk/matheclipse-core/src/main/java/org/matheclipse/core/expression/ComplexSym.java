@@ -3,6 +3,7 @@ package org.matheclipse.core.expression;
 import java.math.BigInteger;
 
 import org.apache.commons.math3.fraction.BigFraction;
+import org.matheclipse.core.eval.EvalEngine;
 import org.matheclipse.core.interfaces.IComplex;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.IFraction;
@@ -162,6 +163,19 @@ public class ComplexSym extends ExprImpl implements IComplex {
 			return _real.equals(((ComplexSym) obj)._real) && _imaginary.equals(((ComplexSym) obj)._imaginary);
 		}
 		return false;
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public IExpr evaluate(EvalEngine engine) {
+		if (engine.isNumericMode()) {
+			return F.complexNum(this);
+		}
+		final INumber cTemp = normalize();
+		if (cTemp == this) {
+			return null;
+		}
+		return cTemp;
 	}
 
 	/**
@@ -383,7 +397,7 @@ public class ComplexSym extends ExprImpl implements IComplex {
 	public int accept(IVisitorInt visitor) {
 		return visitor.visit(this);
 	}
-	
+
 	@Override
 	public boolean equalsInt(int i) {
 		return false;

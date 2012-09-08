@@ -164,7 +164,7 @@ public abstract class ExprImpl implements IExpr {
 	public boolean isList() {
 		return false;
 	}
-	
+
 	public boolean isSequence() {
 		return false;
 	}
@@ -207,13 +207,13 @@ public abstract class ExprImpl implements IExpr {
 	/** {@inheritDoc} */
 	public boolean isOrderlessAST() {
 		return false;
-	} 
-	
+	}
+
 	/** {@inheritDoc} */
 	public boolean isFlatAST() {
 		return false;
 	}
-	
+
 	/** {@inheritDoc} */
 	public boolean isAST(final IExpr header) {
 		return false;
@@ -361,7 +361,7 @@ public abstract class ExprImpl implements IExpr {
 	public boolean isPatternSequence() {
 		return this instanceof IPatternSequence;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -561,6 +561,11 @@ public abstract class ExprImpl implements IExpr {
 	}
 
 	@Override
+	public IExpr evaluate(EvalEngine engine) {
+		return null;
+	}
+
+	@Override
 	public IExpr gcd(IExpr b) {
 		throw new UnsupportedOperationException(toString());
 	}
@@ -643,6 +648,16 @@ public abstract class ExprImpl implements IExpr {
 	@Override
 	public IExpr negate() {
 		throw new UnsupportedOperationException(toString());
+	}
+
+	@Override
+	public IExpr copy() {
+		try {
+			return (IExpr) clone();
+		} catch (CloneNotSupportedException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 }
