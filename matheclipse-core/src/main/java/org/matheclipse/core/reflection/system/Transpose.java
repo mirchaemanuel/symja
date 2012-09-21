@@ -25,25 +25,29 @@ public class Transpose implements IFunctionEvaluator {
 
 		final int[] dim = ast.get(1).isMatrix();
 		if (dim != null) {
-			final IAST mat = (IAST) ast.get(1);
-			final IAST transposed = F.ast(F.List, dim[1], true);
+			final IAST originalMatrix = (IAST) ast.get(1);
+			final IAST transposedMatrix = F.ast(F.List, dim[1], true);
 			for (int i = 1; i <= dim[1]; i++) {
-				transposed.set(i, F.ast(F.List, dim[0], true));
+				transposedMatrix.set(i, F.ast(F.List, dim[0], true));
 			}
 
-			IAST row;
-			IAST trRow;
+			IAST originalRow;
+			IAST transposedResultRow;
 			for (int i = 1; i <= dim[0]; i++) {
-				row = (AST) mat.get(i);
+				originalRow = (AST) originalMatrix.get(i);
 				for (int j = 1; j <= dim[1]; j++) {
-					trRow = (IAST) transposed.get(j);
-					trRow.set(i, row.get(j));
+					transposedResultRow = (IAST) transposedMatrix.get(j);
+					transposedResultRow.set(i, transform(originalRow.get(j)));
 				}
 			}
-			transposed.addEvalFlags(IAST.IS_MATRIX);
-			return transposed;
+			transposedMatrix.addEvalFlags(IAST.IS_MATRIX);
+			return transposedMatrix;
 		}
 		return null;
+	}
+
+	protected IExpr transform(final IExpr expr) {
+		return expr;
 	}
 
 	public IExpr numericEval(final IAST ast) {

@@ -578,7 +578,7 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 		}
 
 		if (!symbol.equals(F.Integrate)) {
-			IExpr result= symbol.evalDownRule(this, ast);
+			IExpr result = symbol.evalDownRule(this, ast);
 			if (result != null) {
 				return result;
 			}

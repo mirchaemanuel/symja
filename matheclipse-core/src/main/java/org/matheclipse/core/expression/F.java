@@ -106,6 +106,8 @@ public class F {
 
 	public static ISymbol Condition;
 
+	public static ISymbol Conjugate;
+	
 	public static ISymbol Continue;
 
 	public static ISymbol Cos;
@@ -716,8 +718,11 @@ public class F {
 		return binary(Condition, a0, a1);
 	}
 
+	public static IAST Conjugate(final IExpr a0) {
+		return unary(Conjugate, a0);
+	}
+	
 	public static IAST Cos(final IExpr a0) {
-
 		return unary(Cos, a0);
 	}
 
@@ -1156,6 +1161,7 @@ public class F {
 				Ceiling = predefinedSymbol("Ceiling");
 				CompoundExpression = predefinedSymbol("CompoundExpression");
 				Condition = predefinedSymbol("Condition");
+				Conjugate = predefinedSymbol("Conjugate");
 				Continue = predefinedSymbol("Continue");
 				Cos = predefinedSymbol("Cos");
 				Cosh = predefinedSymbol("Cosh");
