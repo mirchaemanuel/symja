@@ -24,7 +24,7 @@ import org.apache.commons.math3.util.Precision;
  *
  * @param <PAIR> Type of (point, value) pair.
  *
- * @version $Id: AbstractConvergenceChecker.java 1364392 2012-07-22 18:27:12Z tn $
+ * @version $Id: AbstractConvergenceChecker.java 1370215 2012-08-07 12:38:59Z sebb $
  * @since 3.0
  */
 public abstract class AbstractConvergenceChecker<PAIR>
@@ -34,12 +34,14 @@ public abstract class AbstractConvergenceChecker<PAIR>
      * @deprecated in 3.1 (to be removed in 4.0) because this value is too small
      * to be useful as a default (cf. MATH-798).
      */
+    @Deprecated
     private static final double DEFAULT_RELATIVE_THRESHOLD = 100 * Precision.EPSILON;
     /**
      * Default absolute threshold.
      * @deprecated in 3.1 (to be removed in 4.0) because this value is too small
      * to be useful as a default (cf. MATH-798).
      */
+    @Deprecated
     private static final double DEFAULT_ABSOLUTE_THRESHOLD = 100 * Precision.SAFE_MIN;
     /**
      * Relative tolerance threshold.

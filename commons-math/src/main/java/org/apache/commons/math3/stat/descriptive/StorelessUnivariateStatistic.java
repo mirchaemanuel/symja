@@ -16,6 +16,8 @@
  */
 package org.apache.commons.math3.stat.descriptive;
 
+import org.apache.commons.math3.exception.MathIllegalArgumentException;
+
 /**
  * Extends the definition of {@link UnivariateStatistic} with
  * {@link #increment} and {@link #incrementAll(double[])} methods for adding
@@ -25,7 +27,7 @@ package org.apache.commons.math3.stat.descriptive;
  * computed in one pass through the data without storing the full array of
  * sample values.</p>
  *
- * @version $Id: StorelessUnivariateStatistic.java 1244107 2012-02-14 16:17:55Z erans $
+ * @version $Id: StorelessUnivariateStatistic.java 1382332 2012-09-08 17:27:47Z psteitz $
  */
 public interface StorelessUnivariateStatistic extends UnivariateStatistic {
 
@@ -41,9 +43,9 @@ public interface StorelessUnivariateStatistic extends UnivariateStatistic {
      * i.e., the values are added <strong>incrementally</strong> to the dataset.
      *
      * @param values  array holding the new values to add
-     * @throws IllegalArgumentException if the array is null
+     * @throws MathIllegalArgumentException if the array is null
      */
-    void incrementAll(double[] values);
+    void incrementAll(double[] values) throws MathIllegalArgumentException;
 
     /**
      * Updates the internal state of the statistic to reflect addition of
@@ -54,9 +56,9 @@ public interface StorelessUnivariateStatistic extends UnivariateStatistic {
      * @param values  array holding the new values to add
      * @param start  the array index of the first value to add
      * @param length  the number of elements to add
-     * @throws IllegalArgumentException if the array is null or the index
+     * @throws MathIllegalArgumentException if the array is null or the index
      */
-    void incrementAll(double[] values, int start, int length);
+    void incrementAll(double[] values, int start, int length) throws MathIllegalArgumentException;
 
     /**
      * Returns the current value of the Statistic.

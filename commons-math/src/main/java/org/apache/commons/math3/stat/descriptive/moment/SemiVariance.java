@@ -18,8 +18,9 @@
 package org.apache.commons.math3.stat.descriptive.moment;
 
 import java.io.Serializable;
+
+import org.apache.commons.math3.exception.MathIllegalArgumentException;
 import org.apache.commons.math3.exception.NullArgumentException;
-import org.apache.commons.math3.exception.util.LocalizedFormats;
 import org.apache.commons.math3.stat.descriptive.AbstractUnivariateStatistic;
 import org.apache.commons.math3.util.MathUtils;
 
@@ -49,7 +50,7 @@ import org.apache.commons.math3.util.MathUtils;
  * be provided to ensure correct results.</p>
  *
  * @since 2.1
- * @version $Id: SemiVariance.java 1364390 2012-07-22 18:21:02Z tn $
+ * @version $Id: SemiVariance.java 1385386 2012-09-16 22:11:15Z psteitz $
  */
 public class SemiVariance extends AbstractUnivariateStatistic implements Serializable {
 
@@ -133,8 +134,9 @@ public class SemiVariance extends AbstractUnivariateStatistic implements Seriali
      * to the {@code original}
      *
      * @param original the {@code SemiVariance} instance to copy
+     * @throws NullArgumentException  if original is null
      */
-    public SemiVariance(final SemiVariance original) {
+    public SemiVariance(final SemiVariance original) throws NullArgumentException {
         copy(original, this);
     }
 
@@ -145,6 +147,7 @@ public class SemiVariance extends AbstractUnivariateStatistic implements Seriali
     @Override
     public SemiVariance copy() {
         SemiVariance result = new SemiVariance();
+        // No try-catch or advertised exception because args are guaranteed non-null
         copy(this, result);
         return result;
     }
@@ -167,25 +170,6 @@ public class SemiVariance extends AbstractUnivariateStatistic implements Seriali
         dest.varianceDirection = source.varianceDirection;
     }
 
-
-    /**
-     * This method calculates {@link SemiVariance} for the entire array against the mean, using
-     * instance properties varianceDirection and biasCorrection.
-     *
-     * @param values the input array
-     * @return the SemiVariance
-     * @throws IllegalArgumentException if values is null
-     *
-     */
-    @Override
-    public double evaluate(final double[] values) {
-        if (values == null) {
-            throw new NullArgumentException(LocalizedFormats.INPUT_ARRAY);
-         }
-        return evaluate(values, 0, values.length);
-    }
-
-
     /**
       * <p>Returns the {@link SemiVariance} of the designated values against the mean, using
       * instance properties varianceDirection and biasCorrection.</p>
@@ -197,11 +181,12 @@ public class SemiVariance extends AbstractUnivariateStatistic implements Seriali
       * @param start index of the first array element to include
       * @param length the number of elements to include
       * @return the SemiVariance
-      * @throws IllegalArgumentException if the parameters are not valid
+      * @throws MathIllegalArgumentException if the parameters are not valid
       *
       */
       @Override
-      public double evaluate(final double[] values, final int start, final int length) {
+      public double evaluate(final double[] values, final int start, final int length)
+      throws MathIllegalArgumentException {
         double m = (new Mean()).evaluate(values, start, length);
         return evaluate(values, m, varianceDirection, biasCorrected, 0, values.length);
       }
@@ -214,10 +199,11 @@ public class SemiVariance extends AbstractUnivariateStatistic implements Seriali
        * @param values the input array
        * @param direction the {@link Direction} of the semivariance
        * @return the SemiVariance
-       * @throws IllegalArgumentException if values is null
+       * @throws MathIllegalArgumentException if values is null
        *
        */
-      public double evaluate(final double[] values, Direction direction) {
+      public double evaluate(final double[] values, Direction direction)
+      throws MathIllegalArgumentException {
           double m = (new Mean()).evaluate(values);
           return evaluate (values, m, direction, biasCorrected, 0, values.length);
       }
@@ -227,14 +213,15 @@ public class SemiVariance extends AbstractUnivariateStatistic implements Seriali
        * instance properties variancDirection and biasCorrection.</p>
        *
        * <p>Returns <code>NaN</code> if the array is empty and throws
-       * <code>IllegalArgumentException</code> if the array is null.</p>
+       * <code>MathIllegalArgumentException</code> if the array is null.</p>
        *
        * @param values the input array
        * @param cutoff the reference point
        * @return the SemiVariance
-       * @throws IllegalArgumentException if values is null
+       * @throws MathIllegalArgumentException if values is null
        */
-      public double evaluate(final double[] values, final double cutoff) {
+      public double evaluate(final double[] values, final double cutoff)
+      throws MathIllegalArgumentException {
           return evaluate(values, cutoff, varianceDirection, biasCorrected, 0, values.length);
       }
 
@@ -243,15 +230,16 @@ public class SemiVariance extends AbstractUnivariateStatistic implements Seriali
        * given direction, using the current value of the biasCorrection instance property.</p>
        *
        * <p>Returns <code>NaN</code> if the array is empty and throws
-       * <code>IllegalArgumentException</code> if the array is null.</p>
+       * <code>MathIllegalArgumentException</code> if the array is null.</p>
        *
        * @param values the input array
        * @param cutoff the reference point
        * @param direction the {@link Direction} of the semivariance
        * @return the SemiVariance
-       * @throws IllegalArgumentException if values is null
+       * @throws MathIllegalArgumentException if values is null
        */
-      public double evaluate(final double[] values, final double cutoff, final Direction direction) {
+      public double evaluate(final double[] values, final double cutoff, final Direction direction)
+      throws MathIllegalArgumentException {
           return evaluate(values, cutoff, direction, biasCorrected, 0, values.length);
       }
 
@@ -270,11 +258,11 @@ public class SemiVariance extends AbstractUnivariateStatistic implements Seriali
       * @param start index of the first array element to include
       * @param length the number of elements to include
       * @return the SemiVariance
-      * @throws IllegalArgumentException if the parameters are not valid
+      * @throws MathIllegalArgumentException if the parameters are not valid
       *
       */
     public double evaluate (final double[] values, final double cutoff, final Direction direction,
-            final boolean corrected, final int start, final int length) {
+            final boolean corrected, final int start, final int length) throws MathIllegalArgumentException {
 
         test(values, start, length);
         if (values.length == 0) {

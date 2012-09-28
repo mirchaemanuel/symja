@@ -24,15 +24,21 @@ import org.apache.commons.math3.optimization.ConvergenceChecker;
 import org.apache.commons.math3.optimization.GoalType;
 
 /**
- * Implements Richard Brent's algorithm (from his book "Algorithms for
+ * For a function defined on some interval {@code (lo, hi)}, this class
+ * finds an approximation {@code x} to the point at which the function
+ * attains its minimum.
+ * It implements Richard Brent's algorithm (from his book "Algorithms for
  * Minimization without Derivatives", p. 79) for finding minima of real
- * univariate functions. This implementation is an adaptation partly
- * based on the Python code from SciPy (module "optimize.py" v0.5).
- * If the function is defined on some interval {@code (lo, hi)}, then
- * this method finds an approximation {@code x} to the point at which
- * the function attains its minimum.
+ * univariate functions.
+ * <br/>
+ * This code is an adaptation, partly based on the Python code from SciPy
+ * (module "optimize.py" v0.5); the original algorithm is also modified
+ * <ul>
+ *  <li>to use an initial guess provided by the user,</li>
+ *  <li>to ensure that the best point encountered is the one returned.</li>
+ * </ul>
  *
- * @version $Id: BrentOptimizer.java 1331635 2012-04-27 23:30:41Z erans $
+ * @version $Id: BrentOptimizer.java 1382441 2012-09-09 10:40:55Z erans $
  * @since 2.0
  */
 public class BrentOptimizer extends BaseAbstractUnivariateOptimizer {
@@ -80,12 +86,13 @@ public class BrentOptimizer extends BaseAbstractUnivariateOptimizer {
         if (abs <= 0) {
             throw new NotStrictlyPositiveException(abs);
         }
+
         relativeThreshold = rel;
         absoluteThreshold = abs;
     }
 
     /**
-     * The arguments are used implement the original stopping criterion
+     * The arguments are used for implementing the original stopping criterion
      * of Brent's algorithm.
      * {@code abs} and {@code rel} define a tolerance
      * {@code tol = rel |x| + abs}. {@code rel} should be no smaller than
@@ -140,6 +147,8 @@ public class BrentOptimizer extends BaseAbstractUnivariateOptimizer {
         UnivariatePointValuePair previous = null;
         UnivariatePointValuePair current
             = new UnivariatePointValuePair(x, isMinim ? fx : -fx);
+        // Best point encountered so far (which is the initial guess).
+        UnivariatePointValuePair best = current;
 
         int iter = 0;
         while (true) {
@@ -223,10 +232,15 @@ public class BrentOptimizer extends BaseAbstractUnivariateOptimizer {
                 // User-defined convergence checker.
                 previous = current;
                 current = new UnivariatePointValuePair(u, isMinim ? fu : -fu);
+                best = best(best,
+                            best(previous,
+                                 current,
+                                 isMinim),
+                            isMinim);
 
                 if (checker != null) {
                     if (checker.converged(iter, previous, current)) {
-                        return current;
+                        return best;
                     }
                 }
 
@@ -263,9 +277,41 @@ public class BrentOptimizer extends BaseAbstractUnivariateOptimizer {
                     }
                 }
             } else { // Default termination (Brent's criterion).
-                return current;
+                return best(best,
+                            best(previous,
+                                 current,
+                                 isMinim),
+                            isMinim);
             }
             ++iter;
+        }
+    }
+
+    /**
+     * Selects the best of two points.
+     *
+     * @param a Point and value.
+     * @param b Point and value.
+     * @param isMinim {@code true} if the selected point must be the one with
+     * the lowest value.
+     * @return the best point, or {@code null} if {@code a} and {@code b} are
+     * both {@code null}. When {@code a} and {@code b} have the same function
+     * value, {@code a} is returned.
+     */
+    private UnivariatePointValuePair best(UnivariatePointValuePair a,
+                                          UnivariatePointValuePair b,
+                                          boolean isMinim) {
+        if (a == null) {
+            return b;
+        }
+        if (b == null) {
+            return a;
+        }
+
+        if (isMinim) {
+            return a.getValue() <= b.getValue() ? a : b;
+        } else {
+            return a.getValue() >= b.getValue() ? a : b;
         }
     }
 }

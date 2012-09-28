@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
+import org.apache.commons.math3.exception.MaxCountExceededException;
 import org.apache.commons.math3.ode.EquationsMapper;
 
 /** This abstract class represents an interpolator over the last step
@@ -35,7 +36,7 @@ import org.apache.commons.math3.ode.EquationsMapper;
  * @see org.apache.commons.math3.ode.SecondOrderIntegrator
  * @see StepHandler
  *
- * @version $Id: AbstractStepInterpolator.java 1244107 2012-02-14 16:17:55Z erans $
+ * @version $Id: AbstractStepInterpolator.java 1382887 2012-09-10 14:37:27Z luc $
  * @since 1.2
  *
  */
@@ -262,7 +263,7 @@ public abstract class AbstractStepInterpolator
   }
 
   /** {@inheritDoc} */
-   public StepInterpolator copy() {
+   public StepInterpolator copy() throws MaxCountExceededException {
 
      // finalize the step before performing copy
      finalizeStep();
@@ -391,13 +392,17 @@ public abstract class AbstractStepInterpolator
    * (theta is zero at the previous time step and one at the current time step)
    * @param oneMinusThetaH time gap between the interpolated time and
    * the current time
+   * @exception MaxCountExceededException if the number of functions evaluations is exceeded
    */
   protected abstract void computeInterpolatedStateAndDerivatives(double theta,
-                                                                 double oneMinusThetaH);
+                                                                 double oneMinusThetaH)
+      throws MaxCountExceededException;
 
   /** Lazy evaluation of complete interpolated state.
+   * @exception MaxCountExceededException if the number of functions evaluations is exceeded
    */
-  private void evaluateCompleteInterpolatedState() {
+  private void evaluateCompleteInterpolatedState()
+      throws MaxCountExceededException {
       // lazy evaluation of the state
       if (dirtyState) {
           final double oneMinusThetaH = globalCurrentTime - interpolatedTime;
@@ -408,7 +413,7 @@ public abstract class AbstractStepInterpolator
   }
 
   /** {@inheritDoc} */
-  public double[] getInterpolatedState() {
+  public double[] getInterpolatedState() throws MaxCountExceededException {
       evaluateCompleteInterpolatedState();
       primaryMapper.extractEquationData(interpolatedState,
                                         interpolatedPrimaryState);
@@ -416,7 +421,7 @@ public abstract class AbstractStepInterpolator
   }
 
   /** {@inheritDoc} */
-  public double[] getInterpolatedDerivatives() {
+  public double[] getInterpolatedDerivatives() throws MaxCountExceededException {
       evaluateCompleteInterpolatedState();
       primaryMapper.extractEquationData(interpolatedDerivatives,
                                         interpolatedPrimaryDerivatives);
@@ -424,7 +429,7 @@ public abstract class AbstractStepInterpolator
   }
 
   /** {@inheritDoc} */
-  public double[] getInterpolatedSecondaryState(final int index) {
+  public double[] getInterpolatedSecondaryState(final int index) throws MaxCountExceededException {
       evaluateCompleteInterpolatedState();
       secondaryMappers[index].extractEquationData(interpolatedState,
                                                   interpolatedSecondaryState[index]);
@@ -432,7 +437,7 @@ public abstract class AbstractStepInterpolator
   }
 
   /** {@inheritDoc} */
-  public double[] getInterpolatedSecondaryDerivatives(final int index) {
+  public double[] getInterpolatedSecondaryDerivatives(final int index) throws MaxCountExceededException {
       evaluateCompleteInterpolatedState();
       secondaryMappers[index].extractEquationData(interpolatedDerivatives,
                                                   interpolatedSecondaryDerivatives[index]);
@@ -477,8 +482,10 @@ public abstract class AbstractStepInterpolator
    * Therefore, subclasses are not allowed not reimplement it, they
    * should rather reimplement <code>doFinalize</code>.</p>
 
+   * @exception MaxCountExceededException if the number of functions evaluations is exceeded
+
    */
-  public final void finalizeStep() {
+  public final void finalizeStep() throws MaxCountExceededException {
     if (! finalized) {
       doFinalize();
       finalized = true;
@@ -488,8 +495,9 @@ public abstract class AbstractStepInterpolator
   /**
    * Really finalize the step.
    * The default implementation of this method does nothing.
+   * @exception MaxCountExceededException if the number of functions evaluations is exceeded
    */
-  protected void doFinalize() {
+  protected void doFinalize() throws MaxCountExceededException {
   }
 
   /** {@inheritDoc} */
@@ -537,8 +545,14 @@ public abstract class AbstractStepInterpolator
     // we do not store the interpolated state,
     // it will be recomputed as needed after reading
 
-    // finalize the step (and don't bother saving the now true flag)
-    finalizeStep();
+    try {
+        // finalize the step (and don't bother saving the now true flag)
+        finalizeStep();
+    } catch (MaxCountExceededException mcee) {
+        final IOException ioe = new IOException(mcee.getLocalizedMessage());
+        ioe.initCause(mcee);
+        throw ioe;
+    }
 
   }
 

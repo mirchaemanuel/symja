@@ -18,8 +18,8 @@
 package org.apache.commons.math3.ode.nonstiff;
 
 import org.apache.commons.math3.exception.DimensionMismatchException;
-import org.apache.commons.math3.exception.MathIllegalArgumentException;
-import org.apache.commons.math3.exception.MathIllegalStateException;
+import org.apache.commons.math3.exception.MaxCountExceededException;
+import org.apache.commons.math3.exception.NoBracketingException;
 import org.apache.commons.math3.exception.NumberIsTooSmallException;
 import org.apache.commons.math3.exception.util.LocalizedFormats;
 import org.apache.commons.math3.ode.AbstractIntegrator;
@@ -58,7 +58,7 @@ import org.apache.commons.math3.util.FastMath;
  * otherwise the step is rejected and a new attempt is made with a new
  * stepsize.</p>
  *
- * @version $Id: AdaptiveStepsizeIntegrator.java 1244699 2012-02-15 20:45:49Z luc $
+ * @version $Id: AdaptiveStepsizeIntegrator.java 1379975 2012-09-02 14:21:00Z luc $
  * @since 1.2
  *
  */
@@ -242,10 +242,13 @@ public abstract class AdaptiveStepsizeIntegrator
    * @param y1 work array for a state vector
    * @param yDot1 work array for the first time derivative of y1
    * @return first integration step
+   * @exception MaxCountExceededException if the number of functions evaluations is exceeded
+   * @exception DimensionMismatchException if arrays dimensions do not match equations settings
    */
   public double initializeStep(final boolean forward, final int order, final double[] scale,
                                final double t0, final double[] y0, final double[] yDot0,
-                               final double[] y1, final double[] yDot1) {
+                               final double[] y1, final double[] yDot1)
+      throws MaxCountExceededException, DimensionMismatchException {
 
     if (initialStep > 0) {
       // use the user provided value
@@ -341,7 +344,8 @@ public abstract class AdaptiveStepsizeIntegrator
   /** {@inheritDoc} */
   @Override
   public abstract void integrate (ExpandableStatefulODE equations, double t)
-    throws MathIllegalStateException, MathIllegalArgumentException;
+      throws NumberIsTooSmallException, DimensionMismatchException,
+             MaxCountExceededException, NoBracketingException;
 
   /** {@inheritDoc} */
   @Override

@@ -17,8 +17,10 @@
 
 package org.apache.commons.math3.ode.nonstiff;
 
-import org.apache.commons.math3.exception.MathIllegalArgumentException;
-import org.apache.commons.math3.exception.MathIllegalStateException;
+import org.apache.commons.math3.exception.DimensionMismatchException;
+import org.apache.commons.math3.exception.MaxCountExceededException;
+import org.apache.commons.math3.exception.NoBracketingException;
+import org.apache.commons.math3.exception.NumberIsTooSmallException;
 import org.apache.commons.math3.ode.ExpandableStatefulODE;
 import org.apache.commons.math3.util.FastMath;
 
@@ -55,7 +57,7 @@ import org.apache.commons.math3.util.FastMath;
  * evaluation is saved. For an <i>fsal</i> method, we have cs = 1 and
  * asi = bi for all i.</p>
  *
- * @version $Id: EmbeddedRungeKuttaIntegrator.java 1244107 2012-02-14 16:17:55Z erans $
+ * @version $Id: EmbeddedRungeKuttaIntegrator.java 1379975 2012-09-02 14:21:00Z luc $
  * @since 1.2
  */
 
@@ -189,7 +191,8 @@ public abstract class EmbeddedRungeKuttaIntegrator
   /** {@inheritDoc} */
   @Override
   public void integrate(final ExpandableStatefulODE equations, final double t)
-      throws MathIllegalStateException, MathIllegalArgumentException {
+      throws NumberIsTooSmallException, DimensionMismatchException,
+             MaxCountExceededException, NoBracketingException {
 
     sanityChecks(equations, t);
     setEquations(equations);

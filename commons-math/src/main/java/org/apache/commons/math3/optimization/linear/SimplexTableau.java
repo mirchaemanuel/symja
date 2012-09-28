@@ -26,6 +26,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.MatrixUtils;
@@ -58,7 +59,7 @@ import org.apache.commons.math3.util.Precision;
  * a1: Artificial variable</br>
  * RHS: Right hand side</br>
  * </p>
- * @version $Id: SimplexTableau.java 1366717 2012-07-28 17:44:32Z tn $
+ * @version $Id: SimplexTableau.java 1385307 2012-09-16 16:19:55Z tn $
  * @since 2.0
  */
 class SimplexTableau implements Serializable {
@@ -109,8 +110,7 @@ class SimplexTableau implements Serializable {
      * Build a tableau for a linear problem.
      * @param f linear objective function
      * @param constraints linear constraints
-     * @param goalType type of optimization goal: either {@link GoalType#MAXIMIZE}
-     * or {@link GoalType#MINIMIZE}
+     * @param goalType type of optimization goal: either {@link GoalType#MAXIMIZE} or {@link GoalType#MINIMIZE}
      * @param restrictToNonNegative whether to restrict the variables to non-negative values
      * @param epsilon amount of error to accept when checking for optimality
      */
@@ -125,8 +125,7 @@ class SimplexTableau implements Serializable {
      * Build a tableau for a linear problem.
      * @param f linear objective function
      * @param constraints linear constraints
-     * @param goalType type of optimization goal: either {@link GoalType#MAXIMIZE}
-     * or {@link GoalType#MINIMIZE}
+     * @param goalType type of optimization goal: either {@link GoalType#MAXIMIZE} or {@link GoalType#MINIMIZE}
      * @param restrictToNonNegative whether to restrict the variables to non-negative values
      * @param epsilon amount of error to accept when checking for optimality
      * @param maxUlps amount of error to accept in floating point comparisons
@@ -333,7 +332,7 @@ class SimplexTableau implements Serializable {
             return;
         }
 
-        List<Integer> columnsToDrop = new ArrayList<Integer>();
+        Set<Integer> columnsToDrop = new TreeSet<Integer>();
         columnsToDrop.add(0);
 
         // positive cost non-artificial variables
@@ -346,24 +345,26 @@ class SimplexTableau implements Serializable {
 
         // non-basic artificial variables
         for (int i = 0; i < getNumArtificialVariables(); i++) {
-          int col = i + getArtificialVariableOffset();
-          if (getBasicRow(col) == null) {
-            columnsToDrop.add(col);
-          }
+            int col = i + getArtificialVariableOffset();
+            if (getBasicRow(col) == null) {
+                columnsToDrop.add(col);
+            }
         }
 
         double[][] matrix = new double[getHeight() - 1][getWidth() - columnsToDrop.size()];
         for (int i = 1; i < getHeight(); i++) {
-          int col = 0;
-          for (int j = 0; j < getWidth(); j++) {
-            if (!columnsToDrop.contains(j)) {
-              matrix[i - 1][col++] = tableau.getEntry(i, j);
+            int col = 0;
+            for (int j = 0; j < getWidth(); j++) {
+                if (!columnsToDrop.contains(j)) {
+                    matrix[i - 1][col++] = tableau.getEntry(i, j);
+                }
             }
-          }
         }
 
-        for (int i = columnsToDrop.size() - 1; i >= 0; i--) {
-          columnLabels.remove((int) columnsToDrop.get(i));
+        // remove the columns in reverse order so the indices are correct
+        Integer[] drop = columnsToDrop.toArray(new Integer[columnsToDrop.size()]);
+        for (int i = drop.length - 1; i >= 0; i--) {
+            columnLabels.remove((int) drop[i]);
         }
 
         this.tableau = new Array2DRowRealMatrix(matrix);
@@ -394,7 +395,6 @@ class SimplexTableau implements Serializable {
 
     /**
      * Get the current solution.
-     *
      * @return current solution
      */
     protected PointValuePair getSolution() {
@@ -434,8 +434,8 @@ class SimplexTableau implements Serializable {
      * Subtracts a multiple of one row from another.
      * <p>
      * After application of this operation, the following will hold:
-     *   minuendRow = minuendRow - multiple * subtrahendRow
-     * </p>
+     * <pre>minuendRow = minuendRow - multiple * subtrahendRow</pre>
+     *
      * @param dividendRow index of the row
      * @param divisor value of the divisor
      */
@@ -449,8 +449,8 @@ class SimplexTableau implements Serializable {
      * Subtracts a multiple of one row from another.
      * <p>
      * After application of this operation, the following will hold:
-     *   minuendRow = minuendRow - multiple * subtrahendRow
-     * </p>
+     * <pre>minuendRow = minuendRow - multiple * subtrahendRow</pre>
+     *
      * @param minuendRow row index
      * @param subtrahendRow row index
      * @param multiple multiplication factor
@@ -483,7 +483,8 @@ class SimplexTableau implements Serializable {
         return tableau.getRowDimension();
     }
 
-    /** Get an entry of the tableau.
+    /**
+     * Get an entry of the tableau.
      * @param row row index
      * @param column column index
      * @return entry at (row, column)
@@ -492,7 +493,8 @@ class SimplexTableau implements Serializable {
         return tableau.getEntry(row, column);
     }
 
-    /** Set an entry of the tableau.
+    /**
+     * Set an entry of the tableau.
      * @param row row index
      * @param column column index
      * @param value for the entry
@@ -529,10 +531,9 @@ class SimplexTableau implements Serializable {
     /**
      * Get the number of decision variables.
      * <p>
-     * If variables are not restricted to positive values, this will include 1
-     * extra decision variable to represent the absolute value of the most
-     * negative variable.
-     * </p>
+     * If variables are not restricted to positive values, this will include 1 extra decision variable to represent
+     * the absolute value of the most negative variable.
+     *
      * @return number of decision variables
      * @see #getOriginalNumDecisionVariables()
      */
@@ -573,7 +574,6 @@ class SimplexTableau implements Serializable {
         return tableau.getData();
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean equals(Object other) {
 
@@ -596,7 +596,6 @@ class SimplexTableau implements Serializable {
       return false;
     }
 
-    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         return Boolean.valueOf(restrictToNonNegative).hashCode() ^
@@ -610,7 +609,8 @@ class SimplexTableau implements Serializable {
                tableau.hashCode();
     }
 
-    /** Serialize the instance.
+    /**
+     * Serialize the instance.
      * @param oos stream where object should be written
      * @throws IOException if object cannot be written to stream
      */
@@ -620,7 +620,8 @@ class SimplexTableau implements Serializable {
         MatrixUtils.serializeRealMatrix(tableau, oos);
     }
 
-    /** Deserialize the instance.
+    /**
+     * Deserialize the instance.
      * @param ois stream from which the object should be read
      * @throws ClassNotFoundException if a class in the stream cannot be found
      * @throws IOException if object cannot be read from the stream

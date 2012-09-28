@@ -18,8 +18,8 @@
 package org.apache.commons.math3.util;
 
 import org.apache.commons.math3.exception.DimensionMismatchException;
-import org.apache.commons.math3.exception.OutOfRangeException;
 import org.apache.commons.math3.exception.NotStrictlyPositiveException;
+import org.apache.commons.math3.exception.OutOfRangeException;
 
 /**
  * Converter between unidimensional storage structure and multidimensional
@@ -41,7 +41,7 @@ import org.apache.commons.math3.exception.NotStrictlyPositiveException;
  * </ul>
  *
  * @since 2.2
- * @version $Id: MultidimensionalCounter.java 1364389 2012-07-22 18:19:26Z tn $
+ * @version $Id: MultidimensionalCounter.java 1382887 2012-09-10 14:37:27Z luc $
  */
 public class MultidimensionalCounter implements Iterable<Integer> {
     /**
@@ -162,7 +162,7 @@ public class MultidimensionalCounter implements Iterable<Integer> {
      * @throws NotStrictlyPositiveException if one of the sizes is
      * negative or zero.
      */
-    public MultidimensionalCounter(int ... size) {
+    public MultidimensionalCounter(int ... size) throws NotStrictlyPositiveException {
         dimension = size.length;
         this.size = MathArrays.copyOf(size);
 
@@ -213,7 +213,7 @@ public class MultidimensionalCounter implements Iterable<Integer> {
      * @throws OutOfRangeException if {@code index} is not between
      * {@code 0} and the value returned by {@link #getSize()} (excluded).
      */
-    public int[] getCounts(int index) {
+    public int[] getCounts(int index) throws OutOfRangeException {
         if (index < 0 ||
             index >= totalSize) {
             throw new OutOfRangeException(index, 0, totalSize);
@@ -250,7 +250,8 @@ public class MultidimensionalCounter implements Iterable<Integer> {
      * the range of the corresponding dimension, as defined in the
      * {@link MultidimensionalCounter#MultidimensionalCounter(int...) constructor}.
      */
-    public int getCount(int ... c) throws OutOfRangeException {
+    public int getCount(int ... c)
+        throws OutOfRangeException, DimensionMismatchException {
         if (c.length != dimension) {
             throw new DimensionMismatchException(c.length, dimension);
         }

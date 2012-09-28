@@ -32,7 +32,7 @@ import org.apache.commons.math3.exception.util.LocalizedFormats;
  * </ul>
  * </p>
  *
- * @version $Id: ContinuedFraction.java 1341171 2012-05-21 19:55:30Z tn $
+ * @version $Id: ContinuedFraction.java 1387635 2012-09-19 15:15:43Z tn $
  */
 public abstract class ContinuedFraction {
     /** Maximum allowed numerical error. */
@@ -69,7 +69,7 @@ public abstract class ContinuedFraction {
      * @return the value of the continued fraction evaluated at x.
      * @throws ConvergenceException if the algorithm fails to converge.
      */
-    public double evaluate(double x) {
+    public double evaluate(double x) throws ConvergenceException {
         return evaluate(x, DEFAULT_EPSILON, Integer.MAX_VALUE);
     }
 
@@ -80,7 +80,7 @@ public abstract class ContinuedFraction {
      * @return the value of the continued fraction evaluated at x.
      * @throws ConvergenceException if the algorithm fails to converge.
      */
-    public double evaluate(double x, double epsilon) {
+    public double evaluate(double x, double epsilon) throws ConvergenceException {
         return evaluate(x, epsilon, Integer.MAX_VALUE);
     }
 
@@ -90,28 +90,27 @@ public abstract class ContinuedFraction {
      * @param maxIterations maximum number of convergents
      * @return the value of the continued fraction evaluated at x.
      * @throws ConvergenceException if the algorithm fails to converge.
+     * @throws MaxCountExceededException if maximal number of iterations is reached
      */
-    public double evaluate(double x, int maxIterations) {
+    public double evaluate(double x, int maxIterations)
+        throws ConvergenceException, MaxCountExceededException {
         return evaluate(x, DEFAULT_EPSILON, maxIterations);
     }
 
     /**
-     * <p>
      * Evaluates the continued fraction at the value x.
-     * </p>
-     *
      * <p>
      * The implementation of this method is based on the modified Lentz algorithm as described
      * on page 18 ff. in:
      * <ul>
-     * <li>
+     *   <li>
      *   I. J. Thompson,  A. R. Barnett. "Coulomb and Bessel Functions of Complex Arguments and Order."
      *   <a target="_blank" href="http://www.fresco.org.uk/papers/Thompson-JCP64p490.pdf">
      *   http://www.fresco.org.uk/papers/Thompson-JCP64p490.pdf</a>
-     * </li>
+     *   </li>
      * </ul>
-     * Note: the implementation uses the terms a<sub>i</sub> and b<sub>i</sub> as defined in
-     * <a href="http://mathworld.wolfram.com/ContinuedFraction.html">Continued Fraction / MathWorld</a>.
+     * <b>Note:</b> the implementation uses the terms a<sub>i</sub> and b<sub>i</sub> as defined in
+     * <a href="http://mathworld.wolfram.com/ContinuedFraction.html">Continued Fraction @ MathWorld</a>.
      * </p>
      *
      * @param x the evaluation point.
@@ -119,8 +118,10 @@ public abstract class ContinuedFraction {
      * @param maxIterations maximum number of convergents
      * @return the value of the continued fraction evaluated at x.
      * @throws ConvergenceException if the algorithm fails to converge.
+     * @throws MaxCountExceededException if maximal number of iterations is reached
      */
-    public double evaluate(double x, double epsilon, int maxIterations) {
+    public double evaluate(double x, double epsilon, int maxIterations)
+        throws ConvergenceException, MaxCountExceededException {
         final double small = 1e-50;
         double hPrev = getA(0, x);
 

@@ -28,8 +28,9 @@ import org.apache.commons.math3.random.RandomVectorGenerator;
  * turn with different starting points in order to avoid being trapped
  * into a local extremum when looking for a global one.
  *
- * @version $Id: DifferentiableMultivariateMultiStartOptimizer.java 1244107 2012-02-14 16:17:55Z erans $
+ * @version $Id: DifferentiableMultivariateMultiStartOptimizer.java 1384907 2012-09-14 20:17:00Z luc $
  * @since 2.0
+ * @deprecated as of 3.1 replaced by {@link MultivariateDifferentiableMultiStartOptimizer}
  */
 public class DifferentiableMultivariateMultiStartOptimizer
     extends BaseMultivariateMultiStartOptimizer<DifferentiableMultivariateFunction>
@@ -44,8 +45,8 @@ public class DifferentiableMultivariateMultiStartOptimizer
      * @param generator Random vector generator to use for restarts.
      */
     public DifferentiableMultivariateMultiStartOptimizer(final DifferentiableMultivariateOptimizer optimizer,
-                                                             final int starts,
-                                                             final RandomVectorGenerator generator) {
+                                                         final int starts,
+                                                         final RandomVectorGenerator generator) {
         super(optimizer, starts, generator);
     }
 }

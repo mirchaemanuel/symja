@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.math3.exception.DimensionMismatchException;
+import org.apache.commons.math3.exception.MaxCountExceededException;
 
 
 /**
@@ -42,7 +43,7 @@ import org.apache.commons.math3.exception.DimensionMismatchException;
  * @see FirstOrderDifferentialEquations
  * @see JacobianMatrices
  *
- * @version $Id: ExpandableStatefulODE.java 1302386 2012-03-19 11:59:25Z sebb $
+ * @version $Id: ExpandableStatefulODE.java 1379975 2012-09-02 14:21:00Z luc $
  * @since 3.0
  */
 
@@ -107,8 +108,11 @@ public class ExpandableStatefulODE {
      * @param t current value of the independent <I>time</I> variable
      * @param y array containing the current value of the complete state vector
      * @param yDot placeholder array where to put the time derivative of the complete state vector
+     * @exception MaxCountExceededException if the number of functions evaluations is exceeded
+     * @exception DimensionMismatchException if arrays dimensions do not match equations settings
      */
-    public void computeDerivatives(final double t, final double[] y, final double[] yDot) {
+    public void computeDerivatives(final double t, final double[] y, final double[] yDot)
+        throws MaxCountExceededException, DimensionMismatchException {
 
         // compute derivatives of the primary equations
         primaryMapper.extractEquationData(y, primaryState);
@@ -279,7 +283,7 @@ public class ExpandableStatefulODE {
      * @throws DimensionMismatchException if the dimension of the complete state does not
      * match the complete equations sets dimension
      */
-    public double[] getCompleteState() {
+    public double[] getCompleteState() throws DimensionMismatchException {
 
         // allocate complete array
         double[] completeState = new double[getTotalDimension()];

@@ -16,11 +16,13 @@
  */
 package org.apache.commons.math3.stat.descriptive;
 
+import org.apache.commons.math3.exception.MathIllegalArgumentException;
+
 
 /**
  * Base interface implemented by all statistics.
  *
- * @version $Id: UnivariateStatistic.java 1244107 2012-02-14 16:17:55Z erans $
+ * @version $Id: UnivariateStatistic.java 1382332 2012-09-08 17:27:47Z psteitz $
  */
 public interface UnivariateStatistic {
 
@@ -29,8 +31,9 @@ public interface UnivariateStatistic {
      *
      * @param values input array
      * @return the value of the statistic applied to the input array
+     * @throws MathIllegalArgumentException  if values is null
      */
-    double evaluate(double[] values);
+    double evaluate(double[] values) throws MathIllegalArgumentException;
 
     /**
      * Returns the result of evaluating the statistic over the specified entries
@@ -40,8 +43,9 @@ public interface UnivariateStatistic {
      * @param begin the index of the first element to include
      * @param length the number of elements to include
      * @return the value of the statistic applied to the included array entries
+     * @throws MathIllegalArgumentException if values is null or the indices are invalid
      */
-    double evaluate(double[] values, int begin, int length);
+    double evaluate(double[] values, int begin, int length) throws MathIllegalArgumentException;
 
     /**
      * Returns a copy of the statistic with the same internal state.

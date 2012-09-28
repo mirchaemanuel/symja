@@ -44,7 +44,7 @@ import org.apache.commons.math3.exception.util.LocalizedFormats;
  * The values are ordered using the default (natural order), unless a
  * <code>Comparator</code> is supplied in the constructor.</p>
  *
- * @version $Id: Frequency.java 1244107 2012-02-14 16:17:55Z erans $
+ * @version $Id: Frequency.java 1382389 2012-09-09 01:47:34Z psteitz $
  */
 public class Frequency implements Serializable {
 
@@ -105,9 +105,9 @@ public class Frequency implements Serializable {
      * </p>
      *
      * @param v the value to add.
-     * @throws IllegalArgumentException if <code>v</code> is not comparable with previous entries
+     * @throws MathIllegalArgumentException if <code>v</code> is not comparable with previous entries
      */
-    public void addValue(Comparable<?> v){
+    public void addValue(Comparable<?> v) throws MathIllegalArgumentException {
         Comparable<?> obj = v;
         if (v instanceof Integer) {
            obj = Long.valueOf(((Integer) v).longValue());
@@ -131,8 +131,10 @@ public class Frequency implements Serializable {
      * Adds 1 to the frequency count for v.
      *
      * @param v the value to add.
+     * @throws MathIllegalArgumentException if the table contains entries not
+     * comparable to Integer
      */
-    public void addValue(int v) {
+    public void addValue(int v) throws MathIllegalArgumentException {
         addValue(Long.valueOf(v));
     }
 
@@ -140,8 +142,10 @@ public class Frequency implements Serializable {
      * Adds 1 to the frequency count for v.
      *
      * @param v the value to add.
+     * @throws MathIllegalArgumentException if the table contains entries not
+     * comparable to Long
      */
-    public void addValue(long v) {
+    public void addValue(long v) throws MathIllegalArgumentException {
         addValue(Long.valueOf(v));
     }
 
@@ -149,8 +153,10 @@ public class Frequency implements Serializable {
      * Adds 1 to the frequency count for v.
      *
      * @param v the value to add.
+     * @throws MathIllegalArgumentException if the table contains entries not
+     * comparable to Char
      */
-    public void addValue(char v) {
+    public void addValue(char v) throws MathIllegalArgumentException {
         addValue(Character.valueOf(v));
     }
 
@@ -311,6 +317,7 @@ public class Frequency implements Serializable {
      * @param v the value to lookup.
      * @return the proportion of values equal to v
      */
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public long getCumFreq(Comparable<?> v) {
         if (getSumFreq() == 0) {
             return 0;
@@ -318,7 +325,6 @@ public class Frequency implements Serializable {
         if (v instanceof Integer) {
             return getCumFreq(((Integer) v).longValue());
         }
-        @SuppressWarnings("unchecked") // OK, freqTable is Comparable<?>
         Comparator<Comparable<?>> c = (Comparator<Comparable<?>>) freqTable.comparator();
         if (c == null) {
             c = new NaturalComparator();

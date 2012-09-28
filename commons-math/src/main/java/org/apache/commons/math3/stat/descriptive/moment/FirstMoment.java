@@ -45,7 +45,7 @@ import org.apache.commons.math3.util.MathUtils;
  * one of the threads invokes the <code>increment()</code> or
  * <code>clear()</code> method, it must be synchronized externally.</p>
  *
- * @version $Id: FirstMoment.java 1244107 2012-02-14 16:17:55Z erans $
+ * @version $Id: FirstMoment.java 1382332 2012-09-08 17:27:47Z psteitz $
  */
 class FirstMoment extends AbstractStorelessUnivariateStatistic
     implements Serializable {
@@ -88,8 +88,9 @@ class FirstMoment extends AbstractStorelessUnivariateStatistic
      * to the {@code original}
      *
      * @param original the {@code FirstMoment} instance to copy
+     * @throws NullArgumentException if original is null
      */
-     public FirstMoment(FirstMoment original) {
+     public FirstMoment(FirstMoment original) throws NullArgumentException {
          super();
          copy(original, this);
      }
@@ -141,6 +142,7 @@ class FirstMoment extends AbstractStorelessUnivariateStatistic
     @Override
     public FirstMoment copy() {
         FirstMoment result = new FirstMoment();
+        // No try-catch or advertised exception because args are guaranteed non-null
         copy(this, result);
         return result;
     }

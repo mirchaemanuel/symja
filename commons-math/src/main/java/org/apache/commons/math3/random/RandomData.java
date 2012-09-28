@@ -18,9 +18,15 @@
 package org.apache.commons.math3.random;
 import java.util.Collection;
 
+import org.apache.commons.math3.exception.NotANumberException;
+import org.apache.commons.math3.exception.NotFiniteNumberException;
+import org.apache.commons.math3.exception.NotStrictlyPositiveException;
+import org.apache.commons.math3.exception.NumberIsTooLargeException;
+
 /**
  * Random data generation utilities.
- * @version $Id: RandomData.java 1244107 2012-02-14 16:17:55Z erans $
+ * @deprecated to be removed in 4.0.  Use {@link RandomDataGenerator} directly
+ * @version $Id: RandomData.java 1382904 2012-09-10 14:47:45Z luc $
  */
 public interface RandomData {
     /**
@@ -33,10 +39,10 @@ public interface RandomData {
      *
      * @param len the length of the string to be generated
      * @return a random string of hex characters of length {@code len}
-     * @throws org.apache.commons.math3.exception.NotStrictlyPositiveException
+     * @throws NotStrictlyPositiveException
      * if {@code len <= 0}
      */
-    String nextHexString(int len);
+    String nextHexString(int len) throws NotStrictlyPositiveException;
 
     /**
      * Generates a uniformly distributed random integer between {@code lower}
@@ -51,10 +57,9 @@ public interface RandomData {
      * @param upper upper bound for generated integer
      * @return a random integer greater than or equal to {@code lower}
      * and less than or equal to {@code upper}
-     * @throws org.apache.commons.math3.exception.NumberIsTooLargeException
-     * if {@code lower >= upper}
+     * @throws NumberIsTooLargeException if {@code lower >= upper}
      */
-    int nextInt(int lower, int upper);
+    int nextInt(int lower, int upper) throws NumberIsTooLargeException;
 
     /**
      * Generates a uniformly distributed random long integer between
@@ -69,10 +74,9 @@ public interface RandomData {
      * @param upper upper bound for generated long integer
      * @return a random long integer greater than or equal to {@code lower} and
      * less than or equal to {@code upper}
-     * @throws org.apache.commons.math3.exception.NumberIsTooLargeException
-     * if {@code lower >= upper}.
+     * @throws NumberIsTooLargeException if {@code lower >= upper}
      */
-    long nextLong(long lower, long upper);
+    long nextLong(long lower, long upper) throws NumberIsTooLargeException;
 
     /**
      * Generates a random string of hex characters from a secure random
@@ -84,10 +88,9 @@ public interface RandomData {
      *
      * @param len the length of the string to be generated
      * @return a random string of hex characters of length {@code len}
-     * @throws org.apache.commons.math3.exception.NotStrictlyPositiveException
-     * if {@code len <= 0}
+     * @throws NotStrictlyPositiveException if {@code len <= 0}
      */
-    String nextSecureHexString(int len);
+    String nextSecureHexString(int len) throws NotStrictlyPositiveException;
 
     /**
      * Generates a uniformly distributed random integer between {@code lower}
@@ -105,10 +108,9 @@ public interface RandomData {
      * @param upper upper bound for generated integer
      * @return a random integer greater than or equal to {@code lower} and less
      * than or equal to {@code upper}.
-     * @throws org.apache.commons.math3.exception.NumberIsTooLargeException
-     * if {@code lower >= upper}.
+     * @throws NumberIsTooLargeException if {@code lower >= upper}.
      */
-    int nextSecureInt(int lower, int upper);
+    int nextSecureInt(int lower, int upper) throws NumberIsTooLargeException;
 
     /**
      * Generates a uniformly distributed random long integer between
@@ -127,10 +129,9 @@ public interface RandomData {
      * @param upper upper bound for generated integer
      * @return a random long integer greater than or equal to {@code lower} and
      * less than or equal to {@code upper}.
-     * @throws org.apache.commons.math3.exception.NumberIsTooLargeException
-     * if {@code lower >= upper}.
+     * @throws NumberIsTooLargeException if {@code lower >= upper}.
      */
-    long nextSecureLong(long lower, long upper);
+    long nextSecureLong(long lower, long upper) throws NumberIsTooLargeException;
 
     /**
      * Generates a random value from the Poisson distribution with the given
@@ -142,10 +143,9 @@ public interface RandomData {
      *
      * @param mean the mean of the Poisson distribution
      * @return a random value following the specified Poisson distribution
-     * @throws org.apache.commons.math3.exception.NotStrictlyPositiveException
-     * if {@code mean <= 0}.
+     * @throws NotStrictlyPositiveException if {@code mean <= 0}.
      */
-    long nextPoisson(double mean);
+    long nextPoisson(double mean) throws NotStrictlyPositiveException;
 
     /**
      * Generates a random value from the Normal (or Gaussian) distribution with
@@ -158,10 +158,9 @@ public interface RandomData {
      * @param mu the mean of the distribution
      * @param sigma the standard deviation of the distribution
      * @return a random value following the specified Gaussian distribution
-     * @throws org.apache.commons.math3.exception.NotStrictlyPositiveException
-     * if {@code sigma <= 0}.
+     * @throws NotStrictlyPositiveException if {@code sigma <= 0}.
      */
-    double nextGaussian(double mu, double sigma);
+    double nextGaussian(double mu, double sigma) throws NotStrictlyPositiveException;
 
     /**
      * Generates a random value from the exponential distribution
@@ -173,10 +172,9 @@ public interface RandomData {
      *
      * @param mean the mean of the distribution
      * @return a random value following the specified exponential distribution
-     * @throws org.apache.commons.math3.exception.NotStrictlyPositiveException
-     * if {@code mean <= 0}.
+     * @throws NotStrictlyPositiveException if {@code mean <= 0}.
      */
-    double nextExponential(double mean);
+    double nextExponential(double mean) throws NotStrictlyPositiveException;
 
     /**
      * Generates a uniformly distributed random value from the open interval
@@ -192,10 +190,12 @@ public interface RandomData {
      * @param upper the exclusive upper bound of the support
      * @return a uniformly distributed random value between lower and upper
      * (exclusive)
-     * @throws org.apache.commons.math3.exception.NumberIsTooLargeException
-     * if {@code lower >= upper}
+     * @throws NumberIsTooLargeException if {@code lower >= upper}
+     * @throws NotFiniteNumberException if one of the bounds is infinite
+     * @throws NotANumberException if one of the bounds is infinite
      */
-    double nextUniform(double lower, double upper);
+    double nextUniform(double lower, double upper)
+        throws NumberIsTooLargeException, NotFiniteNumberException, NotANumberException;
 
     /**
      * Generates a uniformly distributed random value from the interval
@@ -216,10 +216,12 @@ public interface RandomData {
      * interval, if {@code lowerInclusive} is {@code false}, or in the
      * {@code [lower, upper)} interval, if {@code lowerInclusive} is
      * {@code true}
-     * @throws org.apache.commons.math3.exception.NumberIsTooLargeException
-     * if {@code lower >= upper}
+     * @throws NumberIsTooLargeException if {@code lower >= upper}
+     * @throws NotFiniteNumberException if one of the bounds is infinite
+     * @throws NotANumberException if one of the bounds is infinite
      */
-    double nextUniform(double lower, double upper, boolean lowerInclusive);
+    double nextUniform(double lower, double upper, boolean lowerInclusive)
+        throws NumberIsTooLargeException, NotFiniteNumberException, NotANumberException;
 
     /**
      * Generates an integer array of length {@code k} whose entries are selected
@@ -233,12 +235,11 @@ public interface RandomData {
      * @param k the size of the permutation
      * @return a random {@code k}-permutation of {@code n}, as an array of
      * integers
-     * @throws org.apache.commons.math3.exception.NumberIsTooLargeException
-     * if {@code k > n}.
-     * @throws org.apache.commons.math3.exception.NotStrictlyPositiveException
-     * if {@code k <= 0}.
+     * @throws NumberIsTooLargeException if {@code k > n}.
+     * @throws NotStrictlyPositiveException if {@code k <= 0}.
      */
-    int[] nextPermutation(int n, int k);
+    int[] nextPermutation(int n, int k)
+        throws NumberIsTooLargeException, NotStrictlyPositiveException;
 
     /**
      * Returns an array of {@code k} objects selected randomly from the
@@ -254,10 +255,10 @@ public interface RandomData {
      * @param c the collection to be sampled
      * @param k the size of the sample
      * @return a random sample of {@code k} elements from {@code c}
-     * @throws org.apache.commons.math3.exception.NumberIsTooLargeException
-     * if {@code k > c.size()}.
-     * @throws org.apache.commons.math3.exception.NotStrictlyPositiveException
-     * if {@code k <= 0}.
+     * @throws NumberIsTooLargeException if {@code k > c.size()}.
+     * @throws NotStrictlyPositiveException if {@code k <= 0}.
      */
-    Object[] nextSample(Collection<?> c, int k);
+    Object[] nextSample(Collection<?> c, int k)
+        throws NumberIsTooLargeException, NotStrictlyPositiveException;
+
 }

@@ -63,7 +63,7 @@ import org.apache.commons.math3.util.MathUtils;
  * arrays is negligible for small matrices (about 1%). The gain from cache efficiency leads
  * to up to 3-fold improvements for matrices of moderate to large size.
  * </p>
- * @version $Id: BlockRealMatrix.java 1244107 2012-02-14 16:17:55Z erans $
+ * @version $Id: BlockRealMatrix.java 1388296 2012-09-21 01:53:28Z celestin $
  * @since 2.0
  */
 public class BlockRealMatrix extends AbstractRealMatrix implements Serializable {
@@ -266,13 +266,11 @@ public class BlockRealMatrix extends AbstractRealMatrix implements Serializable 
     }
 
     /** {@inheritDoc} */
-    @Override
     public BlockRealMatrix createMatrix(final int rowDimension, final int columnDimension) {
         return new BlockRealMatrix(rowDimension, columnDimension);
     }
 
     /** {@inheritDoc} */
-    @Override
     public BlockRealMatrix copy() {
         // create an empty matrix
         BlockRealMatrix copied = new BlockRealMatrix(rows, columns);
@@ -1128,7 +1126,6 @@ public class BlockRealMatrix extends AbstractRealMatrix implements Serializable 
     }
 
     /** {@inheritDoc} */
-    @Override
     public double getEntry(final int row, final int column) {
         MatrixUtils.checkMatrixIndex(this, row, column);
         final int iBlock = row / BLOCK_SIZE;
@@ -1139,7 +1136,6 @@ public class BlockRealMatrix extends AbstractRealMatrix implements Serializable 
     }
 
     /** {@inheritDoc} */
-    @Override
     public void setEntry(final int row, final int column, final double value) {
         MatrixUtils.checkMatrixIndex(this, row, column);
         final int iBlock = row / BLOCK_SIZE;

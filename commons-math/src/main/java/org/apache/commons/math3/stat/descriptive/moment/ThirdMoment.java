@@ -45,7 +45,7 @@ import org.apache.commons.math3.util.MathUtils;
  * one of the threads invokes the <code>increment()</code> or
  * <code>clear()</code> method, it must be synchronized externally.</p>
  *
- * @version $Id: ThirdMoment.java 1244107 2012-02-14 16:17:55Z erans $
+ * @version $Id: ThirdMoment.java 1382332 2012-09-08 17:27:47Z psteitz $
  */
 class ThirdMoment extends SecondMoment implements Serializable {
 
@@ -76,8 +76,9 @@ class ThirdMoment extends SecondMoment implements Serializable {
      * to the {@code original}
      *
      * @param original the {@code ThirdMoment} instance to copy
+     * @throws NullArgumentException if orginal is null
      */
-    public ThirdMoment(ThirdMoment original) {
+    public ThirdMoment(ThirdMoment original) throws NullArgumentException {
         copy(original, this);
     }
 
@@ -121,6 +122,7 @@ class ThirdMoment extends SecondMoment implements Serializable {
     @Override
     public ThirdMoment copy() {
         ThirdMoment result = new ThirdMoment();
+        // No try-catch or advertised exception because args are guaranteed non-null
         copy(this, result);
         return result;
     }

@@ -26,7 +26,7 @@ import org.apache.commons.math3.exception.util.LocalizedFormats;
 /**
  * Useful functions for the implementation of various transforms.
  *
- * @version $Id: TransformUtils.java 1244107 2012-02-14 16:17:55Z erans $
+ * @version $Id: TransformUtils.java 1385310 2012-09-16 16:32:10Z tn $
  * @since 3.0
  */
 public class TransformUtils {
@@ -93,7 +93,7 @@ public class TransformUtils {
      *
      * @param dataC the array of {@link Complex} data to be transformed
      * @return a two dimensional array filled with the real and imaginary parts
-     * of the specified complex input
+     *   of the specified complex input
      */
     public static double[][] createRealImaginaryArray(final Complex[] dataC) {
         final double[][] dataRI = new double[2][dataC.length];
@@ -117,10 +117,9 @@ public class TransformUtils {
      * </ul>
      *
      * @param dataRI the array of real and imaginary parts to be transformed
-     * @return an array of {@link Complex} with specified real and imaginary
-     * parts.
+     * @return an array of {@link Complex} with specified real and imaginary parts.
      * @throws DimensionMismatchException if the number of rows of the specified
-     * array is not two, or the array is not rectangular
+     *   array is not two, or the array is not rectangular
      */
     public static Complex[] createComplexArray(final double[][] dataRI)
         throws DimensionMismatchException{

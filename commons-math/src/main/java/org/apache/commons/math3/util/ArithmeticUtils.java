@@ -17,6 +17,8 @@
 package org.apache.commons.math3.util;
 
 import java.math.BigInteger;
+import java.util.concurrent.atomic.AtomicReference;
+
 import org.apache.commons.math3.exception.MathArithmeticException;
 import org.apache.commons.math3.exception.NotPositiveException;
 import org.apache.commons.math3.exception.NumberIsTooLargeException;
@@ -27,7 +29,7 @@ import org.apache.commons.math3.exception.util.LocalizedFormats;
  * Some useful, arithmetics related, additions to the built-in functions in
  * {@link Math}.
  *
- * @version $Id: ArithmeticUtils.java 1244107 2012-02-14 16:17:55Z erans $
+ * @version $Id: ArithmeticUtils.java 1387637 2012-09-19 15:21:57Z tn $
  */
 public final class ArithmeticUtils {
 
@@ -40,6 +42,9 @@ public final class ArithmeticUtils {
                479001600l,         6227020800l,         87178291200l,
            1307674368000l,     20922789888000l,     355687428096000l,
         6402373705728000l, 121645100408832000l, 2432902008176640000l };
+
+    /** Stirling numbers of the second kind. */
+    static final AtomicReference<long[][]> STIRLING_S2 = new AtomicReference<long[][]> (null);
 
     /** Private constructor. */
     private ArithmeticUtils() {
@@ -56,7 +61,8 @@ public final class ArithmeticUtils {
      * as an {@code int}.
      * @since 1.1
      */
-    public static int addAndCheck(int x, int y) {
+    public static int addAndCheck(int x, int y)
+            throws MathArithmeticException {
         long s = (long)x + (long)y;
         if (s < Integer.MIN_VALUE || s > Integer.MAX_VALUE) {
             throw new MathArithmeticException(LocalizedFormats.OVERFLOW_IN_ADDITION, x, y);
@@ -74,7 +80,7 @@ public final class ArithmeticUtils {
      *         long
      * @since 1.2
      */
-    public static long addAndCheck(long a, long b) {
+    public static long addAndCheck(long a, long b) throws MathArithmeticException {
         return ArithmeticUtils.addAndCheck(a, b, LocalizedFormats.OVERFLOW_IN_ADDITION);
     }
 
@@ -104,7 +110,8 @@ public final class ArithmeticUtils {
      * @throws MathArithmeticException if the result is too large to be
      * represented by a long integer.
      */
-    public static long binomialCoefficient(final int n, final int k) {
+    public static long binomialCoefficient(final int n, final int k)
+        throws NotPositiveException, NumberIsTooLargeException, MathArithmeticException {
         ArithmeticUtils.checkBinomial(n, k);
         if ((n == k) || (k == 0)) {
             return 1;
@@ -181,8 +188,11 @@ public final class ArithmeticUtils {
      * @return {@code n choose k}
      * @throws NotPositiveException if {@code n < 0}.
      * @throws NumberIsTooLargeException if {@code k > n}.
+     * @throws MathArithmeticException if the result is too large to be
+     * represented by a long integer.
      */
-    public static double binomialCoefficientDouble(final int n, final int k) {
+    public static double binomialCoefficientDouble(final int n, final int k)
+        throws NotPositiveException, NumberIsTooLargeException, MathArithmeticException {
         ArithmeticUtils.checkBinomial(n, k);
         if ((n == k) || (k == 0)) {
             return 1d;
@@ -223,8 +233,11 @@ public final class ArithmeticUtils {
      * @return {@code n choose k}
      * @throws NotPositiveException if {@code n < 0}.
      * @throws NumberIsTooLargeException if {@code k > n}.
+     * @throws MathArithmeticException if the result is too large to be
+     * represented by a long integer.
      */
-    public static double binomialCoefficientLog(final int n, final int k) {
+    public static double binomialCoefficientLog(final int n, final int k)
+        throws NotPositiveException, NumberIsTooLargeException, MathArithmeticException {
         ArithmeticUtils.checkBinomial(n, k);
         if ((n == k) || (k == 0)) {
             return 0;
@@ -295,7 +308,7 @@ public final class ArithmeticUtils {
      * @throws MathArithmeticException if {@code n > 20}: The factorial value is too
      * large to fit in a {@code long}.
      */
-    public static long factorial(final int n) {
+    public static long factorial(final int n) throws NotPositiveException, MathArithmeticException {
         if (n < 0) {
             throw new NotPositiveException(LocalizedFormats.FACTORIAL_NEGATIVE_PARAMETER,
                                            n);
@@ -319,13 +332,13 @@ public final class ArithmeticUtils {
      * @return {@code n!}
      * @throws NotPositiveException if {@code n < 0}.
      */
-    public static double factorialDouble(final int n) {
+    public static double factorialDouble(final int n) throws NotPositiveException {
         if (n < 0) {
             throw new NotPositiveException(LocalizedFormats.FACTORIAL_NEGATIVE_PARAMETER,
                                            n);
         }
         if (n < 21) {
-            return factorial(n);
+            return FACTORIALS[n];
         }
         return FastMath.floor(FastMath.exp(ArithmeticUtils.factorialLog(n)) + 0.5);
     }
@@ -337,13 +350,13 @@ public final class ArithmeticUtils {
      * @return {@code n!}
      * @throws NotPositiveException if {@code n < 0}.
      */
-    public static double factorialLog(final int n) {
+    public static double factorialLog(final int n) throws NotPositiveException {
         if (n < 0) {
             throw new NotPositiveException(LocalizedFormats.FACTORIAL_NEGATIVE_PARAMETER,
                                            n);
         }
         if (n < 21) {
-            return FastMath.log(factorial(n));
+            return FastMath.log(FACTORIALS[n]);
         }
         double logSum = 0;
         for (int i = 2; i <= n; i++) {
@@ -353,90 +366,145 @@ public final class ArithmeticUtils {
     }
 
     /**
-     * <p>
-     * Gets the greatest common divisor of the absolute value of two numbers,
-     * using the "binary gcd" method which avoids division and modulo
-     * operations. See Knuth 4.5.2 algorithm B. This algorithm is due to Josef
-     * Stein (1961).
-     * </p>
+     * Computes the greatest common divisor of the absolute value of two
+     * numbers, using a modified version of the "binary gcd" method.
+     * See Knuth 4.5.2 algorithm B.
+     * The algorithm is due to Josef Stein (1961).
+     * <br/>
      * Special cases:
      * <ul>
-     * <li>The invocations
-     * {@code gcd(Integer.MIN_VALUE, Integer.MIN_VALUE)},
-     * {@code gcd(Integer.MIN_VALUE, 0)} and
-     * {@code gcd(0, Integer.MIN_VALUE)} throw an
-     * {@code ArithmeticException}, because the result would be 2^31, which
-     * is too large for an int value.</li>
-     * <li>The result of {@code gcd(x, x)}, {@code gcd(0, x)} and
-     * {@code gcd(x, 0)} is the absolute value of {@code x}, except
-     * for the special cases above.
-     * <li>The invocation {@code gcd(0, 0)} is the only one which returns
-     * {@code 0}.</li>
+     *  <li>The invocations
+     *   {@code gcd(Integer.MIN_VALUE, Integer.MIN_VALUE)},
+     *   {@code gcd(Integer.MIN_VALUE, 0)} and
+     *   {@code gcd(0, Integer.MIN_VALUE)} throw an
+     *   {@code ArithmeticException}, because the result would be 2^31, which
+     *   is too large for an int value.</li>
+     *  <li>The result of {@code gcd(x, x)}, {@code gcd(0, x)} and
+     *   {@code gcd(x, 0)} is the absolute value of {@code x}, except
+     *   for the special cases above.</li>
+     *  <li>The invocation {@code gcd(0, 0)} is the only one which returns
+     *   {@code 0}.</li>
      * </ul>
      *
      * @param p Number.
      * @param q Number.
-     * @return the greatest common divisor, never negative.
+     * @return the greatest common divisor (never negative).
      * @throws MathArithmeticException if the result cannot be represented as
      * a non-negative {@code int} value.
      * @since 1.1
      */
-    public static int gcd(final int p, final int q) {
-        int u = p;
-        int v = q;
-        if ((u == 0) || (v == 0)) {
-            if ((u == Integer.MIN_VALUE) || (v == Integer.MIN_VALUE)) {
+    public static int gcd(int p,
+                          int q)
+        throws MathArithmeticException {
+        int a = p;
+        int b = q;
+        if (a == 0 ||
+            b == 0) {
+            if (a == Integer.MIN_VALUE ||
+                b == Integer.MIN_VALUE) {
                 throw new MathArithmeticException(LocalizedFormats.GCD_OVERFLOW_32_BITS,
                                                   p, q);
             }
-            return FastMath.abs(u) + FastMath.abs(v);
+            return FastMath.abs(a + b);
         }
-        // keep u and v negative, as negative integers range down to
-        // -2^31, while positive numbers can only be as large as 2^31-1
-        // (i.e. we can't necessarily negate a negative number without
-        // overflow)
-        /* assert u!=0 && v!=0; */
-        if (u > 0) {
-            u = -u;
-        } // make u negative
-        if (v > 0) {
-            v = -v;
-        } // make v negative
-        // B1. [Find power of 2]
-        int k = 0;
-        while ((u & 1) == 0 && (v & 1) == 0 && k < 31) { // while u and v are
-                                                            // both even...
-            u /= 2;
-            v /= 2;
-            k++; // cast out twos.
-        }
-        if (k == 31) {
-            throw new MathArithmeticException(LocalizedFormats.GCD_OVERFLOW_32_BITS,
-                                              p, q);
-        }
-        // B2. Initialize: u and v have been divided by 2^k and at least
-        // one is odd.
-        int t = ((u & 1) == 1) ? v : -(u / 2)/* B3 */;
-        // t negative: u was odd, v may be even (t replaces v)
-        // t positive: u was even, v is odd (t replaces u)
-        do {
-            /* assert u<0 && v<0; */
-            // B4/B3: cast out twos from t.
-            while ((t & 1) == 0) { // while t is even..
-                t /= 2; // cast out twos
-            }
-            // B5 [reset max(u,v)]
-            if (t > 0) {
-                u = -t;
+
+        long al = a;
+        long bl = b;
+        boolean useLong = false;
+        if (a < 0) {
+            if(Integer.MIN_VALUE == a) {
+                useLong = true;
             } else {
-                v = t;
+                a = -a;
             }
-            // B6/B3. at this point both u and v should be odd.
-            t = (v - u) / 2;
-            // |u| larger: t positive (replace u)
-            // |v| larger: t negative (replace v)
-        } while (t != 0);
-        return -u * (1 << k); // gcd is u*2^k
+            al = -al;
+        }
+        if (b < 0) {
+            if (Integer.MIN_VALUE == b) {
+                useLong = true;
+            } else {
+                b = -b;
+            }
+            bl = -bl;
+        }
+        if (useLong) {
+            if(al == bl) {
+                throw new MathArithmeticException(LocalizedFormats.GCD_OVERFLOW_32_BITS,
+                                                  p, q);
+            }
+            long blbu = bl;
+            bl = al;
+            al = blbu % al;
+            if (al == 0) {
+                if (bl > Integer.MAX_VALUE) {
+                    throw new MathArithmeticException(LocalizedFormats.GCD_OVERFLOW_32_BITS,
+                                                      p, q);
+                }
+                return (int) bl;
+            }
+            blbu = bl;
+
+            // Now "al" and "bl" fit in an "int".
+            b = (int) al;
+            a = (int) (blbu % al);
+        }
+
+        return gcdPositive(a, b);
+    }
+
+    /**
+     * Computes the greatest common divisor of two <em>positive</em> numbers
+     * (this precondition is <em>not</em> checked and the result is undefined
+     * if not fulfilled) using the "binary gcd" method which avoids division
+     * and modulo operations.
+     * See Knuth 4.5.2 algorithm B.
+     * The algorithm is due to Josef Stein (1961).
+     * <br/>
+     * Special cases:
+     * <ul>
+     *  <li>The result of {@code gcd(x, x)}, {@code gcd(0, x)} and
+     *   {@code gcd(x, 0)} is the value of {@code x}.</li>
+     *  <li>The invocation {@code gcd(0, 0)} is the only one which returns
+     *   {@code 0}.</li>
+     * </ul>
+     *
+     * @param a Positive number.
+     * @param b Positive number.
+     * @return the greatest common divisor.
+     */
+    private static int gcdPositive(int a,
+                                   int b) {
+        if (a == 0) {
+            return b;
+        }
+        else if (b == 0) {
+            return a;
+        }
+
+        // Make "a" and "b" odd, keeping track of common power of 2.
+        final int aTwos = Integer.numberOfTrailingZeros(a);
+        a >>= aTwos;
+        final int bTwos = Integer.numberOfTrailingZeros(b);
+        b >>= bTwos;
+        final int shift = Math.min(aTwos, bTwos);
+
+        // "a" and "b" are positive.
+        // If a > b then "gdc(a, b)" is equal to "gcd(a - b, b)".
+        // If a < b then "gcd(a, b)" is equal to "gcd(b - a, a)".
+        // Hence, in the successive iterations:
+        //  "a" becomes the absolute difference of the current values,
+        //  "b" becomes the minimum of the current values.
+        while (a != b) {
+            final int delta = a - b;
+            b = Math.min(a, b);
+            a = Math.abs(delta);
+
+            // Remove any power of 2 in "a" ("b" is guaranteed to be odd).
+            a >>= Integer.numberOfTrailingZeros(a);
+        }
+
+        // Recover the common power of 2.
+        return a << shift;
     }
 
     /**
@@ -468,7 +536,7 @@ public final class ArithmeticUtils {
      * a non-negative {@code long} value.
      * @since 2.1
      */
-    public static long gcd(final long p, final long q) {
+    public static long gcd(final long p, final long q) throws MathArithmeticException {
         long u = p;
         long v = q;
         if ((u == 0) || (v == 0)) {
@@ -548,7 +616,7 @@ public final class ArithmeticUtils {
      * a non-negative {@code int} value.
      * @since 1.1
      */
-    public static int lcm(int a, int b) {
+    public static int lcm(int a, int b) throws MathArithmeticException {
         if (a == 0 || b == 0){
             return 0;
         }
@@ -582,7 +650,7 @@ public final class ArithmeticUtils {
      * as a non-negative {@code long} value.
      * @since 2.1
      */
-    public static long lcm(long a, long b) {
+    public static long lcm(long a, long b) throws MathArithmeticException {
         if (a == 0 || b == 0){
             return 0;
         }
@@ -604,7 +672,7 @@ public final class ArithmeticUtils {
      * represented as an {@code int}.
      * @since 1.1
      */
-    public static int mulAndCheck(int x, int y) {
+    public static int mulAndCheck(int x, int y) throws MathArithmeticException {
         long m = ((long)x) * ((long)y);
         if (m < Integer.MIN_VALUE || m > Integer.MAX_VALUE) {
             throw new MathArithmeticException();
@@ -622,7 +690,7 @@ public final class ArithmeticUtils {
      * as a {@code long}.
      * @since 1.2
      */
-    public static long mulAndCheck(long a, long b) {
+    public static long mulAndCheck(long a, long b) throws MathArithmeticException {
         long ret;
         if (a > b) {
             // use symmetry to reduce boundary cases
@@ -676,7 +744,7 @@ public final class ArithmeticUtils {
      * as an {@code int}.
      * @since 1.1
      */
-    public static int subAndCheck(int x, int y) {
+    public static int subAndCheck(int x, int y) throws MathArithmeticException {
         long s = (long)x - (long)y;
         if (s < Integer.MIN_VALUE || s > Integer.MAX_VALUE) {
             throw new MathArithmeticException(LocalizedFormats.OVERFLOW_IN_SUBTRACTION, x, y);
@@ -694,7 +762,7 @@ public final class ArithmeticUtils {
      * {@code long}.
      * @since 1.2
      */
-    public static long subAndCheck(long a, long b) {
+    public static long subAndCheck(long a, long b) throws MathArithmeticException {
         long ret;
         if (b == Long.MIN_VALUE) {
             if (a < 0) {
@@ -717,7 +785,7 @@ public final class ArithmeticUtils {
      * @return k<sup>e</sup>
      * @throws NotPositiveException if {@code e < 0}.
      */
-    public static int pow(final int k, int e) {
+    public static int pow(final int k, int e) throws NotPositiveException {
         if (e < 0) {
             throw new NotPositiveException(LocalizedFormats.EXPONENT, e);
         }
@@ -743,7 +811,7 @@ public final class ArithmeticUtils {
      * @return k<sup>e</sup>
      * @throws NotPositiveException if {@code e < 0}.
      */
-    public static int pow(final int k, long e) {
+    public static int pow(final int k, long e) throws NotPositiveException {
         if (e < 0) {
             throw new NotPositiveException(LocalizedFormats.EXPONENT, e);
         }
@@ -769,7 +837,7 @@ public final class ArithmeticUtils {
      * @return k<sup>e</sup>
      * @throws NotPositiveException if {@code e < 0}.
      */
-    public static long pow(final long k, int e) {
+    public static long pow(final long k, int e) throws NotPositiveException {
         if (e < 0) {
             throw new NotPositiveException(LocalizedFormats.EXPONENT, e);
         }
@@ -795,7 +863,7 @@ public final class ArithmeticUtils {
      * @return k<sup>e</sup>
      * @throws NotPositiveException if {@code e < 0}.
      */
-    public static long pow(final long k, long e) {
+    public static long pow(final long k, long e) throws NotPositiveException {
         if (e < 0) {
             throw new NotPositiveException(LocalizedFormats.EXPONENT, e);
         }
@@ -821,7 +889,7 @@ public final class ArithmeticUtils {
      * @return k<sup>e</sup>
      * @throws NotPositiveException if {@code e < 0}.
      */
-    public static BigInteger pow(final BigInteger k, int e) {
+    public static BigInteger pow(final BigInteger k, int e) throws NotPositiveException {
         if (e < 0) {
             throw new NotPositiveException(LocalizedFormats.EXPONENT, e);
         }
@@ -837,7 +905,7 @@ public final class ArithmeticUtils {
      * @return k<sup>e</sup>
      * @throws NotPositiveException if {@code e < 0}.
      */
-    public static BigInteger pow(final BigInteger k, long e) {
+    public static BigInteger pow(final BigInteger k, long e) throws NotPositiveException {
         if (e < 0) {
             throw new NotPositiveException(LocalizedFormats.EXPONENT, e);
         }
@@ -864,7 +932,7 @@ public final class ArithmeticUtils {
      * @return k<sup>e</sup>
      * @throws NotPositiveException if {@code e < 0}.
      */
-    public static BigInteger pow(final BigInteger k, BigInteger e) {
+    public static BigInteger pow(final BigInteger k, BigInteger e) throws NotPositiveException {
         if (e.compareTo(BigInteger.ZERO) < 0) {
             throw new NotPositiveException(LocalizedFormats.EXPONENT, e);
         }
@@ -883,6 +951,91 @@ public final class ArithmeticUtils {
     }
 
     /**
+     * Returns the <a
+     * href="http://mathworld.wolfram.com/StirlingNumberoftheSecondKind.html">
+     * Stirling number of the second kind</a>, "{@code S(n,k)}", the number of
+     * ways of partitioning an {@code n}-element set into {@code k} non-empty
+     * subsets.
+     * <p>
+     * The preconditions are {@code 0 <= k <= n } (otherwise
+     * {@code NotPositiveException} is thrown)
+     * </p>
+     * @param n the size of the set
+     * @param k the number of non-empty subsets
+     * @return {@code S(n,k)}
+     * @throws NotPositiveException if {@code k < 0}.
+     * @throws NumberIsTooLargeException if {@code k > n}.
+     * @throws MathArithmeticException if some overflow happens, typically for n exceeding 25 and
+     * k between 20 and n-2 (S(n,n-1) is handled specifically and does not overflow)
+     */
+    public static long stirlingS2(final int n, final int k)
+        throws NotPositiveException, NumberIsTooLargeException, MathArithmeticException {
+        if (k < 0) {
+            throw new NotPositiveException(k);
+        }
+        if (k > n) {
+            throw new NumberIsTooLargeException(k, n, true);
+        }
+
+        long[][] stirlingS2 = STIRLING_S2.get();
+
+        if (stirlingS2 == null) {
+            // the cache has never been initialized, compute the first numbers
+            // by direct recurrence relation
+
+            // as S(26,9) = 11201516780955125625 is larger than Long.MAX_VALUE
+            // we must stop computation at row 26
+            final int maxIndex = 26;
+            stirlingS2 = new long[maxIndex][];
+            stirlingS2[0] = new long[] { 1l };
+            for (int i = 1; i < stirlingS2.length; ++i) {
+                stirlingS2[i] = new long[i + 1];
+                stirlingS2[i][0] = 0;
+                stirlingS2[i][1] = 1;
+                stirlingS2[i][i] = 1;
+                for (int j = 2; j < i; ++j) {
+                    stirlingS2[i][j] = j * stirlingS2[i - 1][j] + stirlingS2[i - 1][j - 1];
+                }
+            }
+
+            // atomically save the cache
+            STIRLING_S2.compareAndSet(null, stirlingS2);
+
+        }
+
+        if (n < stirlingS2.length) {
+            // the number is in the small cache
+            return stirlingS2[n][k];
+        } else {
+            // use explicit formula to compute the number without caching it
+            if (k == 0) {
+                return 0;
+            } else if (k == 1 || k == n) {
+                return 1;
+            } else if (k == 2) {
+                return (1l << (n - 1)) - 1l;
+            } else if (k == n - 1) {
+                return binomialCoefficient(n, 2);
+            } else {
+                // definition formula: note that this may trigger some overflow
+                long sum = 0;
+                long sign = ((k & 0x1) == 0) ? 1 : -1;
+                for (int j = 1; j <= k; ++j) {
+                    sign = -sign;
+                    sum += sign * binomialCoefficient(k, j) * pow(j, n);
+                    if (sum < 0) {
+                        // there was an overflow somewhere
+                        throw new MathArithmeticException(LocalizedFormats.ARGUMENT_OUTSIDE_DOMAIN,
+                                                          n, 0, stirlingS2.length - 1);
+                    }
+                }
+                return sum / factorial(k);
+            }
+        }
+
+    }
+
+    /**
      * Add two long integers, checking for overflow.
      *
      * @param a Addend.
@@ -893,7 +1046,7 @@ public final class ArithmeticUtils {
      * as a {@code long}.
      * @since 1.2
      */
-     private static long addAndCheck(long a, long b, Localizable pattern) {
+     private static long addAndCheck(long a, long b, Localizable pattern) throws MathArithmeticException {
         long ret;
         if (a > b) {
             // use symmetry to reduce boundary cases
@@ -936,7 +1089,7 @@ public final class ArithmeticUtils {
      * @throws NotPositiveException if {@code n < 0}.
      * @throws NumberIsTooLargeException if {@code k > n}.
      */
-    private static void checkBinomial(final int n, final int k) {
+    private static void checkBinomial(final int n, final int k) throws NumberIsTooLargeException, NotPositiveException {
         if (n < k) {
             throw new NumberIsTooLargeException(LocalizedFormats.BINOMIAL_INVALID_PARAMETERS_ORDER,
                                                 k, n, true);

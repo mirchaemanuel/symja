@@ -23,14 +23,14 @@ package org.apache.commons.math3.optimization;
  * the following interfaces:
  * <ul>
  *  <li>{@link org.apache.commons.math3.optimization.MultivariateOptimizer}</li>
- *  <li>{@link org.apache.commons.math3.optimization.DifferentiableMultivariateOptimizer}</li>
- *  <li>{@link org.apache.commons.math3.optimization.DifferentiableMultivariateVectorOptimizer}</li>
+ *  <li>{@link org.apache.commons.math3.optimization.MultivariateDifferentiableOptimizer}</li>
+ *  <li>{@link org.apache.commons.math3.optimization.MultivariateDifferentiableVectorOptimizer}</li>
  *  <li>{@link org.apache.commons.math3.optimization.univariate.UnivariateOptimizer}</li>
  * </ul>
  *
  * @param <PAIR> Type of the point/objective pair.
  *
- * @version $Id: BaseOptimizer.java 1364392 2012-07-22 18:27:12Z tn $
+ * @version $Id: BaseOptimizer.java 1384907 2012-09-14 20:17:00Z luc $
  * @since 3.0
  */
 public interface BaseOptimizer<PAIR> {

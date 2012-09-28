@@ -25,13 +25,14 @@ import org.apache.commons.math3.optimization.DifferentiableMultivariateVectorOpt
  * The estimated coefficients are the polynomial coefficients (see the
  * {@link #fit(double[]) fit} method).
  *
- * @version $Id: PolynomialFitter.java 1357353 2012-07-04 18:00:02Z erans $
+ * @version $Id: PolynomialFitter.java 1370215 2012-08-07 12:38:59Z sebb $
  * @since 2.0
  */
 public class PolynomialFitter extends CurveFitter<PolynomialFunction.Parametric> {
     /** Polynomial degree.
      * @deprecated
      */
+    @Deprecated
     private final int degree;
 
     /**
@@ -44,6 +45,7 @@ public class PolynomialFitter extends CurveFitter<PolynomialFunction.Parametric>
      * @deprecated Since 3.1 (to be removed in 4.0). Please use
      * {@link #PolynomialFitter(DifferentiableMultivariateVectorOptimizer)} instead.
      */
+    @Deprecated
     public PolynomialFitter(int degree, final DifferentiableMultivariateVectorOptimizer optimizer) {
         super(optimizer);
         this.degree = degree;
@@ -67,6 +69,7 @@ public class PolynomialFitter extends CurveFitter<PolynomialFunction.Parametric>
      * if the algorithm failed to converge.
      * @deprecated Since 3.1 (to be removed in 4.0). Please use {@link #fit(double[])} instead.
      */
+    @Deprecated
     public double[] fit() {
         return fit(new PolynomialFunction.Parametric(), new double[degree + 1]);
     }

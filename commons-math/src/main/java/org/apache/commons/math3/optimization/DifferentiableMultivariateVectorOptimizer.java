@@ -24,8 +24,10 @@ import org.apache.commons.math3.analysis.DifferentiableMultivariateVectorFunctio
  * {@link DifferentiableMultivariateVectorFunction vectorial differentiable
  * objective functions}.
  *
- * @version $Id: DifferentiableMultivariateVectorOptimizer.java 1244107 2012-02-14 16:17:55Z erans $
+ * @version $Id: DifferentiableMultivariateVectorOptimizer.java 1384907 2012-09-14 20:17:00Z luc $
  * @since 3.0
+ * @deprecated as of 3.1 replaced by {@link MultivariateDifferentiableVectorOptimizer}
  */
+@Deprecated
 public interface DifferentiableMultivariateVectorOptimizer
     extends BaseMultivariateVectorOptimizer<DifferentiableMultivariateVectorFunction> {}

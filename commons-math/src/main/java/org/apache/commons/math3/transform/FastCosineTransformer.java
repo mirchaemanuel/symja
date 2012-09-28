@@ -27,16 +27,13 @@ import org.apache.commons.math3.util.ArithmeticUtils;
 import org.apache.commons.math3.util.FastMath;
 
 /**
- * <p>
  * Implements the Fast Cosine Transform for transformation of one-dimensional
  * real data sets. For reference, see James S. Walker, <em>Fast Fourier
  * Transforms</em>, chapter 3 (ISBN 0849371635).
- * </p>
  * <p>
  * There are several variants of the discrete cosine transform. The present
  * implementation corresponds to DCT-I, with various normalization conventions,
  * which are specified by the parameter {@link DctNormalization}.
- * </p>
  * <p>
  * DCT-I is equivalent to DFT of an <em>even extension</em> of the data series.
  * More precisely, if x<sub>0</sub>, &hellip;, x<sub>N-1</sub> is the data set
@@ -48,7 +45,6 @@ import org.apache.commons.math3.util.FastMath;
  * <li>x<sub>k</sub><sup>&#35;</sup> = x<sub>2N-2-k</sub>
  * if N &le; k &lt; 2N - 2.</li>
  * </ul>
- * </p>
  * <p>
  * Then, the standard DCT-I y<sub>0</sub>, &hellip;, y<sub>N-1</sub> of the real
  * data set x<sub>0</sub>, &hellip;, x<sub>N-1</sub> is equal to <em>half</em>
@@ -58,15 +54,13 @@ import org.apache.commons.math3.util.FastMath;
  * y<sub>n</sub> = (1 / 2) &sum;<sub>k=0</sub><sup>2N-3</sup>
  * x<sub>k</sub><sup>&#35;</sup> exp[-2&pi;i nk / (2N - 2)]
  * &nbsp;&nbsp;&nbsp;&nbsp;k = 0, &hellip;, N-1.
- * </p>
  * <p>
  * The present implementation of the discrete cosine transform as a fast cosine
  * transform requires the length of the data set to be a power of two plus one
  * (N&nbsp;=&nbsp;2<sup>n</sup>&nbsp;+&nbsp;1). Besides, it implicitly assumes
  * that the sampled function is even.
- * </p>
  *
- * @version $Id: FastCosineTransformer.java 1244107 2012-02-14 16:17:55Z erans $
+ * @version $Id: FastCosineTransformer.java 1385310 2012-09-16 16:32:10Z tn $
  * @since 1.2
  */
 public class FastCosineTransformer implements RealTransformer, Serializable {
@@ -94,7 +88,8 @@ public class FastCosineTransformer implements RealTransformer, Serializable {
      * @throws MathIllegalArgumentException if the length of the data array is
      * not a power of two plus one
      */
-    public double[] transform(final double[] f, final TransformType type) {
+    public double[] transform(final double[] f, final TransformType type)
+      throws MathIllegalArgumentException {
         if (type == TransformType.FORWARD) {
             if (normalization == DctNormalization.ORTHOGONAL_DCT_I) {
                 final double s = FastMath.sqrt(2.0 / (f.length - 1));
@@ -124,7 +119,7 @@ public class FastCosineTransformer implements RealTransformer, Serializable {
      */
     public double[] transform(final UnivariateFunction f,
         final double min, final double max, final int n,
-        final TransformType type) {
+        final TransformType type) throws MathIllegalArgumentException {
 
         final double[] data = FunctionUtils.sample(f, min, max, n);
         return transform(data, type);

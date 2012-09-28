@@ -39,7 +39,7 @@ import org.apache.commons.math3.util.FastMath;
  *
  * @see <a href="http://mathworld.wolfram.com/CholeskyDecomposition.html">MathWorld</a>
  * @see <a href="http://en.wikipedia.org/wiki/Cholesky_decomposition">Wikipedia</a>
- * @version $Id: RectangularCholeskyDecomposition.java 1244107 2012-02-14 16:17:55Z erans $
+ * @version $Id: RectangularCholeskyDecomposition.java 1384945 2012-09-14 21:55:46Z tn $
  * @since 2.0 (changed to concrete class in 3.0)
  */
 public class RectangularCholeskyDecomposition {
@@ -52,9 +52,28 @@ public class RectangularCholeskyDecomposition {
 
     /**
      * Decompose a symmetric positive semidefinite matrix.
+     * <p>
+     * <b>Note:</b> this constructor follows the linpack method to detect dependent
+     * columns by proceeding with the Cholesky algorithm until a nonpositive diagonal
+     * element is encountered.
+     *
+     * @see <a href="http://eprints.ma.man.ac.uk/1193/01/covered/MIMS_ep2008_56.pdf">
+     * Analysis of the Cholesky Decomposition of a Semi-definite Matrix</a>
      *
      * @param matrix Symmetric positive semidefinite matrix.
-     * @param small Diagonal elements threshold under which  column are
+     * @exception NonPositiveDefiniteMatrixException if the matrix is not
+     * positive semidefinite.
+     */
+    public RectangularCholeskyDecomposition(RealMatrix matrix)
+        throws NonPositiveDefiniteMatrixException {
+        this(matrix, 0);
+    }
+
+    /**
+     * Decompose a symmetric positive semidefinite matrix.
+     *
+     * @param matrix Symmetric positive semidefinite matrix.
+     * @param small Diagonal elements threshold under which columns are
      * considered to be dependent on previous ones and are discarded.
      * @exception NonPositiveDefiniteMatrixException if the matrix is not
      * positive semidefinite.
@@ -62,11 +81,10 @@ public class RectangularCholeskyDecomposition {
     public RectangularCholeskyDecomposition(RealMatrix matrix, double small)
         throws NonPositiveDefiniteMatrixException {
 
-        int order = matrix.getRowDimension();
-        double[][] c = matrix.getData();
-        double[][] b = new double[order][order];
+        final int order = matrix.getRowDimension();
+        final double[][] c = matrix.getData();
+        final double[][] b = new double[order][order];
 
-        int[] swap  = new int[order];
         int[] index = new int[order];
         for (int i = 0; i < order; ++i) {
             index[i] = i;
@@ -76,26 +94,29 @@ public class RectangularCholeskyDecomposition {
         for (boolean loop = true; loop;) {
 
             // find maximal diagonal element
-            swap[r] = r;
+            int swapR = r;
             for (int i = r + 1; i < order; ++i) {
                 int ii  = index[i];
-                int isi = index[swap[i]];
-                if (c[ii][ii] > c[isi][isi]) {
-                    swap[r] = i;
+                int isr = index[swapR];
+                if (c[ii][ii] > c[isr][isr]) {
+                    swapR = i;
                 }
             }
 
 
             // swap elements
-            if (swap[r] != r) {
-                int tmp = index[r];
-                index[r] = index[swap[r]];
-                index[swap[r]] = tmp;
+            if (swapR != r) {
+                final int tmpIndex    = index[r];
+                index[r]              = index[swapR];
+                index[swapR]          = tmpIndex;
+                final double[] tmpRow = b[r];
+                b[r]                  = b[swapR];
+                b[swapR]              = tmpRow;
             }
 
             // check diagonal element
             int ir = index[r];
-            if (c[ir][ir] < small) {
+            if (c[ir][ir] <= small) {
 
                 if (r == 0) {
                     throw new NonPositiveDefiniteMatrixException(c[ir][ir], ir, small);
@@ -112,23 +133,23 @@ public class RectangularCholeskyDecomposition {
 
                 // all remaining diagonal elements are close to zero, we consider we have
                 // found the rank of the symmetric positive semidefinite matrix
-                ++r;
                 loop = false;
 
             } else {
 
                 // transform the matrix
-                double sqrt = FastMath.sqrt(c[ir][ir]);
+                final double sqrt = FastMath.sqrt(c[ir][ir]);
                 b[r][r] = sqrt;
-                double inverse = 1 / sqrt;
+                final double inverse  = 1 / sqrt;
+                final double inverse2 = 1 / c[ir][ir];
                 for (int i = r + 1; i < order; ++i) {
-                    int ii = index[i];
-                    double e = inverse * c[ii][ir];
+                    final int ii = index[i];
+                    final double e = inverse * c[ii][ir];
                     b[i][r] = e;
-                    c[ii][ii] -= e * e;
+                    c[ii][ii] -= c[ii][ir] * c[ii][ir] * inverse2;
                     for (int j = r + 1; j < i; ++j) {
-                        int ij = index[j];
-                        double f = c[ii][ij] - e * b[j][r];
+                        final int ij = index[j];
+                        final double f = c[ii][ij] - e * b[j][r];
                         c[ii][ij] = f;
                         c[ij][ii] = f;
                     }

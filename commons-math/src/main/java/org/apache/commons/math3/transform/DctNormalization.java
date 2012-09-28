@@ -22,12 +22,11 @@ package org.apache.commons.math3.transform;
  * normalizations is detailed below.
  *
  * @see FastCosineTransformer
- * @version $Id: DctNormalization.java 1244107 2012-02-14 16:17:55Z erans $
+ * @version $Id: DctNormalization.java 1385310 2012-09-16 16:32:10Z tn $
  * @since 3.0
  */
 public enum DctNormalization {
     /**
-     * <p>
      * Should be passed to the constructor of {@link FastCosineTransformer}
      * to use the <em>standard</em> normalization convention.  The standard
      * DCT-I normalization convention is defined as follows
@@ -43,12 +42,10 @@ public enum DctNormalization {
      * y<sub>n</sub> cos[&pi; nk / (N - 1)],</li>
      * </ul>
      * where N is the size of the data sample.
-     * </p>
      */
     STANDARD_DCT_I,
 
     /**
-     * <p>
      * Should be passed to the constructor of {@link FastCosineTransformer}
      * to use the <em>orthogonal</em> normalization convention. The orthogonal
      * DCT-I normalization convention is defined as follows
