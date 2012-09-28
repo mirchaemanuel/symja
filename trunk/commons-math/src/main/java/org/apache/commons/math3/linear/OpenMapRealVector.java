@@ -18,17 +18,19 @@ package org.apache.commons.math3.linear;
 
 import java.io.Serializable;
 
+import org.apache.commons.math3.exception.DimensionMismatchException;
 import org.apache.commons.math3.exception.MathArithmeticException;
 import org.apache.commons.math3.exception.NotPositiveException;
+import org.apache.commons.math3.exception.OutOfRangeException;
 import org.apache.commons.math3.exception.util.LocalizedFormats;
+import org.apache.commons.math3.util.FastMath;
 import org.apache.commons.math3.util.OpenIntToDoubleHashMap;
 import org.apache.commons.math3.util.OpenIntToDoubleHashMap.Iterator;
-import org.apache.commons.math3.util.FastMath;
 
 /**
  * This class implements the {@link RealVector} interface with a
  * {@link OpenIntToDoubleHashMap} backing store.
- * @version $Id: OpenMapRealVector.java 1360662 2012-07-12 13:17:08Z celestin $
+ * @version $Id: OpenMapRealVector.java 1381730 2012-09-06 19:42:35Z celestin $
  * @since 2.0
 */
 public class OpenMapRealVector extends SparseRealVector
@@ -222,7 +224,8 @@ public class OpenMapRealVector extends SparseRealVector
 
     /** {@inheritDoc} */
     @Override
-    public RealVector add(RealVector v) {
+    public RealVector add(RealVector v)
+        throws DimensionMismatchException {
         checkVectorDimensions(v.getDimension());
         if (v instanceof OpenMapRealVector) {
             return add((OpenMapRealVector) v);
@@ -237,10 +240,10 @@ public class OpenMapRealVector extends SparseRealVector
      *
      * @param v Vector to add.
      * @return the sum of {@code this} and {@code v}.
-     * @throws org.apache.commons.math3.exception.DimensionMismatchException
-     * if the dimensions do not match.
+     * @throws DimensionMismatchException if the dimensions do not match.
      */
-    public OpenMapRealVector add(OpenMapRealVector v) {
+    public OpenMapRealVector add(OpenMapRealVector v)
+        throws DimensionMismatchException {
         checkVectorDimensions(v.getDimension());
         boolean copyThis = entries.size() > v.entries.size();
         OpenMapRealVector res = copyThis ? this.copy() : v.copy();
@@ -304,9 +307,33 @@ public class OpenMapRealVector extends SparseRealVector
         return new OpenMapRealVector(this);
     }
 
+    /**
+     * Computes the dot product.
+     * Note that the computation is now performed in the parent class: no
+     * performance improvement is to be expected from this overloaded
+     * method.
+     * The previous implementation was buggy and cannot be easily fixed
+     * (see MATH-795).
+     *
+     * @param v Vector.
+     * @return the dot product of this vector with {@code v}.
+     * @throws DimensionMismatchException if {@code v} is not the same size as
+     * {@code this} vector.
+     *
+     * @deprecated as of 3.1 (to be removed in 4.0). The computation is
+     * performed by the parent class. The method must be kept to maintain
+     * backwards compatibility.
+     */
+    @Deprecated
+    public double dotProduct(OpenMapRealVector v)
+        throws DimensionMismatchException {
+        return dotProduct((RealVector) v);
+    }
+
     /** {@inheritDoc} */
     @Override
-    public OpenMapRealVector ebeDivide(RealVector v) {
+    public OpenMapRealVector ebeDivide(RealVector v)
+        throws DimensionMismatchException {
         checkVectorDimensions(v.getDimension());
         OpenMapRealVector res = new OpenMapRealVector(this);
         /*
@@ -323,7 +350,8 @@ public class OpenMapRealVector extends SparseRealVector
 
     /** {@inheritDoc} */
     @Override
-    public OpenMapRealVector ebeMultiply(RealVector v) {
+    public OpenMapRealVector ebeMultiply(RealVector v)
+        throws DimensionMismatchException {
         checkVectorDimensions(v.getDimension());
         OpenMapRealVector res = new OpenMapRealVector(this);
         Iterator iter = entries.iterator();
@@ -355,7 +383,8 @@ public class OpenMapRealVector extends SparseRealVector
 
     /** {@inheritDoc} */
     @Override
-    public OpenMapRealVector getSubVector(int index, int n) {
+    public OpenMapRealVector getSubVector(int index, int n)
+        throws NotPositiveException, OutOfRangeException {
         checkIndex(index);
         if (n < 0) {
             throw new NotPositiveException(LocalizedFormats.NUMBER_OF_ELEMENTS_SHOULD_BE_POSITIVE, n);
@@ -385,10 +414,11 @@ public class OpenMapRealVector extends SparseRealVector
      *
      * @param v Vector to compute distance to.
      * @return the distance from {@code this} and {@code v}.
-     * @throws org.apache.commons.math3.exception.DimensionMismatchException
-     * if the dimensions do not match.
+     * @throws DimensionMismatchException if the dimensions do not match.
      */
-    public double getDistance(OpenMapRealVector v) {
+    public double getDistance(OpenMapRealVector v)
+        throws DimensionMismatchException {
+        checkVectorDimensions(v.getDimension());
         Iterator iter = entries.iterator();
         double res = 0;
         while (iter.hasNext()) {
@@ -412,7 +442,7 @@ public class OpenMapRealVector extends SparseRealVector
 
     /** {@inheritDoc} */
     @Override
-    public double getDistance(RealVector v) {
+    public double getDistance(RealVector v) throws DimensionMismatchException {
         checkVectorDimensions(v.getDimension());
         if (v instanceof OpenMapRealVector) {
             return getDistance((OpenMapRealVector) v);
@@ -423,7 +453,7 @@ public class OpenMapRealVector extends SparseRealVector
 
     /** {@inheritDoc} */
     @Override
-    public double getEntry(int index) {
+    public double getEntry(int index) throws OutOfRangeException {
         checkIndex(index);
         return entries.get(index);
     }
@@ -436,8 +466,11 @@ public class OpenMapRealVector extends SparseRealVector
      *
      * @param v Vector to which distance is requested.
      * @return distance between this vector and {@code v}.
+     * @throws DimensionMismatchException if the dimensions do not match.
      */
-    public double getL1Distance(OpenMapRealVector v) {
+    public double getL1Distance(OpenMapRealVector v)
+        throws DimensionMismatchException {
+        checkVectorDimensions(v.getDimension());
         double max = 0;
         Iterator iter = entries.iterator();
         while (iter.hasNext()) {
@@ -459,7 +492,8 @@ public class OpenMapRealVector extends SparseRealVector
 
     /** {@inheritDoc} */
     @Override
-    public double getL1Distance(RealVector v) {
+    public double getL1Distance(RealVector v)
+        throws DimensionMismatchException {
         checkVectorDimensions(v.getDimension());
         if (v instanceof OpenMapRealVector) {
             return getL1Distance((OpenMapRealVector) v);
@@ -473,8 +507,11 @@ public class OpenMapRealVector extends SparseRealVector
      *
      * @param v Vector to compute distance from.
      * @return the LInfDistance.
+     * @throws DimensionMismatchException if the dimensions do not match.
      */
-    private double getLInfDistance(OpenMapRealVector v) {
+    private double getLInfDistance(OpenMapRealVector v)
+        throws DimensionMismatchException {
+        checkVectorDimensions(v.getDimension());
         double max = 0;
         Iterator iter = entries.iterator();
         while (iter.hasNext()) {
@@ -499,7 +536,8 @@ public class OpenMapRealVector extends SparseRealVector
 
     /** {@inheritDoc} */
     @Override
-    public double getLInfDistance(RealVector v) {
+    public double getLInfDistance(RealVector v)
+        throws DimensionMismatchException {
         checkVectorDimensions(v.getDimension());
         if (v instanceof OpenMapRealVector) {
             return getLInfDistance((OpenMapRealVector) v);
@@ -556,7 +594,8 @@ public class OpenMapRealVector extends SparseRealVector
 
     /** {@inheritDoc} */
     @Override
-    public void setEntry(int index, double value) {
+    public void setEntry(int index, double value)
+        throws OutOfRangeException {
         checkIndex(index);
         if (!isDefaultValue(value)) {
             entries.put(index, value);
@@ -567,7 +606,8 @@ public class OpenMapRealVector extends SparseRealVector
 
     /** {@inheritDoc} */
     @Override
-    public void setSubVector(int index, RealVector v) {
+    public void setSubVector(int index, RealVector v)
+        throws OutOfRangeException {
         checkIndex(index);
         checkIndex(index + v.getDimension() - 1);
         for (int i = 0; i < v.getDimension(); i++) {
@@ -588,10 +628,10 @@ public class OpenMapRealVector extends SparseRealVector
      *
      * @param v Vector to subtract from {@code this}.
      * @return the difference of {@code this} and {@code v}.
-     * @throws org.apache.commons.math3.exception.DimensionMismatchException
-     * if the dimensions do not match.
+     * @throws DimensionMismatchException if the dimensions do not match.
      */
-    public OpenMapRealVector subtract(OpenMapRealVector v) {
+    public OpenMapRealVector subtract(OpenMapRealVector v)
+        throws DimensionMismatchException {
         checkVectorDimensions(v.getDimension());
         OpenMapRealVector res = copy();
         Iterator iter = v.getEntries().iterator();
@@ -609,7 +649,8 @@ public class OpenMapRealVector extends SparseRealVector
 
     /** {@inheritDoc} */
     @Override
-    public RealVector subtract(RealVector v) {
+    public RealVector subtract(RealVector v)
+        throws DimensionMismatchException {
         checkVectorDimensions(v.getDimension());
         if (v instanceof OpenMapRealVector) {
             return subtract((OpenMapRealVector) v);
@@ -620,7 +661,7 @@ public class OpenMapRealVector extends SparseRealVector
 
     /** {@inheritDoc} */
     @Override
-    public OpenMapRealVector unitVector() {
+    public OpenMapRealVector unitVector() throws MathArithmeticException {
         OpenMapRealVector res = copy();
         res.unitize();
         return res;
@@ -628,7 +669,7 @@ public class OpenMapRealVector extends SparseRealVector
 
     /** {@inheritDoc} */
     @Override
-    public void unitize() {
+    public void unitize() throws MathArithmeticException {
         double norm = getNorm();
         if (isDefaultValue(norm)) {
             throw new MathArithmeticException(LocalizedFormats.ZERO_NORM);

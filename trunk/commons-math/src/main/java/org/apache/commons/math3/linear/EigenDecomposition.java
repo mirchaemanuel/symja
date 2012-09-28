@@ -71,10 +71,12 @@ import org.apache.commons.math3.util.FastMath;
  * </p>
  * @see <a href="http://mathworld.wolfram.com/EigenDecomposition.html">MathWorld</a>
  * @see <a href="http://en.wikipedia.org/wiki/Eigendecomposition_of_a_matrix">Wikipedia</a>
- * @version $Id: EigenDecomposition.java 1364783 2012-07-23 20:19:52Z tn $
+ * @version $Id: EigenDecomposition.java 1380122 2012-09-03 03:54:23Z celestin $
  * @since 2.0 (changed to concrete class in 3.0)
  */
 public class EigenDecomposition {
+    /** Internally used epsilon criteria. */
+    private static final double EPSILON = 1e-12;
     /** Maximum number of iterations accepted in the implicit QL transformation */
     private byte maxIter = 30;
     /** Main diagonal of the tridiagonal matrix. */
@@ -99,9 +101,6 @@ public class EigenDecomposition {
     /** Cached value of Vt. */
     private RealMatrix cachedVt;
 
-    /** Internally used epsilon criteria. */
-    private final double epsilon = 1e-12;
-
     /**
      * Calculates the eigen decomposition of the given real matrix.
      * <p>
@@ -112,7 +111,8 @@ public class EigenDecomposition {
      * @throws MathArithmeticException if the decomposition of a general matrix
      * results in a matrix with zero norm
      */
-    public EigenDecomposition(final RealMatrix matrix)  {
+    public EigenDecomposition(final RealMatrix matrix)
+        throws MathArithmeticException {
         if (isSymmetric(matrix, false)) {
             transformToTridiagonal(matrix);
             findEigenVectors(transformer.getQ().getData());
@@ -128,11 +128,15 @@ public class EigenDecomposition {
      * @param matrix Matrix to decompose.
      * @param splitTolerance Dummy parameter (present for backward
      * compatibility only).
+     * @throws MathArithmeticException  if the decomposition of a general matrix
+     * results in a matrix with zero norm
      * @throws MaxCountExceededException if the algorithm fails to converge.
      * @deprecated in 3.1 (to be removed in 4.0) due to unused parameter
      */
+    @Deprecated
     public EigenDecomposition(final RealMatrix matrix,
-                              final double splitTolerance)  {
+                              final double splitTolerance)
+        throws MathArithmeticException {
         this(matrix);
     }
 
@@ -167,6 +171,7 @@ public class EigenDecomposition {
      * @throws MaxCountExceededException if the algorithm fails to converge.
      * @deprecated in 3.1 (to be removed in 4.0) due to unused parameter
      */
+    @Deprecated
     public EigenDecomposition(final double[] main, final double[] secondary,
                               final double splitTolerance) {
         this(main, secondary);
@@ -244,9 +249,9 @@ public class EigenDecomposition {
             cachedD = MatrixUtils.createRealDiagonalMatrix(realEigenvalues);
 
             for (int i = 0; i < imagEigenvalues.length; i++) {
-                if (Precision.compareTo(imagEigenvalues[i], 0.0, epsilon) > 0) {
+                if (Precision.compareTo(imagEigenvalues[i], 0.0, EPSILON) > 0) {
                     cachedD.setEntry(i, i+1, imagEigenvalues[i]);
-                } else if (Precision.compareTo(imagEigenvalues[i], 0.0, epsilon) < 0) {
+                } else if (Precision.compareTo(imagEigenvalues[i], 0.0, EPSILON) < 0) {
                     cachedD.setEntry(i, i-1, imagEigenvalues[i]);
                 }
             }
@@ -289,7 +294,7 @@ public class EigenDecomposition {
      */
     public boolean hasComplexEigenvalues() {
         for (int i = 0; i < imagEigenvalues.length; i++) {
-            if (!Precision.equals(imagEigenvalues[i], 0.0, epsilon)) {
+            if (!Precision.equals(imagEigenvalues[i], 0.0, EPSILON)) {
                 return true;
             }
         }
@@ -724,7 +729,7 @@ public class EigenDecomposition {
 
         for (int i = 0; i < realEigenvalues.length; i++) {
             if (i == (realEigenvalues.length - 1) ||
-                Precision.equals(matT[i + 1][i], 0.0, epsilon)) {
+                Precision.equals(matT[i + 1][i], 0.0, EPSILON)) {
                 realEigenvalues[i] = matT[i][i];
             } else {
                 final double x = matT[i + 1][i + 1];
@@ -760,7 +765,8 @@ public class EigenDecomposition {
      * @param schur the schur transformation of the matrix
      * @throws MathArithmeticException if the Schur form has a norm of zero
      */
-    private void findEigenVectorsFromSchur(final SchurTransformer schur) {
+    private void findEigenVectorsFromSchur(final SchurTransformer schur)
+        throws MathArithmeticException {
         final double[][] matrixT = schur.getT().getData();
         final double[][] matrixP = schur.getP().getData();
 
@@ -775,7 +781,7 @@ public class EigenDecomposition {
         }
 
         // we can not handle a matrix with zero norm
-        if (Precision.equals(norm, 0.0, epsilon)) {
+        if (Precision.equals(norm, 0.0, EPSILON)) {
            throw new MathArithmeticException(LocalizedFormats.ZERO_NORM);
         }
 
@@ -799,7 +805,7 @@ public class EigenDecomposition {
                     for (int j = l; j <= idx; j++) {
                         r = r + matrixT[i][j] * matrixT[j][idx];
                     }
-                    if (Precision.compareTo(imagEigenvalues[i], 0.0, epsilon) < 0.0) {
+                    if (Precision.compareTo(imagEigenvalues[i], 0.0, EPSILON) < 0.0) {
                         z = w;
                         s = r;
                     } else {
@@ -861,7 +867,7 @@ public class EigenDecomposition {
                     }
                     double w = matrixT[i][i] - p;
 
-                    if (Precision.compareTo(imagEigenvalues[i], 0.0, epsilon) < 0.0) {
+                    if (Precision.compareTo(imagEigenvalues[i], 0.0, EPSILON) < 0.0) {
                         z = w;
                         r = ra;
                         s = sa;

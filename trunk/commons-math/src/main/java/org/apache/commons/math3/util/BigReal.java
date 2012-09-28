@@ -35,7 +35,7 @@ import org.apache.commons.math3.exception.util.LocalizedFormats;
  * in order to implement the {@link FieldElement} interface.
  * </p>
  * @since 2.0
- * @version $Id: BigReal.java 1294043 2012-02-27 06:32:59Z celestin $
+ * @version $Id: BigReal.java 1381283 2012-09-05 18:29:47Z luc $
  */
 public class BigReal implements FieldElement<BigReal>, Comparable<BigReal>, Serializable {
 
@@ -248,7 +248,7 @@ public class BigReal implements FieldElement<BigReal>, Comparable<BigReal>, Seri
      *
      * @throws MathArithmeticException if {@code a} is zero
      */
-    public BigReal divide(BigReal a) {
+    public BigReal divide(BigReal a) throws MathArithmeticException {
         try {
             return new BigReal(d.divide(a.d, scale, roundingMode));
         } catch (ArithmeticException e) {
@@ -262,7 +262,7 @@ public class BigReal implements FieldElement<BigReal>, Comparable<BigReal>, Seri
      *
      * @throws MathArithmeticException if {@code this} is zero
      */
-    public BigReal reciprocal() {
+    public BigReal reciprocal() throws MathArithmeticException {
         try {
             return new BigReal(BigDecimal.ONE.divide(d, scale, roundingMode));
         } catch (ArithmeticException e) {

@@ -17,6 +17,8 @@
 
 package org.apache.commons.math3.ode.sampling;
 
+import org.apache.commons.math3.exception.MaxCountExceededException;
+
 
 /**
  * This interface represents a handler that should be called after
@@ -34,7 +36,7 @@ package org.apache.commons.math3.ode.sampling;
  * @see org.apache.commons.math3.ode.FirstOrderIntegrator
  * @see org.apache.commons.math3.ode.SecondOrderIntegrator
  * @see StepInterpolator
- * @version $Id: StepHandler.java 1244107 2012-02-14 16:17:55Z erans $
+ * @version $Id: StepHandler.java 1379975 2012-09-02 14:21:00Z luc $
  * @since 1.2
  */
 
@@ -65,7 +67,10 @@ public interface StepHandler {
      * Keeping only a reference to the interpolator and reusing it will
      * result in unpredictable behavior (potentially crashing the application).
      * @param isLast true if the step is the last one
+     * @exception MaxCountExceededException if the interpolator throws one because
+     * the number of functions evaluations is exceeded
      */
-    void handleStep(StepInterpolator interpolator, boolean isLast);
+    void handleStep(StepInterpolator interpolator, boolean isLast)
+        throws MaxCountExceededException;
 
 }

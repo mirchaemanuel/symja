@@ -25,7 +25,7 @@ import org.apache.commons.math3.util.OpenIntToDoubleHashMap;
 /**
  * Sparse matrix implementation based on an open addressed map.
  *
- * @version $Id: OpenMapRealMatrix.java 1244107 2012-02-14 16:17:55Z erans $
+ * @version $Id: OpenMapRealMatrix.java 1388296 2012-09-21 01:53:28Z celestin $
  * @since 2.0
  */
 public class OpenMapRealMatrix extends AbstractRealMatrix
@@ -69,13 +69,11 @@ public class OpenMapRealMatrix extends AbstractRealMatrix
     }
 
     /** {@inheritDoc} */
-    @Override
     public OpenMapRealMatrix copy() {
         return new OpenMapRealMatrix(this);
     }
 
     /** {@inheritDoc} */
-    @Override
     public OpenMapRealMatrix createMatrix(int rowDimension, int columnDimension) {
         return new OpenMapRealMatrix(rowDimension, columnDimension);
     }
@@ -211,7 +209,6 @@ public class OpenMapRealMatrix extends AbstractRealMatrix
     }
 
     /** {@inheritDoc} */
-    @Override
     public double getEntry(int row, int column) {
         MatrixUtils.checkRowIndex(this, row);
         MatrixUtils.checkColumnIndex(this, column);
@@ -225,7 +222,6 @@ public class OpenMapRealMatrix extends AbstractRealMatrix
     }
 
     /** {@inheritDoc} */
-    @Override
     public void setEntry(int row, int column, double value) {
         MatrixUtils.checkRowIndex(this, row);
         MatrixUtils.checkColumnIndex(this, column);

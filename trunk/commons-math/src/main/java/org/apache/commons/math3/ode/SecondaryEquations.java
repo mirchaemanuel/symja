@@ -17,6 +17,9 @@
 
 package org.apache.commons.math3.ode;
 
+import org.apache.commons.math3.exception.DimensionMismatchException;
+import org.apache.commons.math3.exception.MaxCountExceededException;
+
 /**
  * This interface allows users to add secondary differential equations to a primary
  * set of differential equations.
@@ -33,7 +36,7 @@ package org.apache.commons.math3.ode;
  * method.
  * </p>
  * @see ExpandableStatefulODE
- * @version $Id: SecondaryEquations.java 1302386 2012-03-19 11:59:25Z sebb $
+ * @version $Id: SecondaryEquations.java 1379975 2012-09-02 14:21:00Z luc $
  * @since 3.0
  */
 public interface SecondaryEquations {
@@ -49,8 +52,11 @@ public interface SecondaryEquations {
      * @param primaryDot array containing the derivative of the primary state vector
      * @param secondary array containing the current value of the secondary state vector
      * @param secondaryDot placeholder array where to put the derivative of the secondary state vector
+     * @exception MaxCountExceededException if the number of functions evaluations is exceeded
+     * @exception DimensionMismatchException if arrays dimensions do not match equations settings
      */
     void computeDerivatives(double t, double[] primary, double[] primaryDot,
-                            double[] secondary, double[] secondaryDot);
+                            double[] secondary, double[] secondaryDot)
+        throws MaxCountExceededException, DimensionMismatchException;
 
 }

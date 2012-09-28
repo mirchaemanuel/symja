@@ -74,7 +74,7 @@ import java.io.PrintStream;
  * <li>{@link #scalb(float, int)}</li>
  * </ul>
  * </p>
- * @version $Id: FastMath.java 1366400 2012-07-27 14:56:10Z erans $
+ * @version $Id: FastMath.java 1372199 2012-08-12 21:22:58Z erans $
  * @since 2.2
  */
 public class FastMath {
@@ -1145,7 +1145,7 @@ public class FastMath {
             /* Normalize the subnormal number. */
             bits <<= 1;
             while ( (bits & 0x0010000000000000L) == 0) {
-                exp--;
+                --exp;
                 bits <<= 1;
             }
         }
@@ -1165,8 +1165,9 @@ public class FastMath {
                 xa = aa;
                 xb = ab;
 
-                double ya = LN_QUICK_COEF[LN_QUICK_COEF.length-1][0];
-                double yb = LN_QUICK_COEF[LN_QUICK_COEF.length-1][1];
+                final double[] lnCoef_last = LN_QUICK_COEF[LN_QUICK_COEF.length - 1];
+                double ya = lnCoef_last[0];
+                double yb = lnCoef_last[1];
 
                 for (int i = LN_QUICK_COEF.length - 2; i >= 0; i--) {
                     /* Multiply a = y * x */
@@ -1178,8 +1179,9 @@ public class FastMath {
                     yb = aa - ya + ab;
 
                     /* Add  a = y + lnQuickCoef */
-                    aa = ya + LN_QUICK_COEF[i][0];
-                    ab = yb + LN_QUICK_COEF[i][1];
+                    final double[] lnCoef_i = LN_QUICK_COEF[i];
+                    aa = ya + lnCoef_i[0];
+                    ab = yb + lnCoef_i[1];
                     /* Split y = a */
                     tmp = aa * HEX_40000000;
                     ya = aa + tmp - tmp;
@@ -1199,7 +1201,7 @@ public class FastMath {
         }
 
         // lnm is a log of a number in the range of 1.0 - 2.0, so 0 <= lnm < ln(2)
-        double lnm[] = lnMant.LN_MANT[(int)((bits & 0x000ffc0000000000L) >> 42)];
+        final double[] lnm = lnMant.LN_MANT[(int)((bits & 0x000ffc0000000000L) >> 42)];
 
         /*
     double epsilon = x / Double.longBitsToDouble(bits & 0xfffffc0000000000L);
@@ -1210,7 +1212,7 @@ public class FastMath {
         // y is the most significant 10 bits of the mantissa
         //double y = Double.longBitsToDouble(bits & 0xfffffc0000000000L);
         //double epsilon = (x - y) / y;
-        double epsilon = (bits & 0x3ffffffffffL) / (TWO_POWER_52 + (bits & 0x000ffc0000000000L));
+        final double epsilon = (bits & 0x3ffffffffffL) / (TWO_POWER_52 + (bits & 0x000ffc0000000000L));
 
         double lnza = 0.0;
         double lnzb = 0.0;
@@ -1224,14 +1226,15 @@ public class FastMath {
             double xb = ab;
 
             /* Need a more accurate epsilon, so adjust the division. */
-            double numer = bits & 0x3ffffffffffL;
-            double denom = TWO_POWER_52 + (bits & 0x000ffc0000000000L);
+            final double numer = bits & 0x3ffffffffffL;
+            final double denom = TWO_POWER_52 + (bits & 0x000ffc0000000000L);
             aa = numer - xa*denom - xb * denom;
             xb += aa / denom;
 
             /* Remez polynomial evaluation */
-            double ya = LN_HI_PREC_COEF[LN_HI_PREC_COEF.length-1][0];
-            double yb = LN_HI_PREC_COEF[LN_HI_PREC_COEF.length-1][1];
+            final double[] lnCoef_last = LN_HI_PREC_COEF[LN_HI_PREC_COEF.length-1];
+            double ya = lnCoef_last[0];
+            double yb = lnCoef_last[1];
 
             for (int i = LN_HI_PREC_COEF.length - 2; i >= 0; i--) {
                 /* Multiply a = y * x */
@@ -1243,8 +1246,9 @@ public class FastMath {
                 yb = aa - ya + ab;
 
                 /* Add  a = y + lnHiPrecCoef */
-                aa = ya + LN_HI_PREC_COEF[i][0];
-                ab = yb + LN_HI_PREC_COEF[i][1];
+                final double[] lnCoef_i = LN_HI_PREC_COEF[i];
+                aa = ya + lnCoef_i[0];
+                ab = yb + lnCoef_i[1];
                 /* Split y = a */
                 tmp = aa * HEX_40000000;
                 ya = aa + tmp - tmp;
@@ -1324,47 +1328,42 @@ public class FastMath {
         return a + b;
     }
 
-    /** Compute log(1 + x).
-     * @param x a number
-     * @return log(1 + x)
+    /**
+     * Computes log(1 + x).
+     *
+     * @param x Number.
+     * @return {@code log(1 + x)}.
      */
     public static double log1p(final double x) {
-
         if (x == -1) {
-            return x/0.0;   // -Infinity
+            return Double.NEGATIVE_INFINITY;
         }
 
-        if (x > 0 && 1/x == 0) { // x = Infinity
-            return x;
+        if (x == Double.POSITIVE_INFINITY) {
+            return Double.POSITIVE_INFINITY;
         }
 
-        if (x>1e-6 || x<-1e-6) {
-            double xpa = 1.0 + x;
-            double xpb = -(xpa - 1.0 - x);
+        if (x > 1e-6 ||
+            x < -1e-6) {
+            final double xpa = 1 + x;
+            final double xpb = -(xpa - 1 - x);
 
-            double hiPrec[] = new double[2];
-
+            final double[] hiPrec = new double[2];
             final double lores = log(xpa, hiPrec);
-            if (Double.isInfinite(lores)){ // don't allow this to be converted to NaN
+            if (Double.isInfinite(lores)) { // Don't allow this to be converted to NaN
                 return lores;
             }
 
-            /* Do a taylor series expansion around xpa */
-            /* f(x+y) = f(x) + f'(x)*y + f''(x)/2 y^2 */
-            double fx1 = xpb/xpa;
-
-            double epsilon = 0.5 * fx1 + 1.0;
-            epsilon = epsilon * fx1;
-
-            return epsilon + hiPrec[1] + hiPrec[0];
+            // Do a taylor series expansion around xpa:
+            //   f(x+y) = f(x) + f'(x) y + f''(x)/2 y^2
+            final double fx1 = xpb / xpa;
+            final double epsilon = 0.5 * fx1 + 1;
+            return epsilon * fx1 + hiPrec[1] + hiPrec[0];
+        } else {
+            // Value is small |x| < 1e6, do a Taylor series centered on 1.
+            final double y = (x * F_1_3 - F_1_2) * x + 1;
+            return y * x;
         }
-
-        /* Value is small |x| < 1e6, do a Taylor series centered on 1.0 */
-        double y = x * F_1_3 - F_1_2;
-        y = y * x + 1.0;
-        y = y * x;
-
-        return y;
     }
 
     /** Compute the base 10 logarithm.
@@ -1576,6 +1575,72 @@ public class FastMath {
         return result;
     }
 
+
+    /**
+     * Raise a double to an int power.
+     *
+     * @param d Number to raise.
+     * @param e Exponent.
+     * @return d<sup>e</sup>
+     */
+    public static double pow(double d, int e) {
+
+        if (e == 0) {
+            return 1.0;
+        } else if (e < 0) {
+            e = -e;
+            d = 1.0 / d;
+        }
+
+        // split d as two 26 bits numbers
+        // beware the following expressions must NOT be simplified, they rely on floating point arithmetic properties
+        final int splitFactor = 0x8000001;
+        final double cd       = splitFactor * d;
+        final double d1High   = cd - (cd - d);
+        final double d1Low    = d - d1High;
+
+        // prepare result
+        double resultHigh = 1;
+        double resultLow  = 0;
+
+        // d^(2p)
+        double d2p     = d;
+        double d2pHigh = d1High;
+        double d2pLow  = d1Low;
+
+        while (e != 0) {
+
+            if ((e & 0x1) != 0) {
+                // accurate multiplication result = result * d^(2p) using Veltkamp TwoProduct algorithm
+                // beware the following expressions must NOT be simplified, they rely on floating point arithmetic properties
+                final double tmpHigh = resultHigh * d2p;
+                final double cRH     = splitFactor * resultHigh;
+                final double rHH     = cRH - (cRH - resultHigh);
+                final double rHL     = resultHigh - rHH;
+                final double tmpLow  = rHL * d2pLow - (((tmpHigh - rHH * d2pHigh) - rHL * d2pHigh) - rHH * d2pLow);
+                resultHigh = tmpHigh;
+                resultLow  = resultLow * d2p + tmpLow;
+            }
+
+            // accurate squaring d^(2(p+1)) = d^(2p) * d^(2p) using Veltkamp TwoProduct algorithm
+            // beware the following expressions must NOT be simplified, they rely on floating point arithmetic properties
+            final double tmpHigh = d2pHigh * d2p;
+            final double cD2pH   = splitFactor * d2pHigh;
+            final double d2pHH   = cD2pH - (cD2pH - d2pHigh);
+            final double d2pHL   = d2pHigh - d2pHH;
+            final double tmpLow  = d2pHL * d2pLow - (((tmpHigh - d2pHH * d2pHigh) - d2pHL * d2pHigh) - d2pHH * d2pLow);
+            final double cTmpH   = splitFactor * tmpHigh;
+            d2pHigh = cTmpH - (cTmpH - tmpHigh);
+            d2pLow  = d2pLow * d2p + tmpLow + (tmpHigh - d2pHigh);
+            d2p     = d2pHigh + d2pLow;
+
+            e = e >> 1;
+
+        }
+
+        return resultHigh + resultLow;
+
+    }
 
     /**
      *  Computes sin(x) - x, where |x| < 1/16.

@@ -15,27 +15,22 @@
  * limitations under the License.
  */
 
-package org.apache.commons.math3.optimization.linear;
+package org.apache.commons.math3.optimization;
 
-import org.apache.commons.math3.exception.MathIllegalStateException;
-import org.apache.commons.math3.exception.util.LocalizedFormats;
+import org.apache.commons.math3.analysis.differentiation.MultivariateDifferentiableFunction;
 
 /**
- * This class represents exceptions thrown by optimizers when a solution escapes to infinity.
+ * This interface represents an optimization algorithm for
+ * {@link MultivariateDifferentiableFunction scalar differentiable objective
+ * functions}.
+ * Optimization algorithms find the input point set that either {@link GoalType
+ * maximize or minimize} an objective function.
  *
- * @version $Id: UnboundedSolutionException.java 1385307 2012-09-16 16:19:55Z tn $
- * @since 2.0
+ * @see MultivariateOptimizer
+ * @see MultivariateDifferentiableVectorOptimizer
+ *
+ * @version $Id: MultivariateDifferentiableOptimizer.java 1384907 2012-09-14 20:17:00Z luc $
+ * @since 3.1
  */
-public class UnboundedSolutionException extends MathIllegalStateException {
-
-    /** Serializable version identifier. */
-    private static final long serialVersionUID = 940539497277290619L;
-
-    /**
-     * Simple constructor using a default message.
-     */
-    public UnboundedSolutionException() {
-        super(LocalizedFormats.UNBOUNDED_SOLUTION);
-    }
-
-}
+public interface MultivariateDifferentiableOptimizer
+    extends BaseMultivariateOptimizer<MultivariateDifferentiableFunction> {}

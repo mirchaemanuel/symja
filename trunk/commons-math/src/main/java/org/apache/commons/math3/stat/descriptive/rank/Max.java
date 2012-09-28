@@ -18,6 +18,7 @@ package org.apache.commons.math3.stat.descriptive.rank;
 
 import java.io.Serializable;
 
+import org.apache.commons.math3.exception.MathIllegalArgumentException;
 import org.apache.commons.math3.exception.NullArgumentException;
 import org.apache.commons.math3.stat.descriptive.AbstractStorelessUnivariateStatistic;
 import org.apache.commons.math3.util.MathUtils;
@@ -37,7 +38,7 @@ import org.apache.commons.math3.util.MathUtils;
  * one of the threads invokes the <code>increment()</code> or
  * <code>clear()</code> method, it must be synchronized externally.</p>
  *
- * @version $Id: Max.java 1244107 2012-02-14 16:17:55Z erans $
+ * @version $Id: Max.java 1382537 2012-09-09 16:43:27Z psteitz $
  */
 public class Max extends AbstractStorelessUnivariateStatistic implements Serializable {
 
@@ -63,8 +64,9 @@ public class Max extends AbstractStorelessUnivariateStatistic implements Seriali
      * to the {@code original}
      *
      * @param original the {@code Max} instance to copy
+     * @throws NullArgumentException if original is null
      */
-    public Max(Max original) {
+    public Max(Max original) throws NullArgumentException {
         copy(original, this);
     }
 
@@ -108,7 +110,7 @@ public class Max extends AbstractStorelessUnivariateStatistic implements Seriali
      * the input array, or <code>Double.NaN</code> if the designated subarray
      * is empty.
      * <p>
-     * Throws <code>IllegalArgumentException</code> if the array is null or
+     * Throws <code>MathIllegalArgumentException</code> if the array is null or
      * the array index parameters are not valid.</p>
      * <p>
      * <ul>
@@ -122,11 +124,12 @@ public class Max extends AbstractStorelessUnivariateStatistic implements Seriali
      * @param begin index of the first array element to include
      * @param length the number of elements to include
      * @return the maximum of the values or Double.NaN if length = 0
-     * @throws IllegalArgumentException if the array is null or the array index
+     * @throws MathIllegalArgumentException if the array is null or the array index
      *  parameters are not valid
      */
     @Override
-    public double evaluate(final double[] values, final int begin, final int length) {
+    public double evaluate(final double[] values, final int begin, final int length)
+    throws MathIllegalArgumentException {
         double max = Double.NaN;
         if (test(values, begin, length)) {
             max = values[begin];
@@ -145,6 +148,7 @@ public class Max extends AbstractStorelessUnivariateStatistic implements Seriali
     @Override
     public Max copy() {
         Max result = new Max();
+        // No try-catch or advertised exception because args are non-null
         copy(this, result);
         return result;
     }

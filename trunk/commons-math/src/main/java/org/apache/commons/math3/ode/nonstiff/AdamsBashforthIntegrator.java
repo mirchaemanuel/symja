@@ -17,8 +17,10 @@
 
 package org.apache.commons.math3.ode.nonstiff;
 
-import org.apache.commons.math3.exception.MathIllegalArgumentException;
-import org.apache.commons.math3.exception.MathIllegalStateException;
+import org.apache.commons.math3.exception.DimensionMismatchException;
+import org.apache.commons.math3.exception.MaxCountExceededException;
+import org.apache.commons.math3.exception.NoBracketingException;
+import org.apache.commons.math3.exception.NumberIsTooSmallException;
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.ode.ExpandableStatefulODE;
 import org.apache.commons.math3.ode.sampling.NordsieckStepInterpolator;
@@ -134,7 +136,7 @@ import org.apache.commons.math3.util.FastMath;
  * <p>The P<sup>-1</sup>u vector and the P<sup>-1</sup> A P matrix do not depend on the state,
  * they only depend on k and therefore are precomputed once for all.</p>
  *
- * @version $Id: AdamsBashforthIntegrator.java 1244107 2012-02-14 16:17:55Z erans $
+ * @version $Id: AdamsBashforthIntegrator.java 1379975 2012-09-02 14:21:00Z luc $
  * @since 2.0
  */
 public class AdamsBashforthIntegrator extends AdamsIntegrator {
@@ -153,13 +155,13 @@ public class AdamsBashforthIntegrator extends AdamsIntegrator {
      * be smaller than this
      * @param scalAbsoluteTolerance allowed absolute error
      * @param scalRelativeTolerance allowed relative error
-     * @exception IllegalArgumentException if order is 1 or less
+     * @exception NumberIsTooSmallException if order is 1 or less
      */
     public AdamsBashforthIntegrator(final int nSteps,
                                     final double minStep, final double maxStep,
                                     final double scalAbsoluteTolerance,
                                     final double scalRelativeTolerance)
-        throws IllegalArgumentException {
+        throws NumberIsTooSmallException {
         super(METHOD_NAME, nSteps, nSteps, minStep, maxStep,
               scalAbsoluteTolerance, scalRelativeTolerance);
     }
@@ -189,7 +191,8 @@ public class AdamsBashforthIntegrator extends AdamsIntegrator {
     /** {@inheritDoc} */
     @Override
     public void integrate(final ExpandableStatefulODE equations, final double t)
-        throws MathIllegalStateException, MathIllegalArgumentException {
+        throws NumberIsTooSmallException, DimensionMismatchException,
+               MaxCountExceededException, NoBracketingException {
 
         sanityChecks(equations, t);
         setEquations(equations);

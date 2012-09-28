@@ -36,7 +36,7 @@ import org.apache.commons.math3.exception.NumberIsTooLargeException;
  *
  * @param <FUNC> Type of the objective function to be optimized.
  *
- * @version $Id: BaseAbstractMultivariateSimpleBoundsOptimizer.java 1364392 2012-07-22 18:27:12Z tn $
+ * @version $Id: BaseAbstractMultivariateSimpleBoundsOptimizer.java 1370228 2012-08-07 12:49:31Z sebb $
  * @since 3.0
  */
 public abstract class BaseAbstractMultivariateSimpleBoundsOptimizer<FUNC extends MultivariateFunction>
@@ -81,6 +81,7 @@ public abstract class BaseAbstractMultivariateSimpleBoundsOptimizer<FUNC extends
     }
 
     /** {@inheritDoc} */
+    @Override
     public PointValuePair optimize(int maxEval, FUNC f, GoalType goalType,
                                        double[] startPoint) {
         return optimize(maxEval, f, goalType, startPoint, null, null);

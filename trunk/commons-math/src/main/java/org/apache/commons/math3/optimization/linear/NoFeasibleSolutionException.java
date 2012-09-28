@@ -21,9 +21,9 @@ import org.apache.commons.math3.exception.MathIllegalStateException;
 import org.apache.commons.math3.exception.util.LocalizedFormats;
 
 /**
- * This class represents exceptions thrown by optimizers when no solution
- * fulfills the constraints.
- * @version $Id: NoFeasibleSolutionException.java 1244107 2012-02-14 16:17:55Z erans $
+ * This class represents exceptions thrown by optimizers when no solution fulfills the constraints.
+ *
+ * @version $Id: NoFeasibleSolutionException.java 1385307 2012-09-16 16:19:55Z tn $
  * @since 2.0
  */
 public class NoFeasibleSolutionException extends MathIllegalStateException {

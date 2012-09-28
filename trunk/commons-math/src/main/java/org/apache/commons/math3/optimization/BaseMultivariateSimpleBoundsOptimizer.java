@@ -25,12 +25,12 @@ import org.apache.commons.math3.analysis.MultivariateFunction;
  * the following interfaces:
  * <ul>
  *  <li>{@link org.apache.commons.math3.optimization.MultivariateOptimizer}</li>
- *  <li>{@link org.apache.commons.math3.optimization.DifferentiableMultivariateOptimizer}</li>
+ *  <li>{@link org.apache.commons.math3.optimization.MultivariateDifferentiableOptimizer}</li>
  * </ul>
  *
  * @param <FUNC> Type of the objective function to be optimized.
  *
- * @version $Id: BaseMultivariateSimpleBoundsOptimizer.java 1364392 2012-07-22 18:27:12Z tn $
+ * @version $Id: BaseMultivariateSimpleBoundsOptimizer.java 1384907 2012-09-14 20:17:00Z luc $
  * @since 3.0
  */
 public interface BaseMultivariateSimpleBoundsOptimizer<FUNC extends MultivariateFunction>

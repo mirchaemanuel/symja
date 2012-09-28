@@ -14,28 +14,40 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.apache.commons.math3.ode;
 
-package org.apache.commons.math3.optimization.linear;
-
-import org.apache.commons.math3.exception.MathIllegalStateException;
+import org.apache.commons.math3.exception.MathIllegalArgumentException;
 import org.apache.commons.math3.exception.util.LocalizedFormats;
 
 /**
- * This class represents exceptions thrown by optimizers when a solution escapes to infinity.
+ * Exception to be thrown when a parameter is unknown.
  *
- * @version $Id: UnboundedSolutionException.java 1385307 2012-09-16 16:19:55Z tn $
- * @since 2.0
+ * @since 3.1
+ * @version $Id: UnknownParameterException.java 1379975 2012-09-02 14:21:00Z luc $
  */
-public class UnboundedSolutionException extends MathIllegalStateException {
+public class UnknownParameterException extends MathIllegalArgumentException {
 
-    /** Serializable version identifier. */
-    private static final long serialVersionUID = 940539497277290619L;
+    /** Serializable version Id. */
+    private static final long serialVersionUID = 20120902L;
+
+    /** Parameter name. */
+    private final String name;
 
     /**
-     * Simple constructor using a default message.
+     * Construct an exception from the unknown parameter.
+     *
+     * @param name parameter name.
      */
-    public UnboundedSolutionException() {
-        super(LocalizedFormats.UNBOUNDED_SOLUTION);
+    public UnknownParameterException(final String name) {
+        super(LocalizedFormats.UNKNOWN_PARAMETER);
+        this.name = name;
+    }
+
+    /**
+     * @return the name of the unknown parameter.
+     */
+    public String getName() {
+        return name;
     }
 
 }

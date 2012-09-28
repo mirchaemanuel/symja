@@ -16,6 +16,8 @@
  */
 package org.apache.commons.math3.stat.descriptive;
 
+import org.apache.commons.math3.exception.DimensionMismatchException;
+import org.apache.commons.math3.exception.MathIllegalStateException;
 import org.apache.commons.math3.linear.RealMatrix;
 
 /**
@@ -28,7 +30,7 @@ import org.apache.commons.math3.linear.RealMatrix;
  * thread is computing a statistic from the instance, no other thread can modify
  * the instance nor compute another statistic.
  * @since 1.2
- * @version $Id: SynchronizedMultivariateSummaryStatistics.java 1244107 2012-02-14 16:17:55Z erans $
+ * @version $Id: SynchronizedMultivariateSummaryStatistics.java 1382332 2012-09-08 17:27:47Z psteitz $
  */
 public class SynchronizedMultivariateSummaryStatistics
     extends MultivariateSummaryStatistics {
@@ -51,7 +53,7 @@ public class SynchronizedMultivariateSummaryStatistics
      * {@inheritDoc}
      */
     @Override
-    public synchronized void addValue(double[] value) {
+    public synchronized void addValue(double[] value) throws DimensionMismatchException {
       super.addValue(value);
     }
 
@@ -187,7 +189,8 @@ public class SynchronizedMultivariateSummaryStatistics
      * {@inheritDoc}
      */
     @Override
-    public synchronized void setSumImpl(StorelessUnivariateStatistic[] sumImpl) {
+    public synchronized void setSumImpl(StorelessUnivariateStatistic[] sumImpl)
+    throws DimensionMismatchException, MathIllegalStateException {
         super.setSumImpl(sumImpl);
     }
 
@@ -203,7 +206,8 @@ public class SynchronizedMultivariateSummaryStatistics
      * {@inheritDoc}
      */
     @Override
-    public synchronized void setSumsqImpl(StorelessUnivariateStatistic[] sumsqImpl) {
+    public synchronized void setSumsqImpl(StorelessUnivariateStatistic[] sumsqImpl)
+    throws DimensionMismatchException, MathIllegalStateException {
         super.setSumsqImpl(sumsqImpl);
     }
 
@@ -219,7 +223,8 @@ public class SynchronizedMultivariateSummaryStatistics
      * {@inheritDoc}
      */
     @Override
-    public synchronized void setMinImpl(StorelessUnivariateStatistic[] minImpl) {
+    public synchronized void setMinImpl(StorelessUnivariateStatistic[] minImpl)
+    throws DimensionMismatchException, MathIllegalStateException {
         super.setMinImpl(minImpl);
     }
 
@@ -235,7 +240,8 @@ public class SynchronizedMultivariateSummaryStatistics
      * {@inheritDoc}
      */
     @Override
-    public synchronized void setMaxImpl(StorelessUnivariateStatistic[] maxImpl) {
+    public synchronized void setMaxImpl(StorelessUnivariateStatistic[] maxImpl)
+    throws DimensionMismatchException, MathIllegalStateException{
         super.setMaxImpl(maxImpl);
     }
 
@@ -251,7 +257,8 @@ public class SynchronizedMultivariateSummaryStatistics
      * {@inheritDoc}
      */
     @Override
-    public synchronized void setSumLogImpl(StorelessUnivariateStatistic[] sumLogImpl) {
+    public synchronized void setSumLogImpl(StorelessUnivariateStatistic[] sumLogImpl)
+    throws DimensionMismatchException, MathIllegalStateException {
         super.setSumLogImpl(sumLogImpl);
     }
 
@@ -267,7 +274,8 @@ public class SynchronizedMultivariateSummaryStatistics
      * {@inheritDoc}
      */
     @Override
-    public synchronized void setGeoMeanImpl(StorelessUnivariateStatistic[] geoMeanImpl) {
+    public synchronized void setGeoMeanImpl(StorelessUnivariateStatistic[] geoMeanImpl)
+    throws DimensionMismatchException, MathIllegalStateException {
         super.setGeoMeanImpl(geoMeanImpl);
     }
 
@@ -283,7 +291,8 @@ public class SynchronizedMultivariateSummaryStatistics
      * {@inheritDoc}
      */
     @Override
-    public synchronized void setMeanImpl(StorelessUnivariateStatistic[] meanImpl) {
+    public synchronized void setMeanImpl(StorelessUnivariateStatistic[] meanImpl)
+    throws DimensionMismatchException, MathIllegalStateException {
         super.setMeanImpl(meanImpl);
     }
 }

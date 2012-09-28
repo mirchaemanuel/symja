@@ -66,7 +66,7 @@ import org.apache.commons.math3.util.FastMath;
  * <td>(6, 5, 7, 8, 5, 9, 2, 2, 5)</td></tr></table></p>
  *
  * @since 2.0
- * @version $Id: NaturalRanking.java 1244107 2012-02-14 16:17:55Z erans $
+ * @version $Id: NaturalRanking.java 1370149 2012-08-07 08:58:37Z sebb $
  */
 public class NaturalRanking implements RankingAlgorithm {
 
@@ -444,6 +444,8 @@ public class NaturalRanking implements RankingAlgorithm {
         public int compareTo(IntDoublePair other) {
             return Double.compare(value, other.value);
         }
+
+        // N.B. equals() and hashCode() are not implemented; see MATH-610 for discussion.
 
         /**
          * Returns the value of the pair.

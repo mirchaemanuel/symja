@@ -47,7 +47,7 @@ import org.apache.commons.math3.exception.DimensionMismatchException;
  *  </dd>
  * </dl>
  *
- * @version $Id: RealLinearOperator.java 1244107 2012-02-14 16:17:55Z erans $
+ * @version $Id: RealLinearOperator.java 1387002 2012-09-18 06:38:33Z celestin $
  * @since 3.0
  */
 public abstract class RealLinearOperator {
@@ -70,10 +70,11 @@ public abstract class RealLinearOperator {
      *
      * @param x the vector to operate on
      * @return the product of {@code this} instance with {@code x}
-     * @throws org.apache.commons.math3.exception.DimensionMismatchException
-     * if the column dimension does not match the size of {@code x}
+     * @throws DimensionMismatchException if the column dimension does not match
+     * the size of {@code x}
      */
-    public abstract RealVector operate(final RealVector x);
+    public abstract RealVector operate(final RealVector x)
+        throws DimensionMismatchException;
 
     /**
      * Returns the result of multiplying the transpose of {@code this} operator

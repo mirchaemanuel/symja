@@ -17,25 +17,23 @@
 
 package org.apache.commons.math3.optimization;
 
-import org.apache.commons.math3.analysis.DifferentiableMultivariateVectorFunction;
+import org.apache.commons.math3.analysis.differentiation.MultivariateDifferentiableVectorFunction;
 import org.apache.commons.math3.random.RandomVectorGenerator;
 
 /**
- * Special implementation of the {@link DifferentiableMultivariateVectorOptimizer}
- * interface addind multi-start features to an existing optimizer.
+ * Special implementation of the {@link MultivariateDifferentiableVectorOptimizer}
+ * interface adding multi-start features to an existing optimizer.
  *
  * This class wraps a classical optimizer to use it several times in
  * turn with different starting points in order to avoid being trapped
  * into a local extremum when looking for a global one.
  *
- * @version $Id: DifferentiableMultivariateVectorMultiStartOptimizer.java 1384907 2012-09-14 20:17:00Z luc $
- * @since 2.0
- * @deprecated as of 3.1 replaced by {@link MultivariateDifferentiableVectorMultiStartOptimizer}
+ * @version $Id: MultivariateDifferentiableVectorMultiStartOptimizer.java 1384907 2012-09-14 20:17:00Z luc $
+ * @since 3.1
  */
-@Deprecated
-public class DifferentiableMultivariateVectorMultiStartOptimizer
-    extends BaseMultivariateVectorMultiStartOptimizer<DifferentiableMultivariateVectorFunction>
-    implements DifferentiableMultivariateVectorOptimizer {
+public class MultivariateDifferentiableVectorMultiStartOptimizer
+    extends BaseMultivariateVectorMultiStartOptimizer<MultivariateDifferentiableVectorFunction>
+    implements MultivariateDifferentiableVectorOptimizer {
     /**
      * Create a multi-start optimizer from a single-start optimizer.
      *
@@ -45,8 +43,8 @@ public class DifferentiableMultivariateVectorMultiStartOptimizer
      * equal to 1.
      * @param generator Random vector generator to use for restarts.
      */
-    public DifferentiableMultivariateVectorMultiStartOptimizer(
-                final DifferentiableMultivariateVectorOptimizer optimizer,
+    public MultivariateDifferentiableVectorMultiStartOptimizer(
+                final MultivariateDifferentiableVectorOptimizer optimizer,
                 final int starts,
                 final RandomVectorGenerator generator) {
         super(optimizer, starts, generator);

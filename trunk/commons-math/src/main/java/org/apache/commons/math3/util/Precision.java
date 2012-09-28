@@ -18,6 +18,7 @@
 package org.apache.commons.math3.util;
 
 import java.math.BigDecimal;
+
 import org.apache.commons.math3.exception.MathArithmeticException;
 import org.apache.commons.math3.exception.MathIllegalArgumentException;
 import org.apache.commons.math3.exception.util.LocalizedFormats;
@@ -26,14 +27,21 @@ import org.apache.commons.math3.exception.util.LocalizedFormats;
  * Utilities for comparing numbers.
  *
  * @since 3.0
- * @version $Id: Precision.java 1364376 2012-07-22 17:29:45Z tn $
+ * @version $Id: Precision.java 1387941 2012-09-20 10:09:37Z erans $
  */
 public class Precision {
     /**
-     * Smallest positive number such that {@code 1 - EPSILON} is not
-     * numerically equal to 1.
-     * <br/>
+     * <p>
+     * Largest double-precision floating-point number such that
+     * {@code 1 + EPSILON} is numerically equal to 1. This value is an upper
+     * bound on the relative error due to rounding real numbers to double
+     * precision floating-point numbers.
+     * </p>
+     * <p>
      * In IEEE 754 arithmetic, this is 2<sup>-53</sup>.
+     * </p>
+     *
+     * @see <a href="http://en.wikipedia.org/wiki/Machine_epsilon">Machine epsilon</a>
      */
     public static final double EPSILON;
 
@@ -265,6 +273,28 @@ public class Precision {
     }
 
     /**
+     * Returns {@code true} if there is no double value strictly between the
+     * arguments or the reltaive difference between them is smaller or equal
+     * to the given tolerance.
+     *
+     * @param x First value.
+     * @param y Second value.
+     * @param eps Amount of allowed relative error.
+     * @return {@code true} if the values are two adjacent floating point
+     * numbers or they are within range of each other.
+     */
+    public static boolean equalsWithRelativeTolerance(double x, double y, double eps) {
+        if (equals(x, y, 1)) {
+            return true;
+        }
+
+        final double absoluteMax = FastMath.max(FastMath.abs(x), FastMath.abs(y));
+        final double relativeDifference = FastMath.abs((x - y) / absoluteMax);
+
+        return relativeDifference <= eps;
+    }
+
+    /**
      * Returns true if both arguments are NaN or are equal or within the range
      * of allowed error (inclusive).
      *
@@ -397,8 +427,11 @@ public class Precision {
      * @param roundingMethod Rounding method as defined in {@link BigDecimal}.
      * @return the rounded value.
      * @since 1.1 (previously in {@code MathUtils}, moved as of version 3.0)
+     * @throws MathArithmeticException if an exact operation is required but result is not exact
+     * @throws MathIllegalArgumentException if {@code roundingMethod} is not a valid rounding method.
      */
-    public static float round(float x, int scale, int roundingMethod) {
+    public static float round(float x, int scale, int roundingMethod)
+        throws MathArithmeticException, MathIllegalArgumentException {
         final float sign = FastMath.copySign(1f, x);
         final float factor = (float) FastMath.pow(10.0f, scale) * sign;
         return (float) roundUnscaled(x * factor, sign, roundingMethod) / factor;
@@ -413,12 +446,14 @@ public class Precision {
      * @param sign Sign of the original, scaled value.
      * @param roundingMethod Rounding method, as defined in {@link BigDecimal}.
      * @return the rounded value.
+     * @throws MathArithmeticException if an exact operation is required but result is not exact
      * @throws MathIllegalArgumentException if {@code roundingMethod} is not a valid rounding method.
      * @since 1.1 (previously in {@code MathUtils}, moved as of version 3.0)
      */
     private static double roundUnscaled(double unscaled,
                                         double sign,
-                                        int roundingMethod) {
+                                        int roundingMethod)
+        throws MathArithmeticException, MathIllegalArgumentException {
         switch (roundingMethod) {
         case BigDecimal.ROUND_CEILING :
             if (sign == -1) {

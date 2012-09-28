@@ -36,7 +36,7 @@ import org.apache.commons.math3.linear.ArrayRealVector;
  * The c<sub>i</sub> and d are the coefficients of the equation,
  * the x<sub>i</sub> are the coordinates of the current point.
  * </p>
- * @version $Id: LinearObjectiveFunction.java 1244107 2012-02-14 16:17:55Z erans $
+ * @version $Id: LinearObjectiveFunction.java 1385307 2012-09-16 16:19:55Z tn $
  * @since 2.0
  */
 public class LinearObjectiveFunction implements Serializable {
@@ -101,7 +101,6 @@ public class LinearObjectiveFunction implements Serializable {
         return coefficients.dotProduct(point) + constantTerm;
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean equals(Object other) {
 
@@ -117,13 +116,13 @@ public class LinearObjectiveFunction implements Serializable {
       return false;
     }
 
-    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         return Double.valueOf(constantTerm).hashCode() ^ coefficients.hashCode();
     }
 
-    /** Serialize the instance.
+    /**
+     * Serialize the instance.
      * @param oos stream where object should be written
      * @throws IOException if object cannot be written to stream
      */
@@ -133,7 +132,8 @@ public class LinearObjectiveFunction implements Serializable {
         MatrixUtils.serializeRealVector(coefficients, oos);
     }
 
-    /** Deserialize the instance.
+    /**
+     * Deserialize the instance.
      * @param ois stream from which the object should be read
      * @throws ClassNotFoundException if a class in the stream cannot be found
      * @throws IOException if object cannot be read from the stream

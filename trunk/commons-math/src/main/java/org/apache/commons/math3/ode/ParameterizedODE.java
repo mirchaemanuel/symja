@@ -16,10 +16,11 @@
  */
 package org.apache.commons.math3.ode;
 
+
 /** Interface to compute by finite difference Jacobian matrix for some parameter
  *  when computing {@link JacobianMatrices partial derivatives equations}.
  *
- * @version $Id: ParameterizedODE.java 1302386 2012-03-19 11:59:25Z sebb $
+ * @version $Id: ParameterizedODE.java 1379975 2012-09-02 14:21:00Z luc $
  * @since 3.0
  */
 
@@ -28,15 +29,15 @@ public interface ParameterizedODE extends Parameterizable {
     /** Get parameter value from its name.
      * @param name parameter name
      * @return parameter value
-     * @exception IllegalArgumentException if parameter is not supported
+     * @exception UnknownParameterException if parameter is not supported
      */
-    double getParameter(String name) throws IllegalArgumentException;
+    double getParameter(String name) throws UnknownParameterException;
 
     /** Set the value for a given parameter.
      * @param name parameter name
      * @param value parameter value
-     * @exception IllegalArgumentException if parameter is not supported
+     * @exception UnknownParameterException if parameter is not supported
      */
-    void setParameter(String name, double value) throws IllegalArgumentException;
+    void setParameter(String name, double value) throws UnknownParameterException;
 
 }

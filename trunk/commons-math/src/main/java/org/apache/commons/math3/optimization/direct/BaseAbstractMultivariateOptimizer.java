@@ -35,7 +35,7 @@ import org.apache.commons.math3.optimization.SimpleValueChecker;
  *
  * @param <FUNC> Type of the objective function to be optimized.
  *
- * @version $Id: BaseAbstractMultivariateOptimizer.java 1364392 2012-07-22 18:27:12Z tn $
+ * @version $Id: BaseAbstractMultivariateOptimizer.java 1384907 2012-09-14 20:17:00Z luc $
  * @since 2.2
  */
 public abstract class BaseAbstractMultivariateOptimizer<FUNC extends MultivariateFunction>
@@ -102,6 +102,28 @@ public abstract class BaseAbstractMultivariateOptimizer<FUNC extends Multivariat
     /** {@inheritDoc} */
     public PointValuePair optimize(int maxEval, FUNC f, GoalType goalType,
                                        double[] startPoint) {
+        return optimizeInternal(maxEval, f, goalType, startPoint);
+    }
+
+    /**
+     * Optimize an objective function.
+     *
+     * @param f Objective function.
+     * @param goalType Type of optimization goal: either
+     * {@link GoalType#MAXIMIZE} or {@link GoalType#MINIMIZE}.
+     * @param startPoint Start point for optimization.
+     * @param maxEval Maximum number of function evaluations.
+     * @return the point/value pair giving the optimal value for objective
+     * function.
+     * @throws org.apache.commons.math3.exception.DimensionMismatchException
+     * if the start point dimension is wrong.
+     * @throws org.apache.commons.math3.exception.TooManyEvaluationsException
+     * if the maximal number of evaluations is exceeded.
+     * @throws org.apache.commons.math3.exception.NullArgumentException if
+     * any argument is {@code null}.
+     */
+    protected PointValuePair optimizeInternal(int maxEval, MultivariateFunction f, GoalType goalType,
+                                              double[] startPoint) {
         // Checks.
         if (f == null) {
             throw new NullArgumentException();
