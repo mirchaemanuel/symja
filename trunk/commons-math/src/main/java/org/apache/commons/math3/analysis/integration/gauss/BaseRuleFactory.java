@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import org.apache.commons.math3.util.Pair;
 import org.apache.commons.math3.exception.DimensionMismatchException;
+import org.apache.commons.math3.exception.NotStrictlyPositiveException;
 
 /**
  * Base class for rules that determines the integration nodes and their
@@ -30,7 +31,7 @@ import org.apache.commons.math3.exception.DimensionMismatchException;
  * the quadrature rules.
  *
  * @since 3.1
- * @version $Id: BaseRuleFactory.java 1364387 2012-07-22 18:14:11Z tn $
+ * @version $Id: BaseRuleFactory.java 1382197 2012-09-07 22:35:01Z erans $
  */
 public abstract class BaseRuleFactory<T extends Number> {
     /** List of points and weights, indexed by the order of the rule. */
@@ -41,12 +42,15 @@ public abstract class BaseRuleFactory<T extends Number> {
         = new TreeMap<Integer, Pair<double[], double[]>>();
 
     /**
-     * Gets a copy of the quadrature rule with given number of integration points.
+     * Gets a copy of the quadrature rule with the given number of integration
+     * points.
      *
      * @param numberOfPoints Number of integration points.
      * @return a copy of the integration rule.
+     * @throws NotStrictlyPositiveException if {@code numberOfPoints < 1}.
      */
-    public Pair<double[], double[]> getRule(int numberOfPoints) {
+    public Pair<double[], double[]> getRule(int numberOfPoints)
+        throws NotStrictlyPositiveException {
         // Try to obtain the rule from the cache.
         Pair<double[], double[]> cached = pointsAndWeightsDouble.get(numberOfPoints);
 
@@ -74,8 +78,10 @@ public abstract class BaseRuleFactory<T extends Number> {
      *
      * @param numberOfPoints Order of the rule to be retrieved.
      * @return the points and weights corresponding to the given order.
+     * @throws NotStrictlyPositiveException if {@code numberOfPoints < 1}.
      */
-    protected synchronized Pair<T[], T[]> getRuleInternal(int numberOfPoints) {
+    protected synchronized Pair<T[], T[]> getRuleInternal(int numberOfPoints)
+        throws NotStrictlyPositiveException {
         final Pair<T[], T[]> rule = pointsAndWeights.get(numberOfPoints);
         if (rule == null) {
             addRule(computeRule(numberOfPoints));

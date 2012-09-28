@@ -46,7 +46,7 @@ import org.apache.commons.math3.exception.util.LocalizedFormats;
  *
  * @param <T> generic type of the {@link AbstractListChromosome}s for crossover
  * @since 2.0
- * @version $Id: OnePointCrossover.java 1344031 2012-05-29 22:26:22Z tn $
+ * @version $Id: OnePointCrossover.java 1385297 2012-09-16 16:05:57Z tn $
  *
  */
 public class OnePointCrossover<T> implements CrossoverPolicy {
@@ -72,11 +72,13 @@ public class OnePointCrossover<T> implements CrossoverPolicy {
      * @param second second parent (p2)
      * @return pair of two children (c1,c2)
      * @throws MathIllegalArgumentException iff one of the chromosomes is
-     *         not an instance of {@link AbstractListChromosome}
+     *   not an instance of {@link AbstractListChromosome}
      * @throws DimensionMismatchException if the length of the two chromosomes is different
      */
     @SuppressWarnings("unchecked") // OK because of instanceof checks
-    public ChromosomePair crossover(final Chromosome first, final Chromosome second) {
+    public ChromosomePair crossover(final Chromosome first, final Chromosome second)
+        throws DimensionMismatchException, MathIllegalArgumentException {
+
         if (! (first instanceof AbstractListChromosome<?> && second instanceof AbstractListChromosome<?>)) {
             throw new MathIllegalArgumentException(LocalizedFormats.INVALID_FIXED_LENGTH_CHROMOSOME);
         }
@@ -93,7 +95,7 @@ public class OnePointCrossover<T> implements CrossoverPolicy {
      * @throws DimensionMismatchException if the length of the two chromosomes is different
      */
     private ChromosomePair crossover(final AbstractListChromosome<T> first,
-                                     final AbstractListChromosome<T> second) {
+                                     final AbstractListChromosome<T> second) throws DimensionMismatchException {
         final int length = first.getLength();
         if (length != second.getLength()) {
             throw new DimensionMismatchException(second.getLength(), length);

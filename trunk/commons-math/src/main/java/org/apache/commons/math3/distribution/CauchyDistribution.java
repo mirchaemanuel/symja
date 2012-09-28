@@ -29,7 +29,7 @@ import org.apache.commons.math3.random.Well19937c;
  * @see <a href="http://en.wikipedia.org/wiki/Cauchy_distribution">Cauchy distribution (Wikipedia)</a>
  * @see <a href="http://mathworld.wolfram.com/CauchyDistribution.html">Cauchy Distribution (MathWorld)</a>
  * @since 1.1 (changed to concrete class in 3.0)
- * @version $Id: CauchyDistribution.java 1363604 2012-07-20 00:43:45Z erans $
+ * @version $Id: CauchyDistribution.java 1369202 2012-08-03 20:50:33Z erans $
  */
 public class CauchyDistribution extends AbstractRealDistribution {
     /**
@@ -126,17 +126,6 @@ public class CauchyDistribution extends AbstractRealDistribution {
      */
     public double getScale() {
         return scale;
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * For this distribution {@code P(X = x)} always evaluates to 0.
-     *
-     * @return 0
-     */
-    public double probability(double x) {
-        return 0.0;
     }
 
     /** {@inheritDoc} */

@@ -17,11 +17,14 @@
 
 package org.apache.commons.math3.analysis.function;
 
-import org.apache.commons.math3.analysis.UnivariateFunction;
 import org.apache.commons.math3.analysis.DifferentiableUnivariateFunction;
+import org.apache.commons.math3.analysis.FunctionUtils;
 import org.apache.commons.math3.analysis.ParametricUnivariateFunction;
-import org.apache.commons.math3.exception.NullArgumentException;
+import org.apache.commons.math3.analysis.UnivariateFunction;
+import org.apache.commons.math3.analysis.differentiation.DerivativeStructure;
+import org.apache.commons.math3.analysis.differentiation.UnivariateDifferentiableFunction;
 import org.apache.commons.math3.exception.DimensionMismatchException;
+import org.apache.commons.math3.exception.NullArgumentException;
 import org.apache.commons.math3.exception.OutOfRangeException;
 import org.apache.commons.math3.util.FastMath;
 
@@ -31,9 +34,9 @@ import org.apache.commons.math3.util.FastMath;
  * It is the inverse of the {@link Sigmoid sigmoid} function.
  *
  * @since 3.0
- * @version $Id: Logit.java 1364377 2012-07-22 17:39:16Z tn $
+ * @version $Id: Logit.java 1383441 2012-09-11 14:56:39Z luc $
  */
-public class Logit implements DifferentiableUnivariateFunction {
+public class Logit implements UnivariateDifferentiableFunction, DifferentiableUnivariateFunction {
     /** Lower bound. */
     private final double lo;
     /** Higher bound. */
@@ -60,18 +63,17 @@ public class Logit implements DifferentiableUnivariateFunction {
     }
 
     /** {@inheritDoc} */
-    public double value(double x) {
+    public double value(double x)
+        throws OutOfRangeException {
         return value(x, lo, hi);
     }
 
-    /** {@inheritDoc} */
+    /** {@inheritDoc}
+     * @deprecated as of 3.1, replaced by {@link #value(DerivativeStructure)}
+     */
+    @Deprecated
     public UnivariateFunction derivative() {
-        return new UnivariateFunction() {
-            /** {@inheritDoc} */
-            public double value(double x) {
-                return (hi - lo) / ((x - lo) * (hi - x));
-            }
-        };
+        return FunctionUtils.toDifferentiableUnivariateFunction(this).derivative();
     }
 
     /**
@@ -93,7 +95,9 @@ public class Logit implements DifferentiableUnivariateFunction {
          * @throws DimensionMismatchException if the size of {@code param} is
          * not 2.
          */
-        public double value(double x, double ... param) {
+        public double value(double x, double ... param)
+            throws NullArgumentException,
+                   DimensionMismatchException {
             validateParameters(param);
             return Logit.value(x, param[0], param[1]);
         }
@@ -111,7 +115,9 @@ public class Logit implements DifferentiableUnivariateFunction {
          * @throws DimensionMismatchException if the size of {@code param} is
          * not 2.
          */
-        public double[] gradient(double x, double ... param) {
+        public double[] gradient(double x, double ... param)
+            throws NullArgumentException,
+                   DimensionMismatchException {
             validateParameters(param);
 
             final double lo = param[0];
@@ -130,7 +136,9 @@ public class Logit implements DifferentiableUnivariateFunction {
          * @throws DimensionMismatchException if the size of {@code param} is
          * not 2.
          */
-        private void validateParameters(double[] param) {
+        private void validateParameters(double[] param)
+            throws NullArgumentException,
+                   DimensionMismatchException {
             if (param == null) {
                 throw new NullArgumentException();
             }
@@ -148,10 +156,59 @@ public class Logit implements DifferentiableUnivariateFunction {
      */
     private static double value(double x,
                                 double lo,
-                                double hi) {
+                                double hi)
+        throws OutOfRangeException {
         if (x < lo || x > hi) {
             throw new OutOfRangeException(x, lo, hi);
         }
         return FastMath.log((x - lo) / (hi - x));
     }
+
+    /** {@inheritDoc}
+     * @since 3.1
+     * @exception OutOfRangeException if parameter is outside of function domain
+     */
+    public DerivativeStructure value(final DerivativeStructure t)
+        throws OutOfRangeException {
+        final double x = t.getValue();
+        if (x < lo || x > hi) {
+            throw new OutOfRangeException(x, lo, hi);
+        }
+        double[] f = new double[t.getOrder() + 1];
+
+        // function value
+        f[0] = FastMath.log((x - lo) / (hi - x));
+
+        if (Double.isInfinite(f[0])) {
+
+            if (f.length > 1) {
+                f[1] = Double.POSITIVE_INFINITY;
+            }
+            // fill the array with infinities
+            // (for x close to lo the signs will flip between -inf and +inf,
+            //  for x close to hi the signs will always be +inf)
+            // this is probably overkill, since the call to compose at the end
+            // of the method will transform most infinities into NaN ...
+            for (int i = 2; i < f.length; ++i) {
+                f[i] = f[i - 2];
+            }
+
+        } else {
+
+            // function derivatives
+            final double invL = 1.0 / (x - lo);
+            double xL = invL;
+            final double invH = 1.0 / (hi - x);
+            double xH = invH;
+            for (int i = 1; i < f.length; ++i) {
+                f[i] = xL + xH;
+                xL  *= -i * invL;
+                xH  *=  i * invH;
+            }
+        }
+        
+        return t.compose(f);
+
+    }
+
 }

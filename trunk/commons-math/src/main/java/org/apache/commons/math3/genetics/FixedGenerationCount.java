@@ -19,13 +19,11 @@ package org.apache.commons.math3.genetics;
 import org.apache.commons.math3.exception.NumberIsTooSmallException;
 
 /**
- * Stops after a fixed number of generations.  Each time
- * {@link #isSatisfied(Population)} is invoked, a generation counter is
- * incremented.  Once the counter reaches the configured
- * <code>maxGenerations</code> value, {@link #isSatisfied(Population)} returns
- * true.
+ * Stops after a fixed number of generations. Each time {@link #isSatisfied(Population)} is invoked, a generation
+ * counter is incremented. Once the counter reaches the configured <code>maxGenerations</code> value,
+ * {@link #isSatisfied(Population)} returns true.
  *
- * @version $Id: FixedGenerationCount.java 1244107 2012-02-14 16:17:55Z erans $
+ * @version $Id: FixedGenerationCount.java 1385297 2012-09-16 16:05:57Z tn $
  * @since 2.0
  */
 public class FixedGenerationCount implements StoppingCondition {
@@ -41,7 +39,7 @@ public class FixedGenerationCount implements StoppingCondition {
      * @param maxGenerations number of generations to evolve
      * @throws NumberIsTooSmallException if the number of generations is &lt; 1
      */
-    public FixedGenerationCount(final int maxGenerations) {
+    public FixedGenerationCount(final int maxGenerations) throws NumberIsTooSmallException {
         if (maxGenerations <= 0) {
             throw new NumberIsTooSmallException(maxGenerations, 1, true);
         }
@@ -49,9 +47,8 @@ public class FixedGenerationCount implements StoppingCondition {
     }
 
     /**
-     * Determine whether or not the given number of generations have passed.
-     * Increments the number of generations counter if the maximum has not
-     * been reached.
+     * Determine whether or not the given number of generations have passed. Increments the number of generations
+     * counter if the maximum has not been reached.
      *
      * @param population ignored (no impact on result)
      * @return <code>true</code> IFF the maximum number of generations has been exceeded
@@ -65,6 +62,7 @@ public class FixedGenerationCount implements StoppingCondition {
     }
 
     /**
+     * Returns the number of generations that have already passed.
      * @return the number of generations that have passed
      */
     public int getNumGenerations() {

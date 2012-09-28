@@ -17,13 +17,15 @@
 package org.apache.commons.math3.analysis.interpolation;
 
 import org.apache.commons.math3.analysis.TrivariateFunction;
+import org.apache.commons.math3.exception.DimensionMismatchException;
+import org.apache.commons.math3.exception.NoDataException;
 
 /**
  * Interface representing a trivariate real interpolating function where the
  * sample points must be specified on a regular grid.
  *
  * @since 2.2
- * @version $Id: TrivariateGridInterpolator.java 1364387 2012-07-22 18:14:11Z tn $
+ * @version $Id: TrivariateGridInterpolator.java 1379904 2012-09-01 23:54:52Z erans $
  */
 public interface TrivariateGridInterpolator {
     /**
@@ -38,11 +40,11 @@ public interface TrivariateGridInterpolator {
      * @param fval the values of the interpolation points on all the grid knots:
      * {@code fval[i][j][k] = f(xval[i], yval[j], zval[k])}.
      * @return a function that interpolates the data set.
-     * @throws org.apache.commons.math3.exception.NoDataException if any of
-     * the arrays has zero length.
-     * @throws org.apache.commons.math3.exception.DimensionMismatchException
-     * if the array lengths are inconsistent.
+     * @throws NoDataException if any of the arrays has zero length.
+     * @throws DimensionMismatchException if the array lengths are inconsistent.
      */
     TrivariateFunction interpolate(double[] xval, double[] yval, double[] zval,
-                                       double[][][] fval);
+                                   double[][][] fval)
+        throws NoDataException,
+               DimensionMismatchException;
 }

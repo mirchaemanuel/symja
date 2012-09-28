@@ -34,7 +34,7 @@ import org.apache.commons.math3.util.FastMath;
  * Interpolating function that implements the
  * <a href="http://www.dudziak.com/microsphere.php">Microsphere Projection</a>.
  *
- * @version $Id: MicrosphereInterpolatingFunction.java 1364387 2012-07-22 18:14:11Z tn $
+ * @version $Id: MicrosphereInterpolatingFunction.java 1379904 2012-09-01 23:54:52Z erans $
  */
 public class MicrosphereInterpolatingFunction
     implements MultivariateFunction {
@@ -125,13 +125,13 @@ public class MicrosphereInterpolatingFunction
     }
 
     /**
-     * @param xval the arguments for the interpolation points.
+     * @param xval Arguments for the interpolation points.
      * {@code xval[i][0]} is the first component of interpolation point
      * {@code i}, {@code xval[i][1]} is the second component, and so on
      * until {@code xval[i][d-1]}, the last component of that interpolation
      * point (where {@code dimension} is thus the dimension of the sampled
      * space).
-     * @param yval the values for the interpolation points
+     * @param yval Values for the interpolation points.
      * @param brightnessExponent Brightness dimming factor.
      * @param microsphereElements Number of surface elements of the
      * microsphere.
@@ -147,7 +147,10 @@ public class MicrosphereInterpolatingFunction
                                             double[] yval,
                                             int brightnessExponent,
                                             int microsphereElements,
-                                            UnitSphereRandomVectorGenerator rand) {
+                                            UnitSphereRandomVectorGenerator rand)
+        throws DimensionMismatchException,
+               NoDataException,
+               NullArgumentException {
         if (xval == null ||
             yval == null) {
             throw new NullArgumentException();

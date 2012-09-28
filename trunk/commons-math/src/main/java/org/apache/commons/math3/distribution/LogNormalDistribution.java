@@ -50,7 +50,7 @@ import org.apache.commons.math3.random.Well19937c;
  * @see <a href="http://mathworld.wolfram.com/LogNormalDistribution.html">
  * Log Normal distribution (MathWorld)</a>
  *
- * @version $Id: LogNormalDistribution.java 1363604 2012-07-20 00:43:45Z erans $
+ * @version $Id: LogNormalDistribution.java 1369415 2012-08-04 19:24:56Z erans $
  * @since 3.0
  */
 public class LogNormalDistribution extends AbstractRealDistribution {
@@ -158,17 +158,6 @@ public class LogNormalDistribution extends AbstractRealDistribution {
     /**
      * {@inheritDoc}
      *
-     * For this distribution {@code P(X = x)} always evaluates to 0.
-     *
-     * @return 0
-     */
-    public double probability(double x) {
-        return 0.0;
-    }
-
-    /**
-     * {@inheritDoc}
-     *
      * For scale {@code m}, and shape {@code s} of this distribution, the PDF
      * is given by
      * <ul>
@@ -212,16 +201,28 @@ public class LogNormalDistribution extends AbstractRealDistribution {
         return 0.5 + 0.5 * Erf.erf(dev / (shape * SQRT2));
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @deprecated See {@link RealDistribution#cumulativeProbability(double,double)}
+     */
+    @Override@Deprecated
+    public double cumulativeProbability(double x0, double x1)
+        throws NumberIsTooLargeException {
+        return probability(x0, x1);
+    }
+
     /** {@inheritDoc} */
     @Override
-    public double cumulativeProbability(double x0, double x1)
+    public double probability(double x0,
+                              double x1)
         throws NumberIsTooLargeException {
         if (x0 > x1) {
             throw new NumberIsTooLargeException(LocalizedFormats.LOWER_ENDPOINT_ABOVE_UPPER_ENDPOINT,
                                                 x0, x1, true);
         }
         if (x0 <= 0 || x1 <= 0) {
-            return super.cumulativeProbability(x0, x1);
+            return super.probability(x0, x1);
         }
         final double denom = shape * SQRT2;
         final double v0 = (FastMath.log(x0) - scale) / denom;

@@ -28,7 +28,7 @@ import org.apache.commons.math3.util.MathUtils;
 
 /** This class represents a 2D vector.
  * <p>Instances of this class are guaranteed to be immutable.</p>
- * @version $Id: Vector2D.java 1244107 2012-02-14 16:17:55Z erans $
+ * @version $Id: Vector2D.java 1379977 2012-09-02 14:22:52Z luc $
  * @since 3.0
  */
 public class Vector2D implements Vector<Euclidean2D> {
@@ -221,7 +221,7 @@ public class Vector2D implements Vector<Euclidean2D> {
     }
 
     /** {@inheritDoc} */
-    public Vector2D normalize() {
+    public Vector2D normalize() throws MathArithmeticException {
         double s = getNorm();
         if (s == 0) {
             throw new MathArithmeticException(LocalizedFormats.CANNOT_NORMALIZE_A_ZERO_NORM_VECTOR);

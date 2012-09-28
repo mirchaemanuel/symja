@@ -23,7 +23,7 @@ import org.apache.commons.math3.linear.RealVector;
  * Defines the process dynamics model for the use with a {@link KalmanFilter}.
  *
  * @since 3.0
- * @version $Id: ProcessModel.java 1244107 2012-02-14 16:17:55Z erans $
+ * @version $Id: ProcessModel.java 1381332 2012-09-05 20:06:07Z tn $
  */
 public interface ProcessModel {
     /**
@@ -41,10 +41,9 @@ public interface ProcessModel {
     RealMatrix getControlMatrix();
 
     /**
-     * Returns the process noise matrix. This method is called by the
-     * {@link KalmanFilter} every predict step, so implementations of this
-     * interface may return a modified process noise depending on current
-     * iteration step.
+     * Returns the process noise matrix. This method is called by the {@link KalmanFilter} every
+     * prediction step, so implementations of this interface may return a modified process noise
+     * depending on the current iteration step.
      *
      * @return the process noise matrix
      * @see KalmanFilter#predict()
@@ -56,9 +55,8 @@ public interface ProcessModel {
     /**
      * Returns the initial state estimation vector.
      * <p>
-     * Note: if the return value is zero, the Kalman filter will initialize the
+     * <b>Note:</b> if the return value is zero, the Kalman filter will initialize the
      * state estimation with a zero vector.
-     * </p>
      *
      * @return the initial state estimation vector
      */
@@ -67,9 +65,8 @@ public interface ProcessModel {
     /**
      * Returns the initial error covariance matrix.
      * <p>
-     * Note: if the return value is zero, the Kalman filter will initialize the
+     * <b>Note:</b> if the return value is zero, the Kalman filter will initialize the
      * error covariance with the process noise matrix.
-     * </p>
      *
      * @return the initial error covariance matrix
      */

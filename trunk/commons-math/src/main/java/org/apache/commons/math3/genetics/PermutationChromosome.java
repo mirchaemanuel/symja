@@ -21,10 +21,9 @@ import java.util.List;
 /**
  * Interface indicating that the chromosome represents a permutation of objects.
  *
- * @param <T>
- *            type of the permuted objects
+ * @param <T> type of the permuted objects
  * @since 2.0
- * @version $Id: PermutationChromosome.java 1244107 2012-02-14 16:17:55Z erans $
+ * @version $Id: PermutationChromosome.java 1385284 2012-09-16 15:19:55Z tn $
  */
 public interface PermutationChromosome<T> {
 

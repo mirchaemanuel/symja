@@ -38,7 +38,7 @@ import org.apache.commons.math3.util.CompositeFormat;
  * returned. In the second case, however, the parse position after parsing will be
  * just after the closing curly brace, i.e. just before the trailing space.</p>
  *
- * @version $Id: Vector2DFormat.java 1244107 2012-02-14 16:17:55Z erans $
+ * @version $Id: Vector2DFormat.java 1379977 2012-09-02 14:22:52Z luc $
  * @since 3.0
  */
 public class Vector2DFormat extends VectorFormat<Euclidean2D> {
@@ -112,7 +112,7 @@ public class Vector2DFormat extends VectorFormat<Euclidean2D> {
 
     /** {@inheritDoc} */
     @Override
-    public Vector2D parse(final String source) {
+    public Vector2D parse(final String source) throws MathParseException {
         ParsePosition parsePosition = new ParsePosition(0);
         Vector2D result = parse(source, parsePosition);
         if (parsePosition.getIndex() == 0) {

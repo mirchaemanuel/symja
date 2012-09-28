@@ -19,14 +19,17 @@ package org.apache.commons.math3.analysis.solvers;
 
 import org.apache.commons.math3.analysis.DifferentiableUnivariateFunction;
 import org.apache.commons.math3.analysis.UnivariateFunction;
+import org.apache.commons.math3.exception.TooManyEvaluationsException;
 
 /**
  * Provide a default implementation for several functions useful to generic
  * solvers.
  *
  * @since 3.0
- * @version $Id: AbstractDifferentiableUnivariateSolver.java 1364387 2012-07-22 18:14:11Z tn $
+ * @version $Id: AbstractDifferentiableUnivariateSolver.java 1379560 2012-08-31 19:40:30Z erans $
+ * @deprecated as of 3.1, replaced by {@link AbstractUnivariateDifferentiableSolver}
  */
+@Deprecated
 public abstract class AbstractDifferentiableUnivariateSolver
     extends BaseAbstractUnivariateSolver<DifferentiableUnivariateFunction>
     implements DifferentiableUnivariateSolver {
@@ -50,8 +53,8 @@ public abstract class AbstractDifferentiableUnivariateSolver
      * @param functionValueAccuracy Maximum function value error.
      */
     protected AbstractDifferentiableUnivariateSolver(final double relativeAccuracy,
-                                                         final double absoluteAccuracy,
-                                                         final double functionValueAccuracy) {
+                                                     final double absoluteAccuracy,
+                                                     final double functionValueAccuracy) {
         super(relativeAccuracy, absoluteAccuracy, functionValueAccuracy);
     }
 
@@ -63,7 +66,8 @@ public abstract class AbstractDifferentiableUnivariateSolver
      * @throws org.apache.commons.math3.exception.TooManyEvaluationsException
      * if the maximal number of evaluations is exceeded.
      */
-    protected double computeDerivativeObjectiveValue(double point) {
+    protected double computeDerivativeObjectiveValue(double point)
+        throws TooManyEvaluationsException {
         incrementEvaluationCount();
         return functionDerivative.value(point);
     }

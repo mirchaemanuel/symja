@@ -19,9 +19,11 @@ package org.apache.commons.math3.geometry;
 import java.io.Serializable;
 import java.text.NumberFormat;
 
+import org.apache.commons.math3.exception.MathArithmeticException;
+
 /** This interface represents a generic vector in a vectorial space or a point in an affine space.
  * @param <S> Type of the space.
- * @version $Id: Vector.java 1244107 2012-02-14 16:17:55Z erans $
+ * @version $Id: Vector.java 1379977 2012-09-02 14:22:52Z luc $
  * @see Space
  * @see Vector
  * @since 3.0
@@ -91,9 +93,9 @@ public interface Vector<S extends Space> extends Serializable {
 
     /** Get a normalized vector aligned with the instance.
      * @return a new normalized vector
-     * @exception ArithmeticException if the norm is zero
+     * @exception MathArithmeticException if the norm is zero
      */
-    Vector<S> normalize();
+    Vector<S> normalize() throws MathArithmeticException;
 
     /** Multiply the instance by a scalar.
      * @param a scalar

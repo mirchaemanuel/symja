@@ -17,7 +17,10 @@
 
 package org.apache.commons.math3.analysis;
 
+import org.apache.commons.math3.analysis.differentiation.DerivativeStructure;
+import org.apache.commons.math3.analysis.differentiation.UnivariateDifferentiableFunction;
 import org.apache.commons.math3.analysis.function.Identity;
+import org.apache.commons.math3.exception.DimensionMismatchException;
 import org.apache.commons.math3.exception.NotStrictlyPositiveException;
 import org.apache.commons.math3.exception.NumberIsTooLargeException;
 import org.apache.commons.math3.exception.util.LocalizedFormats;
@@ -25,7 +28,7 @@ import org.apache.commons.math3.exception.util.LocalizedFormats;
 /**
  * Utilities for manipulating function objects.
  *
- * @version $Id: FunctionUtils.java 1365559 2012-07-25 12:40:14Z erans $
+ * @version $Id: FunctionUtils.java 1383845 2012-09-12 08:34:10Z luc $
  * @since 3.0
  */
 public class FunctionUtils {
@@ -35,9 +38,10 @@ public class FunctionUtils {
     private FunctionUtils() {}
 
     /**
-     * Compose functions.  The functions in the argument list are composed
-     * sequentially, in the order given.  For example, compose(f1,f2,f3)
-     * acts like f1(f2(f3(x))).
+     * Composes functions.
+     * <br/>
+     * The functions in the argument list are composed sequentially, in the
+     * given order.  For example, compose(f1,f2,f3) acts like f1(f2(f3(x))).
      *
      * @param f List of functions.
      * @return the composite function.
@@ -56,12 +60,48 @@ public class FunctionUtils {
     }
 
     /**
-     * Compose functions.  The functions in the argument list are composed
-     * sequentially, in the order given.  For example, compose(f1,f2,f3)
-     * acts like f1(f2(f3(x))).
+     * Composes functions.
+     * <br/>
+     * The functions in the argument list are composed sequentially, in the
+     * given order.  For example, compose(f1,f2,f3) acts like f1(f2(f3(x))).
      *
      * @param f List of functions.
      * @return the composite function.
+     * @since 3.1
+     */
+    public static UnivariateDifferentiableFunction compose(final UnivariateDifferentiableFunction ... f) {
+        return new UnivariateDifferentiableFunction() {
+
+            /** {@inheritDoc} */
+            public double value(final double t) {
+                double r = t;
+                for (int i = f.length - 1; i >= 0; i--) {
+                    r = f[i].value(r);
+                }
+                return r;
+            }
+
+            /** {@inheritDoc} */
+            public DerivativeStructure value(final DerivativeStructure t) {
+                DerivativeStructure r = t;
+                for (int i = f.length - 1; i >= 0; i--) {
+                    r = f[i].value(r);
+                }
+                return r;
+            }
+
+        };
+    }
+
+    /**
+     * Composes functions.
+     * <br/>
+     * The functions in the argument list are composed sequentially, in the
+     * given order.  For example, compose(f1,f2,f3) acts like f1(f2(f3(x))).
+     *
+     * @param f List of functions.
+     * @return the composite function.
+     * @deprecated as of 3.1 replaced by {@link #compose(UnivariateDifferentiableFunction...)}
      */
     public static DifferentiableUnivariateFunction compose(final DifferentiableUnivariateFunction ... f) {
         return new DifferentiableUnivariateFunction() {
@@ -93,7 +133,7 @@ public class FunctionUtils {
     }
 
     /**
-     * Add functions.
+     * Adds functions.
      *
      * @param f List of functions.
      * @return a function that computes the sum of the functions.
@@ -112,11 +152,44 @@ public class FunctionUtils {
     }
 
     /**
-     * Add functions.
+     * Adds functions.
      *
      * @param f List of functions.
      * @return a function that computes the sum of the functions.
+     * @since 3.1
      */
+    public static UnivariateDifferentiableFunction add(final UnivariateDifferentiableFunction ... f) {
+        return new UnivariateDifferentiableFunction() {
+
+            /** {@inheritDoc} */
+            public double value(final double t) {
+                double r = f[0].value(t);
+                for (int i = 1; i < f.length; i++) {
+                    r += f[i].value(t);
+                }
+                return r;
+            }
+
+            /** {@inheritDoc} */
+            public DerivativeStructure value(final DerivativeStructure t) {
+                DerivativeStructure r = f[0].value(t);
+                for (int i = 1; i < f.length; i++) {
+                    r = r.add(f[i].value(t));
+                }
+                return r;
+            }
+
+        };
+    }
+
+    /**
+     * Adds functions.
+     *
+     * @param f List of functions.
+     * @return a function that computes the sum of the functions.
+     * @deprecated as of 3.1 replaced by {@link #add(UnivariateDifferentiableFunction...)}
+     */
+    @Deprecated
     public static DifferentiableUnivariateFunction add(final DifferentiableUnivariateFunction ... f) {
         return new DifferentiableUnivariateFunction() {
             /** {@inheritDoc} */
@@ -145,7 +218,7 @@ public class FunctionUtils {
     }
 
     /**
-     * Multiply functions.
+     * Multiplies functions.
      *
      * @param f List of functions.
      * @return a function that computes the product of the functions.
@@ -164,10 +237,42 @@ public class FunctionUtils {
     }
 
     /**
-     * Multiply functions.
+     * Multiplies functions.
      *
      * @param f List of functions.
      * @return a function that computes the product of the functions.
+     * @since 3.1
+     */
+    public static UnivariateDifferentiableFunction multiply(final UnivariateDifferentiableFunction ... f) {
+        return new UnivariateDifferentiableFunction() {
+
+            /** {@inheritDoc} */
+            public double value(final double t) {
+                double r = f[0].value(t);
+                for (int i = 1; i < f.length; i++) {
+                    r  *= f[i].value(t);
+                }
+                return r;
+            }
+
+            /** {@inheritDoc} */
+            public DerivativeStructure value(final DerivativeStructure t) {
+                DerivativeStructure r = f[0].value(t);
+                for (int i = 1; i < f.length; i++) {
+                    r = r.multiply(f[i].value(t));
+                }
+                return r;
+            }
+
+        };
+    }
+
+    /**
+     * Multiplies functions.
+     *
+     * @param f List of functions.
+     * @return a function that computes the product of the functions.
+     * @deprecated as of 3.1 replaced by {@link #multiply(UnivariateDifferentiableFunction...)}
      */
     public static DifferentiableUnivariateFunction multiply(final DifferentiableUnivariateFunction ... f) {
         return new DifferentiableUnivariateFunction() {
@@ -212,8 +317,8 @@ public class FunctionUtils {
      * @return the composite function.
      */
     public static UnivariateFunction combine(final BivariateFunction combiner,
-                                                 final UnivariateFunction f,
-                                                 final UnivariateFunction g) {
+                                             final UnivariateFunction f,
+                                             final UnivariateFunction g) {
         return new UnivariateFunction() {
             /** {@inheritDoc} */
             public double value(double x) {
@@ -233,8 +338,8 @@ public class FunctionUtils {
      * @return a collector function.
      */
     public static MultivariateFunction collector(final BivariateFunction combiner,
-                                                     final UnivariateFunction f,
-                                                     final double initialValue) {
+                                                 final UnivariateFunction f,
+                                                 final double initialValue) {
         return new MultivariateFunction() {
             /** {@inheritDoc} */
             public double value(double[] point) {
@@ -257,19 +362,19 @@ public class FunctionUtils {
      * @return a collector function.
      */
     public static MultivariateFunction collector(final BivariateFunction combiner,
-                                                     final double initialValue) {
+                                                 final double initialValue) {
         return collector(combiner, new Identity(), initialValue);
     }
 
     /**
-     * Create a unary function by fixing the first argument of a binary function.
+     * Creates a unary function by fixing the first argument of a binary function.
      *
      * @param f Binary function.
      * @param fixed Value to which the first argument of {@code f} is set.
      * @return the unary function h(x) = f(fixed, x)
      */
     public static UnivariateFunction fix1stArgument(final BivariateFunction f,
-                                                        final double fixed) {
+                                                    final double fixed) {
         return new UnivariateFunction() {
             /** {@inheritDoc} */
             public double value(double x) {
@@ -278,14 +383,14 @@ public class FunctionUtils {
         };
     }
     /**
-     * Create a unary function by fixing the second argument of a binary function.
+     * Creates a unary function by fixing the second argument of a binary function.
      *
      * @param f Binary function.
      * @param fixed Value to which the second argument of {@code f} is set.
      * @return the unary function h(x) = f(x, fixed)
      */
     public static UnivariateFunction fix2ndArgument(final BivariateFunction f,
-                                                        final double fixed) {
+                                                    final double fixed) {
         return new UnivariateFunction() {
             /** {@inheritDoc} */
             public double value(double x) {
@@ -295,24 +400,21 @@ public class FunctionUtils {
     }
 
     /**
-     * <p>
      * Samples the specified univariate real function on the specified interval.
-     * </p>
-     * <p>
+     * <br/>
      * The interval is divided equally into {@code n} sections and sample points
      * are taken from {@code min} to {@code max - (max - min) / n}; therefore
      * {@code f} is not sampled at the upper bound {@code max}.
-     * </p>
      *
-     * @param f the function to be sampled
-     * @param min the (inclusive) lower bound of the interval
-     * @param max the (exclusive) upper bound of the interval
-     * @param n the number of sample points
-     * @return the array of samples
+     * @param f Function to be sampled
+     * @param min Lower bound of the interval (included).
+     * @param max Upper bound of the interval (excluded).
+     * @param n Number of sample points.
+     * @return the array of samples.
      * @throws NumberIsTooLargeException if the lower bound {@code min} is
-     * greater than, or equal to the upper bound {@code max}
+     * greater than, or equal to the upper bound {@code max}.
      * @throws NotStrictlyPositiveException if the number of sample points
-     * {@code n} is negative
+     * {@code n} is negative.
      */
     public static double[] sample(UnivariateFunction f,
                                   double min, double max, int n) {
@@ -333,4 +435,74 @@ public class FunctionUtils {
         }
         return s;
     }
+
+    /** Convert a {@link UnivariateDifferentiableFunction} into a {@link DifferentiableUnivariateFunction}.
+     * @param f function to convert
+     * @return converted function
+     * @deprecated this conversion method is temporary in version 3.1, as the {@link
+     * DifferentiableUnivariateFunction} interface itself is deprecated
+     */
+    @Deprecated
+    public static DifferentiableUnivariateFunction toDifferentiableUnivariateFunction(final UnivariateDifferentiableFunction f) {
+        return new DifferentiableUnivariateFunction() {
+
+            /** {@inheritDoc} */
+            public double value(final double x) {
+                return f.value(x);
+            }
+
+            /** {@inheritDoc} */
+            public UnivariateFunction derivative() {
+                return new UnivariateFunction() {
+                    /** {@inheritDoc} */
+                    public double value(final double x) {
+                        return f.value(new DerivativeStructure(1, 1, 0, x)).getPartialDerivative(1);
+                    }
+                };
+            }
+
+        };
+    }
+
+    /** Convert a {@link DifferentiableUnivariateFunction} into a {@link UnivariateDifferentiableFunction}.
+     * <p>
+     * Note that the converted function is able to handle {@link DerivativeStructure} with
+     * <em>only</em> one parameter and up to order one. If the function is called with
+     * more parameters or higher order, a {@link DimensionMismatchException} will be thrown.
+     * </p>
+     * @param f function to convert
+     * @return converted function
+     * @deprecated this conversion method is temporary in version 3.1, as the {@link
+     * DifferentiableUnivariateFunction} interface itself is deprecated
+     */
+    @Deprecated
+    public static UnivariateDifferentiableFunction toUnivariateDifferential(final DifferentiableUnivariateFunction f) {
+        return new UnivariateDifferentiableFunction() {
+
+            /** {@inheritDoc} */
+            public double value(final double x) {
+                return f.value(x);
+            }
+
+            /** {@inheritDoc}
+             * @exception DimensionMismatchException if number of parameters or derivation
+             * order are higher than 1
+             */
+            public DerivativeStructure value(final DerivativeStructure t)
+                throws DimensionMismatchException {
+                if (t.getFreeParameters() != 1) {
+                    throw new DimensionMismatchException(t.getFreeParameters(), 1);
+                }
+                if (t.getOrder() > 1) {
+                    throw new DimensionMismatchException(t.getOrder(), 1);
+                }
+                return t.compose(new double[] {
+                    f.value(t.getValue()),
+                    f.derivative().value(t.getValue())
+                });
+            }
+
+        };
+    }
+
 }

@@ -29,7 +29,7 @@ import org.apache.commons.math3.exception.NumberIsTooSmallException;
  * be wrapped into the initial range before being passed to the class that
  * actually computes the interpolation.
  *
- * @version $Id: UnivariatePeriodicInterpolator.java 1364387 2012-07-22 18:14:11Z tn $
+ * @version $Id: UnivariatePeriodicInterpolator.java 1379904 2012-09-01 23:54:52Z erans $
  */
 public class UnivariatePeriodicInterpolator
     implements UnivariateInterpolator {
@@ -54,8 +54,8 @@ public class UnivariatePeriodicInterpolator
      * on each side of the interpolated point.
      */
     public UnivariatePeriodicInterpolator(UnivariateInterpolator interpolator,
-                                              double period,
-                                              int extend) {
+                                          double period,
+                                          int extend) {
         this.interpolator = interpolator;
         this.period = period;
         this.extend = extend;
@@ -70,7 +70,7 @@ public class UnivariatePeriodicInterpolator
      * @param period Period.
      */
     public UnivariatePeriodicInterpolator(UnivariateInterpolator interpolator,
-                                              double period) {
+                                          double period) {
         this(interpolator, period, DEFAULT_EXTEND);
     }
 
@@ -81,7 +81,8 @@ public class UnivariatePeriodicInterpolator
      * iss larger then the size of {@code xval}.
      */
     public UnivariateFunction interpolate(double[] xval,
-                                              double[] yval) {
+                                          double[] yval)
+        throws NumberIsTooSmallException {
         if (xval.length < extend) {
             throw new NumberIsTooSmallException(xval.length, extend, true);
         }

@@ -20,16 +20,15 @@ package org.apache.commons.math3.genetics;
  * Algorithm used to determine when to stop evolution.
  *
  * @since 2.0
- * @version $Id: StoppingCondition.java 1244107 2012-02-14 16:17:55Z erans $
+ * @version $Id: StoppingCondition.java 1385284 2012-09-16 15:19:55Z tn $
  */
 public interface StoppingCondition {
     /**
-     * Determine whether or not the given population satisfies the stopping
-     * condition.
+     * Determine whether or not the given population satisfies the stopping condition.
      *
      * @param population the population to test.
-     * @return <code>true</code> if this stopping condition is met by the
-     *         given population. <code>false</code> otherwise.
+     * @return <code>true</code> if this stopping condition is met by the given population,
+     *   <code>false</code> otherwise.
      */
     boolean isSatisfied(Population population);
 }

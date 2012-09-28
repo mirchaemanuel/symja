@@ -20,6 +20,7 @@ import org.apache.commons.math3.analysis.TrivariateFunction;
 import org.apache.commons.math3.exception.DimensionMismatchException;
 import org.apache.commons.math3.exception.NoDataException;
 import org.apache.commons.math3.exception.OutOfRangeException;
+import org.apache.commons.math3.exception.NonMonotonicSequenceException;
 import org.apache.commons.math3.util.MathArrays;
 
 /**
@@ -33,7 +34,7 @@ import org.apache.commons.math3.util.MathArrays;
  * </quote>
  *
  * @since 2.2
- * @version $Id: TricubicSplineInterpolatingFunction.java 1364387 2012-07-22 18:14:11Z tn $
+ * @version $Id: TricubicSplineInterpolatingFunction.java 1385314 2012-09-16 16:35:49Z tn $
  */
 public class TricubicSplineInterpolatingFunction
     implements TrivariateFunction {
@@ -122,25 +123,16 @@ public class TricubicSplineInterpolatingFunction
      * @param y Sample values of the y-coordinate, in increasing order.
      * @param z Sample values of the y-coordinate, in increasing order.
      * @param f Values of the function on every grid point.
-     * @param dFdX Values of the partial derivative of function with respect
-     * to x on every grid point.
-     * @param dFdY Values of the partial derivative of function with respect
-     * to y on every grid point.
-     * @param dFdZ Values of the partial derivative of function with respect
-     * to z on every grid point.
-     * @param d2FdXdY Values of the cross partial derivative of function on
-     * every grid point.
-     * @param d2FdXdZ Values of the cross partial derivative of function on
-     * every grid point.
-     * @param d2FdYdZ Values of the cross partial derivative of function on
-     * every grid point.
-     * @param d3FdXdYdZ Values of the cross partial derivative of function on
-     * every grid point.
+     * @param dFdX Values of the partial derivative of function with respect to x on every grid point.
+     * @param dFdY Values of the partial derivative of function with respect to y on every grid point.
+     * @param dFdZ Values of the partial derivative of function with respect to z on every grid point.
+     * @param d2FdXdY Values of the cross partial derivative of function on every grid point.
+     * @param d2FdXdZ Values of the cross partial derivative of function on every grid point.
+     * @param d2FdYdZ Values of the cross partial derivative of function on every grid point.
+     * @param d3FdXdYdZ Values of the cross partial derivative of function on every grid point.
      * @throws NoDataException if any of the arrays has zero length.
-     * @throws DimensionMismatchException if the various arrays do not contain
-     * the expected number of elements.
-     * @throws IllegalArgumentException if {@code x}, {@code y} or {@code z}
-     * are not strictly increasing.
+     * @throws DimensionMismatchException if the various arrays do not contain the expected number of elements.
+     * @throws NonMonotonicSequenceException if {@code x}, {@code y} or {@code z} are not strictly increasing.
      */
     public TricubicSplineInterpolatingFunction(double[] x,
                                                double[] y,
@@ -152,7 +144,10 @@ public class TricubicSplineInterpolatingFunction
                                                double[][][] d2FdXdY,
                                                double[][][] d2FdXdZ,
                                                double[][][] d2FdYdZ,
-                                               double[][][] d3FdXdYdZ) {
+                                               double[][][] d3FdXdYdZ)
+        throws NoDataException,
+               DimensionMismatchException,
+               NonMonotonicSequenceException {
         final int xLen = x.length;
         final int yLen = y.length;
         final int zLen = z.length;
@@ -305,8 +300,11 @@ public class TricubicSplineInterpolatingFunction
 
     /**
      * {@inheritDoc}
+     *
+     * @throws OutOfRangeException if any of the variables is outside its interpolation range.
      */
-    public double value(double x, double y, double z) {
+    public double value(double x, double y, double z)
+        throws OutOfRangeException {
         final int i = searchIndex(x, xval);
         if (i == -1) {
             throw new OutOfRangeException(x, xval[0], xval[xval.length - 1]);
@@ -330,9 +328,8 @@ public class TricubicSplineInterpolatingFunction
     /**
      * @param c Coordinate.
      * @param val Coordinate samples.
-     * @return the index in {@code val} corresponding to the interval
-     * containing {@code c}, or {@code -1} if {@code c} is out of the
-     * range defined by the end values of {@code val}.
+     * @return the index in {@code val} corresponding to the interval containing {@code c}, or {@code -1}
+     *   if {@code c} is out of the range defined by the end values of {@code val}.
      */
     private int searchIndex(double c, double[] val) {
         if (c < val[0]) {
@@ -394,8 +391,7 @@ public class TricubicSplineInterpolatingFunction
      * where the subscripts indicate the partial derivative with respect to
      * the corresponding variable(s).
      *
-     * @param beta List of function values and function partial derivatives
-     * values.
+     * @param beta List of function values and function partial derivatives values.
      * @return the spline coefficients.
      */
     private double[] computeSplineCoefficients(double[] beta) {
@@ -418,7 +414,7 @@ public class TricubicSplineInterpolatingFunction
 /**
  * 3D-spline function.
  *
- * @version $Id: TricubicSplineInterpolatingFunction.java 1364387 2012-07-22 18:14:11Z tn $
+ * @version $Id: TricubicSplineInterpolatingFunction.java 1385314 2012-09-16 16:35:49Z tn $
  */
 class TricubicSplineFunction
     implements TrivariateFunction {
@@ -445,8 +441,11 @@ class TricubicSplineFunction
      * @param y y-coordinate of the interpolation point.
      * @param z z-coordinate of the interpolation point.
      * @return the interpolated value.
+     * @throws OutOfRangeException if {@code x}, {@code y} or
+     * {@code z} are not in the interval {@code [0, 1]}.
      */
-    public double value(double x, double y, double z) {
+    public double value(double x, double y, double z)
+        throws OutOfRangeException {
         if (x < 0 || x > 1) {
             throw new OutOfRangeException(x, 0, 1);
         }

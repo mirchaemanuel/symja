@@ -25,19 +25,19 @@ import org.apache.commons.math3.exception.util.LocalizedFormats;
 /**
  * Mutation for {@link BinaryChromosome}s. Randomly changes one gene.
  *
- * @version $Id: BinaryMutation.java 1244107 2012-02-14 16:17:55Z erans $
+ * @version $Id: BinaryMutation.java 1385297 2012-09-16 16:05:57Z tn $
  * @since 2.0
  */
 public class BinaryMutation implements MutationPolicy {
 
     /**
      * Mutate the given chromosome. Randomly changes one gene.
+     *
      * @param original the original chromosome.
      * @return the mutated chromosome.
-     * @throws MathIllegalArgumentException if <code>original</code> is not an instance
-     *         of {@link BinaryChromosome}.
+     * @throws MathIllegalArgumentException if <code>original</code> is not an instance of {@link BinaryChromosome}.
      */
-    public Chromosome mutate(Chromosome original) {
+    public Chromosome mutate(Chromosome original) throws MathIllegalArgumentException {
         if (!(original instanceof BinaryChromosome)) {
             throw new MathIllegalArgumentException(LocalizedFormats.INVALID_BINARY_CHROMOSOME);
         }

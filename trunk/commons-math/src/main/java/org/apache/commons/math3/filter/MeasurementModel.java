@@ -22,7 +22,7 @@ import org.apache.commons.math3.linear.RealMatrix;
  * Defines the measurement model for the use with a {@link KalmanFilter}.
  *
  * @since 3.0
- * @version $Id: MeasurementModel.java 1244107 2012-02-14 16:17:55Z erans $
+ * @version $Id: MeasurementModel.java 1381332 2012-09-05 20:06:07Z tn $
  */
 public interface MeasurementModel {
     /**
@@ -33,10 +33,9 @@ public interface MeasurementModel {
     RealMatrix getMeasurementMatrix();
 
     /**
-     * Returns the measurement noise matrix. This method is called by the
-     * {@link KalmanFilter} every correct step, so implementations of this
-     * interface may return a modified measurement noise depending on current
-     * iteration step.
+     * Returns the measurement noise matrix. This method is called by the {@link KalmanFilter} every
+     * correction step, so implementations of this interface may return a modified measurement noise
+     * depending on the current iteration step.
      *
      * @return the measurement noise matrix
      * @see KalmanFilter#correct(double[])

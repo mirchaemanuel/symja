@@ -32,23 +32,22 @@ import org.apache.commons.math3.random.RandomGenerator;
  * parent. This is typically a poor method of crossover, but empirical evidence
  * suggests that it is more exploratory and results in a larger part of the
  * problem space being searched.
- *
- * <p>This crossover policy evaluates each gene of the parent chromosomes by chosing a
+ * <p>
+ * This crossover policy evaluates each gene of the parent chromosomes by chosing a
  * uniform random number {@code p} in the range [0, 1]. If {@code p} &lt; {@code ratio},
  * the parent genes are swapped. This means with a ratio of 0.7, 30% of the genes from the
  * first parent and 70% from the second parent will be selected for the first offspring (and
- * vice versa for the second offspring).</p>
- *
- * <p>This policy works only on {@link AbstractListChromosome}, and therefore it
+ * vice versa for the second offspring).
+ * <p>
+ * This policy works only on {@link AbstractListChromosome}, and therefore it
  * is parameterized by T. Moreover, the chromosomes must have same lengths.
- * </p>
  *
  * @see <a href="http://en.wikipedia.org/wiki/Crossover_%28genetic_algorithm%29">Crossover techniques (Wikipedia)</a>
  * @see <a href="http://www.obitko.com/tutorials/genetic-algorithms/crossover-mutation.php">Crossover (Obitko.com)</a>
  * @see <a href="http://www.tomaszgwiazda.com/uniformX.htm">Uniform crossover</a>
  * @param <T> generic type of the {@link AbstractListChromosome}s for crossover
  * @since 3.1
- * @version $Id: UniformCrossover.java 1350391 2012-06-14 20:37:29Z tn $
+ * @version $Id: UniformCrossover.java 1385297 2012-09-16 16:05:57Z tn $
  */
 public class UniformCrossover<T> implements CrossoverPolicy {
 
@@ -61,7 +60,7 @@ public class UniformCrossover<T> implements CrossoverPolicy {
      * @param ratio the mixing ratio
      * @throws OutOfRangeException if the mixing ratio is outside the [0, 1] range
      */
-    public UniformCrossover(final double ratio) {
+    public UniformCrossover(final double ratio) throws OutOfRangeException {
         if (ratio < 0.0d || ratio > 1.0d) {
             throw new OutOfRangeException(LocalizedFormats.CROSSOVER_RATE, ratio, 0.0d, 1.0d);
         }
@@ -79,9 +78,15 @@ public class UniformCrossover<T> implements CrossoverPolicy {
 
     /**
      * {@inheritDoc}
+     *
+     * @throws MathIllegalArgumentException iff one of the chromosomes is
+     *   not an instance of {@link AbstractListChromosome}
+     * @throws DimensionMismatchException if the length of the two chromosomes is different
      */
     @SuppressWarnings("unchecked")
-    public ChromosomePair crossover(final Chromosome first, final Chromosome second) {
+    public ChromosomePair crossover(final Chromosome first, final Chromosome second)
+        throws DimensionMismatchException, MathIllegalArgumentException {
+
         if (!(first instanceof AbstractListChromosome<?> && second instanceof AbstractListChromosome<?>)) {
             throw new MathIllegalArgumentException(LocalizedFormats.INVALID_FIXED_LENGTH_CHROMOSOME);
         }
@@ -97,7 +102,7 @@ public class UniformCrossover<T> implements CrossoverPolicy {
      * @throws DimensionMismatchException if the length of the two chromosomes is different
      */
     private ChromosomePair mate(final AbstractListChromosome<T> first,
-                                final AbstractListChromosome<T> second) {
+                                final AbstractListChromosome<T> second) throws DimensionMismatchException {
         final int length = first.getLength();
         if (length != second.getLength()) {
             throw new DimensionMismatchException(second.getLength(), length);

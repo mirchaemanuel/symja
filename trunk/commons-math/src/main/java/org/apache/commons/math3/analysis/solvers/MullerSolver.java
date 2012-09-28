@@ -17,6 +17,9 @@
 package org.apache.commons.math3.analysis.solvers;
 
 import org.apache.commons.math3.util.FastMath;
+import org.apache.commons.math3.exception.NumberIsTooLargeException;
+import org.apache.commons.math3.exception.NoBracketingException;
+import org.apache.commons.math3.exception.TooManyEvaluationsException;
 
 /**
  * This class implements the <a href="http://mathworld.wolfram.com/MullersMethod.html">
@@ -40,7 +43,7 @@ import org.apache.commons.math3.util.FastMath;
  * <p>
  * The formulas here use divided differences directly.</p>
  *
- * @version $Id: MullerSolver.java 1364387 2012-07-22 18:14:11Z tn $
+ * @version $Id: MullerSolver.java 1379560 2012-08-31 19:40:30Z erans $
  * @since 1.2
  * @see MullerSolver2
  */
@@ -78,7 +81,10 @@ public class MullerSolver extends AbstractUnivariateSolver {
      * {@inheritDoc}
      */
     @Override
-    protected double doSolve() {
+    protected double doSolve()
+        throws TooManyEvaluationsException,
+               NumberIsTooLargeException,
+               NoBracketingException {
         final double min = getMin();
         final double max = getMax();
         final double initial = getStartValue();
@@ -120,7 +126,8 @@ public class MullerSolver extends AbstractUnivariateSolver {
      * @return the point at which the function value is zero.
      */
     private double solve(double min, double max,
-                         double fMin, double fMax) {
+                         double fMin, double fMax)
+        throws TooManyEvaluationsException {
         final double relativeAccuracy = getRelativeAccuracy();
         final double absoluteAccuracy = getAbsoluteAccuracy();
         final double functionValueAccuracy = getFunctionValueAccuracy();

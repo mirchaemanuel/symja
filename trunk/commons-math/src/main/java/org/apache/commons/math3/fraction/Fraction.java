@@ -32,7 +32,7 @@ import org.apache.commons.math3.util.FastMath;
  * implements Serializable since 2.0
  *
  * @since 1.1
- * @version $Id: Fraction.java 1244107 2012-02-14 16:17:55Z erans $
+ * @version $Id: Fraction.java 1368253 2012-08-01 21:24:27Z tn $
  */
 public class Fraction
     extends Number
@@ -178,7 +178,7 @@ public class Fraction
         long overflow = Integer.MAX_VALUE;
         double r0 = value;
         long a0 = (long)FastMath.floor(r0);
-        if (a0 > overflow) {
+        if (FastMath.abs(a0) > overflow) {
             throw new FractionConversionException(value, a0, 1l);
         }
 
@@ -206,7 +206,7 @@ public class Fraction
             long a1 = (long)FastMath.floor(r1);
             p2 = (a1 * p1) + p0;
             q2 = (a1 * q1) + q0;
-            if ((p2 > overflow) || (q2 > overflow)) {
+            if ((FastMath.abs(p2) > overflow) || (FastMath.abs(q2) > overflow)) {
                 throw new FractionConversionException(value, p2, q2);
             }
 
@@ -594,7 +594,7 @@ public class Fraction
      * @return the fraction percentage as a <tt>double</tt>.
      */
     public double percentageValue() {
-        return multiply(100).doubleValue();
+        return 100 * doubleValue();
     }
 
     /**

@@ -27,17 +27,16 @@ import org.apache.commons.math3.exception.util.LocalizedFormats;
  * of the array representation to a random value uniformly distributed in [0,1].
  *
  * @since 2.0
- * @version $Id: RandomKeyMutation.java 1244107 2012-02-14 16:17:55Z erans $
+ * @version $Id: RandomKeyMutation.java 1385297 2012-09-16 16:05:57Z tn $
  */
 public class RandomKeyMutation implements MutationPolicy {
 
     /**
      * {@inheritDoc}
      *
-     * @throws MathIllegalArgumentException if <code>original</code> is not a
-     * {@link RandomKey} instance
+     * @throws MathIllegalArgumentException if <code>original</code> is not a {@link RandomKey} instance
      */
-    public Chromosome mutate(final Chromosome original) {
+    public Chromosome mutate(final Chromosome original) throws MathIllegalArgumentException {
         if (!(original instanceof RandomKey<?>)) {
             throw new MathIllegalArgumentException(LocalizedFormats.RANDOMKEY_MUTATION_WRONG_CLASS,
                                                    original.getClass().getSimpleName());

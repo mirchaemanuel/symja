@@ -16,11 +16,13 @@
  */
 package org.apache.commons.math3.genetics;
 
+import org.apache.commons.math3.exception.MathIllegalArgumentException;
+
 /**
  * Algorithm used to mutate a chromosome.
  *
  * @since 2.0
- * @version $Id: MutationPolicy.java 1244107 2012-02-14 16:17:55Z erans $
+ * @version $Id: MutationPolicy.java 1385297 2012-09-16 16:05:57Z tn $
  */
 public interface MutationPolicy {
 
@@ -28,6 +30,7 @@ public interface MutationPolicy {
      * Mutate the given chromosome.
      * @param original the original chromosome.
      * @return the mutated chromosome.
+     * @throws MathIllegalArgumentException if the given chromosome is not compatible with this {@link MutationPolicy}
      */
-    Chromosome mutate(Chromosome original);
+    Chromosome mutate(Chromosome original) throws MathIllegalArgumentException;
 }

@@ -34,7 +34,7 @@ import java.util.ResourceBundle;
  * translation is missing.
  * </p>
  * @since 2.2
- * @version $Id: LocalizedFormats.java 1351257 2012-06-18 10:01:12Z luc $
+ * @version $Id: LocalizedFormats.java 1388099 2012-09-20 16:21:46Z erans $
  */
 public enum LocalizedFormats implements Localizable {
 
@@ -126,6 +126,7 @@ public enum LocalizedFormats implements Localizable {
     INITIAL_CAPACITY_NOT_POSITIVE("initial capacity ({0}) is not positive"),
     INITIAL_COLUMN_AFTER_FINAL_COLUMN("initial column {1} after final column {0}"),
     INITIAL_ROW_AFTER_FINAL_ROW("initial row {1} after final row {0}"),
+    @Deprecated
     INPUT_DATA_FROM_UNSUPPORTED_DATASOURCE("input data comes from unsupported datasource: {0}, supported sources: {1}, {2}"),
     INSTANCES_NOT_COMPARABLE_TO_EXISTING_VALUES("instance of class {0} not comparable to existing values"),
     INSUFFICIENT_DATA_FOR_T_STATISTIC("insufficient data for t statistic, needs at least 2, got {0}"),
@@ -133,7 +134,7 @@ public enum LocalizedFormats implements Localizable {
     DIMENSION("dimension ({0})"), /* keep */
     INSUFFICIENT_OBSERVED_POINTS_IN_SAMPLE("sample contains {0} observed points, at least {1} are required"),
     INSUFFICIENT_ROWS_AND_COLUMNS("insufficient data: only {0} rows and {1} columns."),
-    INTEGRATION_METHOD_NEEDS_AT_LEAST_TWO_PREVIOUS_POINTS("{0} method needs at least two previous points"),
+    INTEGRATION_METHOD_NEEDS_AT_LEAST_TWO_PREVIOUS_POINTS("multistep method needs at least {0} previous steps, got {1}"),
     INTERNAL_ERROR("internal error, please fill a bug report at {0}"),
     INVALID_BINARY_DIGIT("invalid binary digit: {0}"),
     INVALID_BINARY_CHROMOSOME("binary mutation works on BinaryChromosome only"),
@@ -181,6 +182,7 @@ public enum LocalizedFormats implements Localizable {
     NON_REAL_FINITE_ORDINATE("all ordinatae must be finite real numbers, but {0}-th is {1}"),
     NON_REAL_FINITE_WEIGHT("all weights must be finite real numbers, but {0}-th is {1}"),
     NON_SQUARE_MATRIX("non square ({0}x{1}) matrix"),
+    NORM("Norm ({0})"), /* keep */
     NORMALIZE_INFINITE("Cannot normalize to an infinite value"),
     NORMALIZE_NAN("Cannot normalize to NaN"),
     NOT_ADDITION_COMPATIBLE_MATRICES("{0}x{1} and {2}x{3} matrices are not addition compatible"),
@@ -344,7 +346,7 @@ public enum LocalizedFormats implements Localizable {
     WRONG_BLOCK_LENGTH("wrong array shape (block length = {0}, expected {1})"),
     WRONG_NUMBER_OF_POINTS("{0} points are required, got only {1}"),
     NUMBER_OF_POINTS("number of points ({0})"), /* keep */
-    ZERO_DENOMINATOR("denominator must be different from 0"),
+    ZERO_DENOMINATOR("denominator must be different from 0"), /* keep */
     ZERO_DENOMINATOR_IN_FRACTION("zero denominator in fraction {0}/{1}"),
     ZERO_FRACTION_TO_DIVIDE_BY("the fraction to divide by must not be zero: {0}/{1}"),
     ZERO_NORM("zero norm"),

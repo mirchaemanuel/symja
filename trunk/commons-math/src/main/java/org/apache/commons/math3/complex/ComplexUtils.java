@@ -25,7 +25,7 @@ import org.apache.commons.math3.util.FastMath;
  * Static implementations of common
  * {@link org.apache.commons.math3.complex.Complex} utilities functions.
  *
- * @version $Id: ComplexUtils.java 1361793 2012-07-15 20:50:13Z erans $
+ * @version $Id: ComplexUtils.java 1381284 2012-09-05 18:30:08Z luc $
  */
 public class ComplexUtils {
 
@@ -59,7 +59,7 @@ public class ComplexUtils {
      * @throws MathIllegalArgumentException if {@code r} is negative.
      * @since 1.1
      */
-    public static Complex polar2Complex(double r, double theta) {
+    public static Complex polar2Complex(double r, double theta) throws MathIllegalArgumentException {
         if (r < 0) {
             throw new MathIllegalArgumentException(
                   LocalizedFormats.NEGATIVE_COMPLEX_MODULE, r);

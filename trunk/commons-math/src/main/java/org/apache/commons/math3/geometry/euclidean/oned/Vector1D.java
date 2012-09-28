@@ -27,7 +27,7 @@ import org.apache.commons.math3.util.MathUtils;
 
 /** This class represents a 1D vector.
  * <p>Instances of this class are guaranteed to be immutable.</p>
- * @version $Id: Vector1D.java 1244107 2012-02-14 16:17:55Z erans $
+ * @version $Id: Vector1D.java 1379977 2012-09-02 14:22:52Z luc $
  * @since 3.0
  */
 public class Vector1D implements Vector<Euclidean1D> {
@@ -183,7 +183,7 @@ public class Vector1D implements Vector<Euclidean1D> {
     }
 
     /** {@inheritDoc} */
-    public Vector1D normalize() {
+    public Vector1D normalize() throws MathArithmeticException {
         double s = getNorm();
         if (s == 0) {
             throw new MathArithmeticException(LocalizedFormats.CANNOT_NORMALIZE_A_ZERO_NORM_VECTOR);

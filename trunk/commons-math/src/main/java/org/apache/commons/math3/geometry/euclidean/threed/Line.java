@@ -35,7 +35,7 @@ import org.apache.commons.math3.util.Precision;
  * which is closest to the origin. Abscissa increases in the line
  * direction.</p>
 
- * @version $Id: Line.java 1244107 2012-02-14 16:17:55Z erans $
+ * @version $Id: Line.java 1382887 2012-09-10 14:37:27Z luc $
  * @since 3.0
  */
 public class Line implements Embedding<Euclidean3D, Euclidean1D> {
@@ -51,7 +51,7 @@ public class Line implements Embedding<Euclidean3D, Euclidean1D> {
      * @param p2 second point belonging to the line (this can be any point, different from p1)
      * @exception MathIllegalArgumentException if the points are equal
      */
-    public Line(final Vector3D p1, final Vector3D p2) {
+    public Line(final Vector3D p1, final Vector3D p2) throws MathIllegalArgumentException {
         reset(p1, p2);
     }
 
@@ -70,7 +70,7 @@ public class Line implements Embedding<Euclidean3D, Euclidean1D> {
      * @param p2 second point belonging to the line (this can be any point, different from p1)
      * @exception MathIllegalArgumentException if the points are equal
      */
-    public void reset(final Vector3D p1, final Vector3D p2) {
+    public void reset(final Vector3D p1, final Vector3D p2) throws MathIllegalArgumentException {
         final Vector3D delta = p2.subtract(p1);
         final double norm2 = delta.getNormSq();
         if (norm2 == 0.0) {

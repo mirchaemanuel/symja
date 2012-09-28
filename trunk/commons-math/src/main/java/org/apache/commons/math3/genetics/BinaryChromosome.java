@@ -24,7 +24,7 @@ import org.apache.commons.math3.exception.util.LocalizedFormats;
 /**
  * Chromosome represented by a vector of 0s and 1s.
  *
- * @version $Id: BinaryChromosome.java 1244107 2012-02-14 16:17:55Z erans $
+ * @version $Id: BinaryChromosome.java 1385297 2012-09-16 16:05:57Z tn $
  * @since 2.0
  */
 public abstract class BinaryChromosome extends AbstractListChromosome<Integer> {
@@ -32,20 +32,18 @@ public abstract class BinaryChromosome extends AbstractListChromosome<Integer> {
     /**
      * Constructor.
      * @param representation list of {0,1} values representing the chromosome
-     * @throws InvalidRepresentationException iff the <code>representation</code> can not represent
-     *         a valid chromosome
+     * @throws InvalidRepresentationException iff the <code>representation</code> can not represent a valid chromosome
      */
-    public BinaryChromosome(List<Integer> representation) {
+    public BinaryChromosome(List<Integer> representation) throws InvalidRepresentationException {
         super(representation);
     }
 
     /**
      * Constructor.
      * @param representation array of {0,1} values representing the chromosome
-     * @throws InvalidRepresentationException iff the <code>representation</code> can not represent
-     *         a valid chromosome
+     * @throws InvalidRepresentationException iff the <code>representation</code> can not represent a valid chromosome
      */
-    public BinaryChromosome(Integer[] representation) {
+    public BinaryChromosome(Integer[] representation) throws InvalidRepresentationException {
         super(representation);
     }
 
@@ -53,8 +51,7 @@ public abstract class BinaryChromosome extends AbstractListChromosome<Integer> {
      * {@inheritDoc}
      */
     @Override
-    protected void checkValidity(List<Integer> chromosomeRepresentation)
-        throws InvalidRepresentationException {
+    protected void checkValidity(List<Integer> chromosomeRepresentation) throws InvalidRepresentationException {
         for (int i : chromosomeRepresentation) {
             if (i < 0 || i >1) {
                 throw new InvalidRepresentationException(LocalizedFormats.INVALID_BINARY_DIGIT,
@@ -77,9 +74,6 @@ public abstract class BinaryChromosome extends AbstractListChromosome<Integer> {
         return rList;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected boolean isSame(Chromosome another) {
         // type check

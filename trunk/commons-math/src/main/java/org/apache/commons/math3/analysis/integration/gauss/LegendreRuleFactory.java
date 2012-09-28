@@ -17,6 +17,8 @@
 package org.apache.commons.math3.analysis.integration.gauss;
 
 import org.apache.commons.math3.util.Pair;
+import org.apache.commons.math3.exception.NotStrictlyPositiveException;
+import org.apache.commons.math3.exception.util.LocalizedFormats;
 
 /**
  * Factory that creates Gauss-type quadrature rule using Legendre polynomials.
@@ -27,14 +29,20 @@ import org.apache.commons.math3.util.Pair;
  * Abramowitz and Stegun, 1964</a>.
  *
  * @since 3.1
- * @version $Id: LegendreRuleFactory.java 1364387 2012-07-22 18:14:11Z tn $
+ * @version $Id: LegendreRuleFactory.java 1382197 2012-09-07 22:35:01Z erans $
  */
 public class LegendreRuleFactory extends BaseRuleFactory<Double> {
     /**
      * {@inheritDoc}
      */
     @Override
-    protected Pair<Double[], Double[]> computeRule(int numberOfPoints) {
+    protected Pair<Double[], Double[]> computeRule(int numberOfPoints)
+        throws NotStrictlyPositiveException {
+        if (numberOfPoints <= 0) {
+            throw new NotStrictlyPositiveException(LocalizedFormats.NUMBER_OF_POINTS,
+                                                   numberOfPoints);
+        }
+
         if (numberOfPoints == 1) {
             // Break recursion.
             return new Pair<Double[], Double[]>(new Double[] { 0d },
@@ -120,7 +128,10 @@ public class LegendreRuleFactory extends BaseRuleFactory<Double> {
             weights[idx] = w;
         }
         // If "numberOfPoints" is odd, 0 is a root.
-        if (numberOfPoints % 2 == 1) {
+        // Note: as written, the test for oddness will work for negative
+        // integers too (although it is not necessary here), preventing
+        // a FindBugs warning.
+        if (numberOfPoints % 2 != 0) {
             double pmc = 1;
             for (int j = 1; j < numberOfPoints; j += 2) {
                 pmc = -j * pmc / (j + 1);

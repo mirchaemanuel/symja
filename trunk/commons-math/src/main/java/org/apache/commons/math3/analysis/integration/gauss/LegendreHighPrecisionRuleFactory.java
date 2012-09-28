@@ -19,6 +19,8 @@ package org.apache.commons.math3.analysis.integration.gauss;
 import java.math.MathContext;
 import java.math.BigDecimal;
 import org.apache.commons.math3.util.Pair;
+import org.apache.commons.math3.exception.NotStrictlyPositiveException;
+import org.apache.commons.math3.exception.util.LocalizedFormats;
 
 /**
  * Factory that creates Gauss-type quadrature rule using Legendre polynomials.
@@ -29,7 +31,7 @@ import org.apache.commons.math3.util.Pair;
  * Abramowitz and Stegun, 1964</a>.
  *
  * @since 3.1
- * @version $Id: LegendreHighPrecisionRuleFactory.java 1364387 2012-07-22 18:14:11Z tn $
+ * @version $Id: LegendreHighPrecisionRuleFactory.java 1374187 2012-08-17 09:50:54Z erans $
  */
 public class LegendreHighPrecisionRuleFactory extends BaseRuleFactory<BigDecimal> {
     /** Settings for enhanced precision computations. */
@@ -60,9 +62,16 @@ public class LegendreHighPrecisionRuleFactory extends BaseRuleFactory<BigDecimal
 
     /**
      * {@inheritDoc}
+     *
+     * @throws NotStrictlyPositiveException if {@code numberOfPoints < 1}.
      */
     @Override
     protected Pair<BigDecimal[], BigDecimal[]> computeRule(int numberOfPoints) {
+        if (numberOfPoints <= 0) {
+            throw new NotStrictlyPositiveException(LocalizedFormats.NUMBER_OF_POINTS,
+                                                   numberOfPoints);
+        }
+
         if (numberOfPoints == 1) {
             // Break recursion.
             return new Pair<BigDecimal[], BigDecimal[]>(new BigDecimal[] { BigDecimal.ZERO },
@@ -184,7 +193,10 @@ public class LegendreHighPrecisionRuleFactory extends BaseRuleFactory<BigDecimal
             weights[idx] = tmp2;
         }
         // If "numberOfPoints" is odd, 0 is a root.
-        if (numberOfPoints % 2 == 1) {
+        // Note: as written, the test for oddness will work for negative
+        // integers too (although it is not necessary here), preventing
+        // a FindBugs warning.
+        if (numberOfPoints % 2 != 0) {
             BigDecimal pmc = BigDecimal.ONE;
             for (int j = 1; j < numberOfPoints; j += 2) {
                 final BigDecimal b_j = new BigDecimal(j, mContext);

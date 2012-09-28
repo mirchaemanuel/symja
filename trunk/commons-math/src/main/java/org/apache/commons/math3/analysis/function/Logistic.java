@@ -17,9 +17,12 @@
 
 package org.apache.commons.math3.analysis.function;
 
+import org.apache.commons.math3.analysis.FunctionUtils;
 import org.apache.commons.math3.analysis.UnivariateFunction;
 import org.apache.commons.math3.analysis.DifferentiableUnivariateFunction;
 import org.apache.commons.math3.analysis.ParametricUnivariateFunction;
+import org.apache.commons.math3.analysis.differentiation.DerivativeStructure;
+import org.apache.commons.math3.analysis.differentiation.UnivariateDifferentiableFunction;
 import org.apache.commons.math3.exception.NotStrictlyPositiveException;
 import org.apache.commons.math3.exception.NullArgumentException;
 import org.apache.commons.math3.exception.DimensionMismatchException;
@@ -30,9 +33,9 @@ import org.apache.commons.math3.util.FastMath;
  *  Generalised logistic</a> function.
  *
  * @since 3.0
- * @version $Id: Logistic.java 1364377 2012-07-22 17:39:16Z tn $
+ * @version $Id: Logistic.java 1383441 2012-09-11 14:56:39Z luc $
  */
-public class Logistic implements DifferentiableUnivariateFunction {
+public class Logistic implements UnivariateDifferentiableFunction, DifferentiableUnivariateFunction {
     /** Lower asymptote. */
     private final double a;
     /** Upper asymptote. */
@@ -64,7 +67,8 @@ public class Logistic implements DifferentiableUnivariateFunction {
                     double b,
                     double q,
                     double a,
-                    double n) {
+                    double n)
+        throws NotStrictlyPositiveException {
         if (n <= 0) {
             throw new NotStrictlyPositiveException(n);
         }
@@ -82,20 +86,12 @@ public class Logistic implements DifferentiableUnivariateFunction {
         return value(m - x, k, b, q, a, oneOverN);
     }
 
-    /** {@inheritDoc} */
+    /** {@inheritDoc}
+     * @deprecated as of 3.1, replaced by {@link #value(DerivativeStructure)}
+     */
+    @Deprecated
     public UnivariateFunction derivative() {
-        return new UnivariateFunction() {
-            /** {@inheritDoc} */
-            public double value(double x) {
-                final double exp = q * FastMath.exp(b * (m - x));
-                if (Double.isInfinite(exp)) {
-                    // Avoid returning NaN in case of overflow.
-                    return 0;
-                }
-                final double exp1 = exp + 1;
-                return b * oneOverN * exp / FastMath.pow(exp1, oneOverN + 1);
-            }
-        };
+        return FunctionUtils.toDifferentiableUnivariateFunction(this).derivative();
     }
 
     /**
@@ -118,7 +114,10 @@ public class Logistic implements DifferentiableUnivariateFunction {
          * @throws DimensionMismatchException if the size of {@code param} is
          * not 6.
          */
-        public double value(double x, double ... param) {
+        public double value(double x, double ... param)
+            throws NullArgumentException,
+                   DimensionMismatchException,
+                   NotStrictlyPositiveException {
             validateParameters(param);
             return Logistic.value(param[1] - x, param[0],
                                   param[2], param[3],
@@ -139,7 +138,10 @@ public class Logistic implements DifferentiableUnivariateFunction {
          * @throws DimensionMismatchException if the size of {@code param} is
          * not 6.
          */
-        public double[] gradient(double x, double ... param) {
+        public double[] gradient(double x, double ... param)
+            throws NullArgumentException,
+                   DimensionMismatchException,
+                   NotStrictlyPositiveException {
             validateParameters(param);
 
             final double b = param[2];
@@ -170,12 +172,15 @@ public class Logistic implements DifferentiableUnivariateFunction {
          * methods.
          *
          * @param param Values for {@code k}, {@code m}, {@code b}, {@code q},
-         * {@code a} and  {@code n}.
+         * {@code a} and {@code n}.
          * @throws NullArgumentException if {@code param} is {@code null}.
          * @throws DimensionMismatchException if the size of {@code param} is
          * not 6.
          */
-        private void validateParameters(double[] param) {
+        private void validateParameters(double[] param)
+            throws NullArgumentException,
+                   DimensionMismatchException,
+                   NotStrictlyPositiveException {
             if (param == null) {
                 throw new NullArgumentException();
             }
@@ -205,4 +210,12 @@ public class Logistic implements DifferentiableUnivariateFunction {
                                 double oneOverN) {
         return a + (k - a) / FastMath.pow(1 + q * FastMath.exp(b * mMinusX), oneOverN);
     }
+
+    /** {@inheritDoc}
+     * @since 3.1
+     */
+    public DerivativeStructure value(final DerivativeStructure t) {
+        return t.negate().add(m).multiply(b).exp().multiply(q).add(1).pow(oneOverN).reciprocal().multiply(k - a).add(a);
+    }
+
 }

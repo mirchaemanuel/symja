@@ -22,7 +22,7 @@ import org.apache.commons.math3.exception.OutOfRangeException;
 /**
  * Base interface for distributions on the reals.
  *
- * @version $Id: RealDistribution.java 1244107 2012-02-14 16:17:55Z erans $
+ * @version $Id: RealDistribution.java 1385298 2012-09-16 16:09:00Z tn $
  * @since 3.0
  */
 public interface RealDistribution {
@@ -73,7 +73,11 @@ public interface RealDistribution {
      * takes a value between {@code x0} and {@code x1},
      * excluding the lower and including the upper endpoint
      * @throws NumberIsTooLargeException if {@code x0 > x1}
+     *
+     * @deprecated As of 3.1. In 4.0, this method will be renamed
+     * {@code probability(double x0, double x1)}.
      */
+    @Deprecated
     double cumulativeProbability(double x0, double x1) throws NumberIsTooLargeException;
 
     /**
@@ -133,18 +137,26 @@ public interface RealDistribution {
     double getSupportUpperBound();
 
     /**
-     * Use this method to get information about whether the lower bound
-     * of the support is inclusive or not.
+     * Whether or not the lower bound of support is in the domain of the density
+     * function.  Returns true iff {@code getSupporLowerBound()} is finite and
+     * {@code density(getSupportLowerBound())} returns a non-NaN, non-infinite
+     * value.
      *
-     * @return whether the lower bound of the support is inclusive or not
+     * @return true if the lower bound of support is finite and the density
+     * function returns a non-NaN, non-infinite value there
+     * @deprecated to be removed in 4.0
      */
     boolean isSupportLowerBoundInclusive();
 
     /**
-     * Use this method to get information about whether the upper bound
-     * of the support is inclusive or not.
+     * Whether or not the upper bound of support is in the domain of the density
+     * function.  Returns true iff {@code getSupportUpperBound()} is finite and
+     * {@code density(getSupportUpperBound())} returns a non-NaN, non-infinite
+     * value.
      *
-     * @return whether the upper bound of the support is inclusive or not
+     * @return true if the upper bound of support is finite and the density
+     * function returns a non-NaN, non-infinite value there
+     * @deprecated to be removed in 4.0
      */
     boolean isSupportUpperBoundInclusive();
 

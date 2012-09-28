@@ -17,11 +17,14 @@
 
 package org.apache.commons.math3.analysis.function;
 
-import org.apache.commons.math3.analysis.UnivariateFunction;
 import org.apache.commons.math3.analysis.DifferentiableUnivariateFunction;
+import org.apache.commons.math3.analysis.FunctionUtils;
 import org.apache.commons.math3.analysis.ParametricUnivariateFunction;
-import org.apache.commons.math3.exception.NullArgumentException;
+import org.apache.commons.math3.analysis.UnivariateFunction;
+import org.apache.commons.math3.analysis.differentiation.DerivativeStructure;
+import org.apache.commons.math3.analysis.differentiation.UnivariateDifferentiableFunction;
 import org.apache.commons.math3.exception.DimensionMismatchException;
+import org.apache.commons.math3.exception.NullArgumentException;
 import org.apache.commons.math3.util.FastMath;
 
 /**
@@ -29,9 +32,9 @@ import org.apache.commons.math3.util.FastMath;
  *  simple harmonic oscillator</a> function.
  *
  * @since 3.0
- * @version $Id: HarmonicOscillator.java 1364377 2012-07-22 17:39:16Z tn $
+ * @version $Id: HarmonicOscillator.java 1383441 2012-09-11 14:56:39Z luc $
  */
-public class HarmonicOscillator implements DifferentiableUnivariateFunction {
+public class HarmonicOscillator implements UnivariateDifferentiableFunction, DifferentiableUnivariateFunction {
     /** Amplitude. */
     private final double amplitude;
     /** Angular frequency. */
@@ -59,14 +62,12 @@ public class HarmonicOscillator implements DifferentiableUnivariateFunction {
         return value(omega * x + phase, amplitude);
     }
 
-    /** {@inheritDoc} */
+    /** {@inheritDoc}
+     * @deprecated as of 3.1, replaced by {@link #value(DerivativeStructure)}
+     */
+    @Deprecated
     public UnivariateFunction derivative() {
-        return new UnivariateFunction() {
-            /** {@inheritDoc} */
-            public double value(double x) {
-                return -amplitude * omega * FastMath.sin(omega * x + phase);
-            }
-        };
+        return FunctionUtils.toDifferentiableUnivariateFunction(this).derivative();
     }
 
     /**
@@ -89,7 +90,9 @@ public class HarmonicOscillator implements DifferentiableUnivariateFunction {
          * @throws DimensionMismatchException if the size of {@code param} is
          * not 3.
          */
-        public double value(double x, double ... param) {
+        public double value(double x, double ... param)
+            throws NullArgumentException,
+                   DimensionMismatchException {
             validateParameters(param);
             return HarmonicOscillator.value(x * param[1] + param[2], param[0]);
         }
@@ -107,7 +110,9 @@ public class HarmonicOscillator implements DifferentiableUnivariateFunction {
          * @throws DimensionMismatchException if the size of {@code param} is
          * not 3.
          */
-        public double[] gradient(double x, double ... param) {
+        public double[] gradient(double x, double ... param)
+            throws NullArgumentException,
+                   DimensionMismatchException {
             validateParameters(param);
 
             final double amplitude = param[0];
@@ -132,7 +137,9 @@ public class HarmonicOscillator implements DifferentiableUnivariateFunction {
          * @throws DimensionMismatchException if the size of {@code param} is
          * not 3.
          */
-        private void validateParameters(double[] param) {
+        private void validateParameters(double[] param)
+            throws NullArgumentException,
+                   DimensionMismatchException {
             if (param == null) {
                 throw new NullArgumentException();
             }
@@ -151,4 +158,26 @@ public class HarmonicOscillator implements DifferentiableUnivariateFunction {
                                 double amplitude) {
         return amplitude * FastMath.cos(xTimesOmegaPlusPhase);
     }
+
+    /** {@inheritDoc}
+     * @since 3.1
+     */
+    public DerivativeStructure value(final DerivativeStructure t) {
+        final double x = t.getValue();
+        double[] f = new double[t.getOrder() + 1];
+
+        final double alpha = omega * x + phase;
+        f[0] = amplitude * FastMath.cos(alpha);
+        if (f.length > 1) {
+            f[1] = -amplitude * omega * FastMath.sin(alpha);
+            final double mo2 = - omega * omega;
+            for (int i = 2; i < f.length; ++i) {
+                f[i] = mo2 * f[i - 2];
+            }
+        }
+
+        return t.compose(f);
+
+    }
+
 }

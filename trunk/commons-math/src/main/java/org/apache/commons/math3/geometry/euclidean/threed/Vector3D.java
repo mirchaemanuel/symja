@@ -32,7 +32,7 @@ import org.apache.commons.math3.util.MathArrays;
 /**
  * This class implements vectors in a three-dimensional space.
  * <p>Instance of this class are guaranteed to be immutable.</p>
- * @version $Id: Vector3D.java 1244107 2012-02-14 16:17:55Z erans $
+ * @version $Id: Vector3D.java 1379977 2012-09-02 14:22:52Z luc $
  * @since 1.2
  */
 public class Vector3D implements Serializable, Vector<Euclidean3D> {
@@ -293,7 +293,7 @@ public class Vector3D implements Serializable, Vector<Euclidean3D> {
     }
 
     /** {@inheritDoc} */
-    public Vector3D normalize() {
+    public Vector3D normalize() throws MathArithmeticException {
         double s = getNorm();
         if (s == 0) {
             throw new MathArithmeticException(LocalizedFormats.CANNOT_NORMALIZE_A_ZERO_NORM_VECTOR);
@@ -316,7 +316,7 @@ public class Vector3D implements Serializable, Vector<Euclidean3D> {
      * @return a new normalized vector orthogonal to the instance
      * @exception MathArithmeticException if the norm of the instance is null
      */
-    public Vector3D orthogonal() {
+    public Vector3D orthogonal() throws MathArithmeticException {
 
         double threshold = 0.6 * getNorm();
         if (threshold == 0) {
@@ -346,7 +346,7 @@ public class Vector3D implements Serializable, Vector<Euclidean3D> {
      * @return angular separation between v1 and v2
      * @exception MathArithmeticException if either vector has a null norm
      */
-    public static double angle(Vector3D v1, Vector3D v2) {
+    public static double angle(Vector3D v1, Vector3D v2) throws MathArithmeticException {
 
         double normProduct = v1.getNorm() * v2.getNorm();
         if (normProduct == 0) {
