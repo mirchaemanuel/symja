@@ -22,11 +22,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.math3.FieldElement;
-import org.apache.commons.math3.exception.NullArgumentException;
 import org.apache.commons.math3.exception.NotPositiveException;
+import org.apache.commons.math3.exception.NullArgumentException;
 import org.apache.commons.math3.exception.util.LocalizedFormats;
-import org.apache.commons.math3.util.MathUtils;
 import org.apache.commons.math3.util.FastMath;
+import org.apache.commons.math3.util.MathUtils;
 
 /**
  * Representation of a Complex number, i.e. a number which has both a
@@ -52,7 +52,7 @@ import org.apache.commons.math3.util.FastMath;
  * <br/>
  * Implements Serializable since 2.0
  *
- * @version $Id: Complex.java 1244107 2012-02-14 16:17:55Z erans $
+ * @version $Id: Complex.java 1382887 2012-09-10 14:37:27Z luc $
  */
 public class Complex implements FieldElement<Complex>, Serializable  {
     /** The square root of -1. A number representing "0.0 + 1.0i" */
@@ -570,8 +570,7 @@ public class Complex implements FieldElement<Complex>, Serializable  {
             return NaN;
         }
 
-        return this.add(this.sqrt1z().multiply(I)).log()
-            .multiply(I.negate());
+        return this.add(this.sqrt1z().multiply(I)).log().multiply(I.negate());
     }
 
     /**
@@ -595,8 +594,7 @@ public class Complex implements FieldElement<Complex>, Serializable  {
             return NaN;
         }
 
-        return sqrt1z().add(this.multiply(I)).log()
-            .multiply(I.negate());
+        return sqrt1z().add(this.multiply(I)).log().multiply(I.negate());
     }
 
     /**
@@ -621,7 +619,7 @@ public class Complex implements FieldElement<Complex>, Serializable  {
         }
 
         return this.add(I).divide(I.subtract(this)).log()
-            .multiply(I.divide(createComplex(2.0, 0.0)));
+                .multiply(I.divide(createComplex(2.0, 0.0)));
     }
 
     /**
@@ -1128,7 +1126,7 @@ public class Complex implements FieldElement<Complex>, Serializable  {
      * @throws NotPositiveException if {@code n <= 0}.
      * @since 2.0
      */
-    public List<Complex> nthRoot(int n) {
+    public List<Complex> nthRoot(int n) throws NotPositiveException {
 
         if (n <= 0) {
             throw new NotPositiveException(LocalizedFormats.CANNOT_COMPUTE_NTH_ROOT_FOR_NEGATIVE_N,

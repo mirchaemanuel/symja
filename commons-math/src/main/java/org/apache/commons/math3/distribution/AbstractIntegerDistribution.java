@@ -32,7 +32,7 @@ import org.apache.commons.math3.util.FastMath;
  * implementations are provided for some of the methods that do not vary
  * from distribution to distribution.
  *
- * @version $Id: AbstractIntegerDistribution.java 1363612 2012-07-20 01:12:08Z erans $
+ * @version $Id: AbstractIntegerDistribution.java 1370215 2012-08-07 12:38:59Z sebb $
  */
 public abstract class AbstractIntegerDistribution
 implements IntegerDistribution, Serializable {
@@ -43,6 +43,7 @@ implements IntegerDistribution, Serializable {
       * @deprecated As of 3.1, to be removed in 4.0. Please use the
       * {@link #random} instance variable instead.
       */
+    @Deprecated
     protected final RandomDataImpl randomData = new RandomDataImpl();
     /** RNG instance used to generate samples from the distribution. */
     protected final RandomGenerator random;

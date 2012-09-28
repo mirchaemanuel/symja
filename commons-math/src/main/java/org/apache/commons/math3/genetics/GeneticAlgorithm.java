@@ -26,15 +26,14 @@ import org.apache.commons.math3.random.JDKRandomGenerator;
  * of the algorithm can be configured for a specific problem.
  *
  * @since 2.0
- * @version $Id: GeneticAlgorithm.java 1244107 2012-02-14 16:17:55Z erans $
+ * @version $Id: GeneticAlgorithm.java 1385297 2012-09-16 16:05:57Z tn $
  */
 public class GeneticAlgorithm {
 
     /**
-     * Static random number generator shared by GA implementation classes.
-     * Set the randomGenerator seed to get reproducible results.
-     * Use {@link #setRandomGenerator(RandomGenerator)} to supply an alternative
-     * to the default JDK-provided PRNG.
+     * Static random number generator shared by GA implementation classes. Set the randomGenerator seed to get
+     * reproducible results. Use {@link #setRandomGenerator(RandomGenerator)} to supply an alternative to the default
+     * JDK-provided PRNG.
      */
     //@GuardedBy("this")
     private static RandomGenerator randomGenerator = new JDKRandomGenerator();
@@ -58,6 +57,7 @@ public class GeneticAlgorithm {
     private int generationsEvolved = 0;
 
     /**
+     * Create a new genetic algorithm.
      * @param crossoverPolicy The {@link CrossoverPolicy}
      * @param crossoverRate The crossover rate as a percentage (0-1 inclusive)
      * @param mutationPolicy The {@link MutationPolicy}
@@ -69,7 +69,7 @@ public class GeneticAlgorithm {
                             final double crossoverRate,
                             final MutationPolicy mutationPolicy,
                             final double mutationRate,
-                            final SelectionPolicy selectionPolicy) {
+                            final SelectionPolicy selectionPolicy) throws OutOfRangeException {
 
         if (crossoverRate < 0 || crossoverRate > 1) {
             throw new OutOfRangeException(LocalizedFormats.CROSSOVER_RATE,
@@ -125,23 +125,23 @@ public class GeneticAlgorithm {
     }
 
     /**
-     * <p>Evolve the given population into the next generation.</p>
-     * <p><ol>
-     *    <li>Get nextGeneration population to fill from <code>current</code>
-     *        generation, using its nextGeneration method</li>
-     *    <li>Loop until new generation is filled:</li>
-     *    <ul><li>Apply configured SelectionPolicy to select a pair of parents
-     *            from <code>current</code></li>
-     *        <li>With probability = {@link #getCrossoverRate()}, apply
-     *            configured {@link CrossoverPolicy} to parents</li>
-     *        <li>With probability = {@link #getMutationRate()}, apply
-     *            configured {@link MutationPolicy} to each of the offspring</li>
-     *        <li>Add offspring individually to nextGeneration,
-     *            space permitting</li>
-     *    </ul>
-     *    <li>Return nextGeneration</li>
-     *    </ol>
-     * </p>
+     * Evolve the given population into the next generation.
+     * <p>
+     * <ol>
+     *  <li>Get nextGeneration population to fill from <code>current</code>
+     *      generation, using its nextGeneration method</li>
+     *  <li>Loop until new generation is filled:</li>
+     *  <ul><li>Apply configured SelectionPolicy to select a pair of parents
+     *          from <code>current</code></li>
+     *      <li>With probability = {@link #getCrossoverRate()}, apply
+     *          configured {@link CrossoverPolicy} to parents</li>
+     *      <li>With probability = {@link #getMutationRate()}, apply
+     *          configured {@link MutationPolicy} to each of the offspring</li>
+     *      <li>Add offspring individually to nextGeneration,
+     *          space permitting</li>
+     *  </ul>
+     *  <li>Return nextGeneration</li>
+     * </ol>
      *
      * @param current the current population.
      * @return the population for the next generation.
@@ -222,8 +222,7 @@ public class GeneticAlgorithm {
     }
 
     /**
-     * Returns the number of generations evolved to
-     * reach {@link StoppingCondition} in the last run.
+     * Returns the number of generations evolved to reach {@link StoppingCondition} in the last run.
      *
      * @return number of generations evolved
      * @since 2.1

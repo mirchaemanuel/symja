@@ -28,7 +28,7 @@ import org.apache.commons.math3.random.Well19937c;
  * Implements the Beta distribution.
  *
  * @see <a href="http://en.wikipedia.org/wiki/Beta_distribution">Beta distribution</a>
- * @version $Id: BetaDistribution.java 1363604 2012-07-20 00:43:45Z erans $
+ * @version $Id: BetaDistribution.java 1369202 2012-08-03 20:50:33Z erans $
  * @since 2.0 (changed to concrete class in 3.0)
  */
 public class BetaDistribution extends AbstractRealDistribution {
@@ -120,17 +120,6 @@ public class BetaDistribution extends AbstractRealDistribution {
         if (Double.isNaN(z)) {
             z = Gamma.logGamma(alpha) + Gamma.logGamma(beta) - Gamma.logGamma(alpha + beta);
         }
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * For this distribution {@code P(X = x)} always evaluates to 0.
-     *
-     * @return 0
-     */
-    public double probability(double x) {
-        return 0.0;
     }
 
     /** {@inheritDoc} */

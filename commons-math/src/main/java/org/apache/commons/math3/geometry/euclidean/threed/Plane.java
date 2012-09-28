@@ -21,14 +21,14 @@ import org.apache.commons.math3.exception.util.LocalizedFormats;
 import org.apache.commons.math3.geometry.Vector;
 import org.apache.commons.math3.geometry.euclidean.oned.Vector1D;
 import org.apache.commons.math3.geometry.euclidean.twod.Euclidean2D;
-import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import org.apache.commons.math3.geometry.euclidean.twod.PolygonsSet;
+import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import org.apache.commons.math3.geometry.partitioning.Embedding;
 import org.apache.commons.math3.geometry.partitioning.Hyperplane;
 import org.apache.commons.math3.util.FastMath;
 
 /** The class represent planes in a three dimensional space.
- * @version $Id: Plane.java 1244107 2012-02-14 16:17:55Z erans $
+ * @version $Id: Plane.java 1382887 2012-09-10 14:37:27Z luc $
  * @since 3.0
  */
 public class Plane implements Hyperplane<Euclidean3D>, Embedding<Euclidean3D, Euclidean2D> {
@@ -52,7 +52,7 @@ public class Plane implements Hyperplane<Euclidean3D>, Embedding<Euclidean3D, Eu
      * @param normal normal direction to the plane
      * @exception MathArithmeticException if the normal norm is too small
      */
-    public Plane(final Vector3D normal) {
+    public Plane(final Vector3D normal) throws MathArithmeticException {
         setNormal(normal);
         originOffset = 0;
         setFrame();
@@ -63,7 +63,7 @@ public class Plane implements Hyperplane<Euclidean3D>, Embedding<Euclidean3D, Eu
      * @param normal normal direction to the plane
      * @exception MathArithmeticException if the normal norm is too small
      */
-    public Plane(final Vector3D p, final Vector3D normal) {
+    public Plane(final Vector3D p, final Vector3D normal) throws MathArithmeticException {
         setNormal(normal);
         originOffset = -p.dotProduct(w);
         setFrame();
@@ -77,7 +77,8 @@ public class Plane implements Hyperplane<Euclidean3D>, Embedding<Euclidean3D, Eu
      * @param p3 third point belonging to the plane
      * @exception MathArithmeticException if the points do not constitute a plane
      */
-    public Plane(final Vector3D p1, final Vector3D p2, final Vector3D p3) {
+    public Plane(final Vector3D p1, final Vector3D p2, final Vector3D p3)
+        throws MathArithmeticException {
         this(p1, p2.subtract(p1).crossProduct(p3.subtract(p1)));
     }
 
@@ -108,8 +109,9 @@ public class Plane implements Hyperplane<Euclidean3D>, Embedding<Euclidean3D, Eu
     /** Reset the instance as if built from a point and a normal.
      * @param p point belonging to the plane
      * @param normal normal direction to the plane
+     * @exception MathArithmeticException if the normal norm is too small
      */
-    public void reset(final Vector3D p, final Vector3D normal) {
+    public void reset(final Vector3D p, final Vector3D normal) throws MathArithmeticException {
         setNormal(normal);
         originOffset = -p.dotProduct(w);
         setFrame();
@@ -133,7 +135,7 @@ public class Plane implements Hyperplane<Euclidean3D>, Embedding<Euclidean3D, Eu
      * @param normal normal direction to the plane (will be copied)
      * @exception MathArithmeticException if the normal norm is too small
      */
-    private void setNormal(final Vector3D normal) {
+    private void setNormal(final Vector3D normal) throws MathArithmeticException {
         final double norm = normal.getNorm();
         if (norm < 1.0e-10) {
             throw new MathArithmeticException(LocalizedFormats.ZERO_NORM);
@@ -270,7 +272,7 @@ public class Plane implements Hyperplane<Euclidean3D>, Embedding<Euclidean3D, Eu
 
         final Vector3D delta = origin.subtract(center);
         final Plane plane = new Plane(center.add(rotation.applyTo(delta)),
-                                rotation.applyTo(w));
+                                      rotation.applyTo(w));
 
         // make sure the frame is transformed as desired
         plane.u = rotation.applyTo(u);

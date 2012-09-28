@@ -18,8 +18,10 @@ package org.apache.commons.math3.geometry;
 
 import java.io.Serializable;
 
+import org.apache.commons.math3.exception.MathUnsupportedOperationException;
+
 /** This interface represents a generic space, with affine and vectorial counterparts.
- * @version $Id: Space.java 1244107 2012-02-14 16:17:55Z erans $
+ * @version $Id: Space.java 1379977 2012-09-02 14:22:52Z luc $
  * @see Vector
  * @since 3.0
  */
@@ -33,7 +35,9 @@ public interface Space extends Serializable {
     /** Get the n-1 dimension subspace of this space.
      * @return n-1 dimension sub-space of this space
      * @see #getDimension()
+     * @exception MathUnsupportedOperationException for dimension-1 spaces
+     * which do not have sub-spaces
      */
-    Space getSubSpace();
+    Space getSubSpace() throws MathUnsupportedOperationException;
 
 }

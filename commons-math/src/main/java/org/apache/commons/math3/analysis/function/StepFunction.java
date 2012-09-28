@@ -29,7 +29,7 @@ import org.apache.commons.math3.util.MathArrays;
  *  Step function</a>.
  *
  * @since 3.0
- * @version $Id: StepFunction.java 1364377 2012-07-22 17:39:16Z tn $
+ * @version $Id: StepFunction.java 1379218 2012-08-30 23:18:57Z erans $
  */
 public class StepFunction implements UnivariateFunction {
     /** Abscissae. */
@@ -58,7 +58,10 @@ public class StepFunction implements UnivariateFunction {
      * have the same length.
      */
     public StepFunction(double[] x,
-                        double[] y) {
+                        double[] y)
+        throws NullArgumentException,
+               NoDataException,
+               DimensionMismatchException {
         if (x == null ||
             y == null) {
             throw new NullArgumentException();

@@ -25,7 +25,7 @@ import java.util.List;
  * Chromosome represented by an immutable list of a fixed length.
  *
  * @param <T> type of the representation list
- * @version $Id: AbstractListChromosome.java 1244107 2012-02-14 16:17:55Z erans $
+ * @version $Id: AbstractListChromosome.java 1385297 2012-09-16 16:05:57Z tn $
  * @since 2.0
  */
 public abstract class AbstractListChromosome<T> extends Chromosome {
@@ -36,10 +36,9 @@ public abstract class AbstractListChromosome<T> extends Chromosome {
     /**
      * Constructor.
      * @param representation inner representation of the chromosome
-     * @throws InvalidRepresentationException iff the <code>representation</code> can not represent
-     *         a valid chromosome
+     * @throws InvalidRepresentationException iff the <code>representation</code> can not represent a valid chromosome
      */
-    public AbstractListChromosome(final List<T> representation) {
+    public AbstractListChromosome(final List<T> representation) throws InvalidRepresentationException {
         checkValidity(representation);
         this.representation = Collections.unmodifiableList(new ArrayList<T> (representation));
     }
@@ -47,17 +46,17 @@ public abstract class AbstractListChromosome<T> extends Chromosome {
     /**
      * Constructor.
      * @param representation inner representation of the chromosome
+     * @throws InvalidRepresentationException iff the <code>representation</code> can not represent a valid chromosome
      */
-    public AbstractListChromosome(final T[] representation) {
+    public AbstractListChromosome(final T[] representation) throws InvalidRepresentationException {
         this(Arrays.asList(representation));
     }
 
     /**
-     *
      * Asserts that <code>representation</code> can represent a valid chromosome.
+     *
      * @param chromosomeRepresentation representation of the chromosome
-     * @throws InvalidRepresentationException iff the <code>representation</code> can not represent
-     *         a valid chromosome
+     * @throws InvalidRepresentationException iff the <code>representation</code> can not represent a valid chromosome
      */
     protected abstract void checkValidity(List<T> chromosomeRepresentation) throws InvalidRepresentationException;
 
@@ -78,23 +77,17 @@ public abstract class AbstractListChromosome<T> extends Chromosome {
     }
 
     /**
-     * Creates a new instance of the same class as <code>this</code> is, with a
-     * given <code>arrayRepresentation</code>. This is needed in crossover and
-     * mutation operators, where we need a new instance of the same class, but
-     * with different array representation.
-     *
+     * Creates a new instance of the same class as <code>this</code> is, with a given <code>arrayRepresentation</code>.
+     * This is needed in crossover and mutation operators, where we need a new instance of the same class, but with
+     * different array representation.
+     * <p>
      * Usually, this method just calls a constructor of the class.
      *
-     * @param chromosomeRepresentation
-     *            the inner array representation of the new chromosome.
-     * @return new instance extended from FixedLengthChromosome with the given
-     *         arrayRepresentation
+     * @param chromosomeRepresentation the inner array representation of the new chromosome.
+     * @return new instance extended from FixedLengthChromosome with the given arrayRepresentation
      */
     public abstract AbstractListChromosome<T> newFixedLengthChromosome(final List<T> chromosomeRepresentation);
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String toString() {
         return String.format("(f=%s %s)", getFitness(), getRepresentation());

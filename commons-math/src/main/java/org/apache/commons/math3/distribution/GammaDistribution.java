@@ -28,7 +28,7 @@ import org.apache.commons.math3.random.Well19937c;
  *
  * @see <a href="http://en.wikipedia.org/wiki/Gamma_distribution">Gamma distribution (Wikipedia)</a>
  * @see <a href="http://mathworld.wolfram.com/GammaDistribution.html">Gamma distribution (MathWorld)</a>
- * @version $Id: GammaDistribution.java 1363604 2012-07-20 00:43:45Z erans $
+ * @version $Id: GammaDistribution.java 1382904 2012-09-10 14:47:45Z luc $
  */
 public class GammaDistribution extends AbstractRealDistribution {
     /**
@@ -86,8 +86,10 @@ public class GammaDistribution extends AbstractRealDistribution {
      *
      * @param shape the shape parameter
      * @param scale the scale parameter
+     * @throws NotStrictlyPositiveException if {@code shape <= 0} or
+     * {@code scale <= 0}.
      */
-    public GammaDistribution(double shape, double scale) {
+    public GammaDistribution(double shape, double scale) throws NotStrictlyPositiveException {
         this(shape, scale, DEFAULT_INVERSE_ABSOLUTE_ACCURACY);
     }
 
@@ -156,6 +158,7 @@ public class GammaDistribution extends AbstractRealDistribution {
      * @deprecated as of version 3.1, {@link #getShape()} should be preferred.
      * This method will be removed in version 4.0.
      */
+    @Deprecated
     public double getAlpha() {
         return shape;
     }
@@ -176,6 +179,7 @@ public class GammaDistribution extends AbstractRealDistribution {
      * @deprecated as of version 3.1, {@link #getScale()} should be preferred.
      * This method will be removed in version 4.0.
      */
+    @Deprecated
     public double getBeta() {
         return scale;
     }
@@ -187,17 +191,6 @@ public class GammaDistribution extends AbstractRealDistribution {
      */
     public double getScale() {
         return scale;
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * For this distribution {@code P(X = x)} always evaluates to 0.
-     *
-     * @return 0
-     */
-    public double probability(double x) {
-        return 0.0;
     }
 
     /** {@inheritDoc} */

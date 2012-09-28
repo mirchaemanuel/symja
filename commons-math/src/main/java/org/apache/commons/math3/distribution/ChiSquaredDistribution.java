@@ -24,7 +24,7 @@ import org.apache.commons.math3.random.Well19937c;
  *
  * @see <a href="http://en.wikipedia.org/wiki/Chi-squared_distribution">Chi-squared distribution (Wikipedia)</a>
  * @see <a href="http://mathworld.wolfram.com/Chi-SquaredDistribution.html">Chi-squared Distribution (MathWorld)</a>
- * @version $Id: ChiSquaredDistribution.java 1363604 2012-07-20 00:43:45Z erans $
+ * @version $Id: ChiSquaredDistribution.java 1385299 2012-09-16 16:09:17Z tn $
  */
 public class ChiSquaredDistribution extends AbstractRealDistribution {
     /**
@@ -89,18 +89,7 @@ public class ChiSquaredDistribution extends AbstractRealDistribution {
      * @return the degrees of freedom.
      */
     public double getDegreesOfFreedom() {
-        return gamma.getAlpha() * 2.0;
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * For this distribution {@code P(X = x)} always evaluates to 0.
-     *
-     * @return zero.
-     */
-    public double probability(double x) {
-        return 0;
+        return gamma.getShape() * 2.0;
     }
 
     /** {@inheritDoc} */

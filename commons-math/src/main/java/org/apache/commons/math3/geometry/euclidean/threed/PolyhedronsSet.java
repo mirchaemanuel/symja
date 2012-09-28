@@ -24,6 +24,7 @@ import org.apache.commons.math3.geometry.euclidean.oned.Euclidean1D;
 import org.apache.commons.math3.geometry.euclidean.twod.Euclidean2D;
 import org.apache.commons.math3.geometry.euclidean.twod.SubLine;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
+import org.apache.commons.math3.geometry.partitioning.AbstractRegion;
 import org.apache.commons.math3.geometry.partitioning.BSPTree;
 import org.apache.commons.math3.geometry.partitioning.BSPTreeVisitor;
 import org.apache.commons.math3.geometry.partitioning.BoundaryAttribute;
@@ -32,11 +33,10 @@ import org.apache.commons.math3.geometry.partitioning.Region;
 import org.apache.commons.math3.geometry.partitioning.RegionFactory;
 import org.apache.commons.math3.geometry.partitioning.SubHyperplane;
 import org.apache.commons.math3.geometry.partitioning.Transform;
-import org.apache.commons.math3.geometry.partitioning.AbstractRegion;
 import org.apache.commons.math3.util.FastMath;
 
 /** This class represents a 3D region: a set of polyhedrons.
- * @version $Id: PolyhedronsSet.java 1244107 2012-02-14 16:17:55Z erans $
+ * @version $Id: PolyhedronsSet.java 1382887 2012-09-10 14:37:27Z luc $
  * @since 3.0
  */
 public class PolyhedronsSet extends AbstractRegion<Euclidean3D, Euclidean2D> {
@@ -91,17 +91,34 @@ public class PolyhedronsSet extends AbstractRegion<Euclidean3D, Euclidean2D> {
      * @param zMin low bound along the z direction
      * @param zMax high bound along the z direction
      */
-    @SuppressWarnings("unchecked")
     public PolyhedronsSet(final double xMin, final double xMax,
                           final double yMin, final double yMax,
                           final double zMin, final double zMax) {
-        this(new RegionFactory<Euclidean3D>().buildConvex(
-            new Plane(new Vector3D(xMin, 0,    0),   Vector3D.MINUS_I),
-            new Plane(new Vector3D(xMax, 0,    0),   Vector3D.PLUS_I),
-            new Plane(new Vector3D(0,    yMin, 0),   Vector3D.MINUS_J),
-            new Plane(new Vector3D(0,    yMax, 0),   Vector3D.PLUS_J),
-            new Plane(new Vector3D(0,    0,   zMin), Vector3D.MINUS_K),
-            new Plane(new Vector3D(0,    0,   zMax), Vector3D.PLUS_K)).getTree(false));
+        super(buildBoundary(xMin, xMax, yMin, yMax, zMin, zMax));
+    }
+
+    /** Build a parallellepipedic box boundary.
+     * @param xMin low bound along the x direction
+     * @param xMax high bound along the x direction
+     * @param yMin low bound along the y direction
+     * @param yMax high bound along the y direction
+     * @param zMin low bound along the z direction
+     * @param zMax high bound along the z direction
+     * @return boundary tree
+     */
+    private static BSPTree<Euclidean3D> buildBoundary(final double xMin, final double xMax,
+                                                      final double yMin, final double yMax,
+                                                      final double zMin, final double zMax) {
+        final Plane pxMin = new Plane(new Vector3D(xMin, 0,    0),   Vector3D.MINUS_I);
+        final Plane pxMax = new Plane(new Vector3D(xMax, 0,    0),   Vector3D.PLUS_I);
+        final Plane pyMin = new Plane(new Vector3D(0,    yMin, 0),   Vector3D.MINUS_J);
+        final Plane pyMax = new Plane(new Vector3D(0,    yMax, 0),   Vector3D.PLUS_J);
+        final Plane pzMin = new Plane(new Vector3D(0,    0,   zMin), Vector3D.MINUS_K);
+        final Plane pzMax = new Plane(new Vector3D(0,    0,   zMax), Vector3D.PLUS_K);
+        @SuppressWarnings("unchecked")
+        final Region<Euclidean3D> boundary =
+        new RegionFactory<Euclidean3D>().buildConvex(pxMin, pxMax, pyMin, pyMax, pzMin, pzMax);
+        return boundary.getTree(false);
     }
 
     /** {@inheritDoc} */
@@ -345,9 +362,9 @@ public class PolyhedronsSet extends AbstractRegion<Euclidean3D, Euclidean2D> {
                 final Vector3D p00    = oPlane.getOrigin();
                 final Vector3D p10    = oPlane.toSpace(new Vector2D(1.0, 0.0));
                 final Vector3D p01    = oPlane.toSpace(new Vector2D(0.0, 1.0));
-                final Vector2D  tP00   = tPlane.toSubSpace(apply(p00));
-                final Vector2D  tP10   = tPlane.toSubSpace(apply(p10));
-                final Vector2D  tP01   = tPlane.toSubSpace(apply(p01));
+                final Vector2D tP00   = tPlane.toSubSpace(apply(p00));
+                final Vector2D tP10   = tPlane.toSubSpace(apply(p10));
+                final Vector2D tP01   = tPlane.toSubSpace(apply(p01));
                 final AffineTransform at =
                     new AffineTransform(tP10.getX() - tP00.getX(), tP10.getY() - tP00.getY(),
                                         tP01.getX() - tP00.getX(), tP01.getY() - tP00.getY(),
@@ -415,7 +432,7 @@ public class PolyhedronsSet extends AbstractRegion<Euclidean3D, Euclidean2D> {
 
                 cachedOriginal  = (Plane) original;
                 cachedTransform =
-                    org.apache.commons.math3.geometry.euclidean.twod.Line.getTransform(at);
+                        org.apache.commons.math3.geometry.euclidean.twod.Line.getTransform(at);
 
             }
 

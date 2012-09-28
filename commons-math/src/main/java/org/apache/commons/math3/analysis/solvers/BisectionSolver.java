@@ -17,6 +17,7 @@
 package org.apache.commons.math3.analysis.solvers;
 
 import org.apache.commons.math3.util.FastMath;
+import org.apache.commons.math3.exception.TooManyEvaluationsException;
 
 /**
  * Implements the <a href="http://mathworld.wolfram.com/Bisection.html">
@@ -24,7 +25,7 @@ import org.apache.commons.math3.util.FastMath;
  * <p>
  * The function should be continuous but not necessarily smooth.</p>
  *
- * @version $Id: BisectionSolver.java 1364387 2012-07-22 18:14:11Z tn $
+ * @version $Id: BisectionSolver.java 1379560 2012-08-31 19:40:30Z erans $
  */
 public class BisectionSolver extends AbstractUnivariateSolver {
     /** Default absolute accuracy. */
@@ -59,7 +60,8 @@ public class BisectionSolver extends AbstractUnivariateSolver {
      * {@inheritDoc}
      */
     @Override
-    protected double doSolve() {
+    protected double doSolve() 
+        throws TooManyEvaluationsException {
         double min = getMin();
         double max = getMax();
         verifyInterval(min, max);

@@ -18,6 +18,8 @@ package org.apache.commons.math3.analysis.solvers;
 
 
 import org.apache.commons.math3.exception.NoBracketingException;
+import org.apache.commons.math3.exception.TooManyEvaluationsException;
+import org.apache.commons.math3.exception.NumberIsTooLargeException;
 import org.apache.commons.math3.util.FastMath;
 import org.apache.commons.math3.util.Precision;
 
@@ -31,7 +33,7 @@ import org.apache.commons.math3.util.Precision;
  * {@code t} is the absolute accuracy.
  * The given interval must bracket the root.
  *
- * @version $Id: BrentSolver.java 1364387 2012-07-22 18:14:11Z tn $
+ * @version $Id: BrentSolver.java 1379560 2012-08-31 19:40:30Z erans $
  */
 public class BrentSolver extends AbstractUnivariateSolver {
 
@@ -79,7 +81,10 @@ public class BrentSolver extends AbstractUnivariateSolver {
      * {@inheritDoc}
      */
     @Override
-    protected double doSolve() {
+    protected double doSolve()
+        throws NoBracketingException,
+               TooManyEvaluationsException,
+               NumberIsTooLargeException {
         double min = getMin();
         double max = getMax();
         final double initial = getStartValue();

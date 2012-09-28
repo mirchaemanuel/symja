@@ -17,12 +17,12 @@
 
 package org.apache.commons.math3.analysis;
 
-
 /**
  * Extension of {@link MultivariateVectorFunction} representing a differentiable
  * multivariate vectorial function.
- * @version $Id: DifferentiableMultivariateVectorFunction.java 1364387 2012-07-22 18:14:11Z tn $
+ * @version $Id: DifferentiableMultivariateVectorFunction.java 1384907 2012-09-14 20:17:00Z luc $
  * @since 2.0
+ * @deprecated as of 3.1 replaced by {@link org.apache.commons.math3.analysis.differentiation.MultivariateDifferentiableVectorFunction}
  */
 public interface DifferentiableMultivariateVectorFunction
     extends MultivariateVectorFunction {

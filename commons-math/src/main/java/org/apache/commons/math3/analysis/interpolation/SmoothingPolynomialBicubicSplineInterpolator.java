@@ -28,7 +28,7 @@ import org.apache.commons.math3.analysis.polynomials.PolynomialFunction;
  * Prior to generating the interpolating function, the input is smoothed using
  * polynomial fitting.
  *
- * @version $Id: SmoothingPolynomialBicubicSplineInterpolator.java 1364387 2012-07-22 18:14:11Z tn $
+ * @version $Id: SmoothingPolynomialBicubicSplineInterpolator.java 1379904 2012-09-01 23:54:52Z erans $
  * @since 2.2
  */
 public class SmoothingPolynomialBicubicSplineInterpolator
@@ -70,7 +70,9 @@ public class SmoothingPolynomialBicubicSplineInterpolator
     @Override
     public BicubicSplineInterpolatingFunction interpolate(final double[] xval,
                                                           final double[] yval,
-                                                          final double[][] fval) {
+                                                          final double[][] fval)
+        throws NoDataException,
+               DimensionMismatchException {
         if (xval.length == 0 || yval.length == 0 || fval.length == 0) {
             throw new NoDataException();
         }

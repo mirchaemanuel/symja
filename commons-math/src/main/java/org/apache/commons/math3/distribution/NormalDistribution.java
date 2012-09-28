@@ -30,7 +30,7 @@ import org.apache.commons.math3.random.Well19937c;
  *
  * @see <a href="http://en.wikipedia.org/wiki/Normal_distribution">Normal distribution (Wikipedia)</a>
  * @see <a href="http://mathworld.wolfram.com/NormalDistribution.html">Normal distribution (MathWorld)</a>
- * @version $Id: NormalDistribution.java 1363604 2012-07-20 00:43:45Z erans $
+ * @version $Id: NormalDistribution.java 1369415 2012-08-04 19:24:56Z erans $
  */
 public class NormalDistribution extends AbstractRealDistribution {
     /**
@@ -130,17 +130,6 @@ public class NormalDistribution extends AbstractRealDistribution {
         return standardDeviation;
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * For this distribution {@code P(X = x)} always evaluates to 0.
-     *
-     * @return zero.
-     */
-    public double probability(double x) {
-        return 0;
-    }
-
     /** {@inheritDoc} */
     public double density(double x) {
         final double x0 = x - mean;
@@ -163,9 +152,21 @@ public class NormalDistribution extends AbstractRealDistribution {
         return 0.5 * (1 + Erf.erf(dev / (standardDeviation * SQRT2)));
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @deprecated See {@link RealDistribution#cumulativeProbability(double,double)}
+     */
+    @Override@Deprecated
+    public double cumulativeProbability(double x0, double x1)
+        throws NumberIsTooLargeException {
+        return probability(x0, x1);
+    }
+
     /** {@inheritDoc} */
     @Override
-    public double cumulativeProbability(double x0, double x1)
+    public double probability(double x0,
+                              double x1)
         throws NumberIsTooLargeException {
         if (x0 > x1) {
             throw new NumberIsTooLargeException(LocalizedFormats.LOWER_ENDPOINT_ABOVE_UPPER_ENDPOINT,

@@ -28,7 +28,7 @@ import org.apache.commons.math3.random.Well19937c;
  * @see <a href="http://en.wikipedia.org/wiki/Uniform_distribution_(continuous)"
  * >Uniform distribution (continuous), at Wikipedia</a>
  *
- * @version $Id: UniformRealDistribution.java 1363604 2012-07-20 00:43:45Z erans $
+ * @version $Id: UniformRealDistribution.java 1382380 2012-09-08 22:15:32Z psteitz $
  * @since 3.0
  */
 public class UniformRealDistribution extends AbstractRealDistribution {
@@ -102,17 +102,6 @@ public class UniformRealDistribution extends AbstractRealDistribution {
         this.lower = lower;
         this.upper = upper;
         solverAbsoluteAccuracy = inverseCumAccuracy;
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * For this distribution {@code P(X = x)} always evaluates to 0.
-     *
-     * @return 0
-     */
-    public double probability(double x) {
-        return 0.0;
     }
 
     /** {@inheritDoc} */
@@ -192,7 +181,7 @@ public class UniformRealDistribution extends AbstractRealDistribution {
 
     /** {@inheritDoc} */
     public boolean isSupportUpperBoundInclusive() {
-        return false;
+        return true;
     }
 
     /**

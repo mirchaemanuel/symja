@@ -31,7 +31,7 @@ import org.apache.commons.math3.random.Well19937c;
  * @see <a href="http://en.wikipedia.org/wiki/Triangular_distribution">
  * Triangular distribution (Wikipedia)</a>
  *
- * @version $Id: TriangularDistribution.java 1363604 2012-07-20 00:43:45Z erans $
+ * @version $Id: TriangularDistribution.java 1369202 2012-08-03 20:50:33Z erans $
  * @since 3.0
  */
 public class TriangularDistribution extends AbstractRealDistribution {
@@ -124,17 +124,6 @@ public class TriangularDistribution extends AbstractRealDistribution {
     @Override
     protected double getSolverAbsoluteAccuracy() {
         return solverAbsoluteAccuracy;
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * For this distribution {@code P(X = x)} always evaluates to 0.
-     *
-     * @return 0
-     */
-    public double probability(double x) {
-        return 0;
     }
 
     /**

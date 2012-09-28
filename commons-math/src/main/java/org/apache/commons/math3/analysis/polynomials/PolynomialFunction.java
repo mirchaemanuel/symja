@@ -25,6 +25,8 @@ import org.apache.commons.math3.exception.NullArgumentException;
 import org.apache.commons.math3.analysis.DifferentiableUnivariateFunction;
 import org.apache.commons.math3.analysis.UnivariateFunction;
 import org.apache.commons.math3.analysis.ParametricUnivariateFunction;
+import org.apache.commons.math3.analysis.differentiation.DerivativeStructure;
+import org.apache.commons.math3.analysis.differentiation.UnivariateDifferentiableFunction;
 import org.apache.commons.math3.util.FastMath;
 import org.apache.commons.math3.util.MathUtils;
 
@@ -34,9 +36,9 @@ import org.apache.commons.math3.util.MathUtils;
  * <a href="http://mathworld.wolfram.com/HornersMethod.html">Horner's Method</a>
  * is used to evaluate the function.</p>
  *
- * @version $Id: PolynomialFunction.java 1364387 2012-07-22 18:14:11Z tn $
+ * @version $Id: PolynomialFunction.java 1383441 2012-09-11 14:56:39Z luc $
  */
-public class PolynomialFunction implements DifferentiableUnivariateFunction, Serializable {
+public class PolynomialFunction implements UnivariateDifferentiableFunction, DifferentiableUnivariateFunction, Serializable {
     /**
      * Serialization identifier
      */
@@ -133,6 +135,27 @@ public class PolynomialFunction implements DifferentiableUnivariateFunction, Ser
         double result = coefficients[n - 1];
         for (int j = n - 2; j >= 0; j--) {
             result = argument * result + coefficients[j];
+        }
+        return result;
+    }
+
+
+    /** {@inheritDoc}
+     * @since 3.1
+     * @throws NoDataException if {@code coefficients} is empty.
+     * @throws NullArgumentException if {@code coefficients} is {@code null}.
+     */
+    public DerivativeStructure value(final DerivativeStructure t)
+        throws NullArgumentException, NoDataException {
+        MathUtils.checkNotNull(coefficients);
+        int n = coefficients.length;
+        if (n == 0) {
+            throw new NoDataException(LocalizedFormats.EMPTY_POLYNOMIALS_COEFFICIENTS_ARRAY);
+        }
+        DerivativeStructure result =
+                new DerivativeStructure(t.getFreeParameters(), t.getOrder(), coefficients[n - 1]);
+        for (int j = n - 2; j >= 0; j--) {
+            result = result.multiply(t).add(coefficients[j]);
         }
         return result;
     }

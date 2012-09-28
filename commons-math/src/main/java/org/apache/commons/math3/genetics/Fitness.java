@@ -19,15 +19,13 @@ package org.apache.commons.math3.genetics;
 /**
  * Fitness of a chromosome.
  *
- * @version $Id: Fitness.java 1244107 2012-02-14 16:17:55Z erans $
+ * @version $Id: Fitness.java 1385284 2012-09-16 15:19:55Z tn $
  * @since 2.0
  */
 public interface Fitness {
 
     /**
-     * Compute the fitness. This is usually very time-consuming, so the value
-     * should be cached.
-     *
+     * Compute the fitness. This is usually very time-consuming, so the value should be cached.
      * @return fitness
      */
     double fitness();

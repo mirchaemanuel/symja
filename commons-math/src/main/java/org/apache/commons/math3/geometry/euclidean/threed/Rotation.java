@@ -19,6 +19,7 @@ package org.apache.commons.math3.geometry.euclidean.threed;
 
 import java.io.Serializable;
 
+import org.apache.commons.math3.exception.MathArithmeticException;
 import org.apache.commons.math3.exception.MathIllegalArgumentException;
 import org.apache.commons.math3.exception.util.LocalizedFormats;
 import org.apache.commons.math3.util.FastMath;
@@ -87,7 +88,7 @@ import org.apache.commons.math3.util.MathArrays;
  *
  * <p>Rotations are guaranteed to be immutable objects.</p>
  *
- * @version $Id: Rotation.java 1351265 2012-06-18 10:13:40Z luc $
+ * @version $Id: Rotation.java 1382887 2012-09-10 14:37:27Z luc $
  * @see Vector3D
  * @see RotationOrder
  * @since 1.2
@@ -171,7 +172,7 @@ public class Rotation implements Serializable {
    * @param angle rotation angle.
    * @exception MathIllegalArgumentException if the axis norm is zero
    */
-  public Rotation(Vector3D axis, double angle) {
+  public Rotation(Vector3D axis, double angle) throws MathIllegalArgumentException {
 
     double norm = axis.getNorm();
     if (norm == 0) {
@@ -266,11 +267,11 @@ public class Rotation implements Serializable {
    * @param u2 second vector of the origin pair
    * @param v1 desired image of u1 by the rotation
    * @param v2 desired image of u2 by the rotation
-   * @exception MathIllegalArgumentException if the norm of one of the vectors is zero,
+   * @exception MathArithmeticException if the norm of one of the vectors is zero,
    * or if one of the pair is degenerated (i.e. the vectors of the pair are colinear)
    */
   public Rotation(Vector3D u1, Vector3D u2, Vector3D v1, Vector3D v2)
-      throws MathIllegalArgumentException {
+      throws MathArithmeticException {
 
       // build orthonormalized base from u1, u2
       // this fails when vectors are null or colinear, which is forbidden to define a rotation
@@ -322,13 +323,13 @@ public class Rotation implements Serializable {
 
    * @param u origin vector
    * @param v desired image of u by the rotation
-   * @exception MathIllegalArgumentException if the norm of one of the vectors is zero
+   * @exception MathArithmeticException if the norm of one of the vectors is zero
    */
-  public Rotation(Vector3D u, Vector3D v) {
+  public Rotation(Vector3D u, Vector3D v) throws MathArithmeticException {
 
     double normProduct = u.getNorm() * v.getNorm();
     if (normProduct == 0) {
-        throw new MathIllegalArgumentException(LocalizedFormats.ZERO_NORM_FOR_ROTATION_DEFINING_VECTOR);
+        throw new MathArithmeticException(LocalizedFormats.ZERO_NORM_FOR_ROTATION_DEFINING_VECTOR);
     }
 
     double dot = u.dotProduct(v);
@@ -375,14 +376,14 @@ public class Rotation implements Serializable {
    */
   public Rotation(RotationOrder order,
                   double alpha1, double alpha2, double alpha3) {
-    Rotation r1 = new Rotation(order.getA1(), alpha1);
-    Rotation r2 = new Rotation(order.getA2(), alpha2);
-    Rotation r3 = new Rotation(order.getA3(), alpha3);
-    Rotation composed = r1.applyTo(r2.applyTo(r3));
-    q0 = composed.q0;
-    q1 = composed.q1;
-    q2 = composed.q2;
-    q3 = composed.q3;
+      Rotation r1 = new Rotation(order.getA1(), alpha1);
+      Rotation r2 = new Rotation(order.getA2(), alpha2);
+      Rotation r3 = new Rotation(order.getA3(), alpha3);
+      Rotation composed = r1.applyTo(r2.applyTo(r3));
+      q0 = composed.q0;
+      q1 = composed.q1;
+      q2 = composed.q2;
+      q3 = composed.q3;
   }
 
   /** Convert an orthogonal rotation matrix to a quaternion.

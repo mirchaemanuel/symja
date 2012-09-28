@@ -29,7 +29,7 @@ import org.apache.commons.math3.random.Well19937c;
  *
  * @see <a href="http://en.wikipedia.org/wiki/F-distribution">F-distribution (Wikipedia)</a>
  * @see <a href="http://mathworld.wolfram.com/F-Distribution.html">F-distribution (MathWorld)</a>
- * @version $Id: FDistribution.java 1363604 2012-07-20 00:43:45Z erans $
+ * @version $Id: FDistribution.java 1382380 2012-09-08 22:15:32Z psteitz $
  */
 public class FDistribution extends AbstractRealDistribution {
     /**
@@ -118,17 +118,6 @@ public class FDistribution extends AbstractRealDistribution {
         this.numeratorDegreesOfFreedom = numeratorDegreesOfFreedom;
         this.denominatorDegreesOfFreedom = denominatorDegreesOfFreedom;
         solverAbsoluteAccuracy = inverseCumAccuracy;
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * For this distribution {@code P(X = x)} always evaluates to 0.
-     *
-     * @return 0
-     */
-    public double probability(double x) {
-        return 0.0;
     }
 
     /**
@@ -283,7 +272,7 @@ public class FDistribution extends AbstractRealDistribution {
 
     /** {@inheritDoc} */
     public boolean isSupportLowerBoundInclusive() {
-        return true;
+        return false;
     }
 
     /** {@inheritDoc} */

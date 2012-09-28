@@ -44,7 +44,7 @@ import org.apache.commons.math3.exception.MathInternalError;
  * implementation.</p>
  *
  * @since 3.0
- * @version $Id: BaseSecantSolver.java 1364387 2012-07-22 18:14:11Z tn $
+ * @version $Id: BaseSecantSolver.java 1379560 2012-08-31 19:40:30Z erans $
  */
 public abstract class BaseSecantSolver
     extends AbstractUnivariateSolver
@@ -125,9 +125,16 @@ public abstract class BaseSecantSolver
         return solve(maxEval, f, min, max, startValue, AllowedSolution.ANY_SIDE);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     *
+     * @throws ConvergenceException if the algorithm failed due to finite
+     * precision.
+     */
     @Override
-    protected final double doSolve() {
+    protected final double doSolve()
+        throws ConvergenceException,
+               MathInternalError {
         // Get initial solution
         double x0 = getMin();
         double x1 = getMax();

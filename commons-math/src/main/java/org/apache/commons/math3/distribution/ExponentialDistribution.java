@@ -30,7 +30,7 @@ import org.apache.commons.math3.random.Well19937c;
  *
  * @see <a href="http://en.wikipedia.org/wiki/Exponential_distribution">Exponential distribution (Wikipedia)</a>
  * @see <a href="http://mathworld.wolfram.com/ExponentialDistribution.html">Exponential distribution (MathWorld)</a>
- * @version $Id: ExponentialDistribution.java 1363604 2012-07-20 00:43:45Z erans $
+ * @version $Id: ExponentialDistribution.java 1369202 2012-08-03 20:50:33Z erans $
  */
 public class ExponentialDistribution extends AbstractRealDistribution {
     /**
@@ -141,17 +141,6 @@ public class ExponentialDistribution extends AbstractRealDistribution {
      */
     public double getMean() {
         return mean;
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * For this distribution {@code P(X = x)} always evaluates to 0.
-     *
-     * @return 0
-     */
-    public double probability(double x) {
-        return 0.0;
     }
 
     /** {@inheritDoc} */
