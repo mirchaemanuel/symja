@@ -564,8 +564,7 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 			final int attr = symbol.getAttributes();
 			if ((ISymbol.HOLDALL & attr) == ISymbol.HOLDALL) {
 				// check for Set or SetDelayed necessary, because of dynamic
-				// evaluation
-				// then initializing rules for predefined symbols (i.e. Sin,
+				// evaluation then initializing rules for predefined symbols (i.e. Sin,
 				// Cos,...)
 				if (!(symbol.equals(F.Set) || symbol.equals(F.SetDelayed))) {
 					return null;
@@ -578,8 +577,8 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 		}
 
 		if (!symbol.equals(F.Integrate)) {
-			IExpr result = symbol.evalDownRule(this, ast);
-			if (result != null) {
+			IExpr result;
+			if ((result = symbol.evalDownRule(this, ast)) != null) {
 				return result;
 			}
 		}
