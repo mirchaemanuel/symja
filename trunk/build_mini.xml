@@ -37,7 +37,7 @@
             <exclude name="**/*.java"/>
           </patternset>
 		</unjar>
-		<unjar src="lib/google-collect-1.0.jar" dest="${classes.dir}"> 
+		<unjar src="lib/guava-11.0.jar" dest="${classes.dir}"> 
 		  <patternset>
             <exclude name="**/*.java"/>
           </patternset>
