@@ -231,8 +231,9 @@ public class JASConvert<C extends RingElem<C>> {
 		BigRational nr = new BigRational(n);
 		BigRational dr = new BigRational(d);
 		BigRational r = nr.divide(dr);
-		if (fRingFactory instanceof ComplexRing<?>) {
-			Complex<BigRational> c = new Complex<BigRational>((ComplexRing<BigRational>)fRingFactory, r);
+		if (fRingFactory instanceof ComplexRing) {
+			ComplexRing ring = (ComplexRing)fRingFactory;
+			Complex<BigRational> c = new Complex<BigRational>(ring, r);
 			return new GenPolynomial(fPolyFactory, c);
 		} else {
 			return new GenPolynomial(fPolyFactory, r);
