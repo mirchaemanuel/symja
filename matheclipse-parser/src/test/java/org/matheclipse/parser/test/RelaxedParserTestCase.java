@@ -26,7 +26,7 @@ public class RelaxedParserTestCase extends TestCase {
 	public void testParser1() {
 		try {
 			Parser p = new Parser(true);
-			Object obj = p.parse("a()(0)(1)f[x]");
+			Object obj = p.parse("a()(0)(1)f[[x]]");
 			assertEquals(obj.toString(), "Times[a[][0][1], Part[f, x]]");
 		} catch (Exception e) {
 			e.printStackTrace();
