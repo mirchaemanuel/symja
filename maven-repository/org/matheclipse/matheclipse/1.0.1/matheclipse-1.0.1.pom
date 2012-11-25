@@ -15,7 +15,7 @@
 		<connection>
 			scm:svn:http://symja.googlecode.com/svn/trunk/
 		</connection>
-		<developerConnection>
+		<developerConnection> 
 			scm:svn:https://symja.googlecode.com/svn/trunk/
 		</developerConnection>
 		<tag>HEAD</tag>
