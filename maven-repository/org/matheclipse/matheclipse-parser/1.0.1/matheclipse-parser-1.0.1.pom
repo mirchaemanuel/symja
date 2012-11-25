@@ -14,8 +14,8 @@
 	<description> This is the parser project of the MathEclipse system.</description>
 	<licenses>
 		<license>
-			<name>Apache License Version 2.0 </name>
-			<url>http://www.apache.org/licenses/LICENSE-2.0</url>
+			<name>The Apache Software License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
 			<distribution>repo</distribution>
 		</license>
 	</licenses>
