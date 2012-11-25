@@ -13,13 +13,10 @@
 	</organization>
 	<scm>
 		<connection>
-			scm:svn:http://symja.googlecode.com/svn/trunk/
+			scm:git:https://bitbucket.org/axelclk/symja.modules
 		</connection>
-		<developerConnection> 
-			scm:svn:https://symja.googlecode.com/svn/trunk/
-		</developerConnection>
 		<tag>HEAD</tag>
-		<url>http://code.google.com/p/symja/source/browse/</url>
+		<url>https://bitbucket.org/axelclk/symja.modules/src</url>
 	</scm>
 	<issueManagement>
 		<system>Google Code</system>
