@@ -1424,6 +1424,21 @@ public class AST extends NestedFastTable<IExpr> implements IAST {
 		return ast;
 	}
 
+	public static AST newInstance(final ISymbol symbol, final org.apache.commons.math3.complex.Complex[] arr) {
+		// AST ast;
+		// if (Config.SERVER_MODE) {
+		// ast = FACTORY.object();
+		// } else {
+		// ast = new AST(5, false);
+		// }
+		AST ast = new AST(5, false);
+		ast.add(symbol);
+		for (int i = 1; i <= arr.length; i++) {
+			ast.add(i, ComplexNum.valueOf(arr[i - 1].getReal(),arr[i - 1].getImaginary()));
+		}
+		return ast;
+	}
+
 	/**
 	 * Constructs a list with header <i>symbol</i> and the arguments containing
 	 * the given DoubleImpl matrix values as <i>List</i> rows
