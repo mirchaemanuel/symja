@@ -46,9 +46,10 @@ public class Object2Expr { // extends Converter<Object, IExpr> {
 	 * java.util.List       0-th element of the list gives the head of the function 
 	 *                      1..nth element of the list give the arguments of the function
 	 * Object[]             a list of converted objects  
-	 * int[]                a list of Integer values
-	 * double[]             a list of Double values
+	 * int[]                a list of <code>IntegerSym</code>Integer values
+	 * double[]             a list of <code>Num</code> values
 	 * double[][]           a matrix (i.e. nested lists) of Double values
+	 * Complex[]            a list of <code>ComplexNum</code> values
 	 * boolean[]            a list of True or False symbols
 	 * 
 	 * </pre>
@@ -126,6 +127,9 @@ public class Object2Expr { // extends Converter<Object, IExpr> {
 			}
 			return list;
 		}
+		if (obj instanceof org.apache.commons.math3.complex.Complex[]) {
+			return AST.newInstance(F.List, (org.apache.commons.math3.complex.Complex[]) obj);
+		}
 		if (obj instanceof boolean[]) {
 			final IAST list = List();
 			final boolean[] array = (boolean[]) obj;
@@ -139,5 +143,9 @@ public class Object2Expr { // extends Converter<Object, IExpr> {
 			return list;
 		}
 		return F.stringx(obj.toString());
+	}
+
+	public static IExpr convertComplex(org.apache.commons.math3.complex.Complex[] array) throws ConversionException {
+		return AST.newInstance(F.List, array);
 	}
 }
