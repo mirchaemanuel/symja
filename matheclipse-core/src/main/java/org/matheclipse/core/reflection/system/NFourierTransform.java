@@ -33,16 +33,11 @@ public class NFourierTransform extends AbstractFunctionEvaluator {
 				// analyze the parameters, if they are correct
 			}
 		}
-		
-		// uncomment this for an example 
 
-		// UnivariateFunction f = new UnaryNumerical(expr, t, EvalEngine.get());
-		// FastFourierTransformer fft = new
-		// FastFourierTransformer(DftNormalization.STANDARD);
-		// org.apache.commons.math3.complex.Complex[] result = fft.transform(f,
-		// -1.0, 1.0, 8, TransformType.FORWARD);
-		// return Object2Expr.convertComplex(result);
-		return null; // leave unevaluated
+		UnivariateFunction f = new UnaryNumerical(expr, t, EvalEngine.get());
+		FastFourierTransformer fft = new FastFourierTransformer(DftNormalization.STANDARD);
+		org.apache.commons.math3.complex.Complex[] result = fft.transform(f, -1.0, 1.0, 8, TransformType.FORWARD);
+		return Object2Expr.convertComplex(result);
 	}
 
 	@Override
