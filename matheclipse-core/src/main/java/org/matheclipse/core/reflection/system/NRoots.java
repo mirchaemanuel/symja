@@ -25,7 +25,7 @@ public class NRoots extends Roots {
     if (ast.size() != 2) {
       return null;
     }
-    IExpr temp = roots(ast);
+    IExpr temp = roots(ast, true);
     if (temp == null || !temp.isList()) {
       return null;
     }

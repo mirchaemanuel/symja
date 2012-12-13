@@ -62,11 +62,10 @@ public class Roots extends AbstractFunctionEvaluator {
 		if (ast.size() != 2) {
 			return null;
 		}
-		return roots(ast);
+		return roots(ast, false);
 	}
 
-	protected static IAST roots(final IAST ast) {
-
+	protected static IAST roots(final IAST ast, boolean numericSolutions) {
 		ExprVariables eVar = new ExprVariables(ast.get(1));
 		if (!eVar.isSize(1)) {
 			// factor only possible for univariate polynomials
@@ -85,7 +84,7 @@ public class Roots extends AbstractFunctionEvaluator {
 				expr = F.eval(F.Numerator(expr));
 			}
 		}
-		return rootsOfVariable(expr, denom, variables, false);
+		return rootsOfVariable(expr, denom, variables, numericSolutions);
 	}
 
 	protected static IAST rootsOfVariable(final IExpr expr, final IExpr denom, final IAST variables, boolean numericSolutions) {
@@ -305,31 +304,31 @@ public class Roots extends AbstractFunctionEvaluator {
 						result.add(Times(rev2a, Plus(b.negate(), sqrt.negative())));
 					}
 				}
-			} else if (varDegree <= 3) {
-				iPoly = iPoly.monic();
-				// solve Cubic equation: x^3 + a*x^2 + b*x + c = 0
-				a = C0;
-				b = C0;
-				c = C0;
-				for (Monomial<edu.jas.arith.BigInteger> monomial : iPoly) {
-					edu.jas.arith.BigInteger coeff = monomial.coefficient();
-					long lExp = monomial.exponent().getVal(0);
-					if (lExp == 2) {
-						a = integer(coeff.getVal());
-					} else if (lExp == 1) {
-						b = integer(coeff.getVal());
-					} else if (lExp == 0) {
-						c = integer(coeff.getVal());
-					} else if (lExp == 3) {
-						if (!coeff.equals(edu.jas.arith.BigInteger.ONE)) {
-							throw new ArithmeticException("Roots::Solution for cubic equation with leading coefficient: \"" + coeff.toString()
-									+ "\" != 1 currently not implemented: ");
-						}
-					} else {
-						throw new ArithmeticException("Roots::Unexpected exponent value: " + lExp);
-					}
-				}
-				cubicSolution(result, F.C1, a, b, c);
+//			} else if (varDegree <= 3) {
+//				iPoly = iPoly.monic();
+//				// solve Cubic equation: x^3 + a*x^2 + b*x + c = 0
+//				a = C0;
+//				b = C0;
+//				c = C0;
+//				for (Monomial<edu.jas.arith.BigInteger> monomial : iPoly) {
+//					edu.jas.arith.BigInteger coeff = monomial.coefficient();
+//					long lExp = monomial.exponent().getVal(0);
+//					if (lExp == 2) {
+//						a = integer(coeff.getVal());
+//					} else if (lExp == 1) {
+//						b = integer(coeff.getVal());
+//					} else if (lExp == 0) {
+//						c = integer(coeff.getVal());
+//					} else if (lExp == 3) {
+//						if (!coeff.equals(edu.jas.arith.BigInteger.ONE)) {
+//							throw new ArithmeticException("Roots::Solution for cubic equation with leading coefficient: \"" + coeff.toString()
+//									+ "\" != 1 currently not implemented: ");
+//						}
+//					} else {
+//						throw new ArithmeticException("Roots::Unexpected exponent value: " + lExp);
+//					}
+//				}
+//				cubicSolution(result, F.C1, a, b, c);
 			} else {
 				IExpr temp = Power(jas.integerPoly2Expr(iPoly), integer(val));
 				if (!numericSolutions) {
