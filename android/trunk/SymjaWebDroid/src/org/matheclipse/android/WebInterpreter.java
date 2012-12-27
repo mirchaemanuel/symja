@@ -8,6 +8,7 @@ import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 
 import org.matheclipse.parser.client.Parser;
+import org.matheclipse.parser.client.SyntaxError;
 
 import com.google.api.client.extensions.android2.AndroidHttp;
 import com.google.api.client.http.ByteArrayContent;
@@ -18,7 +19,7 @@ import com.google.api.client.http.HttpResponse;
 import com.google.api.client.http.HttpTransport;
 
 /**
- * Evaluate a symja expression through the web interface
+ * Evaluate a Symja expression through the web interface
  * 
  */
 public class WebInterpreter {
@@ -46,6 +47,7 @@ public class WebInterpreter {
 		url.put("evaluate", strEval);
 		HttpRequest request;
 		final StringBuffer buf = new StringBuffer();
+		BufferedReader output = null;
 		try {
 			// final UrlEncodedContent content = new UrlEncodedContent(null);
 			// request = rf.buildGetRequest(url);
@@ -57,11 +59,12 @@ public class WebInterpreter {
 			// headers.setContentType("plain/text");
 			// request.setHeaders(headers);
 			HttpResponse shortUrl = request.execute();
-			BufferedReader output = new BufferedReader(new InputStreamReader(shortUrl.getContent()));
+			output = new BufferedReader(new InputStreamReader(shortUrl.getContent()));
 
 			for (String line = output.readLine(); line != null; line = output.readLine()) {
 				buf.append(line);
 			}
+
 			String resultStr = buf.toString();
 
 			int index1 = resultStr.indexOf(';');
@@ -82,6 +85,14 @@ public class WebInterpreter {
 			printException(buf, e);
 		} catch (IOException e) {
 			printException(buf, e);
+		} finally {
+			if (output != null) {
+				try {
+					output.close();
+				} catch (IOException e) {
+					printException(buf, e);
+				}
+			}
 		}
 		return buf.toString();
 	}
@@ -95,16 +106,37 @@ public class WebInterpreter {
 		}
 	}
 
-	public void eval() {
+	public void eval(final String function) {
+		String evalStr = codeString;
 		try {
-			Parser p = new Parser();
+			Parser p = new Parser(true);
 			// throws SyntaxError exception, if syntax isn't valid
-			p.parse(codeString);
+			if (function != null) {
+				evalStr = function + "(" + codeString + ")";
+				p.parse(evalStr);
+			} else {
+				p.parse(evalStr);
+			}
+		} catch (SyntaxError e1) {
+			try {
+				Parser p = new Parser();
+				// throws SyntaxError exception, if syntax isn't valid
+				if (function != null) {
+					evalStr = function + "[" + codeString + "]";
+					p.parse(evalStr);
+				} else {
+					p.parse(evalStr);
+				}
+			} catch (Exception e2) {
+				outStream.println(e2.getMessage());
+				return;
+			}
 		} catch (Exception e) {
 			outStream.println(e.getMessage());
 			return;
 		}
-		String result = interpreter(codeString);
-		outStream.println(result);
+		String result = "";
+		result = interpreter(evalStr);
+		outStream.print(result);
 	}
 }

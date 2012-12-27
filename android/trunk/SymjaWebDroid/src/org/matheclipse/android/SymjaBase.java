@@ -37,7 +37,7 @@ public class SymjaBase extends Activity {
 		super.onCreate(savedInstanceState);
 
 		_myKeyboardView = (KeyboardViewExtend) findViewById(R.id.keyboard);
-		
+
 		// get a handle on and configure the input and text fields
 		_txtInput = (EditTextExtend) findViewById(R.id.txt_input);
 		_txtInput.setTextSize(TextSize.NORMAL);
@@ -152,7 +152,7 @@ public class SymjaBase extends Activity {
 	}
 
 	public void handleBackButton() {
-  }
+	}
 
 	public void enableKeyboardVisibility() {
 		int visibility = _myKeyboardView.getVisibility();
@@ -238,7 +238,7 @@ public class SymjaBase extends Activity {
 		}
 		if (textToInsert.endsWith("()") || textToInsert.endsWith("[]")) {
 			_suggestionCursorPos = reverse + textToInsert.length() - 1;
-		} else if (textToInsert.endsWith("[,x]")) {
+		} else if (textToInsert.endsWith("(,x)") || textToInsert.endsWith("[,x]")) {
 			_suggestionCursorPos = reverse + textToInsert.length() - 3;
 		} else {
 			_suggestionCursorPos = reverse + textToInsert.length();

@@ -66,6 +66,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 /**
  * Main Symja activity.
@@ -158,7 +159,7 @@ public class SymjaActivity extends SymjaBase implements View.OnClickListener {
 		});
 
 		// show the startup about banner
-		showAbout();
+		// showAbout();
 
 		// and let the interpreter show a little sample
 		// String DSin = "D[Sin[x]^2,x]";
@@ -247,9 +248,7 @@ public class SymjaActivity extends SymjaBase implements View.OnClickListener {
 	}
 
 	/**
-	 * Start up our script engine with a copyright notice. This also demonstrates
-	 * the general principle of reusing the BASIC interpreter by passing commands
-	 * into the input stream and letting it do the work.
+	 * Start up our script engine with a copyright notice.  
 	 */
 	protected void showAbout() {
 		writeOutput("Symja - Computer Algebra System");
@@ -294,10 +293,12 @@ public class SymjaActivity extends SymjaBase implements View.OnClickListener {
 		String codeString = _txtInput.getText().toString();
 		switch (v.getId()) {
 		case R.id.cmd_sym:
-			new EvalCodeStringAsyncTask().execute(codeString);
+			new EvalCodeStringAsyncTask(null).execute(codeString);
+			Toast.makeText(SymjaActivity.this, "Symbolic evaluation requested\nfrom symjaweb.appspot.com", Toast.LENGTH_SHORT).show();
 			break;
 		case R.id.cmd_num:
-			new EvalCodeStringAsyncTask().execute("N[" + codeString + "]");
+			new EvalCodeStringAsyncTask("N").execute(codeString);
+			Toast.makeText(SymjaActivity.this, "Numeric evaluation requested\nfrom symjaweb.appspot.com", Toast.LENGTH_SHORT).show();
 			break;
 		case R.id.cmd_load_scratch:
 			loadScratchFiles();
@@ -457,20 +458,20 @@ public class SymjaActivity extends SymjaBase implements View.OnClickListener {
 	 * @return The result of the evaluation drawn off the interpreter output
 	 *         stream.
 	 */
-	protected String evalCodeStringSync(String codeString) {
-		Log.d(TAG, "evalCodeStringSync(): " + codeString);
-		// invoke eval bypassing use of an EvalCodeStringAsyncTask instance
-		String result = evalCodeString(codeString);
-		if (0 == result.length() || "".equals(result.trim())) {
-			result = "-- null or empty result --";
-		}
-		writeOutput(result);
-		// also place on input area since the user might not have entered this
-		// the method might have been initiated by code and not by the Enter
-		// button
-		_txtInput.setText(codeString);
-		return result;
-	}
+	// protected String evalCodeStringSync(String codeString) {
+	// Log.d(TAG, "evalCodeStringSync(): " + codeString);
+	// // invoke eval bypassing use of an EvalCodeStringAsyncTask instance
+	// String result = evalCodeString(codeString, null);
+	// if (0 == result.length() || "".equals(result.trim())) {
+	// result = "-- null or empty result --";
+	// }
+	// writeOutput(result);
+	// // also place on input area since the user might not have entered this
+	// // the method might have been initiated by code and not by the Enter
+	// // button
+	// _txtInput.setText(codeString);
+	// return result;
+	// }
 
 	/**
 	 * Interpret and execute (evaluate) the given code fragment. It is invoked by
@@ -480,7 +481,7 @@ public class SymjaActivity extends SymjaBase implements View.OnClickListener {
 	 * @return The result of the evaluation drawn off the interpreter output
 	 *         stream.
 	 */
-	protected String evalCodeString(String codeString) {
+	protected String evalCodeString(final String codeString, final String function) {
 		Log.d(TAG, "evalCodeString(): " + codeString);
 
 		_txtInputHistory.add(0, codeString);
@@ -500,9 +501,9 @@ public class SymjaActivity extends SymjaBase implements View.OnClickListener {
 			// buffer
 			_commandInterpreter = new WebInterpreter(codeString, _outputStream);
 			try {
-				_commandInterpreter.eval();
+				_commandInterpreter.eval(function);
 				// extract the resulting text output from the stream
-				result = stringFromOutputStream(_outputStream);
+				result = stringFromOutputStream(_outputStream); 
 			} catch (Throwable t) {
 				Log.e(TAG, String.format("evalCodeString(): UNSUPPORTED OPERATION!\n[\n%s\n]\n%s", codeString, t.toString()), t);
 				result = ("UNSUPPORTED OPERATION!\n[\n" + codeString + "\n]\n" + t.toString());
@@ -533,11 +534,17 @@ public class SymjaActivity extends SymjaBase implements View.OnClickListener {
 	 * android.os.AsyncTask<Params, Progress, Result>
 	 */
 	protected class EvalCodeStringAsyncTask extends AsyncTask<String, Integer, String> {
+		final String fFunction;
+
+		public EvalCodeStringAsyncTask(String function) {
+			fFunction = function;
+		}
+
 		protected String doInBackground(String... codeString) {
 			String result = "";
 			publishProgress((int) (10)); // just to demonstrate how
 			Log.d(TAG, "doInBackground() [code]: \n" + codeString[0]);
-			result = evalCodeString(codeString[0]);
+			result = evalCodeString(codeString[0], fFunction);
 			Log.d(TAG, "doInBackground() [eval]: \n" + result);
 			publishProgress((int) (100)); // just to demonstrate how
 			return result;

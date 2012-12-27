@@ -118,7 +118,7 @@ public class CandidateView extends View {
 			"TimesBy", "Timing", "ToCharacterCode", "Together", "ToString", "Total", "ToUnicode", "Tr", "Trace", "Transpose",
 			"TrigReduce", "TrigToExp", "TrueQ", "Trunc", "Unequal", "Union", "UnsameQ", "UpperCaseQ", "ValueQ", "VandermondeMatrix",
 			"Variables", "VectorQ", "While" };
-	public static String[] CONSTANTS = { "D[,x]", "Degree", "E", "False", "I", "Integrate[,x]", "Null", "Pi", "True" };
+	public static String[] CONSTANTS = { "D(,x)", "Degree", "E", "False", "I", "Integrate(,x)", "Null", "Pi", "True" };
 	public static List<String> mPossibleCompletions = new ArrayList<String>();
 	public static List<String> mPossibleCompletionsRsrvd = new ArrayList<String>();
 
@@ -320,7 +320,7 @@ public class CandidateView extends View {
 				tempString = (String) completionIterator.next();
 				if (tempString.toLowerCase().startsWith(partialText)) {
 					// mSuggestions.add(tempString);
-					mSuggestions.add(tempString + "[]");
+					mSuggestions.add(tempString + "()");
 					setVisibility(View.VISIBLE);
 				}
 			}

@@ -13,12 +13,13 @@
 
     <org.matheclipse.android.EditTextExtend
         android:id="@+id/txt_input"
-        android:inputType="none"
-        android:imeOptions="actionDone"
+        style="?android:attr/textViewStyle"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="top"
-        android:scrollbars="vertical" >
+        android:imeOptions="actionDone"
+        android:inputType="none" 
+        android:textSize="16sp" >
     </org.matheclipse.android.EditTextExtend>
 
     <LinearLayout
@@ -30,42 +31,42 @@
 
         <LinearLayout
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="36dip"
             android:background="@android:drawable/bottom_bar"
             android:gravity="center_vertical" >
 
             <Button
                 android:id="@+id/cmd_sym"
                 android:layout_width="0dip"
-                android:layout_height="wrap_content"
+                android:layout_height="35dip"
                 android:layout_weight="1.0"
                 android:text="Sym" />
 
             <Button
                 android:id="@+id/cmd_num"
                 android:layout_width="0dip"
-                android:layout_height="wrap_content"
+                android:layout_height="35dip"
                 android:layout_weight="1.0"
                 android:text="Num" />
 
             <Button
                 android:id="@+id/cmd_load_scratch"
                 android:layout_width="0dip"
-                android:layout_height="wrap_content"
+                android:layout_height="35dip"
                 android:layout_weight="1.0"
                 android:text="Load" />
 
             <Button
                 android:id="@+id/cmd_save_scratch"
                 android:layout_width="0dip"
-                android:layout_height="wrap_content"
+                android:layout_height="35dip"
                 android:layout_weight="1.0"
                 android:text="Save" />
 
             <Button
                 android:id="@+id/cmd_clear"
                 android:layout_width="0dip"
-                android:layout_height="wrap_content"
+                android:layout_height="35dip"
                 android:layout_weight="1.0"
                 android:text="Clear" />
         </LinearLayout>
@@ -74,7 +75,8 @@
             android:id="@+id/txt_output"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:scrollbars="vertical" >
+            android:scrollbars="vertical"
+            android:textSize="16sp" >
         </TextView>
     </LinearLayout>
 
@@ -83,7 +85,8 @@
         android:layout_width="fill_parent"
         android:layout_height="0dip"
         android:layout_weight="1"
-        android:scrollbars="vertical" />
+        android:listSelector="@android:color/transparent"
+        android:transcriptMode="alwaysScroll" />
 
     <org.matheclipse.android.KeyboardViewExtend
         android:id="@+id/keyboard"

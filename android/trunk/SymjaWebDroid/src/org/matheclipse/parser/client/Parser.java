@@ -687,63 +687,62 @@ public class Parser extends Scanner {
 		ASTNode temp = getFactor();
 		temp = parseArguments(temp);
 
-		if (fRelaxedSyntax) {
-			if (fToken != TT_ARGUMENTS_OPEN) {
-				return temp;
-			}
-		} else {
-			if (fToken != TT_PARTOPEN) {
-				return temp;
-			}
+		// if (fRelaxedSyntax) {
+		// if (fToken != TT_ARGUMENTS_OPEN) {
+		// return temp;
+		// }
+		// } else {
+		if (fToken != TT_PARTOPEN) {
+			return temp;
 		}
+		// }
 
 		FunctionNode function = null;
 
 		do {
 			if (function == null) {
 				function = fFactory.createFunction(fFactory.createSymbol(IConstantOperators.Part), temp);
-				// function.add(temp);
 			} else {
 				function = fFactory.createFunction(fFactory.createSymbol(IConstantOperators.Part), function);
 			}
 			do {
 				getNextToken();
-				if (fRelaxedSyntax) {
-					if (fToken == TT_ARGUMENTS_CLOSE) {
-						throwSyntaxError("Statement (i.e. index) expected in [ ].");
-					}
-				} else {
-					if (fToken == TT_PARTCLOSE) {
-						throwSyntaxError("Statement (i.e. index) expected in [[ ]].");
-					}
+				// if (fRelaxedSyntax) {
+				// if (fToken == TT_ARGUMENTS_CLOSE) {
+				// throwSyntaxError("Statement (i.e. index) expected in [ ].");
+				// }
+				// } else {
+				if (fToken == TT_PARTCLOSE) {
+					throwSyntaxError("Statement (i.e. index) expected in [[ ]].");
 				}
+				// }
 
 				function.add(parseOperators(parsePrimary(), 0));
 			} while (fToken == TT_COMMA);
 
-			if (fRelaxedSyntax) {
-				// no action
-			} else {
-				if (fToken == TT_ARGUMENTS_CLOSE) {
-					// scanner-step begin: (instead of getNextToken() call):
-					if (fInputString.length() > fCurrentPosition) {
-						if (fInputString.charAt(fCurrentPosition) == ']') {
-							fCurrentPosition++;
-							fToken = TT_PARTCLOSE;
-						}
+			// if (fRelaxedSyntax) {
+			// // no action
+			// } else {
+			if (fToken == TT_ARGUMENTS_CLOSE) {
+				// scanner-step begin: (instead of getNextToken() call):
+				if (fInputString.length() > fCurrentPosition) {
+					if (fInputString.charAt(fCurrentPosition) == ']') {
+						fCurrentPosition++;
+						fToken = TT_PARTCLOSE;
 					}
-					// scanner-step end
 				}
+				// scanner-step end
 			}
-			if (fRelaxedSyntax) {
-				if (fToken != TT_ARGUMENTS_CLOSE) {
-					throwSyntaxError("']' expected.");
-				}
-			} else {
-				if (fToken != TT_PARTCLOSE) {
-					throwSyntaxError("']]' expected.");
-				}
+			// }
+			// if (fRelaxedSyntax) {
+			// if (fToken != TT_ARGUMENTS_CLOSE) {
+			// throwSyntaxError("']' expected.");
+			// }
+			// } else {
+			if (fToken != TT_PARTCLOSE) {
+				throwSyntaxError("']]' expected.");
 			}
+			// }
 			getNextToken();
 		} while (fToken == TT_PARTOPEN);
 
