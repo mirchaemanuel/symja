@@ -27,7 +27,7 @@ import org.matheclipse.parser.client.ast.SymbolNode;
  * Converts a parsed <code>org.matheclipse.parser.client.ast.ASTNode</code>
  * expression into an IExpr expression
  * 
- */
+ */  
 public class AST2Expr {
 
 	public static final String[] PREDEFINED_SYMBOLS = { "True", "False", "List", "Modulus", "Flat", "HoldAll", "HoldFirst",
