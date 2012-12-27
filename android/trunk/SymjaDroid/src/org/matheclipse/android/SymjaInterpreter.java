@@ -73,6 +73,6 @@ public class SymjaInterpreter {
 
 	public void eval() {
 		String result = interpreter(codeString);
-		outStream.println(result);
+		outStream.print(result);
 	}
 }

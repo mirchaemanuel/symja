@@ -75,7 +75,7 @@ import android.widget.TextView;
 public class SymjaActivity extends SymjaBase implements View.OnClickListener {
 	protected static final String TAG = "SymjaActivity";
 
-	protected EditText _txtOutput = null;
+	protected TextView _txtOutput = null;
 	protected Button _symEnter = null;
 	protected Button _numEnter = null;
 	protected Button _cmdLoadScratch = null;
@@ -115,8 +115,8 @@ public class SymjaActivity extends SymjaBase implements View.OnClickListener {
 		// set a custom title from the strings table
 		setTitle(getString(R.string.app_desc));
 
-		_txtOutput = (EditText) findViewById(R.id.txt_output);
-		_txtOutput.setTextSize(TextSize.NORMAL);
+		_txtOutput = (TextView) findViewById(R.id.txt_output);
+		_txtOutput.setTextSize(TextSize.NORMAL); 
 		_txtOutput.setTypeface(Typeface.MONOSPACE);
 		_txtOutput.setTextColor(Color.GREEN);
 		_txtOutput.setBackgroundColor(Color.DKGRAY);
