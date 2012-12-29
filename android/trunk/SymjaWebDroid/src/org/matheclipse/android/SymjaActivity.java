@@ -49,6 +49,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -63,7 +65,6 @@ import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -248,7 +249,7 @@ public class SymjaActivity extends SymjaBase implements View.OnClickListener {
 	}
 
 	/**
-	 * Start up our script engine with a copyright notice.  
+	 * Start up our script engine with a copyright notice.
 	 */
 	protected void showAbout() {
 		writeOutput("Symja - Computer Algebra System");
@@ -293,12 +294,20 @@ public class SymjaActivity extends SymjaBase implements View.OnClickListener {
 		String codeString = _txtInput.getText().toString();
 		switch (v.getId()) {
 		case R.id.cmd_sym:
-			new EvalCodeStringAsyncTask(null).execute(codeString);
-			Toast.makeText(SymjaActivity.this, "Symbolic evaluation requested\nfrom symjaweb.appspot.com", Toast.LENGTH_SHORT).show();
+			if (isNetworkAvailable()) {
+				new EvalCodeStringAsyncTask(null).execute(codeString);
+				Toast.makeText(SymjaActivity.this, "Symbolic evaluation requested\nfrom symjaweb.appspot.com", Toast.LENGTH_SHORT).show();
+			} else {
+				Toast.makeText(SymjaActivity.this, "No network available", Toast.LENGTH_LONG).show();
+			}
 			break;
 		case R.id.cmd_num:
-			new EvalCodeStringAsyncTask("N").execute(codeString);
-			Toast.makeText(SymjaActivity.this, "Numeric evaluation requested\nfrom symjaweb.appspot.com", Toast.LENGTH_SHORT).show();
+			if (isNetworkAvailable()) {
+				new EvalCodeStringAsyncTask("N").execute(codeString);
+				Toast.makeText(SymjaActivity.this, "Numeric evaluation requested\nfrom symjaweb.appspot.com", Toast.LENGTH_SHORT).show();
+			} else {
+				Toast.makeText(SymjaActivity.this, "No network available", Toast.LENGTH_LONG).show();
+			}
 			break;
 		case R.id.cmd_load_scratch:
 			loadScratchFiles();
@@ -503,7 +512,7 @@ public class SymjaActivity extends SymjaBase implements View.OnClickListener {
 			try {
 				_commandInterpreter.eval(function);
 				// extract the resulting text output from the stream
-				result = stringFromOutputStream(_outputStream); 
+				result = stringFromOutputStream(_outputStream);
 			} catch (Throwable t) {
 				Log.e(TAG, String.format("evalCodeString(): UNSUPPORTED OPERATION!\n[\n%s\n]\n%s", codeString, t.toString()), t);
 				result = ("UNSUPPORTED OPERATION!\n[\n" + codeString + "\n]\n" + t.toString());
@@ -596,4 +605,14 @@ public class SymjaActivity extends SymjaBase implements View.OnClickListener {
 		protected static final int LARGE = 18;
 	}
 
+	private boolean isNetworkAvailable() {
+		ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+		NetworkInfo networkInfo = cm.getActiveNetworkInfo();
+		// if no network is available networkInfo will be null
+		// otherwise check if we are connected
+		if (networkInfo != null && networkInfo.isConnected()) {
+			return true;
+		}
+		return false;
+	}
 }
