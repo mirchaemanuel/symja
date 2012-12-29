@@ -5,22 +5,21 @@
     android:layout_height="fill_parent"
     android:orientation="vertical" >
 
-    <org.matheclipse.android.CandidateView
+    <org.matheclipse.android.web.CandidateView
         android:id="@+id/candidate"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:visibility="gone" />
 
-    <org.matheclipse.android.EditTextExtend
+    <org.matheclipse.android.web.EditTextExtend
         android:id="@+id/txt_input"
         style="?android:attr/textViewStyle"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="top"
         android:imeOptions="actionDone"
-        android:inputType="none" 
-        android:textSize="16sp" >
-    </org.matheclipse.android.EditTextExtend>
+        android:inputType="none"
+        android:textSize="16sp" />
 
     <LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
@@ -75,6 +74,7 @@
             android:id="@+id/txt_output"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:maxLines="2"
             android:scrollbars="vertical"
             android:textSize="16sp" >
         </TextView>
@@ -88,7 +88,7 @@
         android:listSelector="@android:color/transparent"
         android:transcriptMode="alwaysScroll" />
 
-    <org.matheclipse.android.KeyboardViewExtend
+    <org.matheclipse.android.web.KeyboardViewExtend
         android:id="@+id/keyboard"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"

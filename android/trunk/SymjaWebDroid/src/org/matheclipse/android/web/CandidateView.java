@@ -14,13 +14,15 @@
  * the License.
  */
 
-package org.matheclipse.android;
+package org.matheclipse.android.web;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+
+import org.matheclipse.android.web.R;
 
 import android.content.Context;
 import android.content.res.Resources;

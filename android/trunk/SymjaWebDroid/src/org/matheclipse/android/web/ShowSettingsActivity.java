@@ -1,8 +1,9 @@
-package org.matheclipse.android;
+package org.matheclipse.android.web;
+
+import org.matheclipse.android.web.R;
 
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
-
 public class ShowSettingsActivity extends PreferenceActivity {
 
 	@Override

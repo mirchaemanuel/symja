@@ -13,4 +13,4 @@
 		android:title="@string/menu_app_about">
 	</item>
 	<item android:id="@+id/mainMenuPreferences" android:title="Preferences" />
-</menu>
+</menu> 

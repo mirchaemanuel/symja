@@ -1,4 +1,6 @@
-package org.matheclipse.android;
+package org.matheclipse.android.web;
+
+import org.matheclipse.android.web.R;
 
 import android.content.Context;
 import android.content.res.Configuration;
@@ -9,7 +11,6 @@ import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.LinearLayout;
-
 public class KeyboardViewExtend extends KeyboardView implements KeyboardView.OnKeyboardActionListener
 {
 

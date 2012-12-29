@@ -1,6 +1,7 @@
-package org.matheclipse.android;
+package org.matheclipse.android.web;
 
-import org.matheclipse.android.SymjaActivity.TextSize;
+import org.matheclipse.android.web.R;
+import org.matheclipse.android.web.SymjaActivity.TextSize;
 
 import android.app.Activity;
 import android.content.SharedPreferences;

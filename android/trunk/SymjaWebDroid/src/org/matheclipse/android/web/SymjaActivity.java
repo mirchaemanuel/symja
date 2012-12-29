@@ -29,7 +29,7 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.matheclipse.android;
+package org.matheclipse.android.web;
 
 import static org.matheclipse.android.util.CommonAndroidCodeLibrary.makeToast;
 import static org.matheclipse.android.util.CommonAndroidCodeLibrary.showOkAlertDialog;
@@ -53,6 +53,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -123,6 +124,8 @@ public class SymjaActivity extends SymjaBase implements View.OnClickListener {
 		_txtOutput.setTypeface(Typeface.MONOSPACE);
 		_txtOutput.setTextColor(Color.GREEN);
 		_txtOutput.setBackgroundColor(Color.DKGRAY);
+		// http://stackoverflow.com/questions/1748977/making-textview-scrollable-in-android
+		_txtOutput.setMovementMethod(new ScrollingMovementMethod());
 
 		// get a handle on the Sym command button and its event handler
 		_symEnter = (Button) findViewById(R.id.cmd_sym);

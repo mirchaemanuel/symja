@@ -1,4 +1,4 @@
-package org.matheclipse.android;
+package org.matheclipse.android.web;
 
 import android.content.Context;
 import android.graphics.Rect;

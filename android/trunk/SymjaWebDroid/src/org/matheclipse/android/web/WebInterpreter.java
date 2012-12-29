@@ -1,4 +1,4 @@
-package org.matheclipse.android;
+package org.matheclipse.android.web;
 
 import java.io.BufferedReader;
 import java.io.IOException;
