@@ -18,7 +18,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="top"
         android:imeOptions="actionDone"
-        android:inputType="none" 
+        android:inputType="none"
         android:textSize="16sp" >
     </org.matheclipse.android.EditTextExtend>
 
@@ -75,6 +75,7 @@
             android:id="@+id/txt_output"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:maxLines="2"
             android:scrollbars="vertical"
             android:textSize="16sp" >
         </TextView>

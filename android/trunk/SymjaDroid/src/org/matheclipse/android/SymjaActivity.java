@@ -46,10 +46,12 @@ import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -116,10 +118,12 @@ public class SymjaActivity extends SymjaBase implements View.OnClickListener {
 		setTitle(getString(R.string.app_desc));
 
 		_txtOutput = (TextView) findViewById(R.id.txt_output);
-		_txtOutput.setTextSize(TextSize.NORMAL); 
+		_txtOutput.setTextSize(TextSize.NORMAL);
 		_txtOutput.setTypeface(Typeface.MONOSPACE);
 		_txtOutput.setTextColor(Color.GREEN);
 		_txtOutput.setBackgroundColor(Color.DKGRAY);
+		// http://stackoverflow.com/questions/1748977/making-textview-scrollable-in-android
+		_txtOutput.setMovementMethod(new ScrollingMovementMethod());
 
 		// get a handle on the Sym command button and its event handler
 		_symEnter = (Button) findViewById(R.id.cmd_sym);
@@ -221,7 +225,8 @@ public class SymjaActivity extends SymjaBase implements View.OnClickListener {
 			input3.close();
 		} catch (java.io.IOException except) {
 		}
-
+    // initialize the integration rules in the background
+		new EvalCodeStringAsyncTask(true).execute("Integrate[Sin[x],x]");
 	}
 
 	/** Called when the activity is put into background. */
@@ -293,10 +298,10 @@ public class SymjaActivity extends SymjaBase implements View.OnClickListener {
 		String codeString = _txtInput.getText().toString();
 		switch (v.getId()) {
 		case R.id.cmd_sym:
-			new EvalCodeStringAsyncTask().execute(codeString);
+			new EvalCodeStringAsyncTask(false).execute(codeString);
 			break;
 		case R.id.cmd_num:
-			new EvalCodeStringAsyncTask().execute("N[" + codeString + "]");
+			new EvalCodeStringAsyncTask(false).execute("N[" + codeString + "]");
 			break;
 		case R.id.cmd_load_scratch:
 			loadScratchFiles();
@@ -345,6 +350,9 @@ public class SymjaActivity extends SymjaBase implements View.OnClickListener {
 			return true;
 		case R.id.menu_itm_app_about:
 			showAbout();
+			return true;
+		case R.id.mainMenuPreferences:
+			startActivity(new Intent(this, ShowSettingsActivity.class));
 			return true;
 		default: // not our items
 			return super.onOptionsItemSelected(item); // pass item id up
@@ -528,6 +536,13 @@ public class SymjaActivity extends SymjaBase implements View.OnClickListener {
 	 * android.os.AsyncTask<Params, Progress, Result>
 	 */
 	protected class EvalCodeStringAsyncTask extends AsyncTask<String, Integer, String> {
+		final boolean fNoOutput;
+
+		public EvalCodeStringAsyncTask(boolean noOutput) {
+			super();
+			fNoOutput = noOutput;
+		}
+
 		protected String doInBackground(String... codeString) {
 			String result = "";
 			publishProgress((int) (10)); // just to demonstrate how
@@ -556,7 +571,9 @@ public class SymjaActivity extends SymjaBase implements View.OnClickListener {
 		 */
 		@Override
 		protected void onPostExecute(String result) {
-			writeOutput(result);
+			if (!fNoOutput) {
+				writeOutput(result);
+			}
 		}
 	}
 

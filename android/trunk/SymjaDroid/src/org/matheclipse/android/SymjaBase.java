@@ -3,15 +3,20 @@ package org.matheclipse.android;
 import org.matheclipse.android.SymjaActivity.TextSize;
 
 import android.app.Activity;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Typeface;
 import android.inputmethodservice.Keyboard;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnTouchListener;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
@@ -24,6 +29,7 @@ public class SymjaBase extends Activity {
 	int _suggestionCursorPos = 0;
 	boolean _suggestionTaken = false;
 	boolean _backUpOne = false;
+	public SharedPreferences _sharedPrefs;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -38,14 +44,30 @@ public class SymjaBase extends Activity {
 		_myKeyboardView = (KeyboardViewExtend) findViewById(R.id.keyboard);
 		_mCandidateView = (CandidateView) findViewById(R.id.candidate);
 		_mainLayout = (LinearLayout) findViewById(R.id.wrapView);
+		_sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
 
 		_txtInput.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				enableKeyboardVisibility();
+				if (_sharedPrefs.getBoolean("enable_custom_keyboard", false)) {
+					_txtInput._isTextEditorReturn = true;
+					enableKeyboardVisibility();
+				}
 			}
 		});
 
+		_txtInput.setOnTouchListener(new OnTouchListener() {
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				_txtInput.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_MULTI_LINE);
+				if (_sharedPrefs.getBoolean("enable_custom_keyboard", true)) {
+					_txtInput._isTextEditorReturn = false;
+				}
+				return false;
+
+			}
+		});
+		
 		_txtInput.addTextChangedListener(new TextWatcher() {
 
 			@Override
