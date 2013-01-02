@@ -124,6 +124,13 @@ public class SymjaActivity extends SymjaBase implements View.OnClickListener {
 		_txtOutput.setBackgroundColor(Color.DKGRAY);
 		// http://stackoverflow.com/questions/1748977/making-textview-scrollable-in-android
 		_txtOutput.setMovementMethod(new ScrollingMovementMethod());
+		_txtOutput.setOnTouchListener(new OnTouchListener() {
+			@Override
+			public boolean onTouch(View view, MotionEvent event) {
+				disableKeyboardVisibility(SymjaActivity.this);
+				return false;
+			}
+		});
 
 		// get a handle on the Sym command button and its event handler
 		_symEnter = (Button) findViewById(R.id.cmd_sym);
@@ -155,7 +162,7 @@ public class SymjaActivity extends SymjaBase implements View.OnClickListener {
 		_outputListView.setOnTouchListener(new OnTouchListener() {
 			@Override
 			public boolean onTouch(View view, MotionEvent event) {
-				enableKeyboardVisibility();
+				disableKeyboardVisibility(SymjaActivity.this);
 				return false;
 			}
 		});
@@ -225,7 +232,7 @@ public class SymjaActivity extends SymjaBase implements View.OnClickListener {
 			input3.close();
 		} catch (java.io.IOException except) {
 		}
-    // initialize the integration rules in the background
+		// initialize the integration rules in the background
 		new EvalCodeStringAsyncTask(true).execute("Integrate[Sin[x],x]");
 	}
 

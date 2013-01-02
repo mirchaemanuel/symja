@@ -3,6 +3,7 @@ package org.matheclipse.android;
 import org.matheclipse.android.SymjaActivity.TextSize;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Typeface;
@@ -17,6 +18,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
@@ -49,7 +51,9 @@ public class SymjaBase extends Activity {
 		_txtInput.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				if (_sharedPrefs.getBoolean("enable_custom_keyboard", false)) {
+				if (_sharedPrefs.getBoolean("enable_custom_keyboard", true)) {
+					InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+					imm.hideSoftInputFromWindow(_txtInput.getWindowToken(), 0);
 					_txtInput._isTextEditorReturn = true;
 					enableKeyboardVisibility();
 				}
@@ -67,7 +71,7 @@ public class SymjaBase extends Activity {
 
 			}
 		});
-		
+
 		_txtInput.addTextChangedListener(new TextWatcher() {
 
 			@Override
@@ -146,12 +150,22 @@ public class SymjaBase extends Activity {
 		return;
 	}
 
+	public void disableKeyboardVisibility(Activity activity) {
+		InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+		imm.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
+		int visibility = _myKeyboardView.getVisibility();
+		switch (visibility) {
+		case View.VISIBLE:
+			_myKeyboardView.setVisibility(View.INVISIBLE);
+			break;
+		}
+	}
+
 	public void enableKeyboardVisibility() {
 		int visibility = _myKeyboardView.getVisibility();
 		switch (visibility) {
 		case View.GONE:
 		case View.INVISIBLE:
-			// _myKeyboardView.makeKeyboardView();
 			_myKeyboardView.setVisibility(View.VISIBLE);
 			break;
 		}
