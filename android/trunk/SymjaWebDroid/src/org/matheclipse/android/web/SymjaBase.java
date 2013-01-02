@@ -54,7 +54,7 @@ public class SymjaBase extends Activity {
 		_txtInput.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				if (_sharedPrefs.getBoolean("enable_custom_keyboard", false)) {
+				if (_sharedPrefs.getBoolean("enable_custom_keyboard", true)) {
 					InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 					imm.hideSoftInputFromWindow(_txtInput.getWindowToken(), 0);
 					_txtInput._isTextEditorReturn = true;
@@ -63,7 +63,7 @@ public class SymjaBase extends Activity {
 			}
 		});
 
-		_txtInput.setOnTouchListener(new OnTouchListener() {
+		_txtInput.setOnTouchListener(new OnTouchListener() { 
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
 				_txtInput.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_MULTI_LINE);
