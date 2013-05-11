@@ -1,4 +1,5 @@
 #summary Android version
+#labels Featured
 #sidebar TableOfContents
 
 <wiki:toc max_depth="2" />
