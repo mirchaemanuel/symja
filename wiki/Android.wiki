@@ -17,4 +17,4 @@ The buttons are used for:
 You can find the current sources here
   * [https://bitbucket.org/axelclk/symjadroid/overview https://bitbucket.org/axelclk/symjadroid/overview]
 
-The latest developer release can be found in the Eclipse projects release subfolder.
+The latest developer release can be found in the Eclipse projects *release* subfolder.
