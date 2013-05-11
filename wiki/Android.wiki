@@ -3,8 +3,6 @@
 
 <wiki:toc max_depth="2" />
 
-I released a first Android prototype here: <a href="http://code.google.com/p/symja/downloads/detail?name=SymjaDroid.apk&can=2&q=">SymjaDroid.apk</a>.  
-
 This is a screenshot of the interface:
 
 http://symja.googlecode.com/svn/wiki/android_main.png
@@ -15,6 +13,8 @@ The buttons are used for:
   * *Clear* - clears the input text area
 
 
-== SVN ==
-You can find the current sources in SVN:
-  * [https://symja.googlecode.com/svn/android/trunk/ https://symja.googlecode.com/svn/android/trunk/]
+== GIT Repository==
+You can find the current sources here
+  * [https://bitbucket.org/axelclk/symjadroid/overview https://bitbucket.org/axelclk/symjadroid/overview]
+
+The latest developer release can be found in the Eclipse projects release subfolder.
