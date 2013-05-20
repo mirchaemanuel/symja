@@ -1,5 +1,5 @@
 /*
- * $Id: GBDistHybrid.java 4040 2012-07-25 14:36:03Z kredel $
+ * $Id: GBDistHybrid.java 4334 2012-12-28 11:49:57Z kredel $
  */
 
 package edu.jas.gb;
@@ -17,8 +17,9 @@ import edu.jas.util.RemoteExecutable;
 /**
  * Setup to run a distributed GB example.
  * @author Heinz Kredel
+ * @deprecated use GroebnerBaseDistributedHybridEC
  */
-
+@Deprecated
 public class GBDistHybrid<C extends RingElem<C>> {
 
 

@@ -392,6 +392,27 @@ public class JASConvert<C extends RingElem<C>> {
 		return result;
 	}
 
+	public IAST complexPoly2Expr(final GenPolynomial<edu.jas.arith.BigComplex> poly) throws ArithmeticException, ClassCastException {
+		if (poly.length() == 0) {
+			return F.Plus(F.C0);
+		}
+		IAST result = F.Plus();
+		for (Monomial<edu.jas.arith.BigComplex> monomial : poly) {
+			edu.jas.arith.BigComplex coeff = monomial.coefficient();
+			ExpVector exp = monomial.exponent();
+			IComplex coeffValue = F.complex(coeff);
+			IAST monomTimes = F.Times(coeffValue);
+			long lExp;
+			for (int i = 0; i < exp.length(); i++) {
+				lExp = exp.getVal(i);
+				if (lExp != 0) {
+					monomTimes.add(F.Power(fVariables.get(i), F.integer(lExp)));
+				}
+			}
+			result.add(monomTimes);
+		}
+		return result;
+	}
 	/**
 	 * Convert a jas <code>Integral</code> into a matheclipse expression
 	 * 
