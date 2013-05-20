@@ -33,7 +33,7 @@ import org.apache.commons.math3.util.FastMath;
  *  Generalised logistic</a> function.
  *
  * @since 3.0
- * @version $Id: Logistic.java 1383441 2012-09-11 14:56:39Z luc $
+ * @version $Id: Logistic.java 1391927 2012-09-30 00:03:30Z erans $
  */
 public class Logistic implements UnivariateDifferentiableFunction, DifferentiableUnivariateFunction {
     /** Lower asymptote. */
@@ -113,6 +113,7 @@ public class Logistic implements UnivariateDifferentiableFunction, Differentiabl
          * @throws NullArgumentException if {@code param} is {@code null}.
          * @throws DimensionMismatchException if the size of {@code param} is
          * not 6.
+         * @throws NotStrictlyPositiveException if {@code param[5] <= 0}.
          */
         public double value(double x, double ... param)
             throws NullArgumentException,
@@ -137,6 +138,7 @@ public class Logistic implements UnivariateDifferentiableFunction, Differentiabl
          * @throws NullArgumentException if {@code param} is {@code null}.
          * @throws DimensionMismatchException if the size of {@code param} is
          * not 6.
+         * @throws NotStrictlyPositiveException if {@code param[5] <= 0}.
          */
         public double[] gradient(double x, double ... param)
             throws NullArgumentException,
@@ -176,6 +178,7 @@ public class Logistic implements UnivariateDifferentiableFunction, Differentiabl
          * @throws NullArgumentException if {@code param} is {@code null}.
          * @throws DimensionMismatchException if the size of {@code param} is
          * not 6.
+         * @throws NotStrictlyPositiveException if {@code param[5] <= 0}.
          */
         private void validateParameters(double[] param)
             throws NullArgumentException,

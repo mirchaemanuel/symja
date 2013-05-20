@@ -34,7 +34,7 @@ import org.apache.commons.math3.util.MathUtils;
  * Representation of a rational number without any overflow. This class is
  * immutable.
  *
- * @version $Id: BigFraction.java 1294027 2012-02-27 04:38:45Z celestin $
+ * @version $Id: BigFraction.java 1416643 2012-12-03 19:37:14Z tn $
  * @since 2.0
  */
 public class BigFraction

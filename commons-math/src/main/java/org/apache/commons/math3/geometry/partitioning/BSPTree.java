@@ -57,7 +57,7 @@ import org.apache.commons.math3.util.FastMath;
 
  * @param <S> Type of the space.
 
- * @version $Id: BSPTree.java 1337928 2012-05-13 15:51:30Z luc $
+ * @version $Id: BSPTree.java 1416643 2012-12-03 19:37:14Z tn $
  * @since 3.0
  */
 public class BSPTree<S extends Space> {
@@ -153,7 +153,7 @@ public class BSPTree<S extends Space> {
         }
 
         final SubHyperplane<S> chopped = fitToCell(hyperplane.wholeHyperplane());
-        if (chopped.isEmpty()) {
+        if (chopped == null || chopped.isEmpty()) {
             cut          = null;
             plus         = null;
             minus        = null;
@@ -285,7 +285,7 @@ public class BSPTree<S extends Space> {
      * sub-hyperplane that lie outside of the cell using the
      * cut-hyperplanes of the parent nodes of the instance.</p>
      * @param sub sub-hyperplane to fit
-     * @return a new sub-hyperplane, gueranteed to have no part outside
+     * @return a new sub-hyperplane, guaranteed to have no part outside
      * of the instance cell
      */
     private SubHyperplane<S> fitToCell(final SubHyperplane<S> sub) {

@@ -22,7 +22,7 @@ import org.apache.commons.math3.exception.OutOfRangeException;
 /**
  * Base interface for distributions on the reals.
  *
- * @version $Id: RealDistribution.java 1385298 2012-09-16 16:09:00Z tn $
+ * @version $Id: RealDistribution.java 1416643 2012-12-03 19:37:14Z tn $
  * @since 3.0
  */
 public interface RealDistribution {

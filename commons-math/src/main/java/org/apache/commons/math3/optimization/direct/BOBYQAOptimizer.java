@@ -18,8 +18,6 @@
 
 package org.apache.commons.math3.optimization.direct;
 
-import java.util.Arrays;
-
 import org.apache.commons.math3.analysis.MultivariateFunction;
 import org.apache.commons.math3.exception.MathIllegalStateException;
 import org.apache.commons.math3.exception.NumberIsTooSmallException;
@@ -47,9 +45,11 @@ import org.apache.commons.math3.optimization.MultivariateOptimizer;
  * derivative-based optimizer when the derivatives are approximated by
  * finite differences.
  *
- * @version $Id: BOBYQAOptimizer.java 1364392 2012-07-22 18:27:12Z tn $
+ * @version $Id: BOBYQAOptimizer.java 1462507 2013-03-29 15:50:22Z luc $
+ * @deprecated As of 3.1 (to be removed in 4.0).
  * @since 3.0
  */
+@Deprecated
 public class BOBYQAOptimizer
     extends BaseAbstractMultivariateSimpleBoundsOptimizer<MultivariateFunction>
     implements MultivariateOptimizer {
@@ -181,7 +181,7 @@ public class BOBYQAOptimizer
      * Alternative to {@link #newPoint}, chosen by
      * {@link #altmov(int,double) altmov}.
      * It may replace {@link #newPoint} in order to increase the denominator
-     * in the {@link #update() updating procedure}.
+     * in the {@link #update(double, double, int) updating procedure}.
      * XXX "xalt" in the original code.
      */
     private ArrayRealVector alternativeNewPoint;
@@ -1392,12 +1392,10 @@ public class BOBYQAOptimizer
                     vlag = tmp;
                     isbd = iubd;
                 }
-                if (subd > HALF) {
-                    if (Math.abs(vlag) < ONE_OVER_FOUR) {
-                        step = HALF;
-                        vlag = ONE_OVER_FOUR;
-                        isbd = 0;
-                    }
+                if (subd > HALF && Math.abs(vlag) < ONE_OVER_FOUR) {
+                    step = HALF;
+                    vlag = ONE_OVER_FOUR;
+                    isbd = 0;
                 }
                 vlag *= dderiv;
             }
@@ -1717,16 +1715,14 @@ public class BOBYQAOptimizer
                     final double diff = stepb - stepa;
                     modelSecondDerivativesValues.setEntry(ih, TWO * (tmp - gradientAtTrustRegionCenter.getEntry(nfxm)) / diff);
                     gradientAtTrustRegionCenter.setEntry(nfxm, (gradientAtTrustRegionCenter.getEntry(nfxm) * stepb - tmp * stepa) / diff);
-                    if (stepa * stepb < ZERO) {
-                        if (f < fAtInterpolationPoints.getEntry(nfm - n)) {
-                            fAtInterpolationPoints.setEntry(nfm, fAtInterpolationPoints.getEntry(nfm - n));
-                            fAtInterpolationPoints.setEntry(nfm - n, f);
-                            if (trustRegionCenterInterpolationPointIndex == nfm) {
-                                trustRegionCenterInterpolationPointIndex = nfm - n;
-                            }
-                            interpolationPoints.setEntry(nfm - n, nfxm, stepb);
-                            interpolationPoints.setEntry(nfm, nfxm, stepa);
+                    if (stepa * stepb < ZERO && f < fAtInterpolationPoints.getEntry(nfm - n)) {
+                        fAtInterpolationPoints.setEntry(nfm, fAtInterpolationPoints.getEntry(nfm - n));
+                        fAtInterpolationPoints.setEntry(nfm - n, f);
+                        if (trustRegionCenterInterpolationPointIndex == nfm) {
+                            trustRegionCenterInterpolationPointIndex = nfm - n;
                         }
+                        interpolationPoints.setEntry(nfm - n, nfxm, stepb);
+                        interpolationPoints.setEntry(nfm, nfxm, stepa);
                     }
                     bMatrix.setEntry(0, nfxm, -(stepa + stepb) / (stepa * stepb));
                     bMatrix.setEntry(nfm, nfxm, -HALF / interpolationPoints.getEntry(nfm - n, nfxm));
@@ -1854,10 +1850,9 @@ public class BOBYQAOptimizer
                 if (gradientAtTrustRegionCenter.getEntry(i) >= ZERO) {
                     xbdi.setEntry(i, MINUS_ONE);
                 }
-            } else if (trustRegionCenterOffset.getEntry(i) >= upperDifference.getEntry(i)) {
-                if (gradientAtTrustRegionCenter.getEntry(i) <= ZERO) {
-                    xbdi.setEntry(i, ONE);
-                }
+            } else if (trustRegionCenterOffset.getEntry(i) >= upperDifference.getEntry(i) &&
+                       gradientAtTrustRegionCenter.getEntry(i) <= ZERO) {
+                xbdi.setEntry(i, ONE);
             }
             if (xbdi.getEntry(i) != ZERO) {
                 ++nact;
@@ -2434,21 +2429,6 @@ public class BOBYQAOptimizer
         trialStepPoint = new ArrayRealVector(dimension);
         lagrangeValuesAtNewPoint = new ArrayRealVector(dimension + numberOfInterpolationPoints);
         modelSecondDerivativesValues = new ArrayRealVector(dimension * (dimension + 1) / 2);
-    }
-
-    /**
-     * Creates a new array.
-     *
-     * @param n Dimension of the returned array.
-     * @param value Value for each element.
-     * @return an array containing {@code n} elements set to the given
-     * {@code value}.
-     */
-    private static double[] fillNewArray(int n,
-                                         double value) {
-        double[] ds = new double[n];
-        Arrays.fill(ds, value);
-        return ds;
     }
 
     // XXX utility for figuring out call sequence.

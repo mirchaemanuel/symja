@@ -23,7 +23,7 @@ import java.util.List;
  *
  * @param <T> type of the permuted objects
  * @since 2.0
- * @version $Id: PermutationChromosome.java 1385284 2012-09-16 15:19:55Z tn $
+ * @version $Id: PermutationChromosome.java 1416643 2012-12-03 19:37:14Z tn $
  */
 public interface PermutationChromosome<T> {
 

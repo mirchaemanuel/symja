@@ -28,7 +28,7 @@ import org.apache.commons.math3.random.Well19937c;
  *
  * @see <a href="http://en.wikipedia.org/wiki/Gamma_distribution">Gamma distribution (Wikipedia)</a>
  * @see <a href="http://mathworld.wolfram.com/GammaDistribution.html">Gamma distribution (MathWorld)</a>
- * @version $Id: GammaDistribution.java 1382904 2012-09-10 14:47:45Z luc $
+ * @version $Id: GammaDistribution.java 1422195 2012-12-15 06:45:18Z psteitz $
  */
 public class GammaDistribution extends AbstractRealDistribution {
     /**
@@ -167,6 +167,7 @@ public class GammaDistribution extends AbstractRealDistribution {
      * Returns the shape parameter of {@code this} distribution.
      *
      * @return the shape parameter
+     * @since 3.1
      */
     public double getShape() {
         return shape;
@@ -188,6 +189,7 @@ public class GammaDistribution extends AbstractRealDistribution {
      * Returns the scale parameter of {@code this} distribution.
      *
      * @return the scale parameter
+     * @since 3.1
      */
     public double getScale() {
         return scale;

@@ -26,7 +26,7 @@ import org.apache.commons.math3.geometry.partitioning.SubHyperplane;
 import org.apache.commons.math3.util.Precision;
 
 /** This class represents a 1D region: a set of intervals.
- * @version $Id: IntervalsSet.java 1328959 2012-04-22 20:01:44Z luc $
+ * @version $Id: IntervalsSet.java 1416643 2012-12-03 19:37:14Z tn $
  * @since 3.0
  */
 public class IntervalsSet extends AbstractRegion<Euclidean1D, Euclidean1D> {
@@ -143,8 +143,8 @@ public class IntervalsSet extends AbstractRegion<Euclidean1D, Euclidean1D> {
             double size = 0.0;
             double sum = 0.0;
             for (final Interval interval : asList()) {
-                size += interval.getLength();
-                sum  += interval.getLength() * interval.getMidPoint();
+                size += interval.getSize();
+                sum  += interval.getSize() * interval.getBarycenter();
             }
             setSize(size);
             if (Double.isInfinite(size)) {
@@ -241,7 +241,7 @@ public class IntervalsSet extends AbstractRegion<Euclidean1D, Euclidean1D> {
             if ((checkPoint(low,  loc) == Location.INSIDE) &&
                 (checkPoint(high, loc) == Location.INSIDE)) {
                 // merge the last interval added and the first one of the high sub-tree
-                x = list.remove(list.size() - 1).getLower();
+                x = list.remove(list.size() - 1).getInf();
             }
             recurseList(high, list, x, upper);
 

@@ -23,7 +23,7 @@ package org.apache.commons.math3.genetics;
  * therefore it can be cached.
  *
  * @since 2.0
- * @version $Id: Chromosome.java 1385284 2012-09-16 15:19:55Z tn $
+ * @version $Id: Chromosome.java 1416643 2012-12-03 19:37:14Z tn $
  */
 public abstract class Chromosome implements Comparable<Chromosome>,Fitness {
     /** Value assigned when no fitness has been computed yet. */

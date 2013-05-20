@@ -34,9 +34,11 @@ import org.apache.commons.math3.util.FastMath;
  * searched by a least square estimator initialized with a rough guess
  * based on integrals.
  *
- * @version $Id: HarmonicFitter.java 1374493 2012-08-18 01:10:20Z erans $
+ * @version $Id: HarmonicFitter.java 1422230 2012-12-15 12:11:13Z erans $
+ * @deprecated As of 3.1 (to be removed in 4.0).
  * @since 2.0
  */
+@Deprecated
 public class HarmonicFitter extends CurveFitter<HarmonicOscillator.Parametric> {
     /**
      * Simple constructor.

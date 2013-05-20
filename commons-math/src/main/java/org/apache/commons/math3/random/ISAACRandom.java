@@ -36,7 +36,7 @@ import java.io.Serializable;
  * implementation of the algorithm by Bob Jenkins.
  * <br/>
  *
- * @version $Id: ISAACRandom.java 1302386 2012-03-19 11:59:25Z sebb $
+ * @version $Id: ISAACRandom.java 1416643 2012-12-03 19:37:14Z tn $
  * @since 3.0
  */
 public class ISAACRandom extends BitsStreamGenerator implements Serializable {

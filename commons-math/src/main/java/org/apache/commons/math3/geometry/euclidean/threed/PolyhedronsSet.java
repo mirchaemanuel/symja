@@ -36,7 +36,7 @@ import org.apache.commons.math3.geometry.partitioning.Transform;
 import org.apache.commons.math3.util.FastMath;
 
 /** This class represents a 3D region: a set of polyhedrons.
- * @version $Id: PolyhedronsSet.java 1382887 2012-09-10 14:37:27Z luc $
+ * @version $Id: PolyhedronsSet.java 1416643 2012-12-03 19:37:14Z tn $
  * @since 3.0
  */
 public class PolyhedronsSet extends AbstractRegion<Euclidean3D, Euclidean2D> {

@@ -30,7 +30,7 @@ import java.io.Serializable;
  * are in <a href="http://www.iro.umontreal.ca/~lecuyer/myftp/papers/wellrng-errata.txt">wellrng-errata.txt</a>.</p>
 
  * @see <a href="http://www.iro.umontreal.ca/~panneton/WELLRNG.html">WELL Random number generator</a>
- * @version $Id: AbstractWell.java 1244107 2012-02-14 16:17:55Z erans $
+ * @version $Id: AbstractWell.java 1416643 2012-12-03 19:37:14Z tn $
  * @since 2.2
 
  */

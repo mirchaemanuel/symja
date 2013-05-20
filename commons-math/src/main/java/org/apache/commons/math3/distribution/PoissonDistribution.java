@@ -30,7 +30,7 @@ import org.apache.commons.math3.random.Well19937c;
  *
  * @see <a href="http://en.wikipedia.org/wiki/Poisson_distribution">Poisson distribution (Wikipedia)</a>
  * @see <a href="http://mathworld.wolfram.com/PoissonDistribution.html">Poisson distribution (MathWorld)</a>
- * @version $Id: PoissonDistribution.java 1363604 2012-07-20 00:43:45Z erans $
+ * @version $Id: PoissonDistribution.java 1416643 2012-12-03 19:37:14Z tn $
  */
 public class PoissonDistribution extends AbstractIntegerDistribution {
     /**

@@ -28,7 +28,7 @@ import org.apache.commons.math3.util.MathUtils;
 
 /** This class represents a 2D vector.
  * <p>Instances of this class are guaranteed to be immutable.</p>
- * @version $Id: Vector2D.java 1379977 2012-09-02 14:22:52Z luc $
+ * @version $Id: Vector2D.java 1416643 2012-12-03 19:37:14Z tn $
  * @since 3.0
  */
 public class Vector2D implements Vector<Euclidean2D> {

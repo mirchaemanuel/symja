@@ -28,9 +28,11 @@ import org.apache.commons.math3.optimization.GoalType;
  * This code is based on a Python implementation (from <em>SciPy</em>,
  * module {@code optimize.py} v0.5).
  *
- * @version $Id: BracketFinder.java 1364392 2012-07-22 18:27:12Z tn $
+ * @version $Id: BracketFinder.java 1422230 2012-12-15 12:11:13Z erans $
+ * @deprecated As of 3.1 (to be removed in 4.0).
  * @since 2.2
  */
+@Deprecated
 public class BracketFinder {
     /** Tolerance to avoid division by zero. */
     private static final double EPS_MIN = 1e-21;
@@ -138,7 +140,7 @@ public class BracketFinder {
             double val = tmp2 - tmp1;
             double denom = Math.abs(val) < EPS_MIN ? 2 * EPS_MIN : 2 * val;
 
-            double w = xB - ((xB - xC) * tmp2 - (xB -xA) * tmp1) / denom;
+            double w = xB - ((xB - xC) * tmp2 - (xB - xA) * tmp1) / denom;
             double wLim = xB + growLimit * (xC - xB);
 
             double fW;

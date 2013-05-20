@@ -51,7 +51,7 @@ import org.apache.commons.math3.exception.util.LocalizedFormats;
  * @see ParameterJacobianProvider
  * @see ParameterizedODE
  *
- * @version $Id: JacobianMatrices.java 1382887 2012-09-10 14:37:27Z luc $
+ * @version $Id: JacobianMatrices.java 1422447 2012-12-16 01:38:40Z psteitz $
  * @since 3.0
  */
 public class JacobianMatrices {
@@ -474,7 +474,10 @@ public class JacobianMatrices {
 
     }
 
-    /** Special exception for equations mismatch. */
+    /**
+     * Special exception for equations mismatch.
+     * @since 3.1
+     */
     public static class MismatchedEquations extends MathIllegalArgumentException {
 
         /** Serializable UID. */

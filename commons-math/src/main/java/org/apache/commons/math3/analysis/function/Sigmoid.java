@@ -37,7 +37,7 @@ import org.apache.commons.math3.util.FastMath;
  * by the {@link Logistic} class.
  *
  * @since 3.0
- * @version $Id: Sigmoid.java 1383441 2012-09-11 14:56:39Z luc $
+ * @version $Id: Sigmoid.java 1455194 2013-03-11 15:45:54Z luc $
  */
 public class Sigmoid implements UnivariateDifferentiableFunction, DifferentiableUnivariateFunction {
     /** Lower asymptote. */
@@ -73,6 +73,7 @@ public class Sigmoid implements UnivariateDifferentiableFunction, Differentiable
         return FunctionUtils.toDifferentiableUnivariateFunction(this).derivative();
     }
 
+    /** {@inheritDoc} */
     public double value(double x) {
         return value(x, lo, hi);
     }
@@ -163,7 +164,8 @@ public class Sigmoid implements UnivariateDifferentiableFunction, Differentiable
     /** {@inheritDoc}
      * @since 3.1
      */
-    public DerivativeStructure value(final DerivativeStructure t) {
+    public DerivativeStructure value(final DerivativeStructure t)
+        throws DimensionMismatchException {
 
         double[] f = new double[t.getOrder() + 1];
         final double exp = FastMath.exp(-t.getValue());

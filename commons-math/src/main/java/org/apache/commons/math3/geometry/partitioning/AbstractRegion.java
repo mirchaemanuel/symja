@@ -32,7 +32,7 @@ import org.apache.commons.math3.geometry.Vector;
  * @param <S> Type of the space.
  * @param <T> Type of the sub-space.
 
- * @version $Id: AbstractRegion.java 1345328 2012-06-01 20:02:04Z luc $
+ * @version $Id: AbstractRegion.java 1416643 2012-12-03 19:37:14Z tn $
  * @since 3.0
  */
 public abstract class AbstractRegion<S extends Space, T extends Space> implements Region<S> {

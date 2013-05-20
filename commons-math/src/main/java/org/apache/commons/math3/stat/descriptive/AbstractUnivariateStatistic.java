@@ -34,7 +34,7 @@ import org.apache.commons.math3.exception.util.LocalizedFormats;
  * Also includes a <code>test</code> method that performs generic parameter
  * validation for the <code>evaluate</code> methods.</p>
  *
- * @version $Id: AbstractUnivariateStatistic.java 1382332 2012-09-08 17:27:47Z psteitz $
+ * @version $Id: AbstractUnivariateStatistic.java 1416643 2012-12-03 19:37:14Z tn $
  */
 public abstract class AbstractUnivariateStatistic
     implements UnivariateStatistic {

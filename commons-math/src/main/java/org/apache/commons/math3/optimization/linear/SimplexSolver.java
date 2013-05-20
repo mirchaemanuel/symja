@@ -28,9 +28,11 @@ import org.apache.commons.math3.util.Precision;
 /**
  * Solves a linear problem using the Two-Phase Simplex Method.
  *
- * @version $Id: SimplexSolver.java 1385307 2012-09-16 16:19:55Z tn $
+ * @version $Id: SimplexSolver.java 1462503 2013-03-29 15:48:27Z luc $
+ * @deprecated As of 3.1 (to be removed in 4.0).
  * @since 2.0
  */
+@Deprecated
 public class SimplexSolver extends AbstractLinearOptimizer {
 
     /** Default amount of error to accept for algorithm convergence. */
@@ -146,11 +148,9 @@ public class SimplexSolver extends AbstractLinearOptimizer {
                 for (Integer row : minRatioPositions) {
                     for (int i = varStart; i < varEnd && !row.equals(minRow); i++) {
                         final Integer basicRow = tableau.getBasicRow(i);
-                        if (basicRow != null && basicRow.equals(row)) {
-                            if (i < minIndex) {
-                                minIndex = i;
-                                minRow = row;
-                            }
+                        if (basicRow != null && basicRow.equals(row) && i < minIndex) {
+                            minIndex = i;
+                            minRow = row;
                         }
                     }
                 }

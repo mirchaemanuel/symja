@@ -25,7 +25,7 @@ import org.apache.commons.math3.geometry.partitioning.Side;
  * <p>An hyperplane in 1D is a simple point, its orientation being a
  * boolean.</p>
  * <p>Instances of this class are guaranteed to be immutable.</p>
- * @version $Id: SubOrientedPoint.java 1244107 2012-02-14 16:17:55Z erans $
+ * @version $Id: SubOrientedPoint.java 1416643 2012-12-03 19:37:14Z tn $
  * @since 3.0
  */
 public class SubOrientedPoint extends AbstractSubHyperplane<Euclidean1D, Euclidean1D> {

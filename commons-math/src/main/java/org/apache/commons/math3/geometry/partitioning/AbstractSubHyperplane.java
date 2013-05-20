@@ -17,7 +17,6 @@
 package org.apache.commons.math3.geometry.partitioning;
 
 import org.apache.commons.math3.geometry.Space;
-import org.apache.commons.math3.geometry.partitioning.SubHyperplane;
 
 /** This class implements the dimension-independent parts of {@link SubHyperplane}.
 
@@ -31,7 +30,7 @@ import org.apache.commons.math3.geometry.partitioning.SubHyperplane;
  * @param <S> Type of the embedding space.
  * @param <T> Type of the embedded sub-space.
 
- * @version $Id: AbstractSubHyperplane.java 1244107 2012-02-14 16:17:55Z erans $
+ * @version $Id: AbstractSubHyperplane.java 1421448 2012-12-13 19:45:57Z tn $
  * @since 3.0
  */
 public abstract class AbstractSubHyperplane<S extends Space, T extends Space>

@@ -43,7 +43,7 @@ import org.apache.commons.math3.util.Precision;
 
 /**
  * Base class managing common boilerplate for all integrators.
- * @version $Id: AbstractIntegrator.java 1382887 2012-09-10 14:37:27Z luc $
+ * @version $Id: AbstractIntegrator.java 1465654 2013-04-08 14:41:32Z luc $
  * @since 2.0
  */
 public abstract class AbstractIntegrator implements FirstOrderIntegrator {
@@ -188,6 +188,7 @@ public abstract class AbstractIntegrator implements FirstOrderIntegrator {
         evaluations.resetCount();
 
         for (final EventState state : eventsStates) {
+            state.setExpandable(expandable);
             state.getEventHandler().init(t0, y0, t);
         }
 
@@ -204,6 +205,22 @@ public abstract class AbstractIntegrator implements FirstOrderIntegrator {
      */
     protected void setEquations(final ExpandableStatefulODE equations) {
         this.expandable = equations;
+    }
+
+    /** Get the differential equations to integrate.
+     * @return differential equations to integrate
+     * @since 3.2
+     */
+    protected ExpandableStatefulODE getExpandable() {
+        return expandable;
+    }
+
+    /** Get the evaluations counter.
+     * @return evaluations counter
+     * @since 3.2
+     */
+    protected Incrementor getEvaluationsCounter() {
+        return evaluations;
     }
 
     /** {@inheritDoc} */
@@ -338,11 +355,22 @@ public abstract class AbstractIntegrator implements FirstOrderIntegrator {
                 interpolator.setSoftPreviousTime(previousT);
                 interpolator.setSoftCurrentTime(eventT);
 
-                // trigger the event
+                // get state at event time
                 interpolator.setInterpolatedTime(eventT);
-                final double[] eventY = interpolator.getInterpolatedState().clone();
-                currentEvent.stepAccepted(eventT, eventY);
-                isLastStep = currentEvent.stop();
+                final double[] eventYComplete = new double[y.length];
+                expandable.getPrimaryMapper().insertEquationData(interpolator.getInterpolatedState(),
+                                                                 eventYComplete);
+                int index = 0;
+                for (EquationsMapper secondary : expandable.getSecondaryMappers()) {
+                    secondary.insertEquationData(interpolator.getInterpolatedSecondaryState(index++),
+                                                 eventYComplete);
+                }
+
+                // advance all event states to current time
+                for (final EventState state : eventsStates) {
+                    state.stepAccepted(eventT, eventYComplete);
+                    isLastStep = isLastStep || state.stop();
+                }
 
                 // handle the first part of the step, up to the event
                 for (final StepHandler handler : stepHandlers) {
@@ -351,22 +379,21 @@ public abstract class AbstractIntegrator implements FirstOrderIntegrator {
 
                 if (isLastStep) {
                     // the event asked to stop integration
-                    System.arraycopy(eventY, 0, y, 0, y.length);
-                    for (final EventState remaining : occuringEvents) {
-                        remaining.stepAccepted(eventT, eventY);
-                    }
+                    System.arraycopy(eventYComplete, 0, y, 0, y.length);
                     return eventT;
                 }
 
-                if (currentEvent.reset(eventT, eventY)) {
+                boolean needReset = false;
+                for (final EventState state : eventsStates) {
+                    needReset =  needReset || state.reset(eventT, eventYComplete);
+                }
+                if (needReset) {
                     // some event handler has triggered changes that
                     // invalidate the derivatives, we need to recompute them
-                    System.arraycopy(eventY, 0, y, 0, y.length);
+                    interpolator.setInterpolatedTime(eventT);
+                    System.arraycopy(eventYComplete, 0, y, 0, y.length);
                     computeDerivatives(eventT, y, yDot);
                     resetOccurred = true;
-                    for (final EventState remaining : occuringEvents) {
-                        remaining.stepAccepted(eventT, eventY);
-                    }
                     return eventT;
                 }
 
@@ -383,8 +410,16 @@ public abstract class AbstractIntegrator implements FirstOrderIntegrator {
 
             }
 
+            // last part of the step, after the last event
             interpolator.setInterpolatedTime(currentT);
-            final double[] currentY = interpolator.getInterpolatedState();
+            final double[] currentY = new double[y.length];
+            expandable.getPrimaryMapper().insertEquationData(interpolator.getInterpolatedState(),
+                                                             currentY);
+            int index = 0;
+            for (EquationsMapper secondary : expandable.getSecondaryMappers()) {
+                secondary.insertEquationData(interpolator.getInterpolatedSecondaryState(index++),
+                                             currentY);
+            }
             for (final EventState state : eventsStates) {
                 state.stepAccepted(currentT, currentY);
                 isLastStep = isLastStep || state.stop();

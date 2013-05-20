@@ -35,7 +35,7 @@ import org.apache.commons.math3.util.Precision;
  * which is closest to the origin. Abscissa increases in the line
  * direction.</p>
 
- * @version $Id: Line.java 1382887 2012-09-10 14:37:27Z luc $
+ * @version $Id: Line.java 1453218 2013-03-06 08:53:28Z luc $
  * @since 3.0
  */
 public class Line implements Embedding<Euclidean3D, Euclidean1D> {
@@ -84,7 +84,9 @@ public class Line implements Embedding<Euclidean3D, Euclidean1D> {
      * @return a new instance, with reversed direction
      */
     public Line revert() {
-        return new Line(zero, zero.subtract(direction));
+        final Line reverted = new Line(this);
+        reverted.direction = reverted.direction.negate();
+        return reverted;
     }
 
     /** Get the normalized direction vector.

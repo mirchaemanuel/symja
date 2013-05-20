@@ -34,7 +34,7 @@ import java.util.ResourceBundle;
  * translation is missing.
  * </p>
  * @since 2.2
- * @version $Id: LocalizedFormats.java 1388099 2012-09-20 16:21:46Z erans $
+ * @version $Id: LocalizedFormats.java 1442377 2013-02-04 21:31:42Z erans $
  */
 public enum LocalizedFormats implements Localizable {
 
@@ -72,6 +72,7 @@ public enum LocalizedFormats implements Localizable {
     CLOSEST_ORTHOGONAL_MATRIX_HAS_NEGATIVE_DETERMINANT("the closest orthogonal matrix has a negative determinant {0}"),
     COLUMN_INDEX_OUT_OF_RANGE("column index {0} out of allowed range [{1}, {2}]"),
     COLUMN_INDEX("column index ({0})"), /* keep */
+    CONSTRAINT("constraint"), /* keep */
     CONTINUED_FRACTION_INFINITY_DIVERGENCE("Continued fraction convergents diverged to +/- infinity for value {0}"),
     CONTINUED_FRACTION_NAN_DIVERGENCE("Continued fraction diverged to NaN for value {0}"),
     CONTRACTION_CRITERIA_SMALLER_THAN_EXPANSION_FACTOR("contraction criteria ({0}) smaller than the expansion factor ({1}).  This would lead to a never ending loop of expansion and contraction as a newly expanded internal storage array would immediately satisfy the criteria for contraction."),
@@ -148,6 +149,7 @@ public enum LocalizedFormats implements Localizable {
     INVALID_REGRESSION_OBSERVATION("length of regressor array = {0} does not match the number of variables = {1} in the model"),
     INVALID_ROUNDING_METHOD("invalid rounding method {0}, valid methods: {1} ({2}), {3} ({4}), {5} ({6}), {7} ({8}), {9} ({10}), {11} ({12}), {13} ({14}), {15} ({16})"),
     ITERATOR_EXHAUSTED("iterator exhausted"),
+    ITERATIONS("iterations"), /* keep */
     LCM_OVERFLOW_32_BITS("overflow: lcm({0}, {1}) is 2^31"),
     LCM_OVERFLOW_64_BITS("overflow: lcm({0}, {1}) is 2^63"),
     LIST_OF_CHROMOSOMES_BIGGER_THAN_POPULATION_SIZE("list of chromosomes bigger than maxPopulationSize"),
@@ -385,7 +387,7 @@ public enum LocalizedFormats implements Localizable {
                 return bundle.getString(toString());
             }
 
-        } catch (MissingResourceException mre) {
+        } catch (MissingResourceException mre) { // NOPMD
             // do nothing here
         }
 

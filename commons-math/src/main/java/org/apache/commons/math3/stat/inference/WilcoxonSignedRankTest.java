@@ -31,7 +31,7 @@ import org.apache.commons.math3.util.FastMath;
 /**
  * An implementation of the Wilcoxon signed-rank test.
  *
- * @version $Id: WilcoxonSignedRankTest.java 1244107 2012-02-14 16:17:55Z erans $
+ * @version $Id: WilcoxonSignedRankTest.java 1416643 2012-12-03 19:37:14Z tn $
  */
 public class WilcoxonSignedRankTest {
 
@@ -253,6 +253,7 @@ public class WilcoxonSignedRankTest {
         // - 0.5 is a continuity correction
         final double z = (Wmin - ES - 0.5) / FastMath.sqrt(VarS);
 
+        // No try-catch or advertised exception because args are valid
         final NormalDistribution standardNormal = new NormalDistribution(0, 1);
 
         return 2*standardNormal.cumulativeProbability(z);

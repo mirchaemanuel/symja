@@ -27,7 +27,7 @@ package org.apache.commons.math3.util;
  * @param <V> Value type.
  *
  * @since 3.0
- * @version $Id: Pair.java 1364389 2012-07-22 18:19:26Z tn $
+ * @version $Id: Pair.java 1422313 2012-12-15 18:53:41Z psteitz $
  */
 public class Pair<K, V> {
     /** Key. */
@@ -78,6 +78,7 @@ public class Pair<K, V> {
      * Get the first element of the pair.
      *
      * @return the first element of the pair.
+     * @since 3.1
      */
     public K getFirst() {
         return key;
@@ -87,6 +88,7 @@ public class Pair<K, V> {
      * Get the second element of the pair.
      *
      * @return the second element of the pair.
+     * @since 3.1
      */
     public V getSecond() {
         return value;

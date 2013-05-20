@@ -23,7 +23,7 @@ import org.apache.commons.math3.exception.NumberIsTooSmallException;
  * counter is incremented. Once the counter reaches the configured <code>maxGenerations</code> value,
  * {@link #isSatisfied(Population)} returns true.
  *
- * @version $Id: FixedGenerationCount.java 1385297 2012-09-16 16:05:57Z tn $
+ * @version $Id: FixedGenerationCount.java 1416643 2012-12-03 19:37:14Z tn $
  * @since 2.0
  */
 public class FixedGenerationCount implements StoppingCondition {

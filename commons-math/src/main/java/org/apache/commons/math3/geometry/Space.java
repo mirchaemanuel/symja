@@ -21,7 +21,7 @@ import java.io.Serializable;
 import org.apache.commons.math3.exception.MathUnsupportedOperationException;
 
 /** This interface represents a generic space, with affine and vectorial counterparts.
- * @version $Id: Space.java 1379977 2012-09-02 14:22:52Z luc $
+ * @version $Id: Space.java 1416643 2012-12-03 19:37:14Z tn $
  * @see Vector
  * @since 3.0
  */

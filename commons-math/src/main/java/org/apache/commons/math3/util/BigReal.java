@@ -35,7 +35,7 @@ import org.apache.commons.math3.exception.util.LocalizedFormats;
  * in order to implement the {@link FieldElement} interface.
  * </p>
  * @since 2.0
- * @version $Id: BigReal.java 1381283 2012-09-05 18:29:47Z luc $
+ * @version $Id: BigReal.java 1416643 2012-12-03 19:37:14Z tn $
  */
 public class BigReal implements FieldElement<BigReal>, Comparable<BigReal>, Serializable {
 
