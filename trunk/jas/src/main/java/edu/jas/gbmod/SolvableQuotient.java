@@ -1,110 +1,102 @@
 /*
- * $Id: Quotient.java 4406 2013-04-30 10:07:39Z kredel $
+ * $Id: SolvableQuotient.java 4406 2013-04-30 10:07:39Z kredel $
  */
 
-package edu.jas.ufd;
+package edu.jas.gbmod;
 
 
 import org.apache.log4j.Logger;
 
 import edu.jas.kern.PrettyPrint;
-import edu.jas.poly.GenPolynomial;
+import edu.jas.poly.GenSolvablePolynomial;
 import edu.jas.structure.GcdRingElem;
 
 
 /**
- * Quotient, that is a rational function, based on GenPolynomial with RingElem
- * interface. Objects of this class are immutable.
+ * SolvableQuotient, that is a (left) rational function, based on GenSolvablePolynomial 
+ * with RingElem interface. Objects of this class are immutable.
  * @author Heinz Kredel
  */
-public class Quotient<C extends GcdRingElem<C>> implements GcdRingElem<Quotient<C>> {
+public class SolvableQuotient<C extends GcdRingElem<C>> implements GcdRingElem<SolvableQuotient<C>> {
 
 
-    private static final Logger logger = Logger.getLogger(Quotient.class);
+    private static final Logger logger = Logger.getLogger(SolvableQuotient.class);
 
 
     private final boolean debug = logger.isDebugEnabled();
 
 
     /**
-     * Quotient class factory data structure.
+     * SolvableQuotient class factory data structure.
      */
-    public final QuotientRing<C> ring;
+    public final SolvableQuotientRing<C> ring;
 
 
     /**
      * Numerator part of the element data structure.
      */
-    public final GenPolynomial<C> num;
+    public final GenSolvablePolynomial<C> num;
 
 
     /**
      * Denominator part of the element data structure.
      */
-    public final GenPolynomial<C> den;
+    public final GenSolvablePolynomial<C> den;
 
 
     /**
-     * The constructor creates a Quotient object from a ring factory.
+     * The constructor creates a SolvableQuotient object from a ring factory.
      * @param r ring factory.
      */
-    public Quotient(QuotientRing<C> r) {
+    public SolvableQuotient(SolvableQuotientRing<C> r) {
         this(r, r.ring.getZERO());
     }
 
 
     /**
-     * The constructor creates a Quotient object from a ring factory and a
+     * The constructor creates a SolvableQuotient object from a ring factory and a
      * numerator polynomial. The denominator is assumed to be 1.
      * @param r ring factory.
-     * @param n numerator polynomial.
+     * @param n numerator solvable polynomial.
      */
-    public Quotient(QuotientRing<C> r, GenPolynomial<C> n) {
+    public SolvableQuotient(SolvableQuotientRing<C> r, GenSolvablePolynomial<C> n) {
         this(r, n, r.ring.getONE(), true);
     }
 
 
     /**
-     * The constructor creates a Quotient object from a ring factory and a
-     * numerator and denominator polynomial.
+     * The constructor creates a SolvableQuotient object from a ring factory and a
+     * numerator and denominator solvable polynomial.
      * @param r ring factory.
      * @param n numerator polynomial.
      * @param d denominator polynomial.
      */
-    public Quotient(QuotientRing<C> r, GenPolynomial<C> n, GenPolynomial<C> d) {
+    public SolvableQuotient(SolvableQuotientRing<C> r, GenSolvablePolynomial<C> n, GenSolvablePolynomial<C> d) {
         this(r, n, d, false);
     }
 
 
     /**
-     * The constructor creates a Quotient object from a ring factory and a
+     * The constructor creates a SolvableQuotient object from a ring factory and a
      * numerator and denominator polynomial.
      * @param r ring factory.
      * @param n numerator polynomial.
      * @param d denominator polynomial.
-     * @param isred true if gcd(n,d) == 1, else false.
+     * @param isred <em>unused at the moment</em>.
      */
-    protected Quotient(QuotientRing<C> r, GenPolynomial<C> n, GenPolynomial<C> d, boolean isred) {
+    protected SolvableQuotient(SolvableQuotientRing<C> r, 
+                               GenSolvablePolynomial<C> n, GenSolvablePolynomial<C> d, 
+                               boolean isred) {
         if (d == null || d.isZERO()) {
             throw new IllegalArgumentException("denominator may not be zero");
         }
         ring = r;
         if (d.signum() < 0) {
-            n = n.negate();
-            d = d.negate();
+            n = (GenSolvablePolynomial<C>) n.negate();
+            d = (GenSolvablePolynomial<C>) d.negate();
         }
         if (!isred) {
-            // must reduce to lowest terms
-            GenPolynomial<C> gcd = ring.gcd(n, d);
-            if (false || debug) {
-                logger.info("gcd = " + gcd);
-            }
-            //GenPolynomial<C> gcd = ring.ring.getONE();
-            if (!gcd.isONE()) {
-                //logger.info("gcd = " + gcd);
-                n = ring.divide(n, gcd);
-                d = ring.divide(d, gcd);
-            }
+            // TODO
         }
         C lc = d.leadingBaseCoefficient();
         if (!lc.isONE() && lc.isUnit()) {
@@ -112,6 +104,13 @@ public class Quotient<C extends GcdRingElem<C>> implements GcdRingElem<Quotient<
             n = n.multiply(lc);
             d = d.multiply(lc);
         }
+        if ( n.compareTo(d) == 0 ) {
+            n = ring.ring.getONE();
+            d = ring.ring.getONE();
+	}
+        if ( n.isZERO() ) {
+            d = ring.ring.getONE();
+	}
         num = n;
         den = d;
     }
@@ -122,7 +121,7 @@ public class Quotient<C extends GcdRingElem<C>> implements GcdRingElem<Quotient<
      * @return factory for this Element.
      * @see edu.jas.structure.Element#factory()
      */
-    public QuotientRing<C> factory() {
+    public SolvableQuotientRing<C> factory() {
         return ring;
     }
 
@@ -132,13 +131,13 @@ public class Quotient<C extends GcdRingElem<C>> implements GcdRingElem<Quotient<
      * @see java.lang.Object#clone()
      */
     @Override
-    public Quotient<C> copy() {
-        return new Quotient<C>(ring, num, den, true);
+    public SolvableQuotient<C> copy() {
+        return new SolvableQuotient<C>(ring, num, den, true);
     }
 
 
     /**
-     * Is Quotient zero.
+     * Is SolvableQuotient zero.
      * @return If this is 0 then true is returned, else false.
      * @see edu.jas.structure.RingElem#isZERO()
      */
@@ -148,17 +147,17 @@ public class Quotient<C extends GcdRingElem<C>> implements GcdRingElem<Quotient<
 
 
     /**
-     * Is Quotient one.
+     * Is SolvableQuotient one.
      * @return If this is 1 then true is returned, else false.
      * @see edu.jas.structure.RingElem#isONE()
      */
     public boolean isONE() {
-        return num.equals(den);
+        return num.compareTo(den) == 0;
     }
 
 
     /**
-     * Is Quotient a unit.
+     * Is SolvableQuotient a unit.
      * @return If this is a unit then true is returned, else false.
      * @see edu.jas.structure.RingElem#isUnit()
      */
@@ -192,7 +191,7 @@ public class Quotient<C extends GcdRingElem<C>> implements GcdRingElem<Quotient<
             }
             return s + " }";
         }
-        return "Quotient[ " + num.toString() + " | " + den.toString() + " ]";
+        return "SolvableQuotient[ " + num.toString() + " | " + den.toString() + " ]";
     }
 
 
@@ -201,9 +200,9 @@ public class Quotient<C extends GcdRingElem<C>> implements GcdRingElem<Quotient<
      * @return script compatible representation for this Element.
      * @see edu.jas.structure.Element#toScript()
      */
-    //JAVA6only: @Override
+    @Override
     public String toScript() {
-        // Python case
+        // any scripting case
         if (den.isONE()) {
             return num.toScript();
         }
@@ -216,20 +215,19 @@ public class Quotient<C extends GcdRingElem<C>> implements GcdRingElem<Quotient<
      * @return script compatible representation for this ElemFactory.
      * @see edu.jas.structure.Element#toScriptFactory()
      */
-    //JAVA6only: @Override
+    @Override
     public String toScriptFactory() {
-        // Python case
         return factory().toScript();
     }
 
 
     /**
-     * Quotient comparison.
-     * @param b Quotient.
+     * SolvableQuotient comparison.
+     * @param b SolvableQuotient.
      * @return sign(this-b).
      */
-    //JAVA6only: @Override
-    public int compareTo(Quotient<C> b) {
+    @Override
+    public int compareTo(SolvableQuotient<C> b) {
         if (b == null || b.isZERO()) {
             return this.signum();
         }
@@ -246,8 +244,18 @@ public class Quotient<C extends GcdRingElem<C>> implements GcdRingElem<Quotient<
         if ( den.compareTo(b.den) == 0 ) {
             return num.compareTo(b.num);
         }
-        GenPolynomial<C> r = num.multiply(b.den);
-        GenPolynomial<C> s = den.multiply(b.num);
+        GenSolvablePolynomial<C>[] oc = ring.engine.leftOreCond(den,b.den);
+        if (debug) {
+            System.out.println("den   = " + den);
+            System.out.println("b.den = " + b.den);
+            System.out.println("oc[0] = " + oc[0]);
+            System.out.println("oc[1] = " + oc[1]);
+	}
+        GenSolvablePolynomial<C> r, s;
+        r = oc[0].multiply(num);
+        s = oc[1].multiply(b.num);
+        //System.out.println("r = " + r);
+        //System.out.println("s = " + s);
         return r.compareTo(s);
     }
 
@@ -259,12 +267,12 @@ public class Quotient<C extends GcdRingElem<C>> implements GcdRingElem<Quotient<
     @SuppressWarnings("unchecked")
     @Override
     public boolean equals(Object b) {
-        if (!(b instanceof Quotient)) {
+        if (!(b instanceof SolvableQuotient)) {
             return false;
         }
-        Quotient<C> a = null;
+        SolvableQuotient<C> a = null;
         try {
-            a = (Quotient<C>) b;
+            a = (SolvableQuotient<C>) b;
         } catch (ClassCastException e) {
         }
         if (a == null) {
@@ -276,7 +284,7 @@ public class Quotient<C extends GcdRingElem<C>> implements GcdRingElem<Quotient<
 
 
     /**
-     * Hash code for this quotient.
+     * Hash code for this element.
      * @see java.lang.Object#hashCode()
      */
     @Override
@@ -290,89 +298,79 @@ public class Quotient<C extends GcdRingElem<C>> implements GcdRingElem<Quotient<
 
 
     /**
-     * Quotient absolute value.
+     * SolvableQuotient absolute value.
      * @return the absolute value of this.
      * @see edu.jas.structure.RingElem#abs()
      */
-    public Quotient<C> abs() {
-        return new Quotient<C>(ring, num.abs(), den, true);
+    public SolvableQuotient<C> abs() {
+        return new SolvableQuotient<C>(ring, (GenSolvablePolynomial<C>) num.abs(), den, true);
     }
 
 
     /**
-     * Quotient summation.
-     * @param S Quotient.
+     * SolvableQuotient summation.
+     * @param S SolvableQuotient.
      * @return this+S.
      */
-    public Quotient<C> sum(Quotient<C> S) {
+    public SolvableQuotient<C> sum(SolvableQuotient<C> S) {
         if (S == null || S.isZERO()) {
             return this;
         }
         if (this.isZERO()) {
             return S;
         }
-        GenPolynomial<C> n;
+        GenSolvablePolynomial<C> n, d, n1, n2;
         if (den.isONE() && S.den.isONE()) {
-            n = num.sum(S.num);
-            return new Quotient<C>(ring, n);
+            n = (GenSolvablePolynomial<C>) num.sum(S.num);
+            return new SolvableQuotient<C>(ring, n, den, true);
         }
         if (den.isONE()) {
-            n = num.multiply(S.den);
-            n = n.sum(S.num);
-            return new Quotient<C>(ring, n, S.den, false);
+            n = S.den.multiply(num);
+            n = (GenSolvablePolynomial<C>) n.sum(S.num);
+            return new SolvableQuotient<C>(ring, n, S.den, false);
         }
         if (S.den.isONE()) {
-            n = S.num.multiply(den);
-            n = n.sum(num);
-            return new Quotient<C>(ring, n, den, false);
+            n = den.multiply(S.num);
+            n = (GenSolvablePolynomial<C>) n.sum(num);
+            return new SolvableQuotient<C>(ring, n, den, false);
         }
-        if ( den.compareTo(S.den) == 0 ) {
-            n = num.sum(S.num);
-            return new Quotient<C>(ring, n, den, false);
+        if ( den.compareTo(S.den) == 0 ) { // correct ?
+            //d = den.multiply(den);
+            //n1 = den.multiply(S.num);
+            //n2 = S.den.multiply(num);
+            n = (GenSolvablePolynomial<C>) num.sum(S.num);
+            return new SolvableQuotient<C>(ring, n, den, false);
         }
-        GenPolynomial<C> d;
-        GenPolynomial<C> sd;
-        GenPolynomial<C> g;
-        g = ring.gcd(den, S.den);
-        if (g.isONE()) {
-            d = den;
-            sd = S.den;
-        } else {
-            d = ring.divide(den, g);
-            sd = ring.divide(S.den, g);
-        }
-        n = num.multiply(sd);
-        n = n.sum(d.multiply(S.num));
-        if (n.isZERO()) {
-            return ring.getZERO();
-        }
-        GenPolynomial<C> f;
-        GenPolynomial<C> dd;
-        dd = den;
-        if (!g.isONE()) {
-            f = ring.gcd(n, g);
-            if (!f.isONE()) {
-                n = ring.divide(n, f);
-                dd = ring.divide(den, f);
-            }
-        }
-        d = dd.multiply(sd);
-        return new Quotient<C>(ring, n, d, true);
+        // general case
+        GenSolvablePolynomial<C>[] oc = ring.engine.leftOreCond(den,S.den);
+        if (debug) {
+            System.out.println("den   = " + den);
+            System.out.println("S.den = " + S.den);
+            System.out.println("oc[0] = " + oc[0]);
+            System.out.println("oc[1] = " + oc[1]);
+	}
+        d = oc[0].multiply(den);
+        n1 = oc[0].multiply(num);
+        n2 = oc[1].multiply(S.num);
+        n = (GenSolvablePolynomial<C>) n1.sum(n2);
+        //System.out.println("n = " + n);
+        //System.out.println("d = " + d);
+        return new SolvableQuotient<C>(ring, n, d, false);
     }
 
 
     /**
-     * Quotient negate.
+     * SolvableQuotient negate.
      * @return -this.
      * @see edu.jas.structure.RingElem#negate()
      */
-    public Quotient<C> negate() {
-        return new Quotient<C>(ring, num.negate(), den, true);
+    public SolvableQuotient<C> negate() {
+        return new SolvableQuotient<C>(ring, (GenSolvablePolynomial<C>) num.negate(), den, true);
     }
 
 
     /**
-     * Quotient signum.
+     * SolvableQuotient signum.
      * @see edu.jas.structure.RingElem#signum()
      * @return signum(this).
      */
@@ -383,44 +381,44 @@ public class Quotient<C extends GcdRingElem<C>> implements GcdRingElem<Quotient<
 
 
     /**
-     * Quotient subtraction.
-     * @param S Quotient.
+     * SolvableQuotient subtraction.
+     * @param S SolvableQuotient.
      * @return this-S.
      */
-    public Quotient<C> subtract(Quotient<C> S) {
+    public SolvableQuotient<C> subtract(SolvableQuotient<C> S) {
         return sum(S.negate());
     }
 
 
     /**
-     * Quotient division.
-     * @param S Quotient.
+     * SolvableQuotient division.
+     * @param S SolvableQuotient.
      * @return this/S.
      */
-    public Quotient<C> divide(Quotient<C> S) {
+    public SolvableQuotient<C> divide(SolvableQuotient<C> S) {
         return multiply(S.inverse());
     }
 
 
     /**
-     * Quotient inverse.
+     * SolvableQuotient inverse.
      * @see edu.jas.structure.RingElem#inverse()
      * @return S with S = 1/this.
      */
-    public Quotient<C> inverse() {
+    public SolvableQuotient<C> inverse() {
         if (num.isZERO()) {
             throw new ArithmeticException("element not invertible " + this);
         }
-        return new Quotient<C>(ring, den, num, true);
+        return new SolvableQuotient<C>(ring, den, num, true);
     }
 
 
     /**
-     * Quotient remainder.
-     * @param S Quotient.
+     * SolvableQuotient remainder.
+     * @param S SolvableQuotient.
      * @return this - (this/S)*S.
      */
-    public Quotient<C> remainder(Quotient<C> S) {
+    public SolvableQuotient<C> remainder(SolvableQuotient<C> S) {
         if (num.isZERO()) {
             throw new ArithmeticException("element not invertible " + this);
         }
@@ -429,11 +427,11 @@ public class Quotient<C extends GcdRingElem<C>> implements GcdRingElem<Quotient<
 
 
     /**
-     * Quotient multiplication.
-     * @param S Quotient.
+     * SolvableQuotient multiplication.
+     * @param S SolvableQuotient.
      * @return this*S.
      */
-    public Quotient<C> multiply(Quotient<C> S) {
+    public SolvableQuotient<C> multiply(SolvableQuotient<C> S) {
         if (S == null || S.isZERO()) {
             return S;
         }
@@ -446,53 +444,45 @@ public class Quotient<C extends GcdRingElem<C>> implements GcdRingElem<Quotient<
         if (this.isONE()) {
             return S;
         }
-        GenPolynomial<C> n;
+        GenSolvablePolynomial<C> n, d;
         if (den.isONE() && S.den.isONE()) {
             n = num.multiply(S.num);
-            return new Quotient<C>(ring, n, den, true);
+            return new SolvableQuotient<C>(ring, n, den, true);
         }
-        GenPolynomial<C> g;
-        GenPolynomial<C> d;
         if (den.isONE()) {
-            g = ring.gcd(num, S.den);
-            n = ring.divide(num, g);
-            d = ring.divide(S.den, g);
-            n = n.multiply(S.num);
-            return new Quotient<C>(ring, n, d, true);
+            d = S.den;
+            n = num.multiply(S.num);
+            return new SolvableQuotient<C>(ring, n, d, false);
         }
         if (S.den.isONE()) {
-            g = ring.gcd(S.num, den);
-            n = ring.divide(S.num, g);
-            d = ring.divide(den, g);
-            n = n.multiply(num);
-            return new Quotient<C>(ring, n, d, true);
-        }
-        if ( den.compareTo(S.den) == 0 ) { // correct ?
-            d = den.multiply(den);
+            d = den;
             n = num.multiply(S.num);
-            return new Quotient<C>(ring, n, d, true);
+            return new SolvableQuotient<C>(ring, n, d, false);
         }
-        GenPolynomial<C> f;
-        GenPolynomial<C> sd;
-        GenPolynomial<C> sn;
-        g = ring.gcd(num, S.den);
-        n = ring.divide(num, g);
-        sd = ring.divide(S.den, g);
-        f = ring.gcd(den, S.num);
-        d = ring.divide(den, f);
-        sn = ring.divide(S.num, f);
-        n = n.multiply(sn);
-        d = d.multiply(sd);
-        return new Quotient<C>(ring, n, d, true);
+        // if ( den.compareTo(S.den) == 0 ) { // not correct ?
+        //     d = den.multiply(den);
+        //     n = num.multiply(S.num);
+        //     return new SolvableQuotient<C>(ring, n, d, false);
+        // }
+        GenSolvablePolynomial<C>[] oc = ring.engine.leftOreCond(num,S.den);
+        n = oc[1].multiply(S.num);
+        d = oc[0].multiply(den);
+        if (debug) {
+            System.out.println("num   = " + num);
+            System.out.println("S.den = " + S.den);
+            System.out.println("oc[0] = " + oc[0]);
+            System.out.println("oc[1] = " + oc[1]);
+	}
+        return new SolvableQuotient<C>(ring, n, d, false);
     }
 
 
     /**
-     * Quotient multiplication by GenPolynomial.
-     * @param b GenPolynomial<C>.
+     * SolvableQuotient multiplication by GenSolvablePolynomial.
+     * @param b GenSolvablePolynomial<C>.
      * @return this*b.
      */
-    public Quotient<C> multiply(GenPolynomial<C> b) {
+    public SolvableQuotient<C> multiply(GenSolvablePolynomial<C> b) {
         if (b == null || b.isZERO()) {
             return ring.getZERO();
         }
@@ -502,26 +492,17 @@ public class Quotient<C extends GcdRingElem<C>> implements GcdRingElem<Quotient<
         if (b.isONE()) {
             return this;
         }
-        GenPolynomial<C> gcd = ring.gcd(b, den);
-        GenPolynomial<C> d = den;
-        if (!gcd.isONE()) {
-            b = ring.divide(b, gcd);
-            d = ring.divide(d, gcd);
-        }
-        if (this.isONE()) {
-            return new Quotient<C>(ring, b, d, true);
-        }
-        GenPolynomial<C> n = num.multiply(b);
-        return new Quotient<C>(ring, n, d, true);
+        GenSolvablePolynomial<C> n = num.multiply(b);
+        return new SolvableQuotient<C>(ring, n, den, false);
     }
 
 
     /**
-     * Quotient multiplication by coefficient.
+     * SolvableQuotient multiplication by coefficient.
      * @param b coefficient.
      * @return this*b.
      */
-    public Quotient<C> multiply(C b) {
+    public SolvableQuotient<C> multiply(C b) {
         if (b == null || b.isZERO()) {
             return ring.getZERO();
         }
@@ -531,16 +512,16 @@ public class Quotient<C extends GcdRingElem<C>> implements GcdRingElem<Quotient<
         if (b.isONE()) {
             return this;
         }
-        GenPolynomial<C> n = num.multiply(b);
-        return new Quotient<C>(ring, n, den, true);
+        GenSolvablePolynomial<C> n = num.multiply(b);
+        return new SolvableQuotient<C>(ring, n, den, false);
     }
 
 
     /**
-     * Quotient monic.
+     * SolvableQuotient monic.
      * @return this with monic value part.
      */
-    public Quotient<C> monic() {
+    public SolvableQuotient<C> monic() {
         if (num.isZERO()) {
             return this;
         }
@@ -550,9 +531,9 @@ public class Quotient<C extends GcdRingElem<C>> implements GcdRingElem<Quotient<
         }
         lbc = lbc.inverse();
         //lbc = lbc.abs();
-        GenPolynomial<C> n = num.multiply(lbc);
-        //GenPolynomial<C> d = den.multiply(lbc);
-        return new Quotient<C>(ring, n, den, true);
+        GenSolvablePolynomial<C> n = (GenSolvablePolynomial<C>) num.multiply(lbc);
+        //GenSolvablePolynomial<C> d = (GenSolvablePolynomial<C>) den.multiply(lbc);
+        return new SolvableQuotient<C>(ring, n, den, true);
     }
 
 
@@ -561,7 +542,7 @@ public class Quotient<C extends GcdRingElem<C>> implements GcdRingElem<Quotient<
      * @param b other element.
      * @return gcd(this,b).
      */
-    public Quotient<C> gcd(Quotient<C> b) {
+    public SolvableQuotient<C> gcd(SolvableQuotient<C> b) {
         if (b == null || b.isZERO()) {
             return this;
         }
@@ -578,8 +559,8 @@ public class Quotient<C extends GcdRingElem<C>> implements GcdRingElem<Quotient<
      * @return [ gcd(this,b), c1, c2 ] with c1*this + c2*b = gcd(this,b).
      */
     @SuppressWarnings("unchecked")
-    public Quotient<C>[] egcd(Quotient<C> b) {
-        Quotient<C>[] ret = (Quotient<C>[]) new Quotient[3];
+    public SolvableQuotient<C>[] egcd(SolvableQuotient<C> b) {
+        SolvableQuotient<C>[] ret = (SolvableQuotient<C>[]) new SolvableQuotient[3];
         ret[0] = null;
         ret[1] = null;
         ret[2] = null;
@@ -591,10 +572,11 @@ public class Quotient<C extends GcdRingElem<C>> implements GcdRingElem<Quotient<
             ret[0] = b;
             return ret;
         }
-        GenPolynomial<C> two = ring.ring.fromInteger(2);
+        GenSolvablePolynomial<C> two = ring.ring.fromInteger(2);
         ret[0] = ring.getONE();
         ret[1] = (this.multiply(two)).inverse();
         ret[2] = (b.multiply(two)).inverse();
         return ret;
     }
+
 }

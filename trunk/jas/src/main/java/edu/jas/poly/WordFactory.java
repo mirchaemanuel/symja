@@ -1,5 +1,5 @@
 /*
- * $Id: WordFactory.java 4225 2012-09-29 20:27:56Z kredel $
+ * $Id: WordFactory.java 4388 2013-04-27 19:38:16Z kredel $
  */
 
 package edu.jas.poly;
@@ -145,8 +145,7 @@ public final class WordFactory implements MonoidFactory<Word> {
     /**
      * Is this structure finite or infinite.
      * @return true if this structure is finite, else false.
-     * @see edu.jas.structure.ElemFactory#isFinite() <b>Note: </b> returns true
-     *      because of finite String value.
+     * @see edu.jas.structure.ElemFactory#isFinite() 
      */
     public boolean isFinite() {
         if (alphabet.length() == 0) {

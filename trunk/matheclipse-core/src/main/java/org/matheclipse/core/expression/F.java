@@ -107,7 +107,7 @@ public class F {
 	public static ISymbol Condition;
 
 	public static ISymbol Conjugate;
-	
+
 	public static ISymbol Continue;
 
 	public static ISymbol Cos;
@@ -317,6 +317,8 @@ public class F {
 	public static ISymbol Tan;
 
 	public static ISymbol Tanh;
+
+	public static ISymbol Taylor;
 
 	public static ISymbol Times;
 
@@ -721,7 +723,7 @@ public class F {
 	public static IAST Conjugate(final IExpr a0) {
 		return unary(Conjugate, a0);
 	}
-	
+
 	public static IAST Cos(final IExpr a0) {
 		return unary(Cos, a0);
 	}
@@ -1268,6 +1270,7 @@ public class F {
 				Sum = predefinedSymbol("Sum");
 				Tan = predefinedSymbol("Tan");
 				Tanh = predefinedSymbol("Tanh");
+				Taylor = predefinedSymbol("Taylor");
 
 				Timing = predefinedSymbol("Timing");
 				Together = predefinedSymbol("Together");
@@ -1739,6 +1742,10 @@ public class F {
 		return unary(Tanh, a0);
 	}
 
+	public static IAST Taylor(final IExpr a0, final IExpr a1) {
+		return binary(Taylor, a0, a1);
+	}
+
 	public static IAST Times() {
 		return function(Times);
 	}
@@ -1960,6 +1967,10 @@ public class F {
 	 */
 	public static IComplex complex(final IFraction re, final IFraction im) {
 		return ComplexSym.valueOf(re, im);
+	}
+
+	public static IComplex complex(final edu.jas.arith.BigComplex value) {
+		return ComplexSym.valueOf(fraction(value.getRe()), fraction(value.getIm()));
 	}
 
 	/**
@@ -2207,7 +2218,11 @@ public class F {
 	 * @return IFraction
 	 */
 	public static IFraction fraction(final BigFraction value) {
-		return FractionSym.valueOf(value);
+		return FractionSym.valueOf(value.getNumerator(), value.getDenominator());
+	}
+
+	public static IFraction fraction(final edu.jas.arith.BigRational value) {
+		return FractionSym.valueOf(value.num, value.den);
 	}
 
 	/**

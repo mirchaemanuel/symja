@@ -1,5 +1,5 @@
 /*
- * $Id: GenSolvablePolynomialRing.java 4139 2012-08-26 10:24:29Z kredel $
+ * $Id: GenSolvablePolynomialRing.java 4388 2013-04-27 19:38:16Z kredel $
  */
 
 package edu.jas.poly;
@@ -119,6 +119,18 @@ public class GenSolvablePolynomialRing<C extends RingElem<C>> extends GenPolynom
      */
     public GenSolvablePolynomialRing(RingFactory<C> cf, int n, TermOrder t, String[] v) {
         this(cf, n, t, v, null);
+    }
+
+
+    /**
+     * The constructor creates a solvable polynomial factory object with the
+     * given term order and commutative relations.
+     * @param cf factory for coefficients of type C.
+     * @param t a term order.
+     * @param v names for the variables.
+     */
+    public GenSolvablePolynomialRing(RingFactory<C> cf, TermOrder t, String[] v) {
+        this(cf, v.length, t, v, null);
     }
 
 

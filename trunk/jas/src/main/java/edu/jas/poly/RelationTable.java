@@ -1,5 +1,5 @@
 /*
- * $Id: RelationTable.java 4108 2012-08-18 10:57:40Z kredel $
+ * $Id: RelationTable.java 4388 2013-04-27 19:38:16Z kredel $
  */
 
 package edu.jas.poly;
@@ -50,7 +50,7 @@ public class RelationTable<C extends RingElem<C>> implements Serializable {
     private static final Logger logger = Logger.getLogger(RelationTable.class);
 
 
-    private final boolean debug = true; //logger.isDebugEnabled();
+    private final boolean debug = logger.isDebugEnabled();
 
 
     /**

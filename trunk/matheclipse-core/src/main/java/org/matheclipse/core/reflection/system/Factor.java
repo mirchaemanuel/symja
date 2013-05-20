@@ -19,7 +19,10 @@ import org.matheclipse.core.interfaces.IInteger;
 import edu.jas.arith.BigRational;
 import edu.jas.arith.ModInteger;
 import edu.jas.arith.ModIntegerRing;
+import edu.jas.poly.ComplexRing;
 import edu.jas.poly.GenPolynomial;
+import edu.jas.poly.GenPolynomialRing;
+import edu.jas.poly.PolyUtil;
 import edu.jas.ufd.FactorAbstract;
 import edu.jas.ufd.FactorFactory;
 
@@ -71,7 +74,7 @@ public class Factor extends AbstractFunctionEvaluator {
 		FactorAbstract<edu.jas.arith.BigInteger> factorAbstract = FactorFactory.getImplementation(edu.jas.arith.BigInteger.ONE);
 		SortedMap<GenPolynomial<edu.jas.arith.BigInteger>, Long> map;
 		if (factorSquareFree) {
-			map = factorAbstract.squarefreeFactors(poly);// factors(poly);
+			map = factorAbstract.squarefreeFactors(poly);
 		} else {
 			map = factorAbstract.factors(poly);
 		}
@@ -84,6 +87,39 @@ public class Factor extends AbstractFunctionEvaluator {
 				continue;
 			}
 			result.add(F.Power(jas.integerPoly2Expr(entry.getKey()), F.integer(entry.getValue())));
+		}
+		return result;
+	}
+
+	/**
+	 * TODO: this doesn't work at the moment
+	 * @param expr
+	 * @param varList
+	 * @param factorSquareFree
+	 * @return
+	 * @throws JASConversionException
+	 */
+	@Deprecated
+	public static IExpr factorComplex(IExpr expr, List<IExpr> varList, boolean factorSquareFree) throws JASConversionException {
+		JASConvert<BigRational> jas = new JASConvert<BigRational>(varList, BigRational.ZERO);
+		GenPolynomial<BigRational> polyRat = jas.expr2JAS(expr); 
+		GenPolynomial<edu.jas.arith.BigComplex> poly = PolyUtil.complexFromRational(new GenPolynomialRing<edu.jas.arith.BigComplex>(
+				new ComplexRing(edu.jas.arith.BigRational.ONE), 1), polyRat);
+		FactorAbstract<edu.jas.arith.BigComplex> factorAbstract = FactorFactory.getImplementation(new GenPolynomialRing<edu.jas.arith.BigComplex>(
+				new ComplexRing(edu.jas.arith.BigRational.ONE), 1));
+
+		SortedMap<GenPolynomial<edu.jas.arith.BigComplex>, Long> map;
+		if (factorSquareFree) {
+			map = factorAbstract.squarefreeFactors(poly);
+		} else {
+			map = factorAbstract.factors(poly);
+		}
+		IAST result = F.Times();
+		for (SortedMap.Entry<GenPolynomial<edu.jas.arith.BigComplex>, Long> entry : map.entrySet()) {
+			if (entry.getKey().isONE() && entry.getValue().equals(1L)) {
+				continue;
+			}
+			result.add(F.Power(jas.complexPoly2Expr(entry.getKey()), F.integer(entry.getValue())));
 		}
 		return result;
 	}
