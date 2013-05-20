@@ -33,7 +33,7 @@ import org.apache.commons.math3.util.FastMath;
 
 /**
  * This class implements the {@link RealVector} interface with a double array.
- * @version $Id: ArrayRealVector.java 1382998 2012-09-10 17:42:53Z celestin $
+ * @version $Id: ArrayRealVector.java 1416643 2012-12-03 19:37:14Z tn $
  * @since 2.0
  */
 public class ArrayRealVector extends RealVector implements Serializable {
@@ -306,7 +306,7 @@ public class ArrayRealVector extends RealVector implements Serializable {
         } else {
             checkVectorDimensions(v);
             double[] out = data.clone();
-            Iterator<Entry> it = v.sparseIterator();
+            Iterator<Entry> it = v.iterator();
             while (it.hasNext()) {
                 final Entry e = it.next();
                 out[e.getIndex()] += e.getValue();
@@ -332,7 +332,7 @@ public class ArrayRealVector extends RealVector implements Serializable {
         } else {
             checkVectorDimensions(v);
             double[] out = data.clone();
-            Iterator<Entry> it = v.sparseIterator();
+            Iterator<Entry> it = v.iterator();
             while (it.hasNext()) {
                 final Entry e = it.next();
                 out[e.getIndex()] -= e.getValue();

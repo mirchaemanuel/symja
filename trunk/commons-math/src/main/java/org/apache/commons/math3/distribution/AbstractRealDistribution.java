@@ -33,7 +33,7 @@ import org.apache.commons.math3.util.FastMath;
  * Default implementations are provided for some of the methods
  * that do not vary from distribution to distribution.
  *
- * @version $Id: AbstractRealDistribution.java 1370215 2012-08-07 12:38:59Z sebb $
+ * @version $Id: AbstractRealDistribution.java 1422195 2012-12-15 06:45:18Z psteitz $
  * @since 3.0
  */
 public abstract class AbstractRealDistribution
@@ -48,9 +48,14 @@ implements RealDistribution, Serializable {
       * {@link #random} instance variable instead.
       */
     @Deprecated
-    protected final RandomDataImpl randomData = new RandomDataImpl();
-    /** RNG instance used to generate samples from the distribution. */
+    protected RandomDataImpl randomData = new RandomDataImpl();
+
+    /**
+     * RNG instance used to generate samples from the distribution.
+     * @since 3.1
+     */
     protected final RandomGenerator random;
+
     /** Solver absolute accuracy for inverse cumulative computation */
     private double solverAbsoluteAccuracy = SOLVER_DEFAULT_ABSOLUTE_ACCURACY;
 
@@ -66,6 +71,7 @@ implements RealDistribution, Serializable {
     }
     /**
      * @param rng Random number generator.
+     * @since 3.1
      */
     protected AbstractRealDistribution(RandomGenerator rng) {
         random = rng;
@@ -275,6 +281,7 @@ implements RealDistribution, Serializable {
      * {@inheritDoc}
      *
      * @return zero.
+     * @since 3.1
      */
     public double probability(double x) {
         return 0d;

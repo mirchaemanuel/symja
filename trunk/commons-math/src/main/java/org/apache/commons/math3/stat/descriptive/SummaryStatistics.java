@@ -56,7 +56,7 @@ import org.apache.commons.math3.util.FastMath;
  * {@link SynchronizedSummaryStatistics} if concurrent access from multiple
  * threads is required.
  * </p>
- * @version $Id: SummaryStatistics.java 1382332 2012-09-08 17:27:47Z psteitz $
+ * @version $Id: SummaryStatistics.java 1416643 2012-12-03 19:37:14Z tn $
  */
 public class SummaryStatistics implements StatisticalSummary, Serializable {
 

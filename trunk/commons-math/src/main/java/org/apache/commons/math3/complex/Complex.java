@@ -52,7 +52,7 @@ import org.apache.commons.math3.util.MathUtils;
  * <br/>
  * Implements Serializable since 2.0
  *
- * @version $Id: Complex.java 1382887 2012-09-10 14:37:27Z luc $
+ * @version $Id: Complex.java 1459927 2013-03-22 18:55:58Z luc $
  */
 public class Complex implements FieldElement<Complex>, Serializable  {
     /** The square root of -1. A number representing "0.0 + 1.0i" */
@@ -302,7 +302,7 @@ public class Complex implements FieldElement<Complex>, Serializable  {
         }
 
         if (real == 0.0 && imaginary == 0.0) {
-            return NaN;
+            return INF;
         }
 
         if (isInfinite) {

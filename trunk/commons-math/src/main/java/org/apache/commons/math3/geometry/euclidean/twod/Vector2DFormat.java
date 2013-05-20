@@ -37,8 +37,11 @@ import org.apache.commons.math3.util.CompositeFormat;
  * " { 1 ; 1 } " will be parsed without error and the same vector will be
  * returned. In the second case, however, the parse position after parsing will be
  * just after the closing curly brace, i.e. just before the trailing space.</p>
+ * <p><b>Note:</b> using "," as a separator may interfere with the grouping separator
+ * of the default {@link NumberFormat} for the current locale. Thus it is advised
+ * to use a {@link NumberFormat} instance with disabled grouping in such a case.</p>
  *
- * @version $Id: Vector2DFormat.java 1379977 2012-09-02 14:22:52Z luc $
+ * @version $Id: Vector2DFormat.java 1467801 2013-04-14 16:19:33Z tn $
  * @since 3.0
  */
 public class Vector2DFormat extends VectorFormat<Euclidean2D> {

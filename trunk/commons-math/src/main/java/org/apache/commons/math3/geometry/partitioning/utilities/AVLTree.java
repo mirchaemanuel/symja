@@ -17,31 +17,31 @@
 package org.apache.commons.math3.geometry.partitioning.utilities;
 
 /** This class implements AVL trees.
-
+ *
  * <p>The purpose of this class is to sort elements while allowing
  * duplicate elements (i.e. such that {@code a.equals(b)} is
  * true). The {@code SortedSet} interface does not allow this, so
  * a specific class is needed. Null elements are not allowed.</p>
-
+ *
  * <p>Since the {@code equals} method is not sufficient to
  * differentiate elements, the {@link #delete delete} method is
  * implemented using the equality operator.</p>
-
+ *
  * <p>In order to clearly mark the methods provided here do not have
  * the same semantics as the ones specified in the
  * {@code SortedSet} interface, different names are used
  * ({@code add} has been replaced by {@link #insert insert} and
  * {@code remove} has been replaced by {@link #delete
  * delete}).</p>
-
+ *
  * <p>This class is based on the C implementation Georg Kraml has put
  * in the public domain. Unfortunately, his <a
  * href="www.purists.org/georg/avltree/index.html">page</a> seems not
  * to exist any more.</p>
-
+ *
  * @param <T> the type of the elements
-
- * @version $Id: AVLTree.java 1244107 2012-02-14 16:17:55Z erans $
+ *
+ * @version $Id: AVLTree.java 1416643 2012-12-03 19:37:14Z tn $
  * @since 3.0
  */
 public class AVLTree<T extends Comparable<T>> {

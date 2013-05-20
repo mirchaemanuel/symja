@@ -24,9 +24,12 @@ import java.util.List;
 /**
  * Cluster holding a set of {@link Clusterable} points.
  * @param <T> the type of points that can be clustered
- * @version $Id: Cluster.java 1244107 2012-02-14 16:17:55Z erans $
+ * @version $Id: Cluster.java 1461871 2013-03-27 22:01:25Z tn $
  * @since 2.0
+ * @deprecated As of 3.2 (to be removed in 4.0),
+ * use {@link org.apache.commons.math3.ml.clustering.Cluster} instead
  */
+@Deprecated
 public class Cluster<T extends Clusterable<T>> implements Serializable {
 
     /** Serializable version identifier. */

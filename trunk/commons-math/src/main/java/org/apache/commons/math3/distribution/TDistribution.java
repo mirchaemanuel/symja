@@ -29,7 +29,7 @@ import org.apache.commons.math3.random.Well19937c;
  *
  * @see "<a href='http://en.wikipedia.org/wiki/Student&apos;s_t-distribution'>Student's t-distribution (Wikipedia)</a>"
  * @see "<a href='http://mathworld.wolfram.com/Studentst-Distribution.html'>Student's t-distribution (MathWorld)</a>"
- * @version $Id: TDistribution.java 1369202 2012-08-03 20:50:33Z erans $
+ * @version $Id: TDistribution.java 1416643 2012-12-03 19:37:14Z tn $
  */
 public class TDistribution extends AbstractRealDistribution {
     /**

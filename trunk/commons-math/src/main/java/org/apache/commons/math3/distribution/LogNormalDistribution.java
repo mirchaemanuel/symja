@@ -50,7 +50,7 @@ import org.apache.commons.math3.random.Well19937c;
  * @see <a href="http://mathworld.wolfram.com/LogNormalDistribution.html">
  * Log Normal distribution (MathWorld)</a>
  *
- * @version $Id: LogNormalDistribution.java 1369415 2012-08-04 19:24:56Z erans $
+ * @version $Id: LogNormalDistribution.java 1422195 2012-12-15 06:45:18Z psteitz $
  * @since 3.0
  */
 public class LogNormalDistribution extends AbstractRealDistribution {
@@ -120,6 +120,7 @@ public class LogNormalDistribution extends AbstractRealDistribution {
      * @param shape Shape parameter of this distribution.
      * @param inverseCumAccuracy Inverse cumulative probability accuracy.
      * @throws NotStrictlyPositiveException if {@code shape <= 0}.
+     * @since 3.1
      */
     public LogNormalDistribution(RandomGenerator rng,
                                  double scale,

@@ -35,7 +35,7 @@ import org.apache.commons.math3.util.FastMath;
  *
  * @see org.apache.commons.math3.ode.nonstiff.AdamsBashforthIntegrator
  * @see org.apache.commons.math3.ode.nonstiff.AdamsMoultonIntegrator
- * @version $Id: NordsieckStepInterpolator.java 1379975 2012-09-02 14:21:00Z luc $
+ * @version $Id: NordsieckStepInterpolator.java 1416643 2012-12-03 19:37:14Z tn $
  * @since 2.0
  */
 

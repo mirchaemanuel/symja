@@ -19,6 +19,7 @@ package org.apache.commons.math3.distribution;
 
 import org.apache.commons.math3.exception.NotStrictlyPositiveException;
 import org.apache.commons.math3.exception.NumberIsTooLargeException;
+import org.apache.commons.math3.exception.OutOfRangeException;
 import org.apache.commons.math3.exception.util.LocalizedFormats;
 import org.apache.commons.math3.special.Erf;
 import org.apache.commons.math3.util.FastMath;
@@ -30,7 +31,7 @@ import org.apache.commons.math3.random.Well19937c;
  *
  * @see <a href="http://en.wikipedia.org/wiki/Normal_distribution">Normal distribution (Wikipedia)</a>
  * @see <a href="http://mathworld.wolfram.com/NormalDistribution.html">Normal distribution (MathWorld)</a>
- * @version $Id: NormalDistribution.java 1369415 2012-08-04 19:24:56Z erans $
+ * @version $Id: NormalDistribution.java 1462423 2013-03-29 07:25:18Z luc $
  */
 public class NormalDistribution extends AbstractRealDistribution {
     /**
@@ -150,6 +151,17 @@ public class NormalDistribution extends AbstractRealDistribution {
             return dev < 0 ? 0.0d : 1.0d;
         }
         return 0.5 * (1 + Erf.erf(dev / (standardDeviation * SQRT2)));
+    }
+
+    /** {@inheritDoc}
+     * @since 3.2
+     */
+    @Override
+    public double inverseCumulativeProbability(final double p) throws OutOfRangeException {
+        if (p < 0.0 || p > 1.0) {
+            throw new OutOfRangeException(p, 0, 1);
+        }
+        return mean + standardDeviation * SQRT2 * Erf.erfInv(2 * p - 1);
     }
 
     /**

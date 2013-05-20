@@ -34,7 +34,7 @@ import org.apache.commons.math3.geometry.partitioning.SubHyperplane;
 import org.apache.commons.math3.util.FastMath;
 
 /** This class represents a sub-hyperplane for {@link Line}.
- * @version $Id: SubLine.java 1244107 2012-02-14 16:17:55Z erans $
+ * @version $Id: SubLine.java 1416643 2012-12-03 19:37:14Z tn $
  * @since 3.0
  */
 public class SubLine extends AbstractSubHyperplane<Euclidean2D, Euclidean1D> {
@@ -84,8 +84,8 @@ public class SubLine extends AbstractSubHyperplane<Euclidean2D, Euclidean1D> {
         final List<Segment> segments = new ArrayList<Segment>();
 
         for (final Interval interval : list) {
-            final Vector2D start = line.toSpace(new Vector1D(interval.getLower()));
-            final Vector2D end   = line.toSpace(new Vector1D(interval.getUpper()));
+            final Vector2D start = line.toSpace(new Vector1D(interval.getInf()));
+            final Vector2D end   = line.toSpace(new Vector1D(interval.getSup()));
             segments.add(new Segment(start, end, line));
         }
 

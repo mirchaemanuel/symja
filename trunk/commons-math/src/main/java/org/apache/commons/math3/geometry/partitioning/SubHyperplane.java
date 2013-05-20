@@ -30,7 +30,7 @@ import org.apache.commons.math3.geometry.Space;
 
  * @param <S> Type of the embedding space.
 
- * @version $Id: SubHyperplane.java 1328958 2012-04-22 20:00:33Z luc $
+ * @version $Id: SubHyperplane.java 1416643 2012-12-03 19:37:14Z tn $
  * @since 3.0
  */
 public interface SubHyperplane<S extends Space> {

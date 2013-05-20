@@ -21,7 +21,7 @@ import org.apache.commons.math3.Field;
 import org.apache.commons.math3.FieldElement;
 
 /** Field for Decimal floating point instances.
- * @version $Id: DfpField.java 1296529 2012-03-03 00:35:47Z sebb $
+ * @version $Id: DfpField.java 1416643 2012-12-03 19:37:14Z tn $
  * @since 2.2
  */
 public class DfpField implements Field<Dfp> {

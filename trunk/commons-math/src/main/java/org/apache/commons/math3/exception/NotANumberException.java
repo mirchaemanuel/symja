@@ -19,10 +19,10 @@ package org.apache.commons.math3.exception;
 import org.apache.commons.math3.exception.util.LocalizedFormats;
 
 /**
- * Exception to be thrown when a number is not a n umber.
+ * Exception to be thrown when a number is not a number.
  *
- * @since 3.0
- * @version $Id: NotANumberException.java 1382904 2012-09-10 14:47:45Z luc $
+ * @since 3.1
+ * @version $Id: NotANumberException.java 1422195 2012-12-15 06:45:18Z psteitz $
  */
 public class NotANumberException extends MathIllegalNumberException {
     /** Serializable version Id. */

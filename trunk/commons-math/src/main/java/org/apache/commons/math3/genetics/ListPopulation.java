@@ -32,7 +32,7 @@ import org.apache.commons.math3.exception.NumberIsTooSmallException;
  * Population of chromosomes represented by a {@link List}.
  *
  * @since 2.0
- * @version $Id: ListPopulation.java 1385297 2012-09-16 16:05:57Z tn $
+ * @version $Id: ListPopulation.java 1422195 2012-12-15 06:45:18Z psteitz $
  */
 public abstract class ListPopulation implements Population {
 
@@ -111,7 +111,8 @@ public abstract class ListPopulation implements Population {
      * Add a {@link Collection} of chromosomes to this {@link Population}.
      * @param chromosomeColl a {@link Collection} of chromosomes
      * @throws NumberIsTooLargeException if the population would exceed the population limit when
-     *   adding this chromosome
+     * adding this chromosome
+     * @since 3.1
      */
     public void addChromosomes(final Collection<Chromosome> chromosomeColl) throws NumberIsTooLargeException {
         if (chromosomes.size() + chromosomeColl.size() > populationLimit) {
@@ -132,6 +133,7 @@ public abstract class ListPopulation implements Population {
     /**
      * Access the list of chromosomes.
      * @return the list of chromosomes
+     * @since 3.1
      */
     protected List<Chromosome> getChromosomeList() {
         return chromosomes;

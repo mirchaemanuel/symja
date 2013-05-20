@@ -29,7 +29,7 @@ import org.apache.commons.math3.random.Well19937c;
  *
  * @see <a href="http://en.wikipedia.org/wiki/F-distribution">F-distribution (Wikipedia)</a>
  * @see <a href="http://mathworld.wolfram.com/F-Distribution.html">F-distribution (MathWorld)</a>
- * @version $Id: FDistribution.java 1382380 2012-09-08 22:15:32Z psteitz $
+ * @version $Id: FDistribution.java 1416643 2012-12-03 19:37:14Z tn $
  */
 public class FDistribution extends AbstractRealDistribution {
     /**

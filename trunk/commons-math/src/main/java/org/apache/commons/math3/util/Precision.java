@@ -27,7 +27,7 @@ import org.apache.commons.math3.exception.util.LocalizedFormats;
  * Utilities for comparing numbers.
  *
  * @since 3.0
- * @version $Id: Precision.java 1387941 2012-09-20 10:09:37Z erans $
+ * @version $Id: Precision.java 1422313 2012-12-15 18:53:41Z psteitz $
  */
 public class Precision {
     /**
@@ -282,6 +282,7 @@ public class Precision {
      * @param eps Amount of allowed relative error.
      * @return {@code true} if the values are two adjacent floating point
      * numbers or they are within range of each other.
+     * @since 3.1
      */
     public static boolean equalsWithRelativeTolerance(double x, double y, double eps) {
         if (equals(x, y, 1)) {

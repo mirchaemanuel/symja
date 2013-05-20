@@ -29,7 +29,7 @@ import org.apache.commons.math3.util.FastMath;
 /**
  * An implementation of the Mann-Whitney U test (also called Wilcoxon rank-sum test).
  *
- * @version $Id: MannWhitneyUTest.java 1363565 2012-07-19 22:02:16Z tn $
+ * @version $Id: MannWhitneyUTest.java 1416643 2012-12-03 19:37:14Z tn $
  */
 public class MannWhitneyUTest {
 
@@ -181,6 +181,7 @@ public class MannWhitneyUTest {
 
         final double z = (Umin - EU) / FastMath.sqrt(VarU);
 
+        // No try-catch or advertised exception because args are valid
         final NormalDistribution standardNormal = new NormalDistribution(0, 1);
 
         return 2 * standardNormal.cumulativeProbability(z);

@@ -32,7 +32,7 @@ import org.apache.commons.math3.geometry.Space;
 
  * @param <S> Type of the space.
 
- * @version $Id: Hyperplane.java 1244107 2012-02-14 16:17:55Z erans $
+ * @version $Id: Hyperplane.java 1416643 2012-12-03 19:37:14Z tn $
  * @since 3.0
  */
 public interface Hyperplane<S extends Space> {

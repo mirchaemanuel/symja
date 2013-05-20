@@ -32,7 +32,7 @@ import org.apache.commons.math3.util.FastMath;
 
 /**
  * Abstract base class for implementations of MultipleLinearRegression.
- * @version $Id: AbstractMultipleLinearRegression.java 1296570 2012-03-03 03:35:20Z erans $
+ * @version $Id: AbstractMultipleLinearRegression.java 1416643 2012-12-03 19:37:14Z tn $
  * @since 2.0
  */
 public abstract class AbstractMultipleLinearRegression implements
@@ -222,7 +222,7 @@ public abstract class AbstractMultipleLinearRegression implements
      * @throws MathIllegalArgumentException if the number of rows of {@code x}
      * is not larger than the number of columns + 1
      */
-    protected void validateSampleData(double[][] x, double[] y) {
+    protected void validateSampleData(double[][] x, double[] y) throws MathIllegalArgumentException {
         if ((x == null) || (y == null)) {
             throw new NullArgumentException();
         }

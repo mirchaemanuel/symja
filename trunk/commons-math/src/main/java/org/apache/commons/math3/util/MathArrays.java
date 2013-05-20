@@ -17,24 +17,29 @@
 
 package org.apache.commons.math3.util;
 
-import java.util.List;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Comparator;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
+import org.apache.commons.math3.Field;
 import org.apache.commons.math3.exception.DimensionMismatchException;
+import org.apache.commons.math3.exception.MathArithmeticException;
+import org.apache.commons.math3.exception.MathIllegalArgumentException;
 import org.apache.commons.math3.exception.MathInternalError;
 import org.apache.commons.math3.exception.NonMonotonicSequenceException;
+import org.apache.commons.math3.exception.NotPositiveException;
+import org.apache.commons.math3.exception.NotStrictlyPositiveException;
 import org.apache.commons.math3.exception.NullArgumentException;
-import org.apache.commons.math3.exception.MathIllegalArgumentException;
 import org.apache.commons.math3.exception.util.LocalizedFormats;
-import org.apache.commons.math3.exception.MathArithmeticException;
 
 /**
  * Arrays utilities.
  *
  * @since 3.0
- * @version $Id: MathArrays.java 1382887 2012-09-10 14:37:27Z luc $
+ * @version $Id: MathArrays.java 1462423 2013-03-29 07:25:18Z luc $
  */
 public class MathArrays {
     /** Factor used for splitting double numbers: n = 2^27 + 1 (i.e. {@value}). */
@@ -44,6 +49,149 @@ public class MathArrays {
      * Private constructor.
      */
     private MathArrays() {}
+
+    /**
+     * Real-valued function that operate on an array or a part of it.
+     * @since 3.1
+     */
+    public interface Function {
+        /**
+         * Operates on an entire array.
+         *
+         * @param array Array to operate on.
+         * @return the result of the operation.
+         */
+        double evaluate(double[] array);
+        /**
+         * @param array Array to operate on.
+         * @param startIndex Index of the first element to take into account.
+         * @param numElements Number of elements to take into account.
+         * @return the result of the operation.
+         */
+        double evaluate(double[] array,
+                        int startIndex,
+                        int numElements);
+    }
+
+    /**
+     * Create a copy of an array scaled by a value.
+     *
+     * @param arr Array to scale.
+     * @param val Scalar.
+     * @return scaled copy of array with each entry multiplied by val.
+     * @since 3.2
+     */
+    public static double[] scale(double val, final double[] arr) {
+        double[] newArr = new double[arr.length];
+        for (int i = 0; i < arr.length; i++) {
+            newArr[i] = arr[i] * val;
+        }
+        return newArr;
+    }
+
+    /**
+     * <p>Multiply each element of an array by a value.</p>
+     *
+     * <p>The array is modified in place (no copy is created).</p>
+     *
+     * @param arr Array to scale
+     * @param val Scalar
+     * @since 3.2
+     */
+    public static void scaleInPlace(double val, final double[] arr) {
+        for (int i = 0; i < arr.length; i++) {
+            arr[i] *= val;
+        }
+    }
+
+    /**
+     * Creates an array whose contents will be the element-by-element
+     * addition of the arguments.
+     *
+     * @param a First term of the addition.
+     * @param b Second term of the addition.
+     * @return a new array {@code r} where {@code r[i] = a[i] + b[i]}.
+     * @throws DimensionMismatchException if the array lengths differ.
+     * @since 3.1
+     */
+    public static double[] ebeAdd(double[] a, double[] b)
+        throws DimensionMismatchException {
+        if (a.length != b.length) {
+            throw new DimensionMismatchException(a.length, b.length);
+        }
+
+        final double[] result = a.clone();
+        for (int i = 0; i < a.length; i++) {
+            result[i] += b[i];
+        }
+        return result;
+    }
+    /**
+     * Creates an array whose contents will be the element-by-element
+     * subtraction of the second argument from the first.
+     *
+     * @param a First term.
+     * @param b Element to be subtracted.
+     * @return a new array {@code r} where {@code r[i] = a[i] - b[i]}.
+     * @throws DimensionMismatchException if the array lengths differ.
+     * @since 3.1
+     */
+    public static double[] ebeSubtract(double[] a, double[] b)
+        throws DimensionMismatchException {
+        if (a.length != b.length) {
+            throw new DimensionMismatchException(a.length, b.length);
+        }
+
+        final double[] result = a.clone();
+        for (int i = 0; i < a.length; i++) {
+            result[i] -= b[i];
+        }
+        return result;
+    }
+    /**
+     * Creates an array whose contents will be the element-by-element
+     * multiplication of the arguments.
+     *
+     * @param a First factor of the multiplication.
+     * @param b Second factor of the multiplication.
+     * @return a new array {@code r} where {@code r[i] = a[i] * b[i]}.
+     * @throws DimensionMismatchException if the array lengths differ.
+     * @since 3.1
+     */
+    public static double[] ebeMultiply(double[] a, double[] b)
+        throws DimensionMismatchException {
+        if (a.length != b.length) {
+            throw new DimensionMismatchException(a.length, b.length);
+        }
+
+        final double[] result = a.clone();
+        for (int i = 0; i < a.length; i++) {
+            result[i] *= b[i];
+        }
+        return result;
+    }
+    /**
+     * Creates an array whose contents will be the element-by-element
+     * division of the first argument by the second.
+     *
+     * @param a Numerator of the division.
+     * @param b Denominator of the division.
+     * @return a new array {@code r} where {@code r[i] = a[i] / b[i]}.
+     * @throws DimensionMismatchException if the array lengths differ.
+     * @since 3.1
+     */
+    public static double[] ebeDivide(double[] a, double[] b)
+        throws DimensionMismatchException {
+        if (a.length != b.length) {
+            throw new DimensionMismatchException(a.length, b.length);
+        }
+
+        final double[] result = a.clone();
+        for (int i = 0; i < a.length; i++) {
+            result[i] /= b[i];
+        }
+        return result;
+    }
 
     /**
      * Calculates the L<sub>1</sub> (sum of abs) distance between two points.
@@ -206,9 +354,7 @@ public class MathArrays {
      * @param strict Whether the order should be strict.
      * @return {@code true} if sorted, {@code false} otherwise.
      */
-    public static boolean isMonotonic(double[] val,
-                                      OrderDirection dir,
-                                      boolean strict) {
+    public static boolean isMonotonic(double[] val, OrderDirection dir, boolean strict) {
         return checkOrder(val, dir, strict, false);
     }
 
@@ -299,6 +445,77 @@ public class MathArrays {
      */
     public static void checkOrder(double[] val) throws NonMonotonicSequenceException {
         checkOrder(val, OrderDirection.INCREASING, true);
+    }
+
+    /**
+     * Throws DimensionMismatchException if the input array is not rectangular.
+     *
+     * @param in array to be tested
+     * @throws NullArgumentException if input array is null
+     * @throws DimensionMismatchException if input array is not rectangular
+     * @since 3.1
+     */
+    public static void checkRectangular(final long[][] in)
+        throws NullArgumentException, DimensionMismatchException {
+        MathUtils.checkNotNull(in);
+        for (int i = 1; i < in.length; i++) {
+            if (in[i].length != in[0].length) {
+                throw new DimensionMismatchException(
+                        LocalizedFormats.DIFFERENT_ROWS_LENGTHS,
+                        in[i].length, in[0].length);
+            }
+        }
+    }
+
+    /**
+     * Check that all entries of the input array are strictly positive.
+     *
+     * @param in Array to be tested
+     * @throws NotStrictlyPositiveException if any entries of the array are not
+     * strictly positive.
+     * @since 3.1
+     */
+    public static void checkPositive(final double[] in)
+        throws NotStrictlyPositiveException {
+        for (int i = 0; i < in.length; i++) {
+            if (in[i] <= 0) {
+                throw new NotStrictlyPositiveException(in[i]);
+            }
+        }
+    }
+
+    /**
+     * Check that all entries of the input array are >= 0.
+     *
+     * @param in Array to be tested
+     * @throws NotPositiveException if any array entries are less than 0.
+     * @since 3.1
+     */
+    public static void checkNonNegative(final long[] in)
+        throws NotPositiveException {
+        for (int i = 0; i < in.length; i++) {
+            if (in[i] < 0) {
+                throw new NotPositiveException(in[i]);
+            }
+        }
+    }
+
+    /**
+     * Check all entries of the input array are >= 0.
+     *
+     * @param in Array to be tested
+     * @throws NotPositiveException if any array entries are less than 0.
+     * @since 3.1
+     */
+    public static void checkNonNegative(final long[][] in)
+        throws NotPositiveException {
+        for (int i = 0; i < in.length; i ++) {
+            for (int j = 0; j < in[i].length; j++) {
+                if (in[i][j] < 0) {
+                    throw new NotPositiveException(in[i][j]);
+                }
+            }
+        }
     }
 
     /**
@@ -1087,4 +1304,52 @@ public class MathArrays {
          }
          return out;
      }
+
+     /** Build an array of elements.
+      * <p>
+      * Arrays are filled with field.getZero()
+      * </p>
+      * @param <T> the type of the field elements
+      * @param field field to which array elements belong
+      * @param length of the array
+      * @return a new array
+      * @since 3.2
+      */
+     public static <T> T[] buildArray(final Field<T> field, final int length) {
+         @SuppressWarnings("unchecked") // OK because field must be correct class
+         T[] array = (T[]) Array.newInstance(field.getRuntimeClass(), length);
+         Arrays.fill(array, field.getZero());
+         return array;
+     }
+
+     /** Build a double dimension  array of elements.
+      * <p>
+      * Arrays are filled with field.getZero()
+      * </p>
+      * @param <T> the type of the field elements
+      * @param field field to which array elements belong
+      * @param rows number of rows in the array
+      * @param columns number of columns (may be negative to build partial
+      * arrays in the same way <code>new Field[rows][]</code> works)
+      * @return a new array
+      * @since 3.2
+      */
+     @SuppressWarnings("unchecked")
+    public static <T> T[][] buildArray(final Field<T> field, final int rows, final int columns) {
+         final T[][] array;
+         if (columns < 0) {
+             T[] dummyRow = buildArray(field, 0);
+             array = (T[][]) Array.newInstance(dummyRow.getClass(), rows);
+         } else {
+             array = (T[][]) Array.newInstance(field.getRuntimeClass(),
+                                               new int[] {
+                                                   rows, columns
+                                               });
+             for (int i = 0; i < rows; ++i) {
+                 Arrays.fill(array[i], field.getZero());
+             }
+         }
+         return array;
+     }
+
 }

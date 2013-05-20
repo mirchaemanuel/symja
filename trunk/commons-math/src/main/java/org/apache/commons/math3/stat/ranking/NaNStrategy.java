@@ -28,10 +28,12 @@ package org.apache.commons.math3.stat.ranking;
  * <li>FIXED - NaNs are left "in place," that is the rank transformation is
  * applied to the other elements in the input array, but the NaN elements
  * are returned unchanged.</li>
+ * <li>FAILED - If any NaN is encountered in the input array, an appropriate
+ * exception is thrown</li>
  * </ul>
  *
  * @since 2.0
- * @version $Id: NaNStrategy.java 1244107 2012-02-14 16:17:55Z erans $
+ * @version $Id: NaNStrategy.java 1422313 2012-12-15 18:53:41Z psteitz $
  */
 public enum NaNStrategy {
 
@@ -45,5 +47,10 @@ public enum NaNStrategy {
     REMOVED,
 
     /** NaNs are left in place */
-    FIXED
+    FIXED,
+
+    /** NaNs result in an exception
+     * @since 3.1
+     */
+    FAILED
 }

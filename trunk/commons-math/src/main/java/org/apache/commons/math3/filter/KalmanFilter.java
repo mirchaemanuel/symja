@@ -79,7 +79,7 @@ import org.apache.commons.math3.util.MathUtils;
  * @see ProcessModel
  * @see MeasurementModel
  * @since 3.0
- * @version $Id: KalmanFilter.java 1381332 2012-09-05 20:06:07Z tn $
+ * @version $Id: KalmanFilter.java 1416643 2012-12-03 19:37:14Z tn $
  */
 public class KalmanFilter {
     /** The process model used by this filter instance. */

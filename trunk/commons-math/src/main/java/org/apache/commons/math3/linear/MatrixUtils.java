@@ -20,28 +20,28 @@ package org.apache.commons.math3.linear;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.lang.reflect.Array;
 import java.util.Arrays;
 
 import org.apache.commons.math3.Field;
 import org.apache.commons.math3.FieldElement;
-import org.apache.commons.math3.exception.MathArithmeticException;
-import org.apache.commons.math3.exception.OutOfRangeException;
-import org.apache.commons.math3.exception.NoDataException;
-import org.apache.commons.math3.exception.NumberIsTooSmallException;
-import org.apache.commons.math3.exception.NullArgumentException;
 import org.apache.commons.math3.exception.DimensionMismatchException;
+import org.apache.commons.math3.exception.MathArithmeticException;
+import org.apache.commons.math3.exception.NoDataException;
+import org.apache.commons.math3.exception.NullArgumentException;
+import org.apache.commons.math3.exception.NumberIsTooSmallException;
+import org.apache.commons.math3.exception.OutOfRangeException;
 import org.apache.commons.math3.exception.ZeroException;
 import org.apache.commons.math3.exception.util.LocalizedFormats;
 import org.apache.commons.math3.fraction.BigFraction;
 import org.apache.commons.math3.fraction.Fraction;
 import org.apache.commons.math3.util.FastMath;
+import org.apache.commons.math3.util.MathArrays;
 import org.apache.commons.math3.util.Precision;
 
 /**
  * A collection of static methods that operate on or return matrices.
  *
- * @version $Id: MatrixUtils.java 1380122 2012-09-03 03:54:23Z celestin $
+ * @version $Id: MatrixUtils.java 1483319 2013-05-16 12:29:37Z erans $
  */
 public class MatrixUtils {
 
@@ -194,8 +194,7 @@ public class MatrixUtils {
         createFieldIdentityMatrix(final Field<T> field, final int dimension) {
         final T zero = field.getZero();
         final T one  = field.getOne();
-        @SuppressWarnings("unchecked")
-        final T[][] d = (T[][]) Array.newInstance(field.getRuntimeClass(), new int[] { dimension, dimension });
+        final T[][] d = MathArrays.buildArray(field, dimension, dimension);
         for (int row = 0; row < dimension; row++) {
             final T[] dRow = d[row];
             Arrays.fill(dRow, zero);
@@ -372,6 +371,72 @@ public class MatrixUtils {
             m.setEntry(i, 0, columnData[i]);
         }
         return m;
+    }
+
+    /**
+     * Checks whether a matrix is symmetric, within a given relative tolerance.
+     *
+     * @param matrix Matrix to check.
+     * @param relativeTolerance Tolerance of the symmetry check.
+     * @param raiseException If {@code true}, an exception will be raised if
+     * the matrix is not symmetric.
+     * @return {@code true} if {@code matrix} is symmetric.
+     * @throws NonSquareMatrixException if the matrix is not square.
+     * @throws NonSymmetricMatrixException if the matrix is not symmetric.
+     */
+    private static boolean isSymmetricInternal(RealMatrix matrix,
+                                               double relativeTolerance,
+                                               boolean raiseException) {
+        final int rows = matrix.getRowDimension();
+        if (rows != matrix.getColumnDimension()) {
+            if (raiseException) {
+                throw new NonSquareMatrixException(rows, matrix.getColumnDimension());
+            } else {
+                return false;
+            }
+        }
+        for (int i = 0; i < rows; i++) {
+            for (int j = i + 1; j < rows; j++) {
+                final double mij = matrix.getEntry(i, j);
+                final double mji = matrix.getEntry(j, i);
+                if (FastMath.abs(mij - mji) >
+                    FastMath.max(FastMath.abs(mij), FastMath.abs(mji)) * relativeTolerance) {
+                    if (raiseException) {
+                        throw new NonSymmetricMatrixException(i, j, relativeTolerance);
+                    } else {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Checks whether a matrix is symmetric.
+     *
+     * @param matrix Matrix to check.
+     * @param eps Relative tolerance.
+     * @throws NonSquareMatrixException if the matrix is not square.
+     * @throws NonSymmetricMatrixException if the matrix is not symmetric.
+     * @since 3.1
+     */
+    public static void checkSymmetric(RealMatrix matrix,
+                                      double eps) {
+        isSymmetricInternal(matrix, eps, true);
+    }
+
+    /**
+     * Checks whether a matrix is symmetric.
+     *
+     * @param matrix Matrix to check.
+     * @param eps Relative tolerance.
+     * @return {@code true} if {@code matrix} is symmetric.
+     * @since 3.1
+     */
+    public static boolean isSymmetric(RealMatrix matrix,
+                                      double eps) {
+        return isSymmetricInternal(matrix, eps, false);
     }
 
     /**
@@ -928,5 +993,74 @@ public class MatrixUtils {
                 b.setEntry(j, b.getEntry(j)-bi*rm.getEntry(j,i)  );
             }
         }
+    }
+
+    /**
+     * Computes the inverse of the given matrix by splitting it into
+     * 4 sub-matrices.
+     *
+     * @param m Matrix whose inverse must be computed.
+     * @param splitIndex Index that determines the "split" line and
+     * column.
+     * The element corresponding to this index will part of the
+     * upper-left sub-matrix.
+     * @return the inverse of {@code m}.
+     * @throws NonSquareMatrixException if {@code m} is not square.
+     */
+    public static RealMatrix blockInverse(RealMatrix m,
+                                          int splitIndex) {
+        final int n = m.getRowDimension();
+        if (m.getColumnDimension() != n) {
+            throw new NonSquareMatrixException(m.getRowDimension(),
+                                               m.getColumnDimension());
+        }
+
+        final int splitIndex1 = splitIndex + 1;
+
+        final RealMatrix a = m.getSubMatrix(0, splitIndex, 0, splitIndex);
+        final RealMatrix b = m.getSubMatrix(0, splitIndex, splitIndex1, n - 1);
+        final RealMatrix c = m.getSubMatrix(splitIndex1, n - 1, 0, splitIndex);
+        final RealMatrix d = m.getSubMatrix(splitIndex1, n - 1, splitIndex1, n - 1);
+
+        final SingularValueDecomposition aDec = new SingularValueDecomposition(a);
+        final DecompositionSolver aSolver = aDec.getSolver();
+        if (!aSolver.isNonSingular()) {
+            throw new SingularMatrixException();
+        }
+        final RealMatrix aInv = aSolver.getInverse();
+
+        final SingularValueDecomposition dDec = new SingularValueDecomposition(d);
+        final DecompositionSolver dSolver = dDec.getSolver();
+        if (!dSolver.isNonSingular()) {
+            throw new SingularMatrixException();
+        }
+        final RealMatrix dInv = dSolver.getInverse();
+
+        final RealMatrix tmp1 = a.subtract(b.multiply(dInv).multiply(c));
+        final SingularValueDecomposition tmp1Dec = new SingularValueDecomposition(tmp1);
+        final DecompositionSolver tmp1Solver = tmp1Dec.getSolver();
+        if (!tmp1Solver.isNonSingular()) {
+            throw new SingularMatrixException();
+        }
+        final RealMatrix result00 = tmp1Solver.getInverse();
+
+        final RealMatrix tmp2 = d.subtract(c.multiply(aInv).multiply(b));
+        final SingularValueDecomposition tmp2Dec = new SingularValueDecomposition(tmp2);
+        final DecompositionSolver tmp2Solver = tmp2Dec.getSolver();
+        if (!tmp2Solver.isNonSingular()) {
+            throw new SingularMatrixException();
+        }
+        final RealMatrix result11 = tmp2Solver.getInverse();
+
+        final RealMatrix result01 = aInv.multiply(b).multiply(result11).scalarMultiply(-1);
+        final RealMatrix result10 = dInv.multiply(c).multiply(result00).scalarMultiply(-1);
+
+        final RealMatrix result = new Array2DRowRealMatrix(n, n);
+        result.setSubMatrix(result00.getData(), 0, 0);
+        result.setSubMatrix(result01.getData(), 0, splitIndex1);
+        result.setSubMatrix(result10.getData(), splitIndex1, 0);
+        result.setSubMatrix(result11.getData(), splitIndex1, splitIndex1);
+
+        return result;
     }
 }

@@ -28,7 +28,7 @@ import org.apache.commons.math3.geometry.partitioning.Hyperplane;
 import org.apache.commons.math3.util.FastMath;
 
 /** The class represent planes in a three dimensional space.
- * @version $Id: Plane.java 1382887 2012-09-10 14:37:27Z luc $
+ * @version $Id: Plane.java 1416643 2012-12-03 19:37:14Z tn $
  * @since 3.0
  */
 public class Plane implements Hyperplane<Euclidean3D>, Embedding<Euclidean3D, Euclidean2D> {

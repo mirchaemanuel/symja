@@ -56,7 +56,7 @@ import org.apache.commons.math3.util.MathUtils;
  * left half plane is the set of points with negative offsets and the
  * right half plane is the set of points with positive offsets.</p>
 
- * @version $Id: Line.java 1244107 2012-02-14 16:17:55Z erans $
+ * @version $Id: Line.java 1422195 2012-12-15 06:45:18Z psteitz $
  * @since 3.0
  */
 public class Line implements Hyperplane<Euclidean2D>, Embedding<Euclidean2D, Euclidean1D> {
@@ -261,6 +261,19 @@ public class Line implements Hyperplane<Euclidean2D>, Embedding<Euclidean2D, Euc
      */
     public boolean contains(final Vector2D p) {
         return FastMath.abs(getOffset(p)) < 1.0e-10;
+    }
+
+    /** Compute the distance between the instance and a point.
+     * <p>This is a shortcut for invoking FastMath.abs(getOffset(p)),
+     * and provides consistency with what is in the
+     * org.apache.commons.math3.geometry.euclidean.threed.Line class.</p>
+     *
+     * @param p to check
+     * @return distance between the instance and the point
+     * @since 3.1
+     */
+    public double distance(final Vector2D p) {
+        return FastMath.abs(getOffset(p));
     }
 
     /** Check the instance is parallel to another line.

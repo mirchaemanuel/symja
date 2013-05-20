@@ -32,7 +32,7 @@ import org.apache.commons.math3.util.MathArrays;
 /**
  * This class implements vectors in a three-dimensional space.
  * <p>Instance of this class are guaranteed to be immutable.</p>
- * @version $Id: Vector3D.java 1379977 2012-09-02 14:22:52Z luc $
+ * @version $Id: Vector3D.java 1447259 2013-02-18 13:56:39Z luc $
  * @since 1.2
  */
 public class Vector3D implements Serializable, Vector<Euclidean3D> {
@@ -323,10 +323,10 @@ public class Vector3D implements Serializable, Vector<Euclidean3D> {
             throw new MathArithmeticException(LocalizedFormats.ZERO_NORM);
         }
 
-        if ((x >= -threshold) && (x <= threshold)) {
+        if (FastMath.abs(x) <= threshold) {
             double inverse  = 1 / FastMath.sqrt(y * y + z * z);
             return new Vector3D(0, inverse * z, -inverse * y);
-        } else if ((y >= -threshold) && (y <= threshold)) {
+        } else if (FastMath.abs(y) <= threshold) {
             double inverse  = 1 / FastMath.sqrt(x * x + z * z);
             return new Vector3D(-inverse * z, 0, inverse * x);
         }

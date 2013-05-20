@@ -34,9 +34,12 @@ import org.apache.commons.math3.util.MathUtils;
  * Clustering algorithm based on David Arthur and Sergei Vassilvitski k-means++ algorithm.
  * @param <T> type of the points to cluster
  * @see <a href="http://en.wikipedia.org/wiki/K-means%2B%2B">K-means++ (wikipedia)</a>
- * @version $Id: KMeansPlusPlusClusterer.java 1244107 2012-02-14 16:17:55Z erans $
+ * @version $Id: KMeansPlusPlusClusterer.java 1461871 2013-03-27 22:01:25Z tn $
  * @since 2.0
+ * @deprecated As of 3.2 (to be removed in 4.0),
+ * use {@link org.apache.commons.math3.ml.clustering.KMeansPlusPlusClusterer} instead
  */
+@Deprecated
 public class KMeansPlusPlusClusterer<T extends Clusterable<T>> {
 
     /** Strategies to use for replacing an empty cluster. */
@@ -95,10 +98,12 @@ public class KMeansPlusPlusClusterer<T extends Clusterable<T>> {
      * @return a list of clusters containing the points
      * @throws MathIllegalArgumentException if the data points are null or the number
      *     of clusters is larger than the number of data points
+     * @throws ConvergenceException if an empty cluster is encountered and the
+     * {@link #emptyStrategy} is set to {@code ERROR}
      */
     public List<Cluster<T>> cluster(final Collection<T> points, final int k,
                                     int numTrials, int maxIterationsPerTrial)
-        throws MathIllegalArgumentException {
+        throws MathIllegalArgumentException, ConvergenceException {
 
         // at first, we have not found any clusters list yet
         List<Cluster<T>> best = null;
@@ -149,10 +154,12 @@ public class KMeansPlusPlusClusterer<T extends Clusterable<T>> {
      * @return a list of clusters containing the points
      * @throws MathIllegalArgumentException if the data points are null or the number
      *     of clusters is larger than the number of data points
+     * @throws ConvergenceException if an empty cluster is encountered and the
+     * {@link #emptyStrategy} is set to {@code ERROR}
      */
     public List<Cluster<T>> cluster(final Collection<T> points, final int k,
                                     final int maxIterations)
-        throws MathIllegalArgumentException {
+        throws MathIllegalArgumentException, ConvergenceException {
 
         // sanity checks
         MathUtils.checkNotNull(points);
@@ -371,8 +378,10 @@ public class KMeansPlusPlusClusterer<T extends Clusterable<T>> {
      *
      * @param clusters the {@link Cluster}s to search
      * @return a random point from the selected cluster
+     * @throws ConvergenceException if clusters are all empty
      */
-    private T getPointFromLargestVarianceCluster(final Collection<Cluster<T>> clusters) {
+    private T getPointFromLargestVarianceCluster(final Collection<Cluster<T>> clusters)
+    throws ConvergenceException {
 
         double maxVariance = Double.NEGATIVE_INFINITY;
         Cluster<T> selected = null;
@@ -412,8 +421,9 @@ public class KMeansPlusPlusClusterer<T extends Clusterable<T>> {
      *
      * @param clusters the {@link Cluster}s to search
      * @return a random point from the selected cluster
+     * @throws ConvergenceException if clusters are all empty
      */
-    private T getPointFromLargestNumberCluster(final Collection<Cluster<T>> clusters) {
+    private T getPointFromLargestNumberCluster(final Collection<Cluster<T>> clusters) throws ConvergenceException {
 
         int maxNumber = 0;
         Cluster<T> selected = null;
@@ -446,8 +456,9 @@ public class KMeansPlusPlusClusterer<T extends Clusterable<T>> {
      *
      * @param clusters the {@link Cluster}s to search
      * @return point farthest to its cluster center
+     * @throws ConvergenceException if clusters are all empty
      */
-    private T getFarthestPoint(final Collection<Cluster<T>> clusters) {
+    private T getFarthestPoint(final Collection<Cluster<T>> clusters) throws ConvergenceException {
 
         double maxDistance = Double.NEGATIVE_INFINITY;
         Cluster<T> selectedCluster = null;

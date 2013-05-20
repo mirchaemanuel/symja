@@ -34,7 +34,7 @@ import org.apache.commons.math3.random.Well19937c;
  * @see <a href="http://en.wikipedia.org/wiki/Weibull_distribution">Weibull distribution (Wikipedia)</a>
  * @see <a href="http://mathworld.wolfram.com/WeibullDistribution.html">Weibull distribution (MathWorld)</a>
  * @since 1.1 (changed to concrete class in 3.0)
- * @version $Id: WeibullDistribution.java 1369202 2012-08-03 20:50:33Z erans $
+ * @version $Id: WeibullDistribution.java 1416643 2012-12-03 19:37:14Z tn $
  */
 public class WeibullDistribution extends AbstractRealDistribution {
     /**

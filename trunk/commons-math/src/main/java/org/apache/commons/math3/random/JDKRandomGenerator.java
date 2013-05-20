@@ -23,7 +23,7 @@ import java.util.Random;
  * {@link RandomGenerator}.
  *
  * @since 1.1
- * @version $Id: JDKRandomGenerator.java 1244107 2012-02-14 16:17:55Z erans $
+ * @version $Id: JDKRandomGenerator.java 1416643 2012-12-03 19:37:14Z tn $
  */
 public class JDKRandomGenerator extends Random implements RandomGenerator {
 

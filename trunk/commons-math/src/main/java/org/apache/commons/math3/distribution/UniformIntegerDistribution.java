@@ -29,7 +29,7 @@ import org.apache.commons.math3.util.FastMath;
  * @see <a href="http://en.wikipedia.org/wiki/Uniform_distribution_(discrete)"
  * >Uniform distribution (discrete), at Wikipedia</a>
  *
- * @version $Id: UniformIntegerDistribution.java 1363604 2012-07-20 00:43:45Z erans $
+ * @version $Id: UniformIntegerDistribution.java 1416643 2012-12-03 19:37:14Z tn $
  * @since 3.0
  */
 public class UniformIntegerDistribution extends AbstractIntegerDistribution {

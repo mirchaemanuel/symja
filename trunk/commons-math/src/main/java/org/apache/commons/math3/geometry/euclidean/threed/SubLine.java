@@ -26,7 +26,7 @@ import org.apache.commons.math3.geometry.euclidean.oned.Vector1D;
 import org.apache.commons.math3.geometry.partitioning.Region.Location;
 
 /** This class represents a subset of a {@link Line}.
- * @version $Id: SubLine.java 1379977 2012-09-02 14:22:52Z luc $
+ * @version $Id: SubLine.java 1416643 2012-12-03 19:37:14Z tn $
  * @since 3.0
  */
 public class SubLine {
@@ -84,8 +84,8 @@ public class SubLine {
         final List<Segment> segments = new ArrayList<Segment>();
 
         for (final Interval interval : list) {
-            final Vector3D start = line.toSpace(new Vector1D(interval.getLower()));
-            final Vector3D end   = line.toSpace(new Vector1D(interval.getUpper()));
+            final Vector3D start = line.toSpace(new Vector1D(interval.getInf()));
+            final Vector3D end   = line.toSpace(new Vector1D(interval.getSup()));
             segments.add(new Segment(start, end, line));
         }
 

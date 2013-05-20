@@ -19,7 +19,7 @@ package org.apache.commons.math3.dfp;
 
 /** Mathematical routines for use with {@link Dfp}.
  * The constants are defined in {@link DfpField}
- * @version $Id: DfpMath.java 1244107 2012-02-14 16:17:55Z erans $
+ * @version $Id: DfpMath.java 1462503 2013-03-29 15:48:27Z luc $
  * @since 2.2
  */
 public class DfpMath {
@@ -653,11 +653,9 @@ public class DfpMath {
             r = exp(log(x).multiply(y));
         }
 
-        if (invert) {
+        if (invert && y.rint().equals(y) && !y.remainder(two).equals(zero)) {
             // if y is odd integer
-            if (y.rint().equals(y) && !y.remainder(two).equals(zero)) {
-                r = r.negate();
-            }
+            r = r.negate();
         }
 
         return x.newInstance(r);

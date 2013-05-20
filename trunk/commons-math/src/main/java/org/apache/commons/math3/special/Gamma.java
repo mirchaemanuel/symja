@@ -49,7 +49,7 @@ import org.apache.commons.math3.util.FastMath;
  * functions can safely be ported to Commons-Math.
  * </p>
  *
- * @version $Id: Gamma.java 1379270 2012-08-31 03:12:16Z celestin $
+ * @version $Id: Gamma.java 1422313 2012-12-15 18:53:41Z psteitz $
  */
 public class Gamma {
     /**
@@ -61,6 +61,7 @@ public class Gamma {
     /**
      * The value of the {@code g} constant in the Lanczos approximation, see
      * {@link #lanczos(double)}.
+     * @since 3.1
      */
     public static final double LANCZOS_G = 607.0 / 128.0;
 
@@ -497,7 +498,7 @@ public class Gamma {
      * {@code gamma(x) = sqrt(2 * pi) / x * (x + g + 0.5) ^ (x + 0.5)
      *                   * exp(-x - g - 0.5) * lanczos(x)},
      * </center>
-     * where {@code g} is a constant, returned by {@link #getLanczosG()}.
+     * where {@code g} is the Lanczos constant.
      * </p>
      *
      * @param x Argument.
@@ -506,6 +507,7 @@ public class Gamma {
      * equations (1) through (5), and Paul Godfrey's
      * <a href="http://my.fit.edu/~gabdo/gamma.txt">Note on the computation
      * of the convergent Lanczos complex Gamma approximation</a>
+     * @since 3.1
      */
     public static double lanczos(final double x) {
         double sum = 0.0;
@@ -525,6 +527,7 @@ public class Gamma {
      * @return The value of {@code 1.0 / Gamma(1.0 + x) - 1.0}.
      * @throws NumberIsTooSmallException if {@code x < -0.5}
      * @throws NumberIsTooLargeException if {@code x > 1.5}
+     * @since 3.1
      */
     public static double invGamma1pm1(final double x) {
 
@@ -617,6 +620,7 @@ public class Gamma {
      * @return The value of {@code log(Gamma(1 + x))}.
      * @throws NumberIsTooSmallException if {@code x < -0.5}.
      * @throws NumberIsTooLargeException if {@code x > 1.5}.
+     * @since 3.1
      */
     public static double logGamma1p(final double x)
         throws NumberIsTooSmallException, NumberIsTooLargeException {
@@ -633,16 +637,19 @@ public class Gamma {
 
 
     /**
-     * Returns the value of &Gamma;(x). The present implementation is based on
-     * the double precision implementation in the
-     * <em>NSWC Library of Mathematics Subroutines</em>, {@code DGAMMA}.
+     * Returns the value of Γ(x). Based on the <em>NSWC Library of
+     * Mathematics Subroutines</em> double precision implementation,
+     * {@code DGAMMA}.
      *
-     * @param x the argument
-     * @return the value of {@code Gamma(x)}
+     * @param x Argument.
+     * @return the value of {@code Gamma(x)}.
+     * @since 3.1
      */
     public static double gamma(final double x) {
 
-        // TODO Check whether x is a negative integer
+        if ((x == FastMath.rint(x)) && (x <= 0.0)) {
+            return Double.NaN;
+        }
 
         final double ret;
         final double absX = FastMath.abs(x);
