@@ -1,5 +1,5 @@
 /*
- * $Id: DHTTransport.java 3991 2012-07-14 13:56:59Z kredel $
+ * $Id: DHTTransport.java 4259 2012-10-21 10:20:37Z kredel $
  */
 
 package edu.jas.util;
@@ -78,6 +78,31 @@ public abstract class DHTTransport<K, V> implements Serializable {
 
 }
 
+
+/**
+ * Transport container to signal termination for a distributed version
+ * of a HashTable. Contains no objects.
+ * @author Heinz Kredel
+ */
+
+class DHTTransportTerminate<K, V> extends DHTTransport<K, V> {
+
+    /**
+     * Get the key from this DHTTransport Container.
+     */
+    public K key() throws IOException, ClassNotFoundException {
+        throw new UnsupportedOperationException("this should not happen");
+    }
+
+
+    /**
+     * Get the value from this DHTTransport Container.
+     */
+    public V value() throws IOException, ClassNotFoundException {
+        throw new UnsupportedOperationException("this should not happen");
+    }
+
+}
 
 
 /**

@@ -1,5 +1,5 @@
 /*
- * $Id: GroebnerBase.java 3187 2010-06-16 22:07:38Z kredel $
+ * $Id: GroebnerBase.java 4179 2012-09-09 10:45:58Z kredel $
  */
 
 package edu.jas.gb;
@@ -18,6 +18,9 @@ import edu.jas.poly.GenPolynomial;
  * Defines methods for Groebner bases and GB test.
  * @param <C> coefficient type
  * @author Heinz Kredel
+ *
+ * @see edu.jas.application.GBAlgorithmBuilder
+ * @see edu.jas.gbufd.GBFactory
  */
 
 public interface GroebnerBase<C extends RingElem<C>> 

@@ -1,5 +1,5 @@
 /*
- * $Id: SolvableGroebnerBaseAbstract.java 4104 2012-08-18 10:00:59Z kredel $
+ * $Id: SolvableGroebnerBaseAbstract.java 4184 2012-09-10 19:33:52Z kredel $
  */
 
 package edu.jas.gb;
@@ -164,7 +164,10 @@ public abstract class SolvableGroebnerBaseAbstract<C extends RingElem<C>>
             for ( int j = 0; j < X.size(); j++ ) {
                 x = X.get(j);
                 p = p.multiply( x );
-                F.add( p );
+                p = sred.leftNormalform(F, p);
+                if (!p.isZERO()) {
+                    F.add(p);
+                }
             }
         }
         //System.out.println("F to check = " + F);

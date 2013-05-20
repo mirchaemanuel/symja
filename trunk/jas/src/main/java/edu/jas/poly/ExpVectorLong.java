@@ -1,5 +1,5 @@
 /*
- * $Id: ExpVectorLong.java 4125 2012-08-19 19:05:22Z kredel $
+ * $Id: ExpVectorLong.java 4270 2012-10-24 20:41:11Z kredel $
  */
 
 package edu.jas.poly;
@@ -17,7 +17,7 @@ import java.util.ArrayList;
  * @author Heinz Kredel
  */
 
-public class ExpVectorLong extends ExpVector
+public final class ExpVectorLong extends ExpVector
 /*implements AbelianGroupElem<ExpVectorLong>*/{
 
 

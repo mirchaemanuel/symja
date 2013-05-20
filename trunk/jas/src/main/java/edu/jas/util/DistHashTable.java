@@ -1,5 +1,5 @@
 /*
- * $Id: DistHashTable.java 3986 2012-07-14 11:39:27Z kredel $
+ * $Id: DistHashTable.java 4336 2012-12-29 11:54:51Z kredel $
  */
 
 package edu.jas.util;
@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
+//import java.util.concurrent.ConcurrentSkipListMap;
 
 import org.apache.log4j.Logger;
 
@@ -82,6 +83,7 @@ public class DistHashTable<K, V> extends AbstractMap<K, V> /* implements Map<K,V
         if (debug) {
             logger.debug("dl channel = " + channel);
         }
+        //theList = new ConcurrentSkipListMap<K, V>(); // Java 1.6
         theList = new TreeMap<K, V>();
         listener = new DHTListener<K, V>(channel, theList);
         // listener.start() is in initialize()
@@ -95,6 +97,7 @@ public class DistHashTable<K, V> extends AbstractMap<K, V> /* implements Map<K,V
     public DistHashTable(SocketChannel sc) {
         cf = null;
         channel = sc;
+        //theList = new ConcurrentSkipListMap<K, V>(); // Java 1.6
         theList = new TreeMap<K, V>();
         listener = new DHTListener<K, V>(channel, theList);
         // listener.start() is in initialize()
@@ -142,7 +145,10 @@ public class DistHashTable<K, V> extends AbstractMap<K, V> /* implements Map<K,V
      */
     @Override
     public Collection<V> values() {
-        return theList.values();
+        synchronized (theList) {
+            return new ArrayList<V>(theList.values());
+            //return theList.values();
+        }
     }
 
 
@@ -151,7 +157,9 @@ public class DistHashTable<K, V> extends AbstractMap<K, V> /* implements Map<K,V
      */
     @Override
     public Set<K> keySet() {
-        return theList.keySet();
+        synchronized (theList) {
+            return theList.keySet();
+        }
     }
 
 
@@ -160,7 +168,9 @@ public class DistHashTable<K, V> extends AbstractMap<K, V> /* implements Map<K,V
      */
     @Override
     public Set<Entry<K, V>> entrySet() {
-        return theList.entrySet();
+        synchronized (theList) {
+            return theList.entrySet();
+        }
     }
 
 
@@ -232,7 +242,7 @@ public class DistHashTable<K, V> extends AbstractMap<K, V> /* implements Map<K,V
      * @param value
      */
     public void putWait(K key, V value) {
-        put(key, value); // = send
+        V o = put(key, value); // = send
         // assume key does not change multiple times before test:
         while (!value.equals(getWait(key))) {
             //System.out.print("#");
@@ -242,7 +252,7 @@ public class DistHashTable<K, V> extends AbstractMap<K, V> /* implements Map<K,V
 
     /**
      * Put object to the distributed hash table. Returns immediately after
-     * sending does not block.
+     * sending, does not block.
      * @param key
      * @param value
      */

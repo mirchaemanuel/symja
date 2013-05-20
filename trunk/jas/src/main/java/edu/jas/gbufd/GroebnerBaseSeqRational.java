@@ -1,5 +1,5 @@
 /*
- * $Id: GroebnerBaseSeqRational.java 4089 2012-08-04 10:33:17Z kredel $
+ * $Id: GroebnerBaseSeqRational.java 4173 2012-09-08 20:13:53Z kredel $
  */
 
 package edu.jas.gbufd;
@@ -26,7 +26,7 @@ import edu.jas.poly.PolyUtil;
  * @author Heinz Kredel
  */
 
-public class GroebnerBaseSeqRational<C extends BigRational> extends GroebnerBaseSeq<BigRational> {
+public class GroebnerBaseSeqRational<C extends BigRational> extends GroebnerBaseAbstract<BigRational> {
 
 
     private static final Logger logger = Logger.getLogger(GroebnerBaseSeqRational.class);
@@ -137,6 +137,22 @@ public class GroebnerBaseSeqRational<C extends BigRational> extends GroebnerBase
         G = PolyUtil.<BigRational> fromIntegerCoefficients(rring, Gi);
         G = PolyUtil.<BigRational> monic(G);
         return G;
+    }
+
+
+    /**
+     * Cleanup and terminate ThreadPool.
+     */
+    public void terminate() {
+        bba.terminate();
+    }
+
+
+    /**
+     * Cancel ThreadPool.
+     */
+    public int cancel() {
+        return bba.cancel();
     }
 
 }
