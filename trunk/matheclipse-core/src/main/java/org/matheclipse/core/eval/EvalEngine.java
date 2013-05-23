@@ -333,21 +333,17 @@ public class EvalEngine implements Serializable, IEvaluationEngine {
 	 * evaluation step. If evaluation is not possible return <code>null</code>.
 	 * 
 	 * @param expr
-	 *          the object which should be evaluated
-	 * @param numericMode
-	 *          reset the numericMode to this value after evaluation
+	 *          the object which should be evaluated 
 	 * @return the evaluated object of <code>null</code> if no evaluation was
 	 *         possible
 	 */
 	public final IExpr evaluateNull(final IExpr expr) {
-		// boolean numericMode = fNumericMode;
-		// // StackContext.enter();
-		// try {
-		return evalLoop(expr);
-		// } finally {
-		// fNumericMode = numericMode;
-		// // StackContext.exit();
-		// }
+		boolean numericMode = fNumericMode;
+		try {
+			return evalLoop(expr);
+		} finally {
+			fNumericMode = numericMode;
+		}
 	}
 
 	/**
