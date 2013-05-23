@@ -13,7 +13,8 @@ public class IntegrateTestCase extends AbstractTestCase {
 	}
 
 	public void testSystem001() {
-		check("Integrate[Sin[x]*Cos[x],x]", "(-1/4)*Cos[2*x]");
+		check("Integrate[Sin[x]*Cos[x],x]", "1/2*Sin[x]^2");
+		
 		check("Integrate[x^(-1),x]", "Log[x]");
 		check("Integrate[x^a,x]", "x^(a+1)*(a+1)^(-1)");
 		check("Integrate[x^10,x]", "1/11*x^11");
