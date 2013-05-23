@@ -1,5 +1,6 @@
 package org.matheclipse.core.reflection.system;
 
+import org.matheclipse.core.eval.EvalEngine;
 import org.matheclipse.core.eval.exception.Validate;
 import org.matheclipse.core.eval.interfaces.AbstractFunctionEvaluator;
 import org.matheclipse.core.expression.F;
@@ -21,14 +22,24 @@ public class And extends AbstractFunctionEvaluator {
 	@Override
 	public IExpr evaluate(final IAST ast) {
 		Validate.checkRange(ast, 3);
+		
 		boolean evaled = false;
+		final EvalEngine engine = EvalEngine.get();
 		IAST result = ast.clone();
 		int index = 1;
+		IExpr temp;
 		for (int i = 1; i < ast.size(); i++) {
-			if (ast.get(i).isFalse()) {
+			temp = engine.evaluateNull(ast.get(i));
+			if (temp == null) {
+				temp = ast.get(i);
+			} else {
+				result.set(index, temp);
+				evaled = true;
+			}
+			if (temp.isFalse()) {
 				return F.False;
 			}
-			if (ast.get(i).isTrue()) {
+			if (temp.isTrue()) {
 				result.remove(index);
 				evaled = true;
 				continue;
@@ -46,6 +57,6 @@ public class And extends AbstractFunctionEvaluator {
 
 	@Override
 	public void setUp(final ISymbol symbol) {
-		symbol.setAttributes(ISymbol.ONEIDENTITY | ISymbol.ORDERLESS | ISymbol.FLAT);
+		symbol.setAttributes(ISymbol.HOLDALL | ISymbol.ONEIDENTITY | ISymbol.FLAT);
 	}
 }
