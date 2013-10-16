@@ -6,3 +6,4 @@
   * [http://github.com/iee github.com/iee - Integrated Engineering Environment (Eclipse Plugin)]
   * [http://code.google.com/p/scalalab ScalaLab]
   * [http://code.google.com/p/jlabgroovy GroovyLab]
+  * [http://github.com/masenf/GraphDroid2012 GraphDroid 2012: the symbolic graphing calculator for the Android platform]
