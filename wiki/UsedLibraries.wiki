@@ -1,6 +1,8 @@
 #summary External libraries used in the Symja project
 #sidebar TableOfContents
 
+*The information on this page is outdated; the Symja project has moved to [https://bitbucket.org/axelclk/symja_android_library BitBucket.org].*
+
 <wiki:toc max_depth="1" />
 
 = Links to external open source libraries =
