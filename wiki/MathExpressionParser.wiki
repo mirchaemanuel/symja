@@ -2,6 +2,8 @@
 #labels Featured,Phase-Implementation
 #sidebar TableOfContents
 
+*Symja's source has moved to [https://bitbucket.org/axelclk/symja_android_library BitBucket.org].*
+
 <wiki:toc max_depth="3" />
 
 = About =
