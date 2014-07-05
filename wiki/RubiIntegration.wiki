@@ -1,8 +1,7 @@
 #summary Integration of the Rubi libraries
 #sidebar TableOfContents
  
-
-*Note:* the following implementation is currently only available through SVN.
+*The information on this page is outdated; the Symja project has moved to [https://bitbucket.org/axelclk/symja_android_library BitBucket.org].*
 
 = The Rubi rule-based integrator library =
 Description of implementation of the rules from the [http://www.apmaths.uwo.ca/~arich/ Rubi rule-based integrator].
