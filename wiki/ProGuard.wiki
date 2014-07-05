@@ -1,6 +1,8 @@
 #summary Shrinking the Console application with ProGuard
 #sidebar TableOfContents
 
+*The information on this page is outdated; the Symja project has moved to [https://bitbucket.org/axelclk/symja_android_library BitBucket.org].*
+
 = build_mini.xml ANT script =
 To reduce the size of the {{{org.matheclipse.core.eval.Console}}} application we can use the [http://proguard.sourceforge.net/ ProGuard] tool. 
 
